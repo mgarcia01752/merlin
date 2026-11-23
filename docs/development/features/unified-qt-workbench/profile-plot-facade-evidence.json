@@ -1,0 +1,330 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Profile plot inspection facade",
+  "status": "Level 1 consumer accepted; parent Level 2 and milestone/final Level 3 gates remain pending",
+  "base_commit": "d85efab1fa1b182af39c4dcc2bee2b3902729e5b",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-08",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/src/downstream/inputs/profile_input/plot.rs",
+      "sha256": "7d29f52895ac815d58a08f8410793797386bee13717c932fe4a9de8d037668cd"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/profile_input/mod.rs",
+      "sha256": "98db6aa27d8cc68a5a15d2b719cefd34d12882afd3e710e452786872a7156a89"
+    },
+    {
+      "path": "apps/qt/src/downstream/common/constants.rs",
+      "sha256": "fedf67de70ffe093853f1932b1deeef62c28fe2db7771b51a4310463bf927040"
+    },
+    {
+      "path": "apps/qt/src/shared/presentation/constants.rs",
+      "sha256": "820aab6f88cf78cd639b66d419e4fe40e3eae9a86531f29b65fe2c2c0ff01e38"
+    }
+  ],
+  "ownership": [
+    "Public CaptureLoader.profile_capture admits exact original bytes/name; ProfileCapture.inspect supplies scientific roles/loading, original coordinates, bounded extrema, ideal Shannon and useful data capacity. Qt only formats existing selection/axes/labels/lanes and JSON keys.",
+    "The original 512-column single trace remains separate from the accepted public overlay bucket cap. Independent 14-bit single-view, 15-bit overlay and 45-dB Shannon extents remain presentation policies. Public source-ID and role budgets are authoritative; backend signatures and scientific algorithms are unchanged."
+  ],
+  "preservation": {
+    "before": {
+      "files": 24,
+      "sites": 91
+    },
+    "after": {
+      "files": 23,
+      "sites": 88
+    },
+    "scientific_dependencies": 3,
+    "retired": {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/profile_input/plot.rs",
+        "sha256": "af9efc4bd433e241745629a0ac8158bbbe3d6b022cce7e86b9648e26a1c433ac",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 136,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Profile plot inspection facade",
+      "reason": "Public original-capture admission and ProfileCapture.inspect supply all raw role/loading/Shannon/capacity/extrema/coordinate data; Qt retains only existing drawing, selection and text formatting.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-profile-plot-inspection-facade-accepted"
+    },
+    "focused_test_only_review": {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/profile_input/mod.rs",
+        "sha256": "d3201357eb959101d0c1e9e8da299376424a51f2e9c9bc4ff591a7ce2b38c05e",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 191,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 217,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/inputs/profile_input/mod.rs",
+        "sha256": "98db6aa27d8cc68a5a15d2b719cefd34d12882afd3e710e452786872a7156a89",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 240,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Only the first-carrier-exclusion regression fixture preparation changes from private in-memory mutation to an admitted decoded capture with the same source role/loading. Every original assertion, all production bytes and every other test byte are exact. Remaining private production/test sites stay frozen, without introducing a new science call.",
+      "preserved_production_prefix": {
+        "sha256": "14194e15788d2bcdde0560ddb0de64956345d4066f1299552a3bfc62ef8f0173",
+        "byte_length": 5263,
+        "exact_at_base_commit": "d85efab1fa1b182af39c4dcc2bee2b3902729e5b"
+      },
+      "all_original_marker_assertions_and_other_test_bytes_exact": true,
+      "evidence": "docs/development/features/unified-qt-workbench/profile-plot-facade-evidence.json"
+    },
+    "all_other_frozen_entries_dependencies_initial_and_prior_review_history_exact": true,
+    "all_original_profile_assertions_and_other_model_bytes_exact": true,
+    "official_checkboxes_and_states_unchanged": true
+  },
+  "testing": {
+    "level": 1,
+    "risk": "Qt-only adoption of existing accepted public admission/inspection APIs. One existing test fixture now expresses its original exclusion as an admitted capture instead of mutating private decoded truth; all original assertions are preserved. No backend/native/schema/CXX/lifecycle change.",
+    "executed": {
+      "rust": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "downstream::inputs::profile_input::",
+          "--",
+          "--nocapture"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 7.3552019920000475,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "qml": {
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+          "Workbench::test_profile_staging_apply_cancel_and_remove",
+          "Workbench::test_profile_dialog_bounds_at_minimum_window",
+          "Workbench::test_ofdm_tree_and_blank_profile"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.3385841389999769,
+        "behavior_cases": 3
+      },
+      "clippy": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 4.271610394999925,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "format": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.3439082770000823,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "release": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "build",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--release",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 18.466930676999937,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "metadata": [
+        {
+          "label": "boundary",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/qt_api_boundary.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.1888008600003559
+        },
+        {
+          "label": "documents",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/feature_documentation.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 10.84432743599973
+        },
+        {
+          "label": "traceability",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/integration_traceability.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 8.378840898999897
+        },
+        {
+          "label": "python-guide",
+          "command": [
+            "python3",
+            "-B",
+            "tools/python/update_integration_doc.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.05487784400020246
+        },
+        {
+          "label": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.02221314300004451
+        }
+      ]
+    },
+    "actual_rust_cases": [
+      "downstream::inputs::profile_input::tests::staged_failures_removal_and_profile_rejection_preserve_accepted_input",
+      "downstream::inputs::profile_input::tests::binary_and_json_use_the_same_profile_validation",
+      "downstream::inputs::profile_input::plot::tests::raw_source_ids_request_bounds_and_capture_immutability_survive_public_inspection",
+      "downstream::inputs::profile_input::tests::profile_plot_preserves_source_grid_roles_and_bounds",
+      "downstream::inputs::profile_input::tests::profile_inspection_overlays_metrics_and_filters_preserve_capture"
+    ],
+    "rust_case_count": 5,
+    "qml_behavior_cases": 3,
+    "qml_harness_total": 5,
+    "qml_warning_count": 0,
+    "not_required": [
+      {
+        "scope": "Fresh wheel, root/scientific/native parity and API operation inventories",
+        "reason": "No backend/binding/API signature/default/schema/behavior changes. Existing accepted public owners are reused; real Qt binary/JSON, independent original Shannon/grid/role/capacity assertions and raw-ID cases validate this consumer. No API row/export changes."
+      },
+      {
+        "scope": "Complete Qt/QML or unchanged validator unit suites",
+        "reason": "Focused profile/boundary/traceability tests cover this unit; full relevant task coverage remains Level 2 and validator code is unchanged."
+      },
+      {
+        "scope": "Native startup/Open, CLI, project persistence and packaging suites",
+        "reason": "No QML/CXX/resource registration, native chooser, schema/serialization, lifecycle, dependency or packaging changes. This in-memory capture fixture changes no saved workbench. A current optimized executable is built; no new native/installed-platform execution is claimed."
+      }
+    ],
+    "deferred": [
+      {
+        "gate": "Level 2 UIU-DS-01",
+        "scope": "Complete relevant feature/crate, affected Qt/QML, compatibility and traceability before checking the official task."
+      },
+      {
+        "gate": "Level 3 milestones/UIU-QA-01",
+        "scope": "Full applicable workspace/Qt/native/CLI/persistence/packaging regressions, zero scientific exceptions and final numeric audit."
+      }
+    ],
+    "boundary": {
+      "errors": [],
+      "scientific_dependencies": 3,
+      "frozen_legacy_files": 23,
+      "final": false
+    }
+  },
+  "compatibility": "All four original profile regressions pass: actual binary/JSON equivalence, exact original grid/role/loading and missing markers, independent ideal-Shannon numerical values and gross rate, overlay/filter/empty/error and accepted-state behavior. Added raw IDs 17/255, sorted/deduplicated selection, zero-count reset, invalid request bytes/ID count/role count/metric and immutable source bytes/hash/document/assignments.",
+  "numeric_review": "Domain/work bounds use public owners; independent drawing limits and legacy selectors are named in the direction constants owner. Hz/MHz and bit/Mbit conversions have separate shared definitions. A named one-Hz drawing denominator is not a grid validator. The exclusion test code 16 and boundary literals have adjacent independent-fixture explanations. Final line-by-line audit remains pending.",
+  "limitation": "One bounded original-capture admission occurs per view. Retaining the immutable public catalog belongs to the remaining input-owner migration; no new mutable cache/session contract is introduced.",
+  "executable": {
+    "path": "apps/qt/target/release/merlin-qt",
+    "sha256": "5d43344b95ac9ec94e83d9093fb83ff14942ed87eac8f8186e04e5469f3baf07",
+    "scope": "Current optimized Linux build; no fresh native startup or installed-platform execution claimed."
+  }
+}

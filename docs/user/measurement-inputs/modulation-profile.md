@@ -38,6 +38,10 @@ Special carrier roles also appear in separate colored lanes beneath the plot.
 or a receiver requirement. **Profile BW** opens per-profile gross data rates:
 data-carrier bits multiplied by subcarrier spacing, before cyclic-prefix, FEC
 and other overhead. It is not net payload throughput.
+The public Rust profile inspection supplies these quantities and the bounded
+role/loading extrema. Qt formats the axes, lanes and labels. Original capture
+bytes, IDs, grids and hashes stay unchanged while viewing or zooming; source
+IDs outside the runnable profile range can still be inspected.
 
 The horizontal axis preserves the capture's original frequency grid. Hover for
 profile, frequency and value. Full-span views retain bounded extrema and break

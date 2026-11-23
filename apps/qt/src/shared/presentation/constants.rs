@@ -12,6 +12,8 @@ pub(crate) const SAMPLES_PER_MEGASAMPLE: f64 = 1_000_000.0;
 pub(crate) const HERTZ_PER_MEGAHERTZ: f64 = 1_000_000.0;
 /// Hz per kHz for bin-width/ENBW labels; this is not a duration or work budget.
 pub(crate) const HERTZ_PER_KILOHERTZ: f64 = 1_000.0;
+/// Bits per megabit for gross-rate labels; separate from equal-valued frequency units.
+pub(crate) const BITS_PER_MEGABIT: f64 = 1_000_000.0;
 /// Microseconds per second for drawing time labels from the backend sample clock.
 pub(crate) const MICROSECONDS_PER_SECOND: f64 = 1_000_000.0;
 

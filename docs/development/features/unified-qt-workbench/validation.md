@@ -2242,3 +2242,48 @@ startup/Open/CLI/persistence/package checks were not required; the exact evidenc
 records why and claims no such passes. Original screenshots still match this
 unchanged presentation. Parent Level 2, milestone/final Level 3 and numeric audit
 remain pending.
+
+
+## UIU-DS-01 profile plot inspection facade accepted
+
+[Design/owners](design.md#uiu-ds-01-profile-plot-inspection-facade),
+[exact evidence](profile-plot-facade-evidence.json),
+[architecture](../../../architecture.md#unified-qt-public-api-boundary),
+[REQ-UIU-02](../../../requirements.md#req-uiu-02),
+[REQ-UIU-03](../../../requirements.md#req-uiu-03),
+[REQ-UIU-08](../../../requirements.md#req-uiu-08),
+[REQ-UIU-24](../../../requirements.md#req-uiu-24),
+[REQ-UIU-27](../../../requirements.md#req-uiu-27) and
+[UIU-DS-01](../../checklist.md#task-uiu-ds-01) trace this consumer.
+
+Public CaptureLoader.profile_capture and ProfileCapture.inspect provide exact
+original coordinate/role/loading/extrema, ideal Shannon and gross useful-rate
+values. Qt retains existing graph normalization, output keys, role lanes,
+selection, tick/axis choices and text; it no longer calculates scientific
+profile metrics. Independent single/overlay axis extents, request policy and
+single-profile grouping are named in the direction constants owner. Frequency
+and bitrate SI conversions have separate shared definitions despite equal values.
+
+Level 1 passes five Qt Rust tests: all four original profile cases and one new
+raw-ID/request-boundary/passivity regression. Original binary/JSON equivalence,
+source grids/loading/roles, missing markers, overlay/Shannon numeric assertions,
+empty filters, errors and accepted-state preservation all remain. The added
+case keeps raw IDs 17/255 distinct from run IDs, checks transport/list/metric
+bounds and preserves original bytes/hash/document/assignments. Three affected
+DPD QML behaviors pass (five with harness setup/cleanup). Qt format/all-target
+Clippy, actual locked boundary, optimized build and docs/traceability pass.
+
+The marker test's fixture previously mutated an internal profile separately
+from original bytes. Only that preparation now creates the same first-carrier
+exclusion as a valid decoded original, using existing encoded assignment 16.
+Every original assertion, all production bytes and every other test byte in
+profile_input/mod.rs remain exact. Its two remaining direct sites stay frozen
+under a focused recorded review. All other entries/dependencies/history remain
+exact; plot.rs retires completely, leaving 23 files/88 sites/three dependencies.
+
+No backend/binding, schema, registration, lifecycle or package contract changed.
+Another wheel, scientific/root/full Qt/native/CLI/persistence/package suites and
+native startup were not required for this focused unit; evidence records the
+reasons and makes no new full/installed pass claim. Existing dark screenshots
+still describe the unchanged presentation. Parent Level 2, milestone/final
+Level 3 and the final numeric audit stay pending.

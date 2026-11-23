@@ -1374,6 +1374,17 @@ backend. [Consumer evidence](development/features/unified-qt-workbench/validatio
 retires receiver/fec.rs, leaving 24 frozen files/91 sites/three dependencies.
 Parent and final acceptance remain open.
 
+The [profile plot consumer](development/features/unified-qt-workbench/design.md#uiu-ds-01-profile-plot-inspection-facade)
+uses original-preserving public capture admission and ProfileCapture.inspect.
+Authoritative loading/role/coordinate/extrema, ideal Shannon and useful-rate
+values replace Qt scientific reconstruction; the adapter only draws existing
+single/overlay axes, lanes and labels. Single-view columns, overlay work bounds,
+independent axis extents and rate/frequency units retain their distinct owners.
+[Scoped evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-profile-plot-inspection-facade-accepted)
+retires plot.rs. A narrowly reviewed test-only fixture preparation preserves
+all profile model production/assertion bytes and its remaining private sites.
+The boundary now retains 23 files/88 sites/three dependencies; the parent stays open.
+
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
 

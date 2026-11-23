@@ -2652,3 +2652,40 @@ Level 1 uses targeted Qt Rust/QML, format/Clippy, actual boundary, traceability
 and an optimized build. The preceding exact-wheel API evidence is historical
 prerequisite evidence; no unchanged wheel/scientific/full suite is rerun or
 claimed as a new Qt pass. Parent Level 2 and milestone/final Level 3 stay open.
+
+## UIU-DS-01 profile plot inspection facade
+
+REQ-UIU-02/03/08/24/27 and UIU-DS-01 own this existing-API consumer.
+EDIT the complete inputs/profile_input/plot.rs exception to REUSE public
+CaptureLoader.profile_capture on the exact original bytes and ProfileCapture.inspect
+for all role/loading/coordinate/extrema, ideal Shannon and useful-rate data.
+Qt retains only selection, labels, ticks, normalized drawing coordinates and
+existing output keys. Separate single-profile 512-column and multi-profile public
+bucket policies preserve sampling; 14-bit single-view, 15-bit overlay and 45-dB
+overlay axes remain independent named presentation choices in the existing
+direction constants owner. Preserve full-span reset, original byte IDs, all/empty
+selections, missing/zero role markers and original source provenance.
+
+REUSE profile_input/document.rs and admission/state owners unchanged. The old
+marker regression mutated an internal profile independently of its original
+bytes; adapt only that fixture preparation in profile_input/mod.rs to an admitted
+decoded capture with the same first-carrier exclusion. Keep every assertion and
+all other production/test code exact; record a focused whole-file review of that
+still-frozen owner, preserving its remaining private sites. This does not change
+saved workbench/project contracts or add a public operation for a test shortcut.
+
+Run the existing profile module tests and affected DPD QML cases, Qt format/Clippy,
+actual boundary, traceability and optimized build. Backend/bindings, CXX/resource
+registration, lifecycle and serialization are unchanged; no fresh wheel or
+unrelated full suite is required. Parent Level 2/final Level 3 remain pending.
+
+
+[Focused acceptance](validation.md#uiu-ds-01-profile-plot-inspection-facade-accepted)
+passes all four original profile tests and one new raw-ID/boundary/immutability
+case, three QML behaviors, scoped Qt checks and a current optimized build. The
+first-carrier exclusion is now represented by original decoded scheme data;
+all original assertions and every other model production/test byte remain exact.
+The whole plot exception retires, leaving 23 files/88 sites/three dependencies.
+One bounded public original-capture admission occurs per view; retaining its
+immutable public catalog belongs to the remaining input-owner migration. No
+new caching/session or scientific API contract is introduced in this unit.

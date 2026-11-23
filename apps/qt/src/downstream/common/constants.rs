@@ -103,3 +103,26 @@ pub(crate) const TX_CELL_VIEW_MIN_EXTENT: f64 = 1.0;
 pub(crate) const TX_PHYSICAL_POWER_BUCKETS: usize = 1024;
 /// Minimum physical-power graph vertical scale, distinct from any amplitude extent.
 pub(crate) const TX_PHYSICAL_POWER_MIN_SCALE: f64 = 1.0;
+
+/// Existing single-profile grouping columns, separate from the public overlay budget.
+pub(crate) const PROFILE_SINGLE_TRACE_COLUMNS: usize = 512;
+/// Maximum bytes in the ephemeral profile-view selection request, not capture admission.
+pub(crate) const MAX_PROFILE_VIEW_REQUEST_BYTES: usize = 8192;
+/// Existing single-view bit-axis extent; a display choice, not source/run validation.
+pub(crate) const PROFILE_SINGLE_BIT_AXIS_MAX: u32 = 14;
+/// Bit spacing of that same single-view axis; its interval count derives from the extent.
+pub(crate) const PROFILE_SINGLE_BIT_TICK_STEP: u32 = 2;
+/// Existing overlay bit-axis headroom, independent of the single-view extent above.
+pub(crate) const PROFILE_OVERLAY_BIT_AXIS_MAX: f64 = 15.0;
+/// Existing ideal-Shannon overlay axis extent in dB; not a receiver admission limit.
+pub(crate) const PROFILE_OVERLAY_SHANNON_AXIS_MAX_DB: f64 = 45.0;
+/// Horizontal tick density shared by the two profile-view formats.
+pub(crate) const PROFILE_FREQUENCY_TICK_INTERVALS: u32 = 4;
+/// Overlay vertical tick density; independent of equal-valued horizontal density.
+pub(crate) const PROFILE_OVERLAY_METRIC_TICK_INTERVALS: u32 = 4;
+/// Existing ephemeral viewer metric selector; scientific meaning comes from ProfileMetric.
+pub(crate) const PROFILE_VIEW_IDEAL_DB_SELECTOR: u8 = 0;
+/// Bit-loading selector in that same viewer message, unrelated to source bit values.
+pub(crate) const PROFILE_VIEW_BITS_SELECTOR: u8 = 1;
+/// One-Hz denominator floor for drawing a single-carrier viewport; not a grid limit.
+pub(crate) const MIN_PROFILE_FREQUENCY_AXIS_SPAN_HZ: u32 = 1;

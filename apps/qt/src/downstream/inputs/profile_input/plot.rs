@@ -2,31 +2,63 @@
  * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: GPL-3.0-only
  */
-//! Bounded profile projections for the shared PNM Viewer-derived chart.
+//! Drawing-only profile views over authoritative public inspection results.
 use super::document::Capture;
-use docsis_ofdm_fec::types::modulation::CarrierType;
+use crate::{
+    downstream::common::constants::*,
+    shared::presentation::constants::{BITS_PER_MEGABIT, HERTZ_PER_MEGAHERTZ},
+};
+use merlin::downstream::{
+    inputs::CaptureLoader, MeasurementViewport, NamedCapture, ProfileCapture, ProfileCarrierRole,
+    ProfileInspection, ProfileMetric, ProfileViewRequest, MAX_PROFILE_SOURCE_IDS,
+    MAX_PROFILE_VIEW_BUCKETS,
+};
 use serde_json::{json, Value};
 
-const DISPLAY_COLUMNS: usize = 512;
-const MAX_BITS: f64 = 14.0;
+#[derive(serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ViewRequest {
+    profiles: Vec<u8>,
+    roles: Vec<ProfileCarrierRole>,
+    metric: u8,
+    start: usize,
+    count: usize,
+}
 
-/// Projects a draft profile into role-aware min/max groups on its original grid.
+fn admitted(capture: &Capture) -> Result<ProfileCapture, String> {
+    let original = NamedCapture::new(&capture.name, capture.original.as_ref().clone())
+        .map_err(|error| error.message().to_owned())?;
+    CaptureLoader::profile_capture(&original).map_err(|error| error.message().to_owned())
+}
+
+/// Projects a draft profile using public raw extrema and original coordinates.
 /// # Arguments
-/// * `capture` - Validated original input retained by the editor.
-/// * `profile_id` - Captured profile identity, never an array position.
-/// * `start`, `count` - Source offsets; zero count selects the full profile.
+/// * `capture` - Validated original binary/JSON input retained unchanged by the editor.
+/// * `profile_id` - Original byte identity, independent of the runnable ProfileId domain.
+/// * `start`, `count` - Source viewport; zero count resets to the full original profile.
 /// # Returns
-/// Bounded normalized points, ticks and exact frequency/readout metadata.
+/// Bounded normalized points/ticks with authoritative role/loading/frequency metadata.
 /// # Errors
-/// Rejects unavailable profiles, empty/out-of-bounds ranges or invalid coordinates.
+/// Preserves capture admission and unavailable/overflow/out-of-bounds viewport errors.
 pub(crate) fn viewport(
     capture: &Capture,
     profile_id: u8,
     start: usize,
     count: usize,
 ) -> Result<Value, String> {
-    let profile = capture.profile(profile_id)?;
-    let total = profile.assignments.len();
+    viewport_document(&admitted(capture)?, profile_id, start, count)
+}
+
+fn viewport_document(
+    capture: &ProfileCapture,
+    profile_id: u8,
+    start: usize,
+    count: usize,
+) -> Result<Value, String> {
+    if !capture.profile_ids().contains(&profile_id) {
+        return Err("Choose an available profile.".into());
+    }
+    let total = capture.metadata().key.grid.sample_count;
     let (start, count) = if count == 0 {
         (0, total)
     } else {
@@ -36,48 +68,48 @@ pub(crate) fn viewport(
     if count == 0 || end > total {
         return Err("Choose a range inside the captured profile.".into());
     }
-    let grid = &profile.key.grid;
-    let first = grid.frequency(start).map_err(|error| error.to_string())?;
-    let last = grid.frequency(end - 1).map_err(|error| error.to_string())?;
-    let span = f64::from(last.saturating_sub(first).max(1));
-    let stride = count.div_ceil(DISPLAY_COLUMNS);
-    let mut points = Vec::new();
-    let mut roles = Vec::new();
-    for kind in CarrierType::ALL {
-        if profile.assignments[start..end]
-            .iter()
-            .any(|assignment| assignment.carrier_type == kind)
-        {
-            roles.push(json!({"kind":kind,"label":label(kind)}));
-        }
-    }
-    for offset in (start..end).step_by(stride) {
-        let stop = (offset + stride).min(end);
-        for kind in CarrierType::ALL {
-            let selected = (offset..stop)
-                .filter(|index| profile.assignments[*index].carrier_type == kind)
-                .collect::<Vec<_>>();
-            let Some(&index) = selected.first() else {
-                continue;
-            };
-            let values = selected
+    let view = capture
+        .inspect(&ProfileViewRequest {
+            profiles: Some(vec![profile_id]),
+            viewport: MeasurementViewport { start, count },
+            max_buckets: PROFILE_SINGLE_TRACE_COLUMNS,
+            ..Default::default()
+        })
+        .map_err(|error| error.message().to_owned())?;
+    let first = view.first_frequency_hz;
+    let last = view.last_frequency_hz;
+    let span = f64::from(
+        last.saturating_sub(first)
+            .max(MIN_PROFILE_FREQUENCY_AXIS_SPAN_HZ),
+    );
+    let buckets = &view.series[0].buckets;
+    let roles = ProfileCarrierRole::ALL
+        .iter()
+        .filter(|kind| {
+            buckets
                 .iter()
-                .filter_map(|index| profile.assignments[*index].bit_loading);
-            let minimum = values.clone().min();
-            let maximum = values.max();
-            let frequency = grid.frequency(index).map_err(|error| error.to_string())?;
-            let physical_bin = usize::from(grid.first_subcarrier_index) + index;
+                .any(|bucket| bucket.roles.iter().any(|role| role.kind == **kind))
+        })
+        .map(|kind| json!({"kind":kind,"label":label(*kind)}))
+        .collect::<Vec<_>>();
+    let mut points = Vec::new();
+    for bucket in buckets {
+        for role in &bucket.roles {
+            let minimum = role.minimum_bit_loading;
+            let maximum = role.maximum_bit_loading;
+            let frequency = role.first.frequency_hz;
+            let physical_bin = role.first.physical_carrier;
             let loading = match (minimum, maximum) {
                 (Some(low), Some(high)) if low == high => format!("{low} bits/symbol"),
                 (Some(low), Some(high)) => format!("{low}–{high} bits/symbol"),
                 _ => "No bit loading · role marker".into(),
             };
             points.push(json!({"x":f64::from(frequency-first)/span,
-                "y":1.0-f64::from(maximum.unwrap_or(0))/MAX_BITS,
-                "minimum_y":1.0-f64::from(minimum.unwrap_or(0))/MAX_BITS,
-                "role":kind,"gap":stride>1,"bits":maximum,
+                "y":1.0-f64::from(maximum.unwrap_or(0))/f64::from(PROFILE_SINGLE_BIT_AXIS_MAX),
+                "minimum_y":1.0-f64::from(minimum.unwrap_or(0))/f64::from(PROFILE_SINGLE_BIT_AXIS_MAX),
+                "role":role.kind,"gap":count>PROFILE_SINGLE_TRACE_COLUMNS,"bits":maximum,
                 "bin":physical_bin,"frequency_hz":frequency,
-                "readout":format!("{:.3} MHz · Bin {physical_bin} · {} · {loading} · {} carrier(s)", f64::from(frequency)/1e6,label(kind),selected.len())}));
+                "readout":format!("{:.3} MHz · Bin {physical_bin} · {} · {loading} · {} carrier(s)",f64::from(frequency)/HERTZ_PER_MEGAHERTZ,label(role.kind),role.count)}));
         }
     }
     points.sort_by(|left, right| {
@@ -86,13 +118,12 @@ pub(crate) fn viewport(
             .unwrap()
             .total_cmp(&right["x"].as_f64().unwrap())
     });
-    let x_ticks = (0..=4).map(|tick| {
-        let fraction = f64::from(tick)/4.0;
-        json!({"x":fraction,"label":format!("{:.3}",(f64::from(first)+fraction*f64::from(last-first))/1e6)})
+    let x_ticks=(0..=PROFILE_FREQUENCY_TICK_INTERVALS).map(|tick| {
+        let fraction=f64::from(tick)/f64::from(PROFILE_FREQUENCY_TICK_INTERVALS);
+        json!({"x":fraction,"label":format!("{:.3}",(f64::from(first)+fraction*f64::from(last-first))/HERTZ_PER_MEGAHERTZ)})
     }).collect::<Vec<_>>();
-    let y_ticks = (0..=7)
-        .map(|tick| json!({"x":1.0-f64::from(tick)/7.0,"label":(tick*2).to_string()}))
-        .collect::<Vec<_>>();
+    let bit_intervals = PROFILE_SINGLE_BIT_AXIS_MAX / PROFILE_SINGLE_BIT_TICK_STEP;
+    let y_ticks=(0..=bit_intervals).map(|tick|json!({"x":1.0-f64::from(tick)/f64::from(bit_intervals),"label":(tick*PROFILE_SINGLE_BIT_TICK_STEP).to_string()})).collect::<Vec<_>>();
     Ok(
         json!({"profile_id":profile_id,"total":total,"start":start,"count":count,
         "points":points,"roles":roles,"x_ticks":x_ticks,"y_ticks":y_ticks,
@@ -102,170 +133,206 @@ pub(crate) fn viewport(
     )
 }
 
-fn label(kind: CarrierType) -> &'static str {
+fn label(kind: ProfileCarrierRole) -> &'static str {
     match kind {
-        CarrierType::Data => "Data",
-        CarrierType::ContinuousPilot => "Pilots",
-        CarrierType::Plc => "PLC",
-        CarrierType::Exclusion => "Excluded",
-        CarrierType::ZeroBitLoaded => "Zero-loaded",
-        CarrierType::Reserved => "Reserved",
-        CarrierType::Unknown => "Unknown",
+        ProfileCarrierRole::Data => "Data",
+        ProfileCarrierRole::ContinuousPilot => "Pilots",
+        ProfileCarrierRole::Plc => "PLC",
+        ProfileCarrierRole::Exclusion => "Excluded",
+        ProfileCarrierRole::ZeroBitLoaded => "Zero-loaded",
+        ProfileCarrierRole::Reserved => "Reserved",
+        ProfileCarrierRole::Unknown => "Unknown",
     }
 }
 
-#[derive(serde::Deserialize)]
-#[serde(deny_unknown_fields)]
-struct ViewRequest {
-    profiles: Vec<u8>,
-    roles: Vec<CarrierType>,
-    metric: u8,
-    start: usize,
-    count: usize,
-}
-
-/// Projects independent profile overlays using the viewer's metric semantics.
+/// Formats independent public profile metrics without recalculating scientific values.
 /// # Arguments
-/// * `capture` - Retained validated binary or JSON draft.
-/// * `request` - Bounded JSON selection, metric (0=dB, 1=bits) and source range.
+/// * `capture` - Retained original binary/JSON draft, never modified by this operation.
+/// * `request` - Bounded JSON selection: profiles, roles, legacy metric selector and range.
 /// # Returns
-/// Metadata, bounded extrema, special-role lanes and stable frequency axes.
+/// Existing bounded overlay/role-lane JSON, summaries and original frequency axes.
 /// # Errors
-/// Rejects malformed/oversized requests, unknown profiles, metrics and ranges.
+/// Rejects malformed/oversized requests, unavailable identities, metrics and viewports.
 pub(crate) fn inspect(capture: &Capture, request: &str) -> Result<Value, String> {
-    use docsis_ofdm_fec::signal_processing::shannon::minimum_snr_db;
-    if request.len() > 8192 {
+    if request.len() > MAX_PROFILE_VIEW_REQUEST_BYTES {
         return Err("Profile view request is too large.".into());
     }
-    let mut request: ViewRequest = serde_json::from_str(request).map_err(|e| e.to_string())?;
-    if request.metric > 1 || request.profiles.len() > 256 || request.roles.len() > 7 {
+    let mut request: ViewRequest =
+        serde_json::from_str(request).map_err(|error| error.to_string())?;
+    let metric = match request.metric {
+        PROFILE_VIEW_IDEAL_DB_SELECTOR => ProfileMetric::IdealShannonSnr,
+        PROFILE_VIEW_BITS_SELECTOR => ProfileMetric::BitLoading,
+        _ => return Err("Invalid profile view selection.".into()),
+    };
+    if request.profiles.len() > MAX_PROFILE_SOURCE_IDS
+        || request.roles.len() > ProfileCarrierRole::ALL.len()
+    {
         return Err("Invalid profile view selection.".into());
     }
     request.profiles.sort_unstable();
     request.profiles.dedup();
+    let public = admitted(capture)?;
     for id in &request.profiles {
-        capture.profile(*id)?;
+        if !public.profile_ids().contains(id) {
+            return Err("Choose an available profile.".into());
+        }
     }
-    let reference = capture.profiles.first().ok_or("No captured profiles.")?;
-    let mut output = viewport(capture, reference.profile_id, request.start, request.count)?;
-    let start = output["start"].as_u64().unwrap() as usize;
-    let count = output["count"].as_u64().unwrap() as usize;
-    let end = start + count;
-    let grid = &reference.key.grid;
-    let first = grid.frequency(start).map_err(|e| e.to_string())?;
-    let last = grid.frequency(end - 1).map_err(|e| e.to_string())?;
-    let span = f64::from(last.saturating_sub(first).max(1));
-    let maximum = if request.metric == 0 { 45.0 } else { 15.0 };
-    let profiles = capture.profiles.iter().map(|profile| {
-        let bits: u64 = profile.assignments.iter().filter(|a| a.carrier_type == CarrierType::Data)
-            .filter_map(|a| a.bit_loading).map(u64::from).sum();
-        let bps = bits * u64::from(profile.key.grid.spacing_hz);
-        json!({"id":profile.profile_id,"bandwidth_bps":bps,"bandwidth_text":format!("{:.3} Mbit/s",bps as f64/1e6)})
+    let reference = *public
+        .profile_ids()
+        .first()
+        .ok_or("No captured profiles.")?;
+    let mut output = viewport_document(&public, reference, request.start, request.count)?;
+    let view = public
+        .inspect(&ProfileViewRequest {
+            profiles: Some(request.profiles),
+            roles: request.roles.clone(),
+            metric,
+            viewport: MeasurementViewport {
+                start: request.start,
+                count: request.count,
+            },
+            max_buckets: MAX_PROFILE_VIEW_BUCKETS,
+        })
+        .map_err(|error| error.message().to_owned())?;
+    format_inspection(&mut output, &view, &request.roles, request.metric);
+    output["channel"] = capture.document["channel_id"].clone();
+    output["mac"] = capture.document["mac_address"].clone();
+    Ok(output)
+}
+
+fn format_inspection(
+    output: &mut Value,
+    view: &ProfileInspection,
+    selected_roles: &[ProfileCarrierRole],
+    metric: u8,
+) {
+    let first = view.first_frequency_hz;
+    let last = view.last_frequency_hz;
+    let span = f64::from(
+        last.saturating_sub(first)
+            .max(MIN_PROFILE_FREQUENCY_AXIS_SPAN_HZ),
+    );
+    let (maximum, units) = if metric == PROFILE_VIEW_IDEAL_DB_SELECTOR {
+        (PROFILE_OVERLAY_SHANNON_AXIS_MAX_DB, "dB")
+    } else {
+        (PROFILE_OVERLAY_BIT_AXIS_MAX, "bits/symbol")
+    };
+    let profiles=view.profiles.iter().map(|profile| {
+        let bps=profile.uncoded_data_capacity_bps;
+        json!({"id":profile.profile_id,"bandwidth_bps":bps,"bandwidth_text":format!("{:.3} Mbit/s",bps as f64/BITS_PER_MEGABIT)})
     }).collect::<Vec<_>>();
-    let roles = CarrierType::ALL
+    let roles = view
+        .selected_role_counts
         .iter()
-        .map(|kind| {
-            let count = capture
-                .profiles
-                .iter()
-                .filter(|p| request.profiles.contains(&p.profile_id))
-                .flat_map(|p| &p.assignments)
-                .filter(|a| a.carrier_type == *kind)
-                .count();
-            json!({"kind":kind,"label":label(*kind),"count":count})
-        })
+        .map(|role| json!({"kind":role.kind,"label":label(role.kind),"count":role.count}))
         .collect::<Vec<_>>();
-    let lanes = CarrierType::ALL
+    let lanes = view
+        .selected_role_counts
         .iter()
-        .filter(|kind| {
-            **kind != CarrierType::Data
-                && request.roles.contains(kind)
-                && roles.iter().any(|role| {
-                    role["kind"] == json!(kind) && role["count"].as_u64().unwrap_or(0) > 0
-                })
+        .filter(|role| {
+            role.kind != ProfileCarrierRole::Data
+                && selected_roles.contains(&role.kind)
+                && role.count > 0
         })
-        .copied()
+        .map(|role| role.kind)
         .collect::<Vec<_>>();
     let mut series = Vec::new();
     let mut markers = Vec::new();
-    let budget = (2048 / request.profiles.len().max(1)).max(8);
-    let stride = count.div_ceil(budget);
-    for id in &request.profiles {
-        let profile = capture.profile(*id)?;
-        if profile.key.grid != *grid || profile.assignments.len() < end {
-            return Err("Profile grids differ.".into());
-        }
+    for source in &view.series {
         let mut points = Vec::new();
-        for offset in (start..end).step_by(stride) {
-            let stop = (offset + stride).min(end);
-            let mut values = Vec::new();
-            let mut missing = false;
-            for (index, assignment) in profile.assignments[offset..stop].iter().enumerate() {
-                let kind = assignment.carrier_type;
-                let selected = request.roles.contains(&kind);
-                let value = if selected
-                    && matches!(
-                        kind,
-                        CarrierType::Data | CarrierType::ContinuousPilot | CarrierType::Plc
-                    ) {
-                    assignment.bit_loading.and_then(|bits| {
-                        if request.metric == 0 {
-                            minimum_snr_db(bits)
-                        } else {
-                            Some(f64::from(bits))
-                        }
-                    })
-                } else {
-                    None
-                };
-                if let Some(value) = value {
-                    values.push((offset + index, value));
-                } else {
-                    missing = true;
+        for bucket in &source.buckets {
+            for role in &bucket.roles {
+                if lanes.contains(&role.kind) {
+                    markers.push(json!({"role":role.kind,"x":f64::from(role.first.frequency_hz-first)/span,"last_x":f64::from(role.last.frequency_hz-first)/span,"count":role.count}));
                 }
             }
-            for kind in &lanes {
-                let indices = (offset..stop)
-                    .filter(|i| profile.assignments[*i].carrier_type == *kind)
-                    .collect::<Vec<_>>();
-                if let (Some(a), Some(b)) = (indices.first(), indices.last()) {
-                    markers.push(json!({"role":kind,"x":f64::from(grid.frequency(*a).map_err(|e|e.to_string())?-first)/span,"last_x":f64::from(grid.frequency(*b).map_err(|e|e.to_string())?-first)/span,"count":indices.len()}));
-                }
-            }
-            if values.is_empty() {
+            let (Some(low), Some(high), Some(coordinate)) =
+                (bucket.minimum, bucket.maximum, bucket.first_value)
+            else {
                 points.push(json!({"y":null}));
                 continue;
-            }
-            let low = values.iter().map(|v| v.1).fold(f64::INFINITY, f64::min);
-            let high = values.iter().map(|v| v.1).fold(f64::NEG_INFINITY, f64::max);
-            let index = values[0].0;
-            let hz = grid.frequency(index).map_err(|e| e.to_string())?;
+            };
+            let hz = coordinate.frequency_hz;
             points.push(json!({"x":f64::from(hz-first)/span,"y":1.0-high/maximum,"minimum_y":1.0-low/maximum,
-                "gap":missing,"readout":format!("Profile {id} · {:.3} MHz · {low:.3}–{high:.3} {}",f64::from(hz)/1e6,if request.metric==0 {"dB"} else {"bits/symbol"})}));
+                "gap":bucket.gap,"readout":format!("Profile {} · {:.3} MHz · {low:.3}–{high:.3} {units}",source.profile_id,f64::from(hz)/HERTZ_PER_MEGAHERTZ)}));
         }
-        series.push(json!({"id":id,"points":points}));
+        series.push(json!({"id":source.profile_id,"points":points}));
     }
     output["series"] = json!(series);
     output["markers"] = json!(markers);
     output["lanes"] = json!(lanes);
     output["profiles"] = json!(profiles);
     output["roles"] = json!(roles);
-    output["channel"] = capture.document["channel_id"].clone();
-    output["mac"] = capture.document["mac_address"].clone();
-    output["axis_label"] = json!(if request.metric == 0 {
+    output["axis_label"] = json!(if metric == PROFILE_VIEW_IDEAL_DB_SELECTOR {
         "dB"
     } else {
         "Bits/Symbol"
     });
-    output["y_ticks"] = json!((0..=4)
-        .map(|i| json!({"x":f64::from(i)/4.0,"label":format!("{}",maximum*(1.0-f64::from(i)/4.0))}))
-        .collect::<Vec<_>>());
+    output["y_ticks"]=json!((0..=PROFILE_OVERLAY_METRIC_TICK_INTERVALS).map(|tick|json!({"x":f64::from(tick)/f64::from(PROFILE_OVERLAY_METRIC_TICK_INTERVALS),"label":format!("{}",maximum*(1.0-f64::from(tick)/f64::from(PROFILE_OVERLAY_METRIC_TICK_INTERVALS)))})).collect::<Vec<_>>());
     output["summary"] = json!(format!(
         "Frequency selection: {:.3} – {:.3} MHz",
-        f64::from(first) / 1e6,
-        f64::from(last) / 1e6
+        f64::from(first) / HERTZ_PER_MEGAHERTZ,
+        f64::from(last) / HERTZ_PER_MEGAHERTZ
     ));
-    // Navigation anchors retain the common grid even with no selected trace.
+
+    // Keep navigation anchors even when the selected trace set is empty.
     output["points"] = json!([{"x":0},{"x":1}]);
-    Ok(output)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn raw_source_ids_request_bounds_and_capture_immutability_survive_public_inspection() {
+        let mut document: Value = serde_json::from_slice(include_bytes!(
+            "../../../../../../examples/measurements/single-channel/modulation_profile.json"
+        ))
+        .unwrap();
+
+        // Independent encoded IDs include the byte ceiling and an ID outside 0..15 runs.
+        for (profile, id) in document["profiles"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .zip([255, 17, 0, 1])
+        {
+            profile["profile_id"] = json!(id);
+        }
+        let capture = Capture::decode(
+            "raw-ids.json".into(),
+            serde_json::to_vec(&document).unwrap(),
+        )
+        .unwrap();
+        let original = capture.original.clone();
+        let hash = capture.sha256.clone();
+        let decoded = capture.document.clone();
+        let assignments = capture.profile(255).unwrap().assignments.clone();
+        let request =
+            json!({"profiles":[255,17,255],"roles":["data"],"metric":1,"start":20,"count":4});
+        let view = inspect(&capture, &request.to_string()).unwrap();
+        assert_eq!(view["series"][0]["id"], 17);
+        assert_eq!(view["series"][1]["id"], 255);
+        assert_eq!(view["series"].as_array().unwrap().len(), 2);
+        assert_eq!(viewport(&capture, 255, 0, 1).unwrap()["profile_id"], 255);
+        assert_eq!(viewport(&capture, 255, usize::MAX, 0).unwrap()["start"], 0);
+
+        // Independent one-above boundaries: 8192 bytes, 256 raw IDs and seven roles.
+        assert!(inspect(&capture, &" ".repeat(8193)).is_err());
+        let mut invalid = request.clone();
+        invalid["profiles"] = json!(vec![255; 257]);
+        assert!(inspect(&capture, &invalid.to_string()).is_err());
+        invalid = request.clone();
+        invalid["roles"] = json!(vec!["data"; 8]);
+        assert!(inspect(&capture, &invalid.to_string()).is_err());
+        invalid = request;
+
+        // Metric selector two is outside the existing dB/bit pair.
+        invalid["metric"] = json!(2);
+        assert!(inspect(&capture, &invalid.to_string()).is_err());
+        assert_eq!(capture.original.as_ref(), original.as_ref());
+        assert_eq!(capture.sha256, hash);
+        assert_eq!(capture.document.as_ref(), decoded.as_ref());
+        assert_eq!(capture.profile(255).unwrap().assignments, assignments);
+    }
 }

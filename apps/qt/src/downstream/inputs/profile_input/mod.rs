@@ -185,12 +185,35 @@ mod tests {
             .iter()
             .any(|row| row["key"] == "source"));
         assert_eq!(binary.name, "original.bin");
-        let mut missing = binary.clone();
-        let mut profile = binary.profile(0).unwrap().clone();
-        profile.assignments[0].carrier_type =
-            docsis_ofdm_fec::types::modulation::CarrierType::Exclusion;
-        profile.assignments[0].bit_loading = None;
-        missing.profiles = std::sync::Arc::new(vec![profile]);
+
+        // Same independent first-carrier exclusion, expressed as an admitted source capture.
+        let mut document: Value = serde_json::from_slice(JSON).unwrap();
+        let profile = document["profiles"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|profile| profile["profile_id"] == 0)
+            .unwrap();
+        let schemes = profile["schemes"].as_array_mut().unwrap();
+        let first_count = schemes[0]["num_subcarriers"].as_u64().unwrap();
+        assert!(first_count > 1);
+        let mut exclusion = schemes[0].clone();
+        exclusion["num_subcarriers"] = json!(1);
+
+        // Existing encoded exclusion assignment 16 has no loading/constellation/Shannon value.
+        exclusion["modulation_order_code"] = json!(16);
+        exclusion["modulation_order"] = json!("exclusion");
+        exclusion["carrier_type"] = json!("exclusion");
+        exclusion["bit_loading"] = Value::Null;
+        exclusion["constellation"] = Value::Null;
+        exclusion["shannon_minimum_mer_db"] = Value::Null;
+        schemes[0]["num_subcarriers"] = json!(first_count - 1);
+        schemes.insert(0, exclusion);
+        let missing = Capture::decode(
+            "missing.json".into(),
+            serde_json::to_vec(&document).unwrap(),
+        )
+        .unwrap();
         let marker = plot::viewport(&missing, 0, 0, 2).unwrap();
         assert!(marker["points"][0]["bits"].is_null());
         assert_eq!(marker["points"][0]["role"], "exclusion");
