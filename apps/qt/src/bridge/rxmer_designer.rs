@@ -52,12 +52,19 @@ impl bridge::MeasurementInputs {
             if self.rust().designer_work.is_some() {
                 return Err("Wait for the previous Designer operation to stop.".into());
             }
-            let profile = crate::downstream::workbench::session::snapshot()
+            let inputs = crate::downstream::workbench::session::snapshot();
+            let profile = inputs
                 .profile
                 .ok_or("Apply a modulation profile before opening RxMER Designer.")?;
-            let session = Session::begin(&self.rust().model.draft_rx, Arc::new(profile))?;
+            let session = Session::begin(
+                &self.rust().model.draft_rx,
+                Arc::new(profile),
+                inputs
+                    .profile_capture
+                    .ok_or("Apply the original modulation-profile capture.")?,
+            )?;
             let grid = &session.profile.key.grid;
-            let value = json!({"request":session.request,"imported_count":session.hashes.len(),"first_hz":grid.frequency(0).map_err(|error|error.to_string())?,"last_hz":grid.frequency(grid.sample_count-1).map_err(|error|error.to_string())?,"spacing_hz":grid.spacing_hz});
+            let value = json!({"request":session.request,"imported_count":session.hashes.len(),"first_hz":grid.frequency(0).map_err(|error|error.to_string())?,"last_hz":grid.frequency(grid.sample_count-1).map_err(|error|error.to_string())?,"spacing_hz":grid.spacing_hz,"limits":merlin::downstream::inputs::RxMerDesign::limits()});
             self.as_mut().rust_mut().designer = Some(session);
             Ok(value)
         })();
@@ -183,7 +190,7 @@ fn adopt(
     work: Work,
     result: Result<Vec<Capture>, AdmissionError>,
     model: &mut Model,
-    profile: Option<&docsis_ofdm_fec::profile::candidate::CapturedProfile>,
+    profile: Option<&merlin::downstream::SourceProfileFrame>,
 ) -> Result<Value, AdmissionError> {
     if work.cancel.load(Ordering::Relaxed) {
         log::debug!(
@@ -221,8 +228,7 @@ fn adopt(
     } else {
         options.selected_captures = None;
         if captures.len() > 1 {
-            options.mode =
-                docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Hold;
+            options.mode = merlin::downstream::MeasurementMode::Hold;
         }
     }
     let mut checked = Model::default();
@@ -248,7 +254,12 @@ mod tests {
         let (inputs, editors) = project.prepare().unwrap();
         let mut model = editors.measurements;
         model.draft_rx.truncate(2);
-        let session = Session::begin(&model.draft_rx, Arc::new(inputs.profile.unwrap())).unwrap();
+        let session = Session::begin(
+            &model.draft_rx,
+            Arc::new(inputs.profile.unwrap()),
+            inputs.profile_capture.unwrap(),
+        )
+        .unwrap();
         (session, model)
     }
     fn work(session: &Session, options: Options) -> Work {

@@ -7,8 +7,10 @@ use super::measurement_input::bridge;
 use crate::downstream::inputs::measurement_input::designer::Request;
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
-use docsis_ofdm_fec::scenario::RxMerFrame;
-use pnm_input::rxmer_export::{self, ExportDestination, ExportFormat, RangePolicy};
+use merlin::downstream::inputs::rxmer_export::{
+    self, ExportDestination, ExportFormat, RangePolicy,
+};
+use merlin::downstream::RxMerFrame;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use std::{

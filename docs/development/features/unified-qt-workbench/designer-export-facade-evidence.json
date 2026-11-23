@@ -1,0 +1,463 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Designer and export facade",
+  "base_commit": "f3555a413d02a5436b2418518cc64b2675830946",
+  "status": "Level 1 Designer/export Qt consumer batch accepted; parent Level2 and downstream milestone Level3 remain open",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-08",
+    "REQ-UIU-09",
+    "REQ-UIU-21",
+    "REQ-UIU-22",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "design": "docs/development/features/unified-qt-workbench/design.md#uiu-ds-01-designer-and-export-owner-adoption",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/qml/downstream/measurements/RxmerDesignScope.qml",
+      "sha256": "ff420f0e663f763d111270db0b49dfd45bf7b90e06f1a591ceb2a9aebef26f95"
+    },
+    {
+      "path": "apps/qt/qml/downstream/measurements/RxmerDesignerDialog.qml",
+      "sha256": "d6ed2d142c5f9dacafe1e471c304940f112856baeeb061a4f4ae9d8beb02e5a4"
+    },
+    {
+      "path": "apps/qt/src/bridge/rxmer_designer.rs",
+      "sha256": "463ec17ff8253309672cb99c23d52d09992d12e1b79332ca2bb8453b8be22ca7"
+    },
+    {
+      "path": "apps/qt/src/bridge/rxmer_export.rs",
+      "sha256": "060eb4fd4f0566a216fb99ec4776e67b2928703f60a9cf25dd965bcf7cf3d5be"
+    },
+    {
+      "path": "apps/qt/src/downstream/common/constants.rs",
+      "sha256": "a9ee0244b732772540d50e03f96d8464b0004482d0533f62228c412f6cbb4e28"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+      "sha256": "db4e5c495401a53cd2c97f625c781e301fa228ebfb8be8a4907b174e2a00d9cd"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+      "sha256": "d115ce5767de4cb34cd4a8cde1408b4cff8e0ac5a9f1b44d0420f2ed28fb9225"
+    },
+    {
+      "path": "apps/qt/tests/tst_rxmer_designer.qml",
+      "sha256": "de235956dc07ba52f3f9bd73f837c94ab11a0aef3d329017ac54facde411f0b5"
+    }
+  ],
+  "ownership": [
+    "Public RxMerDesign owns admission, source-catalog flat/imported creation, recipe evaluation, materialization, limits and numerical previews; public native-input export owns conversion/guards. No new API or scientific kernel.",
+    "Qt retains immutable original/decoded identities and typed versioned envelope transport/control restoration. Changed positions/counts pass existing public from_bytes admission rather than private recipe methods.",
+    "QML uses distinct public scientific count/edit/tilt/ripple/notch/random domains, preserving existing values. Missing limits disable scientific actions. Existing independent screen-axis policies receive separate purpose names.",
+    "Designer-only initial BOM normalization, original labels/epochs/nulls, public source identity, noncompounding baseline edits, PLC overlays, bounded collection retention and atomic cancellation/adoption remain compatible."
+  ],
+  "testing": {
+    "level": 1,
+    "risk_expansion": "Designer envelopes/materialization feed saved projects, workers and export; run every affected Qt measured-input/Designer worker/project case, shared Rust admission/export/workbench cases, installed-native Designer/export/legacy workbench consumers and affected QML. No schema or backend implementation changes.",
+    "executed": {
+      "qt_rust_unique_cases": 32,
+      "shared_rust_cases": 29,
+      "qml_behavior_cases": 15,
+      "qml_cases_with_harness": 17,
+      "native_cases": 14,
+      "qt": {
+        "public-limits-tests": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "downstream::inputs::measurement_input::",
+            "--",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 112.8252564309987,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        },
+        "owner-consumer-tests": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "--",
+            "bridge::rxmer_designer::",
+            "downstream::workbench::project_file::",
+            "downstream::simulation::closed_loop::",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 213.78908882299947,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        },
+        "owner-clippy": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "clippy",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--all-targets",
+            "--locked",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 60.08385662599903,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        },
+        "owner-release": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "build",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--release",
+            "--locked"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 85.1745216829986,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        }
+      },
+      "shared_rust": {
+        "command": [
+          "docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "--locked",
+          "-p",
+          "pnm-input",
+          "--test",
+          "designer_admission",
+          "--test",
+          "designer_workbench",
+          "--test",
+          "rxmer_export",
+          "--test",
+          "workbench",
+          "--test",
+          "workbench_full_loop",
+          "--",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 142.15822257200125
+      },
+      "installed_native": {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measured-input-api-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-c",
+          "import sys,hashlib,unittest,importlib\nfrom pathlib import Path\nimport merlin._native as native\nassert Path(native.__file__).resolve().is_relative_to(Path(sys.prefix).resolve())\nassert hashlib.sha256(Path(native.__file__).read_bytes()).hexdigest()==sys.argv[2]\nsys.path.insert(0,sys.argv[1]);suite=unittest.TestSuite()\nfor name in ['test_designer_workbench','test_rxmer_export','test_workbench_full_loop','test_workbench']:\n module=importlib.import_module(name)\n for test_class in [getattr(module,name) for name in dir(module) if isinstance(getattr(module,name),type) and issubclass(getattr(module,name),unittest.TestCase)]:\n  for method in unittest.defaultTestLoader.getTestCaseNames(test_class):\n   if method=='test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match': continue\n   suite.addTest(test_class(method))\nresult=unittest.TextTestRunner(verbosity=2).run(suite)\nassert result.testsRun>0 and not result.skipped\nraise SystemExit(not result.wasSuccessful())",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "1f665a56753fc650c37d113f4c489c6e8ef7ee315d1520b6075480e072b8692a"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.53488712699982,
+        "cwd": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-designer-owner-native",
+        "wheel": "/home/dev01/Projects/merlin/local/python-wheels-ds-measured-input-api/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+        "wheel_sha256": "1080e2621068854eac4ea570d8face4fe672f22ed92702bf1ce182a36daa1957",
+        "archive_native_sha256": "1f665a56753fc650c37d113f4c489c6e8ef7ee315d1520b6075480e072b8692a"
+      },
+      "qml": {
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_rxmer_designer.qml"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 3.9289266980013053,
+        "cwd": "/home/dev01/Projects/merlin/docs/development/local/visual-workspace"
+      },
+      "native_ui": [
+        {
+          "label": "designer-admission",
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-designer-owner-native-ui/designer.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.13172929999927874,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": "",
+          "executable_sha256": "3058061fbe34d9df9c271b610c877e1ccf7281ace9a08d5adcfae0809e82b009"
+        },
+        {
+          "label": "legacy-admission",
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "/home/dev01/Projects/merlin/examples/workbench/multi-rxmer-2/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.6084625069997855,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": "",
+          "executable_sha256": "3058061fbe34d9df9c271b610c877e1ccf7281ace9a08d5adcfae0809e82b009"
+        },
+        {
+          "label": "startup-open",
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test",
+            "--workbench",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-designer-owner-native-ui/designer.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.6398156779978308,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": "",
+          "executable_sha256": "3058061fbe34d9df9c271b610c877e1ccf7281ace9a08d5adcfae0809e82b009"
+        }
+      ],
+      "metadata": [
+        {
+          "label": "format",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "fmt",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.34374810199733474
+        },
+        {
+          "label": "boundary",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/qt_api_boundary.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.29085385000144015
+        },
+        {
+          "label": "documents",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/feature_documentation.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 10.792045422000228
+        },
+        {
+          "label": "traceability",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/integration_traceability.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 8.507805298999301
+        },
+        {
+          "label": "versions",
+          "command": [
+            "python3",
+            "-B",
+            "tools/release/versions.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.038363970001228154
+        },
+        {
+          "label": "guide",
+          "command": [
+            "python3",
+            "-B",
+            "tools/python/update_integration_doc.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.08194024999829708
+        },
+        {
+          "label": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.04097525500037591
+        }
+      ]
+    },
+    "corrections": [
+      "An initial successful QML run exposed a transient undefined maximum-count binding when limits disappeared; the corrected final17-case run has no warnings.",
+      "A preliminary documentation scan ran before the new validation anchor was added and reported that one missing anchor. Final metadata validates the completed record; no missing-link pass is claimed."
+    ],
+    "not_required": [
+      {
+        "checks": "New wheel and native binding/export inventories",
+        "reason": "All scientific Rust/binding/package/API sources remain byte-exact; verify/reuse the existing exact accepted wheel and native archive SHA."
+      },
+      {
+        "checks": "Unrelated complete root workspace/analysis/CLI/package suites",
+        "reason": "Only Qt existing consumers/QML and documentation change. Shared saved-contract tests and affected installed-native consumers run; full integration acceptance remains pending."
+      },
+      {
+        "checks": "New screenshot assets or global registration checks",
+        "reason": "Unchanged normal visual layout/theme and registration retain existing screenshots/declarations; actual affected QML interactions and freshly built executable/Open are checked."
+      }
+    ],
+    "deferred": [
+      "Bounded detached receiver archive public gap and receiver QAM/soft consumer migration, including matcher-invisible computations",
+      "Three scientific dependency removals and zero-exception boundary",
+      "UIU-DS-01 complete Level2 and downstream milestone Level3 before session/shell integration",
+      "Final full integration/native/CLI/package gates and line-by-line numeric/common-constant audit"
+    ]
+  },
+  "boundary": {
+    "before_files": 7,
+    "before_sites": 31,
+    "retired_files": 4,
+    "retired_sites": 19,
+    "remaining_files": 3,
+    "remaining_sites": 12,
+    "scientific_dependencies": 3,
+    "remaining": [
+      {
+        "path": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
+        "sha256": "4e314389c700c4b7b2edb4a448f9c950d83bd88fe96889113dc9cb1f49990c20",
+        "sites": [
+          {
+            "line": 15,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      {
+        "path": "apps/qt/src/downstream/instruments/receiver/qam_history.rs",
+        "sha256": "0d9912772744fd131614ae43b42dbd150183aab4d6839ea0e34c84dc17c93483",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 21,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 151,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      {
+        "path": "apps/qt/src/downstream/instruments/receiver/selection.rs",
+        "sha256": "14182c1a7192f45c3de50b2e3d2c0fd46476696aee2e585fc9961b589acef563",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 18,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 20,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 128,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 130,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 265,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 280,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 329,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      }
+    ]
+  },
+  "preservation": {
+    "manifest_lock_registration_build_and_history_exact": [
+      "Cargo.toml",
+      "Cargo.lock",
+      "apps/qt/Cargo.toml",
+      "apps/qt/Cargo.lock",
+      "apps/qt/build.rs",
+      "bindings/python/Cargo.lock",
+      "apps/qt/src/bridge/measurement_input.rs",
+      "docs/development/ui-checklist.md"
+    ],
+    "all_official_checkbox_states_exact": true,
+    "initial_boundary_and_previous_history_exact": true,
+    "backend_binding_examples_vectors_and_schemas_unchanged": true,
+    "existing_independent_scientific_assertions_retained": true
+  },
+  "executable": {
+    "path": "apps/qt/target/release/merlin-qt",
+    "sha256": "3058061fbe34d9df9c271b610c877e1ccf7281ace9a08d5adcfae0809e82b009"
+  },
+  "no_push_merge_release_install_or_parent_acceptance": true
+}

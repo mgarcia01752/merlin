@@ -4,7 +4,7 @@
  */
 //! Immutable original measurement files decoded through the pinned PNM library.
 use crate::downstream::common::constants::MAX_MEASUREMENT_COLLECTION_ORIGINAL_BYTES;
-use docsis_ofdm_fec::input_format::{detect, json_bytes, InputFormat};
+use crate::downstream::common::constants::UTF8_JSON_BYTE_ORDER_MARK;
 use merlin::downstream::{
     inputs::CaptureLoader, CaptureKind, CaptureProvenance, ChannelEstimateFrame, NamedCapture,
     RxMerFrame, ScenarioKey, MAX_CAPTURE_BYTES,
@@ -45,8 +45,13 @@ impl Capture {
         if bytes.len() > MAX_INPUT_BYTES {
             return Err("Input exceeds 16 MiB.".into());
         }
-        if rxmer && detect(&bytes) == InputFormat::JsonText {
-            if let Some(capture) = super::designer::decode(json_bytes(&bytes))? {
+        // Preserve the existing Designer-only JSON transport normalization.
+        // Ordinary capture admission below retains its complete original bytes.
+        if rxmer {
+            let json = bytes
+                .strip_prefix(UTF8_JSON_BYTE_ORDER_MARK)
+                .unwrap_or(&bytes);
+            if let Some(capture) = super::designer::decode(json)? {
                 return Ok(capture);
             }
         }

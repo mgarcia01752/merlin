@@ -8,6 +8,10 @@ an association anchor; it is not a measured acquisition time.
 ![RxMER Designer with seeded random variation and PLC shading](../../images/workbench/rxmer-designer-dark.png)
 
 The preview shows the Designer's starting-variation and frequency-effect controls.
+The controls obtain recipe limits from the public Rust backend. If that report is
+unavailable, Apply, Save, value-edit addition and effect stepping are disabled.
+Rust validates all typed values before generating or staging captures. Reopening
+and changing a recipe always derives from its original baseline.
 
 ## Starting values and random variation
 

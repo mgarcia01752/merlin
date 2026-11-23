@@ -11,6 +11,14 @@ WorkbenchDialog {
     required property var backend
     property var parentOptions: ({})
     property var information: ({})
+
+    // Scientific domains come from the same public Rust owner that admits recipes.
+    readonly property var domainLimits: information.limits || ({})
+    readonly property bool limitsAvailable: !!information.limits
+    readonly property int maximumCaptures: Number.isInteger(domainLimits.maximum_captures) ? domainLimits.maximum_captures : 0
+
+    // Existing UI increment, independent of the backend standard-deviation domain.
+    readonly property real randomDeviationStepDb: 0.5
     property var viewport: ({})
     property int viewStart: 0
     property int viewCount: 0
@@ -35,7 +43,7 @@ WorkbenchDialog {
     }
     function canStepTilt(delta) {
         const value=Number(tiltDb.text)
-        return tilt.checked && tiltDb.text.trim().length>0 && Number.isFinite(value) && value>=-60 && value<=60 && value+delta>=-60 && value+delta<=60
+        return limitsAvailable && tilt.checked && tiltDb.text.trim().length>0 && Number.isFinite(value) && value>=-domainLimits.maximum_absolute_tilt_db && value<=domainLimits.maximum_absolute_tilt_db && value+delta>=-domainLimits.maximum_absolute_tilt_db && value+delta<=domainLimits.maximum_absolute_tilt_db
     }
     function stepTilt(delta) {
         if (canStepTilt(delta)) {tiltDb.text=String(Number(tiltDb.text)+delta);refresh()}
@@ -44,8 +52,8 @@ WorkbenchDialog {
     readonly property real maximumFrequencyHz: 4294967295
     function canStepRipple(field,delta) {
         const value=Number(field.text), next=value+delta
-        if (!ripple.checked || field.text.trim().length===0 || !Number.isFinite(value) || !Number.isFinite(next)) {return false}
-        if (field===rippleDb) {return value>=0 && value<=60 && next>=0 && next<=60}
+        if (!limitsAvailable || !ripple.checked || field.text.trim().length===0 || !Number.isFinite(value) || !Number.isFinite(next)) {return false}
+        if (field===rippleDb) {return value>=0 && value<=domainLimits.maximum_ripple_peak_to_peak_db && next>=0 && next<=domainLimits.maximum_ripple_peak_to_peak_db}
         return !distanceMode.checked && Math.round(value*1e6)>=1 && Math.round(value*1e6)<=maximumFrequencyHz
             && Math.round(next*1e6)>=1 && Math.round(next*1e6)<=maximumFrequencyHz
     }
@@ -54,8 +62,8 @@ WorkbenchDialog {
     }
     function canStepNotch(field,delta) {
         const value=Number(field.text), next=value+delta
-        if (!notch.checked || field.text.trim().length===0 || !Number.isFinite(value) || !Number.isFinite(next)) {return false}
-        if (field===depth) {return value>=0 && value<=60 && next>=0 && next<=60}
+        if (!limitsAvailable || !notch.checked || field.text.trim().length===0 || !Number.isFinite(value) || !Number.isFinite(next)) {return false}
+        if (field===depth) {return value>=0 && value<=domainLimits.maximum_notch_depth_db && next>=0 && next<=domainLimits.maximum_notch_depth_db}
         const centerHz=Math.round(Number(center.text)*1e6), widthHz=Math.round(Number(bandwidth.text)*1e6), edgeHz=Math.round(Number(edge.text)*1e6)
         function valid(centerValue,widthValue,edgeValue) {
             return Number.isFinite(centerValue) && Number.isFinite(widthValue) && Number.isFinite(edgeValue)
@@ -148,7 +156,7 @@ WorkbenchDialog {
             Label {text:"Baseline";color:theme.text}
             ComboBox {id:source;objectName:"designerSource";model:["Imported captures","New flat sequence"];Layout.preferredWidth:200;onActivated:dialog.refresh()}
             Label {text:source.currentIndex === 0 ? (dialog.information.imported_count || 0)+" captures":"Captures";color:theme.muted}
-            TextField {id:count;objectName:"designerCount";visible:source.currentIndex === 1;text:"50";Layout.preferredWidth:65;validator:IntValidator {bottom:1;top:256}
+            TextField {id:count;objectName:"designerCount";visible:source.currentIndex === 1;text:"50";Layout.preferredWidth:65;validator:IntValidator {bottom:1;top:dialog.maximumCaptures}
  onEditingFinished:dialog.refresh()}
             Label {visible:source.currentIndex === 1;text:"Flat RxMER (dB)";color:theme.text}
             TextField {id:baseline;visible:source.currentIndex === 1;text:"48";Layout.preferredWidth:65;onEditingFinished:dialog.refresh()}
@@ -175,11 +183,11 @@ WorkbenchDialog {
                         TextField {id:randomDeviation;objectName:"designerRandomDeviation";text:"1.5";Layout.preferredWidth:65;onEditingFinished:dialog.refresh();Accessible.name:"Random variation standard deviation in dB"}
                         StepButtons {
                             theme:dialog.theme;namePrefix:"designerRandomDeviation"
-                            canIncrease:randomDeviation.text.trim().length>0 && Number.isFinite(Number(randomDeviation.text)) && Number(randomDeviation.text)>=0 && Number(randomDeviation.text)<=19.5
-                            canDecrease:randomDeviation.text.trim().length>0 && Number.isFinite(Number(randomDeviation.text)) && Number(randomDeviation.text)>=0.5 && Number(randomDeviation.text)<=20
+                            canIncrease:dialog.limitsAvailable && randomDeviation.text.trim().length>0 && Number.isFinite(Number(randomDeviation.text)) && Number(randomDeviation.text)>=0 && Number(randomDeviation.text)<=dialog.domainLimits.maximum_random_standard_deviation_db-dialog.randomDeviationStepDb
+                            canDecrease:dialog.limitsAvailable && randomDeviation.text.trim().length>0 && Number.isFinite(Number(randomDeviation.text)) && Number(randomDeviation.text)>=dialog.randomDeviationStepDb && Number(randomDeviation.text)<=dialog.domainLimits.maximum_random_standard_deviation_db
                             increaseDescription:"Increase standard deviation by 0.5 dB";decreaseDescription:"Decrease standard deviation by 0.5 dB"
-                            onIncreaseRequested:{randomDeviation.text=String(Number(randomDeviation.text)+0.5);dialog.refresh()}
-                            onDecreaseRequested:{randomDeviation.text=String(Number(randomDeviation.text)-0.5);dialog.refresh()}
+                            onIncreaseRequested:{randomDeviation.text=String(Number(randomDeviation.text)+dialog.randomDeviationStepDb);dialog.refresh()}
+                            onDecreaseRequested:{randomDeviation.text=String(Number(randomDeviation.text)-dialog.randomDeviationStepDb);dialog.refresh()}
                         }
                     }
                     RowLayout {
@@ -220,7 +228,7 @@ WorkbenchDialog {
                         }
 
                     }
-                    RxmerDesignScope {id:tiltScope;objectName:"designerTiltScope";enabled:tilt.checked;opacity:enabled ? 1:0.5;theme:dialog.theme;captureCount:dialog.captureCount;onEdited:dialog.refresh()}
+                    RxmerDesignScope {id:tiltScope;objectName:"designerTiltScope";enabled:tilt.checked;opacity:enabled ? 1:0.5;theme:dialog.theme;captureCount:dialog.captureCount;maximumCaptures:dialog.maximumCaptures;onEdited:dialog.refresh()}
                     Rectangle {Layout.fillWidth:true; height:1;color:theme.line}
                     CheckBox {id:ripple;objectName:"designerRipple";text:"Ripple";onToggled:dialog.refresh()}
                     RowLayout {
@@ -265,7 +273,7 @@ WorkbenchDialog {
 TextField {id:distance;text:"6.37";Layout.preferredWidth:70;onEditingFinished:dialog.refresh()}
 Label {text:"VF";color:theme.text}
 TextField {id:vf;text:"0.85";Layout.preferredWidth:65;onEditingFinished:dialog.refresh()} }
-                    RxmerDesignScope {id:rippleScope;theme:dialog.theme;captureCount:dialog.captureCount;onEdited:dialog.refresh()}
+                    RxmerDesignScope {id:rippleScope;theme:dialog.theme;captureCount:dialog.captureCount;maximumCaptures:dialog.maximumCaptures;onEdited:dialog.refresh()}
                     Rectangle {Layout.fillWidth:true;height:1;color:theme.line}
                     CheckBox {id:notch;objectName:"designerNotch";text:"LTE / 5G-style notch";onToggled:dialog.refresh();ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus;ToolTip.text:"Synthetic reduction in MER over a frequency band, not an LTE or 5G waveform simulation."}
                     GridLayout {
@@ -342,7 +350,7 @@ TextField {id:vf;text:"0.85";Layout.preferredWidth:65;onEditingFinished:dialog.r
                             onDecreaseRequested:dialog.stepNotch(edge,-1)
                         }
                     }
-                    RxmerDesignScope {id:notchScope;objectName:"designerNotchScope";theme:dialog.theme;captureCount:dialog.captureCount;onEdited:dialog.refresh()}
+                    RxmerDesignScope {id:notchScope;objectName:"designerNotchScope";theme:dialog.theme;captureCount:dialog.captureCount;maximumCaptures:dialog.maximumCaptures;onEdited:dialog.refresh()}
                     Rectangle {Layout.fillWidth:true;height:1;color:theme.line}
                     Label {text:"Replace subcarrier values";color:theme.accent;font.bold:true}
                     Label {text:"Use exact carrier-center frequencies. Equal endpoints edit one subcarrier. Missing values stay missing.";color:theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap;font.pixelSize:11}
@@ -351,8 +359,8 @@ TextField {id:editFirst;Layout.preferredWidth:85}
 TextField {id:editLast;Layout.preferredWidth:85} }
                     RowLayout {Label {text:"RxMER dB";color:theme.text}
 TextField {id:editDb;text:"30";Layout.preferredWidth:75} }
-                    RxmerDesignScope {id:editScope;theme:dialog.theme;captureCount:dialog.captureCount}
-                    WorkbenchActionButton {theme:dialog.theme;text:"Add Value Edit";enabled:dialog.valueEdits.length<32;onClicked:{dialog.valueEdits=dialog.valueEdits.concat([{scope:editScope.value(),first_hz:Math.round(Number(editFirst.text)*1e6),last_hz:Math.round(Number(editLast.text)*1e6),value_db:Number(editDb.text)}]);dialog.refresh()} }
+                    RxmerDesignScope {id:editScope;theme:dialog.theme;captureCount:dialog.captureCount;maximumCaptures:dialog.maximumCaptures}
+                    WorkbenchActionButton {theme:dialog.theme;objectName:"designerAddValueEdit";text:"Add Value Edit";enabled:dialog.limitsAvailable && dialog.valueEdits.length<dialog.domainLimits.maximum_value_edits;onClicked:{dialog.valueEdits=dialog.valueEdits.concat([{scope:editScope.value(),first_hz:Math.round(Number(editFirst.text)*1e6),last_hz:Math.round(Number(editLast.text)*1e6),value_db:Number(editDb.text)}]);dialog.refresh()} }
                     Repeater {model:dialog.valueEdits;delegate:RowLayout {required property var modelData;required property int index
                         Label {text:(modelData.first_hz/1e6)+"–"+(modelData.last_hz/1e6)+" MHz: "+modelData.value_db+" dB";color:theme.text;Layout.fillWidth:true;elide:Text.ElideRight}
                         WorkbenchActionButton {theme:dialog.theme;text:"Remove";compact:true;onClicked:{const next=dialog.valueEdits.slice();next.splice(index,1);dialog.valueEdits=next;dialog.refresh()} }
@@ -386,9 +394,9 @@ TextField {id:editDb;text:"30";Layout.preferredWidth:75} }
         ContextualStatus {theme:dialog.theme;diagnostic:dialog.diagnostic;onHelpRequested:function(code){dialog.contextHelpRequested(code)};text:dialog.working ? "Designing captures: "+dialog.completed+" / "+dialog.captureCount:dialog.errorMessage;visible:text.length>0;color:dialog.errorMessage.length ? theme.statusError:theme.accent;Layout.fillWidth:true;wrapMode:Text.WordWrap}
     }
     footer:ApplyCancelFooter {
-        theme:dialog.theme;applyObjectName:"designerApply";applyEnabled:!dialog.working && !!dialog.information.request && !dialog.errorMessage.length
+        theme:dialog.theme;applyObjectName:"designerApply";applyEnabled:dialog.limitsAvailable && !dialog.working && !!dialog.information.request && !dialog.errorMessage.length
         onApplied: {const result=JSON.parse(dialog.backend.designer_stage(dialog.document(),JSON.stringify(dialog.parentOptions)));dialog.errorMessage=result.error || "";dialog.diagnostic=result.diagnostic || null;dialog.completed=0;dialog.working=!!result.running}
-        WorkbenchActionButton {theme:dialog.theme;objectName:"designerExportPnm";text:"Save";enabled:!dialog.working && !!dialog.information.request && !dialog.errorMessage.length
+        WorkbenchActionButton {theme:dialog.theme;objectName:"designerExportPnm";text:"Save";enabled:dialog.limitsAvailable && !dialog.working && !!dialog.information.request && !dialog.errorMessage.length
             onClicked:{pnmExport.documentSnapshot=dialog.document();pnmExport.captureCount=dialog.captureCount;pnmExport.previewCapture=Math.round(preview.value);pnmExport.open()}}
         onCancelled:dialog.reject()
     }

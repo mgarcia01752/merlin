@@ -25,14 +25,16 @@ Pane {
         function designer_export_poll(){return JSON.stringify(exportSaved ? {running:false,saved:true,path:"/fixture/export.bin",summary:{captures:1,samples:7600,missing:10,rounded:3,clipped:0}} : {running:false,can_export:exportAllowed,can_json:true,error:exportAllowed ? "":"Capture 1: carrier 296: outside PNM range.",summary:{captures:1,samples:7600,missing:10,rounded:3,clipped:0}})}
         function designer_export_save(format){exportFormat=format;exportSaves++;exportSaved=true;return JSON.stringify({running:true})}
         function designer_export_cancel(){}
-        function designer_begin(){return JSON.stringify({imported_count:50,first_hz:640000000,last_hz:827000000,spacing_hz:25000,request:{source:"imported",capture_count:50,baseline_db:48,recipe:{tilt:null,ripple:null,notch:null,edits:[]}}})}
+        // Independent fixture anchors for the public limits report; no production fallback.
+        property var limits: ({minimum_mer_db:-30,maximum_mer_db:120,maximum_captures:256,maximum_values:4000000,maximum_value_edits:32,maximum_random_standard_deviation_db:20,maximum_absolute_tilt_db:60,maximum_ripple_peak_to_peak_db:60,maximum_notch_depth_db:60,minimum_echo_distance_metres:0.001,maximum_echo_distance_metres:10000})
+        function designer_begin(){return JSON.stringify({limits:limits,imported_count:50,first_hz:640000000,last_hz:827000000,spacing_hz:25000,request:{source:"imported",capture_count:50,baseline_db:48,recipe:{tilt:null,ripple:null,notch:null,edits:[]}}})}
         function designer_preview(document,position,start,count){lastRequest=JSON.parse(document);return JSON.stringify({points:[{x:0,y:0.2,minimum_y:0.2,gap:false}],comparison:[{x:0,y:0.1,minimum_y:0.1,gap:false}],bands:[{first:0.4,last:0.41,label:"PLC"}],start:count ? start:0,count:count || 7481,total:7481,plc_view:{start:4000,count:80},plc_summary:"PLC first–last: 740.000–740.375 MHz · 16 carriers",axis_label:"RxMER (dB)",summary:"Capture "+position,timeline:[]})}
         function designer_stage(document,options){lastRequest=JSON.parse(document);pending=true;return JSON.stringify({running:true})}
         function designer_poll(){pending=false;return JSON.stringify({running:false,cancelled:true})}
         function designer_cancel(){cancelled++}
     }
     RxmerDesignerDialog {id:dialog;theme:theme;backend:backend;parentOptions:({mode:"hold",interval_symbols:"1000",tolerance_seconds:90000})}
-    RxmerDesignScope {id:scopeProbe;theme:theme;captureCount:50;visible:false}
+    RxmerDesignScope {id:scopeProbe;theme:theme;captureCount:50;maximumCaptures:256;visible:false}
     TestCase {
         name:"RxmerDesigner";when:windowShown
         function cleanup(){dialog.close();findChild(dialog,"designerEffectsScroll").contentItem.contentY=0;wait(100)}
@@ -41,6 +43,49 @@ Pane {
             const point=item.mapToItem(scroll,0,0)
             flick.contentY=Math.max(0,Math.min(flick.contentHeight-flick.height,flick.contentY+point.y-flick.height/2))
             verify(waitForRendering(dialog.contentItem))
+        }
+        function test_button_domains_follow_the_public_report(){
+            const original=backend.limits
+            try {
+                backend.limits=Object.assign({},original,{maximum_captures:8,maximum_value_edits:3,maximum_absolute_tilt_db:12,maximum_ripple_peak_to_peak_db:7,maximum_notch_depth_db:9,maximum_random_standard_deviation_db:2})
+                dialog.open();tryCompare(dialog,"visible",true)
+                compare(findChild(dialog,"designerCount").validator.top,8)
+                dialog.valueEdits=[{},{}]
+                verify(findChild(dialog,"designerAddValueEdit").enabled)
+                dialog.valueEdits=[{},{},{}]
+                verify(!findChild(dialog,"designerAddValueEdit").enabled)
+                dialog.valueEdits=[]
+                findChild(dialog,"designerTilt").checked=true
+                findChild(dialog,"designerTiltDb").text="12"
+                verify(!dialog.canStepTilt(1));verify(dialog.canStepTilt(-1))
+                findChild(dialog,"designerRipple").checked=true
+                const ripple=findChild(dialog,"designerRippleDb");ripple.text="7"
+                verify(!dialog.canStepRipple(ripple,1));verify(dialog.canStepRipple(ripple,-1))
+                findChild(dialog,"designerNotch").checked=true
+                const depth=findChild(dialog,"designerNotchDepth");depth.text="9"
+                verify(!dialog.canStepNotch(depth,1));verify(dialog.canStepNotch(depth,-1))
+                findChild(dialog,"designerSource").currentIndex=1
+                findChild(dialog,"designerRandomVariation").checked=true
+                findChild(dialog,"designerRandomDeviation").text="2"
+                verify(!findChild(dialog,"designerRandomDeviationUp").enabled)
+                verify(findChild(dialog,"designerRandomDeviationDown").enabled)
+            } finally {
+                backend.limits=original
+            }
+        }
+        function test_missing_public_limits_disable_scientific_actions(){
+            const original=backend.limits
+            try {
+                backend.limits=null
+                dialog.open();tryCompare(dialog,"visible",true)
+                verify(!findChild(dialog,"designerApply").enabled)
+                verify(!findChild(dialog,"designerExportPnm").enabled)
+                verify(!findChild(dialog,"designerAddValueEdit").enabled)
+                findChild(dialog,"designerTilt").checked=true
+                verify(!dialog.canStepTilt(1))
+            } finally {
+                backend.limits=original
+            }
         }
         function test_random_variation_only_for_flat_source(){
             dialog.open();tryCompare(dialog,"visible",true)

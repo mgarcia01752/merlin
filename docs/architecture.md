@@ -1159,8 +1159,8 @@ add only a typed source-catalog synthetic-unity response preview and an immutabl
 Designer limits report. The OFDM API reuses existing response projection/view
 owners without claiming a measured capture; native-input reports existing Designer
 domains from their constants, including its distinct aggregate-value guard. Native
-Python mirrors both operations. Qt adoption remains a separate UIU-DS-01 unit after
-paired acceptance; no scientific algorithm, domain value or saved schema changes.
+Python mirrors both operations. Paired acceptance precedes the Qt consumers
+described below; no scientific algorithm, domain value or saved schema changes.
 
 The [measured-input/channel adapter adoption](development/features/unified-qt-workbench/design.md#uiu-ds-01-measured-input-and-configured-channel-adoption)
 retains the original public source catalog with the selected source-frame snapshot.
@@ -1170,8 +1170,15 @@ claiming cross-input scientific readiness. Public sequence, response/unity and
 configured-channel operations own admission, projections, residual conversion,
 physical planning and gain. Response association retains its independently accepted
 tolerance. Qt formats bounded authoritative views and preserves selector/axis labels,
-original bytes/hashes, PLC overlays and safe project adoption. Designer evaluation
-and bounded receiver archives remain the explicit downstream migration frontier.
+original bytes/hashes, PLC overlays and safe project adoption. The [Designer/export adoption](development/features/unified-qt-workbench/design.md#uiu-ds-01-designer-and-export-owner-adoption)
+uses immutable public RxMerDesign admission, source-catalog flat/imported creation,
+recipe replacement, materialization and previews, plus native-input export. Qt
+retains only envelope transport/control restoration, immutable original identities,
+PLC overlays and common-axis screen projection. QML button/count/edit guards read
+the public limits report; unavailable limits disable scientific actions. Existing
+recipe domains, saved envelopes and noncompounding behavior remain compatible.
+Bounded receiver archives and remaining soft/QAM numerical projections are the
+explicit downstream migration frontier.
 
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
@@ -1378,8 +1385,8 @@ Public notification age drives the separate UI wall clock without treating polls
 as progress. H/profile tolerance remains independent of RxMER/profile tolerance.
 The [scoped acceptance record](development/features/unified-qt-workbench/validation.md#uiu-ds-01-controlled-worker-facade-accepted)
 tracks this consumer; remaining legacy input/instrument providers and the final
-numeric audit keep UIU-DS-01 open. The Designer production code remains frozen;
-only its affected real-FEC regression now calls the public request.
+numeric audit keep UIU-DS-01 open. The later Designer/export consumer above now
+uses public operations; earlier freeze records remain historical evidence.
 
 The [transmitted PLC viewer](development/features/unified-qt-workbench/design.md#uiu-ds-01-transmitted-plc-message-viewer-facade)
 now obtains packets, typed descriptor meanings, original offsets, pending/issue

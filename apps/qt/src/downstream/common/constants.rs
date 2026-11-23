@@ -228,3 +228,15 @@ pub(crate) const MEASUREMENT_PHASE_PROJECTION: i32 = 1;
 pub(crate) const MEASUREMENT_REAL_PROJECTION: i32 = 2;
 /// Measurement-dialog imaginary-component selector in the existing UI protocol.
 pub(crate) const MEASUREMENT_IMAGINARY_PROJECTION: i32 = 3;
+
+/// Existing initial flat Designer MER shown before user edits; backend validates the domain.
+pub(crate) const DEFAULT_DESIGN_BASELINE_DB: f64 = 48.0;
+
+/// Minimum symmetric empty Designer drawing extent; not an admitted MER bound.
+pub(crate) const DESIGNER_EMPTY_AXIS_EXTENT_DB: f64 = 1.0;
+/// Fractional margin around each Designer trace before sharing its drawing axis.
+pub(crate) const DESIGNER_AXIS_PADDING_FRACTION: f64 = 0.1;
+/// Independent minimum drawing margin; not the empty-axis extent or a MER limit.
+pub(crate) const DESIGNER_MIN_AXIS_PADDING_DB: f64 = 1.0;
+/// Vertical drawing tick intervals; independent of capture count and recipe scope.
+pub(crate) const DESIGNER_METRIC_TICK_INTERVALS: u32 = 4;

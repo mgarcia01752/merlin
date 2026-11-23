@@ -50,110 +50,6 @@
   ],
   "files": [
     {
-      "path": "apps/qt/src/bridge/rxmer_designer.rs",
-      "sha256": "e92b66bacf06b74c67baddcd75f3f1fe3488d5ac57af276e4f3507bb6a308c98",
-      "sites": [
-        {
-          "line": 186,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 225,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/bridge/rxmer_export.rs",
-      "sha256": "4b3cf78f815588359f8957edaabc8a95bb4df7b2aa1917030aa250cdc06fff8d",
-      "sites": [
-        {
-          "line": 10,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 11,
-          "root": "pnm_input"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
-      "sha256": "10f150e416b4b368c7fcd63f012c3ea783099410fe159bebbf199dec002be2be",
-      "sites": [
-        {
-          "line": 8,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 494,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 494,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 563,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 586,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 619,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 638,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 639,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 799,
-          "root": "pnm_input"
-        },
-        {
-          "line": 801,
-          "root": "pnm_input"
-        },
-        {
-          "line": 810,
-          "root": "pnm_input"
-        },
-        {
-          "line": 812,
-          "root": "pnm_input"
-        },
-        {
-          "line": 816,
-          "root": "pnm_input"
-        },
-        {
-          "line": 818,
-          "root": "pnm_input"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
-      "sha256": "bb65a9ce780ec36f09c4c683bb7ec443a7149ea56a3ef97e6bab37bb479bae27",
-      "sites": [
-        {
-          "line": 7,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
       "sha256": "4e314389c700c4b7b2edb4a448f9c950d83bd88fe96889113dc9cb1f49990c20",
       "sites": [
@@ -2822,6 +2718,134 @@
       "unit": "Measured-input and configured-channel facade",
       "reason": "Existing public source catalog/sequence/response/unity/channel APIs replace private numerical calls. Passive editor DTO/options storage preserves incomplete projects and exact originals; public scientific admission remains separate. PLC source geometry and existing assertion tails are preserved.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-measured-input-and-channel-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/bridge/rxmer_designer.rs",
+        "sha256": "e92b66bacf06b74c67baddcd75f3f1fe3488d5ac57af276e4f3507bb6a308c98",
+        "sites": [
+          {
+            "line": 186,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 225,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Designer and export facade",
+      "reason": "Immutable public RxMerDesign admits/evaluates source-catalog flat/imported recipes and original envelopes. Public materialized/preview values and native-input export replace private kernels; QML consumes the public limits report. Transport/control restoration and screen projection stay application-owned.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-designer-and-export-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/bridge/rxmer_export.rs",
+        "sha256": "4b3cf78f815588359f8957edaabc8a95bb4df7b2aa1917030aa250cdc06fff8d",
+        "sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 11,
+            "root": "pnm_input"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Designer and export facade",
+      "reason": "Immutable public RxMerDesign admits/evaluates source-catalog flat/imported recipes and original envelopes. Public materialized/preview values and native-input export replace private kernels; QML consumes the public limits report. Transport/control restoration and screen projection stay application-owned.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-designer-and-export-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+        "sha256": "10f150e416b4b368c7fcd63f012c3ea783099410fe159bebbf199dec002be2be",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 563,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 586,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 619,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 638,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 639,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 799,
+            "root": "pnm_input"
+          },
+          {
+            "line": 801,
+            "root": "pnm_input"
+          },
+          {
+            "line": 810,
+            "root": "pnm_input"
+          },
+          {
+            "line": 812,
+            "root": "pnm_input"
+          },
+          {
+            "line": 816,
+            "root": "pnm_input"
+          },
+          {
+            "line": 818,
+            "root": "pnm_input"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Designer and export facade",
+      "reason": "Immutable public RxMerDesign admits/evaluates source-catalog flat/imported recipes and original envelopes. Public materialized/preview values and native-input export replace private kernels; QML consumes the public limits report. Transport/control restoration and screen projection stay application-owned.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-designer-and-export-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+        "sha256": "bb65a9ce780ec36f09c4c683bb7ec443a7149ea56a3ef97e6bab37bb479bae27",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Designer and export facade",
+      "reason": "Immutable public RxMerDesign admits/evaluates source-catalog flat/imported recipes and original envelopes. Public materialized/preview values and native-input export replace private kernels; QML consumes the public limits report. Transport/control restoration and screen projection stay application-owned.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-designer-and-export-facade-accepted"
     }
   ],
   "reviewed_updates": [

@@ -2772,3 +2772,45 @@ workspace, new wheel, CLI execution or packaging suites for this Qt adapter batc
 Full native parity, downstream milestone Level 3, parent UIU-DS-01 Level 2, final
 numeric/shared-constant audit and integrated session/upstream work remain pending.
 No official checklist checkbox or installed-platform acceptance changes.
+
+## UIU-DS-01 Designer and export facade accepted
+
+[Design](design.md#uiu-ds-01-designer-and-export-owner-adoption),
+[machine evidence](designer-export-facade-evidence.json),
+[public boundary](../../../architecture.md#unified-qt-public-api-boundary) and
+[official parent](../../checklist.md#task-uiu-ds-01) trace REQ-UIU-02/03/08/09/21/22/24/27.
+Immutable public RxMerDesign operations replace Qt recipe evaluation, flat-mask
+construction, private source validation and measurement projection. Public native
+export replaces private export imports. Original envelope/control transport,
+labels, epochs, hashes, BOM normalization, PLC overlays, range/zoom interaction,
+common-axis drawing and atomic cancellation/adoption remain compatible.
+QML reads distinct scientific domains from the public limits report; absent
+reports disable scientific actions. Existing independent scope, residual-power,
+actual FEC and export-range assertions remain, with an additional repeated-edit
+oracle: 48 dB → 42 → 45 → 48 from an unchanged flat baseline.
+
+Executed: 32 distinct Qt Rust cases (16 complete measured-input cases, two
+Designer adoption guards, eleven affected worker cases and three project cases),
+29 shared Rust Designer/export/workbench contract cases, 15 QML behaviors (17 with
+harness), and 14 exact-wheel native Designer/export/legacy saved-project cases.
+The QML cases vary the supplied limits independently and check unavailable
+reports, mouse/keyboard stepping, scopes, zoom, Save and Cancel. The final QML run
+has no warnings; an earlier run exposed a transient undefined count binding,
+corrected by reading the typed count directly. Separate fresh Rust/native process
+comparison is not claimed for this Qt-only unit; native tests reuse the verified
+unchanged installed wheel and their independent existing anchors.
+
+Qt formatting/all-target Clippy, the rebuilt optimized executable, native
+Designer/legacy project admission and embedded-resource startup/Open pass. Final
+boundary, documentation/traceability, version/guide and whitespace checks are
+recorded in the machine evidence.
+Four complete frozen owners/19 sites retire: seven files/31 sites becomes
+**three receiver files/12 sites**, with three scientific dependencies still
+present. Earlier boundary entries, retirements/reviews and every official
+checkbox remain unchanged. No public API, numerical algorithm, domain value,
+saved schema, binding, manifest/lock or global registration changes. No wheel
+rebuild or unrelated complete workspace/CLI/package regression is required.
+Bounded receiver archives, matcher-invisible QAM/soft calculations, dependency
+removal, UIU-DS-01 Level 2, downstream milestone Level 3 and final numeric/common-
+constant acceptance remain open. Prepared agent branches establish no integrated
+session/upstream acceptance.

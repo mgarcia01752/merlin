@@ -3048,3 +3048,40 @@ project compatibility checks if persisted admission changes; do not rebuild a
 wheel for unchanged accepted APIs. Compare frozen entries explicitly and retire
 only complete migrated owners. Parent Level 2 and milestone Level 3 remain open
 until all downstream owners and dependencies are resolved.
+
+## UIU-DS-01 Designer and export owner adoption
+
+REQ-UIU-02/03/08/09/21/22/24/27 and UIU-DS-01 migrate the remaining nineteen
+Designer/transport/export sites. EDIT measurement_input/designer.rs and document.rs,
+bridge/rxmer_designer.rs and rxmer_export.rs. REUSE the immutable public
+RxMerDesign, its authoritative limits, source-catalog flat/imported admission,
+from_bytes, with_recipe and materialize operations, and the facade's native export
+owner. Retain Qt's existing versioned envelope transport and control restoration;
+only the backend evaluates/validates recipes or constructs flat source masks.
+Changing collection position/count serializes the existing typed envelope back
+through public from_bytes admission, without a new scientific API or evaluator.
+
+Retain original baseline bytes and generated label/envelope conventions, restore
+common controls without compounding previous edits, and preserve separate original
+and decoded identities. The existing transport strips only an initial UTF-8 BOM
+before Designer-envelope admission; do not invent a different scientific capture
+or alter ordinary-capture provenance. Pure transport detection uses the existing
+named BOM marker. Native operation results supply all samples; common-axis screen
+projection, PLC clipping and timeline geometry remain presentation.
+
+Keep the legacy 64 MiB UI collection budget distinct from public scientific count/
+value/recipe domains. Validate original Designer/worker/export assertions and
+affected QML editors, exact-wheel native Designer/saved-project compatibility,
+formatting/Clippy, optimized Qt build, boundary and traceability. Preserve existing
+independent numerical values and cancellation/atomic-adoption checks. Retire whole
+entries only after all direct private owners are removed. Bounded receiver
+QAM/soft history and final dependency removal remain separate downstream owners;
+the parent and final numeric acceptance gates stay open.
+
+The existing Designer QML consumes the public limits report for capture counts,
+value-edit count, tilt, ripple, notch and random-deviation stepping. Distinct
+scientific limits stay distinct even when numerically equal. Missing reports
+never activate guessed domains; Rust still validates typed values. Existing
+screen-only empty extent, padding and tick policies receive independent names in
+the common application constants owner without changing their values. The
+unchanged visual layout retains its existing dark-theme guide screenshot.

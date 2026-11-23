@@ -5,11 +5,17 @@
 //! Synthetic RxMER envelopes and immutable designer sessions; input files stay intact.
 use super::document::{Capture, Measurement, MAX_INPUT_BYTES, MAX_TOTAL_BYTES};
 use crate::downstream::help::AdmissionError;
-use docsis_ofdm_fec::{
-    profile::candidate::CapturedProfile,
-    scenario::{measurement_view::measurement_view, RxMerFrame, ScenarioKey, SourceProvenance},
-    signal_processing::rxmer_designer::RxmerRecipe,
-    types::modulation::CarrierType,
+use crate::downstream::{
+    common::constants::{
+        DEFAULT_DESIGN_BASELINE_DB, DESIGNER_AXIS_PADDING_FRACTION, DESIGNER_EMPTY_AXIS_EXTENT_DB,
+        DESIGNER_METRIC_TICK_INTERVALS, DESIGNER_MIN_AXIS_PADDING_DB,
+    },
+    workbench::session::profile_source,
+};
+use merlin::downstream::{
+    inputs::{RxMerDesign, RxMerDesignPosition, RxmerRecipe},
+    CaptureTime, MeasurementViewport, MerDb, NamedCapture, ProfileCapture, RxMerFrame, ScenarioKey,
+    SourceProfileFrame as CapturedProfile,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -44,7 +50,7 @@ pub(crate) struct Record {
 #[derive(Clone)]
 pub(crate) struct Origin {
     record: Record,
-    frame: Arc<RxMerFrame>,
+    design: RxMerDesign,
 }
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -58,91 +64,52 @@ pub(crate) struct Request {
 pub(crate) struct Session {
     pub hashes: Vec<String>,
     pub profile: Arc<CapturedProfile>,
+    pub catalog: ProfileCapture,
     origins: Vec<Origin>,
     pub request: Request,
 }
 fn hash(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
 }
-fn frame_from_flat(
-    key: &ScenarioKey,
-    epoch: u32,
-    valid: &[bool],
-    db: f64,
-) -> Result<Arc<RxMerFrame>, String> {
-    key.grid.validate().map_err(|error| error.to_string())?;
-    if valid.len() != key.grid.sample_count || !db.is_finite() || !(-30.0..=120.0).contains(&db) {
-        return Err("Invalid synthetic baseline/grid.".into());
-    }
-    let bytes = serde_json::to_vec(&(key, epoch, valid, db)).map_err(|error| error.to_string())?;
-    Ok(Arc::new(RxMerFrame {
-        key: key.clone(),
-        capture_time: epoch,
-        mer_db: valid.iter().map(|valid| valid.then_some(db)).collect(),
-        source: SourceProvenance {
-            name: "Synthetic flat RxMER baseline".into(),
-            sha256: hash(&bytes),
-            byte_length: bytes.len(),
-            capture_time: Some(epoch),
-            file_kind: "merlin_synthetic_rxmer_baseline".into(),
-            format_major: 1,
-            format_minor: 0,
-        },
-    }))
+fn name(record: &Record) -> String {
+    let prefix = if matches!(record.baseline, Baseline::Flat { .. }) {
+        "Synthetic"
+    } else {
+        "Designed"
+    };
+
+    // Preserve the existing three-digit minimum-width generated capture label.
+    format!("{prefix} RxMER {:03}", record.capture_index)
 }
-fn materialize(record: Record, frame: Arc<RxMerFrame>) -> Result<Capture, AdmissionError> {
-    if matches!(record.baseline, Baseline::Imported { .. })
-        && record.recipe.random_variation.is_some()
-    {
-        return Err("Random variation requires a new flat sequence.".into());
-    }
-    let values = record
-        .recipe
-        .apply(
-            &frame.key.grid,
-            &frame.mer_db,
-            record.capture_index,
-            record.capture_count,
-        )
-        .map_err(AdmissionError::classified)?;
-    let bytes = serde_json::to_vec(&record).map_err(|error| error.to_string())?;
+
+fn capture(record: Record, design: RxMerDesign) -> Result<Capture, AdmissionError> {
+    let bytes = design.original_bytes().to_vec();
     if bytes.len() > MAX_INPUT_BYTES {
         return Err("Designed capture exceeds 16 MiB.".into());
     }
-    let synthetic = matches!(record.baseline, Baseline::Flat { .. });
-    let name = format!(
-        "{} RxMER {:03}",
-        if synthetic { "Synthetic" } else { "Designed" },
-        record.capture_index
-    );
-    let digest = hash(&bytes);
-    let mut designed = (*frame).clone();
-    designed.mer_db = values;
-    designed.source = SourceProvenance {
-        name: name.clone(),
-        sha256: digest.clone(),
-        byte_length: bytes.len(),
-        capture_time: Some(frame.capture_time),
-        file_kind: if synthetic {
-            "merlin_synthetic_rxmer"
-        } else {
-            "merlin_designed_rxmer"
-        }
-        .into(),
-        format_major: 1,
-        format_minor: 0,
-    };
-    designed.validate().map_err(|error| error.to_string())?;
-    let decoded_hash = hash(&serde_json::to_vec(&designed).map_err(|error| error.to_string())?);
+    let observation = design.materialize();
+    let frame = observation.frame().clone();
+    let decoded_hash = hash(&serde_json::to_vec(&frame).map_err(|cause| cause.to_string())?);
     Ok(Capture {
-        name,
+        name: name(&record),
+        hash: hash(&bytes),
         original: Arc::new(bytes),
         format: "Designed RxMER",
-        hash: digest,
         decoded_hash,
-        measurement: Measurement::Rxmer(Arc::new(designed)),
-        designer: Some(Arc::new(Origin { record, frame })),
+        measurement: Measurement::Rxmer(Arc::new(frame)),
+        designer: Some(Arc::new(Origin { record, design })),
     })
+}
+
+fn admit(record: &Record) -> Result<RxMerDesign, AdmissionError> {
+    let bytes = serde_json::to_vec(record).map_err(|cause| cause.to_string())?;
+    let input = NamedCapture::new(name(record), bytes).map_err(AdmissionError::classified)?;
+    RxMerDesign::from_bytes(&input).map_err(AdmissionError::classified)
+}
+
+fn materialize(record: Record) -> Result<Capture, AdmissionError> {
+    let design = admit(&record)?;
+    capture(record, design)
 }
 /// Detects and validates a native designer envelope before the ordinary PNM decoder.
 /// # Arguments
@@ -152,59 +119,28 @@ fn materialize(record: Record, frame: Arc<RxMerFrame>) -> Result<Capture, Admiss
 /// # Errors
 /// Rejects unsupported versions, nesting, invalid provenance and unbounded recipes.
 pub(crate) fn decode(bytes: &[u8]) -> Result<Option<Capture>, String> {
-    #[derive(Deserialize)]
-    struct Header {
-        merlin_rxmer_designer: Option<u32>,
-    }
-    let Ok(header) = serde_json::from_slice::<Header>(bytes) else {
+    let Ok(fields) =
+        serde_json::from_slice::<std::collections::BTreeMap<String, serde::de::IgnoredAny>>(bytes)
+    else {
         return Ok(None);
     };
-    let Some(version) = header.merlin_rxmer_designer else {
+    if !fields.contains_key("merlin_rxmer_designer") {
         return Ok(None);
-    };
-    if version != 1 {
-        return Err("Unsupported RxMER Designer format version.".into());
     }
-    let record: Record = serde_json::from_slice(bytes).map_err(|error| error.to_string())?;
-    let frame = match &record.baseline {
-        Baseline::Imported { original } => {
-            let (name, bytes) = crate::downstream::workbench::project_file::decode(original)?;
-            if serde_json::from_slice::<Header>(&bytes)
-                .ok()
-                .is_some_and(|header| header.merlin_rxmer_designer.is_some())
-            {
-                return Err("Nested designer baselines are not supported.".into());
-            }
-            let capture = Capture::decode(name, bytes, true)?;
-            let Measurement::Rxmer(frame) = capture.measurement else {
-                return Err("Expected RxMER baseline.".into());
-            };
-            frame
-        }
-        Baseline::Flat {
-            key,
-            anchor_epoch,
-            valid,
-            baseline_db,
-        } => frame_from_flat(key, *anchor_epoch, valid, *baseline_db)?,
-    };
-    let mut capture = materialize(record, frame).map_err(|error| error.to_string())?;
-    // Keep the actual imported envelope bytes and hash, including whitespace.
-    capture.original = Arc::new(bytes.to_vec());
-    capture.hash = hash(bytes);
-    if let Measurement::Rxmer(frame) = &mut capture.measurement {
-        let frame = Arc::make_mut(frame);
-        frame.source.sha256 = capture.hash.clone();
-        frame.source.byte_length = bytes.len();
-        capture.decoded_hash = hash(&serde_json::to_vec(frame).map_err(|error| error.to_string())?);
-    }
-    Ok(Some(capture))
+    let record: Record = serde_json::from_slice(bytes).map_err(|cause| cause.to_string())?;
+    let input = NamedCapture::new(name(&record), bytes.to_vec())
+        .map_err(|cause| cause.message().to_owned())?;
+    let design = RxMerDesign::from_bytes(&input).map_err(|cause| cause.message().to_owned())?;
+    capture(record, design)
+        .map(Some)
+        .map_err(|cause| cause.message)
 }
+
 impl Session {
     /// Snapshots original baselines and restores a common recipe without compounding.
     /// # Arguments
     /// * `captures` - Current parent draft, including optional designed copies.
-    /// * `profile` - Accepted modulation profile used for synthetic grids and PLC.
+    /// * `profile`, `catalog` - Selected source DTO and its exact original, for public admission and PLC.
     /// # Returns
     /// Immutable session and bounded controls; differing recipes reset to original data.
     /// # Errors
@@ -212,34 +148,34 @@ impl Session {
     pub(crate) fn begin(
         captures: &[Capture],
         profile: Arc<CapturedProfile>,
+        catalog: ProfileCapture,
     ) -> Result<Self, String> {
+        profile_source(Some(profile.as_ref()), Some(&catalog))?;
         let mut origins = Vec::new();
         for (index, capture) in captures.iter().enumerate() {
-            if capture.key() != &profile.key {
-                return Err("RxMER Designer requires the exact accepted modulation-profile grid and identity.".into());
-            }
-            if let Some(origin) = &capture.designer {
-                origins.push((**origin).clone());
+            let origin = if let Some(origin) = &capture.designer {
+                (**origin).clone()
             } else {
-                let Measurement::Rxmer(frame) = &capture.measurement else {
-                    return Err("Expected RxMER.".into());
-                };
-                origins.push(Origin {
-                    frame: frame.clone(),
-                    record: Record {
-                        merlin_rxmer_designer: 1,
-                        baseline: Baseline::Imported {
-                            original: crate::downstream::workbench::project_file::encode(
-                                &capture.name,
-                                &capture.original,
-                            ),
-                        },
-                        recipe: RxmerRecipe::default(),
-                        capture_index: index + 1,
-                        capture_count: captures.len(),
-                    },
-                });
-            }
+                let input = NamedCapture::new(&capture.name, capture.original.as_ref().clone())
+                    .map_err(|cause| cause.message().to_owned())?;
+                let design = RxMerDesign::imported_capture(
+                    &catalog,
+                    profile.profile_id,
+                    &input,
+                    RxmerRecipe::default(),
+                    RxMerDesignPosition::new(index + 1, captures.len())
+                        .map_err(|cause| cause.message().to_owned())?,
+                )
+                .map_err(|cause| cause.message().to_owned())?;
+                let record = serde_json::from_slice(design.original_bytes())
+                    .map_err(|cause| cause.to_string())?;
+                Origin { record, design }
+            };
+            origin
+                .design
+                .check_capture(&catalog, profile.profile_id)
+                .map_err(|cause| cause.message().to_owned())?;
+            origins.push(origin);
         }
         let common = origins.first().filter(|first| {
             origins.iter().enumerate().all(|(index, origin)| {
@@ -276,7 +212,7 @@ impl Session {
                     Baseline::Flat { baseline_db, .. } => Some(baseline_db),
                     _ => None,
                 })
-                .unwrap_or(48.0),
+                .unwrap_or(DEFAULT_DESIGN_BASELINE_DB),
             recipe: common
                 .map(|origin| origin.record.recipe.clone())
                 .unwrap_or_default(),
@@ -287,6 +223,7 @@ impl Session {
                 .map(|capture| capture.hash.clone())
                 .collect(),
             profile,
+            catalog,
             origins,
             request,
         })
@@ -300,17 +237,20 @@ impl Session {
             "flat" => request.capture_count,
             _ => return Err("Choose imported or flat baseline.".into()),
         };
-        if !(1..=256).contains(&count)
+        let limits = RxMerDesign::limits();
+        if count == 0
+            || count > limits.maximum_captures
             || count
                 .checked_mul(self.profile.key.grid.sample_count)
-                .is_none_or(|values| values > 4_000_000)
+                .is_none_or(|values| values > limits.maximum_values)
         {
             return Err("Use 1–256 captures and at most 4,000,000 total values.".into());
         }
-        request
-            .recipe
-            .validate(&self.profile.key.grid, count)
-            .map_err(AdmissionError::classified)?;
+        let mut record = self.origin(request, 0)?.record;
+        record.recipe = request.recipe.clone();
+        record.capture_index = 1;
+        record.capture_count = count;
+        admit(&record)?;
         Ok(count)
     }
     fn origin(&self, request: &Request, index: usize) -> Result<Origin, String> {
@@ -321,39 +261,20 @@ impl Session {
                 .cloned()
                 .ok_or_else(|| "Choose an available original capture.".into());
         }
-        let valid = self
-            .profile
-            .assignments
-            .iter()
-            .map(|assignment| {
-                !matches!(
-                    assignment.carrier_type,
-                    CarrierType::Exclusion | CarrierType::Unknown | CarrierType::Reserved
-                )
-            })
-            .collect::<Vec<_>>();
-        let baseline = Baseline::Flat {
-            key: self.profile.key.clone(),
-            anchor_epoch: self.profile.capture_time,
-            valid: valid.clone(),
-            baseline_db: request.baseline_db,
-        };
-        let frame = frame_from_flat(
-            &self.profile.key,
-            self.profile.capture_time,
-            &valid,
-            request.baseline_db,
-        )?;
-        Ok(Origin {
-            record: Record {
-                merlin_rxmer_designer: 1,
-                baseline,
-                recipe: request.recipe.clone(),
-                capture_index: index + 1,
-                capture_count: request.capture_count,
-            },
-            frame,
-        })
+        let design = RxMerDesign::flat_capture(
+            &self.catalog,
+            self.profile.profile_id,
+            MerDb::new(request.baseline_db).map_err(|cause| cause.message().to_owned())?,
+            CaptureTime::new(self.profile.capture_time)
+                .map_err(|cause| cause.message().to_owned())?,
+            RxmerRecipe::default(),
+            RxMerDesignPosition::new(index + 1, request.capture_count)
+                .map_err(|cause| cause.message().to_owned())?,
+        )
+        .map_err(|cause| cause.message().to_owned())?;
+        let record =
+            serde_json::from_slice(design.original_bytes()).map_err(|cause| cause.to_string())?;
+        Ok(Origin { record, design })
     }
     /// Materializes only the requested export range on full original grids.
     /// # Arguments
@@ -385,8 +306,7 @@ impl Session {
             origin.record.recipe = request.recipe.clone();
             origin.record.capture_index = index;
             origin.record.capture_count = count;
-            let capture =
-                materialize(origin.record, origin.frame).map_err(|error| error.message)?;
+            let capture = materialize(origin.record).map_err(|error| error.message)?;
             let Measurement::Rxmer(frame) = capture.measurement else {
                 unreachable!()
             };
@@ -430,15 +350,29 @@ impl Session {
             return Err("Preview capture outside the collection.".into());
         }
         let origin = self.origin(request, position - 1)?;
-        let grid = &origin.frame.key.grid;
-        let designed = request
-            .recipe
-            .apply(grid, &origin.frame.mer_db, position, count)
-            .map_err(AdmissionError::classified)?;
-        let before = measurement_view(grid, &origin.frame.mer_db, start, samples, "RxMER (dB)")
-            .map_err(|error| error.to_string())?;
-        let after = measurement_view(grid, &designed, start, samples, "RxMER (dB)")
-            .map_err(|error| error.to_string())?;
+        let baseline = origin
+            .design
+            .with_recipe(RxmerRecipe::default())
+            .map_err(AdmissionError::classified)?
+            .materialize();
+        let grid = &baseline.frame().key.grid;
+        let mut record = origin.record;
+        record.recipe = request.recipe.clone();
+        record.capture_index = position;
+        record.capture_count = count;
+        let designed = admit(&record)?.materialize();
+        let viewport = MeasurementViewport {
+            start,
+            count: samples,
+        };
+        let before = baseline
+            .preview(viewport)
+            .map_err(AdmissionError::classified)?
+            .view;
+        let after = designed
+            .preview(viewport)
+            .map_err(AdmissionError::classified)?
+            .view;
         let window = after.start..after.start + after.count;
         // Reproject both normalized curves onto a common range from original dB values.
         let mut before = serde_json::to_value(before).map_err(|error| error.to_string())?;
@@ -455,13 +389,17 @@ impl Session {
                 .copied()
                 .fold(f64::NEG_INFINITY, f64::max);
             if !low.is_finite() {
-                return (-1.0, 1.0);
+                return (
+                    -DESIGNER_EMPTY_AXIS_EXTENT_DB,
+                    DESIGNER_EMPTY_AXIS_EXTENT_DB,
+                );
             }
-            let padding = ((high - low) * 0.1).max(1.0);
+            let padding =
+                ((high - low) * DESIGNER_AXIS_PADDING_FRACTION).max(DESIGNER_MIN_AXIS_PADDING_DB);
             (low - padding, high + padding)
         }
-        let (before_bottom, before_top) = limits(&origin.frame.mer_db[window.clone()]);
-        let (after_bottom, after_top) = limits(&designed[window]);
+        let (before_bottom, before_top) = limits(&baseline.frame().mer_db[window.clone()]);
+        let (after_bottom, after_top) = limits(&designed.frame().mer_db[window]);
         let low = before_bottom.min(after_bottom);
         let high = before_top.max(after_top);
         for (view, (bottom, top)) in [
@@ -476,7 +414,7 @@ impl Session {
                 }
             }
         }
-        after["y_ticks"]=json!((0..=4).map(|tick|json!({"x":f64::from(tick)/4.0,"label":format!("{:.1}",high-f64::from(tick)/4.0*(high-low))})).collect::<Vec<_>>());
+        after["y_ticks"]=json!((0..=DESIGNER_METRIC_TICK_INTERVALS).map(|tick|json!({"x":f64::from(tick)/f64::from(DESIGNER_METRIC_TICK_INTERVALS),"label":format!("{:.1}",high-f64::from(tick)/f64::from(DESIGNER_METRIC_TICK_INTERVALS)*(high-low))})).collect::<Vec<_>>());
         after["comparison"] = before["points"].clone();
         super::plc::annotate(&mut after, grid, Some(&self.profile));
         let rules = [
@@ -491,7 +429,7 @@ impl Session {
             ),
         ];
         after["timeline"]=json!(rules.into_iter().filter_map(|(label,scope)|scope.map(|scope| {
-            let (first,last)=match scope {docsis_ofdm_fec::signal_processing::rxmer_designer::CaptureScope::All=>(1,count),docsis_ofdm_fec::signal_processing::rxmer_designer::CaptureScope::Range{first,last}=>(*first,*last)};
+            let (first,last)=match scope {merlin::downstream::inputs::CaptureScope::All=>(1,count),merlin::downstream::inputs::CaptureScope::Range{first,last}=>(*first,*last)};
             json!({"label":label,"first":(first-1) as f64/count as f64,"last":last as f64/count as f64,"summary":format!("{first}–{last} / {count}")})
         })).collect::<Vec<_>>());
         after["capture_count"] = json!(count);
@@ -525,7 +463,7 @@ impl Session {
             origin.record.recipe = request.recipe.clone();
             origin.record.capture_index = index + 1;
             origin.record.capture_count = count;
-            let capture = materialize(origin.record, origin.frame)?;
+            let capture = materialize(origin.record)?;
             bytes += capture.original.len();
             if bytes > MAX_TOTAL_BYTES {
                 return Err("Designed collection exceeds 64 MiB.".into());
@@ -551,6 +489,7 @@ mod tests {
         let session = Session::begin(
             &editors.measurements.draft_rx,
             Arc::new(inputs.profile.unwrap()),
+            inputs.profile_capture.unwrap(),
         )
         .unwrap();
         (session, editors.measurements)
@@ -559,19 +498,17 @@ mod tests {
     fn random_variation_requires_flat_and_survives_envelope_roundtrip() {
         let (session, _) = fixture();
         let mut request = session.request.clone();
-        request.recipe.random_variation = Some(
-            docsis_ofdm_fec::signal_processing::rxmer_designer::RandomVariation {
-                standard_deviation_db: 1.5,
-                seed: 41,
-            },
-        );
+        request.recipe.random_variation = Some(merlin::downstream::inputs::RandomVariation {
+            standard_deviation_db: 1.5,
+            seed: 41,
+        });
         request.source = "imported".into();
         assert!(session.count(&request).is_err());
         request.source = "flat".into();
         request.capture_count = 1;
         assert_eq!(session.count(&request).unwrap(), 1);
         let origin = session.origin(&request, 0).unwrap();
-        let capture = materialize(origin.record, origin.frame).unwrap();
+        let capture = materialize(origin.record).unwrap();
         let restored = decode(&capture.original).unwrap().unwrap();
         assert_eq!(capture.decoded_hash, restored.decoded_hash);
     }
@@ -583,7 +520,7 @@ mod tests {
         session.hashes.truncate(2);
         let mut request = session.request.clone();
         request.source = "imported".into();
-        request.recipe.tilt = Some(docsis_ofdm_fec::signal_processing::rxmer_designer::Tilt {
+        request.recipe.tilt = Some(merlin::downstream::inputs::Tilt {
             scope: Default::default(),
             tilt_db: -4.0,
         });
@@ -601,7 +538,8 @@ mod tests {
         .unwrap();
         assert_eq!(imported.hash, result[0].hash);
         assert_eq!(imported.decoded_hash, result[0].decoded_hash);
-        let reopened = Session::begin(&result, session.profile.clone()).unwrap();
+        let reopened =
+            Session::begin(&result, session.profile.clone(), session.catalog.clone()).unwrap();
         assert_eq!(reopened.request.recipe, request.recipe);
         let repeated = reopened
             .build(
@@ -615,8 +553,7 @@ mod tests {
             accepted_rx: result.clone(),
             draft_rx: result,
             options: Options {
-                mode:
-                    docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Hold,
+                mode: merlin::downstream::MeasurementMode::Hold,
                 ..Default::default()
             },
             ..Default::default()
@@ -624,6 +561,40 @@ mod tests {
         let restored = Model::from_saved(&accepted.export()).unwrap();
         assert_eq!(restored.accepted_rx[0].hash, accepted.accepted_rx[0].hash);
         assert_eq!(model.accepted_rx.len(), 132);
+    }
+    #[test]
+    fn repeated_flat_edits_recover_the_immutable_baseline() {
+        let (session, model) = fixture();
+        let original_bytes = model.draft_rx[0].original.clone();
+        let mut request = Request {
+            source: "flat".into(),
+            capture_count: 1,
+            baseline_db: 48.0,
+            recipe: Default::default(),
+        };
+        let mut current = session;
+
+        // Independent edge anchors: a 48-dB flat baseline plus -6, -3 and zero tilt.
+        for (tilt_db, expected_last_db) in [(-6.0, 42.0), (-3.0, 45.0), (0.0, 48.0)] {
+            request.recipe.tilt = Some(merlin::downstream::inputs::Tilt {
+                scope: Default::default(),
+                tilt_db,
+            });
+            let result = current
+                .build(&request, &AtomicBool::new(false), &AtomicUsize::new(0))
+                .unwrap();
+            let Measurement::Rxmer(frame) = &result[0].measurement else {
+                panic!("Expected a public Designer observation");
+            };
+            assert_eq!(frame.mer_db.iter().flatten().next(), Some(&48.0));
+            assert_eq!(
+                frame.mer_db.iter().flatten().next_back(),
+                Some(&expected_last_db)
+            );
+            current =
+                Session::begin(&result, current.profile.clone(), current.catalog.clone()).unwrap();
+        }
+        assert_eq!(*model.draft_rx[0].original, *original_bytes);
     }
     #[test]
     fn flat_scope_preview_plc_and_cancellation_preserve_inputs() {
@@ -635,8 +606,8 @@ mod tests {
             recipe: Default::default(),
         };
         let grid = &session.profile.key.grid;
-        request.recipe.notch = Some(docsis_ofdm_fec::signal_processing::rxmer_designer::Notch {
-            scope: docsis_ofdm_fec::signal_processing::rxmer_designer::CaptureScope::Range {
+        request.recipe.notch = Some(merlin::downstream::inputs::Notch {
+            scope: merlin::downstream::inputs::CaptureScope::Range {
                 first: 10,
                 last: 20,
             },
@@ -680,7 +651,12 @@ mod tests {
             .unwrap();
         let (mut inputs, editors) = project.prepare().unwrap();
         let profile = Arc::new(inputs.profile.as_ref().unwrap().clone());
-        let session = Session::begin(&editors.measurements.draft_rx, profile.clone()).unwrap();
+        let session = Session::begin(
+            &editors.measurements.draft_rx,
+            profile.clone(),
+            inputs.profile_capture.clone().unwrap(),
+        )
+        .unwrap();
         let request = Request {
             source: "flat".into(),
             capture_count: 1,
@@ -796,9 +772,9 @@ mod tests {
             session.profile.key.grid.sample_count
         );
         assert_eq!(frames[0].capture_time, session.profile.capture_time);
-        let summary = pnm_input::rxmer_export::preflight(
+        let summary = merlin::downstream::inputs::rxmer_export::preflight(
             &frames,
-            pnm_input::rxmer_export::RangePolicy::Reject,
+            merlin::downstream::inputs::rxmer_export::RangePolicy::Reject,
         )
         .unwrap();
         assert_eq!(summary.captures, 2);
@@ -807,15 +783,15 @@ mod tests {
         let frames = session
             .export_frames(&request, 1, 1, &cancel, &completed)
             .unwrap();
-        assert!(pnm_input::rxmer_export::preflight(
+        assert!(merlin::downstream::inputs::rxmer_export::preflight(
             &frames,
-            pnm_input::rxmer_export::RangePolicy::Reject
+            merlin::downstream::inputs::rxmer_export::RangePolicy::Reject
         )
         .is_err());
         assert!(
-            pnm_input::rxmer_export::preflight(
+            merlin::downstream::inputs::rxmer_export::preflight(
                 &frames,
-                pnm_input::rxmer_export::RangePolicy::Clamp
+                merlin::downstream::inputs::rxmer_export::RangePolicy::Clamp
             )
             .unwrap()
             .clipped
