@@ -1,0 +1,344 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "FEC monitor recovery facade",
+  "status": "Level 1 Qt consumer accepted; Level 2 parent and Level 3 milestone/final remain incomplete",
+  "base_commit": "7752a02ac5a0b7e751c4ac5b2331ba6c1befd061",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-08",
+    "REQ-UIU-19",
+    "REQ-UIU-20",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/fec.rs",
+      "sha256": "7c5385daf7014737d0de6760c47808aedf55f1930f8c3752565a09480a4d54d8"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop/tests.rs",
+      "sha256": "63780b6f8b9e23fc298512e66c246adda00e030ed7719a58b87157d1329e6bdf"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/channel/results.rs",
+      "sha256": "4547bbacdceac4c4eacc9bbca9769244e0ae32c5b83facac8cbba4da2ac20d8e"
+    }
+  ],
+  "ownership": "The accepted FullLoopResult.fec_recovery supplies whole-run scientific counts. Qt formats fixed segment keys/labels/order/fractions and histogram geometry. Observation-window counters, compared bits/BER, partial states, records and verification charts keep their existing public-report values.",
+  "preservation": {
+    "before": {
+      "files": 25,
+      "sites": 93
+    },
+    "after": {
+      "files": 24,
+      "sites": 91
+    },
+    "scientific_dependencies": 3,
+    "retired": {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/fec.rs",
+        "sha256": "939b06152646797e5e0a31fc0f4a71a9222dd6c6fb107d677b8a9f86cca348a9",
+        "sites": [
+          {
+            "line": 30,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 113,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "FEC monitor recovery facade",
+      "reason": "The chart formats the independently accepted FullLoopFecRecovery result; the backend retains the original five-word classification oracle. No private FecCounters import or Qt recovery subtraction remains.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-fec-monitor-recovery-facade-accepted"
+    },
+    "all_other_frozen_entries_and_prior_history_exact": true,
+    "official_checkboxes_and_states_unchanged": true,
+    "backend_non_documentation_lines_exact": true,
+    "test_relocation": {
+      "from": "apps/qt/src/downstream/instruments/receiver/fec.rs::recovery_never_counts_rejected_or_source_mismatched_words_as_success",
+      "to": "crates/ofdm/src/simulation/channel/results.rs::recovery_tests::recovery_never_counts_rejected_or_source_mismatched_words_as_success",
+      "accepted_prerequisite_commit": "7752a02ac5a0b7e751c4ac5b2331ba6c1befd061",
+      "scope": "Original independent outcomes, [1,1,1,2] counts and five-word total remain preserved in the accepted backend owner. That earlier run is prerequisite evidence, not a new execution in this Qt unit."
+    }
+  },
+  "testing": {
+    "level": 1,
+    "risk": "Qt-only adoption of an independently accepted unchanged public operation. The backend source change only clarifies documentation; non-documentation lines are exact. No public signature, algorithm, schema, CXX registration, native binding or cross-direction lifecycle change.",
+    "executed": {
+      "rust": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "--",
+          "--exact",
+          "downstream::instruments::receiver::fec::tests::histogram_preserves_internal_gaps_and_trims_unused_range",
+          "downstream::instruments::receiver::fec::tests::allocations_keep_failures_distinct_and_empty_denominators_finite",
+          "downstream::simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+          "downstream::simulation::closed_loop::tests::independent_sweep_preserves_each_profile_and_legacy_run_options",
+          "--nocapture"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 53.53267750399982,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "qml": {
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+          "Workbench::test_fec_overview_profiles_tabs_and_partial_empty_states",
+          "Workbench::test_receiver_retained_filters_response_soft_and_fec_navigation"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 3.1271709509999255,
+        "behavior_cases": 2
+      },
+      "clippy": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.986104175000037,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "format": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.3278788949999125,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "release": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "build",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--release",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 53.24804041900006,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "metadata": [
+        {
+          "label": "boundary",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/qt_api_boundary.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.2955735689999983
+        },
+        {
+          "label": "documents",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/feature_documentation.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 9.811906291000014
+        },
+        {
+          "label": "traceability",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/integration_traceability.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 10.990183472999888
+        },
+        {
+          "label": "python-guide",
+          "command": [
+            "python3",
+            "-B",
+            "tools/python/update_integration_doc.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.09325143399996705
+        },
+        {
+          "label": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.05274529500002245
+        }
+      ]
+    },
+    "actual_rust_cases": [
+      "downstream::instruments::receiver::fec::tests::allocations_keep_failures_distinct_and_empty_denominators_finite",
+      "downstream::instruments::receiver::fec::tests::histogram_preserves_internal_gaps_and_trims_unused_range",
+      "downstream::simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+      "downstream::simulation::closed_loop::tests::independent_sweep_preserves_each_profile_and_legacy_run_options"
+    ],
+    "rust_case_count": 4,
+    "qml_behavior_cases": 2,
+    "qml_harness_total": 4,
+    "qml_warning_count": 2,
+    "qml_warning_scope": "Two focus-property warnings in the existing receiver navigation case; both selected behaviors pass. QML/focus code is unchanged in this unit.",
+    "not_required": [
+      {
+        "scope": "Fresh Python wheel, installed native parity, root/scientific full workspace suites",
+        "reason": "Accepted prerequisite 7752a02a has current scientific/paired evidence; no scientific implementation, signature, binding or runtime behavior changes here. The backend correction is Rust documentation only. Actual Qt tests validate this consumer."
+      },
+      {
+        "scope": "Complete Qt/QML and unchanged validation-tool unit suites",
+        "reason": "Targeted actual worker/multi-profile and chart/navigation checks plus actual boundary/traceability audits cover this focused adoption. Full task coverage remains Level 2; validators are unchanged."
+      },
+      {
+        "scope": "Native startup/Open, CLI, project persistence and packaging suites",
+        "reason": "No resource/CXX registration, chooser/serialization, lifecycle, dependency or packaging changes. A current optimized executable is built; no fresh native startup or installed-platform pass is claimed."
+      }
+    ],
+    "deferred": [
+      {
+        "gate": "Level 2 UIU-DS-01",
+        "scope": "Complete relevant feature/crate, affected Qt/QML, compatibility and traceability before checking the parent."
+      },
+      {
+        "gate": "Level 3 milestones/UIU-QA-01",
+        "scope": "Full applicable workspace/Qt/native/CLI/persistence/packaging regressions, zero scientific exceptions and final numeric audit."
+      }
+    ],
+    "boundary": {
+      "errors": [],
+      "scientific_dependencies": 3,
+      "frozen_legacy_files": 24,
+      "final": false
+    },
+    "tooling_failure_history": {
+      "initial_metadata": [
+        {
+          "label": "boundary",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/qt_api_boundary.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.2955735689999983
+        },
+        {
+          "label": "documents",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/feature_documentation.py"
+          ],
+          "exit_code": 1,
+          "elapsed_seconds": 13.174846332000016
+        },
+        {
+          "label": "traceability",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/integration_traceability.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 10.990183472999888
+        },
+        {
+          "label": "python-guide",
+          "command": [
+            "python3",
+            "-B",
+            "tools/python/update_integration_doc.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.09325143399996705
+        },
+        {
+          "label": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.05274529500002245
+        }
+      ],
+      "cause": "The private evidence finalizer used an absolute path in git show and stopped before writing the new tracked evidence file. The initial documentation audit therefore correctly reported that missing link. The finalizer was corrected to use a repository-relative Git path; only the failed documentation audit was rerun. Source, tests and assertions were unchanged. Initial failed output and all other successful checks are preserved."
+    }
+  },
+  "wording_correction": "Recovered means decoder-accepted with no detected independent source mismatch, not positive verification when no source bits were compared. Compare bits/BER remain separate. Original counts and report serialization do not change.",
+  "numeric_review": "No new domain limits or scientific calculations. Existing chart ratio normalization and gap/empty/finite assertions remain; the four expected segment categories are independent presentation anchors. Final line-by-line numeric audit remains pending.",
+  "executable": {
+    "path": "apps/qt/target/release/merlin-qt",
+    "sha256": "0cdf94d9512e92ef6948ec09a8729bbc754a2db82b234f0c816c41f6d94ce28c",
+    "scope": "Current optimized Linux Qt build; no fresh native startup/installed-platform execution claimed."
+  }
+}

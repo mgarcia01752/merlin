@@ -2202,3 +2202,43 @@ codec or package contract changed. Their runtime suites and unrelated full
 workspace/Qt/package regressions were not required for this focused prerequisite;
 all final gates remain pending. The FEC Qt file is still frozen, with 25 files/
 93 sites/three dependencies unchanged, until separate consumer acceptance.
+
+
+## UIU-DS-01 FEC monitor recovery facade accepted
+
+[Design/owners](design.md#uiu-ds-01-fec-monitor-recovery-facade),
+[exact evidence](fec-monitor-facade-evidence.json),
+[architecture](../../../architecture.md#unified-qt-public-api-boundary),
+[REQ-UIU-02](../../../requirements.md#req-uiu-02),
+[REQ-UIU-03](../../../requirements.md#req-uiu-03),
+[REQ-UIU-08](../../../requirements.md#req-uiu-08),
+[REQ-UIU-19](../../../requirements.md#req-uiu-19),
+[REQ-UIU-20](../../../requirements.md#req-uiu-20),
+[REQ-UIU-24](../../../requirements.md#req-uiu-24),
+[REQ-UIU-27](../../../requirements.md#req-uiu-27) and
+[UIU-DS-01](../../checklist.md#task-uiu-ds-01) trace this consumer.
+
+The monitor formats the accepted public FullLoopFecRecovery result rather than
+subtracting private counters. Segment keys/order/labels/fractions, histogram
+bins, observation-only categories, compared bits/BER, partial states and bounded
+retained words remain compatible. The exact original five-word classification
+oracle passed in prerequisite 7752a02a and now remains in its backend owner;
+the two existing Qt drawing tests retain their complete assertions.
+
+Level 1 passes four targeted Qt Rust tests: those chart tests, the actual worker
+with authoritative per-segment/passivity assertions, and the original four-profile
+archival/retention regression. Two QML behaviors (four including harness setup/
+cleanup) pass overview/tab/profile/partial/empty and receiver navigation checks;
+the latter emits two focus-property warnings with no failures. Qt all-target
+Clippy, formatting, actual locked boundary audit, optimized build and document/
+traceability checks pass. One whole-file exception retires, leaving 24 files/
+91 sites/three scientific dependencies; every other frozen record stays exact.
+
+Backend changes in this unit are documentation-only clarification: decoder
+acceptance without a detected source mismatch is not positive proof when no bits
+were compared. Existing counts/algorithms/public signatures and native bindings
+are unchanged. Another wheel, root/full/scientific/native suites, unrelated
+startup/Open/CLI/persistence/package checks were not required; the exact evidence
+records why and claims no such passes. Original screenshots still match this
+unchanged presentation. Parent Level 2, milestone/final Level 3 and numeric audit
+remain pending.

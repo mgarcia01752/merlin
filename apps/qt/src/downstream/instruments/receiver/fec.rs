@@ -4,6 +4,7 @@
  */
 //! Bounded FEC summaries and graph coordinates over immutable simulation results.
 use crate::downstream::simulation::closed_loop::ResultData;
+use merlin::downstream::FullLoopFecRecovery;
 use serde_json::{json, Value};
 
 fn allocation(entries: &[(&str, &str, u64)], total: u64) -> Value {
@@ -25,24 +26,15 @@ fn iterations(counts: &[u64]) -> Value {
         })).collect::<Vec<_>>()})
 }
 
-fn recovery(
-    generated: u64,
-    fec: &docsis_ofdm_fec::simulation::channel::results::FecCounters,
-    pending: u64,
-) -> Value {
-    let mismatched = fec.undetected_errors();
-    let recovered = fec
-        .total_codewords()
-        .saturating_sub(fec.uncorrectable_codewords())
-        .saturating_sub(mismatched);
+fn recovery(recovery: &FullLoopFecRecovery) -> Value {
     allocation(
         &[
-            ("clean", "Recovered", recovered),
-            ("failed", "Rejected", fec.uncorrectable_codewords()),
-            ("mismatch", "Mismatch", mismatched),
-            ("pending", "Unrecovered", pending),
+            ("clean", "Recovered", recovery.recovered),
+            ("failed", "Rejected", recovery.rejected),
+            ("mismatch", "Mismatch", recovery.mismatched),
+            ("pending", "Unrecovered", recovery.unrecovered),
         ],
-        generated,
+        recovery.generated,
     )
 }
 
@@ -65,12 +57,9 @@ pub(crate) fn snapshot(result: &ResultData) -> Value {
             fec.total_codewords(),
         )
     });
-    let recovery = recovery(
-        summary.generated_payloads,
-        &summary.fec,
-        result.job.unrecovered_generated_payloads,
-    );
-    let recovered = recovery["segments"][0]["count"].as_u64().unwrap();
+    let source_recovery = result.backend().fec_recovery();
+    let recovered = source_recovery.recovered;
+    let recovery = recovery(&source_recovery);
     json!({
         "available":true,"profile_id":result.job.settings.playback.as_ref().map(|p|p.profile.profile_id),
         "status":result.job.status,"fec":observation,"outcomes":outcomes,
@@ -106,24 +95,6 @@ mod tests {
         assert_eq!(chart["points"][0]["fraction"], 1.0);
         assert_eq!(iterations(&[0; 101])["points"], json!([]));
         assert_eq!(iterations(&[3])["points"][0]["iteration"], 0);
-    }
-
-    #[test]
-    fn recovery_never_counts_rejected_or_source_mismatched_words_as_success() {
-        use docsis_ofdm_fec::simulation::channel::results::{FecCounters, FecOutcome};
-        let mut fec = FecCounters::new();
-        fec.record(FecOutcome::Corrected, false);
-        fec.record(FecOutcome::Uncorrectable, true);
-        fec.record(FecOutcome::Clean, true);
-        let chart = recovery(5, &fec, 2);
-        let counts: Vec<u64> = chart["segments"]
-            .as_array()
-            .unwrap()
-            .iter()
-            .map(|segment| segment["count"].as_u64().unwrap())
-            .collect();
-        assert_eq!(counts, vec![1, 1, 1, 2]);
-        assert_eq!(counts.iter().sum::<u64>(), 5);
     }
 
     #[test]

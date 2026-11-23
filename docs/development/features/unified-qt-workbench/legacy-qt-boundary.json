@@ -425,21 +425,6 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/downstream/instruments/receiver/fec.rs",
-      "sha256": "939b06152646797e5e0a31fc0f4a71a9222dd6c6fb107d677b8a9f86cca348a9",
-      "sites": [
-        {
-          "line": 30,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 113,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/instruments/receiver/performance.rs",
       "sha256": "4226fd5315c90493ae002ab836a89e043bbbe73cd917e5fa7bc7ca4a85289f76",
       "sites": [
@@ -2730,6 +2715,27 @@
       "unit": "RxMER animation preview facade",
       "reason": "Selected original capture/name and immutable decoded frame use public NamedCapture, RxMer.from_frame and RxMer.preview. Sparse ordering, provenance and bounded output are preserved without Qt measurement algorithms.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-rxmer-animation-preview-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/fec.rs",
+        "sha256": "939b06152646797e5e0a31fc0f4a71a9222dd6c6fb107d677b8a9f86cca348a9",
+        "sites": [
+          {
+            "line": 30,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 113,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "FEC monitor recovery facade",
+      "reason": "The chart formats the independently accepted FullLoopFecRecovery result; the backend retains the original five-word classification oracle. No private FecCounters import or Qt recovery subtraction remains.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-fec-monitor-recovery-facade-accepted"
     }
   ],
   "reviewed_updates": [

@@ -1365,6 +1365,15 @@ source/decoded hashes, original bytes and timestamps are preserved. Its
 retires only preview.rs; 25 frozen files/93 sites/three dependencies remain.
 Measurement admission/editors and parent/final acceptance remain separate work.
 
+The [FEC monitor consumer](development/features/unified-qt-workbench/design.md#uiu-ds-01-fec-monitor-recovery-facade)
+formats the accepted public whole-run recovery projection instead of subtracting
+private counters in Qt. Histogram/segment geometry remains presentation only;
+observation-window categories, compared bits/BER and partial/retained-word states
+remain separate. The original independent classification oracle lives in the
+backend. [Consumer evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-fec-monitor-recovery-facade-accepted)
+retires receiver/fec.rs, leaving 24 frozen files/91 sites/three dependencies.
+Parent and final acceptance remain open.
+
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
 

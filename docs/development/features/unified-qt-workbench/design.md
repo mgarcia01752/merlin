@@ -2625,3 +2625,30 @@ classification is factual validation data retained from the project-owned
 GPL-3.0-only Qt recovery test at checkpoint 7428b33. The new typed projection is
 backend code; no Qt chart implementation, geometry, dependency or notice is
 imported into the Apache backend. Existing license files/headers remain intact.
+
+## UIU-DS-01 FEC monitor recovery facade
+
+Consume the paired recovery prerequisite from commit 7752a02a for
+REQ-UIU-02/03/08/19/20/24/27 and UIU-DS-01. Edit the complete receiver/fec.rs
+exception: replace the private counter-based subtraction with a drawing-only
+formatter over FullLoopFecRecovery from ResultData.backend().fec_recovery().
+Preserve every JSON key, label, segment order/fraction, histogram gap, observed
+decoder category, retained-word/partial state and verification chart. No Qt
+scientific recovery calculation remains.
+
+The independent five-word classifier regression is already preserved and passed
+in the backend prerequisite; retire its Qt duplicate when retiring the private
+import. Keep the existing chart allocation and histogram assertions and extend
+the actual worker regression to compare every emitted recovery count with the
+authoritative public result, retaining the separate four-profile archival case. REUSE existing FEC QML overview,
+partial/empty and receiver navigation cases without changing presentation.
+
+Clarify the backend field/API guide's wording: no detected source mismatch is
+different from positive verification when no source bits were compared. This
+is a documentation correction to the existing subtraction, not a decoder/count
+behavior change. The monitor keeps compared bits and BER visible separately.
+
+Level 1 uses targeted Qt Rust/QML, format/Clippy, actual boundary, traceability
+and an optimized build. The preceding exact-wheel API evidence is historical
+prerequisite evidence; no unchanged wheel/scientific/full suite is rerun or
+claimed as a new Qt pass. Parent Level 2 and milestone/final Level 3 stay open.

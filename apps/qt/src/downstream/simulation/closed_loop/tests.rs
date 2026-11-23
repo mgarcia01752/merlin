@@ -245,6 +245,30 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
     );
     assert_eq!(result.job.summary.comparison.bit_errors, 0);
     let source = crate::transmitter_instruments::stage(0, 0);
+
+    // Graph geometry formats the accepted public recovery; it never classifies words.
+    let report_before = serde_json::to_value(result.backend().report()).unwrap();
+    let recovery = result.backend().fec_recovery();
+    let fec_chart = crate::downstream::instruments::receiver::fec::snapshot(&result);
+    assert_eq!(fec_chart["recovery"]["total"], recovery.generated);
+    assert_eq!(fec_chart["recovered"], recovery.recovered);
+    assert_eq!(fec_chart["unrecovered"], recovery.unrecovered);
+    let segments = fec_chart["recovery"]["segments"].as_array().unwrap();
+    for (segment, (key, label, count)) in segments.iter().zip([
+        ("clean", "Recovered", recovery.recovered),
+        ("failed", "Rejected", recovery.rejected),
+        ("mismatch", "Mismatch", recovery.mismatched),
+        ("pending", "Unrecovered", recovery.unrecovered),
+    ]) {
+        assert_eq!(segment["key"], key);
+        assert_eq!(segment["label"], label);
+        assert_eq!(segment["count"], count);
+    }
+    assert_eq!(segments.len(), 4);
+    assert_eq!(
+        serde_json::to_value(result.backend().report()).unwrap(),
+        report_before
+    );
     assert_eq!(source["available"], true, "{source}");
     assert_eq!(source["rows"][0]["value"].as_str().unwrap().len(), 32);
     let coded = crate::transmitter_instruments::stage(1, 0);
