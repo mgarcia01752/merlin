@@ -926,3 +926,121 @@ fn response_admission_honors_its_independent_accepted_epoch_tolerance() {
     )
     .is_err());
 }
+
+#[test]
+fn tx_spectra_keep_independent_frame_output_budgets_and_authoritative_calibrated_power() {
+    use merlin::downstream::{FullLoopObservationPolicy, FullLoopSpectrumQuery, FullLoopStage};
+    // Independent compatibility fixture: three retained frames, 1024-sample CP,
+    // 16K frame prefix (three averages) and 32K continuous prefix (seven averages).
+    let (inputs, mut transmission, sections) = accepted_inputs();
+    transmission.cyclic_prefix_samples = 1024;
+    let options = Options {
+        duration_ms: 1,
+        max_iterations: 10,
+        ..Default::default()
+    };
+    let request = prepare(&transmission, &inputs, &options, &sections).unwrap();
+    let stages = [
+        FullLoopStage::TxIfft,
+        FullLoopStage::TxPrefix,
+        FullLoopStage::TxWindow,
+        FullLoopStage::TxOverlap,
+    ];
+    let mut policy = request.observation_policy().unwrap().settings().clone();
+    for entry in &mut policy.stages {
+        if stages[..3].contains(&entry.stage) {
+            entry.max_events = 3;
+        }
+    }
+    let request = request
+        .with_observations(FullLoopObservationPolicy::new(policy).unwrap())
+        .unwrap();
+    let result = Arc::new(run_one(&request, 60000, &FullLoopControl::new()).unwrap());
+    let before = serde_json::to_value(result.backend().report()).unwrap();
+    let statistics = serde_json::to_value(result.backend().observation_stats()).unwrap();
+    publish(Some(result.clone()));
+    for (index, stage) in stages.into_iter().enumerate() {
+        let expected_averages = match stage {
+            FullLoopStage::TxOverlap => 7,
+            _ => 3,
+        };
+        let query = FullLoopSpectrumQuery {
+            stage,
+            max_averages: expected_averages,
+            ..Default::default()
+        };
+        let expected = match stage {
+            FullLoopStage::TxOverlap => result.backend().calibrated_spectrum(query).unwrap().power,
+            _ => {
+                result
+                    .backend()
+                    .calibrated_spectrum_sequence(query)
+                    .unwrap()
+                    .power
+            }
+        };
+        let full = crate::transmitter_instruments::spectrum(index as i32, 0, 0, false);
+        assert!(full.get("error").is_none(), "{full}");
+        assert_eq!(full["total"], 8192);
+        assert!(full["summary"]
+            .as_str()
+            .unwrap()
+            .contains(&format!("{expected_averages} averages")));
+        assert_eq!(
+            full["channel_power"],
+            serde_json::to_value(expected.channel_power).unwrap()
+        );
+        assert_eq!(
+            crate::transmitter_instruments::spectrum_state(index as i32)["has_result"],
+            true
+        );
+        let zoom = crate::transmitter_instruments::spectrum(index as i32, 100, 32, true);
+        assert!(zoom.get("error").is_none(), "{zoom}");
+        assert_eq!(zoom["channel_power"], full["channel_power"]);
+        assert_eq!(zoom["summary"], full["summary"]);
+        assert_eq!(zoom["start"], 100);
+        assert_eq!(zoom["count"], 32);
+        assert_eq!(zoom["plc_summary"], "");
+        assert!(zoom["frequency_label"]
+            .as_str()
+            .unwrap()
+            .contains("Capture frequency"));
+        assert!(full["points"].as_array().unwrap().len() <= 2048);
+        assert_eq!(
+            crate::transmitter_instruments::spectrum(index as i32, 0, 1, false)["error"],
+            "Display at least two spectrum bins."
+        );
+        assert_eq!(
+            crate::transmitter_instruments::spectrum(index as i32, -1, 32, false)["error"],
+            "Invalid spectrum start."
+        );
+        assert_eq!(
+            crate::transmitter_instruments::spectrum(index as i32, 0, -1, false)["error"],
+            "Invalid spectrum count."
+        );
+        // Zero count means full FFT width, preserving the old out-of-range suffix rejection.
+        assert!(
+            crate::transmitter_instruments::spectrum(index as i32, 100, 0, false)["error"]
+                .is_string()
+        );
+    }
+    for tap in [-1, 4, i32::MAX] {
+        assert_eq!(
+            crate::transmitter_instruments::spectrum(tap, 0, 0, false)["error"],
+            "Invalid TX tap."
+        );
+        assert_eq!(
+            crate::transmitter_instruments::spectrum_state(tap)["has_result"],
+            false
+        );
+    }
+    assert_eq!(
+        serde_json::to_value(result.backend().report()).unwrap(),
+        before
+    );
+    assert_eq!(
+        serde_json::to_value(result.backend().observation_stats()).unwrap(),
+        statistics
+    );
+    publish(None);
+}

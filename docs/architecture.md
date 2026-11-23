@@ -1337,6 +1337,16 @@ gaps/overlaps remain explicit. Rust and native Python share the operation and
 bounded result. [Focused paired evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-calibrated-ordered-frame-api-accepted)
 precedes Qt adoption. No query/default/schema or frozen Qt record changes here.
 
+The [TX spectrum facade adoption](development/features/unified-qt-workbench/design.md#uiu-ds-01-tx-spectrum-facade-adoption)
+now consumes those public operations for retained IFFT/prefix/window diagnostics
+and continuous output. Distinct named 16384/32768-sample presentation policies
+reuse the public capacity planner. Readiness uses public inventory, PLC shading
+uses configured public layout and graphs reuse the shared drawing viewport.
+[Scoped consumer evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-tx-spectrum-facade-accepted)
+preserves actual prefix/average/power/zoom semantics and retires one whole source
+exception: 26 frozen files/94 sites/three dependencies remain. Parent task and
+final numeric acceptance stay open.
+
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
 

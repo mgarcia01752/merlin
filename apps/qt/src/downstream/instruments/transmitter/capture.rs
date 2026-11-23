@@ -4,11 +4,10 @@
  */
 //! Finite copies of existing transmitter boundaries, never simulation inputs.
 use crate::downstream::common::constants::{
-    MAX_INSTRUMENT_TIME_SAMPLES, MAX_TRANSMITTER_MESSAGE_FRAMES,
+    MAX_INSTRUMENT_TIME_SAMPLES, MAX_TRANSMITTER_MESSAGE_FRAMES, MAX_TX_FRAME_SEQUENCE_SAMPLES,
 };
 use merlin::downstream::{
     FullLoopStage as TestPointId, FullLoopStageData as ProbeData, FullLoopStageSnapshot,
-    MAX_STAGE_EVENT_ELEMENTS,
 };
 type IqPair = [f64; 2];
 use serde_json::Value;
@@ -34,7 +33,7 @@ pub(crate) const STAGES: &[TestPointId] = &[
 ];
 
 /// Presentation order of the four actual TX waveform boundaries.
-const WAVE_STAGES: &[TestPointId] = &[
+pub(super) const WAVE_STAGES: &[TestPointId] = &[
     TestPointId::TxIfft,
     TestPointId::TxPrefix,
     TestPointId::TxWindow,
@@ -84,7 +83,7 @@ impl Capture {
                 let limit = if event.stage == TestPointId::TxOverlap {
                     MAX_INSTRUMENT_TIME_SAMPLES
                 } else {
-                    MAX_STAGE_EVENT_ELEMENTS
+                    MAX_TX_FRAME_SEQUENCE_SAMPLES
                 };
                 let count = values.len().min(limit - self.waves[index].len());
                 self.waves[index].extend_from_slice(&values[..count]);

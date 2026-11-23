@@ -15,6 +15,14 @@ TX Output can generate its independent preview; **Run simulation** regenerates
 that preview from frozen source settings. This does not start the full closed
 loop. Opening the SA while the main run is busy never starts another preview.
 
+IFFT, cyclic-prefix and window selections analyze consecutive retained frame
+samples, using at most 16,384 samples. This ordered frame diagnostic preserves
+frames that can have physical gaps or overlaps. TX Output instead uses up to
+32,768 actual continuous output samples. The displayed average count reflects
+the complete analysis windows available within the selected prefix. Both views
+use the backend's authoritative spectrum and electrical/relative calibration;
+switching taps or zooming starts no new simulation.
+
 **Run simulation** is at the lower left; **Close** stays at the lower right.
 **Cancel preview** appears only while the separate TX preview is running. It
 cancels that preview, preserving accepted inputs and any previous completed

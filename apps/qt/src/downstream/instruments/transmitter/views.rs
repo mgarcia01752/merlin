@@ -3,12 +3,17 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Small presentation pages over retained TX samples, bits and cells.
+use super::capture::WAVE_STAGES;
 use crate::downstream::common::constants::{
-    TX_BIT_PREVIEW_PAGE_BITS, TX_INSPECTOR_BITS_PER_ROW, TX_INSPECTOR_ROWS,
+    MAX_INSTRUMENT_TIME_SAMPLES, MAX_TX_FRAME_SEQUENCE_SAMPLES, TX_BIT_PREVIEW_PAGE_BITS,
+    TX_INSPECTOR_BITS_PER_ROW, TX_INSPECTOR_ROWS,
 };
 use crate::downstream::simulation::closed_loop::latest;
-use docsis_ofdm_fec::signal_processing::waveform::spectrum::estimate;
-use merlin::downstream::FullLoopStage as TestPointId;
+use crate::shared::presentation::constants::MIN_SPECTRUM_DISPLAY_BINS;
+use merlin::downstream::{
+    ApiResult, ChannelSpectrum, ErrorCode, FullLoopResult, FullLoopSpectrumQuery,
+    FullLoopStage as TestPointId,
+};
 use serde_json::{json, Value};
 
 const STAGE_IDS: [TestPointId; 9] = [
@@ -33,6 +38,9 @@ const NAMES: [&str; STAGE_IDS.len()] = [
     "PLC Data I/Q",
     "PLC Preamble I/Q",
 ];
+const WAVE_NAMES: [&str; WAVE_STAGES.len()] =
+    ["TX IFFT", "TX Cyclic Prefix", "TX Window", "TX Output"];
+
 /// Returns a fixed-size page and scatter view of one genuine TX boundary.
 /// # Arguments
 /// * `index` - Source/coding/bits/labels/mapped/interleaved/bins/PLC selector.
@@ -140,62 +148,117 @@ pub(crate) fn stage_previews() -> Value {
 
 /// Describes one retained TX waveform tap without calculating a spectrum.
 /// # Arguments
-/// * `tap` - IFFT, prefix, window or overlap-add index0..3.
+/// * `tap` - Existing IFFT/prefix/window/overlap selector, in the shared registration order.
 /// # Returns
-/// SA readiness with local run dispatch disabled and an explicit reference plane.
+/// Original SA readiness/labels with local run dispatch disabled; absent history stays absent.
 pub(crate) fn spectrum_state(tap: i32) -> Value {
-    let names = ["TX IFFT", "TX Cyclic Prefix", "TX Window", "TX Output"];
-    let ids = [
-        TestPointId::TxIfft,
-        TestPointId::TxPrefix,
-        TestPointId::TxWindow,
-        TestPointId::TxOverlap,
-    ];
-    let index = usize::try_from(tap).ok().filter(|i| *i < 4);
+    let index = usize::try_from(tap)
+        .ok()
+        .filter(|index| *index < WAVE_STAGES.len());
     let result = latest();
-    let available = index
-        .zip(result.as_ref())
-        .is_some_and(|(i, r)| !r.observations.tx.waves[i].is_empty());
-    json!({"has_result":available,"can_generate":false,"busy":false,"result_token":format!("{:?}-{tap}",result.as_ref().map(|r|r.job.elapsed_ms)),"tap_name":index.map(|i|names[i]).unwrap_or("Unavailable"),"tap_id":index.map(|i|ids[i]),"tap_description":"TX complex baseband I/Q · before channel","reason":if available {""} else {"Use Start on the main workbench to capture this TX tap."}})
+    let available = index.zip(result.as_ref()).is_some_and(|(index, result)| {
+        result
+            .backend()
+            .stage_inventory()
+            .iter()
+            .any(|info| info.stage == WAVE_STAGES[index] && info.retained_elements > 0)
+    });
+    let reason = match available {
+        true => "",
+        false => "Use Start on the main workbench to capture this TX tap.",
+    };
+    json!({"has_result":available,"can_generate":false,"busy":false,
+        "result_token":format!("{:?}-{tap}",result.as_ref().map(|result|result.job.elapsed_ms)),
+        "tap_name":index.map(|index|WAVE_NAMES[index]).unwrap_or("Unavailable"),
+        "tap_id":index.map(|index|WAVE_STAGES[index]),
+        "tap_description":"TX complex baseband I/Q · before channel","reason":reason})
 }
 
-/// Calculates a viewport from actual TX time samples using the shared estimator.
+fn observed_power(
+    result: &FullLoopResult,
+    query: FullLoopSpectrumQuery,
+) -> ApiResult<ChannelSpectrum> {
+    match query.stage {
+        TestPointId::TxOverlap => Ok(result.calibrated_spectrum(query)?.power),
+        _ => Ok(result.calibrated_spectrum_sequence(query)?.power),
+    }
+}
+
+/// Formats authoritative calibrated TX spectra within the unchanged retained-sample policies.
 /// # Arguments
-/// * `tap` - Waveform reference plane0..3.
+/// * `tap` - Shared IFFT/prefix/window/overlap selector.
 /// * `start` - Nonnegative first FFT display bin.
-/// * `count` - Positive bin count, or zero for full span.
-/// * `capture_axis` - Map frequency labels to the capture without RF conversion.
+/// * `count` - At least two bins, or zero for the existing full-FFT-width convention.
+/// * `capture_axis` - Physical capture labels instead of centered baseband coordinates.
 /// # Returns
-/// Bounded viewport or explicit missing/invalid-data error; no bits receive an FFT.
+/// Existing bounded SA viewport with unchanged labels, PLC shading and full-band power.
+/// Frame taps preserve their ordered-frame prefix; output uses physically continuous samples.
+/// All PSD/calibration/window planning comes from public Rust operations; no run is started.
 pub(crate) fn spectrum(tap: i32, start: i32, count: i32, capture_axis: bool) -> Value {
     let get = || -> Result<Value, String> {
         let result = latest().ok_or("Run the simulation to capture TX samples.")?;
-        let samples = &result
-            .observations
-            .tx
-            .waves
+        let stage = *WAVE_STAGES
             .get(usize::try_from(tap).map_err(|_| "Invalid TX tap.")?)
             .ok_or("Invalid TX tap.")?;
-        let spectrum = estimate(
-            result.job.settings.transmission.subcarrier_spacing,
-            result.job.settings.layout.zero_frequency_hz,
-            samples,
-        )
-        .map_err(|e| e.to_string())?;
-        let layout = docsis_ofdm_fec::transmission::layout::CarrierLayout::new(
-            &result.job.settings.transmission,
-            &result.job.settings.layout,
-        )
-        .map_err(|e| e.to_string())?;
-        crate::downstream::instruments::channel::channel_viewport(
-            spectrum,
+        let backend = result.backend();
+        let transmission = &backend.inputs().transmission;
+        let budget = match stage {
+            TestPointId::TxOverlap => MAX_INSTRUMENT_TIME_SAMPLES,
+            _ => MAX_TX_FRAME_SEQUENCE_SAMPLES,
+        };
+        let query = FullLoopSpectrumQuery {
+            stage,
+            max_averages: transmission
+                .spectrum_average_capacity(budget)
+                .map_err(|cause| cause.message().to_owned())?,
+            ..Default::default()
+        };
+        // Preserve the old missing-sample presentation and numerical-error ordering.
+        // This is an error label, not an independently enforced analysis work limit.
+        let full = observed_power(backend, query.clone()).map_err(|cause| match cause.code() {
+            ErrorCode::MissingCoverage | ErrorCode::InvalidIdentifier => {
+                "Spectrum needs 1..32 complete overlapping FFT windows.".to_owned()
+            }
+            _ => cause.message().to_owned(),
+        })?;
+        let start = usize::try_from(start).map_err(|_| "Invalid spectrum start.")?;
+        let count = if count == 0 {
+            full.fft_samples
+        } else {
+            usize::try_from(count).map_err(|_| "Invalid spectrum count.")?
+        };
+        if count < MIN_SPECTRUM_DISPLAY_BINS {
+            return Err("Display at least two spectrum bins.".into());
+        }
+        let selected = if start == 0 && count == full.fft_samples {
+            // Full span reuses the original estimate; zoom needs precise original-bin buckets.
+            None
+        } else {
+            Some(
+                observed_power(
+                    backend,
+                    FullLoopSpectrumQuery {
+                        start,
+                        count,
+                        ..query
+                    },
+                )
+                .map_err(|cause| cause.message().to_owned())?,
+            )
+        };
+        // Only the fixed configured PLC interval is drawn; no scattered-role phase is inferred.
+        let layout = transmission
+            .physical_layout(&backend.inputs().profile, 0, 0, 0)
+            .map_err(|cause| cause.message().to_owned())?;
+        Ok(crate::shared::presentation::spectrum::viewport(
+            selected.as_ref().unwrap_or(&full),
+            &full,
+            &layout.layout,
             start,
             count,
             capture_axis,
             "TX complex baseband · before channel",
-            &layout,
-            &result.job.settings.impairments.power,
-        )
+        ))
     };
     get().unwrap_or_else(|error| json!({"error":error,"points":[],"x_ticks":[],"y_ticks":[]}))
 }

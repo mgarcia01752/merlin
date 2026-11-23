@@ -2536,3 +2536,32 @@ all previous operation rows/types/native members are preserved. The evidence
 records the stale-reference failure, current Rust reference refresh, unchanged
 wheel reuse and explicit executed/not-required/deferred scopes. No Qt entry is
 retired; parent Level 2 and milestone/final Level 3 remain pending.
+
+## UIU-DS-01 TX spectrum facade adoption
+
+After API prerequisite 8cf1f7e, migrate the remaining TX spectrum functions in
+views.rs without changing QML controls, axis conventions or accepted samples.
+REQ-UIU-02/08/09/24/27 and UIU-DS-01 own this Level 1 unit; the parent stays open.
+
+| Owner / disposition | Reuse and compatibility |
+| --- | --- |
+| EDIT `apps/qt/src/downstream/instruments/transmitter/views.rs` | REUSE public stage inventory for readiness, calibrated_spectrum_sequence for IFFT/prefix/window and calibrated_spectrum for continuous TX overlap. Existing capacity helper preserves separate 16384/32768 sample prefixes. Remove private estimator and CarrierLayout calls. Reuse the accepted shared presentation viewport, public configured PLC interval and unchanged labels/full-span/zoom/power behavior. |
+| EDIT `capture.rs` and directional common constants | SHARE the actual four-stage selector order between capture and viewer. Name the legacy frame-sequence sample policy separately from the backend event budget and continuous-output policy; retain equal-valued policies independently. |
+| EDIT existing Qt closed-loop tests | Preserve every existing stage/SA assertion. Add a three-frame, supported 1024-CP actual run to verify original frame-prefix averages, seven-window bounded continuous output, calibrated power/zoom, invalid selections and unchanged report/retention. |
+| EDIT spectrum/transmitter user guides | Explain existing ordered-frame versus continuous-output sampling, public ownership and retained sample budgets. No visual layout/control or rendered-value change requires replacement screenshots. |
+
+Level 1 runs affected Qt Rust and QML navigation/SA cases, Qt formatting/Clippy,
+actual dependency-boundary audit, documentation/traceability and the latest
+optimized Qt build. Backend/binding code and accepted APIs are unchanged; another
+wheel, full scientific/native suite and unrelated native startup/project probes
+are not required. Level 2 task and Level 3 milestone/final gates remain pending.
+Retire only the entire views.rs exception after compatibility passes; preserve
+every other frozen hash and the original history.
+
+This [Level 1 consumer is accepted](validation.md#uiu-ds-01-tx-spectrum-facade-accepted):
+two actual Qt Rust cases, two QML behavior cases, actual boundary audit, scoped
+Clippy/formatting, optimized build and documentation/traceability checks pass.
+The explicit three-frame/long-CP fixture preserves independent three-/seven-average
+prefix anchors and public power/zoom/error behavior. One full exception retires;
+26 files/94 sites/three dependencies remain. Backend/native code is unchanged,
+and the evidence identifies not-required suites and pending Level 2/3 gates.

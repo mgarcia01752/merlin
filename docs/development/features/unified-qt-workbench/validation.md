@@ -2089,3 +2089,40 @@ changed; no full workspace/Qt/native/CLI/project/packaging suite is claimed.
 Qt adoption remains the next focused consumer. This API unit retires no frozen
 entry: 27 files/96 sites/three dependencies remain. Official UIU-DS-01 Level 2,
 major/final Level 3 and the final numeric audit remain pending.
+
+## UIU-DS-01 TX spectrum facade accepted
+
+[Design/owners](design.md#uiu-ds-01-tx-spectrum-facade-adoption),
+[exact evidence](tx-spectrum-facade-evidence.json),
+[architecture](../../../architecture.md#unified-qt-public-api-boundary),
+[REQ-UIU-02](../../../requirements.md#req-uiu-02),
+[REQ-UIU-08](../../../requirements.md#req-uiu-08),
+[REQ-UIU-09](../../../requirements.md#req-uiu-09),
+[REQ-UIU-24](../../../requirements.md#req-uiu-24),
+[REQ-UIU-27](../../../requirements.md#req-uiu-27) and
+[UIU-DS-01](../../checklist.md#task-uiu-ds-01) trace this consumer.
+
+Qt now queries public calibrated ordered-frame/continuous results, with separate
+named 16384/32768-sample prefixes planned by the accepted public capacity method.
+Public inventory supplies readiness and configured public layout supplies fixed
+PLC bounds. Shared drawing-only formatting preserves axes, scaling, labels and
+zoom-independent calibrated/relative full-band power. No private estimator or
+CarrierLayout remains in views.rs. One whole exception retires, leaving 26
+files/94 reference sites/three scientific dependencies; all other frozen entries
+and prior history remain exact.
+
+Level 1 passes two actual Qt Rust cases, two QML behavior cases (four including
+harness initialization/cleanup), actual locked boundary audit, Qt formatting/
+all-target Clippy, optimized build and documentation/traceability checks. The
+new supported long-CP/three-frame run independently preserves three frame-prefix
+averages and seven continuous-output averages, authoritative power, zoom/axis/
+PLC and error behavior, plus immutable report/retention. Every previous worker/
+instrument assertion remains. The latest optimized executable hash is recorded.
+
+Backend/API/native sources and QML/registration/lifecycle/persistence contracts
+are unchanged. Another wheel, root/scientific/native/complete Qt suite, unrelated
+startup/Open and packaging checks were not required; the evidence records why
+and makes no such pass claim. Existing screenshots still describe the unchanged
+appearance. User guides clarify existing sampling meanings and accepted PSD
+units. Official parent Level 2, milestone/final Level 3 and numeric audit remain
+pending.

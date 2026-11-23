@@ -17,6 +17,9 @@ and window boundaries. After main **Start**, the SA uses that run's actual TX
 samples. Before a full run, TX Output can generate the existing transmitter-only
 preview with **Run simulation**; that preview does not populate other inspectors.
 Wheel/drag zoom and **Full Span** use the shared analyzer controls.
+IFFT/prefix/window use retained frame diagnostics; TX Output uses the continuous
+output boundary. Their separate sample budgets and sampling meanings are
+explained in the [Spectrum Analyzer guide](spectrum-analyzer.md).
 
 ![TX output Spectrum Analyzer](../images/workbench/transmitter-output-sa-dark.png)
 

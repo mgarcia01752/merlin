@@ -38,6 +38,10 @@ pub(crate) const PROFILE_COMPLETION_CAPACITY: usize = 1;
 /// Existing contiguous time-window display cap shared by TX and RX instruments.
 /// This is presentation retention, separate from per-event backend query budgets.
 pub(crate) const MAX_INSTRUMENT_TIME_SAMPLES: usize = 32768;
+/// Legacy concatenated IFFT/prefix/window diagnostic prefix, in actual samples.
+/// Independent of the equal-valued backend per-event retention limit and the
+/// continuous-output budget above; its source frames may have physical gaps.
+pub(crate) const MAX_TX_FRAME_SEQUENCE_SAMPLES: usize = 16384;
 
 /// Whole transmitted PLC frames retained for the existing message viewer.
 /// Independent of decoder-word and chart-bar limits that also happen to be 64.

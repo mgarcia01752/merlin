@@ -114,7 +114,8 @@ and [receiver channel estimation](receiver-estimation/README.md).
 | ENBW | Equivalent Noise Bandwidth: the effective noise bandwidth of the FFT window. It differs from the frequency spacing between FFT bins. |
 | FEC | Forward Error Correction: adds redundancy so a receiver can detect/correct errors. |
 | Observation duration | Source observation interval configured in Configure WorkBench. Acquisition and completion/drain can add processing beyond that interval. |
-| PSD | Power Spectral Density: power per unit frequency. MERLIN's time-sample SA uses normalized dB/Hz, not calibrated RF dBm or dBmV. |
+| Ordered frame diagnostic | Analyzes consecutive retained frame-stage samples while keeping their original physical gaps or overlaps distinct from a continuous waveform. See [Spectrum Analyzer sampling](spectrum-analyzer.md). |
+| PSD | Power Spectral Density: power per unit frequency. MERLIN's time-sample SA shows normalized dB/Hz or dBmV/Hz when an explicit electrical reference is accepted. This does not imply RF upconversion or a dBm measurement. |
 | Spectrum Analyzer (SA) | Displays power versus frequency for a selected test point. TX and RX instruments use distinct retained boundaries. |
 
 See [FEC](fec-codec.md), [run/results](closed-loop-workbench.md) and the
