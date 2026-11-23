@@ -3337,3 +3337,27 @@ transport tests. This source-only prerequisite traces REQ-UIU-03/06/07 through
 UIU-SESSION-01; real direction wiring and the pending aggregate accounting
 decision remain required. Validate standalone tests/Clippy/format, final boundary
 and canonical traceability without rebuilding unchanged scientific consumers.
+
+## UIU-SESSION-01 actual upstream controller preparation
+
+The isolated session agent prepares an actual public-API consumer for
+REQ-UIU-03/06/07 and UIU-SESSION-01, reusable by later UIU-US-02/REQ-UIU-12.
+Review the complete prepared commit before adopting; no main/Cargo/bridge/QML
+registration or scientific implementation belongs in this preparation.
+
+| Disposition / exact owner | Contract |
+| --- | --- |
+| Add `apps/qt/src/upstream/mod.rs`, `session.rs` | `PreparedSession::from_document(document, observation_policy, reservation)` calls existing public admission off-GUI. `UpstreamController::new(key, prepared)` binds an immutable host-issued identity. |
+| Reuse shared shell transport | `start(lease, control, result_reservation, capacity)` runs only public `Simulation::run_with_control`. The same `Arc<UpstreamControl>` belongs to host admission and the controller; cancellation is idempotent. No separate thread/terminal abstraction. |
+| Add controller lifecycle | Progress returns the real public snapshot with its token; pause/resume/cancel require that exact active token. `poll` consumes at most one event and returns the original typed terminal/sole lease. The canonical host must revalidate before UI adoption. |
+| Preserve scientific ownership | Move the real Simulation out of a short-lock slot during execution; an unwind guard restores it on every operation exit. Charged `Arc<Retained<...>>` owners keep configuration and queued/old report reservations through actual release. |
+| Add `apps/qt/src/upstream/tests.rs` | Existing tracked 50-kHz public configuration exercises actual complete/cancel/pause/error results, provenance, stale identity and charged alias/disposal behavior. Fixed accounting ticks test reservation lifetime only, never a backend byte bound. |
+| Reuse agent-owned handoff | Exact origin, focused commands/artifacts and remaining host/registration/resource hooks. Lead alone updates canonical documentation/checklist. |
+
+The controller trusts independently audited host reservations and introduces no
+byte estimates/defaults. It must not establish aggregate acceptance using fixture
+counter ticks. Run actual public-API tests and warnings-denied Clippy with existing
+compiled libraries, plus format/boundary/traceability. No changed scientific/API/
+binding/layout source requires a new wheel or full workspace regression. Real Qt
+registration, canonical two-direction integration, the pending retention decision
+and complete Level 2 session acceptance remain mandatory before checking the task.

@@ -1567,6 +1567,15 @@ operations remain available. Real adapter adoption is pending. The separate
 [retention accounting proposal](development/features/unified-qt-workbench/retention-contract-decision.md)
 does not change the accepted memory contract until its decision is recorded.
 
+The [upstream application controller](development/features/unified-qt-workbench/design.md#uiu-session-01-actual-upstream-controller-preparation)
+under `apps/qt/src/upstream/` owns a real public `Simulation` and actual retained
+reports. It uses the shared terminal transport, exact-token controls and charged
+shared owners; an unwind guard restores its exclusively executing scientific
+session. [Focused primary-checkout evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-actual-upstream-controller-preparation)
+includes real public runs. Qt registration, canonical host token revalidation and
+audited aggregate admission remain pending; this source-only consumer does not
+accept SESSION or upstream Workbench execution.
+
 Normal project files remain direction-specific. Open validates/detects direction
 and guards that target tab's dirty state before mutation. Schema 1/2 retain DS
 interpretation; the [selected schema 3 contract](development/features/unified-qt-workbench/design.md#uiu-api-05-direction-aware-public-project-admission) explicitly tags direction. Its public backend is [accepted under API-05](development/features/unified-qt-workbench/validation.md#uiu-api-05-project-backend-accepted). Backend/native

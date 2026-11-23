@@ -200,3 +200,135 @@ with ordinary `mod tests;`. The existing final Qt boundary rejects external
 source-tree inclusion. Test assertions and production logic remain unchanged;
 lead-owned final checks and acceptance are recorded in the canonical feature
 validation. The prepared commit above remains historical branch evidence.
+
+## UIU-SESSION-01 upstream controller preparation
+
+Prepared after `93dd675fc34250ce961d14c640f9decd76f66f16` with the lead-approved
+interface. The immediate owner is
+[UIU-SESSION-01](../../../checklist.md#task-uiu-session-01), serving
+[REQ-UIU-03](../../../../requirements.md#req-uiu-03),
+[REQ-UIU-06](../../../../requirements.md#req-uiu-06) and
+[REQ-UIU-07](../../../../requirements.md#req-uiu-07); later reuse belongs to
+[UIU-US-02](../../../checklist.md#task-uiu-us-02) and
+[REQ-UIU-12](../../../../requirements.md#req-uiu-12).
+[Canonical session ownership](../../../../architecture.md#unified-qt-session-and-file-lifecycle)
+and the [approved design](../design.md) remain authoritative. This is preparation,
+not official task, Qt registration or aggregate-memory acceptance. The earlier
+`93dd675` tabs remain unintegrated.
+
+### Owner/interface contract
+
+Only three new application files and this handoff change:
+
+| Add | Responsibility |
+| --- | --- |
+| `apps/qt/src/upstream/mod.rs` | Unregistered exports and acceptance boundary. |
+| `apps/qt/src/upstream/session.rs` | Actual public session/document, exclusive worker ownership, charged actual reports and exact-token controls. |
+| `apps/qt/src/upstream/tests.rs` | Ten real public-API fixture tests inside the source tree. |
+
+Reuse is direct: `merlin::upstream::{ConfigurationDocument, Simulation,
+RunControl, BatchReport}` retains validation/science/finite options/original
+errors; public shell worker exports at primary `2ed5a1e` supply the sole
+thread/terminal transport. The unchanged supported fixture is
+`examples/cli/upstream/us-50khz.json`. No engine, scientific API, saved schema,
+serialization, binding, generic shell or registration code changes.
+
+- `PreparedSession::from_document(document, observations, reservation)` admits
+  through public operations off-GUI and owns the actual session/source document.
+  `UpstreamController::new(key, prepared)` requires a host-issued upstream key.
+- `inspect` borrows the actual idle session immutably, returning Busy rather than
+  waiting. Owned copies/instrument snapshots need separate host reservations.
+  Changed science requires a new prepared owner and changed canonical identity.
+- `start(lease, control, result_reservation, capacity)` checks the immutable key
+  and calls only public `Simulation::run_with_control` via shared transport.
+  A short-lock application guard restores the actual session on return/error/
+  unwind. `StartError::into_parts` returns the original unstarted lease for host
+  acknowledgement, including OS spawn errors.
+- The same `Arc<UpstreamControl>` must reach shell `begin` and `start`; it wraps
+  the actual public control with one cancellation request across gate/controller/
+  destruction. `progress` returns the public scalar snapshot with its token.
+  `pause/resume/cancel` require the exact active token; pause request is not ack.
+- `poll` consumes at most one event. Actual reports, including real partial ones,
+  carry their original token. Original typed `ApiError` remains in returned
+  `WorkerTerminal<ApiError>`. API failure/panic preserves the old report. Host
+  consumes or drops every known terminal; disconnection without terminal retains
+  local Busy conservatively. Drop cancels without joining or releasing early.
+- Configuration and result charges live inside shared retained payloads, surviving
+  worker/queue/old-view aliases and destruction. Cloning underlying data requires
+  another reservation. The controller owns no budget and cannot verify provenance;
+  the host supplies independently audited, pre-reserved charges from the correct
+  application budget, including preparation peak ownership.
+
+Public preview/options/input-length/policy counts give finite populations but
+not private observation/playback capacities or a deep reachable-byte bound.
+Serialized size is not heap size. No estimate or numerical policy is invented;
+aggregate proof stays pending. Test accounting ticks prove ownership only.
+
+### Executed focused evidence
+
+Exact command arrays, logs and source/artifact hashes are in the ignored receipt:
+
+`/home/dev01/Projects/merlin-worktrees/qt-session-shell/docs/development/local/session-shell/upstream-validation/receipt.json`
+
+Pinned `rustc` compiles the real public-API tests against cached
+`libmerlin-3892f0def2e621d5.rlib` (`downstream,native-input,upstream`). The harness
+uses the accepted branch shell plus an exact primary worker copy, omitting only
+its own test-module declaration. Ten tests pass, zero fail; 16 earlier foundation
+tests compile but are filtered, not rerun. Cases:
+
+1. Actual completed recovery, original document bytes and real report coverage.
+2. Acknowledged pause, global other-direction Busy and actual resume completion.
+3. Paused cancellation/actual partial report plus old-report charge retention.
+4. Invalid real-document rejection preserving the existing accepted owner.
+5. Genuine public `control.busy` failure preserving old report/session.
+6. Changed generation/replaced session rejection returning the unstarted lease.
+7. Stale envelope carrying a real prior report rejected without adoption.
+8. Queued rendezvous report/disconnection cleanup after actual completion.
+9. Paused destruction/cancellation with eventual terminal and charge cleanup.
+10. Application unwind restoring the actual accepted public session.
+
+Direct `clippy-driver -D warnings -D clippy::all`, pinned `rustfmt --check`,
+whitespace/allowlist/SPDX/banner/comment/numeric review and Python-guide currency
+pass. Harness-only allowances cover unused exports/dead code for unregistered
+modules; no Clippy lint is suppressed. The stale-envelope injection tests identity,
+not a fake engine. Counter charges, callback capacity and scheduling deadline are
+explicit harness anchors, not scientific defaults or deep-byte measurements.
+
+| Source/artifact | SHA-256 |
+| --- | --- |
+| `upstream/mod.rs` | `2f0795590115d8366560441df0e07d0183fa3c9218a3c0ad8a5ea4057f650d0a` |
+| `upstream/session.rs` | `8eb393fe83e35e8b2d4af84c77339b5104011e5d45988cbfc6dbbc03dfec77a4` |
+| `upstream/tests.rs` | `258f45e9f74434ce957198618b12025b632e81d8713620c73c53bb27ed511366` |
+| Ignored `receipt.json` | `daea87e5a93fd0d2c7f911f693ba962510a312ddbb772464a777b6c658799fe4` |
+| Ignored `upstream-tests` | `d1c36b9c156918a5a3af39a04f6bf57da054b19b11260c7d14f8f0be9b5b0a64` |
+
+The receipt also hashes the exact shell foundation, primary worker, fixture,
+backend cache/fingerprint, harness, copied worker and logs. Disk before/after:
+79% used, 25 GiB available, inodes 13%; this unit's ignored outputs occupy 14 MiB.
+No shared target/cache, input evidence or other checkout was edited or cleaned.
+
+### Remaining lead hooks/gates
+
+1. Review/adopt only these files and this new handoff section, preserving the
+   primary's earlier test-placement adaptation. Register/wire the actual owner
+   under lead control; tabs, build, bridge, Cargo and QML remain separate.
+2. Prepare off-GUI with audited host reservations/provenance. Recheck actual
+   Open/configuration guards and advance canonical identity on replacement;
+   never rebind changed science under an unchanged key.
+3. Share the control Arc/genuine gate/lease and validated callback-count policy.
+   Poll without Qt waits. Revalidate every returned token against canonical
+   `ShellSessions` immediately before current UI/store adoption: an immutable
+   retired controller only validates its old key. Record actual pause/resume ack
+   in the gate; gate cancellation reaches the same once-only adapter. Consume
+   terminal leases through canonical finish/drop; never free admission on request.
+4. Recompile/rerun against primary sources, then validate actual upstream Qt
+   lifecycle/downstream isolation/responsiveness and native targets. No Cargo,
+   shared-target build, wheel/full workspace/Python/CLI, full Qt/native, packaging,
+   installation or hosted checks were run. Cached-library tests are preparation,
+   not primary-source rebuild evidence. Aggregate memory, FILE/RECOVERY,
+   instruments, expanded Level 1/2 and final Level 3 remain pending. Architecture/
+   checklist were reviewed without changing official ownership or status.
+
+Focused save SHA/clean-tree verification are reported separately. No push,
+merge, release or installation occurs. The helper's deterministic Python-guide
+refresh must retain its existing hash.

@@ -3051,3 +3051,47 @@ material clarification for user decision. It remains proposed and changes no
 accepted requirement, byte guarantee or task state. Controller/terminal work can
 continue independently; aggregate accounting acceptance cannot precede that
 decision and the demonstrated public metadata prerequisites.
+
+## UIU-SESSION-01 actual upstream controller preparation
+
+[Design](design.md#uiu-session-01-actual-upstream-controller-preparation),
+[architecture](../../../architecture.md#unified-qt-session-and-file-lifecycle),
+[exact evidence](session-upstream-controller-evidence.json) and
+[UIU-SESSION-01](../../checklist.md#task-uiu-session-01) trace REQ-UIU-03/06/07.
+The lead reviews and adopts the isolated d1a1aa7 preparation: three byte-exact
+source files and only the new controller handoff section. The prior primary
+handoff adaptation remains intact; 93dd675 shell tabs remain unintegrated.
+Later Workbench execution reuses this owner under UIU-US-02/REQ-UIU-12.
+
+The controller owns an actual public upstream Simulation/document and real
+complete/partial reports. Admission is off-GUI; execution moves the scientific
+session outside the short lock and an unwind guard restores it. Shared terminal
+transport carries the genuine host-issued token/lease. Public controls preserve
+actual pause/progress/cancel behavior. Charged Arc owners follow queued/old report
+aliases and destroyed controllers. Local immutable-key checks never substitute
+for canonical host revalidation before UI adoption.
+
+All **37 combined primary-checkout cases** pass: 27 application ownership/transport
+cases plus ten real public-API controller cases. The unchanged 50-kHz fixture
+checks complete recovery/original provenance, actual acknowledged pause/resume,
+paused partial cancellation, failed admission and genuine public-control Busy
+errors, stale generation/session/run events, queued/old charged aliases,
+destruction and restoration after application unwind. No failures or skips.
+Warnings-denied Clippy (including all normal lints), formatting and the unchanged
+final zero-scientific-dependency boundary pass. The primary harness applies no
+lint allowances; agent-only unregistered-harness allowances remain recorded as
+historical preparation context.
+
+Fixed accounting ticks test reservation lifetime only; they are explicitly not
+backend allocation estimates. Public metadata/preallocation bounds and the
+[pending retention decision](retention-contract-decision.md) remain unresolved.
+No aggregate acceptance is inferred from these tests.
+
+This is source-only Level 1 acceptance. No scientific/API/binding/manifest/
+registration/schema/QML/fixture bytes change. Reuse the compiled facade artifact;
+its exact hash and feature fingerprint are recorded. Another executable/wheel,
+Qt/QML, full workspace, CLI or packaging build/regression is not required here.
+The optimized executable remains the current accepted downstream artifact.
+Canonical two-direction host wiring, actual downstream shared-worker migration,
+Qt runtime/Level 2 and all later checklist gates remain pending; no task checkbox
+changes. No push, merge, release or installation occurs.

@@ -30,6 +30,16 @@ sole writer/committer in each isolated worktree. The lead alone commits accepted
 integration in the primary checkout. Any reassignment requires an explicit
 handoff before another writer starts.
 
+After accepting the application foundation and downstream explicit context,
+the lead reassigns the idle session/shell agent to new `apps/qt/src/upstream/`
+controller source/tests and its existing handoff only. Accepted shell source is
+now lead-owned and must not be edited in that worktree. The agent consumes the
+lead's shared terminal transport read-only, with real public upstream API tests
+in an ignored standalone harness using existing compiled libraries. It performs
+no Cargo/shared-target build or global registration. The upstream presentation
+agent's QML scope does not overlap this Rust preparation. This reassignment does
+not accept SESSION/US-02 or the pending aggregate-memory contract.
+
 Agents must not edit shared components, CXX-Qt bridge declarations/registration,
 Cargo manifests/locks, global QML registration, application startup, existing
 shell/downstream files or canonical documentation. Missing integration hooks are
