@@ -1690,3 +1690,27 @@ Only one Rust enum type export is added; all 567 Rust/540 native callable rows,
 Qt consumption, its constants, parent DS-01 and final numerical review remain
 pending. No Qt, engine, Python runtime implementation, dependency or saved schema
 is changed. Historical full-suite/platform acceptance is kept separate.
+
+## UIU-DS-01 wall-time adapter facade accepted
+
+The [wall-time evidence](downstream-wall-time-evidence.json) accepts the timing
+adapter's use of the separately committed public ChannelPhase enum. Existing
+elapsed/profile/progress-age values, freeze behavior and all six phase labels
+are preserved. Standard Duration conversion replaces inline milliseconds-to-
+seconds division. Shared presentation constants distinguish seconds/minute from
+minutes/hour and derive seconds/hour; neither definition is a simulation budget.
+The existing named profile-timing cap remains with its current result owner
+pending that owner's migration, avoiding a duplicate policy definition.
+
+Three scoped Rust cases pass, retaining all original assertions and adding
+all-phase label coverage. One focused QML elapsed/pause/completion case passes
+(three harness checks including initialization/cleanup). Qt all-target Clippy,
+formatting, 20 boundary regressions, current guard, optimized build and six
+native project/startup checks pass. One exact original frozen entry retires;
+the other 37 files, three scientific dependencies and immutable initial record
+are unchanged. No QML, backend, binding, saved setting or dependency changes.
+
+This is scoped presentation acceptance. The full-loop worker and other science
+consumers, session isolation, complete DS-01 and final line-by-line numeric audit
+remain pending. Backend/native API suites retain the separately committed
+prerequisite evidence; no full historical workspace gate is repeated here.

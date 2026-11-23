@@ -1237,7 +1237,8 @@ calibration or logarithmic power calculations. A shared presentation owner forma
 public spectrum buckets and physical PLC bounds. Existing legacy run/instrument
 providers remain separate migration debt until their own facade adoption.
 [Scoped consumer acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted)
-passes with the latest optimized Qt executable; 38 frozen legacy files remain.
+passes with the optimized Qt executable; subsequent scoped migration leaves 37
+frozen legacy files.
 
 The [resource build-cache correction](development/features/unified-qt-workbench/validation.md#uiu-ds-01-resource-build-cache-accepted)
 keeps branding resource generation in the Qt build adapter. Existing pinned
@@ -1251,6 +1252,10 @@ alongside ChannelProgress and ChannelJobStatus. Native Python control snapshots
 retain their existing snake-case phase strings. This is the same engine-owned
 type/serialization, not a separate Qt phase model; see the
 [progress phase prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-public-progress-phase-prerequisite).
+RunTiming now consumes that public enum for the unchanged status labels and
+uses standard Duration conversion plus shared, unit-named clock constants for
+elapsed-time formatting. Its wall clock remains independent of simulation time;
+see [scoped timing acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-wall-time-adapter-facade-accepted).
 
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).

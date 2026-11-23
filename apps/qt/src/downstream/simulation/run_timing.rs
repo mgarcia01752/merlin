@@ -3,9 +3,15 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Monotonic wall timing and bounded worker progress, separate from simulation time.
-use docsis_ofdm_fec::simulation::channel::ChannelPhase;
+use crate::shared::presentation::constants::{
+    MINUTES_PER_HOUR, SECONDS_PER_HOUR, SECONDS_PER_MINUTE,
+};
+use merlin::downstream::ChannelPhase;
 use serde_json::{json, Value};
-use std::{sync::Mutex, time::Instant};
+use std::{
+    sync::Mutex,
+    time::{Duration, Instant},
+};
 
 const MAX_PROFILE_TIMINGS: usize =
     crate::downstream::instruments::receiver::performance::MAX_PROFILES;
@@ -32,12 +38,13 @@ fn millis(start: Instant, end: Instant) -> u64 {
 }
 
 fn formatted(milliseconds: u64) -> String {
-    let seconds = milliseconds / 1000;
+    let seconds = Duration::from_millis(milliseconds).as_secs();
+    // Clock fields use at least two display digits; hours remain unbounded.
     format!(
         "{:02}:{:02}:{:02}",
-        seconds / 3600,
-        seconds / 60 % 60,
-        seconds % 60
+        seconds / SECONDS_PER_HOUR,
+        seconds / SECONDS_PER_MINUTE % MINUTES_PER_HOUR,
+        seconds % SECONDS_PER_MINUTE
     )
 }
 
@@ -77,7 +84,7 @@ impl RunTiming {
 
     /// Records actual post-step progress without advancing the engine.
     /// # Arguments
-    /// * `phase` - Core processing phase after a completed step.
+    /// * `phase` - Public downstream processing phase after a completed step.
     /// * `recovered` - Current profile's completed payload-word count.
     pub(crate) fn progress(&self, phase: ChannelPhase, recovered: u64) {
         let mut state = self.state.lock().unwrap_or_else(|error| error.into_inner());
@@ -140,10 +147,18 @@ impl RunTiming {
                 || millis(state.profile_started, end),
                 |(_, elapsed)| *elapsed,
             );
+        let mce = state.mce.map(|tracking| {
+            if tracking {
+                // This is receiver readiness text, independent of the wall clock.
+                "Tracking"
+            } else {
+                "Training"
+            }
+        });
         json!({"elapsed_ms":elapsed,"elapsed_text":formatted(elapsed),
             "profile_elapsed_ms":profile,"profile_elapsed_text":formatted(profile),
             "phase":state.phase,"recovered_payloads":state.recovered,
-            "mce":state.mce.map(|tracking|if tracking {"Tracking"}else{"Training"}),
+            "mce":mce,
             "progress_age_text":formatted(millis(state.last_progress,end)),
             "profiles":state.profiles.iter().map(|(id,elapsed)|json!({"profile_id":id,"elapsed_ms":elapsed,"elapsed_text":formatted(*elapsed)})).collect::<Vec<_>>()})
     }
@@ -152,7 +167,22 @@ impl RunTiming {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::time::Duration;
+
+    #[test]
+    fn all_public_processing_phases_preserve_existing_status_labels() {
+        let clock = RunTiming::new();
+        for (phase, label) in [
+            (ChannelPhase::Acquisition, "Acquiring"),
+            (ChannelPhase::Completion, "Completing"),
+            (ChannelPhase::Failed, "Failed"),
+            (ChannelPhase::Observation, "Observing"),
+            (ChannelPhase::InterleaverDrain, "Draining"),
+            (ChannelPhase::Finished, "Finishing"),
+        ] {
+            clock.progress(phase, 0);
+            assert_eq!(clock.snapshot()["phase"], label);
+        }
+    }
 
     #[test]
     fn elapsed_advances_without_progress_and_freezes_before_late_ui_poll() {

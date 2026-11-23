@@ -775,17 +775,6 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/downstream/simulation/run_timing.rs",
-      "sha256": "65c02f34f43415720e6c6a3c0714d89d1af984711b5cff0ff4a01ba18383e082",
-      "sites": [
-        {
-          "line": 6,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/workbench/project_file.rs",
       "sha256": "b09096855d35825e23fe574b5d04ff9f69b638e859c5f0b1fb869c8cdae6d193",
       "sites": [
@@ -2656,6 +2645,23 @@
       "unit": "Idle transmitter preview facade",
       "reason": "Public preview/control/spectrum/physical-layout and timing/window queries replace direct private scientific imports; Qt retains coordinate/label projection only.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/simulation/run_timing.rs",
+        "sha256": "65c02f34f43415720e6c6a3c0714d89d1af984711b5cff0ff4a01ba18383e082",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Wall-time adapter facade",
+      "reason": "Actual progress matches the same public ChannelPhase enum; elapsed-time display uses standard Duration and named shared clock units. No private scientific import remains.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-wall-time-adapter-facade-accepted"
     }
   ]
 }

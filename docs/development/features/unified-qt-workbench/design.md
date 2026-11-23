@@ -2177,3 +2177,34 @@ and native class/signature is unchanged. The historical direct Rust full-loop
 reference is explicitly reused with its hash; no new reference run is claimed.
 No Qt source, dependency, frozen record or scientific implementation is changed.
 Commit this prerequisite before the wall-time consumer. Parent DS-01 stays open.
+
+## UIU-DS-01 wall-time adapter facade
+
+Consume the separately committed public ChannelPhase enum in the existing
+RunTiming presentation owner. Preserve monotonic wall-clock semantics, paused
+elapsed time, completed-profile timing, progress age, poison recovery and frozen
+completion. The worker remains the legacy owner pending its coherent migration;
+do not change it or claim full-loop facade acceptance. REQ-UIU-02/07/08/27 and
+UIU-DS-01 own this scoped consumer.
+
+| Path and symbol | Reuse and implementation |
+| --- | --- |
+| `apps/qt/src/downstream/simulation/run_timing.rs` | ADAPT only phase import/matching to `merlin::downstream::ChannelPhase`; retain the same nominal type, strings and callbacks. REUSE standard Duration conversion for milliseconds to seconds. Preserve all original time/profile assertions and add all-six-phase label coverage. |
+| `apps/qt/src/shared/presentation/constants.rs` | SHARE exact seconds/minute and minutes/hour units with separate purpose/unit names despite equal values; derive seconds/hour from those definitions. These are display units, separate from simulation budgets and sample clocks. |
+| Legacy boundary record | RETIRE only the original run-timing entry after all private imports are removed. Preserve every other frozen entry and the immutable initial record byte for byte. |
+| Current docs/evidence | RECORD scoped Rust/QML control checks, boundary regressions, Clippy, optimized executable and six native checks. Parent DS-01, the worker and final numeric audit stay open. |
+
+Reuse/license: existing GPL-3.0-only MERLIN RunTiming and common presentation
+constants at `d5638acb19a57c8a71e20934ec0b878ef3bbac2d`. No third-party code,
+new dependency, scientific algorithm, saved setting or QML presentation is added.
+Retain the named existing profile-timing bound from its present owner until that
+frozen profile-result owner migrates; do not duplicate the policy just to relocate
+an equal number. The final numeric audit reconciles those remaining common uses.
+
+Scoped consumer accepted: [timing validation](validation.md#uiu-ds-01-wall-time-adapter-facade-accepted)
+and [exact evidence](downstream-wall-time-evidence.json) record three Rust cases,
+the targeted QML clock/pause/completion case, 20 boundary regressions, Clippy,
+optimized executable and six native checks. All original timing assertions stay
+exact. Only the original timing boundary entry retires; 37 frozen files and the
+three scientific dependencies remain. No worker/API/backend/QML behavior change
+or full parent/final numeric acceptance is claimed.

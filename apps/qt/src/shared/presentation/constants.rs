@@ -15,6 +15,13 @@ pub(crate) const HERTZ_PER_KILOHERTZ: f64 = 1_000.0;
 /// Microseconds per second for drawing time labels from the backend sample clock.
 pub(crate) const MICROSECONDS_PER_SECOND: f64 = 1_000_000.0;
 
+/// Exact seconds in a clock minute for elapsed-time labels, not a runtime budget.
+pub(crate) const SECONDS_PER_MINUTE: u64 = 60;
+/// Exact minutes in a clock hour; distinct units despite the same value as above.
+pub(crate) const MINUTES_PER_HOUR: u64 = 60;
+/// Exact seconds in a clock hour, derived from the two authoritative unit scales.
+pub(crate) const SECONDS_PER_HOUR: u64 = SECONDS_PER_MINUTE * MINUTES_PER_HOUR;
+
 /// Vertical clipping span of the existing spectrum display, in decibels.
 pub(crate) const SPECTRUM_DISPLAY_SPAN_DB: f64 = 100.0;
 /// Decibel grid interval used to round the visible top edge.
