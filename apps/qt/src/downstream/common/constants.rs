@@ -126,3 +126,11 @@ pub(crate) const PROFILE_VIEW_IDEAL_DB_SELECTOR: u8 = 0;
 pub(crate) const PROFILE_VIEW_BITS_SELECTOR: u8 = 1;
 /// One-Hz denominator floor for drawing a single-carrier viewport; not a grid limit.
 pub(crate) const MIN_PROFILE_FREQUENCY_AXIS_SPAN_HZ: u32 = 1;
+
+/// Initial continuous-source widget choice: all 15 register bits set (0x7fff).
+/// This explicit editor default is separate from seed validation and sequence period.
+pub(crate) const INITIAL_CONTINUOUS_SOURCE_SEED: u16 = 32_767;
+/// Independent initial file-fill widget seed, also all ones; not the continuous policy.
+pub(crate) const INITIAL_FILE_FILL_SEED: u16 = 32_767;
+/// Maximum source-options message bytes, independent of file content and OCD limits.
+pub(crate) const MAX_SOURCE_OPTIONS_DOCUMENT_BYTES: usize = 2048;

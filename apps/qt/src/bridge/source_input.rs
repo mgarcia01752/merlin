@@ -95,7 +95,7 @@ impl bridge::SourceInput {
                     if let Some(url) = url {
                         let (name, bytes) = crate::platform::input_file::read_local(
                             &url,
-                            docsis_ofdm_fec::simulation::source::file::MAX_FILE_BYTES,
+                            merlin::downstream::SourceInput::file_limits().max_original_bytes,
                         )?;
                         self.as_mut().rust_mut().model.stage(name, bytes)?;
                     }

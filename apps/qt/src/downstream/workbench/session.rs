@@ -3,14 +3,13 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! One GUI-thread workbench's accepted scientific inputs, shared by typed snapshots.
-use docsis_ofdm_fec::{
-    profile::candidate::CapturedProfile, simulation::source::PayloadSourceConfig,
-};
+use docsis_ofdm_fec::profile::candidate::CapturedProfile;
+use merlin::downstream::SourceInput;
 use std::cell::RefCell;
 
 #[derive(Clone)]
 pub(crate) struct AcceptedSource {
-    pub config: PayloadSourceConfig,
+    pub config: SourceInput,
     pub seed: u16,
 }
 

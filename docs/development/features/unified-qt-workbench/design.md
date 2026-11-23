@@ -2719,3 +2719,39 @@ reconstructing the original file on each edit would lose existing shared-buffer
 behavior. Pointer/ownership tests prove the existing FilePayload owner is reused.
 The initial two-query build remains separate from final three-operation native
 acceptance. Qt source/session/worker consumption is the next dependent unit.
+
+## UIU-DS-01 source editor admission facade
+
+Consume prerequisite 80c9fc47 for REQ-UIU-02/03/08/20/22/24/27 and UIU-DS-01.
+EDIT source_input/model.rs and bridge/source_input.rs completely: SourceInput,
+PrbsSeed and FileFillPolicy own admission, file counts and immutable fill edits;
+the picker reads SourceInput.file_limits. Preserve draft/accepted state, unchanged
+Options JSON/defaults, exact bytes/hash/labels, empty/unnamed files, dormant seeds
+and all existing source assertions. Name independent initial continuous/fill seeds
+and the source-options transport cap in the existing direction constants module.
+
+EDIT only the source field/type import in the still-frozen session.rs and the
+already-public worker request's metadata comparison. Public source snapshots and
+file_info replace private PayloadSourceConfig serialization; seed identity remains
+separate. Keep every other session byte/owner untouched and freeze its remaining
+private sites under a focused review. This is input typing, not UIU-SESSION-01's
+future direction lifecycle implementation. No CXX/QML declaration changes.
+
+The source export implementation uses the same exact original bytes and existing
+project encoding. Treat that persistence boundary as affected: run source and
+Qt Save/Open/recovery regressions plus targeted Rust/native saved-file/fill
+compatibility, reusing the exact accepted installed wheel. Validate actual source
+selection, original-byte identity, zero/equal/partial fill, rejection atomicity
+and default/dormant choices. Qt format/Clippy, dependency boundary, traceability
+and current optimized build apply. No new schema/API/backend, registration or
+cross-direction lifecycle change; full task/milestone/final gates stay pending.
+
+
+[Focused consumer acceptance](validation.md#uiu-ds-01-source-editor-admission-facade-accepted)
+passes six Qt Rust/one QML behavior plus two Rust/two exact-reused-native saved
+project cases, scoped checks and a current optimized build. A new source test
+independently pins the unchanged saved section and proves stage/accepted buffer
+sharing. All original source assertions remain through public accessor/limit
+adaptation. Two whole entries retire; the source-type-only session review keeps
+all other bytes exact. The boundary retains 21 files/85 sites/three dependencies.
+No CXX declaration, API/schema/backend or direction lifecycle changes occur.

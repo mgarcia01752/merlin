@@ -1394,6 +1394,19 @@ retires plot.rs. A narrowly reviewed test-only fixture preparation preserves
 all profile model production/assertion bytes and its remaining private sites.
 The boundary now retains 23 files/88 sites/three dependencies; the parent stays open.
 
+The [source editor consumer](development/features/unified-qt-workbench/design.md#uiu-ds-01-source-editor-admission-facade)
+uses public SourceInput/PrbsSeed/FileFillPolicy, file_limits/file_info and shared
+fill replacement for admission and counts. Source snapshots in the existing
+session store now hold the public source; the worker compares its bounded public
+metadata with the admitted original input. All other session state/operations
+remain unchanged, pending UIU-SESSION-01. Original source export, independent
+widget seeds, dormant choices and readiness remain compatible.
+[Scoped consumer evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-source-editor-admission-facade-accepted)
+includes affected Rust/native saved-project checks using the unchanged accepted
+wheel. Source model/bridge entries retire; only the source field/import changes
+in the still-frozen session owner. The boundary retains 21 files/85 sites/three
+dependencies. Parent and final acceptance stay open.
+
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
 

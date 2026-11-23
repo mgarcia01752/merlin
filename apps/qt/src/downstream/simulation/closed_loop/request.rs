@@ -204,6 +204,8 @@ fn admit(
         filter: options.channel_filter.clone(),
     })
     .map_err(AdmissionError::classified)?;
+    let prepared_source = serde_json::to_value((source.source.kind(), source.source.file_info()))
+        .map_err(|cause| cause.to_string())?;
     let request = Simulation::prepare_full_loop_with_response_tolerance(
         FullLoopInputs {
             transmission: transmission.clone(),
@@ -217,13 +219,15 @@ fn admit(
         AssociationTolerance::new(tolerance).map_err(AdmissionError::classified)?,
     )
     .map_err(|cause| AdmissionError::from_run(cause, &transmission, options.duration_ms, span))?;
+
     // Compare existing bounded source metadata, never serialize or reconstruct raw payloads.
     // The public request owns exact file bytes; this catches mismatched background snapshots.
-    let accepted =
-        serde_json::to_value(&accepted_source.config).map_err(|cause| cause.to_string())?;
-    let prepared =
-        serde_json::to_value(&request.settings().source).map_err(|cause| cause.to_string())?;
-    if accepted != prepared {
+    let accepted = serde_json::to_value((
+        accepted_source.config.kind(),
+        accepted_source.config.file_info(),
+    ))
+    .map_err(|cause| cause.to_string())?;
+    if accepted != prepared_source {
         return Err("Accepted source differs from its original editor section.".into());
     }
     let policy = FullLoopObservationPolicy::new(FullLoopObservationInput::default())

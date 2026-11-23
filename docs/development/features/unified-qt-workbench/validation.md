@@ -2335,3 +2335,51 @@ Their runtime/full suites were not required for this focused additive source
 API; reasons and pending gates are explicit in the evidence. Qt debt remains
 23 files/88 sites/three dependencies until separate consumer acceptance. Parent
 Level 2, milestone/final Level 3 and the line-by-line numeric audit stay pending.
+
+
+## UIU-DS-01 source editor admission facade accepted
+
+[Design/owners](design.md#uiu-ds-01-source-editor-admission-facade),
+[exact evidence](source-editor-facade-evidence.json),
+[architecture](../../../architecture.md#unified-qt-public-api-boundary),
+[REQ-UIU-02](../../../requirements.md#req-uiu-02),
+[REQ-UIU-03](../../../requirements.md#req-uiu-03),
+[REQ-UIU-08](../../../requirements.md#req-uiu-08),
+[REQ-UIU-20](../../../requirements.md#req-uiu-20),
+[REQ-UIU-22](../../../requirements.md#req-uiu-22),
+[REQ-UIU-24](../../../requirements.md#req-uiu-24),
+[REQ-UIU-27](../../../requirements.md#req-uiu-27) and
+[UIU-DS-01](../../checklist.md#task-uiu-ds-01) trace this consumer.
+
+Public source admission, checked seeds, file_info/limits and with_fill replace
+private file/generator use and Qt count subtraction. Original names/bytes/hash,
+empty/unnamed and zero/equal/partial fill behavior, independent/dormant seeds,
+draft/accepted/readiness semantics and Options/export JSON stay compatible.
+The native chooser uses the authoritative public byte cap. The worker compares
+bounded public source metadata captured before ownership transfer; it does not
+serialize private source configurations or reconstruct payloads. The session's
+source snapshot holds SourceInput; every other session byte/owner stays exact.
+
+Level 1 passes six Qt Rust cases: both original source cases, a new independent
+saved-section/buffer-sharing regression, seed/capture mismatch admission,
+actual unnamed-file recovery/dormant settings and source/project corruption/
+round-trip. One affected source-options QML behavior passes (three with harness).
+Because source export uses a different getter, affected saved-project coverage
+also passes two existing Rust and two installed native named/unnamed/file/fill/
+recovery cases. The exact accepted prerequisite wheel is verified and reused;
+no new wheel is built. Qt format/all-target Clippy, actual boundary, optimized
+build and document/traceability checks pass.
+
+The initial Qt compile caught an unavailable FullLoopRequest.inputs getter.
+Metadata is now read from the public admitted source before ownership transfer;
+no private workaround or API addition is needed. Original failed logs and final
+successful runs remain separate. Full CXX declarations/resources are unchanged;
+no new native startup/chooser/platform execution is claimed. The source export
+shape is independently pinned; no schema/default/embedded payload changes occur.
+
+Two whole exceptions retire. A focused source-type/import-only session review
+preserves every other byte and all nine remaining private sites. Other frozen
+records/dependencies/history stay exact; 21 files/85 sites/three scientific
+dependencies remain. Unaffected full workspace/Qt/Python/CLI/package suites and
+unchanged validator suites were not run; evidence records why, separately from
+pending parent Level 2, milestone/final Level 3 and numeric-audit gates.

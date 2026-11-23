@@ -123,17 +123,6 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/bridge/source_input.rs",
-      "sha256": "08782a51209dbf4339932646c85bd7da4bda2102024ff24a20487a4abb175ecd",
-      "sites": [
-        {
-          "line": 98,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/bridge/workbench_file.rs",
       "sha256": "bf191542686a08ab27e8b6b74f117ce43db22aa1a1e45166a801ed2dac481c70",
       "sites": [
@@ -357,21 +346,6 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/downstream/inputs/source_input/model.rs",
-      "sha256": "cd749e45a92804507a7d12c84b780c41a19deb767ca845c83fb5758f820a5aa4",
-      "sites": [
-        {
-          "line": 6,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 245,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/instruments/channel/mod.rs",
       "sha256": "1d9fc006c24c42b2f52e7fece5179e59b3672f0e374e759ed7e6c8cbb08fcd1f",
       "sites": [
@@ -521,14 +495,18 @@
     },
     {
       "path": "apps/qt/src/downstream/workbench/session.rs",
-      "sha256": "439f869b04539487f831fe53bddb1ec4568215e413d840ca060b4174c170750d",
+      "sha256": "4e6520606c7664ee9a52c16f5cdfbf39c193009e59a5db1d35d450723193f2f2",
       "sites": [
         {
           "line": 6,
           "root": "docsis_ofdm_fec"
         },
         {
-          "line": 19,
+          "line": 18,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 23,
           "root": "docsis_ofdm_fec"
         },
         {
@@ -536,27 +514,23 @@
           "root": "docsis_ofdm_fec"
         },
         {
-          "line": 25,
+          "line": 26,
           "root": "docsis_ofdm_fec"
         },
         {
-          "line": 27,
+          "line": 89,
           "root": "docsis_ofdm_fec"
         },
         {
-          "line": 90,
+          "line": 97,
           "root": "docsis_ofdm_fec"
         },
         {
-          "line": 98,
+          "line": 147,
           "root": "docsis_ofdm_fec"
         },
         {
-          "line": 148,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 157,
+          "line": 156,
           "root": "docsis_ofdm_fec"
         }
       ],
@@ -2738,6 +2712,44 @@
       "unit": "Profile plot inspection facade",
       "reason": "Public original-capture admission and ProfileCapture.inspect supply all raw role/loading/Shannon/capacity/extrema/coordinate data; Qt retains only existing drawing, selection and text formatting.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-profile-plot-inspection-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/bridge/source_input.rs",
+        "sha256": "08782a51209dbf4339932646c85bd7da4bda2102024ff24a20487a4abb175ecd",
+        "sites": [
+          {
+            "line": 98,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Source editor admission facade",
+      "reason": "Public SourceInput/PrbsSeed/FileFillPolicy own passive source admission, meaningful-bit metadata and shared-buffer fill replacement. The chooser uses authoritative public source limits; original source/export behavior remains compatible.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-source-editor-admission-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/source_input/model.rs",
+        "sha256": "cd749e45a92804507a7d12c84b780c41a19deb767ca845c83fb5758f820a5aa4",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 245,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Source editor admission facade",
+      "reason": "Public SourceInput/PrbsSeed/FileFillPolicy own passive source admission, meaningful-bit metadata and shared-buffer fill replacement. The chooser uses authoritative public source limits; original source/export behavior remains compatible.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-source-editor-admission-facade-accepted"
     }
   ],
   "reviewed_updates": [
@@ -2960,6 +2972,99 @@
       },
       "all_original_marker_assertions_and_other_test_bytes_exact": true,
       "evidence": "docs/development/features/unified-qt-workbench/profile-plot-facade-evidence.json"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/workbench/session.rs",
+        "sha256": "439f869b04539487f831fe53bddb1ec4568215e413d840ca060b4174c170750d",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 19,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 24,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 25,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 27,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 90,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 98,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 148,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 157,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/workbench/session.rs",
+        "sha256": "4e6520606c7664ee9a52c16f5cdfbf39c193009e59a5db1d35d450723193f2f2",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 18,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 23,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 24,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 26,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 89,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 97,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 147,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 156,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Only the legacy accepted source type/import becomes public SourceInput. Every other session byte, thread-local owner and operation is exact; no direction lifecycle or remaining scientific owner is migrated here. Its nine remaining private root-reference sites stay frozen.",
+      "all_bytes_except_source_type_import_exact": true,
+      "exact_at_base_commit": "80c9fc47dd99447bd1a32106f4ab4f751673b704",
+      "evidence": "docs/development/features/unified-qt-workbench/source-editor-facade-evidence.json"
     }
   ]
 }
