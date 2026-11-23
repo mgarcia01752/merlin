@@ -51,6 +51,8 @@ relative sample units, not a PSD or a calibrated channel-power measurement. The
 map shows the full retained span independently of the exact-value Details page;
 hover for actual bin, frequency, power and role. No multi-symbol waterfall is
 shown. Preview cards use captured data and show No capture until it is available.
+Power, frequencies and role bands come from the retained public Rust result;
+the workbench only reduces them for drawing and keeps missing readings explicit.
 
 ![Actual captured LDPC bits](../images/workbench/transmitter-stage-dark.png)
 
@@ -71,7 +73,7 @@ Both palettes preserve these role colors. Display reduction keeps rare roles
 represented within the same2048-point limit.
 
 Classification follows the actual TX packing plan and its retained source grid.
-The first interleaved snapshot uses the same interleaver transport for role labels;
+The backend supplies role labels for the first aligned interleaved snapshot;
 when the necessary history is unavailable, samples remain unclassified. Missing
 cells are not drawn. PLC Data/Preamble remain separate selections.
 

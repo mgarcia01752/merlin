@@ -77,3 +77,25 @@ pub(crate) const OPEN_PHYSICAL_BIN_SELECTOR: i32 = -1;
 /// This preserves its unit-sized empty/small-signal axis and is not an RX scale,
 /// power calibration, sample modification or backend numerical acceptance limit.
 pub(crate) const TX_PHYSICAL_SCATTER_MIN_EXTENT: f64 = 1.0;
+
+/// Bit characters per inspector text row, independent of raster graph columns.
+pub(crate) const TX_INSPECTOR_BITS_PER_ROW: usize = 32;
+/// Maximum inspector rows per ordinary page, independent of bit raster width.
+pub(crate) const TX_INSPECTOR_ROWS: usize = 64;
+/// Source/interleaved-bit preview page length; not a source or FEC work limit.
+pub(crate) const TX_BIT_PREVIEW_PAGE_BITS: usize = 128;
+/// Horizontal cells in the coded-bit raster; separate from inspector row count.
+pub(crate) const TX_CODED_RASTER_COLUMNS: usize = 64;
+/// Lower trace position for a displayed zero bit on the normalized drawing axis.
+pub(crate) const TX_ZERO_BIT_Y: f64 = 0.8;
+/// Upper trace position for a displayed one bit, independent of label row placement.
+pub(crate) const TX_ONE_BIT_Y: f64 = 0.2;
+/// Fixed label-strip row, separate from the equal-valued one-bit trace position.
+pub(crate) const TX_LABEL_STRIP_Y: f64 = 0.2;
+/// Unit-sized minimum I/Q drawing extent shared by TX cell scatter/sequence views.
+/// This is independent of physical-bin scatter, power calibration and RX scaling.
+pub(crate) const TX_CELL_VIEW_MIN_EXTENT: f64 = 1.0;
+/// Maximum physical-power min/max groups; each emits at most two display points.
+pub(crate) const TX_PHYSICAL_POWER_BUCKETS: usize = 1024;
+/// Minimum physical-power graph vertical scale, distinct from any amplitude extent.
+pub(crate) const TX_PHYSICAL_POWER_MIN_SCALE: f64 = 1.0;

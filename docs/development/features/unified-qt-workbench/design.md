@@ -2441,3 +2441,37 @@ thirteen Rust and thirteen exact-archive installed native cases pass, alongside
 38 metadata cases, Clippy and strict 571/545 operation tracing. Every prior row,
 type and native member is preserved. Qt adoption, the parent migration and final
 numeric audit remain separate unfinished work.
+
+## UIU-DS-01 retained transmitter views facade unit
+
+After the separately accepted sample-budget API, migrate retained TX stage
+presentation, QAM roles and physical graphs together. REQ-UIU-02/03/09/24/27 and
+UIU-DS-01 own this unit; the parent stays open. No QML controls, saved settings,
+source generation, channel processing or decoder behavior changes.
+
+| Inspected owner / disposition | Contract and selected replacement |
+| --- | --- |
+| EDIT `apps/qt/src/downstream/instruments/transmitter/views.rs` | Preserve stage registration, pages, cards, labels and absent states. REUSE public stage identifiers and already retained public snapshots for these views. Keep spectrum_state and spectrum byte-for-byte unchanged under a focused reviewed frozen-record update; their remaining scientific imports are not retired. |
+| EDIT `apps/qt/src/downstream/instruments/transmitter/qam_points.rs` | REUSE FullLoopResult.transmit_cells for original mapped/interleaved roles. Remove the Qt metadata interleaver; reduce only already supplied finite I/Q and role values. Keep rare-role quotas, missing history and absolute displayed indices. |
+| EDIT `apps/qt/src/downstream/instruments/transmitter/graphs/mod.rs`, `graphs/physical.rs` | REUSE FullLoopResult.physical_bins for actual power, frequency, roles and bounded role spans. No Qt I²+Q² or CarrierLayout construction. Min/max display reduction, axis scaling and ordered-cell drawing remain presentation. |
+| EDIT directional/common presentation constants | Name inspector row/page widths, raster columns, bit/label drawing positions, cell extent and physical envelope bucket policy separately even where their numeric values match. Reuse shared scatter/headroom/unit definitions with real existing consumers. |
+| EDIT `crates/ofdm/src/simulation/payload/role_projection.rs` tests only | Preserve the retired Qt 128-cell/depth-four role fixture, actual interleaver comparison, one NCP, 96 missing-history positions and later-symbol rejection at the existing Rust role owner. No production backend or public contract changes. |
+| EDIT physical/QAM presentation tests and existing closed-loop acceptance test | Keep original graph assertions and independent 3+4i→25 backend anchor. Physical formatting takes supplied power and public layout; it does not fabricate a public result. Check actual backend-to-UI values, all four unchanged spectrum taps and bounded windows. |
+
+Acceptance requires targeted Qt/core cases, QML navigation, boundary regressions,
+all-target Qt Clippy/formatting, optimized build and native startup/Open checks.
+Retire only the three graph/QAM whole-file exceptions after compatibility passes; preserve
+all other frozen hashes and historical records. No fresh wheel is required for
+unchanged backend production/bindings; preceding paired API acceptance remains
+separate. The final line-by-line numeric audit is still UIU-QA-01.
+
+The source review found a separate spectrum prerequisite: legacy IFFT/prefix/
+window plots concatenate up to 16384 retained frame-stage samples. Those frames
+are not necessarily physically continuous. Existing spectrum_sequence exposes
+the normalized ordered-frame diagnostic, whereas calibrated_spectrum deliberately
+uses one frame at these boundaries. The accepted sample-capacity operation alone
+cannot bridge electrical calibration while preserving this sampling basis.
+Retain the original spectrum functions until a focused typed API extension is
+independently accepted. Do not silently replace three-window legacy results with
+one physical-frame window, or label an ordered-frame diagnostic as a continuous
+waveform. TX overlap remains a separate 32768-sample continuous-output budget.

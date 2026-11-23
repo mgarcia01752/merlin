@@ -95,6 +95,50 @@ mod tests {
     }
 
     #[test]
+    fn migrated_qt_128_cell_roles_follow_actual_interleaver_and_later_history_stays_unknown() {
+        // Preserved Qt fixture: 50 kHz, 128 cells, depth four and first symbol 128.
+        // The independent one-NCP/96-missing anchors remain literal below.
+        let settings = InterleaverSettings::new(SubcarrierSpacing::Khz50, 128, 4).unwrap();
+        let grid = CellProbeGrid {
+            settings,
+            origin_symbol: 128,
+            ncp_modulation: NcpModulation::Qpsk,
+        };
+        let mut labels = vec![TransmitCellRole::Data; 128];
+        labels[0] = TransmitCellRole::Ncp;
+        labels[4] = TransmitCellRole::Filler;
+        let mut source = ProbeContext::new("roles", "input", RunPhase::Observation).unwrap();
+        source.channel_symbol_index = Some(128);
+        source.source_symbol_index = Some(128);
+        source.cell_grid = Some(grid);
+        source.transmit_cell_roles = Some(labels.clone());
+        let mut target = source.clone();
+        let actual = first_symbol_roles(&source, 0, &target).unwrap().unwrap();
+        let iq: Vec<_> = labels
+            .iter()
+            .enumerate()
+            .map(|(index, role)| Some((*role, index)))
+            .collect();
+        let expected = SymbolInterleaver::new(settings, InterleaverDirection::Transmit)
+            .unwrap()
+            .process_symbol(0, &iq)
+            .unwrap();
+        for (role, cell) in actual.iter().zip(expected) {
+            assert_eq!(*role, cell.map(|(role, _)| role));
+        }
+        assert_eq!(
+            actual
+                .iter()
+                .filter(|role| **role == Some(TransmitCellRole::Ncp))
+                .count(),
+            1
+        );
+        assert_eq!(actual.iter().filter(|role| role.is_none()).count(), 96);
+        target.channel_symbol_index = Some(129);
+        assert!(first_symbol_roles(&source, 0, &target).unwrap().is_none());
+    }
+
+    #[test]
     fn later_misaligned_missing_or_other_run_roles_remain_unavailable() {
         let source = context();
         assert!(first_symbol_roles(&source, 1, &source).unwrap().is_none());

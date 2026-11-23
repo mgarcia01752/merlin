@@ -3,10 +3,12 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Small presentation pages over retained TX samples, bits and cells.
-use crate::downstream::simulation::closed_loop::latest;
-use docsis_ofdm_fec::{
-    signal_processing::waveform::spectrum::estimate, simulation::test_points::TestPointId,
+use crate::downstream::common::constants::{
+    TX_BIT_PREVIEW_PAGE_BITS, TX_INSPECTOR_BITS_PER_ROW, TX_INSPECTOR_ROWS,
 };
+use crate::downstream::simulation::closed_loop::latest;
+use docsis_ofdm_fec::signal_processing::waveform::spectrum::estimate;
+use merlin::downstream::FullLoopStage as TestPointId;
 use serde_json::{json, Value};
 
 const STAGE_IDS: [TestPointId; 9] = [
@@ -20,7 +22,7 @@ const STAGE_IDS: [TestPointId; 9] = [
     TestPointId::PlcIq,
     TestPointId::PlcPreamble,
 ];
-const NAMES: [&str; 9] = [
+const NAMES: [&str; STAGE_IDS.len()] = [
     "Source Bits",
     "LDPC Codeword",
     "Interleaved Bits",
@@ -31,7 +33,6 @@ const NAMES: [&str; 9] = [
     "PLC Data I/Q",
     "PLC Preamble I/Q",
 ];
-
 /// Returns a fixed-size page and scatter view of one genuine TX boundary.
 /// # Arguments
 /// * `index` - Source/coding/bits/labels/mapped/interleaved/bins/PLC selector.
@@ -62,11 +63,14 @@ pub(crate) fn stage(index: i32, offset: i32) -> Value {
                 | TestPointId::PayloadCoded
                 | TestPointId::PayloadInterleavedBits
         );
-        let stride = if bits { 32 } else { 1 };
-        let page_size = if matches!(index, 0 | 2) {
-            128
+        let stride = if bits { TX_INSPECTOR_BITS_PER_ROW } else { 1 };
+        let page_size = if matches!(
+            id,
+            TestPointId::SourcePayload | TestPointId::PayloadInterleavedBits
+        ) {
+            TX_BIT_PREVIEW_PAGE_BITS
         } else {
-            64 * stride
+            TX_INSPECTOR_ROWS * stride
         };
         let end = (offset + page_size).min(values.len());
         let rows: Vec<_> = values[offset..end]
@@ -82,18 +86,10 @@ pub(crate) fn stage(index: i32, offset: i32) -> Value {
                 json!({"index":first,"value":text})
             })
             .collect();
-        let roles = super::qam_points::roles(
-            id,
-            snapshot,
-            result
-                .observations
-                .tx
-                .snapshots
-                .get(&TestPointId::PayloadMapped),
-        );
+        let roles = super::qam_points::roles(result.backend(), id, snapshot);
         let scatter = super::qam_points::scatter(values, snapshot.offset, roles.as_deref(), id);
         let graph = super::graphs::project(
-            index,
+            id,
             snapshot,
             offset,
             end,
@@ -102,7 +98,7 @@ pub(crate) fn stage(index: i32, offset: i32) -> Value {
                 .tx
                 .snapshots
                 .get(&TestPointId::PayloadMapped),
-            &result.job.settings,
+            result.backend(),
         );
         Ok(
             json!({"graph":graph,"available":true,"name":NAMES[index],"tap":id,"rows":rows,"points":scatter["points"],"offset":offset,"end":end,"retained":values.len(),"total":snapshot.total,"symbol":snapshot.symbol,"phase":snapshot.phase,"extent":scatter["extent"],"iq_count":scatter["iq_count"],"role_counts":scatter["role_counts"],"missing":values.iter().filter(|v|v.is_null()).count(),"reason":""}),

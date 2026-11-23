@@ -1320,6 +1320,15 @@ processing. Actual retained availability remains separate. The supported
 1024-sample-CP compatibility case and [paired evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-spectrum-sample-budget-api-accepted)
 precede Qt spectrum adoption; no remaining frozen entry is retired here.
 
+The [retained TX stage/physical-power unit](development/features/unified-qt-workbench/design.md#uiu-ds-01-retained-transmitter-views-facade-unit)
+uses public actual bin power/frequency/role spans and transported-cell metadata.
+These TX views retain graph reduction, axis coordinates and bounded role-color
+groups; they no longer construct an interleaver or compute bin power. Three
+whole-file exceptions retire after scoped acceptance, leaving 27 frozen files/
+96 sites/three scientific dependencies. The two unchanged TX spectrum functions
+remain frozen: ordered-frame electrical calibration requires a separate public
+API prerequisite before their migration. Parent/final numeric acceptance stays open.
+
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
 

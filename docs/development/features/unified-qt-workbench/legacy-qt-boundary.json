@@ -565,60 +565,15 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/downstream/instruments/transmitter/graphs/mod.rs",
-      "sha256": "04ff0b5b90685ce4b3beb8f53cbde16cfd00b0cc2e7a3a3dfe4477d65ab49b68",
-      "sites": [
-        {
-          "line": 25,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/downstream/instruments/transmitter/graphs/physical.rs",
-      "sha256": "836a25a11a68186fe8bc1287b05b76c6d2ac01c08a5a85eb22c1c4c313e31fc0",
-      "sites": [
-        {
-          "line": 6,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 98,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 99,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/downstream/instruments/transmitter/qam_points.rs",
-      "sha256": "61349f7f52bd7815bf4ece1144a864354468130cae0ac428625804702bcd60cf",
-      "sites": [
-        {
-          "line": 7,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 131,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/instruments/transmitter/views.rs",
-      "sha256": "7dfffc3502bfa20788897fd6382950c2916ba1bed2df925f82c8244839d31e69",
+      "sha256": "18dcb54538c9748162553ec1e8cd5337ae1a7909a7e598c2b5a36f2448f5f582",
       "sites": [
         {
-          "line": 7,
+          "line": 10,
           "root": "docsis_ofdm_fec"
         },
         {
-          "line": 189,
+          "line": 185,
           "root": "docsis_ofdm_fec"
         }
       ],
@@ -2700,6 +2655,69 @@
       "unit": "Pre-channel physical-bin scatter facade",
       "reason": "Public actual physical-bin and carrier metadata replace private CarrierLayout construction/frequency queries. SubcarrierIndex owns explicit selector admission; plot scaling remains presentation-only.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-pre-channel-physical-bin-scatter-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/graphs/mod.rs",
+        "sha256": "04ff0b5b90685ce4b3beb8f53cbde16cfd00b0cc2e7a3a3dfe4477d65ab49b68",
+        "sites": [
+          {
+            "line": 25,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Retained TX stage and physical-power facade",
+      "reason": "Public actual physical powers/layout spans and transported cell roles replace private scientific reconstruction; graph coordinates only remain in Qt.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-retained-transmitter-views-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/graphs/physical.rs",
+        "sha256": "836a25a11a68186fe8bc1287b05b76c6d2ac01c08a5a85eb22c1c4c313e31fc0",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 98,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 99,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Retained TX stage and physical-power facade",
+      "reason": "Public actual physical powers/layout spans and transported cell roles replace private scientific reconstruction; graph coordinates only remain in Qt.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-retained-transmitter-views-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/qam_points.rs",
+        "sha256": "61349f7f52bd7815bf4ece1144a864354468130cae0ac428625804702bcd60cf",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 131,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Retained TX stage and physical-power facade",
+      "reason": "Public actual physical powers/layout spans and transported cell roles replace private scientific reconstruction; graph coordinates only remain in Qt.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-retained-transmitter-views-facade-accepted"
     }
   ],
   "reviewed_updates": [
@@ -2837,6 +2855,46 @@
       "task": "UIU-DS-01",
       "reason": "Only designed_flat_mer_drives_residual_power_and_real_fec moves its engine invocation to the public request; every production byte and other test remains exact. The remaining scientific debt stays frozen.",
       "evidence": "docs/development/features/unified-qt-workbench/downstream-worker-evidence.json"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+        "sha256": "7dfffc3502bfa20788897fd6382950c2916ba1bed2df925f82c8244839d31e69",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 189,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+        "sha256": "18dcb54538c9748162553ec1e8cd5337ae1a7909a7e598c2b5a36f2448f5f582",
+        "sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 185,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Only stage view public identifiers/callers and named page policies change. The spectrum_state and spectrum functions remain byte-for-byte exact; their two remaining science sites stay frozen pending a separate calibrated ordered-frame API prerequisite.",
+      "retained_spectrum_functions": {
+        "sha256": "5248c0e8d6679a897be8e3cd3c7252861442289bd2724ed0d89cb3ecad4f5ae4",
+        "byte_length": 2814,
+        "exact_at_base_commit": "b7146e94c595b344b81694e6473942d27f6211d9"
+      },
+      "evidence": "docs/development/features/unified-qt-workbench/transmitter-views-evidence.json"
     }
   ]
 }

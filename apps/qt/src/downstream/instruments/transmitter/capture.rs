@@ -7,7 +7,6 @@ use crate::downstream::common::constants::{
     MAX_INSTRUMENT_TIME_SAMPLES, MAX_TRANSMITTER_MESSAGE_FRAMES,
 };
 use merlin::downstream::{
-    FullLoopCellGrid as CellProbeGrid, FullLoopCellRole as TransmitCellRole,
     FullLoopStage as TestPointId, FullLoopStageData as ProbeData, FullLoopStageSnapshot,
     MAX_STAGE_EVENT_ELEMENTS,
 };
@@ -48,9 +47,7 @@ pub(crate) struct Snapshot {
     pub offset: usize,
     pub symbol: Option<u64>,
     pub phase: String,
-    pub grid: Option<CellProbeGrid>,
     pub source_symbol: Option<u64>,
-    pub roles: Option<Vec<TransmitCellRole>>,
 }
 
 #[derive(Default)]
@@ -101,9 +98,7 @@ impl Capture {
                 offset: event.element_start,
                 symbol: event.context.channel_symbol_index,
                 phase: format!("{:?}", event.context.phase),
-                grid: event.context.cell_grid,
                 source_symbol: event.context.source_symbol_index,
-                roles: event.context.transmit_cell_roles.clone(),
             });
     }
 }

@@ -272,6 +272,45 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
     assert_eq!(mapped["graph"]["kind"], "constellation");
     assert_eq!(bins["graph"]["kind"], "physical");
     assert!(bins["graph"]["points"].as_array().unwrap().len() <= 2048);
+    let physical = result
+        .backend()
+        .physical_bins(merlin::downstream::FullLoopStage::PhysicalBins, 0, 0, 0)
+        .unwrap();
+    // Independent preexisting unit-sized drawing floor; actual powers come from Rust.
+    let expected_maximum = physical
+        .bins
+        .iter()
+        .filter_map(|bin| bin.linear_power)
+        .fold(1.0f64, f64::max);
+    assert_eq!(bins["graph"]["maximum"], expected_maximum);
+    assert_eq!(
+        bins["graph"]["omitted_bands"],
+        physical.layout.omitted_role_spans
+    );
+    assert_eq!(
+        bins["graph"]["bands"].as_array().unwrap().len(),
+        physical.layout.role_spans.len()
+    );
+    let mapped_cells = result
+        .backend()
+        .transmit_cells(merlin::downstream::FullLoopStage::PayloadMapped, 0, 0, 0)
+        .unwrap();
+    for point in mapped["points"].as_array().unwrap() {
+        let index = point["index"].as_u64().unwrap() as usize;
+        let cell = mapped_cells
+            .cells
+            .iter()
+            .find(|cell| cell.cell_index == index)
+            .unwrap();
+        let role = match cell.role {
+            Some(merlin::downstream::FullLoopCellRole::Data) => "data",
+            Some(merlin::downstream::FullLoopCellRole::Ncp) => "ncp",
+            Some(merlin::downstream::FullLoopCellRole::Filler) => "filler",
+            Some(merlin::downstream::FullLoopCellRole::Pilot) => "pilot",
+            None => "unknown",
+        };
+        assert_eq!(point["role"], role);
+    }
     let previews = crate::transmitter_instruments::stage_previews();
     assert_eq!(previews.as_array().unwrap().len(), 6);
     assert_eq!(previews[0]["observation"]["graph"]["kind"], "bits");

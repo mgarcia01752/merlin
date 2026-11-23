@@ -4,46 +4,37 @@
  */
 //! Role-preserving bounded QAM presentation; no role inference from I/Q positions.
 use super::capture::Snapshot;
-use docsis_ofdm_fec::{
-    signal_processing::interleaving::{InterleaverDirection, SymbolInterleaver},
-    simulation::test_points::{TestPointId, TransmitCellRole},
+use crate::downstream::common::constants::TX_CELL_VIEW_MIN_EXTENT;
+use crate::shared::presentation::constants::{
+    MAX_SCATTER_PLOT_POINTS, SCATTER_AXIS_CENTER, SCATTER_HEADROOM_RATIO,
+};
+use merlin::downstream::{
+    FullLoopCellRole as TransmitCellRole, FullLoopResult, FullLoopStage as TestPointId,
 };
 use serde_json::{json, Value};
 use std::collections::BTreeMap;
 
-/// Aligns retained TX packing roles with a mapped/interleaved snapshot.
+/// Reads authoritative roles aligned with one retained mapped/interleaved snapshot.
 /// # Arguments
+/// * `result` - Immutable public run result supplying actual transport provenance.
 /// * `id` - Selected TX test point.
 /// * `snapshot` - Immutable retained data and original element offset.
-/// * `mapped` - First mapped source snapshot carrying the actual packing roles.
 /// # Returns
-/// Source-rank or transported roles; None means unavailable provenance.
-/// Only the first aligned source symbol is transported; later history is not guessed.
+/// Roles parallel to retained values, or None for unavailable provenance. Absolute
+/// cell-rank alignment and first-symbol transport are owned by the Rust backend.
 pub(super) fn roles(
+    result: &FullLoopResult,
     id: TestPointId,
     snapshot: &Snapshot,
-    mapped: Option<&Snapshot>,
 ) -> Option<Vec<Option<TransmitCellRole>>> {
-    let source = mapped?;
-    let grid = source.grid?;
-    let values = source.roles.as_ref()?;
-    if id == TestPointId::PayloadMapped {
-        return Some(values.iter().copied().map(Some).collect());
-    }
-    if id != TestPointId::PayloadInterleaved
-        || source.offset != 0
-        || source.source_symbol != Some(grid.origin_symbol)
-        || snapshot.symbol != Some(grid.origin_symbol)
-        || snapshot.source_symbol != source.source_symbol
-        || snapshot.grid != source.grid
-        || values.len() != grid.settings.cells()
+    let observation = result.transmit_cells(id, 0, 0, 0).ok()?;
+    if observation.element_start != snapshot.offset
+        || observation.context.channel_symbol_index != snapshot.symbol
+        || observation.role_source == "unavailable"
     {
         return None;
     }
-    SymbolInterleaver::new(grid.settings, InterleaverDirection::Transmit)
-        .ok()?
-        .process_symbol(0, &values.iter().copied().map(Some).collect::<Vec<_>>())
-        .ok()
+    Some(observation.cells.iter().map(|cell| cell.role).collect())
 }
 
 fn role_name(role: Option<TransmitCellRole>, id: TestPointId) -> &'static str {
@@ -61,7 +52,7 @@ fn role_name(role: Option<TransmitCellRole>, id: TestPointId) -> &'static str {
 /// # Arguments
 /// * `values` - Original bounded snapshot values, including missing history.
 /// * `offset` - Absolute first retained cell index.
-/// * `roles` - Optional full-grid provenance, indexed by absolute source/channel rank.
+/// * `roles` - Optional backend provenance parallel to the retained values.
 /// * `id` - Test point, distinguishing PLC from mixed payload/control cells.
 /// # Returns
 /// At most2048 points, unchanged I/Q, common scale and exact retained role counts.
@@ -72,7 +63,7 @@ pub(super) fn scatter(
     id: TestPointId,
 ) -> Value {
     let mut groups: BTreeMap<&str, Vec<(usize, [f64; 2])>> = BTreeMap::new();
-    let mut extent = 1.0f64;
+    let mut extent = TX_CELL_VIEW_MIN_EXTENT;
     for (index, value) in values.iter().enumerate() {
         let raw = if value.is_array() {
             value
@@ -90,22 +81,20 @@ pub(super) fn scatter(
             continue;
         }
         extent = extent.max(iq.0.abs()).max(iq.1.abs());
-        let role = roles
-            .and_then(|items| items.get(offset + index))
-            .copied()
-            .flatten();
+        let role = roles.and_then(|items| items.get(index)).copied().flatten();
         groups
             .entry(role_name(role, id))
             .or_default()
             .push((offset + index, [iq.0, iq.1]));
     }
-    extent *= 1.1;
-    let base = 2048 / groups.len().max(1);
+    extent *= SCATTER_HEADROOM_RATIO;
+    let span = extent + extent;
+    let base = MAX_SCATTER_PLOT_POINTS / groups.len().max(1);
     let mut quotas: BTreeMap<_, _> = groups
         .iter()
         .map(|(role, values)| (*role, values.len().min(base)))
         .collect();
-    let mut remaining = 2048 - quotas.values().sum::<usize>();
+    let mut remaining = MAX_SCATTER_PLOT_POINTS - quotas.values().sum::<usize>();
     for (role, values) in &groups {
         let quota = quotas.get_mut(role).unwrap();
         let extra = remaining.min(values.len() - *quota);
@@ -119,7 +108,7 @@ pub(super) fn scatter(
         let quota = quotas[role];
         for position in 0..quota {
             let (index, iq) = values[position * values.len() / quota];
-            points.push(json!({"index":index,"i":iq[0],"q":iq[1],"x":0.5+iq[0]/(2.0*extent),"y":0.5-iq[1]/(2.0*extent),"role":role}));
+            points.push(json!({"index":index,"i":iq[0],"q":iq[1],"x":SCATTER_AXIS_CENTER+iq[0]/span,"y":SCATTER_AXIS_CENTER-iq[1]/span,"role":role}));
         }
     }
     json!({"points":points,"role_counts":counts,"extent":extent,"iq_count":groups.values().map(Vec::len).sum::<usize>()})
@@ -128,11 +117,6 @@ pub(super) fn scatter(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use docsis_ofdm_fec::{
-        signal_processing::interleaving::InterleaverSettings,
-        simulation::test_points::CellProbeGrid,
-        transmission::{packing::NcpModulation, SubcarrierSpacing},
-    };
 
     #[test]
     fn rare_ncp_survives_reduction_and_unknown_is_never_colored_as_data() {
@@ -153,48 +137,24 @@ mod tests {
     }
 
     #[test]
-    fn roles_follow_actual_interleaver_and_unavailable_history_stays_unknown() {
-        let settings = InterleaverSettings::new(SubcarrierSpacing::Khz50, 128, 4).unwrap();
-        let grid = CellProbeGrid {
-            settings,
-            origin_symbol: 128,
-            ncp_modulation: NcpModulation::Qpsk,
-        };
-        let mut labels = vec![TransmitCellRole::Data; 128];
-        labels[0] = TransmitCellRole::Ncp;
-        labels[4] = TransmitCellRole::Filler;
-        let mut snapshot = Snapshot {
-            data: Value::Null,
-            total: 128,
-            offset: 0,
-            symbol: Some(128),
-            source_symbol: Some(128),
-            phase: "Observation".into(),
-            grid: Some(grid),
-            roles: Some(labels.clone()),
-        };
-        let actual = roles(TestPointId::PayloadInterleaved, &snapshot, Some(&snapshot)).unwrap();
-        let iq: Vec<_> = labels
+    fn nonzero_retained_offsets_use_parallel_backend_roles_and_preserve_missing_values() {
+        // Supplied roles are already aligned by the backend; no permutation runs here.
+        let values = [json!([1.0, -1.0]), Value::Null, json!([0.0, 0.0])];
+        let roles = [
+            Some(TransmitCellRole::Ncp),
+            None,
+            Some(TransmitCellRole::Data),
+        ];
+        let view = scatter(&values, 37, Some(&roles), TestPointId::PayloadInterleaved);
+        assert_eq!(view["iq_count"], 2);
+        assert_eq!(view["role_counts"]["ncp"], 1);
+        assert_eq!(view["role_counts"]["data"], 1);
+        let points = view["points"].as_array().unwrap();
+        assert!(points
             .iter()
-            .enumerate()
-            .map(|(index, role)| Some((*role, index)))
-            .collect();
-        let expected = SymbolInterleaver::new(settings, InterleaverDirection::Transmit)
-            .unwrap()
-            .process_symbol(0, &iq)
-            .unwrap();
-        for (role, cell) in actual.iter().zip(expected) {
-            assert_eq!(*role, cell.map(|(role, _)| role));
-        }
-        assert_eq!(
-            actual
-                .iter()
-                .filter(|v| **v == Some(TransmitCellRole::Ncp))
-                .count(),
-            1
-        );
-        assert_eq!(actual.iter().filter(|v| v.is_none()).count(), 96);
-        snapshot.symbol = Some(129);
-        assert!(roles(TestPointId::PayloadInterleaved, &snapshot, Some(&snapshot)).is_none());
+            .any(|point| point["index"] == 37 && point["role"] == "ncp"));
+        assert!(points
+            .iter()
+            .any(|point| point["index"] == 39 && point["role"] == "data"));
     }
 }

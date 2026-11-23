@@ -5,24 +5,29 @@
 //! Bounded graphical presentation of actual transmitter boundaries.
 mod physical;
 use super::capture::Snapshot;
+use crate::downstream::common::constants::{
+    TX_CELL_VIEW_MIN_EXTENT, TX_CODED_RASTER_COLUMNS, TX_LABEL_STRIP_Y, TX_ONE_BIT_Y, TX_ZERO_BIT_Y,
+};
+use crate::shared::presentation::constants::{SCATTER_AXIS_CENTER, SCATTER_HEADROOM_RATIO};
+use merlin::downstream::{FullLoopResult, FullLoopStage};
 use serde_json::{json, Value};
 
 /// Projects one retained stage page without changing sample values or provenance.
 /// # Arguments
-/// * `index` - Registered transmitter stage.
+/// * `stage` - Authoritative registered transmitter boundary.
 /// * `snapshot` - Immutable captured boundary.
 /// * `offset`, `end` - Validated page inside the retained array.
 /// * `mapped` - Separate source-mapped capture for an ordered-sequence comparison.
-/// * `settings` - Frozen run geometry used by physical assembly.
+/// * `result` - Immutable public result supplying physical power/roles/frequencies.
 /// # Returns
 /// Bounded graph coordinates, exact readouts and explicit unsupported state.
 pub(crate) fn project(
-    index: usize,
+    stage: FullLoopStage,
     snapshot: &Snapshot,
     offset: usize,
     end: usize,
     mapped: Option<&Snapshot>,
-    settings: &docsis_ofdm_fec::simulation::channel::ChannelRunSettings,
+    result: &FullLoopResult,
 ) -> Value {
     let values = snapshot.data["values"]
         .as_array()
@@ -30,12 +35,16 @@ pub(crate) fn project(
         .unwrap_or_default();
     let page = &values[offset..end];
     let first = snapshot.offset + offset;
-    match index {
-        0 | 2 => bits(page, first, false),
-        1 => bits(page, first, true),
-        3 => labels(page, first),
-        4 | 7 | 8 => json!({"kind":"constellation","x_label":"I","y_label":"Q"}),
-        5 => {
+    match stage {
+        FullLoopStage::SourcePayload | FullLoopStage::PayloadInterleavedBits => {
+            bits(page, first, false)
+        }
+        FullLoopStage::PayloadCoded => bits(page, first, true),
+        FullLoopStage::PayloadLabels => labels(page, first),
+        FullLoopStage::PayloadMapped | FullLoopStage::PlcIq | FullLoopStage::PlcPreamble => {
+            json!({"kind":"constellation","x_label":"I","y_label":"Q"})
+        }
+        FullLoopStage::PayloadInterleaved => {
             let mut graph = sequence(page, first);
             graph["title"] = json!(format!(
                 "After interleaving · channel symbol {}",
@@ -52,8 +61,12 @@ pub(crate) fn project(
                             sequence(&values[offset..source_end], source.offset + offset);
                         let common = graph["extent"]
                             .as_f64()
-                            .unwrap_or(1.0)
-                            .max(graph["before"]["extent"].as_f64().unwrap_or(1.0));
+                            .unwrap_or(TX_CELL_VIEW_MIN_EXTENT)
+                            .max(
+                                graph["before"]["extent"]
+                                    .as_f64()
+                                    .unwrap_or(TX_CELL_VIEW_MIN_EXTENT),
+                            );
                         rescale(&mut graph, common);
                         rescale(&mut graph["before"], common);
                         graph["before"]["title"] = json!(format!(
@@ -68,7 +81,7 @@ pub(crate) fn project(
             }
             graph
         }
-        6 => physical::project(values, snapshot.offset, snapshot.symbol, settings),
+        FullLoopStage::PhysicalBins => physical::project(result),
         _ => json!({"kind":"empty"}),
     }
 }
@@ -79,7 +92,9 @@ fn rescale(graph: &mut Value, extent: f64) {
         for point in points {
             for field in ["y", "q_y"] {
                 if let Some(value) = point[field].as_f64() {
-                    point[field] = json!(0.5 - (0.5 - value) * previous / extent);
+                    point[field] = json!(
+                        SCATTER_AXIS_CENTER - (SCATTER_AXIS_CENTER - value) * previous / extent
+                    );
                 }
             }
         }
@@ -88,15 +103,24 @@ fn rescale(graph: &mut Value, extent: f64) {
 }
 
 fn bits(values: &[Value], offset: usize, raster: bool) -> Value {
-    let columns = 64usize;
+    let columns = TX_CODED_RASTER_COLUMNS;
     let rows = values.len().div_ceil(columns).max(1);
-    let points=values.iter().enumerate().map(|(index,value)| {
-        let bit=value.as_u64().filter(|value|*value<=1);
-        json!({"x":if raster {(index%columns) as f64/columns as f64} else {index as f64/values.len().saturating_sub(1).max(1) as f64},
-            "y":if raster {Some((index/columns) as f64/rows as f64)} else {bit.map(|value|if value==0 {0.8} else {0.2})},
-            "value":bit,"index":offset+index,"readout":format!("Bit {} · {}",offset+index,bit.map(|value|value.to_string()).unwrap_or_else(||"unavailable".into()))})
+    let points = values.iter().enumerate().map(|(index, value)| {
+        let bit = value.as_u64().filter(|value| *value <= 1);
+        let (x, y) = if raster {
+            ((index % columns) as f64 / columns as f64, Some((index / columns) as f64 / rows as f64))
+        } else {
+            (index as f64 / values.len().saturating_sub(1).max(1) as f64,
+                bit.map(|value| match value {0 => TX_ZERO_BIT_Y, _ => TX_ONE_BIT_Y}))
+        };
+        json!({"x":x,"y":y,"value":bit,"index":offset+index,"readout":format!(
+            "Bit {} · {}",offset+index,bit.map(|value|value.to_string()).unwrap_or_else(||"unavailable".into()))})
     }).collect::<Vec<_>>();
-    json!({"kind":if raster {"raster"} else {"bits"},"points":points,"columns":columns,"rows":rows,"start":offset,"count":values.len(),"x_label":"Bit index","y_label":if raster {"Coded bits · 0 / 1"} else {"Bit · 0 / 1"},"first":offset.to_string(),"last":offset.saturating_add(values.len().saturating_sub(1)).to_string()})
+    let (kind, y_label) = match raster {
+        true => ("raster", "Coded bits · 0 / 1"),
+        false => ("bits", "Bit · 0 / 1"),
+    };
+    json!({"kind":kind,"points":points,"columns":columns,"rows":rows,"start":offset,"count":values.len(),"x_label":"Bit index","y_label":y_label,"first":offset.to_string(),"last":offset.saturating_add(values.len().saturating_sub(1)).to_string()})
 }
 
 fn labels(values: &[Value], offset: usize) -> Value {
@@ -106,7 +130,7 @@ fn labels(values: &[Value], offset: usize) -> Value {
         .max()
         .unwrap_or(1)
         .max(1);
-    let points=values.iter().enumerate().map(|(index,value)| json!({"x":index as f64/values.len().max(1) as f64,"y":0.2,"value":value.as_u64(),"intensity":value.as_u64().map(|value|value as f64/maximum as f64),"index":offset+index,"readout":format!("Cell label {} · {}",offset+index,value)})).collect::<Vec<_>>();
+    let points=values.iter().enumerate().map(|(index,value)| json!({"x":index as f64/values.len().max(1) as f64,"y":TX_LABEL_STRIP_Y,"value":value.as_u64(),"intensity":value.as_u64().map(|value|value as f64/maximum as f64),"index":offset+index,"readout":format!("Cell label {} · {}",offset+index,value)})).collect::<Vec<_>>();
     json!({"kind":"labels","points":points,"count":values.len(),"x_label":"Label index","y_label":"QAM label value","first":offset.to_string(),"last":offset.saturating_add(values.len().saturating_sub(1)).to_string()})
 }
 
@@ -126,11 +150,14 @@ fn sequence(values: &[Value], offset: usize) -> Value {
     let extent = values
         .iter()
         .filter_map(iq)
-        .fold(1.0f64, |maximum, (i, q)| maximum.max(i.abs()).max(q.abs()))
-        * 1.1;
+        .fold(TX_CELL_VIEW_MIN_EXTENT, |maximum, (i, q)| {
+            maximum.max(i.abs()).max(q.abs())
+        })
+        * SCATTER_HEADROOM_RATIO;
+    let span = extent + extent;
     let points=values.iter().enumerate().map(|(index,value)| {
         let sample=iq(value);
-        json!({"x":index as f64/values.len().saturating_sub(1).max(1) as f64,"y":sample.map(|(i,_)|0.5-i/(2.0*extent)),"q_y":sample.map(|(_,q)|0.5-q/(2.0*extent)),"index":offset+index,"readout":sample.map(|(i,q)|format!("Cell {} · I {i:.5} · Q {q:.5}",offset+index)).unwrap_or_else(||format!("Cell {} · unavailable history",offset+index))})
+        json!({"x":index as f64/values.len().saturating_sub(1).max(1) as f64,"y":sample.map(|(i,_)|SCATTER_AXIS_CENTER-i/span),"q_y":sample.map(|(_,q)|SCATTER_AXIS_CENTER-q/span),"index":offset+index,"readout":sample.map(|(i,q)|format!("Cell {} · I {i:.5} · Q {q:.5}",offset+index)).unwrap_or_else(||format!("Cell {} · unavailable history",offset+index))})
     }).collect::<Vec<_>>();
     json!({"kind":"sequence","points":points,"x_label":"Cell index","y_label":"I / Q · normalized amplitude","extent":extent,"first":offset.to_string(),"last":offset.saturating_add(values.len().saturating_sub(1)).to_string()})
 }

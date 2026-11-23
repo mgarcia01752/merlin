@@ -1,0 +1,509 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Retained TX stage and physical-power facade",
+  "status": "Scoped TX stage/physical-power/QAM consumer accepted; spectrum migration, parent DS task and final numeric audit remain incomplete",
+  "base_commit": "b7146e94c595b344b81694e6473942d27f6211d9",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-09",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/src/downstream/common/constants.rs",
+      "sha256": "6378ad55d72a5a7acdeb7929310bbc10f0ace7fac01b9e095c5886c1eb51ba65"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/capture.rs",
+      "sha256": "3c2e9a322104241bda08122ba8fd60cf94ab56b91d1357d2d30f716f33dd5c96"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/graphs/mod.rs",
+      "sha256": "7b6b7ee08921bfd57ed73c555b3a1c45684bf444c0ca6df9303e46a6979016e3"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/graphs/physical.rs",
+      "sha256": "03682874ae08a893d66de7106758f9ad21c1b5188a45504cccb1a9f63924d4d9"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/qam_points.rs",
+      "sha256": "3bbd2cdc4ff8dcde80020135a3b94eb78ffb5095831b82bfa1a77341a011f5c7"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+      "sha256": "18dcb54538c9748162553ec1e8cd5337ae1a7909a7e598c2b5a36f2448f5f582"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop/tests.rs",
+      "sha256": "40b56f1aa2e868645137c3ee7b41ebff4eafa4210c31acb718ca48d9025f639a"
+    },
+    {
+      "path": "crates/ofdm/src/simulation/payload/role_projection.rs",
+      "sha256": "7668523bc377b36341e8710cfc95944b76657a2166c9637b67da14c977dcc66a"
+    }
+  ],
+  "ownership": [
+    "Public FullLoopResult.physical_bins supplies actual linear power, increasing-frequency metadata, physical roles and bounded role spans. Qt only reduces supplied powers into a min/max envelope and drawing coordinates.",
+    "Public FullLoopResult.transmit_cells owns first-aligned-symbol role transport and missing history. Qt renders returned parallel roles with absolute cell indices and preserves rare-role quotas; no interleaver or I/Q-derived scientific power remains in the three retired files.",
+    "Existing public-derived Snapshot presentation data, stage order, pages, labels, before/after sequences, common axis scale and explicit missing values remain. Unused duplicate snapshot role/grid fields are removed.",
+    "The two legacy TX spectrum functions are byte-for-byte preserved and their two science sites remain frozen. Ordered-frame electrical calibration is a distinct next API prerequisite; the sample-budget helper alone does not justify replacing legacy frame concatenation with a single-frame PSD."
+  ],
+  "boundary": {
+    "before": {
+      "files": 30,
+      "sites": 102
+    },
+    "after": {
+      "files": 27,
+      "sites": 96
+    },
+    "scientific_dependencies": 3,
+    "retired": [
+      {
+        "entry": {
+          "path": "apps/qt/src/downstream/instruments/transmitter/graphs/mod.rs",
+          "sha256": "04ff0b5b90685ce4b3beb8f53cbde16cfd00b0cc2e7a3a3dfe4477d65ab49b68",
+          "sites": [
+            {
+              "line": 25,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sunset_task": "UIU-DS-01"
+        },
+        "task": "UIU-DS-01",
+        "unit": "Retained TX stage and physical-power facade",
+        "reason": "Public actual physical powers/layout spans and transported cell roles replace private scientific reconstruction; graph coordinates only remain in Qt.",
+        "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-retained-transmitter-views-facade-accepted"
+      },
+      {
+        "entry": {
+          "path": "apps/qt/src/downstream/instruments/transmitter/graphs/physical.rs",
+          "sha256": "836a25a11a68186fe8bc1287b05b76c6d2ac01c08a5a85eb22c1c4c313e31fc0",
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 98,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 99,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sunset_task": "UIU-DS-01"
+        },
+        "task": "UIU-DS-01",
+        "unit": "Retained TX stage and physical-power facade",
+        "reason": "Public actual physical powers/layout spans and transported cell roles replace private scientific reconstruction; graph coordinates only remain in Qt.",
+        "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-retained-transmitter-views-facade-accepted"
+      },
+      {
+        "entry": {
+          "path": "apps/qt/src/downstream/instruments/transmitter/qam_points.rs",
+          "sha256": "61349f7f52bd7815bf4ece1144a864354468130cae0ac428625804702bcd60cf",
+          "sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 131,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sunset_task": "UIU-DS-01"
+        },
+        "task": "UIU-DS-01",
+        "unit": "Retained TX stage and physical-power facade",
+        "reason": "Public actual physical powers/layout spans and transported cell roles replace private scientific reconstruction; graph coordinates only remain in Qt.",
+        "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-retained-transmitter-views-facade-accepted"
+      }
+    ],
+    "focused_review": {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+        "sha256": "7dfffc3502bfa20788897fd6382950c2916ba1bed2df925f82c8244839d31e69",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 189,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+        "sha256": "18dcb54538c9748162553ec1e8cd5337ae1a7909a7e598c2b5a36f2448f5f582",
+        "sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 185,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Only stage view public identifiers/callers and named page policies change. The spectrum_state and spectrum functions remain byte-for-byte exact; their two remaining science sites stay frozen pending a separate calibrated ordered-frame API prerequisite.",
+      "retained_spectrum_functions": {
+        "sha256": "5248c0e8d6679a897be8e3cd3c7252861442289bd2724ed0d89cb3ecad4f5ae4",
+        "byte_length": 2814,
+        "exact_at_base_commit": "b7146e94c595b344b81694e6473942d27f6211d9"
+      },
+      "evidence": "docs/development/features/unified-qt-workbench/transmitter-views-evidence.json"
+    },
+    "other_entries_exact": true,
+    "initial_historical_record_unchanged": true
+  },
+  "test_preservation": [
+    {
+      "original": "Qt qam_points::roles_follow_actual_interleaver_and_unavailable_history_stays_unknown",
+      "destination": "crates/ofdm/src/simulation/payload/role_projection.rs::migrated_qt_128_cell_roles_follow_actual_interleaver_and_later_history_stays_unknown",
+      "coverage": "Same 50 kHz/128-cell/depth-four/origin-128 fixture, NCP at zero/filler at four, production-interleaver comparison, one NCP, 96 unavailable history positions and symbol 129 rejection. Existing independent eight-cell role vector also runs."
+    },
+    {
+      "original": "Qt physical::bins_preserve_peak_missing_power_and_layout_roles_within_bounds",
+      "destination": "Same Qt case plus existing waveform::bin_power tests",
+      "coverage": "Preserves literal maximum 25, <=2048 points, y=0 peak, missing gap, PLC band and missing-symbol rejection. Supplied power formatting fixture uses an actual public configured layout. Original synthetic 3+4i->25 oracle and nonfinite/overflow rejection run at the existing scientific owner; Qt does not fabricate a public result or recompute magnitude."
+    },
+    {
+      "original": "Qt graph digital/raster and ordered-cell cases; rare-NCP case",
+      "destination": "Same Qt cases",
+      "coverage": "Original bit levels, absolute offsets, unknown values, raster columns, ordered I/Q correspondence, rare NCP endpoint and missing-role behavior preserved. Added nonzero retained-offset/parallel-role case."
+    },
+    {
+      "original": "Actual worker/instrument regression",
+      "destination": "apps/qt/src/downstream/simulation/closed_loop/tests.rs::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+      "coverage": "Every old assertion remains. Added direct public physical power maximum/span accounting and per-rendered-point mapped role equality. Existing actual API test preserves raw-bin powers/roles/context/window/absence oracles."
+    }
+  ],
+  "numeric_review": {
+    "domain": "No changed scientific limits. Numerical owner retains authoritative power/role definitions. Backend change is tests only.",
+    "presentation": "Named bit-row width, page-row count, preview page length, raster columns, zero/one bit positions, separate label-row position, TX cell amplitude extent, physical-power bucket count and power-scale floor. Equal numeric policies are separate; cell scatter/sequence reuse one semantic extent, shared scatter headroom/center and frequency units.",
+    "independent_anchors": "Existing literal test positions/expected values remain independent. New 37/39 offset fixture is explained.",
+    "final_line_by_line_audit": "Pending UIU-QA-01; no final numeric acceptance claimed."
+  },
+  "validation": {
+    "rust-final": {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "--bin",
+        "merlin-qt",
+        "--",
+        "downstream::instruments::transmitter::graphs::tests",
+        "downstream::instruments::transmitter::graphs::physical::tests",
+        "downstream::instruments::transmitter::qam_points::tests",
+        "downstream::simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 21.51323544200568,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      }
+    },
+    "clippy": {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 16.174546035006642,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      }
+    },
+    "qml": {
+      "command": [
+        "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+        "-input",
+        "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+        "Workbench::test_transmitter_stage_message_and_qam_navigation"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.4921628330048406,
+      "behavior_cases": 1
+    },
+    "rust-final-cases": {
+      "passed": 6,
+      "log": "docs/development/local/unified-qt-workbench/ds-01-cell-views-rust-final.log",
+      "sha256": "b328a55b3896913a1b2f1d0007f2ad76e44fbf5f3ac8a13f41b03b7d53781c0e",
+      "cases": [
+        "downstream::instruments::transmitter::graphs::tests::ordered_iq_is_not_a_constellation_or_a_fabricated_permutation",
+        "downstream::instruments::transmitter::qam_points::tests::nonzero_retained_offsets_use_parallel_backend_roles_and_preserve_missing_values",
+        "downstream::instruments::transmitter::graphs::tests::digital_and_raster_coordinates_preserve_bits_offsets_and_unknowns",
+        "downstream::instruments::transmitter::qam_points::tests::rare_ncp_survives_reduction_and_unknown_is_never_colored_as_data",
+        "downstream::instruments::transmitter::graphs::physical::tests::bins_preserve_peak_missing_power_and_layout_roles_within_bounds",
+        "downstream::simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views"
+      ]
+    },
+    "core-cases": {
+      "passed": 5,
+      "log": "docs/development/local/unified-qt-workbench/ds-01-cell-views-core.log",
+      "sha256": "07119230777d6b32cbedb9d7d077ed3b81e819b3aee65633e57d9ec3043fa2ee",
+      "cases": [
+        "signal_processing::waveform::bin_power::tests::literal_bin_power_preserves_known_zero_and_missing_history",
+        "signal_processing::waveform::bin_power::tests::nonfinite_or_overflowing_bin_power_is_rejected",
+        "simulation::payload::role_projection::tests::independent_eight_cell_roles_preserve_delay_gaps_and_frequency_order",
+        "simulation::payload::role_projection::tests::migrated_qt_128_cell_roles_follow_actual_interleaver_and_later_history_stays_unknown",
+        "simulation::payload::role_projection::tests::later_misaligned_missing_or_other_run_roles_remain_unavailable"
+      ],
+      "command": [
+        "docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--locked",
+        "--lib",
+        "--",
+        "simulation::payload::role_projection::tests",
+        "signal_processing::waveform::bin_power::tests",
+        "--nocapture"
+      ],
+      "exit_code": 0
+    },
+    "api-cases": {
+      "passed": 1,
+      "log": "docs/development/local/unified-qt-workbench/ds-01-cell-views-api.log",
+      "sha256": "2b5860b9419114f1b58d2db71383ddfdf6d54c97f6c48b72b52c97f2aa1584a4",
+      "cases": [
+        "actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history"
+      ],
+      "command": [
+        "docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--locked",
+        "--features",
+        "high-level-api",
+        "--test",
+        "api_full_loop_observations",
+        "actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history",
+        "--",
+        "--exact"
+      ],
+      "exit_code": 0
+    },
+    "rust_cases": 12,
+    "boundary_cases": 20,
+    "release": {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "build",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--release",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 53.83506374199351,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      }
+    },
+    "format-final": {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "fmt",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.427117082013865,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      }
+    },
+    "native_desktop": {
+      "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+      "sha256": "d7c5a791cf8532b2ca2d0499d2e86ff78fdb7435457811563635c041703fbb0d",
+      "display": ":0",
+      "display_dimensions": [
+        "dimensions:    1280x800 pixels (338x211 millimeters)"
+      ],
+      "qt_sdk_version": "6.8.3",
+      "commands": [
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.04739971298840828,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.07578120200196281,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.7715506740059936,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.031346791991381906,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.8162670169986086,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test",
+            "--workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.3121740060014417,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        }
+      ]
+    },
+    "boundary": {
+      "errors": [],
+      "scientific_dependencies": 3,
+      "frozen_legacy_files": 27,
+      "final": false
+    },
+    "documents": {
+      "errors": [],
+      "mode": "current",
+      "feature_files": 320,
+      "markdown_links": 9780,
+      "canonical_requirement_ids": 520,
+      "source_requirements": 59,
+      "downstream_routes": 127,
+      "downstream_task_mappings": 430,
+      "functional_records": 9,
+      "functional_requirement_mappings": 57,
+      "functional_unique_requirements": 50,
+      "functional_task_mappings": 22,
+      "dependency_nodes": 30,
+      "skills": 12,
+      "discovery_links": 24,
+      "protected_original_records": 163,
+      "historical_archives": 12
+    },
+    "traceability": {
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/integration_traceability.py"
+      ],
+      "exit_code": 0,
+      "output": "Integration traceability: task/requirement/architecture and recorded implementation chains pass"
+    },
+    "boundary_unit_command": [
+      "python3",
+      "-B",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/validation",
+      "-p",
+      "test_qt_api_boundary.py",
+      "-v"
+    ],
+    "other_checks": [
+      "Root/Qt format checks",
+      "Version metadata 0.4.0",
+      "Python installation guide --check",
+      "git diff --check"
+    ]
+  },
+  "failure_history": [
+    "An initial Qt Cargo --lib invocation rejected because this package has only a binary target; corrected to --bin merlin-qt.",
+    "An initial filter used the import alias instead of declared module names and selected only the actual worker case. The final invocation selects all six intended cases explicitly.",
+    "The first build reported newly unused duplicate Snapshot grid/roles fields; removed after verifying all consumers use authoritative public roles.",
+    "A private boundary-record script initially used the wrong scanner function name and made no change. The guard correctly rejected the four changed frozen files until the focused retirement/review record was applied."
+  ]
+}

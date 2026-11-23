@@ -1973,3 +1973,46 @@ FEC/planning tasks remain closed. Qt spectrum consumers, the 30-file/102-site/
 three-dependency migration debt, the parent DS task and final numeric audit remain
 incomplete. The latest Qt executable is still the preceding accepted consumer;
 this prerequisite adds no Qt adoption or native desktop/hosted/release claim.
+
+## UIU-DS-01 retained transmitter views facade accepted
+
+[Design/owners](design.md#uiu-ds-01-retained-transmitter-views-facade-unit),
+[exact evidence](transmitter-views-evidence.json),
+[architecture](../../../architecture.md#unified-qt-public-api-boundary),
+[REQ-UIU-02](../../../requirements.md#req-uiu-02),
+[REQ-UIU-03](../../../requirements.md#req-uiu-03),
+[REQ-UIU-09](../../../requirements.md#req-uiu-09),
+[REQ-UIU-24](../../../requirements.md#req-uiu-24),
+[REQ-UIU-27](../../../requirements.md#req-uiu-27) and
+[UIU-DS-01](../../checklist.md#task-uiu-ds-01) trace this scoped consumer.
+
+Physical graphs consume actual public bin power, frequencies and bounded role
+spans. QAM consumes backend transported roles and missing history. Qt retains
+only display reduction, finite drawing coordinates, role-group quotas and the
+existing stage pages/cards. Duplicate snapshot role/grid copies are removed.
+Distinct page/raster/bit/label/power policies have named directional owners;
+cell views reuse their shared amplitude extent and shared drawing/unit constants.
+
+Twelve focused Rust cases pass: six Qt cases, five backend role/power cases and
+the actual bin/cell API case. All old graph/rare-role and worker assertions remain.
+The original 128-cell/depth-four interleaver comparison, one NCP, 96 missing
+positions and later-symbol rejection now run at the backend role owner, beside
+the independent eight-cell vector. The original 3+4i→25 oracle runs at the
+existing bin-power owner; the Qt test formats supplied power with a real public
+configured layout. Added checks compare actual rendered powers/roles against
+public results and verify parallel roles at nonzero retained offsets.
+
+Three whole-file exceptions retire, leaving 27 files/96 sites/three dependencies.
+The views file receives a focused review for stage-only migration. Its two TX
+spectrum functions remain byte-for-byte exact, identified by their retained hash;
+no remaining spectrum debt is accepted. Original IFFT/prefix/window plots join
+up to 16384 ordered-frame samples. The normalized public sequence query and
+single-frame calibrated query have different sampling contracts. A separate
+typed calibration prerequisite must preserve that distinction before migration.
+The accepted sample-capacity helper is insufficient alone.
+
+QML navigation, boundary regressions, Clippy, optimized/native checks and their
+exact executable identity are recorded in the evidence. The UI appearance and
+existing screenshots are unchanged. No new wheel, complete historical suite,
+hosted/platform lifecycle or external interoperability is claimed. This parent,
+remaining spectrum/receiver/input migrations and the final numeric audit stay open.
