@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-573 explicit public Rust operations and 547 installed native Python entries with
+576 explicit public Rust operations and 550 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/fec-recovery-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/source-file-api-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 112 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -261,7 +261,7 @@ Named contract references resolve in the data's `contracts` object.
 
 | Row group | Rust scope | Python scope |
 | --- | --- | --- |
-| Downstream: 404 Rust / 402 native operations | Accepted API, quantities, original inputs, full-loop requests, retained observations and saved full-loop preparation. | Installed native classes preserve legacy root aliases; current scoped and preceding full-gate receipts define behavioral coverage. |
+| Downstream: 407 Rust / 405 native operations | Accepted API, quantities, original inputs, full-loop requests, retained observations and saved full-loop preparation. | Installed native classes preserve legacy root aliases; current scoped and preceding full-gate receipts define behavioral coverage. |
 | Upstream: 147 Rust / 119 native operations | Independent sessions, measured admission, resource plans and actual bounded instrument observations. | Installed native upstream namespace and API-04 backend acceptance; Qt adoption remains separate. |
 | Common: 22 Rust / 26 native operations | One-way cancellation plus optional original-preserving Project admission; returned scientific owners remain separate. | Installed common namespace, enum accessors and Project; the Rust Cancellation trait and typed ProjectError remain explicit language differences. |
 
@@ -325,3 +325,13 @@ complete/cancelled/empty/finite-file outcomes, immutable reports and owned nativ
 dictionaries, plus separate Rust-process parity. Every preceding 572/546 row,
 class and member remains exact; [executed cases](../unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json)
 record this focused scope. Qt adoption and Level 2/3 acceptance remain separate.
+
+
+The [source-file admission prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-source-file-admission-api-accepted)
+adds file_limits/file_info and immutable with_fill, preserving all preceding
+573/547 rows and native exports. Six Rust/ten exact-wheel native cases cover
+independent original/work limits, empty/unnamed/partial-byte/zero-fill metadata,
+actual original-buffer sharing and atomic errors, plus separate Rust-process
+parity. [Executed cases](../unified-qt-workbench/ds-01-source-file-operation-test-results.json)
+and exact inventories establish focused acceptance; Qt consumer and Level 2/3
+gates remain separate.

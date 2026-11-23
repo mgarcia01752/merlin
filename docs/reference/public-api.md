@@ -227,6 +227,13 @@ copies the bounded recovered original prefix. Job results own that same optional
 continuous PRBS. See [file source design](../user/simulation/file-source/README.md)
 for cursor, padding, truth and partial-export contracts.
 
+`SourceInput::file_limits`, `file_info` and `with_fill` expose authoritative
+finite-source budgets, constant-size original/fill metadata and immutable append
+replacement. SourceFileLimits and SourceFileInfo retain explicit octet/bit units
+and optional independently seeded policy. Replacement shares the validated
+original byte buffer; native Python mirrors these operations with owned results.
+See [source admission semantics](../user/api/input-admission.md#finite-source-limits-and-immutable-fill-editing).
+
 ## Downstream FEC shortening
 
 `fec_codec::shortening::{Shortening, ShortenedCodec}` provides checked original

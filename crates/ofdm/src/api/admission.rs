@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Passive validated editor inputs; execution and scientific stages keep existing owners.
+mod source_info;
 use super::{ApiError, ApiResult, Dpd, ErrorCode, NamedCapture, ObservationDuration, PrbsSeed};
 use crate::{
     simulation::source::{
@@ -13,6 +14,7 @@ use crate::{
 };
 use serde::Serialize;
 use sha2::{Digest, Sha256};
+pub use source_info::{SourceFileInfo, SourceFileLimits};
 use std::time::Duration;
 
 /// Existing desktop timing-editor byte ceiling, independent of PHY sample limits.

@@ -25,7 +25,8 @@ pub use crate::transmission::SubcarrierSpacing;
 pub use crate::transmission::{DurationTiming, TransmissionSettings};
 pub use crate::types::ProtocolScope;
 pub use admission::{
-    FileFillPolicy, SourceInput, TransmissionConfiguration, MAX_TRANSMISSION_DOCUMENT_BYTES,
+    FileFillPolicy, SourceFileInfo, SourceFileLimits, SourceInput, TransmissionConfiguration,
+    MAX_TRANSMISSION_DOCUMENT_BYTES,
 };
 pub use channel::*;
 pub use configuration::*;

@@ -2689,3 +2689,33 @@ The whole plot exception retires, leaving 23 files/88 sites/three dependencies.
 One bounded public original-capture admission occurs per view; retaining its
 immutable public catalog belongs to the remaining input-owner migration. No
 new caching/session or scientific API contract is introduced in this unit.
+
+## UIU-DS-01 source-file admission metadata prerequisite
+
+REQ-UIU-02/03/08/09/20/24/27 and UIU-DS-01 own this paired additive prerequisite.
+The source editor still uses private file/generator types for finite counts and
+the native chooser's limit; the worker compares accepted source metadata with
+the prepared request. Expose the related passive metadata and immutable fill
+operations before changing these Qt consumers. Preserve exact bytes, unnamed/empty files, dormant continuous
+seeds, independent fill seeds/partial-byte targets and current source limits.
+
+| Owner / disposition | Exact contract and validation |
+| --- | --- |
+| ADD `crates/ofdm/src/api/admission/source_info.rs`; EDIT admission/root re-exports | `SourceInput::file_limits() -> SourceFileLimits` returns existing authoritative max_original_bytes/max_total_bits. `file_info(&self) -> Option<SourceFileInfo>` returns original_bytes, original_bits, target_bits, fill_bits and optional typed FileFillPolicy. None means continuous PRBS, never empty-file EOF. Values derive solely from the existing validated FilePayload. `SourceInput::with_fill(&self, Option<FileFillPolicy>) -> ApiResult<SourceInput>` reuses FilePayload.with_fill and shares its original byte buffer; it rejects continuous inputs. No generator/bit stream or source mutation. |
+| EDIT native source adapter/root typing | Matching static file_limits() -> dict, file_info() -> dict or None and with_fill(fill=None) -> SourceInput. Only Rust calculates source counts/validates replacement; Python returns owned snapshots/handles. Existing constructors/properties/defaults/aliases stay exact. |
+| EDIT existing Rust/native source tests, facade compile contract and bounded process reference | Independent 16-MiB/134217728-bit limits, empty/one-byte/11-bit fill/equal-target/dormant state, provenance, pointer-proven original-buffer sharing and source immutability, invalid targets/seeds and separate-process Rust/native parity. Preserve all existing source assertions. |
+| DEFER Qt source model/bridge and session/worker source metadata | No Qt change until paired acceptance is committed. Later adoption keeps editor persistence and lifecycle contracts, with separate current consumer tests. |
+
+Level 1 expands to affected Rust/native/facade/source owners, scoped Clippy,
+analysis-only build and exact additive inventories. No scientific algorithm,
+upstream/shared codec, CLI, project schema, registration or packaging changes.
+Level 2/3 official task/final gates remain pending; completed tasks stay closed.
+
+
+[Paired Level 1 acceptance](validation.md#uiu-ds-01-source-file-admission-api-accepted)
+passes six Rust/ten exact-archive native cases, scoped contracts and complete
+additive inventories. Source review added with_fill before Qt adoption because
+reconstructing the original file on each edit would lose existing shared-buffer
+behavior. Pointer/ownership tests prove the existing FilePayload owner is reused.
+The initial two-query build remains separate from final three-operation native
+acceptance. Qt source/session/worker consumption is the next dependent unit.

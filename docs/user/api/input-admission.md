@@ -204,3 +204,47 @@ not add timeline policies or a direction-tagged project schema.
 Traceability: [architecture](../../architecture.md#unified-qt-public-api-boundary),
 [requirements](../../requirements.md#req-uiu-09),
 [task and validation](../../development/features/unified-qt-workbench/validation.md#uiu-api-01-input-admission-unit).
+
+
+## Finite source limits and immutable fill editing
+
+`SourceInput::file_limits()` returns the existing original-file byte ceiling and
+finite meaningful-bit work ceiling as SourceFileLimits. These application
+resource policies are separate from capture-decoder limits and PHY parameters.
+Native Python `SourceInput.file_limits()` returns the matching owned dictionary.
+
+`source.file_info()` returns SourceFileInfo in Rust and an owned dictionary in
+Python, or None for continuous PRBS15. A finite empty file returns a present
+zero-valued summary. The fields are original_bytes, original_bits, target_bits,
+fill_bits and optional fill (target_bits and independent checked seed). An
+explicit zero-bit append policy remains distinguishable from no append policy.
+The query generates no source or fill bits and excludes FEC padding.
+
+`source.with_fill(fill)` returns a new independently validated file source while
+sharing the immutable original byte buffer and preserving name/hash. Passing
+None removes append and restores the original bit length. The original object
+stays unchanged; continuous PRBS inputs reject this operation. Rust owns all
+admission, counting and memory sharing. Python `source.with_fill(fill=None)`
+returns a new native handle; original_bytes still returns an owned Python copy.
+
+```rust
+// `source` is an already accepted finite SourceInput.
+let info = source.file_info().expect("finite source");
+let limits = SourceInput::file_limits();
+assert!(info.target_bits <= limits.max_total_bits);
+let original_only = source.with_fill(None)?;
+assert_eq!(original_only.file_info().unwrap().fill_bits, 0);
+```
+
+```python
+import merlin.downstream as m
+
+# `source` is an already accepted finite m.SourceInput.
+info = source.file_info()
+limits = m.SourceInput.file_limits()
+assert info['target_bits'] <= limits['max_total_bits']
+original_only = source.with_fill()
+assert original_only.file_info()['fill_bits'] == 0
+```
+
+See the bounded [Rust process reference](../../../crates/ofdm/examples/api_source_file_info.rs).

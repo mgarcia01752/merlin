@@ -2287,3 +2287,51 @@ native startup were not required for this focused unit; evidence records the
 reasons and makes no new full/installed pass claim. Existing dark screenshots
 still describe the unchanged presentation. Parent Level 2, milestone/final
 Level 3 and the final numeric audit stay pending.
+
+
+## UIU-DS-01 source-file admission API accepted
+
+[Design/owners](design.md#uiu-ds-01-source-file-admission-metadata-prerequisite),
+[exact evidence](source-file-api-evidence.json),
+[executed cases](ds-01-source-file-operation-test-results.json),
+[architecture](../../../architecture.md#unified-qt-public-api-boundary),
+[REQ-UIU-02](../../../requirements.md#req-uiu-02),
+[REQ-UIU-03](../../../requirements.md#req-uiu-03),
+[REQ-UIU-08](../../../requirements.md#req-uiu-08),
+[REQ-UIU-09](../../../requirements.md#req-uiu-09),
+[REQ-UIU-20](../../../requirements.md#req-uiu-20),
+[REQ-UIU-24](../../../requirements.md#req-uiu-24),
+[REQ-UIU-27](../../../requirements.md#req-uiu-27) and
+[UIU-DS-01](../../checklist.md#task-uiu-ds-01) trace this prerequisite.
+
+SourceInput.file_limits/file_info expose the existing FilePayload byte/bit bounds,
+actual original/target/fill counts and independent append policy. With_fill
+returns a revalidated immutable file selection sharing the exact original byte
+buffer; None removes append and continuous inputs reject it. Empty finite files
+remain distinct from PRBS; explicit zero-length append remains distinct from no
+policy. These operations generate no source/RNG state or payload serialization.
+Native Python delegates validation/counts and returns owned dictionaries/handles.
+
+Level 1 passes six Rust cases: five focused source-admission cases plus the exact
+legacy/facade namespace contract. Independent 16-MiB/134217728-bit ceilings,
+8-/11-bit targets, original pointer sharing, name/hash/byte preservation, partial
+bytes, empty/unnamed files and invalid changes are covered. Ten exact-archive
+installed native cases cover source/namespace behavior, result ownership and a
+passive separate Rust-process reference. No full simulation is needed for the
+new source queries. Scoped root/native Clippy, formatting, analysis-only build,
+strict actual 576/550 operation inventories and docs/traceability pass. Every
+prior 573/547 row, native class/member and execution record remains intact.
+
+The initial new Rust test failed to compile because its json macro import was
+missing; the import was corrected without changing assertions. An earlier
+build-only wheel contained two metadata operations; final source review added
+necessary shared-buffer fill replacement before Qt adoption. A separate exclusive
+final wheel/receipt supplies all native acceptance, including method-presence
+and exact archive/installed module checks. Earlier logs/artifacts remain separate
+and are not claimed as final native acceptance.
+
+No Qt, CLI/schema/lifecycle, upstream/shared-codec or packaging contract changed.
+Their runtime/full suites were not required for this focused additive source
+API; reasons and pending gates are explicit in the evidence. Qt debt remains
+23 files/88 sites/three dependencies until separate consumer acceptance. Parent
+Level 2, milestone/final Level 3 and the line-by-line numeric audit stay pending.

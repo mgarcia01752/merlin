@@ -233,6 +233,54 @@ impl PyFileFill {
 
 #[pymethods]
 impl PySourceInput {
+    /// Returns an independent finite fill selection sharing Rust's original byte buffer.
+    /// # Arguments
+    /// * `fill` - Optional admitted total-bit target and independent fill seed.
+    /// # Returns
+    /// Owned file source with unchanged original name/bytes/hash; None removes append.
+    /// Rust reuses the original immutable buffer and performs all target validation.
+    /// # Errors
+    /// Continuous inputs or invalid finite targets raise ApiError without mutating self.
+    #[pyo3(signature=(fill=None))]
+    fn with_fill(&self, py: Python<'_>, fill: Option<&PyFileFill>) -> PyResult<Self> {
+        let policy = fill.map(|fill| fill.0);
+        py.detach(|| self.0.with_fill(policy))
+            .map(Self)
+            .map_err(error)
+    }
+
+    /// Reads authoritative Rust finite-source byte and meaningful-bit resource limits.
+    /// # Returns
+    /// Owned max_original_bytes/max_total_bits dictionary; no source or generator starts.
+    /// # Errors
+    /// Preserves structured transport and Python allocation failures.
+    #[staticmethod]
+    fn file_limits(py: Python<'_>) -> PyResult<Py<PyAny>> {
+        let text = serde_json::to_string(&api::SourceInput::file_limits()).map_err(|cause| {
+            error(api::ApiError::new(
+                api::ErrorCode::InvalidInput,
+                cause.to_string(),
+            ))
+        })?;
+        object_from_json(py, &text)
+    }
+
+    /// Reads the actual finite-source metadata without copying or generating payload bits.
+    /// # Returns
+    /// None for continuous PRBS; owned original_bytes/original_bits/target_bits/fill_bits
+    /// and optional fill policy for finite files, including empty input. Rust owns counts.
+    /// # Errors
+    /// Preserves structured transport and Python allocation failures.
+    fn file_info(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
+        let text = serde_json::to_string(&self.0.file_info()).map_err(|cause| {
+            error(api::ApiError::new(
+                api::ErrorCode::InvalidInput,
+                cause.to_string(),
+            ))
+        })?;
+        object_from_json(py, &text)
+    }
+
     /// Admits a passive continuous PRBS15 choice through public Rust data contracts.
     ///
     /// # Arguments

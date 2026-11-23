@@ -8,6 +8,7 @@ use docsis_ofdm_fec::api::{
     ApiError, Dpd, ErrorCode, FileFillPolicy, FullLoopOptions, NamedCapture, ObservationDuration,
     PrbsSeed, SourceInput, SubcarrierSpacing, TransmissionConfiguration, TransmissionSettings,
 };
+use serde_json::json;
 
 #[test]
 fn spectrum_average_capacity_uses_independent_fft_boundaries_without_running() {
@@ -326,4 +327,105 @@ fn source_admission_distinguishes_empty_file_eof_and_continuous_prbs15() {
     assert!(PrbsSeed::new(0).is_err());
     assert!(PrbsSeed::new(32768).is_err());
     assert!(FileFillPolicy::new(134_217_729, PrbsSeed::new(1).unwrap()).is_err());
+}
+
+#[test]
+fn source_file_info_limits_and_fill_metadata_are_passive_and_owned() {
+    let limits = SourceInput::file_limits();
+
+    // Independent existing 16-MiB input and 128-Mibit finite-work ceilings.
+    assert_eq!(limits.max_original_bytes, 16_777_216);
+    assert_eq!(limits.max_total_bits, 134_217_728);
+    let continuous = SourceInput::prbs15(PrbsSeed::new(1).unwrap());
+    assert!(continuous.file_info().is_none());
+    let empty = SourceInput::unnamed_file(&[], None).unwrap();
+    assert_eq!(
+        serde_json::to_value(empty.file_info()).unwrap(),
+        json!({
+            "original_bytes":0,"original_bits":0,"target_bits":0,"fill_bits":0,"fill":null
+        })
+    );
+
+    // One actual octet and independent 11-bit target leave three meaningful fill bits.
+    let fill = FileFillPolicy::new(11, PrbsSeed::new(7).unwrap()).unwrap();
+    let source = SourceInput::unnamed_file(&[0x80], Some(fill)).unwrap();
+    let hash = source.original_sha256().unwrap().to_owned();
+    let mut info = source.file_info().unwrap();
+    assert_eq!(
+        serde_json::to_value(info).unwrap(),
+        json!({
+            "original_bytes":1,"original_bits":8,"target_bits":11,"fill_bits":3,
+            "fill":{"target_bits":11,"seed":7}
+        })
+    );
+    info.target_bits = 999;
+    assert_eq!(info.target_bits, 999);
+    assert_eq!(source.file_info().unwrap().target_bits, 11);
+    assert_eq!(source.original_bytes(), Some([0x80].as_slice()));
+    assert_eq!(source.original_sha256(), Some(hash.as_str()));
+    assert_eq!(source.name(), Some(""));
+
+    // Explicit zero-length append remains distinguishable from an absent fill policy.
+    let equal = SourceInput::file(
+        NamedCapture::new("named", vec![0x80]).unwrap(),
+        Some(FileFillPolicy::new(8, PrbsSeed::new(1).unwrap()).unwrap()),
+    )
+    .unwrap();
+    assert_eq!(equal.file_info().unwrap().fill_bits, 0);
+    assert!(equal.file_info().unwrap().fill.is_some());
+    assert!(SourceInput::unnamed_file(&[0x80], None)
+        .unwrap()
+        .file_info()
+        .unwrap()
+        .fill
+        .is_none());
+}
+
+#[test]
+fn source_fill_replacement_shares_originals_and_preserves_error_atomicity() {
+    let original = SourceInput::unnamed_file(&[0x80], None).unwrap();
+    let fill = FileFillPolicy::new(11, PrbsSeed::new(7).unwrap()).unwrap();
+    let extended = original.with_fill(Some(fill)).unwrap();
+    assert_eq!(original.target_bits(), Some(8));
+    assert_eq!(extended.target_bits(), Some(11));
+    assert_eq!(
+        original.original_bytes().unwrap().as_ptr(),
+        extended.original_bytes().unwrap().as_ptr()
+    );
+    assert_eq!(original.original_sha256(), extended.original_sha256());
+    assert_eq!(original.name(), extended.name());
+    let reset = extended.with_fill(None).unwrap();
+    assert_eq!(reset.target_bits(), Some(8));
+    assert!(reset.file_info().unwrap().fill.is_none());
+    assert_eq!(
+        reset.original_bytes().unwrap().as_ptr(),
+        original.original_bytes().unwrap().as_ptr()
+    );
+
+    // One below an actual octet, one above the existing finite-work ceiling, zero seed.
+    for invalid in [
+        FileFillPolicy {
+            target_bits: 7,
+            seed: PrbsSeed::new(1).unwrap(),
+        },
+        FileFillPolicy {
+            target_bits: 134_217_729,
+            seed: PrbsSeed::new(1).unwrap(),
+        },
+    ] {
+        assert!(extended.with_fill(Some(invalid)).is_err());
+    }
+    assert!(PrbsSeed::new(0).is_err());
+    assert_eq!(extended.target_bits(), Some(11));
+    assert_eq!(extended.original_bytes(), Some([0x80].as_slice()));
+    assert_eq!(
+        SourceInput::prbs15(PrbsSeed::new(1).unwrap())
+            .with_fill(None)
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::InvalidInput
+    );
+    drop(original);
+    assert_eq!(extended.original_bytes(), Some([0x80].as_slice()));
 }

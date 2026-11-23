@@ -15,6 +15,72 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 class NativeAdmissionTests(unittest.TestCase):
+    def test_source_file_info_limits_partial_targets_and_owned_snapshots(self):
+        """Independent original/work ceilings and partial-byte accounting remain Rust-owned."""
+        limits = m.SourceInput.file_limits()
+        self.assertEqual(limits, {'max_original_bytes': 16777216, 'max_total_bits': 134217728})
+        limits['max_original_bytes'] = 0
+        self.assertEqual(m.SourceInput.file_limits()['max_original_bytes'], 16777216)
+        self.assertIsNone(m.SourceInput.prbs15(m.PrbsSeed(1)).file_info())
+        self.assertEqual(m.SourceInput.from_bytes('empty', b'').file_info(),
+                         {'original_bytes': 0, 'original_bits': 0, 'target_bits': 0,
+                          'fill_bits': 0, 'fill': None})
+
+        # One actual octet plus a separate three-bit append; seven is the independent seed.
+        original = bytearray([0x80])
+        source = m.SourceInput.from_unnamed_bytes(original, m.FileFillPolicy(11, m.PrbsSeed(7)))
+        expected = {'original_bytes': 1, 'original_bits': 8, 'target_bits': 11,
+                    'fill_bits': 3, 'fill': {'target_bits': 11, 'seed': 7}}
+        info = source.file_info()
+        self.assertEqual(info, expected)
+        info['fill']['seed'] = 0
+        info['target_bits'] = 999
+        original[0] = 0
+        self.assertEqual(source.file_info(), expected)
+        self.assertEqual(source.original_bytes, b'\x80')
+        self.assertEqual(source.original_sha256, hashlib.sha256(b'\x80').hexdigest())
+        self.assertEqual(source.name, '')
+        equal = m.SourceInput.from_bytes('equal', b'\x80', m.FileFillPolicy(8, m.PrbsSeed(1)))
+        self.assertEqual(equal.file_info()['fill_bits'], 0)
+        self.assertIsNotNone(equal.file_info()['fill'])
+        self.assertIsNone(m.SourceInput.from_unnamed_bytes(b'\x80').file_info()['fill'])
+
+    @unittest.skipUnless(os.environ.get('MERLIN_SOURCE_FILE_INFO_REFERENCE'), 'Direct Rust reference required')
+    def test_source_file_info_matches_the_direct_rust_process(self):
+        """The current installed native artifact matches a bounded independent Rust process."""
+        reference = json.loads(Path(os.environ['MERLIN_SOURCE_FILE_INFO_REFERENCE']).read_text())
+        sources = [m.SourceInput.prbs15(m.PrbsSeed(1)),
+                   m.SourceInput.from_bytes('empty', b''),
+                   m.SourceInput.from_unnamed_bytes(b'\x80'),
+                   m.SourceInput.from_unnamed_bytes(b'\x80', m.FileFillPolicy(11, m.PrbsSeed(7))),
+                   m.SourceInput.from_bytes('equal', b'\x80', m.FileFillPolicy(8, m.PrbsSeed(1)))]
+        self.assertEqual(m.SourceInput.file_limits(), reference['limits'])
+        self.assertEqual([source.file_info() for source in sources], reference['info'])
+        extended = sources[2].with_fill(m.FileFillPolicy(11, m.PrbsSeed(7)))
+        reset = extended.with_fill()
+        self.assertEqual([extended.file_info(), reset.file_info()], reference['edits'])
+
+    def test_source_fill_replacement_preserves_original_and_rejects_atomic_changes(self):
+        """Immutable append editing preserves original bytes/hash and independent source lifetimes."""
+        original = m.SourceInput.from_unnamed_bytes(b'\x80')
+        extended = original.with_fill(m.FileFillPolicy(11, m.PrbsSeed(7)))
+        self.assertEqual(original.target_bits, 8)
+        self.assertEqual(extended.target_bits, 11)
+        self.assertEqual(extended.original_bytes, original.original_bytes)
+        self.assertEqual(extended.original_sha256, original.original_sha256)
+        self.assertEqual(extended.name, '')
+        reset = extended.with_fill()
+        self.assertEqual(reset.target_bits, 8)
+        self.assertIsNone(reset.file_info()['fill'])
+        with self.assertRaises(m.ApiError):
+            extended.with_fill(m.FileFillPolicy(7, m.PrbsSeed(1)))
+        self.assertEqual(extended.target_bits, 11)
+        with self.assertRaises(m.ApiError) as rejected:
+            m.SourceInput.prbs15(m.PrbsSeed(1)).with_fill()
+        self.assertEqual(rejected.exception.code, m.ErrorCode.InvalidInput)
+        del original
+        self.assertEqual(extended.original_bytes, b'\x80')
+
     def test_spectrum_average_capacity_is_bounded_idle_and_immutable(self):
         # Independent N/hop and 32768-sample retained-prefix anchors for both spacings.
         for spacing, cases, below in [

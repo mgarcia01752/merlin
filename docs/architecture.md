@@ -1089,6 +1089,15 @@ Native Python delegates that same constant-size query. It changes no decoder,
 receiver input, original report serialization, observation window or retained
 word policy. Qt adoption remains a separate UIU-DS-01 unit after paired acceptance.
 
+The [source-file admission prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-source-file-admission-metadata-prerequisite)
+adds passive file_limits/file_info and immutable with_fill operations in
+api/admission/source_info. Existing FilePayload owns byte/work validation and
+shared original storage; the high-level report preserves original/fill counts,
+independent fill policy and empty-versus-continuous identity. Fill replacement
+retains original bytes/name/hash without another large copy. Native Python is
+conversion only. Qt source/editor/worker consumption remains separate UIU-DS-01
+work after the paired prerequisite; schema and source-stream behavior do not change.
+
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

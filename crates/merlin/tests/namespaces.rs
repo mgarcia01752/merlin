@@ -89,6 +89,15 @@ fn downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior() {
         &docsis_ofdm_fec::api::FullLoopResult,
     ) -> docsis_ofdm_fec::api::FullLoopFecRecovery = recovery;
     let _ = legacy_recovery;
+    let source_limits: fn() -> downstream::SourceFileLimits = downstream::SourceInput::file_limits;
+    let source_info: fn(&downstream::SourceInput) -> Option<downstream::SourceFileInfo> =
+        downstream::SourceInput::file_info;
+    let _ = (source_limits, source_info);
+    let with_fill: fn(
+        &downstream::SourceInput,
+        Option<downstream::FileFillPolicy>,
+    ) -> downstream::ApiResult<downstream::SourceInput> = downstream::SourceInput::with_fill;
+    let _ = with_fill;
     assert_eq!(
         TypeId::of::<common::RunControl>(),
         TypeId::of::<downstream::RunControl>()

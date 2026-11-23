@@ -5,10 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "7428b33a16eef703deffec74f5aed264e45852eb plus exact recovery candidate",
-    "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-fec-recovery-native/results.json",
-    "native_sha256": "278777e78d61818c1d2dbdb01f6f46d1d17eba88df3881ed1f581451490e8956",
-    "scope": "Eight focused full-loop/namespace cases; all prior native classes/members/kinds/signatures remain exact after removing only the new fec_recovery method."
+    "revision": "85bdf73876f2b9b23e30574a37c6be7ceaffd73b plus exact source-file candidate",
+    "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-source-file-native/results.json",
+    "native_sha256": "10cad90727628baa6b2cbd3d768736ef8546405afa709554044fb0e8d81414a5",
+    "scope": "Ten selected source/namespace cases; all prior native classes/members/kinds/signatures are exact after removing only file_limits/file_info/with_fill."
   },
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
@@ -133,7 +133,9 @@
     "evidence.uiu-ds-01-calibrated-sequence": "../unified-qt-workbench/calibrated-sequence-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-calibrated-ordered-frame-api-accepted: actual relative/electrical sequence, original segment/stop/error compatibility, exact archive/native/direct-Rust-process parity and complete additive inventories.",
     "status.uiu-ds-01-calibrated-sequence": "Scoped additive paired prerequisite accepted at Level 1; Qt adoption, parent task Level 2 and milestone/final Level 3 remain incomplete.",
     "evidence.uiu-ds-01-fec-recovery": "../unified-qt-workbench/fec-recovery-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-source-verified-fec-recovery-api-accepted: independent five-word oracle, actual complete/cancelled/empty results, exact archive/direct-Rust-process parity and additive export tracing.",
-    "status.uiu-ds-01-fec-recovery": "Level 1 paired prerequisite accepted; Qt adoption, official parent Level 2 and milestone/final Level 3 remain pending."
+    "status.uiu-ds-01-fec-recovery": "Level 1 paired prerequisite accepted; Qt adoption, official parent Level 2 and milestone/final Level 3 remain pending.",
+    "evidence.uiu-ds-01-source-file": "../unified-qt-workbench/source-file-api-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-source-file-admission-api-accepted: independent byte/bit limits, named/unnamed/empty/partial-byte/zero-fill, buffer sharing, ownership/errors and exact archive/direct-Rust-process parity.",
+    "status.uiu-ds-01-source-file": "Level 1 paired prerequisite accepted; Qt consumer, official parent Level 2 and milestone/final Level 3 remain pending."
   },
   "type_exports": {
     "downstream": [
@@ -1035,6 +1037,14 @@
       },
       {
         "export": "merlin::downstream::FullLoopFecRecovery",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::SourceFileInfo",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::SourceFileLimits",
         "kind": "struct"
       }
     ],
@@ -32538,6 +32548,171 @@
       },
       "evidence": "evidence.uiu-ds-01-fec-recovery",
       "status": "status.uiu-ds-01-fec-recovery"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::SourceInput::file_limits",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn file_limits() -> SourceFileLimits",
+        "source_file": "crates/ofdm/src/api/admission/source_info.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.SourceInput.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.SourceInput.file_limits",
+        "declaration": "merlin.downstream.SourceInput.file_limits"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.count",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "SourceFileLimits",
+        "scope": "Authoritative existing source limits and original/fill metadata, or immutable revalidated replacement sharing original bytes; no source/RNG/simulation state advances."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_admission.rs::source_file_info_limits_and_fill_metadata_are_passive_and_owned",
+          "crates/ofdm/tests/api_admission.rs::source_fill_replacement_shares_originals_and_preserves_error_atomicity",
+          "crates/ofdm/tests/api_admission.rs::source_admission_preserves_arbitrary_original_bytes_and_independent_fill"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_file_info_limits_partial_targets_and_owned_snapshots",
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_file_info_matches_the_direct_rust_process",
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_fill_replacement_preserves_original_and_rejects_atomic_changes"
+          ],
+          "scope": "Bounded original/fill metadata, actual source limits, independent targets/seeds, shared Rust buffers, immutable source/native ownership, atomic invalid changes and current direct Rust process."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-file",
+      "status": "status.uiu-ds-01-source-file"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::SourceInput::file_info",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn file_info(&self) -> Option<SourceFileInfo>",
+        "source_file": "crates/ofdm/src/api/admission/source_info.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.SourceInput.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.SourceInput.file_info",
+        "declaration": "merlin.downstream.SourceInput.file_info"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.count",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "Option<SourceFileInfo>",
+        "scope": "Authoritative existing source limits and original/fill metadata, or immutable revalidated replacement sharing original bytes; no source/RNG/simulation state advances."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_admission.rs::source_file_info_limits_and_fill_metadata_are_passive_and_owned",
+          "crates/ofdm/tests/api_admission.rs::source_fill_replacement_shares_originals_and_preserves_error_atomicity",
+          "crates/ofdm/tests/api_admission.rs::source_admission_preserves_arbitrary_original_bytes_and_independent_fill"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_file_info_limits_partial_targets_and_owned_snapshots",
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_file_info_matches_the_direct_rust_process",
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_fill_replacement_preserves_original_and_rejects_atomic_changes"
+          ],
+          "scope": "Bounded original/fill metadata, actual source limits, independent targets/seeds, shared Rust buffers, immutable source/native ownership, atomic invalid changes and current direct Rust process."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-file",
+      "status": "status.uiu-ds-01-source-file"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::SourceInput::with_fill",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn with_fill(&self, fill: Option<FileFillPolicy>) -> ApiResult<Self>",
+        "source_file": "crates/ofdm/src/api/admission/source_info.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.SourceInput.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.SourceInput.with_fill",
+        "declaration": "merlin.downstream.SourceInput.with_fill"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.count",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_return": "ApiResult<SourceInput>",
+        "scope": "Authoritative existing source limits and original/fill metadata, or immutable revalidated replacement sharing original bytes; no source/RNG/simulation state advances."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_admission.rs::source_file_info_limits_and_fill_metadata_are_passive_and_owned",
+          "crates/ofdm/tests/api_admission.rs::source_fill_replacement_shares_originals_and_preserves_error_atomicity",
+          "crates/ofdm/tests/api_admission.rs::source_admission_preserves_arbitrary_original_bytes_and_independent_fill"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_file_info_limits_partial_targets_and_owned_snapshots",
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_file_info_matches_the_direct_rust_process",
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_fill_replacement_preserves_original_and_rejects_atomic_changes"
+          ],
+          "scope": "Bounded original/fill metadata, actual source limits, independent targets/seeds, shared Rust buffers, immutable source/native ownership, atomic invalid changes and current direct Rust process."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-file",
+      "status": "status.uiu-ds-01-source-file"
     }
   ],
   "executed_records": [
@@ -32576,7 +32751,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -67982,6 +68158,189 @@
       },
       "evidence": "evidence.uiu-ds-01-fec-recovery",
       "status": "status.uiu-ds-01-fec-recovery"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.SourceInput.file_limits",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::SourceInput",
+        "source_file": "bindings/python/src/admission.rs",
+        "symbol": "PySourceInput",
+        "signature": "pub fn file_limits() -> SourceFileLimits",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "merlin::downstream::SourceInput::file_limits",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "file_limits",
+        "kind": "method",
+        "signature": "()",
+        "declaration": "SourceInput.file_limits"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.count",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::SourceInput",
+        "scope": "Owned finite-source dictionaries/None or a new native source handle; Rust owns counts, revalidation and original-buffer sharing."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_admission.rs::source_file_info_limits_and_fill_metadata_are_passive_and_owned",
+          "crates/ofdm/tests/api_admission.rs::source_fill_replacement_shares_originals_and_preserves_error_atomicity",
+          "crates/ofdm/tests/api_admission.rs::source_admission_preserves_arbitrary_original_bytes_and_independent_fill"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_file_info_limits_partial_targets_and_owned_snapshots",
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_file_info_matches_the_direct_rust_process",
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_fill_replacement_preserves_original_and_rejects_atomic_changes"
+          ],
+          "scope": "Bounded original/fill metadata, actual source limits, independent targets/seeds, shared Rust buffers, immutable source/native ownership, atomic invalid changes and current direct Rust process."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-file",
+      "status": "status.uiu-ds-01-source-file"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.SourceInput.file_info",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::SourceInput",
+        "source_file": "bindings/python/src/admission.rs",
+        "symbol": "PySourceInput",
+        "signature": "pub fn file_info(&self) -> Option<SourceFileInfo>",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "merlin::downstream::SourceInput::file_info",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "file_info",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "SourceInput.file_info"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.count",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::SourceInput",
+        "scope": "Owned finite-source dictionaries/None or a new native source handle; Rust owns counts, revalidation and original-buffer sharing."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_admission.rs::source_file_info_limits_and_fill_metadata_are_passive_and_owned",
+          "crates/ofdm/tests/api_admission.rs::source_fill_replacement_shares_originals_and_preserves_error_atomicity",
+          "crates/ofdm/tests/api_admission.rs::source_admission_preserves_arbitrary_original_bytes_and_independent_fill"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_file_info_limits_partial_targets_and_owned_snapshots",
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_file_info_matches_the_direct_rust_process",
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_fill_replacement_preserves_original_and_rejects_atomic_changes"
+          ],
+          "scope": "Bounded original/fill metadata, actual source limits, independent targets/seeds, shared Rust buffers, immutable source/native ownership, atomic invalid changes and current direct Rust process."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-file",
+      "status": "status.uiu-ds-01-source-file"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.SourceInput.with_fill",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::SourceInput",
+        "source_file": "bindings/python/src/admission.rs",
+        "symbol": "PySourceInput",
+        "signature": "pub fn with_fill(&self, fill: Option<FileFillPolicy>) -> ApiResult<Self>",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "merlin::downstream::SourceInput::with_fill",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "with_fill",
+        "kind": "method",
+        "signature": "(self, /, fill=None)",
+        "declaration": "SourceInput.with_fill"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.count",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.configure",
+      "report_contract": {
+        "rust_type": "merlin::downstream::SourceInput",
+        "scope": "Owned finite-source dictionaries/None or a new native source handle; Rust owns counts, revalidation and original-buffer sharing."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_admission.rs::source_file_info_limits_and_fill_metadata_are_passive_and_owned",
+          "crates/ofdm/tests/api_admission.rs::source_fill_replacement_shares_originals_and_preserves_error_atomicity",
+          "crates/ofdm/tests/api_admission.rs::source_admission_preserves_arbitrary_original_bytes_and_independent_fill"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_file_info_limits_partial_targets_and_owned_snapshots",
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_file_info_matches_the_direct_rust_process",
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_source_fill_replacement_preserves_original_and_rejects_atomic_changes"
+          ],
+          "scope": "Bounded original/fill metadata, actual source limits, independent targets/seeds, shared Rust buffers, immutable source/native ownership, atomic invalid changes and current direct Rust process."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-file",
+      "status": "status.uiu-ds-01-source-file"
     }
   ],
   "native_type_exports": {
@@ -69154,6 +69513,13 @@
         "root_and_namespace_operation_instances": 953,
         "scope": "Original 80 root class exports and every directional/common export unchanged; new Rust report is an owned dictionary in Python."
       }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "7428b33a16eef703deffec74f5aed264e45852eb plus exact recovery candidate",
+      "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-fec-recovery-native/results.json",
+      "native_sha256": "278777e78d61818c1d2dbdb01f6f46d1d17eba88df3881ed1f581451490e8956",
+      "scope": "Eight focused full-loop/namespace cases; all prior native classes/members/kinds/signatures remain exact after removing only the new fec_recovery method."
     }
   ],
   "historical_rust_export_corrections": [
