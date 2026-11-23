@@ -11,6 +11,8 @@ are retained instruction sources. [Continuous execution is authorized](features/
 old scheduling statements below describe their own historical checkpoints.
 Current execution uses the [three-level testing strategy](features/unified-qt-workbench/testing-strategy.md)
 for focused commits, official task acceptance and integration milestones.
+The [parallel ownership record](features/unified-qt-workbench/parallel-development.md)
+assigns isolated preparation work and preserves dependency-ordered acceptance.
 
 The [selected namespace mapping](features/high-level-api/namespace-design.md) fixes the literal Rust root, common contract leaf and real Python package layout; namespace runtime acceptance remains separate.
 

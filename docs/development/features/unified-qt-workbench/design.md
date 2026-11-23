@@ -23,6 +23,7 @@ INT-DEFER-01's wider PHY deferrals remain in force.
 - [Original master guide](master-guide.md)
 - [Additional high-level API contract](high-level-api-contract.md)
 - [Approved upstream startup layout](upstream-startup-layout.md)
+- [Parallel implementation ownership](parallel-development.md)
 
 The feature files refine the three canonical documents. They are not alternative
 requirements or completion registers. Proposed destination files are written as
