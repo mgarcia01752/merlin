@@ -1568,3 +1568,35 @@ All Qt sources, locks and forty frozen legacy entries remain unchanged. Commit
 this API prerequisite before idle preview adoption. Parent DS-01 and final
 numeric/unified runtime acceptance remain open; no hosted/installed GUI or
 external interoperability acceptance is claimed.
+
+## UIU-DS-01 unnamed file source API accepted
+
+The [unnamed-source evidence](unnamed-file-source-evidence.json) accepts the next
+DS-01 compatibility prerequisite before Qt adoption. The existing Qt release
+accepts an empty file-source display label and rejects empty scientific capture
+provenance. The explicit public `SourceInput::unnamed_file` and native
+`SourceInput.from_unnamed_bytes` preserve that distinction, retaining an empty
+original label, exact bytes/hash and independent optional fill. Existing named
+constructors keep their validation. Saved full-loop loading uses the same source
+owner; profile/RxMER/H still use named capture/provenance admission.
+
+Twenty scoped Rust cases and sixteen installed native admission/saved-full-loop/
+namespace cases pass, including a fresh separate Rust saved-workbench reference.
+They preserve existing source/preview/timing/real-FEC assertions and add exact
+original-file recovery with an empty label, caller ownership, zero-byte input,
+independent fill and byte/name/integrity boundaries. Literal source SHA-256 and
+bit-count anchors remain independent of production constants. The old saved
+name/base64 endpoints move unchanged to their common policy owner.
+
+Root/native Clippy, formatting, analysis-only compilation, 34 API metadata cases
+and strict compiler/installed operation tracing pass. All earlier rows, class
+exports, constructors and signatures stay exact; one operation per language
+brings the matrix to567 Rust/540 native rows. Full historical gates are retained
+separately from this focused prerequisite.
+
+Sixteen Qt WIP files remain preserved under the recorded local stash/manifest;
+this API commit changes no Qt sources, dependencies, locks or frozen boundary
+entries. Restore/verify that work, adopt the explicit file-label operation and
+finish Qt/build/native checks afterward. Parent DS-01 and final numeric/unified
+runtime acceptance remain open. No push, release or external interoperability
+acceptance is claimed.

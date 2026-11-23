@@ -36,6 +36,45 @@ fn transmission_admission_uses_literal_sample_clock_accounting_without_running()
 }
 
 #[test]
+fn unnamed_file_preserves_exact_bytes_empty_label_bounds_and_named_validation() {
+    // Independent original/fill anchors: eight bytes ->64 bits, then a finite80-bit target.
+    let mut bytes = b"\0exact\r\n".to_vec();
+    let source = SourceInput::unnamed_file(&bytes, None).unwrap();
+    bytes[0] = 255; // Caller mutation must not replace retained original zero.
+    assert_eq!(source.name(), Some(""));
+    assert_eq!(source.kind(), "file");
+    assert_eq!(source.original_bytes(), Some(b"\0exact\r\n".as_slice()));
+    assert_eq!(source.target_bits(), Some(64));
+    assert!(source.prbs_seed().is_none());
+    assert_eq!(
+        source.original_sha256(),
+        Some("541070fc2b7aa44069811cafe1c6810b607e696dc92792089c0fd88789bb8797")
+    );
+    let seed = PrbsSeed::new(7).unwrap(); // Independent finite-fill recurrence choice.
+    let filled =
+        SourceInput::unnamed_file(b"\0exact\r\n", Some(FileFillPolicy::new(80, seed).unwrap()))
+            .unwrap();
+    assert_eq!(filled.target_bits(), Some(80));
+    assert_eq!(filled.original_bytes(), source.original_bytes());
+    assert_eq!(filled.original_sha256(), source.original_sha256());
+    assert!(
+        SourceInput::unnamed_file(b"\0exact\r\n", Some(FileFillPolicy::new(8, seed).unwrap()),)
+            .is_err()
+    );
+    // Independent one-past existing16-MiB file admission boundary.
+    assert!(SourceInput::unnamed_file(&vec![0; 16 * 1024 * 1024 + 1], None).is_err());
+    let empty = SourceInput::unnamed_file(&[], None).unwrap();
+    assert_eq!(empty.name(), Some(""));
+    assert_eq!(empty.target_bits(), Some(0));
+    assert_eq!(empty.original_bytes(), Some(b"".as_slice()));
+    assert_eq!(
+        NamedCapture::new("", vec![]).unwrap_err().code(),
+        ErrorCode::ResourceLimit
+    );
+    assert_eq!(source.target_bits(), Some(64));
+}
+
+#[test]
 fn minimum_observation_rounds_complete_periods_and_reports_over_policy_thresholds() {
     // Independent rational-clock anchors: a 512-sample CP gives 17/400 ms
     // periods at 25 kHz and 9/400 ms at 50 kHz; a 1024-sample CP gives 45 us.

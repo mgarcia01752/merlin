@@ -1220,6 +1220,15 @@ electrical calibration and waveform processing retain their existing owners;
 now passes before preview adoption. A common power-ratio factor serves integrated
 power and existing power-density conversion, independently of amplitude scaling.
 
+The [unnamed file-source prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-unnamed-file-source-compatibility-api-prerequisite)
+preserves legacy finite file payloads whose saved display label is empty. Add an
+explicit `SourceInput::unnamed_file` operation and native equivalent, using the
+same source/fill owner and returning the original empty label. Keep named-capture
+validation and profile/measurement provenance requirements unchanged. The saved
+full-loop adapter admits that file-only case through the same public source API.
+[Scoped paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-unnamed-file-source-api-accepted)
+now passes before resuming the preserved Qt preview consumer.
+
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
 

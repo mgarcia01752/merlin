@@ -1994,3 +1994,53 @@ every old operation row and native signature; validate metadata, docs and links.
 Parent DS-01 and final numeric/integration gates remain unchecked.
 
 Scoped prerequisite accepted: [relative-power validation](validation.md#uiu-ds-01-relative-channel-power-api-accepted) and [exact evidence](relative-channel-power-evidence.json) record ten Rust/twelve installed native cases, independent zero/flat-density anchors and fresh separate-process parity. Qt preview adoption and the parent remain pending.
+
+## UIU-DS-01 unnamed file source compatibility API prerequisite
+
+Compatibility review of the idle TX consumer found an actual input distinction:
+the existing Qt release accepts a saved finite file whose original display name
+is empty. `NamedCapture::new` intentionally rejects empty capture identities. The
+new Qt adapter must not narrow legacy file support or fabricate a replacement
+name. Keep the named constructor unchanged and add a specific passive file source
+operation for an explicitly absent display label:
+
+```rust
+pub fn unnamed_file(bytes: &[u8], fill: Option<FileFillPolicy>) -> ApiResult<Self>;
+```
+
+Python exposes `SourceInput.from_unnamed_bytes(data: bytes, fill=None)`. Preserve
+`kind == file`, name `Some("")`/empty string, exact bytes/SHA-256, the existing
+finite source bounds, independent fill seed/target and no source/RNG advancement.
+NamedCapture/new and SourceInput.file/from_bytes retain their original validation.
+The saved full-loop adapter must use this operation only for an empty file-source
+label, preserving capture-name/provenance checks for profiles, RxMER and H.
+
+The prior optimized Qt executable accepted the private modified single-workbench
+fixture with an empty file label (`--check-workbench`, exit 0). Its SHA-256 was
+`9eaa52d7eb32ef9630d20cad9b29ae5d649e7932f50e37ee764d6eafa78700ee`;
+the exact input digest was
+`b51496051c310bb133cec385864e15659894a4047ffd893aa070bc613d4c64d8`.
+The same executable rejected an empty profile-capture name, exit 1 with invalid
+source provenance. This is a file-label compatibility gap, not permission to
+relax scientific capture identities. Private receipts/inputs are under
+`docs/development/local/unified-qt-workbench/ds-01-preview-unlabeled-*`.
+
+| Path and symbol | Current contract / gap | Decision / destination |
+| --- | --- | --- |
+| `crates/ofdm/src/api/admission.rs::SourceInput::file` | Existing validated immutable FilePayload/fill/hash owner, named input only | SHARE its private construction helper; ADD explicit unnamed_file without a duplicate source algorithm or altered named constructor. |
+| `bindings/python/src/admission.rs`, root stub | Existing native passive source wrapper | ADD from_unnamed_bytes, identical Rust validation/ownership and GIL release. |
+| `crates/pnm-input/src/workbench.rs::Stored`, full-loop source loader | Shared integrity/budget checking currently also forces NamedCapture for file labels | EXTRACT private verified-byte decoding. Existing capture decoding still calls NamedCapture::new; only file-source loading chooses the explicit unnamed operation. |
+| `crates/pnm-input/src/common/constants.rs` | Existing name/base64 safety endpoints are inline literals | CENTRALIZE their unchanged inclusive byte bounds by saved-input purpose. Keep aggregate/original/encoded budgets independent. |
+| Rust admission/workbench and native equivalents | Existing exact bytes, fill, real FEC, provenance and bounds cases | RETAIN and add empty-label/empty-file, caller mutation, bounds, named rejection, saved original/fill recovery and corrupt-source cases. |
+| Qt work in progress and guard record | Consumer not yet accepted/committed | PRESERVE exact WIP in local stash c0224b5c963e175ccd2eb68c055c9404ca4cc7fa while this API commits independently; restore and verify hashes afterward. |
+
+Reuse audit: the Apache SourceInput/FilePayload/saved-workbench owners at
+`4c208860fa9baec12779562a77e501182af2bafa` retain algorithms and licenses. The
+GPL Qt release is a behavioral compatibility reference only; copy no GPL code
+into Apache crates. No new normative mode, scientific algorithm or dependency.
+Trace REQ-UIU-02/08/09/24/27 and UIU-DS-01. Validate Rust before a fresh installed
+wheel, scoped original-owner cases and fresh saved-workbench process parity.
+Record exact additive method signatures/operation rows and unchanged earlier
+exports. API/FEC/planning milestones remain completed; DS-01/QA-01 stay open.
+
+Scoped paired prerequisite accepted: [unnamed-source validation](validation.md#uiu-ds-01-unnamed-file-source-api-accepted) and [exact evidence](unnamed-file-source-evidence.json) record20 Rust/16 installed native cases, prior constructor preservation and actual original-file recovery. Restore/verify the preserved Qt WIP after this focused API commit; DS-01 stays open.

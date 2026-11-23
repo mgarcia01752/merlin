@@ -16,6 +16,7 @@ and legacy `merlin.merlin` path. Existing Simulation behavior is unchanged.
 | `FileFillPolicy::new(u64, PrbsSeed)` | `FileFillPolicy(target_bits, PrbsSeed)` | Finite file-plus-fill target; independent nonzero 15-bit fill seed. |
 | `SourceInput::prbs15(PrbsSeed) -> SourceInput` | `SourceInput.prbs15(PrbsSeed)` | Passive continuous PRBS15 choice; no generator/verifier is retained. |
 | `SourceInput::file(NamedCapture, Option<FileFillPolicy>)` | `SourceInput.from_bytes(name, data, fill=None)` | Own exact original bytes and SHA-256; no filename-based conversion. |
+| `SourceInput::unnamed_file(&[u8], Option<FileFillPolicy>)` | `SourceInput.from_unnamed_bytes(data, fill=None)` | Explicitly absent file display label; retain empty name, exact bytes/hash and original file/fill limits. |
 | `kind()`, `prbs_seed()`, `name()`, `original_bytes()`, `original_sha256()`, `target_bits()` | Read-only properties with the same names | File target includes fill, excludes FEC padding. Empty file is target zero. Continuous PRBS has no finite target or original bytes. |
 
 File admission preserves BOM, zero bytes and line endings, up to the existing
@@ -23,6 +24,13 @@ File admission preserves BOM, zero bytes and line endings, up to the existing
 are bounded by the existing finite-source limit. File fill and continuous source
 seeds have separate meanings; neither replaces PHY scrambling. Python file
 ownership/hash admission releases the GIL and delegates validation to Rust.
+
+Use the explicit unnamed-file operation when the original file label is absent,
+including legacy saved file sources. Its name is the empty string (`Some("")`
+in Rust), distinct from continuous PRBS's absent name (`None`). Empty file bytes
+are valid and remain a finite zero-bit file. This does not relax the existing
+nonempty identity requirement for named inputs or scientific profile/measurement
+captures, and never invents a replacement label.
 
 ```python
 from merlin.downstream import (

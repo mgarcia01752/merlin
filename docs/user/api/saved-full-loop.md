@@ -25,6 +25,11 @@ Single uses the first selected stored original, as in the legacy loader. Tempora
 selection must fit the saved observation duration. Dormant files and unselected
 captures are still checked. Missing, unknown or corrupt settings fail explicitly.
 
+A legacy file source may have an empty display label. Admission retains that
+empty label and exact source bytes/hash through the explicit unnamed-file source
+contract. Profile, RxMER and channel-estimate captures still require valid
+provenance identities. The file label never selects encoding or changes fill.
+
 Rust loads without executing:
 
 ```rust,ignore

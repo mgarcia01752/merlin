@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "exit_code": 0,
+      "passed": 12,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "minimum_observation_rounds_complete_periods_and_reports_over_policy_thresholds"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "source_admission_distinguishes_empty_file_eof_and_continuous_prbs15"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "source_admission_preserves_arbitrary_original_bytes_and_independent_fill"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "transmission_admission_uses_literal_sample_clock_accounting_without_running"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "unnamed_file_preserves_exact_bytes_empty_label_bounds_and_named_validation"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "transmission_json_admission_rejects_corruption_unknown_fields_and_limits"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "profile_editor_compatibility_is_separate_from_full_execution_readiness"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_transmitter_preview.rs",
+          "qualified_test_case": "cross_thread_cancel_progress_busy_and_precancel_are_one_shot"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_transmitter_preview.rs",
+          "qualified_test_case": "idle_timing_window_and_encoded_id_admission_keep_existing_support"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_transmitter_preview.rs",
+          "qualified_test_case": "finite_file_previews_exhaust_without_mutating_source_and_queries_reject_bounds"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_transmitter_preview.rs",
+          "qualified_test_case": "idle_calibrated_spectrum_keeps_full_band_power_zoom_independent_and_does_not_apply_channel_gain"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_transmitter_preview.rs",
+          "qualified_test_case": "actual_tx_samples_psd_and_owned_originals_match_existing_owner"
+        }
+      ],
+      "receipt": "ds-01-unnamed-file-source-tests.stdout"
+    },
+    {
+      "exit_code": 0,
+      "passed": 8,
+      "cases": [
+        {
+          "test_file": "crates/pnm-input/tests/workbench_full_loop.rs",
+          "qualified_test_case": "corrupted_unselected_originals_unknown_fields_and_budget_fail_before_adoption"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench_full_loop.rs",
+          "qualified_test_case": "designer_recipe_reuses_shared_materialization_without_rewriting_original"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench_full_loop.rs",
+          "qualified_test_case": "saved_response_and_rxmer_epoch_policies_remain_independent"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench_full_loop.rs",
+          "qualified_test_case": "timeline_uses_stored_selection_order_and_exact_synthetic_clock_capacity"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench_full_loop.rs",
+          "qualified_test_case": "file_and_fill_keep_exact_bytes_and_dormant_fields_do_not_replace_selection"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench_full_loop.rs",
+          "qualified_test_case": "unnamed_saved_file_preserves_original_label_bytes_fill_and_capture_name_validation"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench_full_loop.rs",
+          "qualified_test_case": "actual_saved_full_loop_preserves_fec_and_independent_recovered_source"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/workbench_full_loop.rs",
+          "qualified_test_case": "legacy_and_selected_projects_preserve_idle_settings_and_original_inputs"
+        }
+      ],
+      "receipt": "ds-01-unnamed-file-workbench-tests.stdout"
+    },
+    {
+      "exit_code": 0,
+      "passed": 6,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_empty_eof_and_continuous_seed_remain_distinct"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_exact_byte_file_source_fill_bounds_and_lifetime"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_minimum_observation_has_exact_period_rounding_and_wide_thresholds"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_transmission_literal_timing_and_owned_settings"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_transmission_rejection_and_original_profile_compatibility"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_unnamed_file_preserves_original_bytes_fill_and_named_rejection"
+        }
+      ],
+      "receipt": "ds-01-unnamed-file-native/admission.stderr"
+    },
+    {
+      "exit_code": 0,
+      "passed": 6,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+          "qualified_test_case": "WorkbenchFullLoopTests.test_installed_idle_preparation_settings_ownership_and_precancel"
+        },
+        {
+          "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+          "qualified_test_case": "WorkbenchFullLoopTests.test_invalid_project_rejection_preserves_accepted_plan"
+        },
+        {
+          "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+          "qualified_test_case": "WorkbenchFullLoopTests.test_response_tolerance_is_independent_and_original_constructor_is_compatible"
+        },
+        {
+          "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+          "qualified_test_case": "WorkbenchFullLoopTests.test_saved_file_fill_and_timeline_settings_and_legacy_behavior"
+        },
+        {
+          "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+          "qualified_test_case": "WorkbenchFullLoopTests.test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+          "qualified_test_case": "WorkbenchFullLoopTests.test_unnamed_saved_file_keeps_original_label_recovery_and_capture_names"
+        }
+      ],
+      "receipt": "ds-01-unnamed-file-native/workbench-full-loop.stderr"
+    },
+    {
+      "exit_code": 0,
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ],
+      "receipt": "ds-01-unnamed-file-native/namespaces.stderr"
+    }
+  ]
+}

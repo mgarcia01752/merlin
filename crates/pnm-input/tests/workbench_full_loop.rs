@@ -181,6 +181,41 @@ fn saved_response_and_rxmer_epoch_policies_remain_independent() {
 }
 
 #[test]
+fn unnamed_saved_file_preserves_original_label_bytes_fill_and_capture_name_validation() {
+    let mut value = document(SINGLE);
+    value["sections"]["source"]["file"] = stored("", FILE_BYTES);
+    value["sections"]["source"]["options"]["mode"] = json!("file");
+    value["sections"]["source"]["options"]["append"] = json!(true);
+    value["sections"]["source"]["options"]["target_bits"] = json!(FILE_TARGET_BITS);
+    value["sections"]["source"]["options"]["fill_seed"] = json!(FILE_FILL_SEED);
+    value["sections"]["source"]["options"]["seed"] = json!(0); // Dormant continuous seed.
+    let result = prepare(&value)
+        .unwrap()
+        .request(0)
+        .unwrap()
+        .run(&FullLoopControl::new())
+        .unwrap();
+    assert_eq!(result.inputs().source.name(), Some(""));
+    assert_eq!(result.inputs().source.original_bytes(), Some(FILE_BYTES));
+    assert_eq!(result.inputs().source.target_bits(), Some(FILE_TARGET_BITS));
+    assert_eq!(
+        result.inputs().source.original_sha256(),
+        value["sections"]["source"]["file"]["sha256"].as_str()
+    );
+    assert_eq!(result.recovered_bytes(), Some(FILE_BYTES));
+    let mut invalid = value.clone();
+    invalid["sections"]["profile"]["file"]["name"] = json!("");
+    assert!(prepare(&invalid).is_err());
+    invalid = value.clone();
+    invalid["sections"]["source"]["file"]["sha256"] = json!("invalid");
+    assert!(prepare(&invalid).is_err());
+    invalid = value.clone();
+    // Independent one-past original saved display-name bound (1024 bytes).
+    invalid["sections"]["source"]["file"]["name"] = json!("x".repeat(1025));
+    assert!(prepare(&invalid).is_err());
+}
+
+#[test]
 fn file_and_fill_keep_exact_bytes_and_dormant_fields_do_not_replace_selection() {
     let mut value = document(SINGLE);
     value["sections"]["source"]["file"] = stored("opaque.bin", FILE_BYTES);

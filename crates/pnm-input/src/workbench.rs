@@ -138,9 +138,13 @@ fn unsupported(message: &str) -> ApiError {
 }
 impl Stored {
     fn decode(&self, total: &mut usize) -> ApiResult<NamedCapture> {
-        if self.name.len() > 1024
+        NamedCapture::new(&self.name, self.decode_bytes(total)?)
+    }
+
+    fn decode_bytes(&self, total: &mut usize) -> ApiResult<Vec<u8>> {
+        if self.name.len() > crate::common::constants::MAX_EMBEDDED_NAME_BYTES
             || self.byte_length > MAX_EMBEDDED_BYTES
-            || self.base64.len() > 24 * 1024 * 1024
+            || self.base64.len() > crate::common::constants::MAX_EMBEDDED_BASE64_BYTES
         {
             return Err(ApiError::new(
                 ErrorCode::ResourceLimit,
@@ -163,7 +167,7 @@ impl Stored {
         {
             return Err(invalid("Embedded WB capture length or SHA-256 mismatch"));
         }
-        NamedCapture::new(&self.name, bytes)
+        Ok(bytes)
     }
 }
 /// Validated saved WB, retaining exact JSON and one independent controller per selected profile.

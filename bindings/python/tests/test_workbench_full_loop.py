@@ -60,6 +60,31 @@ class WorkbenchFullLoopTests(unittest.TestCase):
         self.assertEqual(summary['profile_sources'][0]['original_sha256'],
                          value['sections']['profile']['file']['sha256'])
 
+    def test_unnamed_saved_file_keeps_original_label_recovery_and_capture_names(self):
+        value = document()
+        value['sections']['source']['file'] = {
+            'name': '', 'byte_length': len(FILE_BYTES),
+            'sha256': hashlib.sha256(FILE_BYTES).hexdigest(),
+            'base64': base64.b64encode(FILE_BYTES).decode()}
+        value['sections']['source']['options'].update(
+            mode='file', append=True, target_bits=FILE_TARGET_BITS,
+            fill_seed=FILE_FILL_SEED, seed=0)
+        request = prepare(value).request(0)
+        self.assertEqual(request.settings['source']['payload']['target_bits'], FILE_TARGET_BITS)
+        result = request.run()
+        self.assertEqual(result.input_summary()['source_kind'], 'file')
+        self.assertEqual(result.input_summary()['source_sha256'],
+                         value['sections']['source']['file']['sha256'])
+        self.assertEqual(result.recovered_bytes(), FILE_BYTES)
+        invalid = json.loads(json.dumps(value))
+        invalid['sections']['profile']['file']['name'] = ''
+        with self.assertRaises(m.ApiError):
+            prepare(invalid)
+        invalid = json.loads(json.dumps(value))
+        invalid['sections']['source']['file']['sha256'] = 'invalid'
+        with self.assertRaises(m.ApiError):
+            prepare(invalid)
+
     def test_saved_file_fill_and_timeline_settings_and_legacy_behavior(self):
         value = document()
         value['sections']['source']['file'] = {

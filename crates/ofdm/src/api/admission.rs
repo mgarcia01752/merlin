@@ -236,19 +236,25 @@ impl SourceInput {
     /// # Errors
     /// Rejects existing 16 MiB/work ceilings or a target shorter than the original file.
     pub fn file(input: NamedCapture, fill: Option<FileFillPolicy>) -> ApiResult<Self> {
-        let payload = FilePayload::new(
-            input.bytes(),
-            fill.map(|policy| PrbsFill {
-                target_bits: policy.target_bits,
-                seed: policy.seed.value(),
-            }),
-        )?;
-        Ok(Self {
-            configuration: PayloadSourceConfig::File { payload },
-            seed: None,
-            name: Some(input.name().to_owned()),
-            sha256: Some(format!("{:x}", Sha256::digest(input.bytes()))),
-        })
+        Self::file_with_label(input.name().to_owned(), input.bytes(), fill)
+    }
+
+    /// Owns an exact-byte file whose original display label is explicitly absent.
+    ///
+    /// # Arguments
+    /// * `bytes` - Original file bytes, including zeros, BOM and line endings.
+    /// * `fill` - Optional finite total-bit target and independent checked fill seed.
+    ///
+    /// # Returns
+    /// Immutable finite file source with the original empty label, exact bytes/hash
+    /// and no continuous seed. Empty files are accepted. No bits or RNG advance;
+    /// caller bytes can be changed or dropped after admission. Named capture/file
+    /// constructors retain their existing nonempty-identity contract.
+    ///
+    /// # Errors
+    /// Preserves existing file byte/work limits and rejects fill below original size.
+    pub fn unnamed_file(bytes: &[u8], fill: Option<FileFillPolicy>) -> ApiResult<Self> {
+        Self::file_with_label(String::new(), bytes, fill)
     }
 
     /// Reports the scientific source family without inspecting a filename.
@@ -306,5 +312,25 @@ impl SourceInput {
             PayloadSourceConfig::Prbs15 => None,
             PayloadSourceConfig::File { payload } => Some(payload.target_bits()),
         }
+    }
+
+    fn file_with_label(
+        name: String,
+        bytes: &[u8],
+        fill: Option<FileFillPolicy>,
+    ) -> ApiResult<Self> {
+        let payload = FilePayload::new(
+            bytes,
+            fill.map(|policy| PrbsFill {
+                target_bits: policy.target_bits,
+                seed: policy.seed.value(),
+            }),
+        )?;
+        Ok(Self {
+            configuration: PayloadSourceConfig::File { payload },
+            seed: None,
+            name: Some(name),
+            sha256: Some(format!("{:x}", Sha256::digest(bytes))),
+        })
     }
 }

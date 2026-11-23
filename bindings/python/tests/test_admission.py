@@ -14,6 +14,31 @@ ROOT = Path(__file__).resolve().parents[3]
 
 
 class NativeAdmissionTests(unittest.TestCase):
+    def test_unnamed_file_preserves_original_bytes_fill_and_named_rejection(self):
+        # Independent eight-byte/64-bit original and finite80-bit fill target.
+        original = b'\0exact\r\n'
+        source = m.SourceInput.from_unnamed_bytes(original)
+        self.assertEqual(source.kind, 'file')
+        self.assertEqual(source.name, '')
+        self.assertEqual(source.original_bytes, original)
+        self.assertEqual(source.original_sha256, '541070fc2b7aa44069811cafe1c6810b607e696dc92792089c0fd88789bb8797')
+        self.assertEqual(source.target_bits, 64)
+        self.assertIsNone(source.prbs_seed)
+        filled = m.SourceInput.from_unnamed_bytes(original, m.FileFillPolicy(80, m.PrbsSeed(7)))
+        self.assertEqual(filled.original_bytes, original)
+        self.assertEqual(filled.original_sha256, source.original_sha256)
+        self.assertEqual(filled.target_bits, 80)
+        with self.assertRaises(m.ApiError):
+            m.SourceInput.from_unnamed_bytes(original, m.FileFillPolicy(8, m.PrbsSeed(7)))
+        with self.assertRaises(m.ApiError):
+            m.SourceInput.from_unnamed_bytes(b'\0' * (16 * 1024 * 1024 + 1))
+        with self.assertRaises(m.ApiError) as named:
+            m.SourceInput.from_bytes('', original)
+        self.assertEqual(named.exception.code, m.ErrorCode.ResourceLimit)
+        empty = m.SourceInput.from_unnamed_bytes(b'')
+        self.assertEqual((empty.name, empty.original_bytes, empty.target_bits), ('', b'', 0))
+        self.assertEqual(source.original_bytes, original)
+
     def test_minimum_observation_has_exact_period_rounding_and_wide_thresholds(self):
         # Independent periods: CP=512 gives 17/400 ms at 25 kHz and 9/400 ms
         # at 50 kHz. The 1024-sample CP gives 45 us at 25 kHz. Index 399

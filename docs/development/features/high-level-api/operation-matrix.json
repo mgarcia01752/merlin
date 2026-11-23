@@ -5,14 +5,14 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "653bbe05cb4237500ddc34908d29125769b0e179 plus exact DS-01 relative power candidate",
-    "inventory_command": "Installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/ds-01-relative-power-native/native-exports.json",
-    "native_sha256": "bc51c54ea64a9e8742018b27c6a662a291e55b230b11292c5335a6b4017aa57e",
-    "scope": "Fresh installed metadata and 12 scoped channel-spectrum/TX/namespace cases, including two freshly executed separate Rust process references. All operation/class metadata is unchanged; additive non-exhaustive spectrum field only.",
+    "revision": "4c208860fa9baec12779562a77e501182af2bafa plus exact DS-01 unnamed file candidate",
+    "inventory_command": "Installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/ds-01-unnamed-file-native/native-exports.json",
+    "native_sha256": "806f23f7ede0affd833c75b71af630c4ea2fc585997242fec9e8508266978cc4",
+    "scope": "Fresh installed metadata and 16 scoped admission/saved-full-loop/namespace cases including a fresh separate Rust process reference. Original methods/exports remain exact; one explicit unnamed-file operation per language.",
     "preserved_prior_inventory": {
-      "sha256": "0b95e8740c9a91fa4fd16b460f9e0d254588d8880dbe7395fc89cac6b3311c8d",
+      "sha256": "0a74e3f3e24b5e90e436e13c5adf235bcba6a89abbda19b48d5549d6f531c208",
       "root_and_namespace_operation_instances": 942,
-      "scope": "All prior root and real namespace classes, aliases, constructors, methods, properties, constants and signatures are deeply equal."
+      "scope": "Every earlier class/alias/constructor and operation kind/signature is deeply equal after removing only the added unnamed-file method."
     }
   },
   "contracts": {
@@ -118,7 +118,9 @@
     "status.uiu-ds-01-idle-capacity": "Implemented passive capacity on immutable sequence options, shared by the unchanged admitted-sequence method. Scoped paired prerequisite accepted; Qt selection-status adoption and final UI gates remain UIU-DS-01/UIU-QA-01.",
     "units.source-observation-milliseconds": "Whole milliseconds of source-observation time, zero-based OFDM symbol indices; no host-runtime, acquisition, interleaver-drain or window-tail substitution.",
     "evidence.uiu-ds-01-minimum-window": "../unified-qt-workbench/minimum-observation-timing-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-minimum-observation-timing-api-accepted: independent both-clock exact rounding and installed native acceptance; original exports preserved.",
-    "status.uiu-ds-01-minimum-window": "Scoped paired API prerequisite accepted. Backend timing owner uses checked inverse sample-clock arithmetic; Qt help adoption and final UI gates remain UIU-DS-01/UIU-QA-01."
+    "status.uiu-ds-01-minimum-window": "Scoped paired API prerequisite accepted. Backend timing owner uses checked inverse sample-clock arithmetic; Qt help adoption and final UI gates remain UIU-DS-01/UIU-QA-01.",
+    "evidence.uiu-ds-01-unnamed-file": "../unified-qt-workbench/unnamed-file-source-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-unnamed-file-source-api-accepted: reproduced legacy distinction, actual exact recovered source and fresh installed native/Rust process acceptance.",
+    "status.uiu-ds-01-unnamed-file": "Scoped paired compatibility prerequisite accepted. Existing named constructors and scientific capture identities remain unchanged; Qt WIP adoption and final DS-01/QA-01 gates remain open."
   },
   "type_exports": {
     "downstream": [
@@ -32145,6 +32147,57 @@
       },
       "evidence": "evidence.uiu-ds-01-minimum-window",
       "status": "status.uiu-ds-01-minimum-window"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::SourceInput::unnamed_file",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn unnamed_file( bytes: &[u8], fill: Option<FileFillPolicy>, ) -> ApiResult<Self>",
+        "source_file": "crates/ofdm/src/api/admission.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.SourceInput.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.SourceInput.from_unnamed_bytes",
+        "declaration": "merlin.downstream.SourceInput.from_unnamed_bytes"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.configuration",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Owned finite source with the exact original empty label, bytes/hash and independent optional fill. Original file/work limits remain; no source/RNG advance or weakening of named capture validation."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_admission.rs::unnamed_file_preserves_exact_bytes_empty_label_bounds_and_named_validation",
+          "crates/pnm-input/tests/workbench_full_loop.rs::unnamed_saved_file_preserves_original_label_bytes_fill_and_capture_name_validation"
+        ],
+        "python": {
+          "status": "installed native owner acceptance",
+          "cases": [
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_unnamed_file_preserves_original_bytes_fill_and_named_rejection",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_unnamed_saved_file_keeps_original_label_recovery_and_capture_names"
+          ],
+          "scope": "Explicit empty file label, original bytes/hash/ownership, zero/over-limit source, independent fill, unchanged named rejection and actual saved-source FEC recovery; no relaxed scientific capture names."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-unnamed-file",
+      "status": "status.uiu-ds-01-unnamed-file"
     }
   ],
   "executed_records": [
@@ -32176,7 +32229,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -67116,6 +67170,63 @@
       },
       "evidence": "evidence.uiu-ds-01-minimum-window",
       "status": "status.uiu-ds-01-minimum-window"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.SourceInput.from_unnamed_bytes",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::SourceInput",
+        "source_file": "bindings/python/src/admission.rs",
+        "symbol": "PySourceInput",
+        "signature": "pub fn unnamed_file( bytes: &[u8], fill: Option<FileFillPolicy>, ) -> ApiResult<Self>",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "merlin::downstream::SourceInput::unnamed_file",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "from_unnamed_bytes",
+        "kind": "method",
+        "signature": "(data, fill=None)",
+        "declaration": "SourceInput.from_unnamed_bytes"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.configuration",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::SourceInput",
+        "scope": "Immutable owned Rust file input with empty name, original bytes/hash, no continuous seed and existing finite fill semantics. Native conversion/GIL handling match existing file admission."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_admission.rs::unnamed_file_preserves_exact_bytes_empty_label_bounds_and_named_validation",
+          "crates/pnm-input/tests/workbench_full_loop.rs::unnamed_saved_file_preserves_original_label_bytes_fill_and_capture_name_validation"
+        ],
+        "python": {
+          "status": "installed native owner acceptance",
+          "cases": [
+            "bindings/python/tests/test_admission.py::NativeAdmissionTests.test_unnamed_file_preserves_original_bytes_fill_and_named_rejection",
+            "bindings/python/tests/test_workbench_full_loop.py::WorkbenchFullLoopTests.test_unnamed_saved_file_keeps_original_label_recovery_and_capture_names"
+          ],
+          "scope": "Explicit empty file label, original bytes/hash/ownership, zero/over-limit source, independent fill, unchanged named rejection and actual saved-source FEC recovery; no relaxed scientific capture names."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-unnamed-file",
+      "status": "status.uiu-ds-01-unnamed-file"
     }
   ],
   "native_type_exports": {
@@ -68216,6 +68327,18 @@
         "sha256": "66b0ad1734c32690e3940cab9fe577f7a861402542af01e72b0a7ff06fb96923",
         "root_and_namespace_operation_instances": 940,
         "scope": "Exact prior class/alias/constructor metadata and operation kind/signature; additive minimum-window query only."
+      }
+    },
+    {
+      "version": "0.4.0",
+      "revision": "653bbe05cb4237500ddc34908d29125769b0e179 plus exact DS-01 relative power candidate",
+      "inventory_command": "Installed candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/ds-01-relative-power-native/native-exports.json",
+      "native_sha256": "bc51c54ea64a9e8742018b27c6a662a291e55b230b11292c5335a6b4017aa57e",
+      "scope": "Fresh installed metadata and 12 scoped channel-spectrum/TX/namespace cases, including two freshly executed separate Rust process references. All operation/class metadata is unchanged; additive non-exhaustive spectrum field only.",
+      "preserved_prior_inventory": {
+        "sha256": "0b95e8740c9a91fa4fd16b460f9e0d254588d8880dbe7395fc89cac6b3311c8d",
+        "root_and_namespace_operation_instances": 942,
+        "scope": "All prior root and real namespace classes, aliases, constructors, methods, properties, constants and signatures are deeply equal."
       }
     }
   ],

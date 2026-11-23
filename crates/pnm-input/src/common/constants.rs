@@ -17,6 +17,11 @@ pub const CHANNEL_POWER_SCHEMA_VERSION: u32 = 1;
 pub const MAX_WORKBENCH_BYTES: usize = 144 * 1024 * 1024;
 /// Inclusive original byte budget for each embedded downstream source or capture.
 pub const MAX_EMBEDDED_BYTES: usize = 16 * 1024 * 1024;
+/// Inclusive display-name byte ceiling in an embedded saved downstream original.
+/// Empty file-source labels remain valid; scientific captures require provenance names.
+pub const MAX_EMBEDDED_NAME_BYTES: usize = 1024;
+/// Inclusive base64-text budget for one saved original; independent of decoded size.
+pub const MAX_EMBEDDED_BASE64_BYTES: usize = 24 * 1024 * 1024;
 /// Inclusive aggregate original byte budget for a saved downstream project.
 pub const MAX_TOTAL_ORIGINAL_BYTES: usize = 96 * 1024 * 1024;
 /// Inclusive number of original RxMER captures retained in a saved project.

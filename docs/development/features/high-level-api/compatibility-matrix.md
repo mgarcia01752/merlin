@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-566 explicit public Rust operations and 539 installed native Python entries with
+567 explicit public Rust operations and 540 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/relative-channel-power-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/unnamed-file-source-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 112 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -46,6 +46,14 @@ flat-density/zero and fresh separate-process parity checks. Every earlier row,
 class export and signature stays exact; [execution records](../unified-qt-workbench/ds-01-relative-power-operation-test-results.json)
 retain scoped evidence without claiming a new full backend gate. Qt adoption
 remains DS-01.
+
+The [unnamed file-source compatibility prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-unnamed-file-source-api-accepted)
+adds one explicit passive operation in each language while retaining every earlier
+row/class/signature. Twenty Rust and sixteen installed native cases preserve
+originals, empty file labels and existing named-capture validation, including
+fresh saved-workbench Rust process parity and actual exact-file recovery.
+[Execution records](../unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json)
+retain scoped acceptance; the preserved Qt consumer and parent remain pending.
 
 The additive [UIU-API-01 admission/preview acceptance](../unified-qt-workbench/validation.md#uiu-api-01-public-admission-accepted)
 appends 99 Rust and 75 native rows, retaining every original row and historical

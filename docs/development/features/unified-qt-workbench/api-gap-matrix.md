@@ -238,3 +238,13 @@ covers literal flat-density/zero anchors, full-band zoom/calibration independenc
 and fresh Rust/native process parity. Existing methods, constructors, original
 fields and operation rows remain intact. Qt's relative-power formatter still
 awaits adoption, with no local logarithmic calculation permitted in its replacement.
+
+## UIU-DS-01 unnamed file-source compatibility follow-up
+
+The [unnamed-source prerequisite](design.md#uiu-ds-01-unnamed-file-source-compatibility-api-prerequisite)
+preserves the reproduced legacy empty file-label case with an explicit passive
+public SourceInput operation and native equivalent. Existing named constructors
+and profile/measurement/H provenance checks stay strict. Saved full-loop source
+admission shares the same operation and exact integrity/resource checks.
+[Paired acceptance](validation.md#uiu-ds-01-unnamed-file-source-api-accepted) precedes
+restoring/adapting the preserved idle TX consumer. No schema or scientific mode changes.

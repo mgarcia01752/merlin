@@ -190,12 +190,16 @@ fn source(source: &Source, decoded_bytes: &mut usize) -> ApiResult<SourceInput> 
     let file = source
         .file
         .as_ref()
-        .map(|stored| stored.decode(decoded_bytes))
+        .map(|stored| {
+            stored
+                .decode_bytes(decoded_bytes)
+                .map(|bytes| (stored.name.as_str(), bytes))
+        })
         .transpose()?;
     match source.options.mode.as_str() {
         "prbs15" => Ok(SourceInput::prbs15(PrbsSeed::new(source.options.seed)?)),
         "file" => {
-            let file = file.ok_or_else(|| {
+            let (name, bytes) = file.ok_or_else(|| {
                 ApiError::new(ErrorCode::MissingSetting, "WB file source has no original")
             })?;
             let fill = if source.options.append {
@@ -206,7 +210,11 @@ fn source(source: &Source, decoded_bytes: &mut usize) -> ApiResult<SourceInput> 
             } else {
                 None
             };
-            SourceInput::file(file, fill)
+            if name.is_empty() {
+                SourceInput::unnamed_file(&bytes, fill)
+            } else {
+                SourceInput::file(NamedCapture::new(name, bytes)?, fill)
+            }
         }
         _ => Err(unsupported("Unsupported WB source mode")),
     }

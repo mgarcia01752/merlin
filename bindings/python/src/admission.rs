@@ -256,6 +256,31 @@ impl PySourceInput {
         .map_err(error)
     }
 
+    /// Admits an exact-byte file with an explicitly absent original display label.
+    ///
+    /// # Arguments
+    /// * `data` - Original caller bytes, including zeros, BOM and line endings.
+    /// * `fill` - Optional admitted total-bit target and independent fill seed.
+    ///
+    /// # Returns
+    /// Immutable file with an empty name and exact bytes/hash. Rust owns validation
+    /// and copying while the GIL is released; no source or RNG advances.
+    ///
+    /// # Errors
+    /// Original Rust byte/work/fill failures raise ApiError without changing inputs.
+    #[staticmethod]
+    #[pyo3(signature=(data, fill=None))]
+    fn from_unnamed_bytes(
+        py: Python<'_>,
+        data: Vec<u8>,
+        fill: Option<&PyFileFill>,
+    ) -> PyResult<Self> {
+        let policy = fill.map(|policy| policy.0);
+        py.detach(move || api::SourceInput::unnamed_file(&data, policy))
+            .map(Self)
+            .map_err(error)
+    }
+
     /// Reads the Rust-owned source family without inspecting a file extension.
     ///
     /// # Returns
