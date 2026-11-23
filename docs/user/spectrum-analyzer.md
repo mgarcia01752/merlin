@@ -165,7 +165,9 @@ records the PHY derivation and manufacturer VF references.
 Time-domain SA views integrate the fixed occupied channel band independently of
 mouse zoom. The readout includes the integration bandwidth; pilot energy, internal
 gaps and noise remain in the integral. A transmitter-only preview reports relative
-power. Completed-run TX/RX and channel TP views use the run's optional TX electrical
+power in dB re one normalized sample unit squared over that whole band. This
+differs from the trace's per-Hz density; zero power has no finite dB reading.
+Completed-run TX/RX and channel TP views use the run's optional TX electrical
 reference to report rms dBmV and a separate band-average dBmV/6 MHz level. FFT-bin
 views remain separately labeled bin power. See [channel conditioning](channel-measurements.md#launch-amplifier-attenuator-and-tappoints)
 for calibration, noise and saved settings. Plotting capture frequencies does not

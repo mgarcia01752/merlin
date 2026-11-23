@@ -1229,6 +1229,17 @@ full-loop adapter admits that file-only case through the same public source API.
 [Scoped paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-unnamed-file-source-api-accepted)
 now passes before resuming the preserved Qt preview consumer.
 
+The [idle TX facade unit](development/features/unified-qt-workbench/design.md#uiu-ds-01-idle-transmitter-preview-facade)
+now uses public preview admission/execution, progress/cancellation, PSD and symbol
+timing/window observations. Qt translates accepted self-contained original source/
+profile sections into public inputs; it performs no source, FFT, window-generation,
+calibration or logarithmic power calculations. A shared presentation owner formats
+public spectrum buckets and physical PLC bounds. Existing legacy run/instrument
+providers remain separate migration debt until their own facade adoption.
+[Scoped consumer acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted)
+passes with the latest optimized Qt executable; 38 frozen legacy files remain.
+
+
 Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
 Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
 

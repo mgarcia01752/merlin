@@ -248,3 +248,13 @@ and profile/measurement/H provenance checks stay strict. Saved full-loop source
 admission shares the same operation and exact integrity/resource checks.
 [Paired acceptance](validation.md#uiu-ds-01-unnamed-file-source-api-accepted) precedes
 restoring/adapting the preserved idle TX consumer. No schema or scientific mode changes.
+
+## UIU-DS-01 idle transmitter preview consumer
+
+[Scoped preview adoption](validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted)
+now uses the accepted public source/capture/preview/control, timing/window,
+configured-layout and calibrated-spectrum operations. The [exact record](downstream-preview-evidence.json)
+retains original source/timing/spectrum behavior and the explicit unnamed-file
+compatibility prerequisite. Qt projects backend values into the existing fields;
+no private TX/window/FFT/calibration operation remains in these two retired files.
+Other TX inspectors and channel/receiver providers remain separate DS-01 work.

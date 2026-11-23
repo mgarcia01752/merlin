@@ -588,21 +588,6 @@
       "sunset_task": "UIU-DS-01"
     },
     {
-      "path": "apps/qt/src/downstream/instruments/spectrum/symbol_timing.rs",
-      "sha256": "8d45c5f3e0c219525a2371e7ad9c87c8c4131eb7f565339da6284f241b4634f7",
-      "sites": [
-        {
-          "line": 6,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 140,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
       "path": "apps/qt/src/downstream/instruments/transmitter/capture.rs",
       "sha256": "7449f43b85007f65d1adfbec906f76329b8f2ddd1f67a295084e55c3891dd940",
       "sites": [
@@ -660,29 +645,6 @@
       "sites": [
         {
           "line": 7,
-          "root": "docsis_ofdm_fec"
-        }
-      ],
-      "sunset_task": "UIU-DS-01"
-    },
-    {
-      "path": "apps/qt/src/downstream/instruments/transmitter/preview.rs",
-      "sha256": "aa62a767fa9aed8bc4098da71e47ee9b1e5e655dfcf6600675abd2ca8a0eea7f",
-      "sites": [
-        {
-          "line": 7,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 228,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 281,
-          "root": "docsis_ofdm_fec"
-        },
-        {
-          "line": 312,
           "root": "docsis_ofdm_fec"
         }
       ],
@@ -2644,6 +2606,56 @@
       "unit": "Recovered-data chart contract facade",
       "reason": "Chart consumes the accepted public report type and supplied comparison counts; no direct scientific crate access remains.",
       "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-verification-contract-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/spectrum/symbol_timing.rs",
+        "sha256": "8d45c5f3e0c219525a2371e7ad9c87c8c4131eb7f565339da6284f241b4634f7",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 140,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Idle transmitter preview facade",
+      "reason": "Public preview/control/spectrum/physical-layout and timing/window queries replace direct private scientific imports; Qt retains coordinate/label projection only.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/preview.rs",
+        "sha256": "aa62a767fa9aed8bc4098da71e47ee9b1e5e655dfcf6600675abd2ca8a0eea7f",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 228,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 281,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 312,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Idle transmitter preview facade",
+      "reason": "Public preview/control/spectrum/physical-layout and timing/window queries replace direct private scientific imports; Qt retains coordinate/label projection only.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted"
     }
   ]
 }

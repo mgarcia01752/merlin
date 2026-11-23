@@ -174,9 +174,10 @@ impl bridge::TransmitterAnalyzer {
             self.as_mut().rust_mut().model = model;
             return QString::from(self.rust().model.status().to_string());
         }
-        let inputs = crate::downstream::workbench::session::snapshot();
+        let source = crate::downstream::workbench::session::saved("source");
+        let profile = crate::downstream::workbench::session::saved("profile");
         let model = &mut self.as_mut().rust_mut().model;
-        model.configure(&settings.to_string(), inputs);
+        model.configure(&settings.to_string(), &source, &profile);
         QString::from(model.status().to_string())
     }
     /// Starts at most one bounded preview job, preserving GUI responsiveness.

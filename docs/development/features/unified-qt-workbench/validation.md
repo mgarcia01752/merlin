@@ -1600,3 +1600,40 @@ entries. Restore/verify that work, adopt the explicit file-label operation and
 finish Qt/build/native checks afterward. Parent DS-01 and final numeric/unified
 runtime acceptance remain open. No push, release or external interoperability
 acceptance is claimed.
+
+## UIU-DS-01 idle transmitter preview facade accepted
+
+The [preview consumer evidence](downstream-preview-evidence.json) accepts the idle
+TX adapter through the public facade. Original accepted source/profile sections
+become owned SourceInput/ProfileCapture inputs; public preview requests, one-shot
+control, progress/cancellation and results replace direct engine access. Public
+symbol timing/window coefficients and calibrated spectrum observations supply the
+original graph fields, axis labels, PLC shading and zoom-independent power.
+Qt retains only drawing/label projection. Named captures remain strict, while the
+separately accepted unnamed-file operation preserves original empty source labels.
+Independent Open preparation uses its own original sections, without GUI globals.
+
+Eleven targeted Rust cases pass on the final adapter: three original preview,
+two timing/window, five project-load cases and one original-byte/file-input case.
+Both FFTs and all44 valid original CP/RP pairs retain independent clock/taper/
+overlap assertions. Every old preview assertion and case name remains; original
+fixtures now enter through the public capture loader. Added cases preserve dormant
+seed/fill semantics, arbitrary exact file bytes, explicit empty labels and the
+existing zero-count/full-width viewport convention. All89 original QML cases,
+16 boundary regressions, final Clippy/formatting and optimized Qt build pass.
+Four curated native preflights and two native XCB/Fusion/software startup checks
+pass with the fresh executable and rediscovered VM display credentials.
+
+Two exact original guard entries retire; the remaining38 files, three dependency
+exceptions and original immutable snapshot stay intact. No backend, Python,
+lockfile, QML or QObject registration change occurs in this consumer unit.
+Shared spectrum rendering currently serves idle TX; legacy channel/receiver
+formatters still await convergence. This is scoped migration acceptance, not final
+DS-01/session/upstream/installed-platform or complete numeric-audit acceptance.
+
+The first Clippy run rejected an equivalent inclusive-end expression; the final
+exclusive-end form passes all11 targeted Rust cases and final Clippy. Earlier
+receipts remain. Backend/native prerequisites retain their own accepted evidence
+without repeating full workspace tests. WIP restore hashes and doc reconciliation
+are recorded. A confirmed empty RCC resource-watch path causes repeated adapter
+builds; address that in a separate focused unit, preserving targets and the SDK.

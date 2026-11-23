@@ -2044,3 +2044,50 @@ Record exact additive method signatures/operation rows and unchanged earlier
 exports. API/FEC/planning milestones remain completed; DS-01/QA-01 stay open.
 
 Scoped paired prerequisite accepted: [unnamed-source validation](validation.md#uiu-ds-01-unnamed-file-source-api-accepted) and [exact evidence](unnamed-file-source-evidence.json) record20 Rust/16 installed native cases, prior constructor preservation and actual original-file recovery. Restore/verify the preserved Qt WIP after this focused API commit; DS-01 stays open.
+
+## UIU-DS-01 idle transmitter preview facade
+
+Implement the next DS-01 consumer after the accepted public preview/timing,
+physical-layout and relative-power prerequisites. Preserve readiness, idle-only
+generation, one worker, original input bytes, source/fill separation, stale-result
+rejection, cancellation, spectrum navigation/PLC shading and stable timing axes.
+Long operations remain on the existing bounded Rust worker. No QML rewrite or
+saved schema/default change. REQ-UIU-02/07/08/09/17/27 and UIU-DS-01 own acceptance.
+
+| Path and symbol | Existing contract / gap | Decision / destination |
+| --- | --- | --- |
+| `apps/qt/src/downstream/inputs/public_inputs.rs` (new), inputs module wiring | Saved source/profile sections already retain originals, integrity and accepted options | ADD a thin adapter translating those sections through NamedCapture, CaptureLoader, SourceInput (including explicit unnamed files), PrbsSeed and FileFillPolicy. No private scientific type, source stream or parameter calculation. Null sections preserve incomplete readiness. File-mode dormant continuous seed and disabled fill remain dormant. |
+| `instruments/transmitter/preview.rs::Analyzer` | Legacy direct preview engine, atomics, geometry and PSD access | ADAPT to public TransmissionConfiguration, TransmitterPreviewRequest/Control/result and configured physical-layout query. Preserve generations, busy state, cancellation and result tokens; public progress replaces private engine callbacks. |
+| `bridge/transmitter_analyzer.rs`, `workbench/project_load.rs` | GUI-thread and independent Open preparation | EDIT callers to pass their own accepted original sections; no new global scientific store or dependency. |
+| `instruments/spectrum/symbol_timing.rs` | Adjacent-window drawing currently generates coefficients from private waveform geometry | ADAPT drawing to owned public SymbolWindow coefficients. Keep only coordinate/axis/label projection in Qt and preserve every existing independent numerical assertion/parameter combination. |
+| `shared/presentation/spectrum.rs` (new), module wiring | Idle preview needs the existing SA shape from typed public buckets | ADD shared presentation over public ChannelSpectrum and PhysicalLayoutView. Reuse original graph arithmetic/strings; backend owns PSD, calibration and integrated relative dB. Legacy channel/receiver formatters remain pending, to converge through this owner during DS-01/SHARED-01. |
+| Shared presentation and downstream common constants | Existing SI labels and independent chart policies have unexplained literals | SHARE unit-specific display conversions and purpose-named chart/timing policies. Equal-valued headroom/grid steps, prefix/taper allowances and sample-count budgets remain distinct. Stable graph padding is a display policy, not a new PHY admission bound. |
+| Boundary record, current docs and user guides | Two fully migrated files can retire exact original exceptions | RETIRE only preview and symbol-timing entries after public adoption; preserve all other entries/initial snapshot verbatim. No guard relaxation or hash refresh for remaining private consumers. |
+
+Reuse provenance: GPL-3.0-only MERLIN files at
+`4c208860fa9baec12779562a77e501182af2bafa`, copyright 2026 MERLIN contributors:
+`instruments/transmitter/preview.rs`, `instruments/spectrum/{mod,symbol_timing,plc}.rs`
+and `instruments/channel/mod.rs`. Adapt only within the GPL Qt adapter, preserving
+headers, original expected vectors and license/NOTICE. Apache API owners remain
+unchanged in this consumer unit. New presentation modules require no package
+resource registration; QObject/QML URIs and current presentation files remain.
+
+Acceptance: scoped Rust preview, independent project-load, original timing-window
+matrix, original-byte translation and spectrum formatting cases; relevant QML
+navigation/timing cases; 16 boundary regressions and current guard; formatting,
+Qt Clippy, optimized executable and native curated-project/startup smokes. Record
+changed assertion construction separately from preserved scientific oracles.
+Backend/native API tests are reused from the prerequisite commits since this unit
+changes only Qt adapters/presentation; final full integration remains QA-01.
+
+Scoped consumer accepted: [preview validation](validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted)
+and [exact evidence](downstream-preview-evidence.json) record11 targeted Rust,
+89 QML, 16 boundary and six native checks, final Clippy and optimized build.
+The original 44-case timing matrix and every original preview assertion remain.
+The unnamed-file compatibility API was committed independently before consumption;
+twelve WIP files restored exactly and four canonical docs reconciled both records.
+Two original guard entries retire without modifying the other38 entries or initial
+snapshot. Backend/binding/lock/QML files stay unchanged. A pinned RCC list parser
+emits an empty resource watch, causing redundant Cargo rebuilds; fix that separately
+through supported build-time Qt APIs after this focused consumer commit. Keep
+DS-01, session/isolation, remaining scientific consumers and final numeric audit open.

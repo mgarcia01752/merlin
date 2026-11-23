@@ -76,7 +76,11 @@ impl PreparedProject {
         receiver.verify = project.comparison_enabled;
         receiver.prepare_inputs(&settings, &inputs);
         let mut transmitter = Analyzer::default();
-        transmitter.configure(&settings, inputs.clone());
+        transmitter.configure(
+            &settings,
+            project.sections.get("source").unwrap_or(&Value::Null),
+            project.sections.get("profile").unwrap_or(&Value::Null),
+        );
         let metadata = json!({"opened":true,"prepared":true,"path":path.as_ref().map(|p|p.to_string_lossy()),
             "transmission":project.transmission,"receiver":project.receiver,
             "verified":project.comparison_enabled,"dark":project.dark,

@@ -6,4 +6,5 @@
 pub(crate) mod channel_model;
 pub(crate) mod measurement_input;
 pub(crate) mod profile_input;
+pub(crate) mod public_inputs;
 pub(crate) mod source_input;

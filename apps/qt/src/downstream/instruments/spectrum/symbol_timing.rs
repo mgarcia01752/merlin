@@ -3,58 +3,63 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Bounded time-axis projections of the actual core transmit-window coefficients.
-use docsis_ofdm_fec::{
-    signal_processing::waveform::{windowing::TransmitWindow, WaveformGeometry},
-    transmission::settings::{CYCLIC_PREFIX_SAMPLES, ROLL_OFF_SAMPLES, SAMPLE_RATE_HZ},
+use crate::downstream::common::constants::{
+    TIMING_DRAWING_INTERVALS, TIMING_OVERVIEW_QUANTUM_MICROSECONDS,
+    TIMING_PREFIX_ALLOWANCE_SAMPLES, TIMING_ROLL_ALLOWANCE_SAMPLES, TIMING_TAPER_DRAWING_INTERVALS,
+    TIMING_TICK_INTERVALS,
 };
+use crate::shared::presentation::constants::MICROSECONDS_PER_SECOND;
+use merlin::downstream::SymbolWindow;
 use serde_json::{json, Value};
 
 /// Projects two adjacent windows and their shared tail on real time axes.
 /// # Arguments
-/// * `geometry` - Validated active or frozen geometry, with unchanged core weights.
+/// * `window` - Owned public snapshot of active/frozen geometry and unchanged backend weights.
 /// # Returns
 /// Bounded overview/detail graphs, each with at most 550 actual sample positions.
 /// Zero outside a window is explicit; no waveform or extra symbol is synthesized.
-pub(crate) fn project(geometry: &WaveformGeometry) -> Value {
-    let stride = geometry.stride_samples();
-    let roll = geometry.roll_off_samples();
-    let prefix = geometry.prefix_samples();
-    let window = TransmitWindow::new(geometry);
-    let maximum_span = 2
-        * (geometry.fft_samples() + usize::from(*CYCLIC_PREFIX_SAMPLES.last().unwrap()))
-        + usize::from(*ROLL_OFF_SAMPLES.last().unwrap());
-    let full_us = (microseconds(maximum_span) / 10.0).ceil() * 10.0;
-    let full_end = (full_us * f64::from(SAMPLE_RATE_HZ) / 1e6).round() as usize;
-    let maximum_roll = usize::from(*ROLL_OFF_SAMPLES.last().unwrap());
+pub(crate) fn project(window: &SymbolWindow) -> Value {
+    let microseconds = |samples| microseconds(samples, window.sample_rate_hz);
+    let stride = window.stride_samples;
+    let roll = window.roll_off_samples;
+    let prefix = window.prefix_samples;
+    let maximum_span =
+        2 * (window.fft_samples + TIMING_PREFIX_ALLOWANCE_SAMPLES) + TIMING_ROLL_ALLOWANCE_SAMPLES;
+    let full_us = (microseconds(maximum_span) / TIMING_OVERVIEW_QUANTUM_MICROSECONDS).ceil()
+        * TIMING_OVERVIEW_QUANTUM_MICROSECONDS;
+    let full_end =
+        (full_us * f64::from(window.sample_rate_hz) / MICROSECONDS_PER_SECOND).round() as usize;
+    let maximum_roll = TIMING_ROLL_ALLOWANCE_SAMPLES;
     let margin = maximum_roll / 2;
     let detail_start = stride.saturating_sub(margin);
-    let detail_end = stride + usize::from(*CYCLIC_PREFIX_SAMPLES.last().unwrap()) + margin;
+    let detail_end = stride + TIMING_PREFIX_ALLOWANCE_SAMPLES + margin;
     json!({
         "prefix_us":microseconds(prefix),"roll_us":microseconds(roll),
-        "fft_us":microseconds(geometry.fft_samples()),"symbol_us":microseconds(stride),
-        "overview":plot(&window, geometry, 0, full_end),
-        "detail":plot(&window, geometry, detail_start, detail_end),
+        "fft_us":microseconds(window.fft_samples),"symbol_us":microseconds(stride),
+        "overview":plot(window, 0, full_end),
+        "detail":plot(window, detail_start, detail_end),
         "overlap_label":format!("Overlap {:.3} µs · Usable guard {:.3} µs · CP end / FFT start {:.3} µs",microseconds(roll),microseconds(prefix-roll),microseconds(stride+prefix)),
         "origin_note":"Window weights, not RF signal amplitude."
     })
 }
 
-fn microseconds(samples: usize) -> f64 {
-    samples as f64 * 1e6 / f64::from(SAMPLE_RATE_HZ)
+fn microseconds(samples: usize, sample_rate_hz: u32) -> f64 {
+    samples as f64 * MICROSECONDS_PER_SECOND / f64::from(sample_rate_hz)
 }
 
-fn plot(window: &TransmitWindow, geometry: &WaveformGeometry, start: usize, end: usize) -> Value {
-    let stride = geometry.stride_samples();
-    let roll = geometry.roll_off_samples();
-    let prefix = geometry.prefix_samples();
-    let mut indices = (0..=256)
-        .map(|index| start + (end - start) * index / 256)
+fn plot(window: &SymbolWindow, start: usize, end: usize) -> Value {
+    let microseconds = |samples| microseconds(samples, window.sample_rate_hz);
+    let stride = window.stride_samples;
+    let roll = window.roll_off_samples;
+    let prefix = window.prefix_samples;
+    let mut indices = (0..=TIMING_DRAWING_INTERVALS)
+        .map(|index| start + (end - start) * index / TIMING_DRAWING_INTERVALS)
         .collect::<Vec<_>>();
     // Keep both taper shapes visible even on the full two-symbol timeline.
     for origin in [0, stride] {
         for taper_start in [origin, origin + stride] {
-            for index in 0..=64 {
-                indices.push(taper_start + roll * index / 64);
+            for index in 0..=TIMING_TAPER_DRAWING_INTERVALS {
+                indices.push(taper_start + roll * index / TIMING_TAPER_DRAWING_INTERVALS);
             }
         }
         for boundary in [
@@ -73,7 +78,7 @@ fn plot(window: &TransmitWindow, geometry: &WaveformGeometry, start: usize, end:
     let weight = |index: usize, origin: usize| {
         index
             .checked_sub(origin)
-            .and_then(|local| window.coefficients().get(local))
+            .and_then(|local| window.coefficients.get(local))
             .copied()
             .unwrap_or(0.0)
     };
@@ -82,12 +87,16 @@ fn plot(window: &TransmitWindow, geometry: &WaveformGeometry, start: usize, end:
         let first=weight(index,0);
         let second=weight(index,stride);
         json!({"x":coordinate(index),"first":first,"second":second,
-            "sum":if index>=stride && index<stride+roll {Some(first+second)} else {None},
+            "sum":if index>=stride && index<stride+roll {
+                Some(first+second)
+            } else {
+                None
+            },
             "readout":format!("{:.3} µs · Symbol 1 {first:.4} · Symbol 2 {second:.4}",microseconds(index))})
     }).collect::<Vec<_>>();
-    let ticks = (0..=4)
+    let ticks = (0..=TIMING_TICK_INTERVALS)
         .map(|index| {
-            let sample = start + (end - start) * index / 4;
+            let sample = start + (end - start) * index / TIMING_TICK_INTERVALS;
             json!({"x":coordinate(sample),"label":format!("{:.3}",microseconds(sample))})
         })
         .collect::<Vec<_>>();
@@ -128,7 +137,7 @@ fn plot(window: &TransmitWindow, geometry: &WaveformGeometry, start: usize, end:
     let fft_labels = [0,stride].into_iter().filter_map(|origin| {
         let left = origin+prefix;
         let right = origin+stride;
-        (left>=start && right<=end).then(||json!({"x":coordinate(left+(right-left)/2),"text":format!("FFT · {:.3} µs",microseconds(geometry.fft_samples()))}))
+        (left>=start && right<=end).then(||json!({"x":coordinate(left+(right-left)/2),"text":format!("FFT · {:.3} µs",microseconds(window.fft_samples))}))
     }).collect::<Vec<_>>();
     json!({"points":points,"ticks":ticks,"bands":bands,"markers":markers,"fft_labels":fft_labels,
         "start_us":microseconds(start),"end_us":microseconds(end)})
@@ -137,12 +146,15 @@ fn plot(window: &TransmitWindow, geometry: &WaveformGeometry, start: usize, end:
 #[cfg(test)]
 mod tests {
     use super::*;
-    use docsis_ofdm_fec::transmission::{SubcarrierSpacing, TransmissionSettings};
+    use merlin::downstream::{SubcarrierSpacing, TransmissionConfiguration, TransmissionSettings};
+    // Independent original parameter matrix, not the production display-padding definitions.
+    const PREFIX_CASES: [u16; 5] = [192, 256, 512, 768, 1024];
+    const ROLL_CASES: [u16; 5] = [0, 64, 128, 192, 256];
     #[test]
     fn both_ffts_and_all_valid_prefix_tapers_preserve_core_weights_and_overlap() {
         for spacing in [SubcarrierSpacing::Khz25, SubcarrierSpacing::Khz50] {
-            for prefix in CYCLIC_PREFIX_SAMPLES {
-                for roll in ROLL_OFF_SAMPLES {
+            for prefix in PREFIX_CASES {
+                for roll in ROLL_CASES {
                     if roll >= prefix {
                         continue;
                     }
@@ -152,11 +164,15 @@ mod tests {
                         roll_off_samples: roll,
                         ..Default::default()
                     };
-                    let geometry = WaveformGeometry::new(&settings).unwrap();
-                    let report = project(&geometry);
+                    let window = TransmissionConfiguration::new(settings)
+                        .unwrap()
+                        .window()
+                        .unwrap();
+                    let microseconds = |samples| microseconds(samples, window.sample_rate_hz);
+                    let report = project(&window);
                     let overview = &report["overview"];
                     let detail = &report["detail"];
-                    let cp_end_us = microseconds(geometry.stride_samples() + usize::from(prefix));
+                    let cp_end_us = microseconds(window.stride_samples + usize::from(prefix));
                     assert!(detail["end_us"].as_f64().unwrap() > cp_end_us);
                     let guard = detail["bands"]
                         .as_array()
@@ -168,6 +184,7 @@ mod tests {
                         detail["end_us"].as_f64().unwrap() - detail["start_us"].as_f64().unwrap();
                     let guard_us =
                         (guard["end_x"].as_f64().unwrap() - guard["x"].as_f64().unwrap()) * span;
+                    // Independent sample clock: 204.8 samples/us, with picosecond-scale tolerance.
                     assert!((guard_us - f64::from(prefix - roll) / 204.8).abs() < 1e-12);
                     assert!(detail["markers"]
                         .as_array()
@@ -177,7 +194,7 @@ mod tests {
                     assert!(overview["points"].as_array().unwrap().len() <= 550);
                     assert!(
                         overview["end_us"].as_f64().unwrap()
-                            > microseconds(2 * geometry.stride_samples() + usize::from(roll))
+                            > microseconds(2 * window.stride_samples + usize::from(roll))
                     );
                     for point in report["detail"]["points"].as_array().unwrap() {
                         if let Some(sum) = point["sum"].as_f64() {
@@ -193,6 +210,7 @@ mod tests {
                             .unwrap()["first"]
                             .as_f64()
                             .unwrap();
+                        // Independent half-sample raised-cosine anchor, not backend coefficients.
                         let expected =
                             0.5 * (1.0 - (std::f64::consts::PI * 0.5 / f64::from(roll)).cos());
                         assert!((first - expected).abs() < 1e-14);
@@ -204,13 +222,23 @@ mod tests {
     #[test]
     fn cp_and_roll_changes_move_timing_without_self_rescaling_the_overview() {
         let settings = TransmissionSettings::default();
-        let first = project(&WaveformGeometry::new(&settings).unwrap());
+        let first = project(
+            &TransmissionConfiguration::new(settings.clone())
+                .unwrap()
+                .window()
+                .unwrap(),
+        );
         let changed = TransmissionSettings {
             cyclic_prefix_samples: 1024,
             roll_off_samples: 256,
             ..settings
         };
-        let second = project(&WaveformGeometry::new(&changed).unwrap());
+        let second = project(
+            &TransmissionConfiguration::new(changed)
+                .unwrap()
+                .window()
+                .unwrap(),
+        );
         assert_eq!(first["overview"]["end_us"], second["overview"]["end_us"]);
         assert_ne!(first["symbol_us"], second["symbol_us"]);
         assert_eq!(second["symbol_us"], 45.0);
