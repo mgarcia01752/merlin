@@ -459,6 +459,172 @@ fn dropped_unacknowledged_lease_cancels_but_never_reopens_gate() {
 }
 
 #[test]
+fn accepted_downstream_edits_cancel_once_and_keep_busy_until_stale_terminal() {
+    let (mut sessions, budget, gate, cancellation) = fixture();
+    let lease = sessions
+        .begin(Direction::Downstream, cancellation.clone())
+        .unwrap();
+    let old = lease.token();
+    sessions
+        .publish_downstream(old, retained(&budget, [3; 12]))
+        .unwrap();
+    gate.acknowledge_pause(old, true).unwrap();
+    assert!(matches!(
+        sessions.configure_downstream(retained(&budget, [7; 4])),
+        Err(SessionError::Dispatch(DispatchError::Busy(_)))
+    ));
+    assert_eq!(cancellation.0.load(Ordering::SeqCst), 0);
+    sessions
+        .configure_downstream_cancelling(retained(&budget, [7; 4]))
+        .unwrap();
+    assert_eq!(sessions.downstream().configuration(), &[7; 4]);
+    assert!(sessions.downstream().result().is_none());
+    assert_eq!(sessions.upstream().configuration(), &[2; 8]);
+    assert_eq!(gate.active().unwrap().token, old);
+    assert_eq!(gate.active().unwrap().phase, DispatchPhase::Cancelling);
+    assert_eq!(cancellation.0.load(Ordering::SeqCst), 1);
+    assert!(sessions.validate_callback(old).is_err());
+    sessions
+        .configure_downstream_cancelling(retained(&budget, [8; 4]))
+        .unwrap();
+    assert_eq!(cancellation.0.load(Ordering::SeqCst), 1);
+    assert!(matches!(
+        sessions.begin(Direction::Upstream, cancellation.clone()),
+        Err(SessionError::Dispatch(DispatchError::Busy(_)))
+    ));
+    assert_eq!(
+        sessions.finish_downstream(lease, Some(retained(&budget, [9; 12]))),
+        Err(SessionError::Dispatch(DispatchError::StaleCallback))
+    );
+    assert!(gate.active().is_none());
+    assert!(sessions.downstream().result().is_none());
+    let next = sessions.begin(Direction::Downstream, cancellation).unwrap();
+    assert_eq!(next.token().key.session, old.key.session);
+    assert_ne!(next.token().key.generation, old.key.generation);
+    sessions.finish_downstream(next, None).unwrap();
+}
+
+#[test]
+fn cancelling_edit_of_idle_direction_never_touches_the_other_active_control() {
+    for active in [Direction::Downstream, Direction::Upstream] {
+        let (mut sessions, budget, gate, cancellation) = fixture();
+        let lease = sessions.begin(active, cancellation.clone()).unwrap();
+        let token = lease.token();
+        match active {
+            Direction::Downstream => {
+                sessions
+                    .configure_upstream_cancelling(retained(&budget, [7; 8]))
+                    .unwrap();
+                assert_eq!(sessions.downstream().configuration(), &[1; 4]);
+            }
+            Direction::Upstream => {
+                sessions
+                    .configure_downstream_cancelling(retained(&budget, [7; 4]))
+                    .unwrap();
+                assert_eq!(sessions.upstream().configuration(), &[2; 8]);
+            }
+        }
+        assert_eq!(cancellation.0.load(Ordering::SeqCst), 0);
+        assert_eq!(gate.active().unwrap().token, token);
+        assert_eq!(gate.active().unwrap().phase, DispatchPhase::Running);
+        sessions.validate_callback(token).unwrap();
+        match active {
+            Direction::Downstream => sessions.finish_downstream(lease, None).unwrap(),
+            Direction::Upstream => sessions.finish_upstream(lease, None).unwrap(),
+        }
+    }
+}
+
+#[test]
+fn accepted_upstream_edit_cancels_only_its_old_generation_until_terminal() {
+    let (mut sessions, budget, gate, cancellation) = fixture();
+    let lease = sessions
+        .begin(Direction::Upstream, cancellation.clone())
+        .unwrap();
+    let old = lease.token();
+    sessions
+        .publish_upstream(old, retained(&budget, [3; 16]))
+        .unwrap();
+    sessions
+        .configure_upstream_cancelling(retained(&budget, [7; 8]))
+        .unwrap();
+    assert_eq!(sessions.upstream().configuration(), &[7; 8]);
+    assert!(sessions.upstream().result().is_none());
+    assert_eq!(sessions.downstream().configuration(), &[1; 4]);
+    assert_eq!(cancellation.0.load(Ordering::SeqCst), 1);
+    assert_eq!(gate.active().unwrap().token, old);
+    assert_eq!(gate.active().unwrap().phase, DispatchPhase::Cancelling);
+    assert_eq!(
+        sessions.finish_upstream(lease, Some(retained(&budget, [9; 16]))),
+        Err(SessionError::Dispatch(DispatchError::StaleCallback))
+    );
+    assert!(gate.active().is_none());
+    assert!(sessions.upstream().result().is_none());
+}
+
+#[test]
+fn invalid_cancelling_edits_preserve_active_owners_before_any_cancel_request() {
+    for direction in [Direction::Downstream, Direction::Upstream] {
+        let (mut sessions, budget, gate, cancellation) = fixture();
+        let foreign = RetentionBudget::new(RetainedBytes(FIXTURE_BUDGET_BYTES));
+        let lease = sessions.begin(direction, cancellation.clone()).unwrap();
+        let token = lease.token();
+        let before = sessions.open_target(direction);
+        let error = match direction {
+            Direction::Downstream => {
+                sessions.configure_downstream_cancelling(retained(&foreign, [7; 4]))
+            }
+            Direction::Upstream => {
+                sessions.configure_upstream_cancelling(retained(&foreign, [7; 8]))
+            }
+        };
+        assert_eq!(error, Err(SessionError::WrongBudget));
+        assert_eq!(sessions.open_target(direction), before);
+        assert_eq!(cancellation.0.load(Ordering::SeqCst), 0);
+        assert_eq!(gate.active().unwrap().token, token);
+        sessions.shutdown();
+        let error = match direction {
+            Direction::Downstream => {
+                sessions.configure_downstream_cancelling(retained(&budget, [7; 4]))
+            }
+            Direction::Upstream => {
+                sessions.configure_upstream_cancelling(retained(&budget, [7; 8]))
+            }
+        };
+        assert_eq!(error, Err(SessionError::Closing));
+        assert_eq!(sessions.open_target(direction), before);
+        assert_eq!(cancellation.0.load(Ordering::SeqCst), 1);
+        lease.acknowledge_termination().unwrap();
+    }
+}
+
+#[test]
+fn cancelling_edit_revision_exhaustion_preserves_configuration_and_active_work() {
+    for exhaust_generation in [false, true] {
+        let (mut sessions, budget, gate, cancellation) = fixture();
+        if exhaust_generation {
+            sessions.downstream.snapshot.key.generation = ConfigurationGeneration(u64::MAX);
+        } else {
+            sessions.downstream.snapshot.revision = EditRevision(u64::MAX);
+        }
+        let lease = sessions
+            .begin(Direction::Downstream, cancellation.clone())
+            .unwrap();
+        let before = sessions.open_target(Direction::Downstream);
+        assert_eq!(
+            sessions.configure_downstream_cancelling(retained(&budget, [7; 4])),
+            Err(SessionError::IdentityExhausted)
+        );
+        assert_eq!(sessions.open_target(Direction::Downstream), before);
+        assert_eq!(sessions.downstream().configuration(), &[1; 4]);
+        assert_eq!(cancellation.0.load(Ordering::SeqCst), 0);
+        assert_eq!(gate.active().unwrap().phase, DispatchPhase::Running);
+        sessions.validate_callback(lease.token()).unwrap();
+        sessions.finish_downstream(lease, None).unwrap();
+    }
+}
+
+#[test]
 fn foreign_owner_destruction_never_cancels_another_sessions_worker() {
     let (mut owner, budget, gate, cancellation) = fixture();
     let lease = owner

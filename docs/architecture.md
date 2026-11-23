@@ -1559,6 +1559,14 @@ lease. [Transport evidence](development/features/unified-qt-workbench/validation
 validates this source-only component; real direction consumers and aggregate
 reachable-byte admission are still required for session acceptance.
 
+Explicit [accepted-edit cancellation transitions](development/features/unified-qt-workbench/design.md#uiu-session-01-accepted-edits-during-cancellation)
+preflight immutable candidates and checked revisions before cancelling the old
+generation. They preserve the legacy downstream edit/invalidation contract while
+retaining Busy until old-worker termination; ordinary reject-while-Busy configure
+operations remain available. Real adapter adoption is pending. The separate
+[retention accounting proposal](development/features/unified-qt-workbench/retention-contract-decision.md)
+does not change the accepted memory contract until its decision is recorded.
+
 Normal project files remain direction-specific. Open validates/detects direction
 and guards that target tab's dirty state before mutation. Schema 1/2 retain DS
 interpretation; the [selected schema 3 contract](development/features/unified-qt-workbench/design.md#uiu-api-05-direction-aware-public-project-admission) explicitly tags direction. Its public backend is [accepted under API-05](development/features/unified-qt-workbench/validation.md#uiu-api-05-project-backend-accepted). Backend/native

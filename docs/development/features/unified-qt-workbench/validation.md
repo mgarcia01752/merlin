@@ -3021,3 +3021,33 @@ memory bounds or UIU-SESSION-01 Level 2. Actual adapters must preserve immutable
 accepted owners, validate every token before adoption and supply independently
 audited reservations for all reachable retained allocations. Logical public
 population counts alone are not a byte bound. The parent remains unchecked.
+
+## UIU-SESSION-01 accepted edits during cancellation
+
+[Design](design.md#uiu-session-01-accepted-edits-during-cancellation),
+[architecture](../../../architecture.md#unified-qt-session-and-file-lifecycle),
+[exact evidence](session-edit-cancel-evidence.json) and
+[UIU-SESSION-01](../../checklist.md#task-uiu-session-01) trace REQ-UIU-03/06/07.
+Two explicit transitions preserve valid accepted edits while cancelling the old
+scientific generation. Candidate budget ownership and both checked revisions are
+preflighted before any cancellation or mutation. The old worker remains Busy
+until its terminal acknowledgement; its stale results cannot replace the edited
+configuration. Existing reject-while-Busy operations retain their behavior.
+
+All **27 application owner/transport tests**, including five new transition cases,
+pass without failures or skips. Warnings-denied Clippy, formatting and the final
+zero-dependency boundary pass. Tests cover both active directions, paused edits,
+repeated edits/cancel-once, idle-other-direction isolation, rejected foreign
+accounting/closing/exhaustion, stale report rejection and terminal release.
+
+This is source-only Level 1 preparation for actual adapters. No registered Qt,
+scientific/public API/binding/project/schema code changes, so no Qt/QML, wheel,
+workspace/CLI/package rebuild or complete regression is required. The latest
+accepted downstream executable remains current. Actual coordinator/worker
+consumers and complete Level 2 session acceptance remain pending.
+
+The [retention accounting comparison](retention-contract-decision.md) records a
+material clarification for user decision. It remains proposed and changes no
+accepted requirement, byte guarantee or task state. Controller/terminal work can
+continue independently; aggregate accounting acceptance cannot precede that
+decision and the demonstrated public metadata prerequisites.

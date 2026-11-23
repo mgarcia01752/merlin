@@ -117,6 +117,14 @@ impl<C, R> DirectionSession<C, R> {
     }
 
     fn reconfigure(&mut self, configuration: Retained<C>) -> Result<(), SessionError> {
+        let revision = self.next_configuration_revision()?;
+        self.accept_configuration(configuration, revision);
+        Ok(())
+    }
+
+    fn next_configuration_revision(
+        &self,
+    ) -> Result<(ConfigurationGeneration, EditRevision), SessionError> {
         let generation = self
             .snapshot
             .key
@@ -130,12 +138,19 @@ impl<C, R> DirectionSession<C, R> {
             .0
             .checked_add(1)
             .ok_or(SessionError::IdentityExhausted)?;
+        Ok((ConfigurationGeneration(generation), EditRevision(revision)))
+    }
+
+    fn accept_configuration(
+        &mut self,
+        configuration: Retained<C>,
+        revision: (ConfigurationGeneration, EditRevision),
+    ) {
         self.configuration = configuration;
         self.result = None;
-        self.snapshot.key.generation = ConfigurationGeneration(generation);
-        self.snapshot.revision = EditRevision(revision);
+        self.snapshot.key.generation = revision.0;
+        self.snapshot.revision = revision.1;
         self.snapshot.dirty = true;
-        Ok(())
     }
 }
 
@@ -279,6 +294,51 @@ impl<DC, DR, UC, UR> ShellSessions<DC, DR, UC, UR> {
     pub fn configure_upstream(&mut self, configuration: Retained<UC>) -> Result<(), SessionError> {
         self.check_candidate(Direction::Upstream, &configuration)?;
         self.upstream.reconfigure(configuration)
+    }
+
+    /// Accepts a downstream edit while cancelling its old scientific generation.
+    ///
+    /// # Arguments
+    /// * `configuration` - Completely validated, immutable, pre-reserved candidate.
+    ///
+    /// # Returns
+    /// Unit after atomic adoption; old work keeps the global slot until termination.
+    ///
+    /// # Errors
+    /// Rejects closing, foreign accounting or revision exhaustion before cancellation
+    /// or mutation. Upstream work and the existing reject-while-Busy API are unchanged.
+    pub fn configure_downstream_cancelling(
+        &mut self,
+        configuration: Retained<DC>,
+    ) -> Result<(), SessionError> {
+        self.check_accounting(&configuration)?;
+        let revision = self.downstream.next_configuration_revision()?;
+        self.cancel_direction(Direction::Downstream);
+        self.downstream
+            .accept_configuration(configuration, revision);
+        Ok(())
+    }
+
+    /// Accepts an upstream edit while cancelling its old scientific generation.
+    ///
+    /// # Arguments
+    /// * `configuration` - Completely validated, immutable, pre-reserved candidate.
+    ///
+    /// # Returns
+    /// Unit after atomic adoption; old work keeps the global slot until termination.
+    ///
+    /// # Errors
+    /// Rejects closing, foreign accounting or revision exhaustion before cancellation
+    /// or mutation. Downstream work and the existing reject-while-Busy API are unchanged.
+    pub fn configure_upstream_cancelling(
+        &mut self,
+        configuration: Retained<UC>,
+    ) -> Result<(), SessionError> {
+        self.check_accounting(&configuration)?;
+        let revision = self.upstream.next_configuration_revision()?;
+        self.cancel_direction(Direction::Upstream);
+        self.upstream.accept_configuration(configuration, revision);
+        Ok(())
     }
 
     /// Replaces downstream only after rechecking the detected Open target's guard.
@@ -498,16 +558,31 @@ impl<DC, DR, UC, UR> ShellSessions<DC, DR, UC, UR> {
         direction: Direction,
         candidate: &Retained<T>,
     ) -> Result<(), SessionError> {
-        self.ensure_open()?;
-        if !self.budget.owns(candidate) {
-            return Err(SessionError::WrongBudget);
-        }
+        self.check_accounting(candidate)?;
         if let Some(active) = self.gate.active() {
             if active.token.key.session == self.snapshot(direction).key.session {
                 return Err(SessionError::Dispatch(DispatchError::Busy(active)));
             }
         }
         Ok(())
+    }
+
+    fn check_accounting<T>(&self, candidate: &Retained<T>) -> Result<(), SessionError> {
+        self.ensure_open()?;
+        if !self.budget.owns(candidate) {
+            return Err(SessionError::WrongBudget);
+        }
+        Ok(())
+    }
+
+    fn cancel_direction(&self, direction: Direction) {
+        if let Some(active) = self.gate.active() {
+            if active.token.key.session == self.snapshot(direction).key.session {
+                // Actual termination can race with cancellation. A stale token
+                // already relinquished this slot; never touch a successor's control.
+                let _ = self.gate.request_cancel(active.token);
+            }
+        }
     }
 
     fn check_replace<T>(

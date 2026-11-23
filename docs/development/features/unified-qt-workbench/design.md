@@ -3313,3 +3313,27 @@ formatting, final boundary and traceability. Actual two-direction coordinator,
 conservative aggregate retention and complete Level 2 session acceptance remain
 required before checking UIU-SESSION-01. No scientific/public API change justifies
 a wheel rebuild or repeated full workspace regression in this source-only unit.
+
+The subsequent [retention accounting decision](retention-contract-decision.md)
+records the demonstrated public metadata gap and a proposed clarification of
+payload-byte versus private container bookkeeping guarantees. It is pending;
+neither a source audit nor the existing transport tests accepts that clarification.
+
+## UIU-SESSION-01 accepted edits during cancellation
+
+Preserve the downstream adapter's existing accepted-edit behavior when adopting
+the shared coordinator: a valid edit cancels old work and invalidates its result,
+but the old worker keeps global Busy until terminal acknowledgement. Add explicit
+`configure_downstream_cancelling` / `configure_upstream_cancelling` transitions to
+`apps/qt/src/shell/mod.rs`; retain the existing reject-while-Busy operations.
+Preflight closing, accounting ownership and both checked revisions before any
+cancel request or state mutation. An edit in the idle other direction must not
+cancel the active direction. Scientific admission and immutable candidate creation
+remain with existing public owners; no scientific API or run default changes.
+
+Extend `apps/qt/src/shell/tests.rs` with accepted-edit/stale-callback/terminal,
+other-direction isolation and failure-before-cancellation cases. Reuse terminal
+transport tests. This source-only prerequisite traces REQ-UIU-03/06/07 through
+UIU-SESSION-01; real direction wiring and the pending aggregate accounting
+decision remain required. Validate standalone tests/Clippy/format, final boundary
+and canonical traceability without rebuilding unchanged scientific consumers.
