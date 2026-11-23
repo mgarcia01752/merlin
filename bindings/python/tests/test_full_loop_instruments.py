@@ -14,6 +14,53 @@ from test_full_loop import request
 
 
 class FullLoopInstrumentTests(unittest.TestCase):
+    def test_full_source_performance_preserves_scope_capacity_and_owned_values(self):
+        result = request().run()
+        before = result.report()
+        performance = result.profile_performance()
+        self.assertEqual(performance['profile_id'], 0)
+        self.assertEqual(len(performance['points']), 7480)
+        point = performance['points'][0]
+        self.assertEqual((point['source_offset'], point['frequency_hz'], point['role']),
+                         (0, 640000000, 'data'))
+        self.assertEqual(point['measurement']['subcarrier'], 356)
+        self.assertEqual(point['measurement']['scope'], 'ObservationCells')
+        self.assertAlmostEqual(point['ideal_shannon_mer_db'], 24.06540180433955, places=12)
+        self.assertEqual(performance['fec']['scope'], 'ObservationWindow')
+        window = before['summary']['window']
+        self.assertEqual(performance['fec']['counters'], window['fec'])
+        self.assertEqual(performance['ber'], window['ber'])
+        self.assertEqual(performance['unrecovered_generated_payloads'], before['unrecovered_generated_payloads'])
+        for point in performance['points']:
+            measured = point['measurement']
+            actual = before['carrier_mer'][measured['subcarrier']]
+            for name in ('samples', 'signal_power', 'error_power'):
+                self.assertEqual(measured[name], actual[name])
+        performance['points'][0]['measurement']['samples'] = -1
+        self.assertNotEqual(result.profile_performance()['points'][0]['measurement']['samples'], -1)
+        self.assertEqual(result.report(), before)
+        retained = result.profile_performance()
+        del result
+        self.assertEqual(retained['points'][-1]['source_offset'], 7479)
+        control = m.FullLoopControl()
+        control.cancel()
+        performance = request().run(control).profile_performance()
+        self.assertEqual(performance['status'], 'cancelled')
+        self.assertTrue(all(point['measurement']['samples'] == 0 and point['measurement']['mer'] is None
+                            for point in performance['points']))
+        self.assertEqual(performance['fec']['counters']['total_cw'], 0)
+        self.assertIsNone(performance['ber'])
+        self.assertIsNotNone(performance['points'][0]['ideal_shannon_mer_db'])
+
+    @unittest.skipUnless(os.environ.get('MERLIN_PROFILE_PERFORMANCE_REFERENCE'), 'Direct Rust process reference required')
+    def test_profile_performance_matches_independent_rust_project_process(self):
+        from merlin.common import Project
+        root = Path(__file__).resolve().parents[3]
+        source = (root / 'examples/workbench/single/workbench.merlin.json').read_bytes()
+        result = Project.from_bytes(source).downstream_plan().request(0).run()
+        expected = json.loads(Path(os.environ['MERLIN_PROFILE_PERFORMANCE_REFERENCE']).read_text())
+        self.assertEqual(result.profile_performance(), expected)
+
     def test_original_psd_response_and_likelihood_metadata_and_owned_results(self):
         result = request().with_observations(m.FullLoopObservationPolicy()).run()
         spectrum = result.spectrum()

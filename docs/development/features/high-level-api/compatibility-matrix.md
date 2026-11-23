@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-587 explicit public Rust operations and 557 installed native Python entries with
+588 explicit public Rust operations and 558 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/measurement-frame-api-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/profile-performance-api-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 112 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -356,3 +356,15 @@ versus decoded provenance and existing views/sequence/namespace compatibility;
 two Qt consumers and CLI compile also pass. [Executed API cases](../unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json)
 record the focused scope. No native DTO class or algorithm is added. Qt adoption,
 parent Level 2 and final Level 3 remain separate gates.
+
+
+The [profile-performance prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-profile-performance-observation-api-accepted)
+adds one paired full-source-grid result observation and two typed Rust models,
+reusing CarrierMer/FecReport and their classic report projections. All preceding
+587/557 rows, types, executed records and native classes/signatures remain exact.
+Eight Rust and ten exact-wheel native cases, a standalone Rust reference process,
+one actual Qt worker consumer and CLI compile cover independent power/capacity/
+FEC scopes, full original coordinates, pre-cancel/ownership and classic reporting.
+[Executed API cases](../unified-qt-workbench/ds-01-profile-performance-operation-test-results.json)
+record this focused scope. No native class or scientific implementation is added;
+Qt viewer and parent/final acceptance remain separate.

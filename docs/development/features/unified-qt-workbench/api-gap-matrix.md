@@ -275,3 +275,9 @@ exposes only immutable original channel data and nominal source DTOs, with
 [paired acceptance](validation.md#uiu-ds-01-original-measurement-frame-api-accepted).
 It preserves separate original/intermediate provenance before measured-input
 adapter adoption; no scientific engine/kernel export or completed-task restart.
+
+The [profile-performance prerequisite](design.md#uiu-ds-01-profile-performance-observation-prerequisite)
+and [paired evidence](validation.md#uiu-ds-01-profile-performance-observation-api-accepted)
+move actual carrier MER/Shannon and scoped report projection behind one typed
+FullLoopResult operation, reusing CarrierMer/FecReport and keeping original source
+coordinates. Qt viewer and bounded QAM-history adoption remain separate units.

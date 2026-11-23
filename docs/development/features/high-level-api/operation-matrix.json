@@ -5,10 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "9956d228327fd34f302d474578700363415d3b17 plus exact measurement-frame candidate",
-    "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-measurement-frames-native/results.json",
-    "native_sha256": "f145fc3803c90e02049ccb532699948cb3c516dbb390bcedf6cfdd64bd85e5cd",
-    "scope": "Eight selected original-measurement/namespace cases; all prior classes/members/signatures exact after removing only ChannelEstimate.frame."
+    "revision": "9fdb48e071a8c8e12128c432c4281bd101652da7 plus exact profile-performance candidate",
+    "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-profile-performance-native/results.json",
+    "native_sha256": "ab928e37f4d58fdd742c23df81e6d7bad784f5bcc625c48b60d94d4d24430faa",
+    "scope": "Ten selected full-loop/classic/namespace cases; all prior classes/members/signatures exact after removing only FullLoopResult.profile_performance."
   },
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
@@ -139,7 +139,9 @@
     "evidence.uiu-ds-01-source-catalog": "../unified-qt-workbench/source-catalog-api-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-raw-source-catalog-api-accepted: raw byte identities, exact roles/grid/epoch/provenance, borrowed/owned frames, unchanged passive admission and existing planner/Designer validation.",
     "status.uiu-ds-01-source-catalog": "Level 1 paired prerequisite accepted; Qt adoption, parent Level 2 and final Level 3 remain pending.",
     "evidence.uiu-ds-01-measurement-frame": "../unified-qt-workbench/measurement-frame-api-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-original-measurement-frame-api-accepted: unchanged key/epoch/IQ/nulls, immutable frame ownership and separate original/intermediate provenance.",
-    "status.uiu-ds-01-measurement-frame": "Level 1 paired frame prerequisite accepted; measured-input Qt adoption, parent Level 2 and final Level 3 remain pending."
+    "status.uiu-ds-01-measurement-frame": "Level 1 paired frame prerequisite accepted; measured-input Qt adoption, parent Level 2 and final Level 3 remain pending.",
+    "evidence.uiu-ds-01-profile-performance": "../unified-qt-workbench/profile-performance-api-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-profile-performance-observation-api-accepted: full original-grid coordinates/roles, actual scoped carrier MER/powers, ideal capacity, FEC/BER/unfinished scopes, classic compatibility and independent process parity.",
+    "status.uiu-ds-01-profile-performance": "Level 1 paired performance prerequisite accepted; Qt viewer, official parent Level 2 and final Level 3 remain pending."
   },
   "type_exports": {
     "downstream": [
@@ -1061,6 +1063,14 @@
       },
       {
         "export": "merlin::downstream::RxMerFrame",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopCarrierPerformance",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::FullLoopProfilePerformance",
         "kind": "struct"
       }
     ],
@@ -33288,6 +33298,61 @@
       },
       "evidence": "evidence.uiu-ds-01-measurement-frame",
       "status": "status.uiu-ds-01-measurement-frame"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::profile_performance",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn profile_performance(&self) -> ApiResult<FullLoopProfilePerformance>",
+        "source_file": "crates/ofdm/src/api/full_loop/performance.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.FullLoopResult.profile_performance",
+        "declaration": "merlin.downstream.FullLoopResult.profile_performance"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopProfilePerformance>",
+        "scope": "Owned full source-grid points with existing typed carrier MER/count/powers, independent ideal Shannon capacity, observation-window FEC/BER, whole-run unfinished totals and actual lifecycle/error; no simulation/source advances."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/reports.rs::typed_carrier_projection_preserves_independent_power_and_missing_zero_error_states",
+          "crates/ofdm/src/api/reports.rs::typed_fec_projection_preserves_scope_and_independent_decoder_source_partitions",
+          "crates/ofdm/tests/api_full_loop_observations.rs::full_source_performance_retains_observation_scopes_original_grid_and_owned_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::precancelled_performance_retains_profile_capacity_without_fabricated_received_metrics"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_full_source_performance_preserves_scope_capacity_and_owned_values",
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_profile_performance_matches_independent_rust_project_process"
+          ],
+          "scope": "Original source coordinates and ideal-capacity anchor, actual MER/count/power fields, scoped FEC/BER, pre-cancelled empty observations, independent dictionary ownership and full separate-process project reference."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-profile-performance",
+      "status": "status.uiu-ds-01-profile-performance"
     }
   ],
   "executed_records": [
@@ -33329,7 +33394,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -69325,6 +69391,67 @@
       },
       "evidence": "evidence.uiu-ds-01-measurement-frame",
       "status": "status.uiu-ds-01-measurement-frame"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.profile_performance",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/result.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn profile_performance(&self) -> ApiResult<FullLoopProfilePerformance>",
+        "mapping": "Native argument/result conversion over public full-loop contracts. No Python science; exact owned projection semantics in docs/user/api/full-loop.md.",
+        "delegated_operation": "merlin::downstream::FullLoopResult::profile_performance",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "profile_performance",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopResult.profile_performance"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::FullLoopResult",
+        "scope": "Owned typed-report dictionary from the public Rust projection; all math/validation stays in existing scientific owners and result/native state is immutable."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-19",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/reports.rs::typed_carrier_projection_preserves_independent_power_and_missing_zero_error_states",
+          "crates/ofdm/src/api/reports.rs::typed_fec_projection_preserves_scope_and_independent_decoder_source_partitions",
+          "crates/ofdm/tests/api_full_loop_observations.rs::full_source_performance_retains_observation_scopes_original_grid_and_owned_values",
+          "crates/ofdm/tests/api_full_loop_observations.rs::precancelled_performance_retains_profile_capacity_without_fabricated_received_metrics"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_full_source_performance_preserves_scope_capacity_and_owned_values",
+            "bindings/python/tests/test_full_loop_instruments.py::FullLoopInstrumentTests.test_profile_performance_matches_independent_rust_project_process"
+          ],
+          "scope": "Original source coordinates and ideal-capacity anchor, actual MER/count/power fields, scoped FEC/BER, pre-cancelled empty observations, independent dictionary ownership and full separate-process project reference."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-profile-performance",
+      "status": "status.uiu-ds-01-profile-performance"
     }
   ],
   "native_type_exports": {
@@ -70518,6 +70645,13 @@
       "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-source-catalog-native/results.json",
       "native_sha256": "ab4eb1e75a6775629fea5c801d5d92312b561d919966b67a7ac8439deae45b9b",
       "scope": "21 affected source/sequence/Designer/namespace native cases; every prior native class/member/signature exact after removing only six added methods."
+    },
+    {
+      "version": "0.4.0",
+      "revision": "9956d228327fd34f302d474578700363415d3b17 plus exact measurement-frame candidate",
+      "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-measurement-frames-native/results.json",
+      "native_sha256": "f145fc3803c90e02049ccb532699948cb3c516dbb390bcedf6cfdd64bd85e5cd",
+      "scope": "Eight selected original-measurement/namespace cases; all prior classes/members/signatures exact after removing only ChannelEstimate.frame."
     }
   ],
   "historical_rust_export_corrections": [

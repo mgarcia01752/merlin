@@ -2563,3 +2563,55 @@ CXX/QML registration/resources and lifecycle are unchanged; affected QML and the
 current optimized build pass. Parent Level 2, milestone/final Level 3, complete
 Designer/model adoption, direction-aware persistence and final numeric audit stay
 open. Existing tests/vectors and earlier evidence remain intact.
+
+## UIU-DS-01 profile-performance observation API accepted
+
+[Exact contract](design.md#uiu-ds-01-profile-performance-observation-prerequisite),
+[machine evidence](profile-performance-api-evidence.json) and
+[executed API cases](ds-01-profile-performance-operation-test-results.json) establish
+Level 1 paired prerequisite acceptance for REQ-UIU-02/03/08/19/20/24/27.
+FullLoopResult.profile_performance returns one point per original source carrier
+with exact physical frequency/bin/role, existing typed CarrierMer powers/count/MER,
+independent ideal Shannon capacity, observation-window FEC/BER and whole-run
+unfinished payloads. Existing FecReport/CarrierMer projection helpers are shared
+with classic PerformanceReport; original public schemas/fields stay unchanged.
+No source, RNG, receiver or decoder advances, and no scientific algorithm changes.
+
+Executed: eight Rust cases (two independent report projection cases, actual full-
+grid and pre-cancelled observations, three classic direct-engine receiver-mode
+comparisons and facade nominal compatibility); ten exact-archive installed native
+cases (new observation/ownership/direct-Rust-project parity, existing full-loop,
+classic completed/partial reports and namespace imports); one actual Qt worker
+consumer; scoped root/native Clippy and formatting, analysis-only build, CLI compile
+and complete fresh inventories. A small independent Rust public-adapter process
+runs the same existing self-contained project as native Python; every reported
+field/point matches. It reuses existing dependencies and does not change manifests
+or locks. The new private projection tests explicitly discover two cases with the
+high-level API feature; the initial zero-discovery command is retained as an
+unexecuted coverage attempt, not a pass.
+
+Independent anchors include unit reference plus 0.1 error giving 20 dB, zero-error
+versus no-sample states, a three-outcome decoder/source partition and eight-bit
+ideal Shannon capacity 24.06540180433955 dB. Actual 7,480-carrier source scope,
+640-MHz first center/physical bin 356, complete power/sample mapping, optional BER,
+window FEC and whole-run unfinished counts remain distinct. Native copies cannot
+mutate a result and owned views survive result release. Diagnostic TX reference
+comparisons never enter normal receiver processing; ideal capacity is not a
+receiver operating requirement, measured RxMER or coded-throughput prediction.
+
+The matrix grows 587/557 to 588 Rust/558 native rows and preserves every earlier
+row/type/execution record and native member after removing only the new method.
+Two typed Rust models are added; 80 root/112 directional-common native class
+exports remain. Fresh native module bytes match the sole wheel archive before
+outside-checkout testing. Canonical facade rustdoc is regenerated explicitly to
+preserve source links; no validator relaxation or cache clean occurs.
+
+Not required: unrelated complete workspace/upstream/codec suites, new QML/native
+startup or optimized UI build, project/packaging regressions: no algorithm,
+UI/CXX/QML source/registration, saved schema, lifecycle, dependency or package
+owner changes. Shared report risk expands to all three classic Rust modes, current
+native completed/partial legacy reports, one actual Qt consumer and CLI compile.
+No unexecuted suite or installed-platform behavior is claimed. Parent Level 2,
+milestone/final Level 3, Qt profile viewer adoption, bounded receiver-history
+migration and final numeric audit remain pending. The source/dependency boundary
+is unchanged at 19 files/77 sites/three dependencies. No official checkbox advances.

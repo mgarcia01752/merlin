@@ -1705,3 +1705,74 @@ fn policy_and_query_bounds_reject_without_mutating_retained_originals() {
         serde_json::to_value(after).unwrap()
     );
 }
+
+#[test]
+fn full_source_performance_retains_observation_scopes_original_grid_and_owned_values() {
+    let result = request().run(&FullLoopControl::new()).unwrap();
+    let before = serde_json::to_value(result.report()).unwrap();
+    let performance = result.profile_performance().unwrap();
+    assert_eq!(performance.points.len(), 7480);
+    assert_eq!(performance.profile_id.value(), 0);
+    assert_eq!(performance.points[0].source_offset, 0);
+    assert_eq!(performance.points[0].measurement.subcarrier().value(), 356);
+    assert_eq!(performance.points[0].frequency_hz.value(), 640000000);
+    assert_eq!(performance.points[0].role, ProfileCarrierRole::Data);
+
+    // Independent Shannon capacity anchor for the original eight-bit data loading.
+    assert!(
+        (performance.points[0].ideal_shannon_mer_db.unwrap().value() - 24.06540180433955).abs()
+            < 1e-12
+    );
+    for point in &performance.points {
+        let actual =
+            &result.report().carrier_mer[usize::from(point.measurement.subcarrier().value())];
+        assert_eq!(point.measurement.samples().value(), actual.samples());
+        assert_eq!(
+            point.measurement.signal_power().value(),
+            actual.signal_power()
+        );
+        assert_eq!(
+            point.measurement.error_power().value(),
+            actual.error_power()
+        );
+        assert_eq!(point.measurement.mer().map(MerDb::value), actual.mer_db());
+        assert_eq!(point.measurement.scope(), MetricScope::ObservationCells);
+    }
+    let window = result.report().summary.window.as_ref();
+    assert_eq!(performance.fec.scope(), MetricScope::ObservationWindow);
+    assert_eq!(
+        performance.fec.total_codewords().value(),
+        window.map_or(0, |value| value.fec.total_codewords())
+    );
+    assert_eq!(
+        performance.ber.map(BitErrorRatio::value),
+        window.and_then(|value| value.ber)
+    );
+    assert_eq!(
+        performance.unrecovered_generated_payloads,
+        result.report().unrecovered_generated_payloads
+    );
+    assert_eq!(serde_json::to_value(result.report()).unwrap(), before);
+    drop(result);
+    assert_eq!(performance.points.last().unwrap().source_offset, 7479);
+}
+
+#[test]
+fn precancelled_performance_retains_profile_capacity_without_fabricated_received_metrics() {
+    let control = FullLoopControl::new();
+    control.cancel();
+    let result = request().run(&control).unwrap();
+    let performance = result.profile_performance().unwrap();
+    assert_eq!(performance.status, ChannelJobStatus::Cancelled);
+    assert_eq!(performance.points.len(), 7480);
+    assert!(
+        performance
+            .points
+            .iter()
+            .all(|point| point.measurement.samples().value() == 0
+                && point.measurement.mer().is_none())
+    );
+    assert_eq!(performance.fec.total_codewords().value(), 0);
+    assert!(performance.ber.is_none());
+    assert!(performance.points[0].ideal_shannon_mer_db.is_some());
+}

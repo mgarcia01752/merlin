@@ -2872,3 +2872,44 @@ optimized build, boundary and traceability. Persistence risk expands to targeted
 Rust/native saved-input cases against the exact accepted unchanged wheel. No
 backend/binding/API, CXX/QML registration, schema or lifecycle change; parent
 Level 2 and final Level 3 remain pending.
+
+## UIU-DS-01 profile performance observation prerequisite
+
+REQ-UIU-02/03/08/19/20/24/27 and UIU-DS-01 own this focused typed observation.
+The profile-performance viewer still invokes private per-carrier MER/Shannon
+owners and copies raw FEC counter types. REUSE existing public CarrierMer,
+FecReport, MetricScope, ChannelJobStatus and quantity types. ADD focused
+ofdm/api/full_loop/performance.rs and EDIT private reports.rs projection helpers.
+`FullLoopResult::profile_performance() -> ApiResult<FullLoopProfilePerformance>`
+returns original profile/key/status, one original-coordinate point per source
+carrier, scoped typed MER/power/counts, ideal Shannon capacity MER, observation-
+window FEC/BER, whole-run unrecovered payloads and the existing error text.
+No observed metric is fabricated for absent/zero-error samples; the existing
+sample/power quantities preserve those distinctions. Diagnostic TX reference
+comparisons never enter receiver processing. Ideal capacity remains distinct
+from DOCSIS operating thresholds, measured RxMER and coded throughput.
+
+FullLoopCarrierPerformance contains source_offset, typed frequency_hz, authoritative
+role, existing CarrierMer and optional typed ideal_shannon_mer_db. Original private
+scientific owners supply every calculation; no scientific implementation changes.
+The existing classic PerformanceReport reuses the same private typed projection
+helper, preserving its public schema/fields. EDIT native full-loop result conversion
+and root typing with `.profile_performance() -> dict`; no native DTO class or
+existing signature change. Native edits/retained lifetime cannot mutate a result.
+
+EDIT existing full-loop observation/facade tests and ADD independent private report
+projection tests: unit reference/0.1 error yields 20 dB; explicit FEC partition and
+source-mismatch counts; actual full source grid and empty/pre-cancelled scope;
+classic direct-engine and native report compatibility. Rust acceptance precedes
+binding implementation. Defer the Qt viewer until paired acceptance is committed.
+Level 1 expands through affected shared reporting/Rust/native/facade/Qt consumers,
+Clippy, analysis-only, CLI compile, exact new wheel/inventories and traceability.
+Parent Level 2 and final Level 3 remain pending; completed FEC/API tasks stay closed.
+
+The bounded independent Rust reference is the public adapter example
+`crates/pnm-input/examples/profile_performance.rs`, which loads the existing
+self-contained saved project through Project and runs its first admitted request.
+Native Python repeats that same public project operation. The adapter's existing
+JSON dependency is reused; facade manifests and all dependency locks stay exact.
+Receiver QAM-history retention remains separate work; this prerequisite exposes
+only the full-source-grid performance observation needed by its existing viewer.

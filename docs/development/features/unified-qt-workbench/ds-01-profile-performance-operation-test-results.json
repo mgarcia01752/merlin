@@ -1,0 +1,214 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "scope": "Level 1 actual source-grid performance/scoped shared report projection: eight Rust and ten exact-archive native cases, including classic reports/three receiver modes, cancellation/ownership and separate Rust process parity. Qt viewer adoption remains separate.",
+  "runs": [
+    {
+      "label": "projection",
+      "command": [
+        "docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--locked",
+        "--lib",
+        "api::reports::projection_tests::"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 7.880591466000624,
+      "stdout_log": "docs/development/local/unified-qt-workbench/ds-01-profile-performance-projection-accepted.stdout",
+      "stderr_log": "docs/development/local/unified-qt-workbench/ds-01-profile-performance-projection-accepted.stderr",
+      "language": "rust",
+      "passed": 2,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/src/api/reports.rs",
+          "qualified_test_case": "typed_fec_projection_preserves_scope_and_independent_decoder_source_partitions"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/reports.rs",
+          "qualified_test_case": "typed_carrier_projection_preserves_independent_power_and_missing_zero_error_states"
+        }
+      ]
+    },
+    {
+      "label": "performance",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--locked",
+        "--test",
+        "api_full_loop_observations",
+        "--",
+        "--exact",
+        "full_source_performance_retains_observation_scopes_original_grid_and_owned_values",
+        "precancelled_performance_retains_profile_capacity_without_fabricated_received_metrics"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 21.071005306999723,
+      "language": "rust",
+      "passed": 2,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_full_loop_observations.rs",
+          "qualified_test_case": "precancelled_performance_retains_profile_capacity_without_fabricated_received_metrics"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_full_loop_observations.rs",
+          "qualified_test_case": "full_source_performance_retains_observation_scopes_original_grid_and_owned_values"
+        }
+      ]
+    },
+    {
+      "label": "classic",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "pnm-input",
+        "--locked",
+        "--test",
+        "high_level_api",
+        "--",
+        "--exact",
+        "high_level_api_matches_direct_engine_and_owns_old_reports",
+        "pilot_estimated_api_matches_direct_engine_fec_and_owns_mode",
+        "merlin_estimated_api_matches_direct_engine_fec_and_owns_mode"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 50.47598540400031,
+      "language": "rust",
+      "passed": 3,
+      "cases": [
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "merlin_estimated_api_matches_direct_engine_fec_and_owns_mode"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "pilot_estimated_api_matches_direct_engine_fec_and_owns_mode"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/high_level_api.rs",
+          "qualified_test_case": "high_level_api_matches_direct_engine_and_owns_old_reports"
+        }
+      ]
+    },
+    {
+      "label": "facade",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "merlin",
+        "--locked",
+        "--test",
+        "namespaces",
+        "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+        "--",
+        "--exact"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 9.399754848000157,
+      "language": "rust",
+      "passed": 1,
+      "cases": [
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior"
+        }
+      ]
+    },
+    {
+      "label": "performance-and-compatibility",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-profile-performance-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-c",
+        "import sys,unittest\nsys.path.insert(0,sys.argv[1])\nimport test_full_loop_instruments as instruments\nimport test_full_loop as full\nimport test_api as classic\nnames=[(instruments,'FullLoopInstrumentTests.test_full_source_performance_preserves_scope_capacity_and_owned_values'),(instruments,'FullLoopInstrumentTests.test_profile_performance_matches_independent_rust_project_process'),(full,'FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests'),(full,'FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery'),(classic,'NativeApiTests.test_runtime_partial_results_and_create_new_export'),(classic,'LoadedProfilesTests.test_inventory_selection_cancellation_and_single_run_parity')]\nsuite=unittest.TestSuite(unittest.defaultTestLoader.loadTestsFromName(name,module) for module,name in names)\nresult=unittest.TextTestRunner(verbosity=2).run(suite);assert result.testsRun==6 and not result.skipped\nraise SystemExit(not result.wasSuccessful())\n",
+        "/home/dev01/Projects/merlin/bindings/python/tests"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-profile-performance-native",
+      "exit_code": 0,
+      "elapsed_seconds": 13.980721276000622,
+      "stdout_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-profile-performance-native/performance-and-compatibility.stdout",
+      "stderr_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-profile-performance-native/performance-and-compatibility.stderr",
+      "language": "python",
+      "passed": 6,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_full_loop_instruments.py",
+          "qualified_test_case": "FullLoopInstrumentTests.test_full_source_performance_preserves_scope_capacity_and_owned_values"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop_instruments.py",
+          "qualified_test_case": "FullLoopInstrumentTests.test_profile_performance_matches_independent_rust_project_process"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery"
+        },
+        {
+          "test_file": "bindings/python/tests/test_api.py",
+          "qualified_test_case": "NativeApiTests.test_runtime_partial_results_and_create_new_export"
+        },
+        {
+          "test_file": "bindings/python/tests/test_api.py",
+          "qualified_test_case": "LoadedProfilesTests.test_inventory_selection_cancellation_and_single_run_parity"
+        }
+      ]
+    },
+    {
+      "label": "namespaces",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-profile-performance-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_namespaces.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-profile-performance-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.1231978080013505,
+      "stdout_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-profile-performance-native/namespaces.stdout",
+      "stderr_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-profile-performance-native/namespaces.stderr",
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ]
+    }
+  ]
+}

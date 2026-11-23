@@ -111,6 +111,17 @@ fn downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior() {
         &'a downstream::ChannelEstimate,
     ) -> &'a downstream::ChannelEstimateFrame = downstream::ChannelEstimate::frame;
     let _ = channel_frame;
+    let profile_performance: fn(
+        &downstream::FullLoopResult,
+    )
+        -> downstream::ApiResult<downstream::FullLoopProfilePerformance> =
+        downstream::FullLoopResult::profile_performance;
+    let legacy_profile_performance: fn(
+        &docsis_ofdm_fec::api::FullLoopResult,
+    ) -> docsis_ofdm_fec::api::ApiResult<
+        docsis_ofdm_fec::api::FullLoopProfilePerformance,
+    > = profile_performance;
+    let _ = legacy_profile_performance;
     let source_limits: fn() -> downstream::SourceFileLimits = downstream::SourceInput::file_limits;
     let source_info: fn(&downstream::SourceInput) -> Option<downstream::SourceFileInfo> =
         downstream::SourceInput::file_info;

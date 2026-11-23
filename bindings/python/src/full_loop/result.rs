@@ -10,6 +10,22 @@ use pyo3::types::PyBytes;
 pub(super) struct PyFullLoopResult(pub(super) api::FullLoopResult);
 #[pymethods]
 impl PyFullLoopResult {
+    /// Copies full source-grid receiver performance through the public Rust observation.
+    /// # Returns
+    /// Owned per-carrier typed MER/power/count/ideal-capacity data, observation-window
+    /// FEC/BER and whole-run unfinished totals. No source, decoder or result advances.
+    /// # Errors
+    /// Shared source geometry/transport failures raise ApiError; work releases the GIL.
+    fn profile_performance(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
+        let text = py
+            .detach(|| {
+                let report = self.0.profile_performance()?;
+                serde_json::to_string(&report).map_err(transport_error)
+            })
+            .map_err(error)?;
+        object_from_json(py, &text)
+    }
+
     /// Inspects actual retained TX PLC messages through the public frame/MAC/descriptor owner.
     /// # Returns
     /// Owned report of at most 32 CRC-validated packets from 64 original frames, typed TLV

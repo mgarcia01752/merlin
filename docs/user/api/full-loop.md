@@ -197,3 +197,31 @@ println!("Recovered {} of {} generated words", recovery.recovered, recovery.gene
 recovery = result.fec_recovery()
 print("Recovered", recovery['recovered'], "of", recovery['generated'], "generated words")
 ```
+
+
+### Full source-grid profile performance
+
+Rust `result.profile_performance() -> ApiResult<FullLoopProfilePerformance>` and
+native Python `result.profile_performance() -> dict` report every original source
+carrier before drawing reduction. Each point retains its source offset, exact
+frequency and role, the existing typed `CarrierMer` observation and optional
+`ideal_shannon_mer_db`. Rust reads MER/count/powers through the existing report
+getters; native dictionaries contain the same scalar quantities.
+
+Observed MER uses actual observation-cell post-equalization samples against a
+matched TX diagnostic reference. This comparison does not feed the receiver.
+Sample count and power sums distinguish an unmeasured carrier from zero-error
+agreement; both keep optional MER instead of inventing a finite dB value. Ideal
+Shannon capacity is an AWGN bound, separate from receiver operating targets,
+measured RxMER and coded throughput. FEC/BER retain observation-window scope;
+unfinished generated payloads retain whole-run scope. Job completion is separate
+from scientific success. Pre-cancelled runs retain original profile capacity and
+explicitly empty received metrics.
+
+The result owns scalar observations without retained original input bytes. Reads
+start no job and change no source, RNG, decoder or stored result. Native dictionary
+edits cannot mutate a result, and an owned report remains valid after the result
+is released. The bounded public Rust adapter example
+[profile_performance.rs](../../../crates/pnm-input/examples/profile_performance.rs)
+loads the existing self-contained saved project and emits this report for a
+separate-process comparison; it reuses existing dependencies.

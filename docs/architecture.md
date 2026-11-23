@@ -1133,6 +1133,16 @@ storage and its independent 64-MiB collection policy remain; Designer detection,
 recipe evaluation and measured-model planning retain explicit frozen migration
 debt. This partial owner migration does not establish parent/final acceptance.
 
+The [profile-performance observation](development/features/unified-qt-workbench/design.md#uiu-ds-01-profile-performance-observation-prerequisite)
+projects each original source carrier through existing typed CarrierMer/FecReport
+owners. FullLoopResult.profile_performance returns original key/identity, exact
+frequency/role and diagnostic post-equalization power/count/MER, independent ideal
+Shannon capacity, observation-window FEC/BER and whole-run unfinished totals.
+Private report projection helpers are shared with the classic report path; no
+scientific algorithm, reference plane or public classic schema changes. Native
+Python returns the same owned dictionary. Qt viewer adoption remains a separate
+UIU-DS-01 unit after paired acceptance.
+
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)
