@@ -3,15 +3,21 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Bounded profile performance retention, separate from the latest detailed instrument snapshot.
-use crate::downstream::simulation::closed_loop::ResultData;
-use docsis_ofdm_fec::{
-    profile::candidate::CapturedProfile, signal_processing::shannon::minimum_snr_db,
-    types::modulation::CarrierType,
+use crate::downstream::{
+    common::constants::{
+        MIN_PROFILE_FREQUENCY_AXIS_SPAN_HZ, PERFORMANCE_AXIS_QUANTUM_DB, PERFORMANCE_CURVE_BUCKETS,
+        PERFORMANCE_IDEAL_SERIES_ID, PERFORMANCE_INITIAL_MAXIMUM_DB,
+        PERFORMANCE_INITIAL_MINIMUM_DB, PERFORMANCE_METRIC_TICK_INTERVALS,
+        PERFORMANCE_OBSERVED_SERIES_ID, PROFILE_FREQUENCY_TICK_INTERVALS,
+    },
+    simulation::closed_loop::ResultData,
 };
+use crate::shared::presentation::constants::HERTZ_PER_MEGAHERTZ;
+use merlin::downstream::{FecReport, ProfileCarrierRole, SourceProfileFrame};
 use serde_json::{json, Value};
 use std::cell::RefCell;
 
-pub(crate) const MAX_PROFILES: usize = 32;
+pub(crate) use crate::downstream::common::constants::MAX_RETAINED_RECEIVER_PROFILES as MAX_PROFILES;
 struct Point {
     hz: u32,
     mer: Option<f64>,
@@ -23,7 +29,7 @@ struct Entry {
     id: u8,
     channel: u8,
     status: String,
-    fec: docsis_ofdm_fec::simulation::channel::results::FecCounters,
+    fec: Option<FecReport>,
     ber: Option<f64>,
     pending: u64,
     points: Vec<Point>,
@@ -39,7 +45,7 @@ pub(crate) fn clear() {
 /// Registers the finite profile catalog so unstarted jobs remain visible after Stop.
 /// # Arguments
 /// * `profiles` - Prevalidated captured identities, bounded by MAX_PROFILES.
-pub(crate) fn begin(profiles: &[CapturedProfile]) {
+pub(crate) fn begin(profiles: &[SourceProfileFrame]) {
     clear();
     super::qam_history::begin(profiles);
     for profile in profiles.iter().take(MAX_PROFILES) {
@@ -48,7 +54,7 @@ pub(crate) fn begin(profiles: &[CapturedProfile]) {
             id: profile.profile_id,
             channel: profile.key.channel_id,
             status: "not_started".into(),
-            fec: Default::default(),
+            fec: None,
             ber: None,
             pending: 0,
             points: vec![],
@@ -70,55 +76,44 @@ fn insert(entry: Entry) {
 /// # Arguments
 /// * `profile` - Exact applied profile for this independent run.
 /// * `result` - Actual completed or partial job, including observation power sums.
-pub(crate) fn retain(profile: &CapturedProfile, result: &ResultData) {
+pub(crate) fn retain(profile: &SourceProfileFrame, result: &ResultData) {
     super::qam_history::retain(profile.profile_id, result);
-    let points = profile
-        .assignments
+    let performance = match result.backend().profile_performance() {
+        Ok(performance) => performance,
+        Err(error) => {
+            reject(
+                profile.profile_id,
+                profile.key.channel_id,
+                error.to_string(),
+            );
+            return;
+        }
+    };
+    let points = performance
+        .points
         .iter()
-        .enumerate()
-        .map(|(i, a)| {
-            let bin = usize::from(profile.key.grid.first_subcarrier_index) + i;
-            let mer = result.job.carrier_mer.get(bin);
-            Point {
-                hz: profile
-                    .key
-                    .grid
-                    .frequency(i)
-                    .expect("Validated captured grid"),
-                mer: mer.and_then(|m| m.mer_db()),
-                samples: mer.map_or(0, |m| m.samples()),
-                plc: a.carrier_type == CarrierType::Plc,
-                ideal: if matches!(
-                    a.carrier_type,
-                    CarrierType::Data | CarrierType::ContinuousPilot | CarrierType::Plc
-                ) {
-                    a.bit_loading.and_then(minimum_snr_db)
-                } else {
-                    None
-                },
-            }
+        .map(|point| Point {
+            hz: point.frequency_hz.value(),
+            mer: point.measurement.mer().map(|mer| mer.value()),
+            samples: point.measurement.samples().value(),
+            plc: point.role == ProfileCarrierRole::Plc,
+            ideal: point.ideal_shannon_mer_db.map(|mer| mer.value()),
         })
         .collect();
-    let job = &result.job;
     let entry = Entry {
         fec_details: Some(super::fec::snapshot(result)),
-        id: profile.profile_id,
-        channel: profile.key.channel_id,
-        status: serde_json::to_value(job.status)
+        id: performance.profile_id.value(),
+        channel: performance.key.channel_id,
+        status: serde_json::to_value(performance.status)
             .unwrap()
             .as_str()
             .unwrap()
             .into(),
-        fec: job
-            .summary
-            .window
-            .as_ref()
-            .map(|w| w.fec.snapshot())
-            .unwrap_or_default(),
-        ber: job.summary.window.as_ref().and_then(|w| w.ber),
-        pending: job.unrecovered_generated_payloads,
+        fec: Some(performance.fec),
+        ber: performance.ber.map(|ber| ber.value()),
+        pending: performance.unrecovered_generated_payloads,
         points,
-        error: job.error.as_ref().map(ToString::to_string),
+        error: performance.error,
     };
     insert(entry);
 }
@@ -132,7 +127,7 @@ pub(crate) fn reject(id: u8, channel: u8, error: String) {
         id,
         channel,
         status: "failed".into(),
-        fec: Default::default(),
+        fec: None,
         ber: None,
         pending: 0,
         points: vec![],
@@ -147,33 +142,101 @@ pub(crate) fn reject(id: u8, channel: u8, error: String) {
 /// Bounded extrema, exact frequency axes, counters and complete/partial status.
 pub(crate) fn view(id: i32, start: i32, count: i32) -> Value {
     ENTRIES.with(|entries| {
-        let entries=entries.borrow();
-        let profiles=entries.iter().map(|e|json!({"id":e.id,"status":e.status})).collect::<Vec<_>>();
-        let Some(entry)=entries.iter().find(|e|i32::from(e.id)==id).or_else(|| if id<0 {entries.iter().rev().find(|entry|entry.status!="not_started").or_else(||entries.first())}else{None}) else {return json!({"available":false,"profiles":profiles,"reason":"Run the simulation to compare profiles."});};
-        let total=entry.points.len();
-        let (start,count)=if count==0 {(0,total)} else {let (Ok(s),Ok(c))=(usize::try_from(start),usize::try_from(count)) else {return json!({"error":"Invalid profile range."});};(s,c)};
-        let Some(end)=start.checked_add(count).filter(|end|*end<=total) else {return json!({"error":"Choose a range within this profile."});};
-        if count==0 {return json!({"available":false,"profiles":profiles,"profile_id":entry.id,"channel":entry.channel,"status":entry.status,"reason":entry.error.clone().unwrap_or_else(||"This profile has not run.".into())});}
-        let first=entry.points[start].hz;let last=entry.points[end-1].hz;let span=f64::from((last-first).max(1));
-        let mut maximum=45.0_f64;let mut minimum=0.0_f64;
-        for p in &entry.points[start..end] {if let Some(v)=p.mer {maximum=maximum.max((v/5.0).ceil()*5.0);minimum=minimum.min((v/5.0).floor()*5.0);}}
-        let mut series=Vec::new();
-        for ideal in [false,true] {
-            let mut points=Vec::new();
-            for bucket in entry.points[start..end].chunks(count.div_ceil(1024)) {
-                let values=bucket.iter().filter_map(|p|if ideal {p.ideal}else{p.mer}).collect::<Vec<_>>();
-                if values.is_empty() {points.push(json!({"y":null}));continue;}
-                let low=values.iter().copied().fold(f64::INFINITY,f64::min);let high=values.iter().copied().fold(f64::NEG_INFINITY,f64::max);
-                points.push(json!({"x":f64::from(bucket[0].hz-first)/span,"y":(maximum-high)/(maximum-minimum),"minimum_y":(maximum-low)/(maximum-minimum),"gap":values.len()!=bucket.len(),"readout":format!("{:.3} MHz · {} · {low:.2}–{high:.2} dB",f64::from(bucket[0].hz)/1e6,if ideal {"Ideal Profile Minimum"}else{"Receiver MER"})}));
-            }
-            series.push(json!({"id":if ideal {0}else{1},"points":points}));
+        let entries = entries.borrow();
+        let profiles = entries
+            .iter()
+            .map(|entry| json!({"id":entry.id,"status":entry.status}))
+            .collect::<Vec<_>>();
+        let selected = entries
+            .iter()
+            .find(|entry| i32::from(entry.id) == id)
+            .or_else(|| {
+                if id < 0 {
+                    entries
+                        .iter()
+                        .rev()
+                        .find(|entry| entry.status != "not_started")
+                        .or_else(|| entries.first())
+                } else {
+                    None
+                }
+            });
+        let Some(entry) = selected else {
+            return json!({"available":false,"profiles":profiles,"reason":"Run the simulation to compare profiles."});
+        };
+        let total = entry.points.len();
+        let (start, count) = if count == 0 {
+            (0, total)
+        } else {
+            let (Ok(start), Ok(count)) = (usize::try_from(start), usize::try_from(count)) else {
+                return json!({"error":"Invalid profile range."});
+            };
+            (start, count)
+        };
+        let Some(end) = start.checked_add(count).filter(|end| *end <= total) else {
+            return json!({"error":"Choose a range within this profile."});
+        };
+        if count == 0 {
+            return json!({"available":false,"profiles":profiles,"profile_id":entry.id,"channel":entry.channel,"status":entry.status,"reason":entry.error.clone().unwrap_or_else(||"This profile has not run.".into())});
         }
-        json!({"available":true,"profiles":profiles,"profile_id":entry.id,"channel":entry.channel,"status":entry.status,"fec":entry.fec,"ber":entry.ber,"unrecovered":entry.pending,"error":entry.error,
+        let first = entry.points[start].hz;
+        let last = entry.points[end - 1].hz;
+        let span = f64::from((last - first).max(MIN_PROFILE_FREQUENCY_AXIS_SPAN_HZ));
+        let mut maximum = PERFORMANCE_INITIAL_MAXIMUM_DB;
+        let mut minimum = PERFORMANCE_INITIAL_MINIMUM_DB;
+        for point in &entry.points[start..end] {
+            if let Some(value) = point.mer {
+                maximum = maximum.max((value / PERFORMANCE_AXIS_QUANTUM_DB).ceil() * PERFORMANCE_AXIS_QUANTUM_DB);
+                minimum = minimum.min((value / PERFORMANCE_AXIS_QUANTUM_DB).floor() * PERFORMANCE_AXIS_QUANTUM_DB);
+            }
+        }
+        let mut series = Vec::new();
+        for ideal in [false, true] {
+            let mut points = Vec::new();
+            for bucket in entry.points[start..end].chunks(count.div_ceil(PERFORMANCE_CURVE_BUCKETS)) {
+                let values = bucket
+                    .iter()
+                    .filter_map(|point| {
+                        if ideal {
+                            point.ideal
+                        } else {
+                            point.mer
+                        }
+                    })
+                    .collect::<Vec<_>>();
+                if values.is_empty() {
+                    points.push(json!({"y":null}));
+                    continue;
+                }
+                let low = values.iter().copied().fold(f64::INFINITY, f64::min);
+                let high = values.iter().copied().fold(f64::NEG_INFINITY, f64::max);
+                points.push(json!({
+                    "x":f64::from(bucket[0].hz - first) / span,
+                    "y":(maximum - high) / (maximum - minimum),
+                    "minimum_y":(maximum - low) / (maximum - minimum),
+                    "gap":values.len() != bucket.len(),
+                    "readout":format!("{:.3} MHz · {} · {low:.2}–{high:.2} dB", f64::from(bucket[0].hz) / HERTZ_PER_MEGAHERTZ, if ideal {"Ideal Profile Minimum"} else {"Receiver MER"})
+                }));
+            }
+            series.push(json!({"id":if ideal {PERFORMANCE_IDEAL_SERIES_ID} else {PERFORMANCE_OBSERVED_SERIES_ID},"points":points}));
+        }
+        json!({"available":true,"profiles":profiles,"profile_id":entry.id,"channel":entry.channel,"status":entry.status,"fec":fec_counters(entry.fec.as_ref()),"ber":entry.ber,"unrecovered":entry.pending,"error":entry.error,
             "total":total,"start":start,"count":count,"points":[{"x":0},{"x":1}],"series":series,"bands":plc_bands(&entry.points,start,end),"lanes":[],"markers":[],"axis_label":"MER (dB)",
-            "samples":entry.points.iter().map(|p|p.samples).sum::<u64>(),"scope":"Measured data-region cells · FEC: contained payload words · Each captured profile runs as Profile A (wire ID 0)",
-            "summary":format!("Frequency selection: {:.3} – {:.3} MHz",f64::from(first)/1e6,f64::from(last)/1e6),
-            "x_ticks":(0..=4).map(|i|json!({"x":f64::from(i)/4.0,"label":format!("{:.3}",(f64::from(first)+f64::from(i)/4.0*f64::from(last-first))/1e6)})).collect::<Vec<_>>(),
-            "y_ticks":(0..=4).map(|i|json!({"x":f64::from(i)/4.0,"label":format!("{:.1}",maximum-f64::from(i)/4.0*(maximum-minimum))})).collect::<Vec<_>>()})
+            "samples":entry.points.iter().map(|point|point.samples).sum::<u64>(),"scope":"Measured data-region cells · FEC: contained payload words · Each captured profile runs as Profile A (wire ID 0)",
+            "summary":format!("Frequency selection: {:.3} – {:.3} MHz",f64::from(first)/HERTZ_PER_MEGAHERTZ,f64::from(last)/HERTZ_PER_MEGAHERTZ),
+            "x_ticks":(0..=PROFILE_FREQUENCY_TICK_INTERVALS).map(|i|json!({"x":f64::from(i)/f64::from(PROFILE_FREQUENCY_TICK_INTERVALS),"label":format!("{:.3}",(f64::from(first)+f64::from(i)/f64::from(PROFILE_FREQUENCY_TICK_INTERVALS)*f64::from(last-first))/HERTZ_PER_MEGAHERTZ)})).collect::<Vec<_>>(),
+            "y_ticks":(0..=PERFORMANCE_METRIC_TICK_INTERVALS).map(|i|json!({"x":f64::from(i)/f64::from(PERFORMANCE_METRIC_TICK_INTERVALS),"label":format!("{:.1}",maximum-f64::from(i)/f64::from(PERFORMANCE_METRIC_TICK_INTERVALS)*(maximum-minimum))})).collect::<Vec<_>>()})
+    })
+}
+
+// Preserve the existing UI counter keys using only the scoped public report getters.
+fn fec_counters(report: Option<&FecReport>) -> Value {
+    json!({
+        "total_cw":report.map_or(0, |report|report.total_codewords().value()),
+        "ccw":report.map_or(0, |report|report.corrected_codewords().value()),
+        "ufec":report.map_or(0, |report|report.uncorrectable_codewords().value()),
+        "clean_cw":report.map_or(0, |report|report.clean_codewords().value()),
+        "undetected_errors":report.map_or(0, |report|report.undetected_errors().value())
     })
 }
 

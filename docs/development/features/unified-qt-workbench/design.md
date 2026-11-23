@@ -2913,3 +2913,27 @@ Native Python repeats that same public project operation. The adapter's existing
 JSON dependency is reused; facade manifests and all dependency locks stay exact.
 Receiver QAM-history retention remains separate work; this prerequisite exposes
 only the full-source-grid performance observation needed by its existing viewer.
+
+## UIU-DS-01 profile performance viewer adoption
+
+REQ-UIU-02/03/08/19/20/24/27 and UIU-DS-01 retain ownership. REUSE the accepted
+FullLoopResult.profile_performance operation and public SourceProfileFrame/FecReport.
+EDIT downstream/instruments/receiver/performance.rs to retain only owned public
+observations and format existing JSON/plots. Remove its private MER/Shannon/FEC
+imports; retain the independent bounded QAM-history route unchanged. Original
+profile/channel identities, source frequency order, gaps, PLC bands, series IDs,
+window FEC/BER and whole-run unfinished counts preserve existing presentation.
+An observation failure becomes an explicit per-profile failure, without stale data.
+
+EDIT downstream/common/constants.rs for existing retention, vertical scale,
+rounding, drawing-bucket and series-role policies. Reuse shared frequency units,
+horizontal ticks and single-carrier frequency denominator. Equal-valued vertical
+ticks/axis defaults remain separate policies where their purposes differ.
+EDIT the actual closed-loop worker test to compare public observations with the
+existing rendered scalars and per-carrier zoom values; preserve all original
+assertions. Level 1 includes that worker, the independent four-profile sweep,
+PLC-band vectors, affected performance/FEC QML navigation, Qt format/Clippy and
+optimized build, source-boundary and traceability checks. No backend/binding,
+serialization, registration or lifecycle change; reuse the accepted API evidence
+without rebuilding a wheel. Retire only this complete frozen file after review.
+Parent Level 2 and final Level 3 remain unchecked.

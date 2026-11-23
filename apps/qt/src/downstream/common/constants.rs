@@ -150,3 +150,21 @@ pub(crate) const UTF8_JSON_BYTE_ORDER_MARK: &[u8] = b"\xef\xbb\xbf";
 /// This UI retention policy is shared by import and Designer batches; it remains
 /// independent of the public measurement sequence's 96-MiB original-byte budget.
 pub(crate) const MAX_MEASUREMENT_COLLECTION_ORIGINAL_BYTES: usize = 64 * 1024 * 1024;
+
+/// Maximum independent receiver profiles retained for performance and QAM history.
+/// This UI history cap is separate from source-profile identity and engine admission.
+pub(crate) const MAX_RETAINED_RECEIVER_PROFILES: usize = 32;
+/// Initial upper performance-axis edge in dB; not a receiver operating threshold.
+pub(crate) const PERFORMANCE_INITIAL_MAXIMUM_DB: f64 = 45.0;
+/// Initial lower performance-axis edge, independent of missing/zero-valued MER.
+pub(crate) const PERFORMANCE_INITIAL_MINIMUM_DB: f64 = 0.0;
+/// Round observed MER drawing bounds to this grid; never round scientific results.
+pub(crate) const PERFORMANCE_AXIS_QUANTUM_DB: f64 = 5.0;
+/// Maximum curve groups in this viewer, independent of source observation retention.
+pub(crate) const PERFORMANCE_CURVE_BUCKETS: usize = 1024;
+/// Vertical tick intervals, independent of the horizontal frequency tick policy.
+pub(crate) const PERFORMANCE_METRIC_TICK_INTERVALS: u32 = 4;
+/// Existing ideal-capacity curve identifier in the presentation protocol.
+pub(crate) const PERFORMANCE_IDEAL_SERIES_ID: u8 = 0;
+/// Existing observed-MER curve identifier; unrelated to source profile identities.
+pub(crate) const PERFORMANCE_OBSERVED_SERIES_ID: u8 = 1;

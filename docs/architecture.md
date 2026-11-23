@@ -1140,8 +1140,11 @@ frequency/role and diagnostic post-equalization power/count/MER, independent ide
 Shannon capacity, observation-window FEC/BER and whole-run unfinished totals.
 Private report projection helpers are shared with the classic report path; no
 scientific algorithm, reference plane or public classic schema changes. Native
-Python returns the same owned dictionary. Qt viewer adoption remains a separate
-UIU-DS-01 unit after paired acceptance.
+Python returns the same owned dictionary. The downstream performance viewer now
+consumes that accepted observation and public FecReport getters, preserving its
+existing curve/counter JSON, source-frequency selection and partial states.
+Only presentation grouping/axis policies remain in Qt; its independent QAM-history
+migration and parent acceptance remain open.
 
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 

@@ -2615,3 +2615,32 @@ No unexecuted suite or installed-platform behavior is claimed. Parent Level 2,
 milestone/final Level 3, Qt profile viewer adoption, bounded receiver-history
 migration and final numeric audit remain pending. The source/dependency boundary
 is unchanged at 19 files/77 sites/three dependencies. No official checkbox advances.
+
+## UIU-DS-01 profile-performance viewer facade accepted
+
+[Design](design.md#uiu-ds-01-profile-performance-viewer-adoption) and
+[machine evidence](performance-viewer-facade-evidence.json) record Level 1 consumer
+acceptance for REQ-UIU-02/03/08/19/20/24/27 after the paired API prerequisite.
+The viewer reads FullLoopResult.profile_performance and public FecReport getters.
+Existing curve/counter JSON, observed/ideal series order and identifiers, original
+source frequencies/roles, PLC bands, optional metrics, profile selection and
+partial statuses remain. Window FEC/BER and whole-run unfinished totals retain
+their distinct scopes. Qt performs only presentation grouping/axis/label work.
+Independent QAM history remains unchanged; this unit does not claim its migration.
+
+Executed: three Qt Rust cases (actual completed worker with public-observation
+scalar/zoom comparisons, independent four-profile sweep and original PLC clipping
+vectors), two affected QML behavior cases (four including harness), Qt formatting,
+all-target Clippy and optimized release build, plus boundary/document/traceability/
+guide/diff checks. All existing worker assertions remain exact. Independent display
+policies are named centrally; existing same-purpose frequency ticks/denominator
+and SI units are reused. No domain limit or scientific algorithm changes.
+
+The complete performance-viewer boundary entry retires: 19 files/77 sites becomes
+18 files/75 sites, with all three dependencies and every other frozen entry exact.
+No backend/binding/API, CXX/QML registration, saved schema or lifecycle changes;
+the accepted exact-wheel API evidence remains applicable without rebuilding it.
+Unrelated workspace/native/CLI suites, startup, project and packaging checks are
+not required for this presentation-only consumer change. No unexecuted suite is
+claimed passed. Remaining downstream consumers, parent Level 2, final Level 3
+and the final numeric audit stay open; no official checkbox changes.

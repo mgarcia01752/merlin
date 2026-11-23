@@ -244,6 +244,86 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         model.state()
     );
     assert_eq!(result.job.summary.comparison.bit_errors, 0);
+    let performance = result.backend().profile_performance().unwrap();
+    let rendered = crate::downstream::instruments::receiver::performance::view(-1, 0, 0);
+    assert_eq!(rendered["profile_id"], performance.profile_id.value());
+    assert_eq!(rendered["channel"], performance.key.channel_id);
+    assert_eq!(rendered["total"], performance.points.len());
+    assert_eq!(
+        rendered["fec"]["total_cw"],
+        performance.fec.total_codewords().value()
+    );
+    assert_eq!(
+        rendered["fec"]["clean_cw"],
+        performance.fec.clean_codewords().value()
+    );
+    assert_eq!(
+        rendered["fec"]["ccw"],
+        performance.fec.corrected_codewords().value()
+    );
+    assert_eq!(
+        rendered["fec"]["ufec"],
+        performance.fec.uncorrectable_codewords().value()
+    );
+    assert_eq!(
+        rendered["fec"]["undetected_errors"],
+        performance.fec.undetected_errors().value()
+    );
+    assert_eq!(
+        rendered["ber"],
+        json!(performance.ber.map(|ber| ber.value()))
+    );
+    assert_eq!(
+        rendered["unrecovered"],
+        performance.unrecovered_generated_payloads
+    );
+    assert_eq!(
+        rendered["samples"],
+        performance
+            .points
+            .iter()
+            .map(|point| point.measurement.samples().value())
+            .sum::<u64>()
+    );
+
+    // Exact single-carrier zooms prove source-index routing without drawing reduction.
+    for index in [
+        0,
+        performance.points.len() / 2,
+        performance.points.len() - 1,
+    ] {
+        let point = &performance.points[index];
+        let zoom = crate::downstream::instruments::receiver::performance::view(-1, index as i32, 1);
+        assert_eq!(zoom["start"], index);
+        assert_eq!(zoom["count"], 1);
+        assert_eq!(zoom["series"][0]["id"], 1);
+        assert_eq!(zoom["series"][1]["id"], 0);
+        for (series, value, label) in [
+            (
+                0,
+                point.measurement.mer().map(|mer| mer.value()),
+                "Receiver MER",
+            ),
+            (
+                1,
+                point.ideal_shannon_mer_db.map(|mer| mer.value()),
+                "Ideal Profile Minimum",
+            ),
+        ] {
+            let curve = &zoom["series"][series]["points"][0];
+            if let Some(value) = value {
+                assert_eq!(
+                    curve["readout"],
+                    format!(
+                        "{:.3} MHz · {label} · {value:.2}–{value:.2} dB",
+                        f64::from(point.frequency_hz.value()) / 1_000_000.0
+                    )
+                );
+            } else {
+                assert!(curve["y"].is_null());
+            }
+        }
+    }
     let source = crate::transmitter_instruments::stage(0, 0);
 
     // Graph geometry formats the accepted public recovery; it never classifies words.
