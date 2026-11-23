@@ -172,3 +172,93 @@ fn invalid_recipe_version_position_nested_and_random_import_reject_without_mutat
     .unwrap();
     assert!(RxMerDesign::imported(&profile(), &baseline(), random, position()).is_err());
 }
+
+#[test]
+fn source_catalog_designs_preserve_raw_ids_and_existing_baseline_semantics() {
+    let mut document: Value = serde_json::from_slice(PROFILE).unwrap();
+
+    // Independent encoded ID 255 must remain usable for passive design only.
+    document["profiles"]
+        .as_array_mut()
+        .unwrap()
+        .iter_mut()
+        .find(|profile| profile["profile_id"] == 0)
+        .unwrap()["profile_id"] = json!(255);
+    let original =
+        NamedCapture::new("raw profile", serde_json::to_vec(&document).unwrap()).unwrap();
+    let capture = ProfileCapture::from_bytes(&original).unwrap();
+    let flat = RxMerDesign::flat_capture(
+        &capture,
+        255,
+        MerDb::new(48.0).unwrap(),
+        CaptureTime::new(7).unwrap(),
+        tilt(-6.0),
+        position(),
+    )
+    .unwrap();
+    let old = RxMerDesign::flat(
+        &profile(),
+        MerDb::new(48.0).unwrap(),
+        CaptureTime::new(7).unwrap(),
+        tilt(-6.0),
+        position(),
+    )
+    .unwrap();
+    assert_eq!(flat.original_bytes(), old.original_bytes());
+    flat.check_capture(&capture, 255).unwrap();
+    assert_eq!(
+        flat.check_capture(&capture, 254).unwrap_err().code(),
+        ErrorCode::InvalidIdentifier
+    );
+    assert!(ProfileId::new(255).is_err());
+    let baseline = baseline();
+    let imported =
+        RxMerDesign::imported_capture(&capture, 255, &baseline, tilt(-6.0), position()).unwrap();
+    let old = RxMerDesign::imported(&profile(), &baseline, tilt(-6.0), position()).unwrap();
+    assert_eq!(imported.original_bytes(), old.original_bytes());
+    assert_eq!(
+        imported
+            .materialize()
+            .values()
+            .last()
+            .unwrap()
+            .unwrap()
+            .value(),
+        42.0
+    );
+    assert!(RxMerDesign::imported_capture(
+        &capture,
+        255,
+        &NamedCapture::new("nested", flat.original_bytes().to_vec()).unwrap(),
+        RxmerRecipe::default(),
+        position()
+    )
+    .is_err());
+    assert!(RxMerDesign::flat_capture(
+        &capture,
+        254,
+        MerDb::new(48.0).unwrap(),
+        CaptureTime::new(7).unwrap(),
+        RxmerRecipe::default(),
+        position()
+    )
+    .is_err());
+    document["channel_id"] = json!(99);
+    let other = ProfileCapture::from_bytes(
+        &NamedCapture::new("other", serde_json::to_vec(&document).unwrap()).unwrap(),
+    )
+    .unwrap();
+    assert_eq!(
+        flat.check_capture(&other, 255).unwrap_err().code(),
+        ErrorCode::IncompatibleGrid
+    );
+    assert!(RxMerDesign::imported_capture(
+        &other,
+        255,
+        &baseline,
+        RxmerRecipe::default(),
+        position()
+    )
+    .is_err());
+    assert_eq!(capture.provenance().original_bytes(), original.bytes());
+}

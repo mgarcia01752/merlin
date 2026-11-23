@@ -199,6 +199,21 @@ impl PyProfileCapture {
         object_from_json(py, &text)
     }
 
+    /// Copies one original source frame through Rust's read-only catalog operation.
+    /// # Arguments
+    /// * `profile_id` - Original byte identity, independent of checked simulation IDs.
+    /// # Returns
+    /// Owned bounded key/epoch/decoded-source/assignment dictionary. Editing the copy
+    /// cannot change the catalog; original capture provenance is available separately.
+    /// # Errors
+    /// Missing identities raise InvalidIdentifier; transport/allocation failures remain errors.
+    fn frame(&self, py: Python<'_>, profile_id: u8) -> PyResult<Py<PyAny>> {
+        let text = py
+            .detach(|| serde_json::to_string(self.0.frame(profile_id)?).map_err(transport_error))
+            .map_err(error)?;
+        object_from_json(py, &text)
+    }
+
     /// Reads authoritative source role counts and uncoded useful-symbol capacity.
     /// # Arguments
     /// * `profile_id` - Original source identity, never an array index or wire assignment.

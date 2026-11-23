@@ -293,3 +293,38 @@ fn accepted_dpd_summary_and_view_keep_existing_identity_and_bounded_originals() 
         })
         .is_err());
 }
+
+#[test]
+fn borrowed_source_frame_preserves_raw_identity_roles_and_capture_ownership() {
+    let input = original();
+    let capture = ProfileCapture::from_bytes(&input).unwrap();
+    let shared = capture.clone();
+    let frame: &SourceProfileFrame = capture.frame(200).unwrap();
+
+    // Independent source order/epoch/role anchors from the four-scheme fixture.
+    assert_eq!(frame.profile_id, 200);
+    assert_eq!(frame.capture_time, 1466967);
+    assert_eq!(frame.assignments.len(), 4);
+    assert_eq!(frame.assignments[0].carrier_type, ProfileCarrierRole::Data);
+    assert_eq!(frame.assignments[1].carrier_type, ProfileCarrierRole::Plc);
+    assert_eq!(
+        frame.assignments[2].carrier_type,
+        ProfileCarrierRole::ContinuousPilot
+    );
+    assert_eq!(
+        frame.assignments[3].carrier_type,
+        ProfileCarrierRole::Unknown
+    );
+    assert_eq!(frame.assignments[3].bit_loading, None);
+    assert!(std::ptr::eq(frame, shared.frame(200).unwrap()));
+    assert_eq!(
+        capture.frame(199).unwrap_err().code(),
+        ErrorCode::InvalidIdentifier
+    );
+    assert_eq!(capture.metadata().source_profile_order, [200, 0]);
+    assert!(ProfileId::new(200).is_err());
+    assert_eq!(capture.provenance().original_bytes(), input.bytes());
+    drop(input);
+    drop(capture);
+    assert_eq!(shared.frame(200).unwrap().profile_id, 200);
+}

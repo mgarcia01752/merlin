@@ -164,3 +164,26 @@ class ProfileCaptureTests(unittest.TestCase):
         self.assertLessEqual(sum(len(s['buckets']) for s in capture.inspect(m.ProfileViewRequest(max_buckets=16))['series']), 16)
         with self.assertRaises(m.ApiError):
             dpd.view(m.ProfileViewRequest(profiles=[1]))
+
+    def test_source_frame_is_owned_preserves_raw_identity_and_roles(self):
+        original = source()
+        capture = m.ProfileCapture.from_bytes('raw source', original)
+        frame = capture.frame(200)
+        self.assertEqual(frame['profile_id'], 200)
+        self.assertEqual(frame['capture_time'], 1466967)
+        self.assertEqual([v['carrier_type'] for v in frame['assignments']],
+                         ['data', 'plc', 'continuous_pilot', 'unknown'])
+        self.assertIsNone(frame['assignments'][-1]['bit_loading'])
+        frame['assignments'][0]['bit_loading'] = 0
+        self.assertEqual(capture.frame(200)['assignments'][0]['bit_loading'], 4)
+        self.assertEqual(capture.metadata['source_profile_order'], [200, 0])
+        with self.assertRaises(m.ApiError) as absent:
+            capture.frame(199)
+        self.assertEqual(absent.exception.code, m.ErrorCode.InvalidIdentifier)
+        for invalid in (-1, 256):  # Independent byte-ID boundaries.
+            with self.assertRaises(OverflowError):
+                capture.frame(invalid)
+        self.assertEqual(capture.provenance['original_sha256'], hashlib.sha256(original).hexdigest())
+        retained = capture.frame(200)
+        del capture
+        self.assertEqual(retained['profile_id'], 200)

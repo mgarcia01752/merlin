@@ -7,6 +7,7 @@ use crate::{
     api, error,
     inputs::{PyDpd, PyRxMer},
     object_from_json,
+    profile_capture::PyProfileCapture,
     quantities::{PyCaptureTime, PyMerDb},
 };
 use merlin::downstream::inputs::{RxMerDesign, RxMerDesignPosition};
@@ -138,6 +139,80 @@ impl PyDesign {
         })
         .map(Self)
         .map_err(error)
+    }
+
+    /// Creates a flat design from exact original source roles without run-ID admission.
+    /// # Arguments
+    /// * `capture`, `profile_id` - Immutable source catalog and original byte identity.
+    /// * `baseline`, `epoch` - Checked MER and explicit original anchor seconds.
+    /// * `recipe_json`, `position` - Existing optional recipe and original collection position.
+    /// # Returns
+    /// Immutable synthetic design evaluated entirely in Rust with the GIL released.
+    /// # Errors
+    /// Missing source and existing recipe/grid/position/baseline/work errors raise ApiError.
+    #[staticmethod]
+    #[pyo3(signature=(capture, profile_id, baseline, epoch, recipe_json=None, position=None))]
+    fn flat_capture(
+        py: Python<'_>,
+        capture: &PyProfileCapture,
+        profile_id: u8,
+        baseline: &PyMerDb,
+        epoch: &PyCaptureTime,
+        recipe_json: Option<&[u8]>,
+        position: Option<&PyDesignPosition>,
+    ) -> PyResult<Self> {
+        let position = position.map(|value| value.0);
+        py.detach(|| {
+            let recipe = RxMerDesign::recipe_from_json(recipe_json.unwrap_or(b"{}"))?;
+            let position = position.map_or_else(|| RxMerDesignPosition::new(1, 1), Ok)?;
+            RxMerDesign::flat_capture(
+                &capture.0, profile_id, baseline.0, epoch.0, recipe, position,
+            )
+        })
+        .map(Self)
+        .map_err(error)
+    }
+
+    /// Wraps an ordinary baseline using a source catalog's original spatial identity.
+    /// # Arguments
+    /// * `capture`, `profile_id` - Immutable source catalog and original byte identity.
+    /// * `name`, `data` - Exact ordinary baseline identity and bytes.
+    /// * `recipe_json`, `position` - Existing optional edits and original collection position.
+    /// # Returns
+    /// Immutable noncompounding design evaluated in Rust with the GIL released.
+    /// # Errors
+    /// Missing source and existing nested/integrity/recipe/grid/work errors raise ApiError.
+    #[staticmethod]
+    #[pyo3(signature=(capture, profile_id, name, data, recipe_json=None, position=None))]
+    fn imported_capture(
+        py: Python<'_>,
+        capture: &PyProfileCapture,
+        profile_id: u8,
+        name: &str,
+        data: &[u8],
+        recipe_json: Option<&[u8]>,
+        position: Option<&PyDesignPosition>,
+    ) -> PyResult<Self> {
+        let position = position.map(|value| value.0);
+        let input = crate::inputs::named_input(name, data)?;
+        py.detach(|| {
+            let recipe = RxMerDesign::recipe_from_json(recipe_json.unwrap_or(b"{}"))?;
+            let position = position.map_or_else(|| RxMerDesignPosition::new(1, 1), Ok)?;
+            RxMerDesign::imported_capture(&capture.0, profile_id, &input, recipe, position)
+        })
+        .map(Self)
+        .map_err(error)
+    }
+
+    /// Checks exact source-catalog spatial association without admitting a run ID.
+    /// # Arguments
+    /// * `capture`, `profile_id` - Immutable catalog and original byte identity.
+    /// # Returns
+    /// None on exact device/channel/grid equality, without changing inputs or epochs.
+    /// # Errors
+    /// Missing sources and incompatible grids raise the shared ApiError.
+    fn check_capture(&self, capture: &PyProfileCapture, profile_id: u8) -> PyResult<()> {
+        self.0.check_capture(&capture.0, profile_id).map_err(error)
     }
 
     /// Replaces effects using the retained original baseline, never the previous output.

@@ -112,3 +112,38 @@ class DesignerAdmissionTests(unittest.TestCase):
         with self.assertRaises(m.ApiError):
             m.RxMerDesign.from_bytes('too many values', json.dumps(excessive).encode())
         self.assertEqual(design.original_bytes, original)
+
+    def test_source_catalog_designs_preserve_raw_ids_masks_and_original_baselines(self):
+        document = json.loads((MEASUREMENTS / 'modulation_profile.json').read_bytes())
+        next(v for v in document['profiles'] if v['profile_id'] == 0)['profile_id'] = 255
+        original = json.dumps(document).encode()
+        capture = m.ProfileCapture.from_bytes('raw profile', original)
+        flat = m.RxMerDesign.flat_capture(capture, 255, m.MerDb(48), m.CaptureTime(7), tilt(-6))
+        old = m.RxMerDesign.flat(profile(), m.MerDb(48), m.CaptureTime(7), tilt(-6))
+        self.assertEqual(flat.original_bytes, old.original_bytes)
+        self.assertIsNone(flat.check_capture(capture, 255))
+        baseline = json.loads((MEASUREMENTS / 'rxmer.json').read_bytes())
+        baseline['values'] = [48] * 7480
+        baseline = json.dumps(baseline).encode()
+        imported = m.RxMerDesign.imported_capture(capture, 255, 'original', baseline, tilt(-6))
+        old = m.RxMerDesign.imported(profile(), 'original', baseline, tilt(-6))
+        self.assertEqual(imported.original_bytes, old.original_bytes)
+        self.assertEqual(imported.materialize().values[-1].value, 42)
+        with self.assertRaises(m.ApiError):
+            m.ProfileId(255)
+        with self.assertRaises(m.ApiError) as absent:
+            flat.check_capture(capture, 254)
+        self.assertEqual(absent.exception.code, m.ErrorCode.InvalidIdentifier)
+        with self.assertRaises(m.ApiError):
+            m.RxMerDesign.flat_capture(capture, 254, m.MerDb(48), m.CaptureTime(7))
+        with self.assertRaises(m.ApiError):
+            m.RxMerDesign.imported_capture(capture, 255, 'nested', flat.original_bytes)
+        document['channel_id'] = 99
+        other = m.ProfileCapture.from_bytes('other', json.dumps(document).encode())
+        with self.assertRaises(m.ApiError) as mismatch:
+            flat.check_capture(other, 255)
+        self.assertEqual(mismatch.exception.code, m.ErrorCode.IncompatibleGrid)
+        with self.assertRaises(m.ApiError):
+            m.RxMerDesign.imported_capture(other, 255, 'original', baseline)
+        del capture
+        self.assertEqual(imported.materialize().values[-1].value, 42)

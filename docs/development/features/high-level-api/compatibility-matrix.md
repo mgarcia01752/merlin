@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-576 explicit public Rust operations and 550 installed native Python entries with
+585 explicit public Rust operations and 556 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/source-file-api-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/source-catalog-api-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 112 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -335,3 +335,12 @@ actual original-buffer sharing and atomic errors, plus separate Rust-process
 parity. [Executed cases](../unified-qt-workbench/ds-01-source-file-operation-test-results.json)
 and exact inventories establish focused acceptance; Qt consumer and Level 2/3
 gates remain separate.
+
+The [raw source-catalog prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-raw-source-catalog-api-accepted)
+adds six paired operations (nine Rust export rows, including existing PNM re-export paths) for a borrowed/owned original source frame, measured
+sequence/response admission and Designer creation/association. All preceding
+576/550 rows, types, execution records and native signatures remain exact.
+Twenty-five Rust and 21 exact-wheel native cases retain independent power/role/
+ID anchors and unchanged legacy-method outputs/errors; three targeted Qt consumer
+cases and the CLI compile also pass. [Executed API cases](../unified-qt-workbench/ds-01-source-catalog-operation-test-results.json)
+cover this focused scope. Qt adoption, parent Level 2 and final Level 3 remain pending.

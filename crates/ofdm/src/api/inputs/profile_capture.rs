@@ -6,6 +6,9 @@
 mod models;
 mod views;
 use super::*;
+/// Original source profile data; its byte ID does not imply simulation support.
+/// Borrowed frames retain source key, epoch, decoded provenance and exact carrier assignments.
+pub use crate::profile::candidate::CapturedProfile as SourceProfileFrame;
 use crate::scenario::pnm_json::{import_profile_capture, profile_metadata::ProfileCaptureMetadata};
 pub use models::*;
 
@@ -31,6 +34,19 @@ impl ProfileCapture {
                 )
             })
     }
+    /// Borrows one immutable original source frame without applying run-ID admission.
+    /// # Arguments
+    /// * `profile_id` - Original byte-sized source identity, never an array position.
+    /// # Returns
+    /// Read-only original key, epoch, decoded-source provenance and assignments, tied to
+    /// this capture's lifetime. No clone, source mutation or simulation occurs. Exact
+    /// original/intermediate capture bytes remain in this catalog's separate provenance.
+    /// # Errors
+    /// InvalidIdentifier when the source identity is absent.
+    pub fn frame(&self, profile_id: u8) -> ApiResult<&SourceProfileFrame> {
+        self.profile_ref(profile_id)
+    }
+
     /// Admits decoded source JSON without a simulation or implicit profile selection.
     /// # Arguments
     /// * `input` - Exact bounded named JSON; binary uses the optional native CaptureLoader.

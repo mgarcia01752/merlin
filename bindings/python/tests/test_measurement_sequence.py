@@ -142,3 +142,43 @@ class MeasurementSequenceTests(unittest.TestCase):
         self.assertEqual(raised.exception.code, m.ErrorCode.AssociationFailed)
         self.assertIsNone(geometry.check_response(dpd, response, m.AssociationTolerance(90000)))
         self.assertEqual(response.provenance, before)
+
+    def test_source_catalog_admission_keeps_raw_ids_and_existing_sequence_errors(self):
+        document = json.loads((FIXTURES / 'modulation_profile.json').read_bytes())
+        next(v for v in document['profiles'] if v['profile_id'] == 0)['profile_id'] = 255
+        original = json.dumps(document).encode()
+        capture = m.ProfileCapture.from_bytes('raw profile', original)
+        transmission = m.TransmissionConfiguration()
+        originals = [measured(0), measured(10)]
+        policy = m.MeasurementSequenceOptions('average', 10)
+        accepted = m.MeasurementSequence.from_capture(capture, 255, transmission, originals, policy)
+        legacy = m.MeasurementSequence(profile(), transmission, originals, policy)
+        self.assertEqual(accepted.at(0), legacy.at(0))
+        self.assertAlmostEqual(accepted.at(0)['normalized_power'][0], 0.55, places=12)
+        self.assertEqual(accepted.capture(0).provenance, originals[0].provenance)
+        self.assertIsNone(transmission.check_response_capture(capture, 255))
+        with self.assertRaises(m.ApiError):
+            m.ProfileId(255)
+        for values in ([], [originals[0], originals[0]]):
+            with self.assertRaises(m.ApiError) as new:
+                m.MeasurementSequence.from_capture(capture, 255, transmission, values, policy)
+            with self.assertRaises(m.ApiError) as old:
+                m.MeasurementSequence(profile(), transmission, values, policy)
+            self.assertEqual((new.exception.code, str(new.exception)), (old.exception.code, str(old.exception)))
+        with self.assertRaises(m.ApiError) as absent:
+            m.MeasurementSequence.from_capture(capture, 254, transmission, originals, policy)
+        self.assertEqual(absent.exception.code, m.ErrorCode.InvalidIdentifier)
+        response = m.ChannelEstimate.from_file(FIXTURES / 'channel_estimation.json')
+        for tolerance in (m.AssociationTolerance(0), m.AssociationTolerance(90000)):
+            def outcome(call):
+                try:
+                    return call()
+                except m.ApiError as cause:
+                    return cause.code, str(cause)
+            self.assertEqual(outcome(lambda: transmission.check_response_capture(capture, 255, response, tolerance)),
+                             outcome(lambda: transmission.check_response(profile(), response, tolerance)))
+        with self.assertRaises(m.ApiError) as absent:
+            transmission.check_response_capture(capture, 254)
+        self.assertEqual(absent.exception.code, m.ErrorCode.InvalidIdentifier)
+        del capture
+        self.assertAlmostEqual(accepted.at(0)['normalized_power'][0], 0.55, places=12)

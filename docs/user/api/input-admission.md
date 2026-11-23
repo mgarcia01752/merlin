@@ -88,6 +88,8 @@ measurement planner with identical grid, epoch, required-coverage and mode check
 | Rust operation | Python operation | Contract |
 | --- | --- | --- |
 | `MeasurementSequence::new(&Dpd, &TransmissionConfiguration, Vec<RxMer>, MeasurementSequenceOptions)` | `MeasurementSequence(profile, transmission, captures, options)` | Unique originals in caller order; maximum 256 captures, 4,000,000 values and 96 MiB original bytes. Count rejects before traversal; aggregate limits reject before backend frame cloning. |
+| `MeasurementSequence::from_capture(&ProfileCapture, raw_id, &TransmissionConfiguration, Vec<RxMer>, options)` | `MeasurementSequence.from_capture(capture, profile_id, transmission, captures, options)` | Same existing ordered-original/resource/grid/epoch/coverage admission for a raw source ID, without simulation-ID admission. |
+| `TransmissionConfiguration::check_response_capture(&ProfileCapture, raw_id, response, tolerance)` | `.check_response_capture(capture, profile_id, response=None, tolerance=None)` | Same physical H/unity and epoch checks; success does not establish run readiness. |
 | `MeasurementSequenceOptions { mode, interval_symbols, tolerance }` | `MeasurementSequenceOptions(mode="single", interval_symbols=1, tolerance=None)` | Typed original-epoch tolerance; Python None requires exact epoch matching. Temporal modes require a positive symbol interval. |
 | `MeasurementSequenceOptions::capacity(&TransmissionConfiguration, ObservationDuration)` | `options.capacity(transmission, duration) -> int` | Idle source-clock reachability before a profile/capture/sequence exists; the same backend query used by admitted sequences. Static modes ignore dormant intervals; zero temporal intervals reject. |
 | `info() -> MeasurementSequenceInfo` | `.info() -> dict` | Mode/count and synthetic symbol interval/span in milliseconds; original epochs stay in provenance. |
@@ -145,6 +147,9 @@ classes through `merlin.downstream` and preserves root/legacy class identity.
 | `RxMerDesignPosition::new(index, count)` | `RxMerDesignPosition(index=1, count=1)` | One-based position in 1..256 original captures; separate from playback symbols. |
 | `RxMerDesign::from_bytes(&NamedCapture)` | `RxMerDesign.from_bytes(name, data)` | Strict saved version-1 Designer envelope; preserves exact original bytes/whitespace. |
 | `RxMerDesign::flat(&Dpd, MerDb, CaptureTime, RxmerRecipe, RxMerDesignPosition)` | `RxMerDesign.flat(profile, baseline, epoch, recipe_json=None, position=None)` | Exact profile grid/identity and backend role mask; explicit synthetic anchor epoch. |
+| `RxMerDesign::flat_capture(&ProfileCapture, raw_id, level, epoch, recipe, position)` | `RxMerDesign.flat_capture(capture, profile_id, baseline, epoch, recipe_json=None, position=None)` | Same authoritative role mask/grid/baseline validation using original source IDs. |
+| `RxMerDesign::imported_capture(&ProfileCapture, raw_id, input, recipe, position)` | `RxMerDesign.imported_capture(capture, profile_id, name, data, recipe_json=None, position=None)` | Same exact ordinary baseline ownership, noncompounding edits and spatial association. |
+| `RxMerDesign::check_capture(&ProfileCapture, raw_id)` | `.check_capture(capture, profile_id)` | Exact original device/channel/grid association; source epochs and tolerance remain separate. |
 | `RxMerDesign::imported(&Dpd, &NamedCapture, RxmerRecipe, RxMerDesignPosition)` | `RxMerDesign.imported(profile, name, data, recipe_json=None, position=None)` | Exact ordinary baseline bytes embedded with integrity metadata; spatial identity checked. |
 | `check_profile(&Dpd)` | `.check_profile(profile)` | Explicit exact device/channel/grid check for an independently loaded design. |
 | `with_recipe(RxmerRecipe)` | `.with_recipe(recipe_json)` | Re-evaluate the retained original baseline with new effects; previous output is never the new baseline. |
@@ -248,3 +253,8 @@ assert original_only.file_info()['fill_bits'] == 0
 ```
 
 See the bounded [Rust process reference](../../../crates/ofdm/examples/api_source_file_info.rs).
+
+Raw source-catalog operations preserve every byte-sized encoded ID. They do not
+widen `ProfileId` (0..15), establish coding support or start a simulation.
+Missing source IDs return `InvalidIdentifier`; existing operation signatures,
+errors, bounds and checked-profile behavior remain available unchanged.

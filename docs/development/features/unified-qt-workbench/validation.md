@@ -2383,3 +2383,42 @@ records/dependencies/history stay exact; 21 files/85 sites/three scientific
 dependencies remain. Unaffected full workspace/Qt/Python/CLI/package suites and
 unchanged validator suites were not run; evidence records why, separately from
 pending parent Level 2, milestone/final Level 3 and numeric-audit gates.
+
+## UIU-DS-01 raw source-catalog API accepted
+
+[Exact contract/owners](design.md#uiu-ds-01-raw-source-catalog-admission-prerequisite),
+[machine evidence](source-catalog-api-evidence.json) and
+[executed API cases](ds-01-source-catalog-operation-test-results.json) establish
+focused Level 1 prerequisite acceptance for REQ-UIU-02/03/08/09/20/24/27.
+ProfileCapture.frame exposes only existing original source data; native Python
+returns an independent dictionary. Measured sequence/response and Designer
+source-catalog variants reuse existing planners, evaluators and bounds. Raw byte
+IDs remain independent of the unchanged 0..15 simulation ProfileId domain.
+
+Executed: 25 Rust cases (source catalog, sequence, Designer, facade, underlying
+playback and existing Designer workbench), 21 exact-archive installed native cases
+(complete affected source/sequence/Designer modules plus namespace compatibility),
+three targeted Qt Rust consumers, scoped root/native Clippy, formatting,
+analysis-only build, CLI compile and fresh complete API inventories. Original
+assertions, source order, roles/nulls, bytes/hash/epochs and existing operation
+signatures remain. Literal residual powers 1 and 0.1 give 0.55, distinct from a
+dB average. Borrowed-frame pointer equality and owned native-copy mutation/lifetime
+checks establish the declared ownership. Same-input legacy methods return the
+same designs, results and errors. Original algorithms and numerical vectors are
+unchanged.
+
+The matrix grows 576/550 to 585 Rust/556 native operations, retaining every prior
+row/type/execution record and all native members after removing only the six
+added methods. One Rust source-data alias is added; the existing 80 root and
+112 directional/common class exports remain. Fresh module bytes match the one
+wheel archive before outside-checkout native testing. The earlier source-file
+wheel is historical evidence, not used for the new methods.
+
+Not required: unrelated workspace/upstream/FEC suites, QML/native desktop startup,
+project persistence and packaging, because no algorithm, QML/CXX registration,
+project format, lifecycle, upstream or package owner changes. Qt's existing
+profile, measurement restoration and Designer envelope consumers are exercised;
+the CLI compile confirms its existing public contracts. No new scientific code
+is added to Qt. Parent Level 2, milestone/final Level 3, full numeric audit and
+Qt input adoption remain incomplete. The boundary remains 21 frozen files,
+85 sites and three scientific dependencies. No official checkbox is advanced.

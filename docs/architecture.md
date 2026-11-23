@@ -1098,6 +1098,16 @@ retains original bytes/name/hash without another large copy. Native Python is
 conversion only. Qt source/editor/worker consumption remains separate UIU-DS-01
 work after the paired prerequisite; schema and source-stream behavior do not change.
 
+The [raw source-catalog prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-raw-source-catalog-admission-prerequisite)
+adds source-catalog variants for measured sequence/response admission and Designer
+creation/association. ProfileCapture.frame borrows the existing source-data DTO;
+SourceProfileFrame is a nominal alias, not a scientific engine export. Original
+byte IDs, source order and decoded-source provenance remain separate from checked
+run IDs and original capture provenance. Existing planner/evaluator owners supply
+all validation and calculations. Native Python returns an owned frame dictionary
+and delegates the same admission/design operations. Qt adoption remains a separate
+UIU-DS-01 consumer unit; no simulation-ID domain or scientific behavior changes.
+
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

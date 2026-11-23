@@ -11,6 +11,7 @@ namespace. Existing `ProfileId` and simulation behavior remain unchanged.
 | `ProfileCapture::from_bytes(&NamedCapture)` | `ProfileCapture.from_bytes(name, data)` via native loader | Rust core admits decoded JSON; Python/native loader also admits pinned binary PNM. Original bytes and intermediate hashes stay distinct. |
 | `ProfileCapture::from_decoded(original, decoded, contract)`; `inputs::CaptureLoader::profile_capture(&NamedCapture)` | `ProfileCapture.from_file(path)` or `from_bytes(name, data)` | Shared decoder/contract/source validation; no filename-based format guessing or output writes. |
 | `profile_ids() -> &[u8]` | `.profile_ids -> tuple[int, ...]` | Every original encoded identity, sorted for discovery. |
+| `frame(raw_id) -> ApiResult<&SourceProfileFrame>` | `.frame(raw_id) -> dict` | Exact original key, epoch, decoded-source metadata and full carrier assignments. Rust borrows existing storage; native Python owns its bounded copy. The byte ID is independent of checked run IDs. |
 | `metadata() -> ProfileCaptureInfo` | `.metadata -> dict` | Original header/key, sorted IDs, source profile order and original encoding. |
 | `provenance() -> &CaptureProvenance` | `.provenance -> dict` | Original/intermediate names, hashes, epoch and decoder declaration; Rust also retains exact immutable bytes. |
 | `summary(raw_id) -> ApiResult<ProfileSummary>` | `.summary(profile_id) -> dict` | Full-grid role counts, original origin/time and known data-carrier useful-symbol capacity. |
@@ -89,3 +90,9 @@ and [task](../../development/checklist.md#task-uiu-api-01). Source-catalog OCD
 compatibility additionally follows the
 [DS-01 prerequisite](../../development/features/unified-qt-workbench/design.md#uiu-ds-01-source-catalog-ocd-compatibility-api-prerequisite)
 and [consumer migration task](../../development/checklist.md#task-uiu-ds-01).
+
+The frame's source metadata describes the decoded profile. Use the catalog's
+`provenance()` (Python `.provenance`) for exact original/intermediate capture
+hashes and bytes; these identities must not be conflated. Cloning the Rust
+catalog shares immutable frame storage. Python dictionary edits cannot change
+that storage or any later frame/inspection result.

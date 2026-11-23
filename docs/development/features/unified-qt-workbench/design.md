@@ -2755,3 +2755,25 @@ sharing. All original source assertions remain through public accessor/limit
 adaptation. Two whole entries retire; the source-type-only session review keeps
 all other bytes exact. The boundary retains 21 files/85 sites/three dependencies.
 No CXX declaration, API/schema/backend or direction lifecycle changes occur.
+
+## UIU-DS-01 raw source-catalog admission prerequisite
+
+REQ-UIU-02/03/08/09/20/24/27 and UIU-DS-01 own this additive API prerequisite.
+REUSE the existing complete ProfileCapture, MeasurementPlayback, response admission
+and Designer recipe evaluator. Raw source IDs remain bytes; ProfileId remains
+0..15 and successful passive admission does not establish run readiness.
+
+| Owner / disposition | Rust contract and native Python mapping |
+| --- | --- |
+| EDIT ofdm/api/inputs/profile_capture.rs | `frame(id: u8) -> ApiResult<&SourceProfileFrame>` borrows the existing source DTO without copying or mutation; the public alias preserves its nominal type. Python `.frame(id) -> dict` owns a bounded copy of the same original key/epoch/source/roles/loadings. Original capture provenance remains separate from the DTO's decoded-source provenance. |
+| EDIT ofdm/api/sequence.rs | `MeasurementSequence::from_capture(&ProfileCapture, raw_id, &TransmissionConfiguration, Vec<RxMer>, options)` reuses the exact existing measurement planner and resource/duplicate/grid/epoch/coverage checks. Native static `from_capture(capture, profile_id, transmission, captures, options)` matches. |
+| EDIT ofdm/api/sequence.rs | `TransmissionConfiguration::check_response_capture(&ProfileCapture, raw_id, Option<&ChannelEstimate>, tolerance)` reuses existing physical response checks; native method uses the same name and optional response/tolerance conventions. |
+| EDIT pnm-input/workbench/designer/admission.rs | `RxMerDesign::{flat_capture, imported_capture, check_capture}` use a catalog plus raw ID in place of Dpd; all other arguments and result/error semantics match existing methods. Native methods mirror these operations; recipes and every calculation remain Rust. |
+| EDIT native adapters/root typing, existing source/sequence/Designer tests and facade compile contracts | Preserve every existing signature/assertion. Test boundary ID 255, absent IDs, original order/bytes/hash/epoch/roles/nulls, borrowed-buffer identity/owned native copies, existing-ID equivalence and all affected rejection/ownership contracts. |
+| DEFER Qt input/session owners | No Qt consumer changes before paired API acceptance and its focused local commit. |
+
+Level 1 expands through affected Rust/native APIs, existing measured/Designer
+science tests, facade compatibility, analysis-only build, scoped Clippy and exact
+additive operation inventories. No scientific algorithm, project format, lifecycle,
+CXX/QML registration, upstream or packaging changes. Parent Level 2 and final
+Level 3 acceptance remain pending. Completed planning/FEC tasks are not reopened.

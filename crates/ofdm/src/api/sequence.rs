@@ -142,6 +142,37 @@ impl MeasurementSequence {
         captures: Vec<RxMer>,
         options: MeasurementSequenceOptions,
     ) -> ApiResult<Self> {
+        Self::admit_profile(&profile.profile, transmission, captures, options)
+    }
+
+    /// Admits measurements against original source roles without admitting a run profile.
+    /// # Arguments
+    /// * `capture`, `profile_id` - Immutable catalog and original byte-sized identity.
+    /// * `transmission` - Accepted physical numerology.
+    /// * `captures` - Unique originals in explicit caller order, subject to existing bounds.
+    /// * `options` - Synthetic mode/clock and original epoch tolerance.
+    /// # Returns
+    /// Immutable sequence with unchanged original measurements; no simulation starts.
+    /// Successful admission does not widen the checked simulation ProfileId domain.
+    /// # Errors
+    /// InvalidIdentifier for a missing source; existing resource, duplicate, grid,
+    /// epoch, coverage and playback-mode errors otherwise.
+    pub fn from_capture(
+        capture: &super::ProfileCapture,
+        profile_id: u8,
+        transmission: &TransmissionConfiguration,
+        captures: Vec<RxMer>,
+        options: MeasurementSequenceOptions,
+    ) -> ApiResult<Self> {
+        Self::admit_profile(capture.frame(profile_id)?, transmission, captures, options)
+    }
+
+    fn admit_profile(
+        profile: &super::SourceProfileFrame,
+        transmission: &TransmissionConfiguration,
+        captures: Vec<RxMer>,
+        options: MeasurementSequenceOptions,
+    ) -> ApiResult<Self> {
         if captures.is_empty() || captures.len() > MAX_PLAYBACK_FRAMES {
             return Err(ApiError::new(
                 ErrorCode::ResourceLimit,
@@ -174,10 +205,10 @@ impl MeasurementSequence {
                 "Duplicate original measurement identity",
             ));
         }
-        transmission.check_profile(profile)?;
+        transmission.check_profile_grid(&profile.key.grid)?;
         let plan = MeasurementPlayback::new(
             transmission.settings(),
-            &profile.profile,
+            profile,
             captures.iter().map(|v| v.frame.clone()).collect(),
             options.mode,
             options.interval_symbols,
@@ -225,6 +256,25 @@ impl TransmissionConfiguration {
         tolerance: AssociationTolerance,
     ) -> ApiResult<()> {
         self.check_response_profile(&profile.profile, response, tolerance)
+    }
+
+    /// Validates a response against original source roles without admitting a run ID.
+    /// # Arguments
+    /// * `capture`, `profile_id` - Immutable catalog and original byte-sized identity.
+    /// * `response` - Original H, or None for explicit synthetic unity.
+    /// * `tolerance` - Maximum original epoch distance from the source profile.
+    /// # Returns
+    /// Unit on the same physical admission as check_response, without sample generation.
+    /// # Errors
+    /// InvalidIdentifier for an absent source; existing physical/epoch errors otherwise.
+    pub fn check_response_capture(
+        &self,
+        capture: &super::ProfileCapture,
+        profile_id: u8,
+        response: Option<&ChannelEstimate>,
+        tolerance: AssociationTolerance,
+    ) -> ApiResult<()> {
+        self.check_response_profile(capture.frame(profile_id)?, response, tolerance)
     }
 
     pub(crate) fn check_response_profile(

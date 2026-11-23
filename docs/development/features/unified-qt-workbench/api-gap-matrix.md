@@ -260,3 +260,12 @@ retains original source/timing/spectrum behavior and the explicit unnamed-file
 compatibility prerequisite. Qt projects backend values into the existing fields;
 no private TX/window/FFT/calibration operation remains in these two retired files.
 Other TX inspectors and channel/receiver providers remain separate DS-01 work.
+
+## Raw source-catalog admission follow-up
+
+The [exact prerequisite contract](design.md#uiu-ds-01-raw-source-catalog-admission-prerequisite)
+and [paired acceptance](validation.md#uiu-ds-01-raw-source-catalog-api-accepted)
+cover ProfileCapture.frame and source-catalog variants of measured sequence,
+response and Designer operations. Existing Rust/native APIs, source-ID/run-ID
+separation, original provenance and calculation owners are retained. Qt input
+adoption remains UIU-DS-01; no completed API or FEC task is reopened.

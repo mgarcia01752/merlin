@@ -89,6 +89,16 @@ fn downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior() {
         &docsis_ofdm_fec::api::FullLoopResult,
     ) -> docsis_ofdm_fec::api::FullLoopFecRecovery = recovery;
     let _ = legacy_recovery;
+    assert_eq!(
+        TypeId::of::<downstream::SourceProfileFrame>(),
+        TypeId::of::<docsis_ofdm_fec::profile::candidate::CapturedProfile>()
+    );
+    let source_frame: for<'a> fn(
+        &'a downstream::ProfileCapture,
+        u8,
+    ) -> downstream::ApiResult<&'a downstream::SourceProfileFrame> =
+        downstream::ProfileCapture::frame;
+    let _ = source_frame;
     let source_limits: fn() -> downstream::SourceFileLimits = downstream::SourceInput::file_limits;
     let source_info: fn(&downstream::SourceInput) -> Option<downstream::SourceFileInfo> =
         downstream::SourceInput::file_info;

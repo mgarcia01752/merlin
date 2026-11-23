@@ -5,10 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "85bdf73876f2b9b23e30574a37c6be7ceaffd73b plus exact source-file candidate",
-    "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-source-file-native/results.json",
-    "native_sha256": "10cad90727628baa6b2cbd3d768736ef8546405afa709554044fb0e8d81414a5",
-    "scope": "Ten selected source/namespace cases; all prior native classes/members/kinds/signatures are exact after removing only file_limits/file_info/with_fill."
+    "revision": "c4898fe87187bec5476f36eb376226af321f68b7 plus exact raw source-catalog candidate",
+    "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-source-catalog-native/results.json",
+    "native_sha256": "ab4eb1e75a6775629fea5c801d5d92312b561d919966b67a7ac8439deae45b9b",
+    "scope": "21 affected source/sequence/Designer/namespace native cases; every prior native class/member/signature exact after removing only six added methods."
   },
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
@@ -135,7 +135,9 @@
     "evidence.uiu-ds-01-fec-recovery": "../unified-qt-workbench/fec-recovery-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-source-verified-fec-recovery-api-accepted: independent five-word oracle, actual complete/cancelled/empty results, exact archive/direct-Rust-process parity and additive export tracing.",
     "status.uiu-ds-01-fec-recovery": "Level 1 paired prerequisite accepted; Qt adoption, official parent Level 2 and milestone/final Level 3 remain pending.",
     "evidence.uiu-ds-01-source-file": "../unified-qt-workbench/source-file-api-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-source-file-admission-api-accepted: independent byte/bit limits, named/unnamed/empty/partial-byte/zero-fill, buffer sharing, ownership/errors and exact archive/direct-Rust-process parity.",
-    "status.uiu-ds-01-source-file": "Level 1 paired prerequisite accepted; Qt consumer, official parent Level 2 and milestone/final Level 3 remain pending."
+    "status.uiu-ds-01-source-file": "Level 1 paired prerequisite accepted; Qt consumer, official parent Level 2 and milestone/final Level 3 remain pending.",
+    "evidence.uiu-ds-01-source-catalog": "../unified-qt-workbench/source-catalog-api-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-raw-source-catalog-api-accepted: raw byte identities, exact roles/grid/epoch/provenance, borrowed/owned frames, unchanged passive admission and existing planner/Designer validation.",
+    "status.uiu-ds-01-source-catalog": "Level 1 paired prerequisite accepted; Qt adoption, parent Level 2 and final Level 3 remain pending."
   },
   "type_exports": {
     "downstream": [
@@ -1045,6 +1047,10 @@
       },
       {
         "export": "merlin::downstream::SourceFileLimits",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::SourceProfileFrame",
         "kind": "struct"
       }
     ],
@@ -32713,6 +32719,465 @@
       },
       "evidence": "evidence.uiu-ds-01-source-file",
       "status": "status.uiu-ds-01-source-file"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::ProfileCapture::frame",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn frame(&self, profile_id: u8) -> ApiResult<&SourceProfileFrame>",
+        "source_file": "crates/ofdm/src/api/inputs/profile_capture.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.ProfileCapture.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.ProfileCapture.frame",
+        "declaration": "merlin.downstream.ProfileCapture.frame"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.configuration",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<&SourceProfileFrame>",
+        "scope": "Raw source catalog byte identities retain exact data, existing admission/evaluation and provenance; no run-ID widening or simulation execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_profile_capture.rs::borrowed_source_frame_preserves_raw_identity_roles_and_capture_ownership"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_profile_capture.py::ProfileCaptureTests.test_source_frame_is_owned_preserves_raw_identity_and_roles"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::MeasurementSequence::from_capture",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn from_capture( capture: &ProfileCapture, profile_id: u8, transmission: &TransmissionConfiguration, captures: Vec<RxMer>, options: MeasurementSequenceOptions, ) -> ApiResult<Self>",
+        "source_file": "crates/ofdm/src/api/sequence.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.MeasurementSequence.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.MeasurementSequence.from_capture",
+        "declaration": "merlin.downstream.MeasurementSequence.from_capture"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Raw source catalog byte identities retain exact data, existing admission/evaluation and provenance; no run-ID widening or simulation execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_measurement_sequence.rs::source_catalog_measurement_and_response_admission_preserve_raw_ids_and_validation"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_measurement_sequence.py::MeasurementSequenceTests.test_source_catalog_admission_keeps_raw_ids_and_existing_sequence_errors"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::TransmissionConfiguration::check_response_capture",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn check_response_capture( &self, capture: &ProfileCapture, profile_id: u8, response: Option<&ChannelEstimate>, tolerance: AssociationTolerance, ) -> ApiResult<()>",
+        "source_file": "crates/ofdm/src/api/sequence.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.TransmissionConfiguration.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.TransmissionConfiguration.check_response_capture",
+        "declaration": "merlin.downstream.TransmissionConfiguration.check_response_capture"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<()>",
+        "scope": "Raw source catalog byte identities retain exact data, existing admission/evaluation and provenance; no run-ID widening or simulation execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_measurement_sequence.rs::source_catalog_measurement_and_response_admission_preserve_raw_ids_and_validation"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_measurement_sequence.py::MeasurementSequenceTests.test_source_catalog_admission_keeps_raw_ids_and_existing_sequence_errors"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "pnm_input::RxMerDesign::flat_capture",
+      "rust_namespace": "pnm_input",
+      "rust_type_method": {
+        "signature": "pub fn flat_capture( capture: &ProfileCapture, profile_id: u8, level: MerDb, epoch: CaptureTime, recipe: RxmerRecipe, position: RxMerDesignPosition, ) -> ApiResult<Self>",
+        "source_file": "crates/pnm-input/src/workbench/designer/admission.rs",
+        "rustdoc": "pnm_input/workbench/struct.RxMerDesign.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.RxMerDesign.flat_capture",
+        "declaration": "merlin.downstream.RxMerDesign.flat_capture"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Raw source catalog byte identities retain exact data, existing admission/evaluation and provenance; no run-ID widening or simulation execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/designer_admission.rs::source_catalog_designs_preserve_raw_ids_and_existing_baseline_semantics"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_designer_admission.py::DesignerAdmissionTests.test_source_catalog_designs_preserve_raw_ids_masks_and_original_baselines"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "pnm_input::RxMerDesign::imported_capture",
+      "rust_namespace": "pnm_input",
+      "rust_type_method": {
+        "signature": "pub fn imported_capture( capture: &ProfileCapture, profile_id: u8, input: &NamedCapture, recipe: RxmerRecipe, position: RxMerDesignPosition, ) -> ApiResult<Self>",
+        "source_file": "crates/pnm-input/src/workbench/designer/admission.rs",
+        "rustdoc": "pnm_input/workbench/struct.RxMerDesign.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.RxMerDesign.imported_capture",
+        "declaration": "merlin.downstream.RxMerDesign.imported_capture"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Raw source catalog byte identities retain exact data, existing admission/evaluation and provenance; no run-ID widening or simulation execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/designer_admission.rs::source_catalog_designs_preserve_raw_ids_and_existing_baseline_semantics"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_designer_admission.py::DesignerAdmissionTests.test_source_catalog_designs_preserve_raw_ids_masks_and_original_baselines"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "pnm_input::RxMerDesign::check_capture",
+      "rust_namespace": "pnm_input",
+      "rust_type_method": {
+        "signature": "pub fn check_capture( &self, capture: &ProfileCapture, profile_id: u8, ) -> ApiResult<()>",
+        "source_file": "crates/pnm-input/src/workbench/designer/admission.rs",
+        "rustdoc": "pnm_input/workbench/struct.RxMerDesign.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.RxMerDesign.check_capture",
+        "declaration": "merlin.downstream.RxMerDesign.check_capture"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<()>",
+        "scope": "Raw source catalog byte identities retain exact data, existing admission/evaluation and provenance; no run-ID widening or simulation execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/designer_admission.rs::source_catalog_designs_preserve_raw_ids_and_existing_baseline_semantics"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_designer_admission.py::DesignerAdmissionTests.test_source_catalog_designs_preserve_raw_ids_masks_and_original_baselines"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "pnm_input::workbench::RxMerDesign::flat_capture",
+      "rust_namespace": "pnm_input::workbench",
+      "rust_type_method": {
+        "signature": "pub fn flat_capture( capture: &ProfileCapture, profile_id: u8, level: MerDb, epoch: CaptureTime, recipe: RxmerRecipe, position: RxMerDesignPosition, ) -> ApiResult<Self>",
+        "source_file": "crates/pnm-input/src/workbench/designer/admission.rs",
+        "rustdoc": "pnm_input/workbench/struct.RxMerDesign.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.RxMerDesign.flat_capture",
+        "declaration": "merlin.downstream.RxMerDesign.flat_capture"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Raw source catalog byte identities retain exact data, existing admission/evaluation and provenance; no run-ID widening or simulation execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/designer_admission.rs::source_catalog_designs_preserve_raw_ids_and_existing_baseline_semantics"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_designer_admission.py::DesignerAdmissionTests.test_source_catalog_designs_preserve_raw_ids_masks_and_original_baselines"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "pnm_input::workbench::RxMerDesign::imported_capture",
+      "rust_namespace": "pnm_input::workbench",
+      "rust_type_method": {
+        "signature": "pub fn imported_capture( capture: &ProfileCapture, profile_id: u8, input: &NamedCapture, recipe: RxmerRecipe, position: RxMerDesignPosition, ) -> ApiResult<Self>",
+        "source_file": "crates/pnm-input/src/workbench/designer/admission.rs",
+        "rustdoc": "pnm_input/workbench/struct.RxMerDesign.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.RxMerDesign.imported_capture",
+        "declaration": "merlin.downstream.RxMerDesign.imported_capture"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Raw source catalog byte identities retain exact data, existing admission/evaluation and provenance; no run-ID widening or simulation execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/designer_admission.rs::source_catalog_designs_preserve_raw_ids_and_existing_baseline_semantics"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_designer_admission.py::DesignerAdmissionTests.test_source_catalog_designs_preserve_raw_ids_masks_and_original_baselines"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "pnm_input::workbench::RxMerDesign::check_capture",
+      "rust_namespace": "pnm_input::workbench",
+      "rust_type_method": {
+        "signature": "pub fn check_capture( &self, capture: &ProfileCapture, profile_id: u8, ) -> ApiResult<()>",
+        "source_file": "crates/pnm-input/src/workbench/designer/admission.rs",
+        "rustdoc": "pnm_input/workbench/struct.RxMerDesign.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.RxMerDesign.check_capture",
+        "declaration": "merlin.downstream.RxMerDesign.check_capture"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<()>",
+        "scope": "Raw source catalog byte identities retain exact data, existing admission/evaluation and provenance; no run-ID widening or simulation execution."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/designer_admission.rs::source_catalog_designs_preserve_raw_ids_and_existing_baseline_semantics"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_designer_admission.py::DesignerAdmissionTests.test_source_catalog_designs_preserve_raw_ids_masks_and_original_baselines"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
     }
   ],
   "executed_records": [
@@ -32752,7 +33217,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -68341,6 +68807,348 @@
       },
       "evidence": "evidence.uiu-ds-01-source-file",
       "status": "status.uiu-ds-01-source-file"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.ProfileCapture.frame",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::ProfileCapture",
+        "source_file": "bindings/python/src/profile_capture.rs",
+        "symbol": "PyProfileCapture",
+        "signature": "pub fn frame(&self, profile_id: u8) -> ApiResult<&SourceProfileFrame>",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "merlin::downstream::ProfileCapture::frame",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "frame",
+        "kind": "method",
+        "signature": "(self, /, profile_id)",
+        "declaration": "ProfileCapture.frame"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.configuration",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::ProfileCapture",
+        "scope": "Owned source frame dictionary or existing immutable Rust-backed handle/None; Rust supplies all validation, calculations and scientific results."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_profile_capture.rs::borrowed_source_frame_preserves_raw_identity_roles_and_capture_ownership"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_profile_capture.py::ProfileCaptureTests.test_source_frame_is_owned_preserves_raw_identity_and_roles"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.MeasurementSequence.from_capture",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::MeasurementSequence",
+        "source_file": "bindings/python/src/sequence.rs",
+        "symbol": "PySequence",
+        "signature": "pub fn from_capture( capture: &ProfileCapture, profile_id: u8, transmission: &TransmissionConfiguration, captures: Vec<RxMer>, options: MeasurementSequenceOptions, ) -> ApiResult<Self>",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "merlin::downstream::MeasurementSequence::from_capture",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native constructor",
+        "name": "from_capture",
+        "kind": "method",
+        "signature": "(capture, profile_id, transmission, captures, options)",
+        "declaration": "MeasurementSequence.from_capture"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::MeasurementSequence",
+        "scope": "Owned source frame dictionary or existing immutable Rust-backed handle/None; Rust supplies all validation, calculations and scientific results."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_measurement_sequence.rs::source_catalog_measurement_and_response_admission_preserve_raw_ids_and_validation"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_measurement_sequence.py::MeasurementSequenceTests.test_source_catalog_admission_keeps_raw_ids_and_existing_sequence_errors"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.TransmissionConfiguration.check_response_capture",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::TransmissionConfiguration",
+        "source_file": "bindings/python/src/sequence.rs",
+        "symbol": "PyTransmission",
+        "signature": "pub fn check_response_capture( &self, capture: &ProfileCapture, profile_id: u8, response: Option<&ChannelEstimate>, tolerance: AssociationTolerance, ) -> ApiResult<()>",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "merlin::downstream::TransmissionConfiguration::check_response_capture",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "check_response_capture",
+        "kind": "method",
+        "signature": "(self, /, capture, profile_id, response=None, tolerance=None)",
+        "declaration": "TransmissionConfiguration.check_response_capture"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.configuration",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::downstream::TransmissionConfiguration",
+        "scope": "Owned source frame dictionary or existing immutable Rust-backed handle/None; Rust supplies all validation, calculations and scientific results."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_measurement_sequence.rs::source_catalog_measurement_and_response_admission_preserve_raw_ids_and_validation"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_measurement_sequence.py::MeasurementSequenceTests.test_source_catalog_admission_keeps_raw_ids_and_existing_sequence_errors"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.RxMerDesign.flat_capture",
+      "rust_namespace": "pnm_input",
+      "rust_type_method": {
+        "export": "pnm_input::RxMerDesign",
+        "source_file": "bindings/python/src/designer.rs",
+        "symbol": "PyDesign",
+        "signature": "pub fn flat_capture( capture: &ProfileCapture, profile_id: u8, level: MerDb, epoch: CaptureTime, recipe: RxmerRecipe, position: RxMerDesignPosition, ) -> ApiResult<Self>",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "pnm_input::RxMerDesign::flat_capture",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "flat_capture",
+        "kind": "method",
+        "signature": "(capture, profile_id, baseline, epoch, recipe_json=None, position=None)",
+        "declaration": "RxMerDesign.flat_capture"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "pnm_input::RxMerDesign",
+        "scope": "Owned source frame dictionary or existing immutable Rust-backed handle/None; Rust supplies all validation, calculations and scientific results."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/designer_admission.rs::source_catalog_designs_preserve_raw_ids_and_existing_baseline_semantics"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_designer_admission.py::DesignerAdmissionTests.test_source_catalog_designs_preserve_raw_ids_masks_and_original_baselines"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.RxMerDesign.imported_capture",
+      "rust_namespace": "pnm_input",
+      "rust_type_method": {
+        "export": "pnm_input::RxMerDesign",
+        "source_file": "bindings/python/src/designer.rs",
+        "symbol": "PyDesign",
+        "signature": "pub fn imported_capture( capture: &ProfileCapture, profile_id: u8, input: &NamedCapture, recipe: RxmerRecipe, position: RxMerDesignPosition, ) -> ApiResult<Self>",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "pnm_input::RxMerDesign::imported_capture",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "imported_capture",
+        "kind": "method",
+        "signature": "(capture, profile_id, name, data, recipe_json=None, position=None)",
+        "declaration": "RxMerDesign.imported_capture"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "pnm_input::RxMerDesign",
+        "scope": "Owned source frame dictionary or existing immutable Rust-backed handle/None; Rust supplies all validation, calculations and scientific results."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/designer_admission.rs::source_catalog_designs_preserve_raw_ids_and_existing_baseline_semantics"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_designer_admission.py::DesignerAdmissionTests.test_source_catalog_designs_preserve_raw_ids_masks_and_original_baselines"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.RxMerDesign.check_capture",
+      "rust_namespace": "pnm_input",
+      "rust_type_method": {
+        "export": "pnm_input::RxMerDesign",
+        "source_file": "bindings/python/src/designer.rs",
+        "symbol": "PyDesign",
+        "signature": "pub fn check_capture( &self, capture: &ProfileCapture, profile_id: u8, ) -> ApiResult<()>",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "pnm_input::RxMerDesign::check_capture",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "check_capture",
+        "kind": "method",
+        "signature": "(self, /, capture, profile_id)",
+        "declaration": "RxMerDesign.check_capture"
+      },
+      "input_ownership": "ownership.owned",
+      "units": "units.measurement",
+      "error_behavior": "errors.ds",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "pnm_input::RxMerDesign",
+        "scope": "Owned source frame dictionary or existing immutable Rust-backed handle/None; Rust supplies all validation, calculations and scientific results."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-20",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/designer_admission.rs::source_catalog_designs_preserve_raw_ids_and_existing_baseline_semantics"
+        ],
+        "python": {
+          "status": "exact archive-matched installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_designer_admission.py::DesignerAdmissionTests.test_source_catalog_designs_preserve_raw_ids_masks_and_original_baselines"
+          ],
+          "scope": "Same Rust validation/calculations, independent literal anchors, unchanged legacy-method outputs/errors and immutable ownership."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-source-catalog",
+      "status": "status.uiu-ds-01-source-catalog"
     }
   ],
   "native_type_exports": {
@@ -69520,6 +70328,13 @@
       "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-fec-recovery-native/results.json",
       "native_sha256": "278777e78d61818c1d2dbdb01f6f46d1d17eba88df3881ed1f581451490e8956",
       "scope": "Eight focused full-loop/namespace cases; all prior native classes/members/kinds/signatures remain exact after removing only the new fec_recovery method."
+    },
+    {
+      "version": "0.4.0",
+      "revision": "85bdf73876f2b9b23e30574a37c6be7ceaffd73b plus exact source-file candidate",
+      "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-source-file-native/results.json",
+      "native_sha256": "10cad90727628baa6b2cbd3d768736ef8546405afa709554044fb0e8d81414a5",
+      "scope": "Ten selected source/namespace cases; all prior native classes/members/kinds/signatures are exact after removing only file_limits/file_info/with_fill."
     }
   ],
   "historical_rust_export_corrections": [

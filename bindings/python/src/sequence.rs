@@ -8,6 +8,7 @@ use crate::{
     api, error,
     inputs::{PyChannelEstimate, PyDpd, PyRxMer},
     object_from_json,
+    profile_capture::PyProfileCapture,
     quantities::{PyAssociationTolerance, PyObservationDuration},
 };
 use pyo3::{prelude::*, types::PySequence as PythonSequence};
@@ -157,6 +158,47 @@ impl PySequence {
             .map_err(error)
     }
 
+    /// Admits ordered measurements against original source roles without run-ID admission.
+    /// # Arguments
+    /// * `capture`, `profile_id` - Immutable catalog and original byte identity.
+    /// * `transmission`, `captures`, `options` - Existing numerology, originals and policy.
+    /// # Returns
+    /// Immutable sequence; Rust validates bounds/association and releases the GIL.
+    /// # Errors
+    /// Missing source and shared resource/grid/epoch/coverage/mode errors raise ApiError.
+    #[staticmethod]
+    fn from_capture(
+        py: Python<'_>,
+        capture: &PyProfileCapture,
+        profile_id: u8,
+        transmission: &PyTransmission,
+        captures: &Bound<'_, PythonSequence>,
+        options: &PySequenceOptions,
+    ) -> PyResult<Self> {
+        if captures.len()? > api::MAX_SEQUENCE_CAPTURES {
+            return Err(error(api::ApiError::new(
+                api::ErrorCode::ResourceLimit,
+                "Measurement capture count exceeds bounds",
+            )));
+        }
+        let values = captures
+            .extract::<Vec<PyRxMer>>()?
+            .into_iter()
+            .map(|v| v.0)
+            .collect();
+        py.detach(|| {
+            api::MeasurementSequence::from_capture(
+                &capture.0,
+                profile_id,
+                &transmission.0,
+                values,
+                options.0,
+            )
+        })
+        .map(Self)
+        .map_err(error)
+    }
+
     /// Reports the Rust-resolved synthetic clock and collection size.
     /// # Returns
     /// Owned mode/count/interval/span dictionary, with no fabricated capture epoch.
@@ -257,6 +299,34 @@ impl PyTransmission {
         py.detach(|| {
             self.0.check_response(
                 &profile.0,
+                response.map(|v| &v.0),
+                tolerance.map_or(api::AssociationTolerance::ZERO, |v| v.0),
+            )
+        })
+        .map_err(error)
+    }
+
+    /// Checks an original response using source roles without admitting a simulation ID.
+    /// # Arguments
+    /// * `capture`, `profile_id` - Immutable catalog and original byte identity.
+    /// * `response`, `tolerance` - Original H or unity and exact-epoch default tolerance.
+    /// # Returns
+    /// None on existing Rust physical admission, without generating samples or advancing state.
+    /// # Errors
+    /// Missing source and shared physical/epoch errors raise ApiError.
+    #[pyo3(signature=(capture, profile_id, response=None, tolerance=None))]
+    fn check_response_capture(
+        &self,
+        py: Python<'_>,
+        capture: &PyProfileCapture,
+        profile_id: u8,
+        response: Option<&PyChannelEstimate>,
+        tolerance: Option<&PyAssociationTolerance>,
+    ) -> PyResult<()> {
+        py.detach(|| {
+            self.0.check_response_capture(
+                &capture.0,
+                profile_id,
                 response.map(|v| &v.0),
                 tolerance.map_or(api::AssociationTolerance::ZERO, |v| v.0),
             )

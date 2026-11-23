@@ -6,7 +6,11 @@
 use super::{is_designer, load, Baseline, RecipeInput, Stored};
 use base64::{engine::general_purpose::STANDARD, Engine};
 use docsis_ofdm_fec::{
-    api::{ApiError, ApiResult, CaptureTime, Dpd, ErrorCode, MerDb, NamedCapture, RxMer},
+    api::{
+        ApiError, ApiResult, CaptureTime, Dpd, ErrorCode, MerDb, NamedCapture, ProfileCapture,
+        RxMer, ScenarioKey,
+    },
+    profile::candidate::CarrierAssignment,
     signal_processing::rxmer_designer::{CaptureScope, RxmerRecipe, MAX_VALUE_EDITS},
     types::modulation::CarrierType,
 };
@@ -95,10 +99,55 @@ impl RxMerDesign {
         recipe: RxmerRecipe,
         position: RxMerDesignPosition,
     ) -> ApiResult<Self> {
+        Self::flat_source(
+            profile.key(),
+            profile.carriers(),
+            level,
+            epoch,
+            recipe,
+            position,
+        )
+    }
+
+    /// Creates a flat design from original source roles without admitting a simulation ID.
+    /// # Arguments
+    /// * `capture`, `profile_id` - Immutable source catalog and original byte identity.
+    /// * `level`, `epoch` - Explicit baseline MER and original anchor seconds.
+    /// * `recipe`, `position` - Existing typed edits and original collection position.
+    /// # Returns
+    /// Immutable synthetic design with exact source grid and role mask; no PHY executes.
+    /// # Errors
+    /// InvalidIdentifier for an absent source; existing flat-design errors otherwise.
+    pub fn flat_capture(
+        capture: &ProfileCapture,
+        profile_id: u8,
+        level: MerDb,
+        epoch: CaptureTime,
+        recipe: RxmerRecipe,
+        position: RxMerDesignPosition,
+    ) -> ApiResult<Self> {
+        let profile = capture.frame(profile_id)?;
+        Self::flat_source(
+            &profile.key,
+            &profile.assignments,
+            level,
+            epoch,
+            recipe,
+            position,
+        )
+    }
+
+    fn flat_source(
+        key: &ScenarioKey,
+        assignments: &[CarrierAssignment],
+        level: MerDb,
+        epoch: CaptureTime,
+        recipe: RxmerRecipe,
+        position: RxMerDesignPosition,
+    ) -> ApiResult<Self> {
         RxMerDesignPosition::new(position.index, position.count)?;
         Self::check_recipe_size(&recipe)?;
-        let valid = profile
-            .carriers()
+        let valid = assignments
             .iter()
             .map(|assignment| {
                 !matches!(
@@ -110,7 +159,7 @@ impl RxMerDesign {
         Self::from_record(RecipeInput {
             merlin_rxmer_designer: 1,
             baseline: Baseline::Flat {
-                key: profile.key().clone(),
+                key: key.clone(),
                 anchor_epoch: epoch.value(),
                 valid,
                 baseline_db: level.value(),
@@ -137,6 +186,34 @@ impl RxMerDesign {
         recipe: RxmerRecipe,
         position: RxMerDesignPosition,
     ) -> ApiResult<Self> {
+        Self::imported_source(profile.key(), input, recipe, position)
+    }
+
+    /// Wraps an ordinary baseline using an original source catalog's spatial identity.
+    /// # Arguments
+    /// * `capture`, `profile_id` - Immutable source catalog and original byte identity.
+    /// * `input` - Exact ordinary original bytes; nested Designer baselines reject.
+    /// * `recipe`, `position` - Existing typed edits and original collection position.
+    /// # Returns
+    /// Immutable noncompounding design; source bytes/epochs and catalog remain unchanged.
+    /// # Errors
+    /// InvalidIdentifier for an absent source; existing imported-design errors otherwise.
+    pub fn imported_capture(
+        capture: &ProfileCapture,
+        profile_id: u8,
+        input: &NamedCapture,
+        recipe: RxmerRecipe,
+        position: RxMerDesignPosition,
+    ) -> ApiResult<Self> {
+        Self::imported_source(&capture.frame(profile_id)?.key, input, recipe, position)
+    }
+
+    fn imported_source(
+        key: &ScenarioKey,
+        input: &NamedCapture,
+        recipe: RxmerRecipe,
+        position: RxMerDesignPosition,
+    ) -> ApiResult<Self> {
         RxMerDesignPosition::new(position.index, position.count)?;
         Self::check_recipe_size(&recipe)?;
         if is_designer(input.bytes()) {
@@ -159,7 +236,7 @@ impl RxMerDesign {
             capture_index: position.index,
             capture_count: position.count,
         })?;
-        design.check_profile(profile)?;
+        design.check_key(key)?;
         Ok(design)
     }
 
@@ -171,7 +248,22 @@ impl RxMerDesign {
     /// # Errors
     /// IncompatibleGrid for a different original device/channel/frequency grid.
     pub fn check_profile(&self, profile: &Dpd) -> ApiResult<()> {
-        if &self.capture.frame().key != profile.key() {
+        self.check_key(profile.key())
+    }
+
+    /// Checks original spatial association without narrowing the encoded source ID.
+    /// # Arguments
+    /// * `capture`, `profile_id` - Immutable catalog and original byte-sized identity.
+    /// # Returns
+    /// Unit on exact device/channel/grid equality, without changing epochs or recipes.
+    /// # Errors
+    /// InvalidIdentifier for an absent source; IncompatibleGrid for spatial mismatch.
+    pub fn check_capture(&self, capture: &ProfileCapture, profile_id: u8) -> ApiResult<()> {
+        self.check_key(&capture.frame(profile_id)?.key)
+    }
+
+    fn check_key(&self, key: &ScenarioKey) -> ApiResult<()> {
+        if &self.capture.frame().key != key {
             return Err(ApiError::new(
                 ErrorCode::IncompatibleGrid,
                 "Designer baseline differs from the accepted profile identity/grid",

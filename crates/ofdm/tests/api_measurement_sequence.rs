@@ -327,3 +327,75 @@ fn residual_power_conversion_has_independent_db_and_unavailable_anchors() {
         assert_eq!(residual_power_mer(value), None);
     }
 }
+
+#[test]
+fn source_catalog_measurement_and_response_admission_preserve_raw_ids_and_validation() {
+    let mut document: Value = serde_json::from_slice(PROFILE).unwrap();
+
+    // Independent upper byte-ID anchor; checked run IDs remain limited to 0..15.
+    document["profiles"]
+        .as_array_mut()
+        .unwrap()
+        .iter_mut()
+        .find(|profile| profile["profile_id"] == 0)
+        .unwrap()["profile_id"] = json!(255);
+    let input = NamedCapture::new("raw profile", serde_json::to_vec(&document).unwrap()).unwrap();
+    let capture = ProfileCapture::from_bytes(&input).unwrap();
+    assert!(ProfileId::new(255).is_err());
+    let original = measured(0.0);
+    let second = measured(10.0);
+    let originals = vec![original.clone(), second.clone()];
+    let policy = options(MeasurementMode::Average);
+    let sequence =
+        MeasurementSequence::from_capture(&capture, 255, &timing(), originals.clone(), policy)
+            .unwrap();
+    let legacy =
+        MeasurementSequence::new(&profile(), &timing(), originals.clone(), policy).unwrap();
+
+    // Two independent residual powers 1 and 0.1 average to 0.55, never 5 dB.
+    close(sequence.at(0).normalized_power[0].unwrap(), 0.55);
+    assert_eq!(
+        serde_json::to_value(sequence.at(0)).unwrap(),
+        serde_json::to_value(legacy.at(0)).unwrap()
+    );
+    assert_eq!(
+        sequence.capture(0).unwrap().provenance().original_bytes(),
+        original.provenance().original_bytes()
+    );
+    timing()
+        .check_response_capture(&capture, 255, None, AssociationTolerance::ZERO)
+        .unwrap();
+    let missing =
+        MeasurementSequence::from_capture(&capture, 254, &timing(), originals.clone(), policy)
+            .err()
+            .unwrap();
+    assert_eq!(missing.code(), ErrorCode::InvalidIdentifier);
+    for values in [vec![], vec![original.clone(), original.clone()]] {
+        let raw =
+            MeasurementSequence::from_capture(&capture, 255, &timing(), values.clone(), policy)
+                .err()
+                .unwrap();
+        let old = MeasurementSequence::new(&profile(), &timing(), values, policy)
+            .err()
+            .unwrap();
+        assert_eq!(raw.code(), old.code());
+        assert_eq!(raw.to_string(), old.to_string());
+    }
+    let response =
+        ChannelEstimate::from_bytes(&NamedCapture::new("H", CHANNEL.to_vec()).unwrap()).unwrap();
+    let raw =
+        timing().check_response_capture(&capture, 255, Some(&response), AssociationTolerance::ZERO);
+    let old = timing().check_response(&profile(), Some(&response), AssociationTolerance::ZERO);
+    assert_eq!(
+        raw.as_ref().err().map(|e| (e.code(), e.to_string())),
+        old.as_ref().err().map(|e| (e.code(), e.to_string()))
+    );
+    assert_eq!(
+        timing()
+            .check_response_capture(&capture, 254, None, AssociationTolerance::ZERO)
+            .unwrap_err()
+            .code(),
+        ErrorCode::InvalidIdentifier
+    );
+    assert_eq!(capture.provenance().original_bytes(), input.bytes());
+}
