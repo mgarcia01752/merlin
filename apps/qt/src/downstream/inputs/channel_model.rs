@@ -3,15 +3,19 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Typed channel editor admission and bounded response previews over shared core APIs.
-use docsis_ofdm_fec::{
-    signal_processing::channel::{
-        additional_loss::AdditionalLoss, impairments::ChannelImpairments,
+use crate::{
+    downstream::{
+        common::constants::{
+            CHANNEL_GAIN_AXIS_PADDING_DB, CHANNEL_GAIN_TICK_INTERVALS,
+            CHANNEL_MODEL_SECTION_VERSION, CHANNEL_POWER_SECTION_VERSION,
+        },
+        workbench::session::profile_source,
     },
-    simulation::channel::measurement::captured_layout,
-    transmission::{
-        layout::{CarrierLayout, PhysicalCarrierRole},
-        TransmissionSettings,
-    },
+    shared::presentation::constants::HERTZ_PER_MEGAHERTZ,
+};
+use merlin::downstream::{
+    AdditionalLoss, AssociationTolerance, ChannelConfiguration, ChannelConfigurationInput,
+    ChannelFilterSettings, PowerConditioning, TransmissionConfiguration, TransmissionSettings,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -34,13 +38,14 @@ pub(crate) fn restore(value: &Value) -> Result<AdditionalLoss, String> {
         return Ok(AdditionalLoss::Off);
     }
     let saved: Saved = serde_json::from_value(value.clone()).map_err(|error| error.to_string())?;
-    if saved.schema_version != 1 {
+    if saved.schema_version != CHANNEL_MODEL_SECTION_VERSION {
         return Err("Unsupported channel model version.".into());
     }
-    saved
-        .additional_loss
-        .validate()
-        .map_err(|error| error.to_string())?;
+    ChannelConfiguration::new(ChannelConfigurationInput {
+        additional_loss: saved.additional_loss.clone(),
+        ..Default::default()
+    })
+    .map_err(|cause| cause.message().to_owned())?;
     Ok(saved.additional_loss)
 }
 /// Encodes only explicit model settings, preserving embedded original capture bytes.
@@ -49,7 +54,7 @@ pub(crate) fn restore(value: &Value) -> Result<AdditionalLoss, String> {
 /// # Returns
 /// Version-1 workbench section.
 pub(crate) fn saved(loss: &AdditionalLoss) -> Value {
-    json!({"schema_version":1,"additional_loss":loss})
+    json!({"schema_version":CHANNEL_MODEL_SECTION_VERSION,"additional_loss":loss})
 }
 /// Builds a bounded additional/effective response chart using the shared impairment planner.
 /// # Arguments
@@ -88,53 +93,35 @@ pub(crate) fn preview_inputs(
         .profile
         .as_ref()
         .ok_or("Apply DPD before configuring additional loss.")?;
-    let layout = captured_layout(profile, settings)
-        .and_then(|config| CarrierLayout::new(settings, &config))
-        .map_err(|error| error.to_string())?;
-    let plan = ChannelImpairments {
-        response: inputs.response.clone(),
+    let (catalog, profile_id) = profile_source(Some(profile), inputs.profile_capture.as_ref())?;
+    let preview = ChannelConfiguration::new(ChannelConfigurationInput {
         additional_loss: loss.clone(),
         ..Default::default()
-    }
-    .plan(settings, &layout, 1.0)
-    .map_err(|error| error.to_string())?;
-    let bins: Vec<_> = layout
-        .static_roles()
+    })
+    .and_then(|configuration| {
+        configuration.preview_capture(
+            &TransmissionConfiguration::new(settings.clone())?,
+            catalog,
+            profile_id,
+            inputs.response.as_ref(),
+            AssociationTolerance::new(inputs.response_tolerance)?,
+        )
+    })
+    .map_err(|cause| cause.message().to_owned())?;
+    let low = preview.active_low_frequency_hz;
+    let high = preview.active_high_frequency_hz;
+    let low_gain = preview.additional_low_gain_db;
+    let high_gain = preview.additional_high_gain_db;
+    let points: Vec<_> = preview
+        .additional_points
         .iter()
-        .enumerate()
-        .filter(|(_, role)| **role != PhysicalCarrierRole::Excluded)
-        .map(|(bin, _)| bin)
+        .map(|point| {
+            json!({
+                "frequency_hz":point.frequency_hz,"gain_db":point.additional_gain_db,
+                "effective_db":point.effective_gain_db
+            })
+        })
         .collect();
-    if bins.len() < 2 {
-        return Err("Additional loss requires at least two active carrier centers.".into());
-    }
-    let low = layout
-        .frequency_hz(bins[0] as u16)
-        .ok_or("Missing low frequency")?;
-    let high = layout
-        .frequency_hz(*bins.last().ok_or("Missing active bins")? as u16)
-        .ok_or("Missing high frequency")?;
-    let low_gain = loss
-        .gain_db(low, low, high)
-        .map_err(|error| error.to_string())?;
-    let high_gain = loss
-        .gain_db(high, low, high)
-        .map_err(|error| error.to_string())?;
-    let count = bins.len().min(128);
-    let mut points = Vec::with_capacity(count);
-    for index in 0..count {
-        let bin = bins[index * (bins.len() - 1) / (count - 1)];
-        let frequency = layout
-            .frequency_hz(bin as u16)
-            .ok_or("Missing physical frequency")?;
-        let gain_db = loss
-            .gain_db(frequency, low, high)
-            .map_err(|error| error.to_string())?;
-        let iq = plan.response[bin];
-        let effective_db = 20.0 * iq[0].hypot(iq[1]).log10();
-        points
-            .push(json!({"frequency_hz":frequency,"gain_db":gain_db,"effective_db":effective_db}));
-    }
     let minimum = points
         .iter()
         .flat_map(|point| {
@@ -145,7 +132,7 @@ pub(crate) fn preview_inputs(
         })
         .fold(0.0_f64, f64::min)
         .floor()
-        - 1.0;
+        - CHANNEL_GAIN_AXIS_PADDING_DB;
     let maximum = points
         .iter()
         .flat_map(|point| {
@@ -156,18 +143,18 @@ pub(crate) fn preview_inputs(
         })
         .fold(0.0_f64, f64::max)
         .ceil()
-        + 1.0;
+        + CHANNEL_GAIN_AXIS_PADDING_DB;
     let chart:Vec<_>=points.iter().map(|point| json!({"x":(point["frequency_hz"].as_f64().unwrap_or(f64::from(low))-f64::from(low))/f64::from(high-low),
         "additional":(maximum-point["gain_db"].as_f64().unwrap_or(0.0))/(maximum-minimum),
         "effective":(maximum-point["effective_db"].as_f64().unwrap_or(0.0))/(maximum-minimum)})).collect();
-    let ticks: Vec<_> = (0..=4)
+    let ticks: Vec<_> = (0..=CHANNEL_GAIN_TICK_INTERVALS)
         .map(|index| {
-            let position = f64::from(index) / 4.0;
+            let position = f64::from(index) / f64::from(CHANNEL_GAIN_TICK_INTERVALS);
             json!({"x":position,"label":format!("{:.1}",maximum-position*(maximum-minimum))})
         })
         .collect();
     Ok(
-        json!({"error":"","chart":chart,"y_ticks":ticks,"x_ticks":[{"x":0,"label":format!("{:.3} MHz",f64::from(low)/1e6)},{"x":1,"label":format!("{:.3} MHz",f64::from(high)/1e6)}],"points":points,"band":format!("{:.3}–{:.3} MHz",f64::from(low)/1e6,f64::from(high)/1e6),
+        json!({"error":"","chart":chart,"y_ticks":ticks,"x_ticks":[{"x":0,"label":format!("{:.3} MHz",f64::from(low)/HERTZ_PER_MEGAHERTZ)},{"x":1,"label":format!("{:.3} MHz",f64::from(high)/HERTZ_PER_MEGAHERTZ)}],"points":points,"band":format!("{:.3}–{:.3} MHz",f64::from(low)/HERTZ_PER_MEGAHERTZ,f64::from(high)/HERTZ_PER_MEGAHERTZ),
         "low_gain":format!("{low_gain:.2} dB"),"high_gain":format!("{high_gain:.2} dB"),"tilt":format!("{:.2} dB",high_gain-low_gain)}),
     )
 }
@@ -184,60 +171,40 @@ pub(crate) fn preview_inputs(
 pub(crate) fn combined_preview(
     settings: &TransmissionSettings,
     inputs: &crate::downstream::workbench::session::Inputs,
-    filter: &docsis_ofdm_fec::signal_processing::channel::filter::ChannelFilterSettings,
+    filter: &ChannelFilterSettings,
 ) -> Result<Value, crate::downstream::help::AdmissionError> {
-    use docsis_ofdm_fec::signal_processing::channel::composition::prepare_channel;
     let profile = inputs
         .profile
         .as_ref()
         .ok_or("Apply DPD to preview the channel response.")?;
-    let layout = captured_layout(profile, settings)
-        .and_then(|config| CarrierLayout::new(settings, &config))
-        .map_err(crate::downstream::help::AdmissionError::classified)?;
-    let prepared = prepare_channel(
-        settings,
-        &layout,
-        &ChannelImpairments {
-            response: inputs.response.clone(),
-            additional_loss: inputs.additional_loss.clone(),
-            power: inputs.power.clone(),
-            ..Default::default()
-        },
-        1.0,
-        filter,
-    )
+    let (catalog, profile_id) = profile_source(Some(profile), inputs.profile_capture.as_ref())?;
+    let preview = ChannelConfiguration::new(ChannelConfigurationInput {
+        additional_loss: inputs.additional_loss.clone(),
+        power: inputs.power.clone(),
+        filter: filter.clone(),
+    })
+    .and_then(|configuration| {
+        configuration.preview_capture(
+            &TransmissionConfiguration::new(settings.clone())?,
+            catalog,
+            profile_id,
+            inputs.response.as_ref(),
+            AssociationTolerance::new(inputs.response_tolerance)?,
+        )
+    })
     .map_err(crate::downstream::help::AdmissionError::classified)?;
-    let active: Vec<_> = layout
-        .static_roles()
-        .iter()
-        .enumerate()
-        .filter(|(_, role)| **role != PhysicalCarrierRole::Excluded)
-        .map(|(bin, _)| bin)
-        .collect();
-    let low = *active.first().ok_or("No active channel carriers.")?;
-    let high = *active.last().ok_or("No active channel carriers.")?;
-    let mut frequency = Vec::new();
-    let mut gain = Vec::new();
-    for bin in low..=high {
-        frequency.push(
-            f64::from(
-                layout
-                    .frequency_hz(bin as u16)
-                    .ok_or("Missing channel frequency.")?,
-            ) / 1e6,
-        );
-        let iq = prepared.plan.response[bin];
-        gain.push(
-            (layout.static_roles()[bin] != PhysicalCarrierRole::Excluded)
-                .then(|| 20.0 * iq[0].hypot(iq[1]).log10()),
-        );
+    let mut view = serde_json::to_value(preview.gain).map_err(|cause| cause.to_string())?;
+    view["available"] = json!(view["points"]
+        .as_array()
+        .is_some_and(|points| points.iter().any(|point| point["y"].is_number())));
+    view["axis_label"] = json!("Gain · dB");
+    view["frequency_label"] = json!("Frequency (MHz)");
+    for tick in view["y_ticks"]
+        .as_array_mut()
+        .ok_or("Missing channel gain ticks.")?
+    {
+        tick["y"] = tick["x"].clone();
     }
-    let mut view = crate::downstream::instruments::receiver::diagnostics::curve(
-        &frequency,
-        &gain,
-        "Gain · dB",
-        "Frequency (MHz)",
-    );
     view["summary"] = json!("Accepted channel response · before receiver correction");
     Ok(view)
 }
@@ -249,23 +216,25 @@ pub(crate) fn combined_preview(
 /// Validated conditioning; absent controls select unity and relative units.
 /// # Errors
 /// Rejects unknown fields, unsupported versions and invalid electrical parameters.
-pub(crate) fn restore_power(
-    value: &Value,
-) -> Result<docsis_ofdm_fec::signal_processing::channel::power::PowerConditioning, String> {
+pub(crate) fn restore_power(value: &Value) -> Result<PowerConditioning, String> {
     #[derive(Deserialize)]
     #[serde(deny_unknown_fields)]
     struct SavedPower {
         schema_version: u32,
-        conditioning: docsis_ofdm_fec::signal_processing::channel::power::PowerConditioning,
+        conditioning: PowerConditioning,
     }
     if value.is_null() {
         return Ok(Default::default());
     }
     let saved: SavedPower = serde_json::from_value(value.clone()).map_err(|e| e.to_string())?;
-    if saved.schema_version != 1 {
+    if saved.schema_version != CHANNEL_POWER_SECTION_VERSION {
         return Err("Unsupported channel power version.".into());
     }
-    saved.conditioning.validate().map_err(|e| e.to_string())?;
+    ChannelConfiguration::new(ChannelConfigurationInput {
+        power: saved.conditioning.clone(),
+        ..Default::default()
+    })
+    .map_err(|cause| cause.message().to_owned())?;
     Ok(saved.conditioning)
 }
 /// Encodes accepted scalar conditioning in its own versioned section.
@@ -273,21 +242,17 @@ pub(crate) fn restore_power(
 /// * `power` - Validated scalar conditioning.
 /// # Returns
 /// Version1 section, separate from existing channel_model additional loss.
-pub(crate) fn saved_power(
-    power: &docsis_ofdm_fec::signal_processing::channel::power::PowerConditioning,
-) -> Value {
-    json!({"schema_version":1,"conditioning":power})
+pub(crate) fn saved_power(power: &PowerConditioning) -> Value {
+    json!({"schema_version":CHANNEL_POWER_SECTION_VERSION,"conditioning":power})
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use docsis_ofdm_fec::signal_processing::channel::additional_loss::{CableModel, LengthUnit};
+    use merlin::downstream::{CableModel, LengthUnit};
     #[test]
     fn combined_preview_is_bounded_and_preserves_admission_diagnostics() {
-        use docsis_ofdm_fec::signal_processing::channel::filter::{
-            ChannelFilterSettings, EchoPath,
-        };
+        use merlin::downstream::{ChannelFilterSettings, EchoPath};
         let project: crate::downstream::workbench::project_file::Project = serde_json::from_slice(
             include_bytes!("../../../../../examples/workbench/single/workbench.merlin.json"),
         )

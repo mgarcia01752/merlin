@@ -200,3 +200,31 @@ pub(crate) const INITIAL_RESPONSE_VELOCITY_PERCENT: u32 = 87;
 pub(crate) const MIN_RESPONSE_VELOCITY_PERCENT: u32 = 1;
 /// Maximum integer percentage; the public backend independently validates (0, 1].
 pub(crate) const MAX_RESPONSE_VELOCITY_PERCENT: u32 = 100;
+
+/// Initial editor replay interval in physical OFDM symbols; not a run duration.
+pub(crate) const DEFAULT_REPLAY_INTERVAL_SYMBOLS: u64 = 1000;
+/// Existing RxMER/profile original-epoch association default, independent of H.
+pub(crate) const DEFAULT_RXMER_ASSOCIATION_SECONDS: u32 = 90000;
+/// Existing H/profile original-epoch association default; independently editable.
+pub(crate) const DEFAULT_RESPONSE_ASSOCIATION_SECONDS: u32 = 90000;
+/// Persisted channel-model section version, independent of power/project versions.
+pub(crate) const CHANNEL_MODEL_SECTION_VERSION: u32 = 1;
+/// Persisted scalar power section version, independent of channel-model version.
+pub(crate) const CHANNEL_POWER_SECTION_VERSION: u32 = 1;
+/// Drawing margin around additional/effective gain curves in dB.
+pub(crate) const CHANNEL_GAIN_AXIS_PADDING_DB: f64 = 1.0;
+/// Vertical label intervals for the additional/effective gain editor chart.
+pub(crate) const CHANNEL_GAIN_TICK_INTERVALS: u32 = 4;
+/// Minimum extra PLC context in original source offsets; not a PHY carrier count.
+pub(crate) const MIN_PLC_PREVIEW_CONTEXT: usize = 8;
+/// Display padding relative to PLC span, independent of carrier allocation.
+pub(crate) const PLC_PREVIEW_CONTEXT_MULTIPLIER: usize = 2;
+
+/// Measurement-dialog gain selector; independent of receiver instrument protocols.
+pub(crate) const MEASUREMENT_GAIN_PROJECTION: i32 = 0;
+/// Measurement-dialog wrapped-phase selector in the existing serialized UI protocol.
+pub(crate) const MEASUREMENT_PHASE_PROJECTION: i32 = 1;
+/// Measurement-dialog real-component selector, not a carrier role or count.
+pub(crate) const MEASUREMENT_REAL_PROJECTION: i32 = 2;
+/// Measurement-dialog imaginary-component selector in the existing UI protocol.
+pub(crate) const MEASUREMENT_IMAGINARY_PROJECTION: i32 = 3;

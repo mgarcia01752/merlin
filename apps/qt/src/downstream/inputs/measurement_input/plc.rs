@@ -3,8 +3,12 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Profile-derived PLC overlays, clipped to the exact chart viewport.
-use docsis_ofdm_fec::{
-    profile::candidate::CapturedProfile, scenario::FrequencyGrid, types::modulation::CarrierType,
+use crate::{
+    downstream::common::constants::{MIN_PLC_PREVIEW_CONTEXT, PLC_PREVIEW_CONTEXT_MULTIPLIER},
+    shared::presentation::constants::HERTZ_PER_MEGAHERTZ,
+};
+use merlin::downstream::{
+    FrequencyGrid, ProfileCarrierRole as CarrierType, SourceProfileFrame as CapturedProfile,
 };
 use serde_json::{json, Value};
 /// Adds PLC carrier footprints only when the accepted profile matches the source.
@@ -33,16 +37,18 @@ pub(crate) fn annotate(view: &mut Value, grid: &FrequencyGrid, profile: Option<&
         .enumerate()
         .filter(|(_, assignment)| assignment.carrier_type == CarrierType::Plc)
         .map(|(index, _)| index);
-    let Some(first) = carriers.next() else { return };
+    let Some(first) = carriers.next() else {
+        return;
+    };
     let last = carriers.next_back().unwrap_or(first);
-    let padding = (last - first + 1).max(8) * 2;
+    let padding = (last - first + 1).max(MIN_PLC_PREVIEW_CONTEXT) * PLC_PREVIEW_CONTEXT_MULTIPLIER;
     let zoom_start = first.saturating_sub(padding);
     let zoom_end = (last + 1 + padding).min(grid.sample_count);
     view["plc_view"] = json!({"start":zoom_start,"count":zoom_end-zoom_start});
     view["plc_summary"] = json!(format!(
         "PLC first–last: {:.3}–{:.3} MHz · {} carriers",
-        f64::from(grid.frequency(first).unwrap_or(0)) / 1e6,
-        f64::from(grid.frequency(last).unwrap_or(0)) / 1e6,
+        f64::from(grid.frequency(first).unwrap_or(0)) / HERTZ_PER_MEGAHERTZ,
+        f64::from(grid.frequency(last).unwrap_or(0)) / HERTZ_PER_MEGAHERTZ,
         last - first + 1
     ));
     if count == 1 {
@@ -64,16 +70,18 @@ mod tests {
     use super::*;
     #[test]
     fn plc_region_spans_first_to_last_and_clips_when_zoomed() {
-        let mut profile = docsis_ofdm_fec::scenario::pnm_json::import_profiles(
-            docsis_ofdm_fec::scenario::pnm_json::JsonCapture {
-                name: "profile",
-                bytes: include_bytes!(
-                    "../../../../../../examples/measurements/single-channel/modulation_profile.json"
-                ),
-            },
+        let capture = merlin::downstream::inputs::CaptureLoader::profile_capture(
+            &merlin::downstream::NamedCapture::new(
+                "profile",
+                include_bytes!(
+                "../../../../../../examples/measurements/single-channel/modulation_profile.json"
+            )
+                .to_vec(),
+            )
+            .unwrap(),
         )
-        .unwrap()
-        .remove(0);
+        .unwrap();
+        let mut profile = capture.frame(0).unwrap().clone();
         // Deliberately separate assignments: rendering is one first-to-last region.
         for assignment in &mut profile.assignments {
             assignment.carrier_type = CarrierType::Data;

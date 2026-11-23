@@ -3,8 +3,11 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! One GUI-thread workbench's accepted scientific inputs, shared by typed snapshots.
-use docsis_ofdm_fec::profile::candidate::CapturedProfile;
-use merlin::downstream::SourceInput;
+use crate::downstream::common::constants::DEFAULT_RESPONSE_ASSOCIATION_SECONDS;
+use merlin::downstream::{
+    AdditionalLoss, ChannelEstimate, MeasurementMode, PowerConditioning, ProfileCapture,
+    RxMerFrame, SourceInput, SourceProfileFrame,
+};
 use std::cell::RefCell;
 
 #[derive(Clone)]
@@ -13,17 +16,70 @@ pub(crate) struct AcceptedSource {
     pub seed: u16,
 }
 
-#[derive(Default, Clone)]
+/// Passive accepted editor selection; scientific admission belongs to MeasurementSequence.
+/// Incomplete saved projects retain their exact frames without claiming run readiness.
+#[derive(Clone)]
+pub(crate) struct PlaybackInputs {
+    pub frames: Vec<RxMerFrame>,
+    pub mode: MeasurementMode,
+    pub interval_symbols: u64,
+    pub tolerance_seconds: u32,
+}
+
+#[derive(Clone)]
 pub(crate) struct Inputs {
-    pub power: docsis_ofdm_fec::signal_processing::channel::power::PowerConditioning,
+    pub power: PowerConditioning,
     pub source: Option<AcceptedSource>,
-    pub profile: Option<CapturedProfile>,
-    pub profiles: Vec<CapturedProfile>,
-    pub playback:
-        Option<docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackConfiguration>,
-    pub response: Option<docsis_ofdm_fec::scenario::ChannelFrame>,
-    pub additional_loss:
-        docsis_ofdm_fec::signal_processing::channel::additional_loss::AdditionalLoss,
+    pub profile: Option<SourceProfileFrame>,
+    pub profiles: Vec<SourceProfileFrame>,
+    pub profile_capture: Option<ProfileCapture>,
+    pub playback: Option<PlaybackInputs>,
+    pub response: Option<ChannelEstimate>,
+    pub response_tolerance: u32,
+    pub additional_loss: AdditionalLoss,
+}
+
+impl Default for Inputs {
+    /// Creates untouched editor storage without admitting a scientific session.
+    /// # Returns
+    /// Independent empty inputs and the existing response-association default.
+    fn default() -> Self {
+        Self {
+            power: PowerConditioning::default(),
+            source: None,
+            profile: None,
+            profiles: Vec::new(),
+            profile_capture: None,
+            playback: None,
+            response: None,
+            response_tolerance: DEFAULT_RESPONSE_ASSOCIATION_SECONDS,
+            additional_loss: AdditionalLoss::default(),
+        }
+    }
+}
+
+/// Checks that the selected editor DTO still corresponds to its exact original catalog.
+/// # Arguments
+/// * `profile`, `capture` - Selected snapshot and retained admitted original.
+/// # Returns
+/// Original catalog and byte-sized identity, without simulation-ID coercion.
+/// # Errors
+/// Rejects missing or stale source snapshots; scientific compatibility stays in the API.
+pub(crate) fn profile_source<'input>(
+    profile: Option<&SourceProfileFrame>,
+    capture: Option<&'input ProfileCapture>,
+) -> Result<(&'input ProfileCapture, u8), String> {
+    let profile = profile.ok_or("Apply a compatible DPD before accepting RxMER.")?;
+    let capture = capture.ok_or("Apply the original modulation-profile capture.")?;
+    let original = capture
+        .frame(profile.profile_id)
+        .map_err(|cause| cause.message().to_owned())?;
+    if serde_json::to_value(original).map_err(|cause| cause.to_string())?
+        != serde_json::to_value(profile).map_err(|cause| cause.to_string())?
+    {
+        return Err("Accepted profile differs from its original editor capture.".into());
+    }
+    Ok((capture, profile.profile_id))
 }
 
 thread_local! { static INPUTS: RefCell<Inputs> = RefCell::new(Inputs::default()); }
@@ -37,19 +93,20 @@ pub(crate) fn set_source(source: Option<AcceptedSource>) {
 
 /// Publishes accepted profile selection/removal, never a draft.
 /// # Arguments
-/// * `profile` - Validated captured assignments, or None after applied removal.
-pub(crate) fn set_profile(profile: Option<CapturedProfile>) {
+/// * `profile`, `capture` - Selected assignments and exact original catalog, or removal.
+pub(crate) fn set_profile(profile: Option<SourceProfileFrame>, capture: Option<ProfileCapture>) {
     INPUTS.with(|inputs| {
         let mut inputs = inputs.borrow_mut();
         inputs.profiles = profile.iter().cloned().collect();
         inputs.profile = profile;
+        inputs.profile_capture = capture;
     });
 }
 
 /// Publishes all profiles from the accepted original capture, never editor drafts.
 /// # Arguments
 /// * `profiles` - Validated captured profiles in source identity order.
-pub(crate) fn set_profiles(profiles: Vec<CapturedProfile>) {
+pub(crate) fn set_profiles(profiles: Vec<SourceProfileFrame>) {
     INPUTS.with(|inputs| inputs.borrow_mut().profiles = profiles);
 }
 
@@ -84,18 +141,19 @@ pub(crate) fn profile_catalog() -> (Vec<u8>, Option<u8>) {
 /// Publishes accepted RxMER playback inputs for independent worker snapshots.
 /// # Arguments
 /// * `playback` - Original frames and explicit combination/schedule, or removal.
-pub(crate) fn set_playback(
-    playback: Option<
-        docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackConfiguration,
-    >,
-) {
+pub(crate) fn set_playback(playback: Option<PlaybackInputs>) {
     INPUTS.with(|inputs| inputs.borrow_mut().playback = playback);
 }
 /// Publishes accepted channel response H; None explicitly means synthetic unity.
 /// # Arguments
 /// * `response` - Original validated response, never reciprocal correction.
-pub(crate) fn set_response(response: Option<docsis_ofdm_fec::scenario::ChannelFrame>) {
-    INPUTS.with(|inputs| inputs.borrow_mut().response = response);
+/// * `tolerance` - Independent accepted response-association seconds.
+pub(crate) fn set_response(response: Option<ChannelEstimate>, tolerance: u32) {
+    INPUTS.with(|inputs| {
+        let mut inputs = inputs.borrow_mut();
+        inputs.response = response;
+        inputs.response_tolerance = tolerance;
+    });
 }
 
 thread_local! { static SAVED: RefCell<std::collections::BTreeMap<String,serde_json::Value>> = RefCell::new(Default::default()); }
@@ -143,17 +201,13 @@ pub(crate) fn restore(
 /// Publishes the accepted synthetic magnitude response for the next frozen run.
 /// # Arguments
 /// * `loss` - Validated additional loss; original measurements remain unchanged.
-pub(crate) fn set_additional_loss(
-    loss: docsis_ofdm_fec::signal_processing::channel::additional_loss::AdditionalLoss,
-) {
+pub(crate) fn set_additional_loss(loss: AdditionalLoss) {
     INPUTS.with(|inputs| inputs.borrow_mut().additional_loss = loss);
 }
 
 /// Publishes validated amplifier, attenuation and electrical-reference settings.
 /// # Arguments
 /// * `power` - Accepted configuration, independent of measurement originals.
-pub(crate) fn set_power(
-    power: docsis_ofdm_fec::signal_processing::channel::power::PowerConditioning,
-) {
+pub(crate) fn set_power(power: PowerConditioning) {
     INPUTS.with(|inputs| inputs.borrow_mut().power = power);
 }

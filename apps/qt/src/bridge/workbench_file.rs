@@ -144,7 +144,7 @@ impl bridge::WorkbenchFile {
         workbench_session::restore(Default::default(), Default::default());
         crate::platform::input_file::clear_original_paths();
         self.as_mut().rust_mut().path = None;
-        QString::from(json!({"created":true,"transmission":docsis_ofdm_fec::transmission::TransmissionSettings::default(),
+        QString::from(json!({"created":true,"transmission":merlin::downstream::TransmissionSettings::default(),
             "receiver":null,"verified":false,"dark":null}).to_string())
     }
 

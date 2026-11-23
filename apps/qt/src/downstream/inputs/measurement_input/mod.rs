@@ -10,7 +10,6 @@ pub(crate) mod plc;
 mod preview;
 /// Independent accepted measurements reconstructed before project adoption.
 pub(crate) struct RestoredMeasurements {
-    pub playback:
-        Option<docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackConfiguration>,
-    pub response: Option<docsis_ofdm_fec::scenario::ChannelFrame>,
+    pub playback: Option<crate::downstream::workbench::session::PlaybackInputs>,
+    pub response: Option<merlin::downstream::ChannelEstimate>,
 }

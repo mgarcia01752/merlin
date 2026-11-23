@@ -108,6 +108,35 @@ impl Capture {
             designer: None,
         })
     }
+    /// Admits this unchanged original/selected DTO through the public RxMER owner.
+    /// # Returns
+    /// Immutable original-grid observation, including existing Designer metadata.
+    /// # Errors
+    /// Rejects the wrong type or invalid frame without changing this input.
+    pub(crate) fn rxmer(&self) -> Result<merlin::downstream::RxMer, String> {
+        let Measurement::Rxmer(frame) = &self.measurement else {
+            return Err("Expected RxMER input.".into());
+        };
+        let original = NamedCapture::new(&self.name, self.original.as_ref().clone())
+            .map_err(|cause| cause.message().to_owned())?;
+        merlin::downstream::RxMer::from_frame(&original, frame.as_ref().clone())
+            .map_err(|cause| cause.message().to_owned())
+    }
+
+    /// Reads the exact original response through public native admission.
+    /// # Returns
+    /// Immutable H with separate original and decoded provenance.
+    /// # Errors
+    /// Rejects the wrong type or invalid original without changing this input.
+    pub(crate) fn response(&self) -> Result<merlin::downstream::ChannelEstimate, String> {
+        if !matches!(&self.measurement, Measurement::Response(_)) {
+            return Err("Expected a channel-response capture.".into());
+        }
+        let original = NamedCapture::new(&self.name, self.original.as_ref().clone())
+            .map_err(|cause| cause.message().to_owned())?;
+        CaptureLoader::channel_estimate(&original).map_err(|cause| cause.message().to_owned())
+    }
+
     /// Borrows the exact capture association key without reconstructing coordinates.
     /// # Returns
     /// Original device/channel/grid identity.

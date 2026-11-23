@@ -129,7 +129,13 @@ impl Project {
                 .map(|(capture, _)| capture.owned_profiles())
                 .transpose()?
                 .unwrap_or_default(),
+            profile_capture: editors
+                .profile
+                .accepted
+                .as_ref()
+                .map(|(capture, _)| capture.catalog.clone()),
             profile,
+            response_tolerance: editors.measurements.response_tolerance,
             playback: measurements.playback,
             response: measurements.response,
             additional_loss: crate::downstream::inputs::channel_model::restore(
@@ -306,7 +312,7 @@ mod tests {
             let profile = inputs.profile.as_ref().unwrap();
             let playback = inputs.playback.as_ref().unwrap();
             if let Some(response) = inputs.response.as_ref() {
-                assert_eq!(profile.key, response.key);
+                assert_eq!(profile.key, response.frame().key);
             } else {
                 assert!(matches!(
                     bundle["id"].as_str(),

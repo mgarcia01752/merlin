@@ -3011,3 +3011,40 @@ no-skipped-tests rule. A focused runner contract discovers optional reference
 guards and verifies complete wiring to real Rust example sources. Level 1 runs
 the affected new process/current native cases and runner tests; complete native
 acceptance remains a milestone/final gate.
+
+## UIU-DS-01 measured-input and configured-channel adoption
+
+REQ-UIU-02/03/08/09/16/17/18/21/22/24/27 and UIU-DS-01 own the remaining
+measured-input cohort. Reuse the accepted public catalog, sequence, response,
+channel preview and Designer contracts; no further measured-input API is planned.
+The lead alone edits these downstream owners; parallel session preparation is
+confined to new unregistered shell files.
+
+EDIT measurement_input/model.rs, document.rs, mod.rs and plc.rs, channel_model.rs,
+downstream/workbench/session.rs and project_file.rs, and their existing bridge
+consumers. Retain the immutable original ProfileCapture alongside its legacy
+selected SourceProfileFrame snapshot. Keep passive publication of selected RxMER
+frame DTOs/options independent of scientific run admission so incomplete/mismatched
+idle saved projects remain loadable. This is application input storage, without
+a second simulation interface. Original bytes and original/decoded hashes remain
+distinct. Public MeasurementSequence and ChannelConfiguration operations perform
+scientific admission and previews; response tolerance stays independent of RxMER.
+Retain all existing selectors, errors where meaningful, JSON keys, gaps, chart
+units/coordinates, PLC overlays, partial-project behavior and FEC worker inputs.
+
+REUSE merlin::downstream::{ProfileCapture, SourceProfileFrame, MeasurementSequence,
+MeasurementSequenceOptions, RxMer, ChannelEstimate, ChannelConfiguration} and the
+accepted synthetic-unity preview. No Qt private measurement projection, residual
+power conversion, physical channel planning, gain calculation or response fitting
+remains in migrated owners. Existing screen transforms and presentation-only
+axis/tick policies stay in Qt with named constants. Designer's independent
+noncompounding operation and bounded archived receiver migration remain explicit
+subsequent owners within the same parent task.
+
+Validate complete affected Qt owner tests and original worker/project assertions,
+affected QML measurement/channel/Designer interactions, scoped Clippy/formatting,
+latest optimized UI build, boundary and canonical traceability. Expand Rust/native
+project compatibility checks if persisted admission changes; do not rebuild a
+wheel for unchanged accepted APIs. Compare frozen entries explicitly and retire
+only complete migrated owners. Parent Level 2 and milestone Level 3 remain open
+until all downstream owners and dependencies are resolved.

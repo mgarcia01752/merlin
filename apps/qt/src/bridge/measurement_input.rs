@@ -6,8 +6,8 @@
 use crate::downstream::inputs::measurement_input::{document, model};
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
-use docsis_ofdm_fec::transmission::TransmissionSettings;
 use document::{Capture, MAX_INPUT_BYTES};
+use merlin::downstream::{MeasurementMode, TransmissionSettings};
 use model::{ChartRequest, Model, Options};
 use serde_json::{json, Value};
 
@@ -258,9 +258,7 @@ impl MeasurementInputsRust {
         json!({"files":self.model.files(rxmer,profile.as_ref()),"options":options,"flat":!rxmer&&self.model.draft_response.is_none()})
     }
     fn stage_urls(&mut self, rxmer: bool, urls: Vec<String>) -> Result<(), String> {
-        if urls.len()
-            > docsis_ofdm_fec::simulation::channel::measurement_playback::MAX_PLAYBACK_FRAMES
-        {
+        if urls.len() > merlin::downstream::MAX_SEQUENCE_CAPTURES {
             return Err("Select at most 256 files.".into());
         }
         if urls.is_empty() {
@@ -289,14 +287,25 @@ impl MeasurementInputsRust {
         options: &Options,
         settings: &TransmissionSettings,
     ) -> Result<Value, String> {
-        let profile = crate::downstream::workbench::session::snapshot().profile;
+        let inputs = crate::downstream::workbench::session::snapshot();
+        let profile = inputs.profile;
         if rxmer {
-            let plan = Model::playback(&self.model.draft_rx, options, settings, profile.as_ref())?;
-            let (symbols, ms) = plan.span();
+            let plan = Model::playback(
+                &self.model.draft_rx,
+                options,
+                settings,
+                profile.as_ref(),
+                inputs.profile_capture.as_ref(),
+            )?;
+            let info = plan.info();
+            let (symbols, ms) = (
+                info.last_transition_symbol,
+                info.last_transition_milliseconds,
+            );
             let summary = match options.mode {
-                docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Single => "Static per-carrier RxMER · one capture held for the run".into(),
-                docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Average => format!("Static equal-weight error-power average · {} captures · no temporal playback",plan.frames().len()),
-                _ => format!("Interval {:.3} ms · final transition at symbol {} ({:.3} ms) · hold final capture",plan.interval_milliseconds(),symbols,ms),
+                MeasurementMode::Single => "Static per-carrier RxMER · one capture held for the run".into(),
+                MeasurementMode::Average => format!("Static equal-weight error-power average · {} captures · no temporal playback",info.source_count),
+                _ => format!("Interval {:.3} ms · final transition at symbol {} ({:.3} ms) · hold final capture",info.interval_milliseconds,symbols,ms),
             };
             Ok(json!({"error":"","summary":summary}))
         } else {
@@ -305,6 +314,7 @@ impl MeasurementInputsRust {
                 settings,
                 profile.as_ref(),
                 options.tolerance_seconds,
+                inputs.profile_capture.as_ref(),
             )?;
             Ok(
                 json!({"error":"","summary":if self.model.draft_response.is_none() {"Synthetic flat H = 1 + 0i per carrier · 0 dB / 0°"} else {"Validated captured channel response H; receiver estimation is separate."}}),
@@ -383,7 +393,7 @@ impl bridge::MeasurementInputs {
                 parse(&run_options.to_string())?;
             let Some(run) = run else {
                 return Ok(
-                    json!({"loaded":loaded,"selected":selected,"capacity":null,"error":selection_error,"fits":selected>0 && (options.mode != docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Single || selected==1),"summary":format!("{selected} selected / {loaded} loaded · Configure WorkBench to see replay capacity.")}),
+                    json!({"loaded":loaded,"selected":selected,"capacity":null,"error":selection_error,"fits":selected>0 && (options.mode != MeasurementMode::Single || selected==1),"summary":format!("{selected} selected / {loaded} loaded · Configure WorkBench to see replay capacity.")}),
                 );
             };
             let settings = parse::<TransmissionSettings>(&settings.to_string())?;
@@ -393,11 +403,21 @@ impl bridge::MeasurementInputs {
                 .map_err(|error| error.to_string())?
                 .complete_symbols;
             let fits = selected > 0 && selected <= capacity;
-            let temporal = matches!(options.mode, docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Hold | docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Interpolate);
+            let temporal = matches!(
+                options.mode,
+                MeasurementMode::Hold | MeasurementMode::Interpolate
+            );
             let summary = if temporal {
                 format!("{selected} selected / {loaded} loaded · CWB: {} ms per profile ({symbols} symbols) · Up to {capacity} captures at {} symbols apart.{}",run.duration_ms,options.interval_symbols,if fits {""} else {" Select fewer captures, reduce the interval or increase CWB duration."})
             } else {
-                format!("{selected} selected / {loaded} loaded · {}",if options.mode == docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Single {"Single Shot requires exactly one capture."} else {"Average combines selected captures; no temporal replay."})
+                format!(
+                    "{selected} selected / {loaded} loaded · {}",
+                    if options.mode == MeasurementMode::Single {
+                        "Single Shot requires exactly one capture."
+                    } else {
+                        "Average combines selected captures; no temporal replay."
+                    }
+                )
             };
             Ok(
                 json!({"error":selection_error,"loaded":loaded,"selected":selected,"capacity":capacity,"fits":fits,"observation_symbols":symbols,"duration_ms":run.duration_ms,"summary":summary}),
@@ -531,12 +551,17 @@ impl bridge::MeasurementInputs {
     /// # Returns
     /// Bounded viewport or diagnostic with no stale points.
     pub fn view(&self, rxmer: bool, request: &QString, settings: &QString) -> QString {
-        let profile = crate::downstream::workbench::session::snapshot().profile;
+        let inputs = crate::downstream::workbench::session::snapshot();
+        let profile = inputs.profile.as_ref();
         let result = parse_selection::<ChartRequest>(&request.to_string()).and_then(|request| {
             parse::<TransmissionSettings>(&settings.to_string()).and_then(|settings| {
-                self.rust()
-                    .model
-                    .chart(rxmer, &request, &settings, profile.as_ref())
+                self.rust().model.chart(
+                    rxmer,
+                    &request,
+                    &settings,
+                    profile,
+                    inputs.profile_capture.as_ref(),
+                )
             })
         });
         QString::from(
@@ -577,12 +602,12 @@ impl bridge::MeasurementInputs {
                 crate::downstream::workbench::session::set_playback(published.playback);
             } else {
                 crate::downstream::workbench::session::set_response(
-                    model.accepted_response.as_ref().and_then(|capture| {
-                        match &capture.measurement {
-                            document::Measurement::Response(frame) => Some(frame.as_ref().clone()),
-                            _ => None,
-                        }
-                    }),
+                    model
+                        .accepted_response
+                        .as_ref()
+                        .map(Capture::response)
+                        .transpose()?,
+                    model.response_tolerance,
                 );
             }
             Ok(())
@@ -658,7 +683,10 @@ impl bridge::MeasurementInputs {
         let model = &self.rust().model;
         if let Ok(inputs) = model.published(profile.as_ref()) {
             crate::downstream::workbench::session::set_playback(inputs.playback);
-            crate::downstream::workbench::session::set_response(inputs.response);
+            crate::downstream::workbench::session::set_response(
+                inputs.response,
+                model.response_tolerance,
+            );
         }
         QString::from(
             model
@@ -684,12 +712,15 @@ impl bridge::MeasurementInputs {
     /// # Returns
     /// Empty on success, diagnostic on failure without changing accepted state.
     pub fn power_apply(self: core::pin::Pin<&mut Self>, document: &QString) -> QString {
-        let result =
-            parse::<docsis_ofdm_fec::signal_processing::channel::power::PowerConditioning>(
-                &document.to_string(),
-            )
+        let result = parse::<merlin::downstream::PowerConditioning>(&document.to_string())
             .and_then(|power| {
-                power.validate().map_err(|e| e.to_string())?;
+                merlin::downstream::ChannelConfiguration::new(
+                    merlin::downstream::ChannelConfigurationInput {
+                        power: power.clone(),
+                        ..Default::default()
+                    },
+                )
+                .map_err(|cause| cause.message().to_owned())?;
                 crate::downstream::workbench::session::put_saved(
                     "channel_power",
                     crate::downstream::inputs::channel_model::saved_power(&power),

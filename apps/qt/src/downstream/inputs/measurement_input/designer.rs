@@ -695,9 +695,15 @@ mod tests {
             &Options::default(),
             &project.transmission,
             Some(&profile),
+            inputs.profile_capture.as_ref(),
         )
         .unwrap();
-        let present = plan.at(0).power.into_iter().flatten().collect::<Vec<_>>();
+        let present = plan
+            .at(0)
+            .normalized_power
+            .into_iter()
+            .flatten()
+            .collect::<Vec<_>>();
         assert!(!present.is_empty());
         for power in present {
             assert!((power - 10f64.powf(-4.8)).abs() < 1e-16);

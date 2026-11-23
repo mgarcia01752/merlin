@@ -1,0 +1,634 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Measured-input and configured-channel facade",
+  "base_commit": "6d727627a03af7c25decc8b8c2f5fbe06e8a0af1",
+  "status": "Level 1 measured-input/configured-channel Qt adapter batch accepted; official parent Level2 and milestone/final Level3 remain incomplete",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-08",
+    "REQ-UIU-09",
+    "REQ-UIU-16",
+    "REQ-UIU-17",
+    "REQ-UIU-18",
+    "REQ-UIU-21",
+    "REQ-UIU-22",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "design": "docs/development/features/unified-qt-workbench/design.md#uiu-ds-01-measured-input-and-configured-channel-adoption",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/src/bridge/measurement_input.rs",
+      "sha256": "ca1c03d00d5da05d4e33fc0d86e9389d4f62ae1cc4f7c940b9e696fb99fe6626"
+    },
+    {
+      "path": "apps/qt/src/bridge/profile_input.rs",
+      "sha256": "b8e4be76c474d1b40330baf0139ff80097a9da6bcee7762eecb1d1eb85276beb"
+    },
+    {
+      "path": "apps/qt/src/bridge/workbench_file.rs",
+      "sha256": "ee39ac1f4265a085d6e092f43ba064866351e97998580975a566a954adb57fee"
+    },
+    {
+      "path": "apps/qt/src/downstream/common/constants.rs",
+      "sha256": "0676c346fac9ae9fde5c3c16b4a3961ede9122d39bb4c995673bf77fa3099e8e"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/channel_model.rs",
+      "sha256": "9e6612b4ad16d9bee9ceee43ddbc607e8b832e1eceac33e227369833a01e6652"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+      "sha256": "10f150e416b4b368c7fcd63f012c3ea783099410fe159bebbf199dec002be2be"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+      "sha256": "bb65a9ce780ec36f09c4c683bb7ec443a7149ea56a3ef97e6bab37bb479bae27"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/mod.rs",
+      "sha256": "17eeb2141e0e8628a29e8144e3b59f2fb2f8d84b09c09216f245602ec2925571"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/model.rs",
+      "sha256": "11e481e3d12c1f8191911c7a3b3307851defe079a2edcc000048f87a6765a73d"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/plc.rs",
+      "sha256": "3d37f78ddba0ee51ee1a035a1b72707d89fa6dc3235aa4e235e81192c48b6277"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/project_file.rs",
+      "sha256": "123ceb0d0eb2724055cde7c5633fbb06e602911a4d9e588a453ab8ba202a174c"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/session.rs",
+      "sha256": "5fb34acd4e12cb47b7daf74f29d507202c83af74034e0a9d70519b77c9b0fe3c"
+    }
+  ],
+  "ownership": [
+    "Existing public source catalogs accompany selected legacy nominal frame DTOs; passive RxMER frame/options publication remains possible for incomplete/mismatched idle projects. Actual readiness/admission uses public MeasurementSequence and ChannelConfiguration; no Qt simulation interface, new API or numerical algorithm.",
+    "Existing sequence/captured-response/synthetic-unity/channel previews own scientific projection, residual conversion, layout/planning and gain. Qt preserves original coordinates/bytes/hash identities, labels, controls/selection and independent response tolerance.",
+    "Configured-channel gain drawing consumes the existing backend bounded view/padding/readouts; y-tick keys and labels adapt to the existing presentation protocol. Public endpoint values drive the additional/effective-response chart.",
+    "Seven complete boundary entries retire; Designer production and all untouched remaining entries stay exact. A test-only Designer accessor/catalog adaptation preserves its independent residual-power/FEC assertions. Existing decoder/metadata bytes remain exact after removing two new immutable public-handle adapter methods."
+  ],
+  "testing": {
+    "level": 1,
+    "risk_expansion": "Accepted input storage and passive saved-state preparation affect all Qt consumers: execute the complete 103-case Qt Rust binary, affected QML behaviors and exact-wheel sequence/channel/saved-full-loop contracts. APIs, scientific algorithms and schemas remain unchanged.",
+    "executed": {
+      "qt_rust_unique_cases": 103,
+      "additional_test_style_recheck_cases": 1,
+      "qml_behavior_cases": 7,
+      "qml_cases_with_harness": 9,
+      "native_cases": 15,
+      "qt_checks": {
+        "corrected-tests": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "--",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 177.38861988999997,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        },
+        "style-case": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "downstream::inputs::measurement_input::model::tests::passive_publication_keeps_incomplete_and_mismatched_editor_originals",
+            "--",
+            "--exact"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 7.2446921419996215,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        },
+        "accepted-clippy": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "clippy",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--locked",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 4.834154628999386,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        },
+        "release": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "build",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--locked",
+            "--release"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 115.30124482499923,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        },
+        "style-format": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "fmt",
+            "--manifest-path",
+            "apps/qt/Cargo.toml"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.4099665539997659,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        }
+      },
+      "consumer_checks": {
+        "native": {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measured-input-api-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-c",
+            "import sys,hashlib,unittest,importlib\nfrom pathlib import Path\nimport merlin._native as native\nassert Path(native.__file__).resolve().is_relative_to(Path(sys.prefix).resolve())\nassert hashlib.sha256(Path(native.__file__).read_bytes()).hexdigest()==sys.argv[2]\nsys.path.insert(0,sys.argv[1]);suite=unittest.TestSuite()\nfor name in ['test_measurement_sequence','test_channel_configuration','test_workbench_full_loop']:\n module=importlib.import_module(name)\n for test_class in [getattr(module,name) for name in dir(module) if isinstance(getattr(module,name),type) and issubclass(getattr(module,name),unittest.TestCase)]:\n  for method in unittest.defaultTestLoader.getTestCaseNames(test_class):\n   if method=='test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match': continue\n   suite.addTest(test_class(method))\nresult=unittest.TextTestRunner(verbosity=2).run(suite);assert result.testsRun==15 and not result.skipped\nraise SystemExit(not result.wasSuccessful())",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "1f665a56753fc650c37d113f4c489c6e8ef7ee315d1520b6075480e072b8692a"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 3.8811856470001658,
+          "cwd": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-measured-owners-native",
+          "scope": "15 affected installed-native cases, unchanged exact wheel; separate process parity remains previously accepted"
+        },
+        "qml": {
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+            "Workbench::test_shared_measurement_viewers_and_joint_channel_readiness",
+            "Workbench::test_rxmer_preview_layout_is_stable_at_minimum_size",
+            "Workbench::test_rxmer_selection_draft_and_single_shot_controls",
+            "Workbench::test_channel_stages_tap_routing_and_loss_draft_cancel",
+            "Workbench::test_channel_power_controls_cancel_apply_and_tap_symmetry",
+            "Workbench::test_workbench_input_restore_discards_drafts_without_apply",
+            "Workbench::test_rxmer_capture_animation_step_pause_end_and_close"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 10.696981041999607,
+          "cwd": "/home/dev01/Projects/merlin/docs/development/local/visual-workspace",
+          "scope": [
+            "test_shared_measurement_viewers_and_joint_channel_readiness",
+            "test_rxmer_preview_layout_is_stable_at_minimum_size",
+            "test_rxmer_selection_draft_and_single_shot_controls",
+            "test_channel_stages_tap_routing_and_loss_draft_cancel",
+            "test_channel_power_controls_cancel_apply_and_tap_symmetry",
+            "test_workbench_input_restore_discards_drafts_without_apply",
+            "test_rxmer_capture_animation_step_pause_end_and_close"
+          ]
+        }
+      },
+      "metadata": [
+        {
+          "label": "format",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "fmt",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.449708964999445
+        },
+        {
+          "label": "boundary",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/qt_api_boundary.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.2164497339981608
+        },
+        {
+          "label": "documents",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/feature_documentation.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 9.577869130000181
+        },
+        {
+          "label": "traceability",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/integration_traceability.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 7.526895174996753
+        },
+        {
+          "label": "versions",
+          "command": [
+            "python3",
+            "-B",
+            "tools/release/versions.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.03860917600104585
+        },
+        {
+          "label": "guide",
+          "command": [
+            "python3",
+            "-B",
+            "tools/python/update_integration_doc.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.03664769799797796
+        },
+        {
+          "label": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.035818986001686426
+        }
+      ]
+    },
+    "failed_attempts": [
+      {
+        "label": "first-compile",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "check",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "--all-targets"
+        ],
+        "exit_code": 101,
+        "elapsed_seconds": 68.39795314500043,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      {
+        "label": "final-tests",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "--",
+          "--test-threads=1"
+        ],
+        "exit_code": 101,
+        "elapsed_seconds": 75.99413415100025,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      {
+        "label": "clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 101,
+        "elapsed_seconds": 69.86153050499888,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      }
+    ],
+    "corrections": "Initial compile corrects a public role alias and borrowed source snapshot; an overly broad constants insertion into the test/default initializer is removed before the complete103-case pass. A subsequent test initializer is made Clippy-compliant; its one affected case reruns successfully. No failed attempt counts as acceptance.",
+    "not_required": [
+      {
+        "checks": "New wheel, unrelated full Rust/native/CLI execution and packaging suites",
+        "reason": "No public API, shared numerical kernel, binding, package, manifest/lock or saved schema change. Reuse the exact accepted wheel; existing affected Rust/backend evidence remains valid."
+      },
+      {
+        "checks": "Fresh QML source/global registration/startup suite",
+        "reason": "QML resources and all three touched CXX declaration blocks remain byte-exact. Actual native executable is rebuilt; parent/milestone launch and complete integration checks stay deferred."
+      }
+    ],
+    "deferred": [
+      "Remaining Designer/transport/export19sites and receiver QAM/soft-history12sites including matcher-invisible calculations",
+      "Removal of three direct scientific dependencies and zero-exception boundary",
+      "UIU-DS-01 complete Level2 and downstream milestone Level3 before session/shell acceptance",
+      "Full native parity, final Level3 and line-by-line numeric/common-constant audit"
+    ]
+  },
+  "boundary": {
+    "before_files": 14,
+    "before_sites": 66,
+    "retired_files": 7,
+    "retired_sites": 35,
+    "remaining_files": 7,
+    "remaining_sites": 31,
+    "scientific_dependencies": 3,
+    "remaining": [
+      {
+        "path": "apps/qt/src/bridge/rxmer_designer.rs",
+        "sha256": "e92b66bacf06b74c67baddcd75f3f1fe3488d5ac57af276e4f3507bb6a308c98",
+        "sites": [
+          {
+            "line": 186,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 225,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      {
+        "path": "apps/qt/src/bridge/rxmer_export.rs",
+        "sha256": "4b3cf78f815588359f8957edaabc8a95bb4df7b2aa1917030aa250cdc06fff8d",
+        "sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 11,
+            "root": "pnm_input"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+        "sha256": "10f150e416b4b368c7fcd63f012c3ea783099410fe159bebbf199dec002be2be",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 563,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 586,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 619,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 638,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 639,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 799,
+            "root": "pnm_input"
+          },
+          {
+            "line": 801,
+            "root": "pnm_input"
+          },
+          {
+            "line": 810,
+            "root": "pnm_input"
+          },
+          {
+            "line": 812,
+            "root": "pnm_input"
+          },
+          {
+            "line": 816,
+            "root": "pnm_input"
+          },
+          {
+            "line": 818,
+            "root": "pnm_input"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+        "sha256": "bb65a9ce780ec36f09c4c683bb7ec443a7149ea56a3ef97e6bab37bb479bae27",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      {
+        "path": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
+        "sha256": "4e314389c700c4b7b2edb4a448f9c950d83bd88fe96889113dc9cb1f49990c20",
+        "sites": [
+          {
+            "line": 15,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      {
+        "path": "apps/qt/src/downstream/instruments/receiver/qam_history.rs",
+        "sha256": "0d9912772744fd131614ae43b42dbd150183aab4d6839ea0e34c84dc17c93483",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 21,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 151,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      {
+        "path": "apps/qt/src/downstream/instruments/receiver/selection.rs",
+        "sha256": "14182c1a7192f45c3de50b2e3d2c0fd46476696aee2e585fc9961b589acef563",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 18,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 20,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 128,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 130,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 265,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 280,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 329,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      }
+    ]
+  },
+  "preservation": {
+    "manifest_lock_build_and_history_files_exact": [
+      "Cargo.toml",
+      "Cargo.lock",
+      "apps/qt/Cargo.toml",
+      "apps/qt/Cargo.lock",
+      "apps/qt/build.rs",
+      "bindings/python/Cargo.lock",
+      "docs/development/ui-checklist.md"
+    ],
+    "cxx_declarations_exact": [
+      {
+        "path": "apps/qt/src/bridge/measurement_input.rs",
+        "declaration_sha256": "4b8871567fb2277a0bfa7f23dc090d280a9b31644e8c1d89547a51e737bbb85e"
+      },
+      {
+        "path": "apps/qt/src/bridge/profile_input.rs",
+        "declaration_sha256": "54f51892dbb4ef6c43a7667d38c70cb226be500cb13b2783ab16da61cfdc7f78"
+      },
+      {
+        "path": "apps/qt/src/bridge/workbench_file.rs",
+        "declaration_sha256": "ac3776aeb4ff62290cd0792bc239fc97d4caf9d3d77ea44c187d0d36db782c56"
+      }
+    ],
+    "all_official_checkbox_states_exact": true,
+    "initial_boundary_and_every_previous_retirement_review_preserved": true,
+    "backend_binding_api_and_qml_sources_unchanged": true,
+    "original_independent_vectors_and_numerical_assertions_preserved": true
+  },
+  "numeric_review": "Former1000-symbol replay default and separate90000-second RxMER/H defaults receive purpose-specific names; public observation admission owns duration minima and legacy Qt maximum remains. Existing channel section versions, projection selectors, gain-axis padding/ticks and PLC context are named, keeping equal-valued independent policies separate. Frequencies reuse shared SI units. Literal protocol/unit/unity/raw-ID and existing mismatch/PLC/FEC oracle anchors remain independent. Whole-integration numeric audit stays pending.",
+  "executable": {
+    "path": "apps/qt/target/release/merlin-qt",
+    "sha256": "2029441f2f98c4644b40d95671a05876a1a3be7acb695367111ca4271ccda37a"
+  },
+  "no_push_merge_release_system_install_or_official_acceptance": true
+}

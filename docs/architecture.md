@@ -1162,6 +1162,17 @@ domains from their constants, including its distinct aggregate-value guard. Nati
 Python mirrors both operations. Qt adoption remains a separate UIU-DS-01 unit after
 paired acceptance; no scientific algorithm, domain value or saved schema changes.
 
+The [measured-input/channel adapter adoption](development/features/unified-qt-workbench/design.md#uiu-ds-01-measured-input-and-configured-channel-adoption)
+retains the original public source catalog with the selected source-frame snapshot.
+Accepted Qt input storage holds passive public RxMER frame DTOs/options and an
+immutable public channel capture; incomplete saved projects still load without
+claiming cross-input scientific readiness. Public sequence, response/unity and
+configured-channel operations own admission, projections, residual conversion,
+physical planning and gain. Response association retains its independently accepted
+tolerance. Qt formats bounded authoritative views and preserves selector/axis labels,
+original bytes/hashes, PLC overlays and safe project adoption. Designer evaluation
+and bounded receiver archives remain the explicit downstream migration frontier.
+
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

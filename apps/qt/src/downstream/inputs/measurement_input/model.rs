@@ -4,17 +4,21 @@
  */
 //! Shared editor state; accepted measurements are independent of transient drafts.
 use super::document::{Capture, Measurement, MAX_TOTAL_BYTES};
-use docsis_ofdm_fec::{
-    profile::candidate::CapturedProfile,
-    scenario::{
-        measurement_view::{measurement_view, response_value, ResponseMetric},
-        FrequencyGrid,
+use crate::downstream::{
+    common::constants::{
+        DEFAULT_REPLAY_INTERVAL_SYMBOLS, DEFAULT_RESPONSE_ASSOCIATION_SECONDS,
+        DEFAULT_RXMER_ASSOCIATION_SECONDS, MEASUREMENT_GAIN_PROJECTION,
+        MEASUREMENT_IMAGINARY_PROJECTION, MEASUREMENT_PHASE_PROJECTION,
+        MEASUREMENT_REAL_PROJECTION,
     },
-    simulation::channel::measurement_playback::{
-        validate_response, MeasurementPlayback, PlaybackMode, MAX_PLAYBACK_FRAMES,
-        MAX_PLAYBACK_VALUES,
-    },
-    transmission::TransmissionSettings,
+    workbench::session::{profile_source, PlaybackInputs},
+};
+use merlin::downstream::{
+    AssociationTolerance, ChannelResponseMetric, MeasurementMode as PlaybackMode,
+    MeasurementSequence, MeasurementSequenceOptions, MeasurementViewport, ObservationDuration,
+    ProfileCapture, SourceProfileFrame as CapturedProfile, TransmissionConfiguration,
+    TransmissionSettings, MAX_SEQUENCE_CAPTURES as MAX_PLAYBACK_FRAMES,
+    MAX_SEQUENCE_VALUES as MAX_PLAYBACK_VALUES,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -32,8 +36,8 @@ impl Default for Options {
     fn default() -> Self {
         Self {
             mode: PlaybackMode::Single,
-            interval_symbols: "1000".into(),
-            tolerance_seconds: 90000,
+            interval_symbols: DEFAULT_REPLAY_INTERVAL_SYMBOLS.to_string(),
+            tolerance_seconds: DEFAULT_RXMER_ASSOCIATION_SECONDS,
             selected_captures: None,
         }
     }
@@ -83,29 +87,31 @@ impl Options {
         settings: &TransmissionSettings,
         duration_ms: u64,
     ) -> Result<usize, String> {
-        if !(1..=crate::downstream::simulation::closed_loop::MAX_DURATION_MS).contains(&duration_ms)
-        {
+        let duration = ObservationDuration::new(duration_ms)
+            .map_err(|_| "Configure a supported duration per profile.")?;
+        if duration.value() > crate::downstream::simulation::closed_loop::MAX_DURATION_MS {
             return Err("Configure a supported duration per profile.".into());
         }
-        let symbols = settings
-            .duration_timing(std::time::Duration::from_millis(duration_ms))
-            .map_err(|error| error.to_string())?
-            .complete_symbols;
-        match self.mode {
-            PlaybackMode::Single => Ok(1),
-            PlaybackMode::Average => Ok(MAX_PLAYBACK_FRAMES),
-            _ => {
-                let interval = self
-                    .interval_symbols
-                    .parse::<u64>()
-                    .map_err(|_| "Enter an integer OFDM-symbol interval.")?;
-                if interval == 0 {
-                    return Err("Replay interval must be greater than zero.".into());
-                }
-                Ok(((symbols.saturating_sub(1) / interval).saturating_add(1))
-                    .min(MAX_PLAYBACK_FRAMES as u64) as usize)
-            }
+        let interval_symbols = match self.mode {
+            // The public static-mode capacity query ignores this dormant interval.
+            PlaybackMode::Single | PlaybackMode::Average => 0,
+            PlaybackMode::Hold | PlaybackMode::Interpolate => self
+                .interval_symbols
+                .parse::<u64>()
+                .map_err(|_| "Enter an integer OFDM-symbol interval.")?,
+        };
+        MeasurementSequenceOptions {
+            mode: self.mode,
+            interval_symbols,
+            tolerance: AssociationTolerance::new(self.tolerance_seconds)
+                .map_err(|cause| cause.message().to_owned())?,
         }
+        .capacity(
+            &TransmissionConfiguration::new(settings.clone())
+                .map_err(|cause| cause.message().to_owned())?,
+            duration,
+        )
+        .map_err(|cause| cause.message().to_owned())
     }
 }
 pub(crate) struct Model {
@@ -124,7 +130,7 @@ impl Default for Model {
             draft_response: None,
             accepted_response: None,
             options: Options::default(),
-            response_tolerance: 90000,
+            response_tolerance: DEFAULT_RESPONSE_ASSOCIATION_SECONDS,
         }
     }
 }
@@ -155,7 +161,14 @@ impl Model {
             .as_ref()
             .map_err(Clone::clone)
             .and_then(|settings| {
-                Model::playback(&self.accepted_rx, &self.options, settings, profile).map(|_| ())
+                Model::playback(
+                    &self.accepted_rx,
+                    &self.options,
+                    settings,
+                    profile,
+                    inputs.profile_capture.as_ref(),
+                )
+                .map(|_| ())
             });
         let response = settings
             .as_ref()
@@ -166,6 +179,7 @@ impl Model {
                     settings,
                     profile,
                     self.response_tolerance,
+                    inputs.profile_capture.as_ref(),
                 )
             });
         let rx_status = status(rx.clone(), profile.is_none() || self.accepted_rx.is_empty());
@@ -261,30 +275,25 @@ impl Model {
                 _ => None,
             })
             .collect::<Vec<_>>();
-        let playback = if let Some(profile) = profile.filter(|_| !frames.is_empty()) {
-            Some(
-                docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackConfiguration {
-                    profile: profile.clone(),
-                    frames,
-                    mode: self.options.mode,
-                    interval_symbols: self
-                        .options
-                        .interval_symbols
-                        .parse()
-                        .map_err(|_| "Invalid interval")?,
-                    tolerance_seconds: self.options.tolerance_seconds,
-                },
-            )
+        let playback = if profile.is_some() && !frames.is_empty() {
+            Some(PlaybackInputs {
+                frames,
+                mode: self.options.mode,
+                interval_symbols: self
+                    .options
+                    .interval_symbols
+                    .parse()
+                    .map_err(|_| "Invalid interval")?,
+                tolerance_seconds: self.options.tolerance_seconds,
+            })
         } else {
             None
         };
         let response = self
             .accepted_response
             .as_ref()
-            .and_then(|c| match &c.measurement {
-                Measurement::Response(frame) => Some(frame.as_ref().clone()),
-                _ => None,
-            });
+            .map(Capture::response)
+            .transpose()?;
         Ok(super::RestoredMeasurements { playback, response })
     }
     /// Starts a fresh draft from accepted immutable input snapshots.
@@ -346,7 +355,7 @@ impl Model {
     /// * `captures` - Original typed inputs.
     /// * `options` - Mode and explicit association/playback controls.
     /// * `settings` - Accepted OCD.
-    /// * `profile` - Accepted DPD; absence blocks acceptance.
+    /// * `profile`, `catalog` - Selected DTO and exact admitted original; absence blocks acceptance.
     /// # Returns
     /// Immutable scientific playback plan without Qt data.
     /// # Errors
@@ -356,35 +365,38 @@ impl Model {
         options: &Options,
         settings: &TransmissionSettings,
         profile: Option<&CapturedProfile>,
-    ) -> Result<MeasurementPlayback, String> {
-        let profile = profile.ok_or("Apply a compatible DPD before accepting RxMER.")?;
-        let frames = options
+        catalog: Option<&ProfileCapture>,
+    ) -> Result<MeasurementSequence, String> {
+        let (catalog, profile_id) = profile_source(profile, catalog)?;
+        let captures = options
             .selected(captures)?
             .into_iter()
-            .map(|capture| match &capture.measurement {
-                Measurement::Rxmer(frame) => Ok(frame.as_ref().clone()),
-                _ => Err("Expected RxMER input.".to_string()),
-            })
+            .map(|capture| capture.rxmer())
             .collect::<Result<Vec<_>, _>>()?;
-        let interval = options
+        let interval_symbols = options
             .interval_symbols
             .parse::<u64>()
             .map_err(|_| "Enter an integer OFDM-symbol interval.".to_string())?;
-        MeasurementPlayback::new(
-            settings,
-            profile,
-            frames,
-            options.mode,
-            interval,
-            options.tolerance_seconds,
+        MeasurementSequence::from_capture(
+            catalog,
+            profile_id,
+            &TransmissionConfiguration::new(settings.clone())
+                .map_err(|cause| cause.message().to_owned())?,
+            captures,
+            MeasurementSequenceOptions {
+                mode: options.mode,
+                interval_symbols,
+                tolerance: AssociationTolerance::new(options.tolerance_seconds)
+                    .map_err(|cause| cause.message().to_owned())?,
+            },
         )
-        .map_err(|error| error.to_string())
+        .map_err(|cause| cause.message().to_owned())
     }
     /// Validates flat/unity or imported response against the accepted profile.
     /// # Arguments
     /// * `capture` - None explicitly selects synthetic unity.
     /// * `settings` - Accepted transmission geometry.
-    /// * `profile` - Accepted profile identity/coverage.
+    /// * `profile`, `catalog` - Selected identity/coverage and exact admitted original.
     /// * `tolerance` - Explicit capture association window in seconds.
     /// # Returns
     /// Unit for supported H, never reciprocal equalizer coefficients.
@@ -395,21 +407,29 @@ impl Model {
         settings: &TransmissionSettings,
         profile: Option<&CapturedProfile>,
         tolerance: u32,
+        catalog: Option<&ProfileCapture>,
     ) -> Result<(), String> {
-        let profile = profile.ok_or("Apply a compatible DPD to define the channel grid.")?;
-        let response = match capture.map(|capture| &capture.measurement) {
-            Some(Measurement::Response(frame)) => {
-                if frame.capture_time.abs_diff(profile.capture_time) > tolerance {
-                    return Err(
-                        "Channel response capture exceeds association tolerance from DPD.".into(),
-                    );
+        if profile.is_none() {
+            return Err("Apply a compatible DPD to define the channel grid.".into());
+        }
+        let (catalog, profile_id) = profile_source(profile, catalog)?;
+        let response = capture.map(Capture::response).transpose()?;
+        TransmissionConfiguration::new(settings.clone())
+            .and_then(|transmission| {
+                transmission.check_response_capture(
+                    catalog,
+                    profile_id,
+                    response.as_ref(),
+                    AssociationTolerance::new(tolerance)?,
+                )
+            })
+            .map_err(|cause| {
+                if cause.code() == merlin::downstream::ErrorCode::AssociationFailed {
+                    "Channel response capture exceeds association tolerance from DPD.".into()
+                } else {
+                    cause.message().to_owned()
                 }
-                Some(frame.as_ref())
-            }
-            Some(_) => return Err("Expected a channel-response capture.".into()),
-            None => None,
-        };
-        validate_response(settings, profile, response).map_err(|error| error.to_string())
+            })
     }
     /// Lists bounded original-file metadata and compatibility diagnostics.
     /// # Arguments
@@ -434,7 +454,7 @@ impl Model {
     /// * `rxmer` - RxMER or response projection.
     /// * `request` - Source index/projection, preview symbol, viewport and draft options.
     /// * `settings` - Accepted OCD.
-    /// * `profile` - Optional accepted DPD.
+    /// * `profile`, `catalog` - Optional accepted DPD and its exact admitted original.
     /// # Returns
     /// Compact chart JSON; missing values remain gaps.
     /// # Errors
@@ -445,6 +465,7 @@ impl Model {
         request: &ChartRequest,
         settings: &TransmissionSettings,
         profile: Option<&CapturedProfile>,
+        catalog: Option<&ProfileCapture>,
     ) -> Result<Value, String> {
         let ChartRequest {
             index,
@@ -458,22 +479,16 @@ impl Model {
         let symbol = symbol
             .parse::<u64>()
             .map_err(|_| "Enter an integer preview symbol.")?;
-        let (grid, values, units): (FrequencyGrid, Vec<Option<f64>>, &str) = if rxmer {
+        let viewport = MeasurementViewport { start, count };
+        let (grid, view, public_units, display_units) = if rxmer {
             if index < 0 {
-                let plan = Self::playback(&self.draft_rx, options, settings, profile)?;
-                let snapshot = plan.at(symbol);
+                let preview = Self::playback(&self.draft_rx, options, settings, profile, catalog)?
+                    .preview(symbol, viewport)
+                    .map_err(|cause| cause.message().to_owned())?;
                 (
-                    plan.frames()[0].key.grid.clone(),
-                    snapshot
-                        .power
-                        .iter()
-                        .map(|power| {
-                            power.and_then(|value| {
-                                let mer = -10.0 * value.log10();
-                                mer.is_finite().then_some(mer)
-                            })
-                        })
-                        .collect(),
+                    preview.grid,
+                    preview.view,
+                    "Equivalent RxMER (dB)",
                     "Equivalent RxMER (dB)",
                 )
             } else {
@@ -481,51 +496,63 @@ impl Model {
                     .draft_rx
                     .get(index as usize)
                     .ok_or("Choose an RxMER capture.")?;
-                let Measurement::Rxmer(frame) = &capture.measurement else {
-                    return Err("Expected RxMER.".into());
-                };
-                (frame.key.grid.clone(), frame.mer_db.clone(), "RxMER (dB)")
+                let preview = capture
+                    .rxmer()?
+                    .preview(viewport)
+                    .map_err(|cause| cause.message().to_owned())?;
+                (preview.grid, preview.view, "RxMER (dB)", "RxMER (dB)")
             }
         } else {
-            let metric = match metric {
-                0 => ResponseMetric::GainDb,
-                1 => ResponseMetric::PhaseDegrees,
-                2 => ResponseMetric::Real,
-                3 => ResponseMetric::Imaginary,
+            let (metric, public_units, display_units) = match metric {
+                MEASUREMENT_GAIN_PROJECTION => (
+                    ChannelResponseMetric::GainDb,
+                    "Gain (dB)",
+                    "Channel gain (dB)",
+                ),
+                MEASUREMENT_PHASE_PROJECTION => (
+                    ChannelResponseMetric::PhaseDegrees,
+                    "Phase (degrees)",
+                    "Wrapped phase (degrees)",
+                ),
+                MEASUREMENT_REAL_PROJECTION => {
+                    (ChannelResponseMetric::Real, "Real", "H real (linear)")
+                }
+                MEASUREMENT_IMAGINARY_PROJECTION => (
+                    ChannelResponseMetric::Imaginary,
+                    "Imaginary",
+                    "H imaginary (linear)",
+                ),
                 _ => return Err("Invalid response projection.".into()),
             };
-            let units = match metric {
-                ResponseMetric::GainDb => "Channel gain (dB)",
-                ResponseMetric::PhaseDegrees => "Wrapped phase (degrees)",
-                ResponseMetric::Real => "H real (linear)",
-                ResponseMetric::Imaginary => "H imaginary (linear)",
-            };
             if let Some(capture) = &self.draft_response {
-                let Measurement::Response(frame) = &capture.measurement else {
-                    return Err("Expected response.".into());
-                };
-                (
-                    frame.key.grid.clone(),
-                    frame
-                        .iq
-                        .iter()
-                        .map(|sample| response_value(*sample, metric))
-                        .collect(),
-                    units,
-                )
+                let preview = capture
+                    .response()?
+                    .preview(viewport, metric)
+                    .map_err(|cause| cause.message().to_owned())?;
+                (preview.grid, preview.view, public_units, display_units)
             } else {
-                let grid = profile
-                    .ok_or("Apply DPD to view the flat channel grid.")?
-                    .key
-                    .grid
-                    .clone();
-                let values = vec![response_value(Some([1.0, 0.0]), metric); grid.sample_count];
-                (grid, values, units)
+                if profile.is_none() {
+                    return Err("Apply DPD to view the flat channel grid.".into());
+                }
+                let (catalog, profile_id) = profile_source(profile, catalog)?;
+                let preview = catalog
+                    .unity_response_preview(profile_id, viewport, metric)
+                    .map_err(|cause| cause.message().to_owned())?;
+                (preview.grid, preview.view, public_units, display_units)
             }
         };
-        let view = measurement_view(&grid, &values, start, count, units)
-            .map_err(|error| error.to_string())?;
         let mut view = serde_json::to_value(view).map_err(|error| error.to_string())?;
+        view["axis_label"] = json!(display_units);
+        if public_units != display_units {
+            for point in view["points"]
+                .as_array_mut()
+                .ok_or("Missing measurement chart points.")?
+            {
+                if let Some(readout) = point["readout"].as_str() {
+                    point["readout"] = json!(readout.replace(public_units, display_units));
+                }
+            }
+        }
         if rxmer {
             super::plc::annotate(
                 &mut view,
@@ -553,16 +580,13 @@ fn status(result: Result<(), String>, empty: bool) -> Value {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use docsis_ofdm_fec::scenario::pnm_json::{import_profiles, JsonCapture};
+    fn catalog() -> ProfileCapture {
+        merlin::downstream::inputs::CaptureLoader::profile_capture(&merlin::downstream::NamedCapture::new(
+            "dpd", include_bytes!("../../../../../../examples/measurements/single-channel/modulation_profile.json").to_vec()
+        ).unwrap()).unwrap()
+    }
     fn profile() -> CapturedProfile {
-        import_profiles(JsonCapture {
-            name: "dpd",
-            bytes: include_bytes!(
-                "../../../../../../examples/measurements/single-channel/modulation_profile.json"
-            ),
-        })
-        .unwrap()
-        .remove(0)
+        catalog().frame(0).unwrap().clone()
     }
     fn baseline() -> Capture {
         Capture::decode(
@@ -614,6 +638,7 @@ mod tests {
             &restored.options,
             &TransmissionSettings::default(),
             Some(&profile),
+            Some(&catalog()),
         )
         .unwrap();
         let all = Options {
@@ -689,7 +714,14 @@ mod tests {
         assert!(model.stage(vec![capture], true).is_err());
         assert_eq!(model.draft_rx.len(), 1);
         let options = Options::default();
-        Model::playback(&model.draft_rx, &options, &settings, Some(&profile)).unwrap();
+        Model::playback(
+            &model.draft_rx,
+            &options,
+            &settings,
+            Some(&profile),
+            Some(&catalog()),
+        )
+        .unwrap();
         model.accepted_rx = model.draft_rx.clone();
         model.draft_rx.clear();
         model.begin(true);
@@ -704,17 +736,22 @@ mod tests {
             options,
         };
         let chart = model
-            .chart(true, &request, &settings, Some(&profile))
+            .chart(true, &request, &settings, Some(&profile), Some(&catalog()))
             .unwrap();
         assert!(chart["points"].as_array().unwrap().len() <= 1024);
         let mut wrong = profile.clone();
         wrong.key.grid.zero_frequency_hz += 25000;
-        assert!(
-            Model::playback(&model.accepted_rx, &model.options, &settings, Some(&wrong)).is_err()
-        );
-        Model::response(None, &settings, Some(&profile), 90000).unwrap();
+        assert!(Model::playback(
+            &model.accepted_rx,
+            &model.options,
+            &settings,
+            Some(&wrong),
+            Some(&catalog())
+        )
+        .is_err());
+        Model::response(None, &settings, Some(&profile), 90000, Some(&catalog())).unwrap();
         let flat = model
-            .chart(false, &request, &settings, Some(&profile))
+            .chart(false, &request, &settings, Some(&profile), Some(&catalog()))
             .unwrap();
         assert_eq!(flat["axis_label"], "Channel gain (dB)");
         let response = Capture::decode(
@@ -732,11 +769,12 @@ mod tests {
             &settings,
             Some(&profile),
             90000,
+            Some(&catalog()),
         )
         .unwrap();
         assert_eq!(
             model
-                .chart(false, &request, &settings, Some(&profile))
+                .chart(false, &request, &settings, Some(&profile), Some(&catalog()))
                 .unwrap()["total"],
             7480
         );
@@ -750,15 +788,33 @@ mod tests {
         let mut model = Model::default();
         model.stage(vec![baseline()], true).unwrap();
         model.stage(vec![Capture::decode("notch.json".into(),include_bytes!("../../../../../../examples/measurements/single-channel/rxmer-center-notch-12db.json").to_vec(),true).unwrap()],true).unwrap();
-        assert!(
-            Model::playback(&model.draft_rx, &model.options, &settings, Some(&profile)).is_err()
-        );
+        assert!(Model::playback(
+            &model.draft_rx,
+            &model.options,
+            &settings,
+            Some(&profile),
+            Some(&catalog())
+        )
+        .is_err());
         let options = Options {
             mode: PlaybackMode::Interpolate,
             ..Default::default()
         };
-        let plan = Model::playback(&model.draft_rx, &options, &settings, Some(&profile)).unwrap();
-        assert_eq!(plan.span(), (1000, 42.5));
+        let plan = Model::playback(
+            &model.draft_rx,
+            &options,
+            &settings,
+            Some(&profile),
+            Some(&catalog()),
+        )
+        .unwrap();
+        assert_eq!(
+            (
+                plan.info().last_transition_symbol,
+                plan.info().last_transition_milliseconds
+            ),
+            (1000, 42.5)
+        );
         let request = ChartRequest {
             index: -1,
             metric: 0,
@@ -769,7 +825,7 @@ mod tests {
         };
         assert!(
             model
-                .chart(true, &request, &settings, Some(&profile))
+                .chart(true, &request, &settings, Some(&profile), Some(&catalog()))
                 .unwrap()["points"]
                 .as_array()
                 .unwrap()
@@ -781,6 +837,99 @@ mod tests {
             mode: PlaybackMode::Interpolate,
             ..Default::default()
         };
-        assert!(Model::playback(&model.draft_rx, &bad, &settings, Some(&profile)).is_err());
+        assert!(Model::playback(
+            &model.draft_rx,
+            &bad,
+            &settings,
+            Some(&profile),
+            Some(&catalog())
+        )
+        .is_err());
+    }
+    #[test]
+    fn passive_publication_keeps_incomplete_and_mismatched_editor_originals() {
+        let model = Model {
+            accepted_rx: vec![baseline()],
+            ..Default::default()
+        };
+        let bytes = model.accepted_rx[0].original.clone();
+        let hash = model.accepted_rx[0].hash.clone();
+        let mut stale = profile();
+
+        // Independent one-carrier mismatch is stored, then rejected on actual admission.
+        stale.key.grid.zero_frequency_hz += 25000;
+        let published = model.published(Some(&stale)).unwrap().playback.unwrap();
+        assert_eq!(published.frames.len(), 1);
+        assert_eq!(published.frames[0].source.sha256, hash);
+        assert!(Model::playback(
+            &model.accepted_rx,
+            &model.options,
+            &TransmissionSettings::default(),
+            Some(&stale),
+            Some(&catalog())
+        )
+        .is_err());
+        assert!(model.published(None).unwrap().playback.is_none());
+        assert_eq!(model.accepted_rx[0].original.as_ref(), bytes.as_ref());
+        assert_eq!(model.accepted_rx[0].hash, hash);
+    }
+
+    #[test]
+    fn public_catalog_unity_preserves_raw_identity_all_legacy_labels_and_source() {
+        let mut original: Value = serde_json::from_slice(include_bytes!(
+            "../../../../../../examples/measurements/single-channel/modulation_profile.json"
+        ))
+        .unwrap();
+        for profile in original["profiles"].as_array_mut().unwrap() {
+            if profile["profile_id"] == 0 {
+                profile["profile_id"] = json!(200);
+            }
+        }
+        let bytes = serde_json::to_vec(&original).unwrap();
+        let capture = merlin::downstream::inputs::CaptureLoader::profile_capture(
+            &merlin::downstream::NamedCapture::new("raw-source", bytes.clone()).unwrap(),
+        )
+        .unwrap();
+        let profile = capture.frame(200).unwrap();
+        let model = Model::default();
+
+        // Literal existing selectors/units are independent protocol compatibility anchors.
+        for (selector, label, value) in [
+            (0, "Channel gain (dB)", "0.000 … 0.000"),
+            (1, "Wrapped phase (degrees)", "0.000 … 0.000"),
+            (2, "H real (linear)", "1.000 … 1.000"),
+            (3, "H imaginary (linear)", "0.000 … 0.000"),
+        ] {
+            let request = ChartRequest {
+                index: -1,
+                metric: selector,
+                symbol: "0".into(),
+                start: 0,
+                count: 0,
+                options: Options::default(),
+            };
+            let view = model
+                .chart(
+                    false,
+                    &request,
+                    &TransmissionSettings::default(),
+                    Some(profile),
+                    Some(&capture),
+                )
+                .unwrap();
+            assert_eq!(view["total"], 7480);
+            assert_eq!(view["axis_label"], label);
+            assert!(view["points"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .all(|point| point["y"] == 0.5
+                    && point["readout"]
+                        .as_str()
+                        .unwrap()
+                        .ends_with(&format!("{value} {label}"))));
+        }
+        assert!(merlin::downstream::ProfileId::new(200).is_err());
+        assert_eq!(capture.provenance().original_bytes(), bytes);
     }
 }

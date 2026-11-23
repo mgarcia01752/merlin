@@ -2719,3 +2719,56 @@ required for this focused prerequisite. Qt measured-input/Designer/channel/sessi
 adoption is still pending. The frozen boundary remains 14 files/66 sites/three
 dependencies. No official checkbox changes; UIU-DS-01 Level 2, downstream milestone
 Level 3 and final acceptance/numeric audit remain open.
+
+## UIU-DS-01 measured input and channel facade accepted
+
+[Design](design.md#uiu-ds-01-measured-input-and-configured-channel-adoption) and
+[machine evidence](measured-owners-facade-evidence.json) record the migrated
+measurement model, bridge implementations, configured-channel owner, passive input
+storage and PLC presentation for REQ-UIU-02/03/08/09/16/17/18/21/22/24/27.
+Existing public catalog/sequence, original response, synthetic-unity and channel
+operations replace private measurement projections, residual-power conversion,
+physical channel planning and gain calculations. No backend API or algorithm is
+added. Original source catalogs accompany selected frame DTOs; passive saved-state
+publication remains separate from scientific admission, including incomplete or
+mismatched idle projects. Captured H and its independent association tolerance,
+original bytes/hashes, raw IDs, selected order, legacy labels and PLC overlays remain.
+
+Executed: all 103 Qt Rust cases, including the original actual worker/FEC,
+multi-profile sweep, independent response-tolerance, stale cancellation and saved
+project/corruption assertions. Two added cases exercise passive mismatched/empty
+publication and raw ID 200 with independent literal unity values and all four old
+measurement projection labels. A subsequent test-initializer-only Clippy correction
+reruns its one affected case; production behavior is unchanged. Fifteen affected
+installed-native sequence/channel/saved-full-loop cases reuse the exact accepted
+wheel with a verified extension hash, without another wheel build. Seven affected
+QML behaviors pass (nine cases including setup/cleanup): measurement/channel
+readiness, layout, selected originals, capture animation, loss/power controls and
+project draft restoration.
+
+Formatting, warnings-denied Qt all-target Clippy, optimized UI build, boundary,
+documentation, traceability, versions, generated-guide and diff checks pass.
+The three touched CXX declaration blocks, QML resources, manifests/locks, saved
+schema and independent scientific vectors remain exact. The combined-channel
+chart now consumes the public bounded gain view; scientific values/gaps/units
+remain authoritative, with backend viewport padding/readouts and the existing
+receiver-curve JSON tick keys adapted for presentation. Additional/effective
+endpoint chart data comes directly from the public configured-channel report.
+
+Seven complete frozen files and 35 sites retire: 14 files/66 sites becomes
+**seven files/31 sites**, with all three direct dependencies still present.
+Designer production is byte-exact; only its existing public-playback consumer test
+changes accessor/arguments while keeping the independent residual-power oracle.
+The original measurement decoder/metadata file is byte-exact after removing two
+added public-handle adapters; its one private Designer transport import remains
+explicitly frozen. All other remaining entries and initial history stay intact.
+The finite frontier is now Designer/measurement transport/export (19 sites) and
+receiver QAM/soft history (12 sites), followed by dependency removal.
+
+Two initial compilation failures and one test-style Clippy failure are retained
+as failed attempts, followed by successful corrected runs; none counts as a pass.
+No scientific/API/binding/schema/registration or package change requires unrelated
+workspace, new wheel, CLI execution or packaging suites for this Qt adapter batch.
+Full native parity, downstream milestone Level 3, parent UIU-DS-01 Level 2, final
+numeric/shared-constant audit and integrated session/upstream work remain pending.
+No official checklist checkbox or installed-platform acceptance changes.
