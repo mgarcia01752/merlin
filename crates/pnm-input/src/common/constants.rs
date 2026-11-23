@@ -37,3 +37,7 @@ pub const MAX_PROJECT_COLLECTION_BYTES: usize = 288 * 1024 * 1024;
 pub const MAX_MEASURED_EXPERIMENT_BYTES: usize = 16 * 1024 * 1024;
 /// Inclusive measured provenance report budget; not the input admission ceiling.
 pub const MAX_MEASURED_PROVENANCE_BYTES: usize = 16 * 1024 * 1024;
+
+/// Existing Designer baseline collection work ceiling in original carrier values.
+/// Independent of equal-valued playback limits: this bounds saved recipe evaluation.
+pub const MAX_DESIGNER_COLLECTION_VALUES: usize = 4_000_000;

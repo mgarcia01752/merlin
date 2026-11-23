@@ -328,3 +328,119 @@ fn borrowed_source_frame_preserves_raw_identity_roles_and_capture_ownership() {
     drop(capture);
     assert_eq!(shared.frame(200).unwrap().profile_id, 200);
 }
+
+#[test]
+fn synthetic_unity_preview_preserves_original_byte_identity_and_independent_response_values() {
+    let input = original();
+    let capture = ProfileCapture::from_bytes(&input).unwrap();
+    let before = serde_json::to_value(capture.metadata()).unwrap();
+    for (metric, projection, reading) in [
+        (
+            ChannelResponseMetric::GainDb,
+            "gain_db",
+            "0.000 … 0.000 Gain (dB)",
+        ),
+        (
+            ChannelResponseMetric::PhaseDegrees,
+            "phase_degrees",
+            "0.000 … 0.000 Phase (degrees)",
+        ),
+        (ChannelResponseMetric::Real, "real", "1.000 … 1.000 Real"),
+        (
+            ChannelResponseMetric::Imaginary,
+            "imaginary",
+            "0.000 … 0.000 Imaginary",
+        ),
+    ] {
+        let report = capture
+            .unity_response_preview(200, MeasurementViewport::default(), metric)
+            .unwrap();
+        assert_eq!(report.profile_id, 200);
+        assert_eq!(
+            report.reference_plane,
+            "configured_synthetic_unity_response"
+        );
+        assert_eq!(report.projection, projection);
+        assert_eq!(report.grid.sample_count, 4);
+        assert_eq!(report.grid.first_subcarrier_index, 356);
+        assert_eq!(report.view.start, 0);
+        assert_eq!(report.view.count, 4);
+        for point in &report.view.points {
+            assert_eq!(point.y, Some(0.5));
+            assert_eq!(point.minimum_y, Some(0.5));
+            assert!(!point.gap);
+            assert!(point.readout.ends_with(reading));
+        }
+        assert!(report.view.points[0]
+            .readout
+            .starts_with("640.000–640.000 MHz"));
+    }
+
+    // Explicit unity stays known at exclusions/reserved roles of the other source profile.
+    let retained = capture
+        .unity_response_preview(
+            0,
+            MeasurementViewport::default(),
+            ChannelResponseMetric::Real,
+        )
+        .unwrap();
+    assert!(retained
+        .view
+        .points
+        .iter()
+        .all(|point| !point.gap && point.y == Some(0.5)));
+    assert_eq!(serde_json::to_value(capture.metadata()).unwrap(), before);
+    assert_eq!(capture.provenance().original_bytes(), input.bytes());
+    drop(capture);
+    assert_eq!(retained.grid.sample_count, 4);
+}
+
+#[test]
+fn unity_preview_rejects_missing_source_and_invalid_viewports_without_mutation() {
+    let capture = ProfileCapture::from_bytes(&original()).unwrap();
+    assert_eq!(
+        capture
+            .unity_response_preview(
+                255,
+                MeasurementViewport::default(),
+                ChannelResponseMetric::GainDb
+            )
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::InvalidIdentifier
+    );
+    for viewport in [
+        MeasurementViewport { start: 4, count: 1 },
+        MeasurementViewport {
+            start: usize::MAX,
+            count: 2,
+        },
+    ] {
+        assert!(capture
+            .unity_response_preview(200, viewport, ChannelResponseMetric::Real)
+            .is_err());
+    }
+    let zoom = capture
+        .unity_response_preview(
+            200,
+            MeasurementViewport { start: 1, count: 2 },
+            ChannelResponseMetric::Real,
+        )
+        .unwrap();
+    assert_eq!(
+        (zoom.view.start, zoom.view.count, zoom.view.total),
+        (1, 2, 4)
+    );
+    let full = capture
+        .unity_response_preview(
+            200,
+            MeasurementViewport {
+                start: usize::MAX,
+                count: 0,
+            },
+            ChannelResponseMetric::Real,
+        )
+        .unwrap();
+    assert_eq!((full.view.start, full.view.count), (0, 4));
+}

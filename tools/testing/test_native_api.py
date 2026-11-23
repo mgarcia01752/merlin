@@ -5,16 +5,28 @@
 #
 """Protect installed native acceptance identity and retained command failures."""
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
 import unittest
 
-from native_api import passed_cases, run
+from native_api import DOWNSTREAM_REFERENCES, passed_cases, run
 
 
 class NativeApiRunnerTests(unittest.TestCase):
+    def test_complete_runner_supplies_every_optional_downstream_reference(self):
+        """New scientific parity cases must have real Rust sources wired into the full gate."""
+        root = Path(__file__).resolve().parents[2]
+        required = set()
+        for path in (root / 'bindings/python/tests').glob('test_*.py'):
+            required.update(re.findall(r"os\.environ\.get\(['\"](MERLIN_\w+_REFERENCE)['\"]\)", path.read_text()))
+        self.assertEqual(required, {row[0] for row in DOWNSTREAM_REFERENCES})
+        for _, package, example in DOWNSTREAM_REFERENCES:
+            crate = 'ofdm' if package == 'docsis-ofdm-fec' else package
+            self.assertTrue((root / 'crates' / crate / 'examples' / (example + '.rs')).is_file())
+
     def test_complete_named_passes_exclude_failed_skipped_and_duplicate_runs(self):
         """No count-only, skipped or partial run becomes native acceptance."""
         body = ('test_actual (test_api.NativeTests)\nActual work. ... ok\n\n'

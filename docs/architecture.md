@@ -1154,6 +1154,14 @@ estimates remaining unavailable. Physical PLC bounds come from public layout
 observations. Existing shared renderers retain presentation only; receiver
 QAM/soft-history and measurement/session migration remain explicit downstream debt.
 
+The [measured-input prerequisites](development/features/unified-qt-workbench/design.md#uiu-ds-01-measured-input-prerequisite-gaps)
+add only a typed source-catalog synthetic-unity response preview and an immutable
+Designer limits report. The OFDM API reuses existing response projection/view
+owners without claiming a measured capture; native-input reports existing Designer
+domains from their constants, including its distinct aggregate-value guard. Native
+Python mirrors both operations. Qt adoption remains a separate UIU-DS-01 unit after
+paired acceptance; no scientific algorithm, domain value or saved schema changes.
+
 Independent PHYs do not depend on Qt, Python, the facade or each other.
 
 The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)

@@ -17,6 +17,7 @@ namespace. Existing `ProfileId` and simulation behavior remain unchanged.
 | `summary(raw_id) -> ApiResult<ProfileSummary>` | `.summary(profile_id) -> dict` | Full-grid role counts, original origin/time and known data-carrier useful-symbol capacity. |
 | `schemes(raw_id, start, limit)` | `.schemes(profile_id, start=0, limit=256)` | Bounded original compact scheme page, source codes/order and authoritative original offsets/frequencies/constellations. |
 | `inspect(&ProfileViewRequest)` | `.inspect(ProfileViewRequest) -> dict` | Bounded raw metric extrema, original coordinates, selected-role support and actual provenance. |
+| `unity_response_preview(raw_id, viewport, metric)` | `.unity_response_preview(profile_id, metric="gain_db", start=0, count=0) -> dict` | Explicit synthetic unity H on the original source grid, with a configured reference and no invented capture provenance. |
 | `Dpd::summary()` / `Dpd::view(&ProfileViewRequest)` | `DPD.summary()` / `DPD.view(request)` | Same numerical owner for the one accepted profile, retaining captured/created/edited origin and actual sources. |
 | `TransmissionConfiguration::check_profile_capture(&capture, raw_id)` | `TransmissionConfiguration.check_profile_capture(capture, profile_id)` | Passive editor spacing/FFT/occupied-band check for any original byte-sized ID; no run-profile conversion or simulation. Missing IDs and incompatible grids retain structured errors. |
 
@@ -96,3 +97,14 @@ The frame's source metadata describes the decoded profile. Use the catalog's
 hashes and bytes; these identities must not be conflated. Cloning the Rust
 catalog shares immutable frame storage. Python dictionary edits cannot change
 that storage or any later frame/inspection result.
+
+The synthetic-unity response operation uses Rust `MeasurementViewport` and
+`ChannelResponseMetric`; Python uses `gain_db`, `phase_degrees`, `real` or
+`imaginary`. `ConfiguredResponsePreview` returns the original byte identity/grid,
+bounded view, projection and `configured_synthetic_unity_response` reference.
+Unity is explicit at every source location, including excluded/unknown profile
+roles. This is a configured response, without a measured capture, epoch or hash.
+It neither admits a simulation ID nor establishes compatible PHY numerology.
+Zero count restores the complete source grid; absent IDs and invalid viewports
+retain structured errors. All projection/grouping stays in Rust. Native views
+own independent dictionaries, and reads do not change the input.

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Public original-capture previews delegate projections and bucketing to existing owners.
-use super::{ApiResult, CaptureProvenance, ChannelEstimate, RxMer};
+use super::{ApiResult, CaptureProvenance, ChannelEstimate, ProfileCapture, RxMer};
 use crate::scenario::{
     measurement_view::{measurement_view, response_value, ResponseMetric},
     FrequencyGrid,
@@ -47,6 +47,70 @@ pub struct MeasurementPreview {
     pub provenance: CaptureProvenance,
     /// Explicit original-observation projection, never simulated BER/FEC or equalizer gain.
     pub projection: &'static str,
+}
+
+/// Configured synthetic response on an original source grid; never a measured capture.
+#[derive(Serialize)]
+#[non_exhaustive]
+pub struct ConfiguredResponsePreview {
+    /// Original byte-sized source identity, independent of simulation-profile admission.
+    pub profile_id: u8,
+    /// Exact source grid, without resampling or inferred numerology compatibility.
+    pub grid: FrequencyGrid,
+    /// Existing bounded projection with missing/zero-value semantics preserved.
+    pub view: MeasurementView,
+    /// Explicit gain/phase/real/imaginary selection.
+    pub projection: &'static str,
+    /// Declared synthetic reference; no capture epoch/hash or received H-hat is invented.
+    pub reference_plane: &'static str,
+}
+
+impl ProfileCapture {
+    /// Previews explicit unity H on an original catalog grid without creating a capture.
+    /// # Arguments
+    /// * `profile_id` - Original byte-sized source identity, never a run-ID coercion.
+    /// * `viewport` - Original offsets; zero count selects the complete source grid.
+    /// * `metric` - Existing gain, wrapped phase, real or imaginary response projection.
+    /// # Returns
+    /// Bounded synthetic-unity view with original grid/identity and explicit reference.
+    /// Unity applies to every source position, including excluded profile positions;
+    /// it does not claim a measured response, receiver estimate or compatible PHY run.
+    /// No source, simulation, original bytes or stored report changes.
+    /// # Errors
+    /// InvalidIdentifier for an absent source; existing grid/viewport/range errors otherwise.
+    pub fn unity_response_preview(
+        &self,
+        profile_id: u8,
+        viewport: MeasurementViewport,
+        metric: ChannelResponseMetric,
+    ) -> ApiResult<ConfiguredResponsePreview> {
+        let grid = self.profile_ref(profile_id)?.key.grid.clone();
+        let (metric, projection, units) = projection_parts(metric);
+
+        // The multiplicative complex identity is H = 1 + j0, with no missing locations.
+        let values = vec![response_value(Some([1.0, 0.0]), metric); grid.sample_count];
+        let view = measurement_view(&grid, &values, viewport.start, viewport.count, units)?;
+        Ok(ConfiguredResponsePreview {
+            profile_id,
+            grid,
+            view,
+            projection,
+            reference_plane: "configured_synthetic_unity_response",
+        })
+    }
+}
+
+fn projection_parts(metric: ChannelResponseMetric) -> (ResponseMetric, &'static str, &'static str) {
+    match metric {
+        ChannelResponseMetric::GainDb => (ResponseMetric::GainDb, "gain_db", "Gain (dB)"),
+        ChannelResponseMetric::PhaseDegrees => (
+            ResponseMetric::PhaseDegrees,
+            "phase_degrees",
+            "Phase (degrees)",
+        ),
+        ChannelResponseMetric::Real => (ResponseMetric::Real, "real", "Real"),
+        ChannelResponseMetric::Imaginary => (ResponseMetric::Imaginary, "imaginary", "Imaginary"),
+    }
 }
 
 impl RxMer {
@@ -93,18 +157,7 @@ impl ChannelEstimate {
         viewport: MeasurementViewport,
         metric: ChannelResponseMetric,
     ) -> ApiResult<MeasurementPreview> {
-        let (metric, projection, units) = match metric {
-            ChannelResponseMetric::GainDb => (ResponseMetric::GainDb, "gain_db", "Gain (dB)"),
-            ChannelResponseMetric::PhaseDegrees => (
-                ResponseMetric::PhaseDegrees,
-                "phase_degrees",
-                "Phase (degrees)",
-            ),
-            ChannelResponseMetric::Real => (ResponseMetric::Real, "real", "Real"),
-            ChannelResponseMetric::Imaginary => {
-                (ResponseMetric::Imaginary, "imaginary", "Imaginary")
-            }
-        };
+        let (metric, projection, units) = projection_parts(metric);
         let values = self
             .frame
             .iq

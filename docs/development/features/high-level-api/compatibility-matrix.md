@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-588 explicit public Rust operations and 558 installed native Python entries with
+591 explicit public Rust operations and 560 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/profile-performance-api-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/measured-input-api-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 112 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -368,3 +368,16 @@ FEC scopes, full original coordinates, pre-cancel/ownership and classic reportin
 [Executed API cases](../unified-qt-workbench/ds-01-profile-performance-operation-test-results.json)
 record this focused scope. No native class or scientific implementation is added;
 Qt viewer and parent/final acceptance remain separate.
+
+The [measured-input prerequisites](../unified-qt-workbench/validation.md#uiu-ds-01-measured-input-prerequisite-apis-accepted)
+add paired synthetic-unity source-grid previews and existing Designer domain-limit
+reports. The distinct synthetic response has no invented measured provenance.
+All preceding 588 Rust / 558 native rows, native classes, signatures and executed
+records remain intact; the limits type has two existing native-input export paths.
+[Executed cases](../unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json)
+record 29 Rust and 23 installed native cases, with every-point/field parity against
+a separate Rust process, plus one real Qt Designer/FEC consumer. Three native-runner
+tests verify strict case accounting and complete wiring of optional Rust reference
+processes into the final gate; the full gate has not been rerun for this addition.
+No existing domain, schema, scientific algorithm or Qt source changes. Qt adoption,
+parent Level 2 and milestone/final Level 3 acceptance remain separate.

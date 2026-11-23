@@ -15,8 +15,8 @@ pub mod downstream {
     pub mod inputs {
         pub use pnm_input::{
             read_capture, rxmer_export, save_json, CaptureLoader, CaptureScope, Notch,
-            RandomVariation, Ripple, RippleSpacing, RxMerDesign, RxMerDesignPosition, RxmerRecipe,
-            Tilt, ValueEdit, Workbench, MAX_RXMER_RECIPE_BYTES,
+            RandomVariation, Ripple, RippleSpacing, RxMerDesign, RxMerDesignLimits,
+            RxMerDesignPosition, RxmerRecipe, Tilt, ValueEdit, Workbench, MAX_RXMER_RECIPE_BYTES,
         };
     }
 }

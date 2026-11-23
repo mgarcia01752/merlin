@@ -262,3 +262,61 @@ fn source_catalog_designs_preserve_raw_ids_and_existing_baseline_semantics() {
     .is_err());
     assert_eq!(capture.provenance().original_bytes(), original.bytes());
 }
+
+#[test]
+fn admitted_designer_limits_match_independent_existing_domains_and_collection_guard() {
+    let limits = RxMerDesign::limits();
+
+    // Independent established input domains; expected values never read production constants.
+    assert_eq!(
+        (limits.minimum_mer_db, limits.maximum_mer_db),
+        (-30.0, 120.0)
+    );
+    assert_eq!(
+        (
+            limits.maximum_captures,
+            limits.maximum_values,
+            limits.maximum_value_edits
+        ),
+        (256, 4_000_000, 32)
+    );
+    assert_eq!(limits.maximum_random_standard_deviation_db, 20.0);
+    assert_eq!(
+        (
+            limits.maximum_absolute_tilt_db,
+            limits.maximum_ripple_peak_to_peak_db,
+            limits.maximum_notch_depth_db
+        ),
+        (60.0, 60.0, 60.0)
+    );
+    assert_eq!(
+        (
+            limits.minimum_echo_distance_metres,
+            limits.maximum_echo_distance_metres
+        ),
+        (0.001, 10_000.0)
+    );
+    let original = NamedCapture::new("original-design", FIXTURE.to_vec()).unwrap();
+    let before = RxMerDesign::from_bytes(&original).unwrap();
+    let mut excessive: Value = serde_json::from_slice(FIXTURE).unwrap();
+    excessive["capture_count"] = json!(256);
+    // 15,625 values times 256 captures equals the independent four-million guard.
+    excessive["baseline"]["valid"] = json!(vec![true; 15625]);
+    excessive["baseline"]["key"]["grid"]["sample_count"] = json!(15625);
+    let boundary = NamedCapture::new("at-budget", serde_json::to_vec(&excessive).unwrap()).unwrap();
+    assert_eq!(
+        RxMerDesign::from_bytes(&boundary).unwrap().position().count,
+        256
+    );
+    excessive["baseline"]["valid"] = json!(vec![true; 15626]);
+    excessive["baseline"]["key"]["grid"]["sample_count"] = json!(15626);
+    let excessive =
+        NamedCapture::new("over-budget", serde_json::to_vec(&excessive).unwrap()).unwrap();
+    assert!(RxMerDesign::from_bytes(&excessive)
+        .err()
+        .unwrap()
+        .message()
+        .contains("4,000,000"));
+    assert_eq!(before.original_bytes(), FIXTURE);
+    assert_eq!(before.position().count, 1);
+}

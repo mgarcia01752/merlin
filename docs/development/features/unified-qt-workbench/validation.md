@@ -2677,3 +2677,45 @@ Existing paired API evidence remains applicable; no fresh wheel or unrelated
 workspace/native/CLI/project/packaging suite is required. No installed-platform
 or unexecuted-suite pass is claimed. Parent Level 2, downstream milestone Level 3,
 later tasks and final numeric/shared-constant acceptance remain pending.
+
+## UIU-DS-01 measured-input prerequisite APIs accepted
+
+[Design](design.md#uiu-ds-01-measured-input-prerequisite-gaps),
+[machine evidence](measured-input-api-evidence.json) and
+[exact operation cases](ds-01-measured-input-api-operation-test-results.json)
+record Level 1 acceptance for REQ-UIU-02/03/08/09/21/24/27. Two demonstrated Qt
+consumer gaps receive paired public operations before Qt adoption: a synthetic
+unity-response preview on the exact original source grid, and a report of existing
+Designer scientific/resource limits. Synthetic unity remains separate from a
+measured response and contains no invented capture provenance. The existing
+four-million-value saved-Designer guard acquires a purpose-specific common name
+without changing its value or admission behavior.
+
+Executed: 29 Rust cases across complete affected source-catalog, captured-response,
+native Designer/workbench, independent scientific Designer and facade-import
+coverage; 23 exact installed-wheel native cases, including all four new cases,
+old affected contracts and genuine namespace imports; one real Qt Designer/FEC
+consumer; and three native-runner contract cases. Independent literal unity
+projections, raw source ID 200, original coordinates, viewport/missing/error and
+ownership behavior pass. Exactly four million Designer values admit; 4,000,256
+reject through the original guard. Every unity-report point/field and complete
+limits report equal the separate public Rust reference process. No new native
+class is introduced. Existing source documents, domain values, public signatures,
+historical matrix rows and tests remain intact.
+
+Formatting, scoped core/native all-target Clippy, CLI compilation, analysis-only
+build, fresh wheel, Rustdoc/native facade export inventories, strict executed-case
+matrix, boundary, documentation, traceability, versions, generated guide and diff
+checks pass. The native acceptance runner now supplies all five existing optional
+downstream Rust reference processes, including these new cases; its strict
+no-skips/completed-case rules remain. The full native gate itself is deferred,
+not reported passed. Current operation inventory is 591 Rust / 560 native.
+
+No Qt/CXX/QML source or registration, lifecycle, saved schema, manifest/lock or
+scientific algorithm changes. The latest optimized UI executable remains applicable
+to unchanged Qt sources; a new QML/startup/release build and unrelated full
+workspace/upstream/codec/CLI execution/project/packaging regressions are not
+required for this focused prerequisite. Qt measured-input/Designer/channel/session
+adoption is still pending. The frozen boundary remains 14 files/66 sites/three
+dependencies. No official checkbox changes; UIU-DS-01 Level 2, downstream milestone
+Level 3 and final acceptance/numeric audit remain open.

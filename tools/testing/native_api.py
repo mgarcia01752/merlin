@@ -38,6 +38,15 @@ REFERENCES = (
     ('CAPTURES25', 'pnm-input', 'upstream_captures', ('25',)),
 )
 
+# These optional focused-test references are mandatory in complete native acceptance.
+DOWNSTREAM_REFERENCES = (
+    ('MERLIN_SOURCE_FILE_INFO_REFERENCE', 'docsis-ofdm-fec', 'api_source_file_info'),
+    ('MERLIN_SPECTRUM_BUDGET_REFERENCE', 'docsis-ofdm-fec', 'api_spectrum_average_capacity'),
+    ('MERLIN_CALIBRATED_SEQUENCE_REFERENCE', 'docsis-ofdm-fec', 'api_calibrated_sequence'),
+    ('MERLIN_PROFILE_PERFORMANCE_REFERENCE', 'pnm-input', 'profile_performance'),
+    ('MERLIN_MEASURED_INPUT_VIEW_REFERENCE', 'pnm-input', 'measured_input_views'),
+)
+
 
 def passed_cases(log):
     """Read exact unittest identities only after a wholly successful native run.
@@ -141,6 +150,13 @@ def main():
             path = run(command, output, environment, key.lower(), report['commands'])
             json.loads(path.read_text())
             environment['MERLIN_UPSTREAM_RUST_' + key + '_JSON'] = str(path)
+        for key, package, example in DOWNSTREAM_REFERENCES:
+            command = [*cargo, 'run', '-p', package, '--example', example, '--locked']
+            if package == 'docsis-ofdm-fec':
+                command += ['--features', 'high-level-api']
+            path = run(command, output, environment, example, report['commands'])
+            json.loads(path.read_text())
+            environment[key] = str(path)
         transmitter = run([*cargo, 'run', '-p', 'docsis-ofdm-fec', '--example',
                            'api_transmitter_preview', '--features', 'high-level-api', '--locked'],
                           output, environment, 'transmitter', report['commands'])
@@ -181,7 +197,7 @@ def main():
              '--output', str(output / 'native-exports.json')], output, environment,
             'native-inventory', report['commands'], cwd=output)
         report['reference_environment'] = {key: value for key, value in environment.items()
-            if key.startswith('MERLIN_UPSTREAM_RUST_') or key in
+            if key.startswith('MERLIN_UPSTREAM_RUST_') or key in {row[0] for row in DOWNSTREAM_REFERENCES} or key in
             ('MERLIN_API_PARITY', 'MERLIN_WB_PARITY', 'MERLIN_DESIGNER_PARITY', 'MERLIN_TRANSMITTER_PARITY', 'MERLIN_FULL_LOOP_PARITY')}
         report['status'] = 'passed'
         print(f"Installed native API: {report['passed']} cases pass", flush=True)

@@ -5,10 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "9fdb48e071a8c8e12128c432c4281bd101652da7 plus exact profile-performance candidate",
-    "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-profile-performance-native/results.json",
-    "native_sha256": "ab928e37f4d58fdd742c23df81e6d7bad784f5bcc625c48b60d94d4d24430faa",
-    "scope": "Ten selected full-loop/classic/namespace cases; all prior classes/members/signatures exact after removing only FullLoopResult.profile_performance."
+    "revision": "102f4908f45292c6715308e9693fdf26b89939c2 plus exact measured-input API candidate",
+    "inventory_command": "Exact archive-matched native_api_inventory.py; ds-01-measured-input-api-native/results.json",
+    "native_sha256": "1f665a56753fc650c37d113f4c489c6e8ef7ee315d1520b6075480e072b8692a",
+    "scope": "23 selected installed cases; all old classes/signatures/members exact after removing only unity_response_preview and limits."
   },
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
@@ -141,7 +141,12 @@
     "evidence.uiu-ds-01-measurement-frame": "../unified-qt-workbench/measurement-frame-api-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-original-measurement-frame-api-accepted: unchanged key/epoch/IQ/nulls, immutable frame ownership and separate original/intermediate provenance.",
     "status.uiu-ds-01-measurement-frame": "Level 1 paired frame prerequisite accepted; measured-input Qt adoption, parent Level 2 and final Level 3 remain pending.",
     "evidence.uiu-ds-01-profile-performance": "../unified-qt-workbench/profile-performance-api-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-profile-performance-observation-api-accepted: full original-grid coordinates/roles, actual scoped carrier MER/powers, ideal capacity, FEC/BER/unfinished scopes, classic compatibility and independent process parity.",
-    "status.uiu-ds-01-profile-performance": "Level 1 paired performance prerequisite accepted; Qt viewer, official parent Level 2 and final Level 3 remain pending."
+    "status.uiu-ds-01-profile-performance": "Level 1 paired performance prerequisite accepted; Qt viewer, official parent Level 2 and final Level 3 remain pending.",
+    "evidence.uiu-ds-01-measured-input": "../unified-qt-workbench/measured-input-api-evidence.json and ../unified-qt-workbench/validation.md#uiu-ds-01-measured-input-prerequisite-apis-accepted: independent synthetic unity, existing Designer domains/guard, ownership, unchanged earlier APIs and complete Rust/native-process parity.",
+    "status.uiu-ds-01-measured-input": "Level 1 paired prerequisite accepted; Qt adoption, parent Level 2 and milestone/final Level 3 remain pending.",
+    "ownership.uiu-ds-01-measured-input": "Passive immutable input reads return owned scalar/plot reports. Rust keeps original inputs unchanged; native dictionaries are independent. No source, simulator or saved schema advances.",
+    "units.uiu-ds-01-measured-input": "Unity H is dimensionless with existing gain dB/wrapped degree/real/imaginary projections on exact source frequencies. Designer reports existing dB/metre limits and separate capture/value/edit counts.",
+    "errors.uiu-ds-01-measured-input": "Unity preserves InvalidIdentifier/grid/viewport errors and native integer/string conversion distinctions. Rust limits is infallible; native JSON transport may raise ApiError."
   },
   "type_exports": {
     "downstream": [
@@ -1072,6 +1077,10 @@
       {
         "export": "merlin::downstream::FullLoopProfilePerformance",
         "kind": "struct"
+      },
+      {
+        "export": "merlin::downstream::ConfiguredResponsePreview",
+        "kind": "struct"
       }
     ],
     "upstream": [
@@ -1733,6 +1742,14 @@
       },
       {
         "export": "pnm_input::workbench::Workbench",
+        "kind": "struct"
+      },
+      {
+        "export": "pnm_input::RxMerDesignLimits",
+        "kind": "struct"
+      },
+      {
+        "export": "pnm_input::workbench::RxMerDesignLimits",
         "kind": "struct"
       }
     ]
@@ -33353,6 +33370,166 @@
       },
       "evidence": "evidence.uiu-ds-01-profile-performance",
       "status": "status.uiu-ds-01-profile-performance"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::ProfileCapture::unity_response_preview",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn unity_response_preview( &self, profile_id: u8, viewport: MeasurementViewport, metric: ChannelResponseMetric, ) -> ApiResult<ConfiguredResponsePreview>",
+        "source_file": "crates/ofdm/src/api/measurement.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.ProfileCapture.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.ProfileCapture.unity_response_preview",
+        "declaration": "merlin.downstream.ProfileCapture.unity_response_preview"
+      },
+      "input_ownership": "ownership.uiu-ds-01-measured-input",
+      "units": "units.uiu-ds-01-measured-input",
+      "error_behavior": "errors.uiu-ds-01-measured-input",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<ConfiguredResponsePreview>",
+        "scope": "Explicit synthetic-unity source-grid view without invented measured provenance."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-21",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_profile_capture.rs::synthetic_unity_preview_preserves_original_byte_identity_and_independent_response_values",
+          "crates/ofdm/tests/api_profile_capture.rs::unity_preview_rejects_missing_source_and_invalid_viewports_without_mutation"
+        ],
+        "python": {
+          "status": "exact-archive installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_measured_input_views.py::MeasuredInputViewTests.test_unity_keeps_raw_source_ids_projection_values_and_independent_owned_views",
+            "bindings/python/tests/test_measured_input_views.py::MeasuredInputViewTests.test_unity_rejects_invalid_conversions_identity_and_viewports",
+            "bindings/python/tests/test_measured_input_views.py::MeasuredInputViewTests.test_all_unity_fields_and_limits_match_separate_public_rust_process"
+          ],
+          "scope": "Independent existing values/bounds, original IDs/grids, invalid conversions/queries, owned results and complete separate Rust-process observations."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-measured-input",
+      "status": "status.uiu-ds-01-measured-input"
+    },
+    {
+      "direction": "downstream",
+      "operation": "pnm_input::RxMerDesign::limits",
+      "rust_namespace": "pnm_input",
+      "rust_type_method": {
+        "signature": "pub fn limits() -> RxMerDesignLimits",
+        "source_file": "crates/pnm-input/src/workbench/designer/limits.rs",
+        "rustdoc": "pnm_input/workbench/struct.RxMerDesign.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.RxMerDesign.limits",
+        "declaration": "merlin.downstream.RxMerDesign.limits"
+      },
+      "input_ownership": "ownership.uiu-ds-01-measured-input",
+      "units": "units.uiu-ds-01-measured-input",
+      "error_behavior": "errors.uiu-ds-01-measured-input",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "RxMerDesignLimits",
+        "scope": "Read-only report of existing named domains and distinct Designer collection-value guard; no validation semantics change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-21",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/designer_admission.rs::admitted_designer_limits_match_independent_existing_domains_and_collection_guard",
+          "crates/merlin/tests/namespaces.rs::native_designer_limits_keep_exact_owner_type_through_facade"
+        ],
+        "python": {
+          "status": "exact-archive installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_measured_input_views.py::MeasuredInputViewTests.test_limits_preserve_all_existing_domains_and_return_independent_dictionaries",
+            "bindings/python/tests/test_measured_input_views.py::MeasuredInputViewTests.test_all_unity_fields_and_limits_match_separate_public_rust_process"
+          ],
+          "scope": "Independent existing values/bounds, original IDs/grids, invalid conversions/queries, owned results and complete separate Rust-process observations."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-measured-input",
+      "status": "status.uiu-ds-01-measured-input"
+    },
+    {
+      "direction": "downstream",
+      "operation": "pnm_input::workbench::RxMerDesign::limits",
+      "rust_namespace": "pnm_input::workbench",
+      "rust_type_method": {
+        "signature": "pub fn limits() -> RxMerDesignLimits",
+        "source_file": "crates/pnm-input/src/workbench/designer/limits.rs",
+        "rustdoc": "pnm_input/workbench/struct.RxMerDesign.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.downstream.RxMerDesign.limits",
+        "declaration": "merlin.downstream.RxMerDesign.limits"
+      },
+      "input_ownership": "ownership.uiu-ds-01-measured-input",
+      "units": "units.uiu-ds-01-measured-input",
+      "error_behavior": "errors.uiu-ds-01-measured-input",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "RxMerDesignLimits",
+        "scope": "Read-only report of existing named domains and distinct Designer collection-value guard; no validation semantics change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-21",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/designer_admission.rs::admitted_designer_limits_match_independent_existing_domains_and_collection_guard",
+          "crates/merlin/tests/namespaces.rs::native_designer_limits_keep_exact_owner_type_through_facade"
+        ],
+        "python": {
+          "status": "exact-archive installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_measured_input_views.py::MeasuredInputViewTests.test_limits_preserve_all_existing_domains_and_return_independent_dictionaries",
+            "bindings/python/tests/test_measured_input_views.py::MeasuredInputViewTests.test_all_unity_fields_and_limits_match_separate_public_rust_process"
+          ],
+          "scope": "Independent existing values/bounds, original IDs/grids, invalid conversions/queries, owned results and complete separate Rust-process observations."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-measured-input",
+      "status": "status.uiu-ds-01-measured-input"
     }
   ],
   "executed_records": [
@@ -33395,7 +33572,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -69452,6 +69630,125 @@
       },
       "evidence": "evidence.uiu-ds-01-profile-performance",
       "status": "status.uiu-ds-01-profile-performance"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.ProfileCapture.unity_response_preview",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::ProfileCapture",
+        "source_file": "bindings/python/src/profile_capture.rs",
+        "symbol": "PyProfileCapture",
+        "signature": "pub fn unity_response_preview( &self, profile_id: u8, viewport: MeasurementViewport, metric: ChannelResponseMetric, ) -> ApiResult<ConfiguredResponsePreview>",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "merlin::downstream::ProfileCapture::unity_response_preview",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "unity_response_preview",
+        "kind": "method",
+        "signature": "(self, /, profile_id, metric='gain_db', start=0, count=0)",
+        "declaration": "ProfileCapture.unity_response_preview"
+      },
+      "input_ownership": "ownership.uiu-ds-01-measured-input",
+      "units": "units.uiu-ds-01-measured-input",
+      "error_behavior": "errors.uiu-ds-01-measured-input",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<ConfiguredResponsePreview>",
+        "scope": "Explicit synthetic-unity source-grid view without invented measured provenance."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-21",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/tests/api_profile_capture.rs::synthetic_unity_preview_preserves_original_byte_identity_and_independent_response_values",
+          "crates/ofdm/tests/api_profile_capture.rs::unity_preview_rejects_missing_source_and_invalid_viewports_without_mutation"
+        ],
+        "python": {
+          "status": "exact-archive installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_measured_input_views.py::MeasuredInputViewTests.test_unity_keeps_raw_source_ids_projection_values_and_independent_owned_views",
+            "bindings/python/tests/test_measured_input_views.py::MeasuredInputViewTests.test_unity_rejects_invalid_conversions_identity_and_viewports",
+            "bindings/python/tests/test_measured_input_views.py::MeasuredInputViewTests.test_all_unity_fields_and_limits_match_separate_public_rust_process"
+          ],
+          "scope": "Independent existing values/bounds, original IDs/grids, invalid conversions/queries, owned results and complete separate Rust-process observations."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-measured-input",
+      "status": "status.uiu-ds-01-measured-input"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.RxMerDesign.limits",
+      "rust_namespace": "pnm_input",
+      "rust_type_method": {
+        "export": "pnm_input::RxMerDesign",
+        "source_file": "bindings/python/src/designer.rs",
+        "symbol": "PyDesign",
+        "signature": "pub fn limits() -> RxMerDesignLimits",
+        "mapping": "Thin native conversion over the named public Rust owner. JSON/fields/language constructors are deliberate language projections; no Python science. See API-01 paired guides for exact typed operations.",
+        "delegated_operation": "pnm_input::RxMerDesign::limits",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "limits",
+        "kind": "method",
+        "signature": "()",
+        "declaration": "RxMerDesign.limits"
+      },
+      "input_ownership": "ownership.uiu-ds-01-measured-input",
+      "units": "units.uiu-ds-01-measured-input",
+      "error_behavior": "errors.uiu-ds-01-measured-input",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "RxMerDesignLimits",
+        "scope": "Read-only report of existing named domains and distinct Designer collection-value guard; no validation semantics change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-02",
+        "REQ-UIU-03",
+        "REQ-UIU-08",
+        "REQ-UIU-09",
+        "REQ-UIU-21",
+        "REQ-UIU-24",
+        "REQ-UIU-27"
+      ],
+      "checklist": [
+        "UIU-DS-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/designer_admission.rs::admitted_designer_limits_match_independent_existing_domains_and_collection_guard",
+          "crates/merlin/tests/namespaces.rs::native_designer_limits_keep_exact_owner_type_through_facade"
+        ],
+        "python": {
+          "status": "exact-archive installed native acceptance",
+          "cases": [
+            "bindings/python/tests/test_measured_input_views.py::MeasuredInputViewTests.test_limits_preserve_all_existing_domains_and_return_independent_dictionaries",
+            "bindings/python/tests/test_measured_input_views.py::MeasuredInputViewTests.test_all_unity_fields_and_limits_match_separate_public_rust_process"
+          ],
+          "scope": "Independent existing values/bounds, original IDs/grids, invalid conversions/queries, owned results and complete separate Rust-process observations."
+        }
+      },
+      "evidence": "evidence.uiu-ds-01-measured-input",
+      "status": "status.uiu-ds-01-measured-input"
     }
   ],
   "native_type_exports": {
@@ -70652,6 +70949,13 @@
       "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-measurement-frames-native/results.json",
       "native_sha256": "f145fc3803c90e02049ccb532699948cb3c516dbb390bcedf6cfdd64bd85e5cd",
       "scope": "Eight selected original-measurement/namespace cases; all prior classes/members/signatures exact after removing only ChannelEstimate.frame."
+    },
+    {
+      "version": "0.4.0",
+      "revision": "9fdb48e071a8c8e12128c432c4281bd101652da7 plus exact profile-performance candidate",
+      "inventory_command": "Exact archive-matched installed native_api_inventory.py; ds-01-profile-performance-native/results.json",
+      "native_sha256": "ab928e37f4d58fdd742c23df81e6d7bad784f5bcc625c48b60d94d4d24430faa",
+      "scope": "Ten selected full-loop/classic/namespace cases; all prior classes/members/signatures exact after removing only FullLoopResult.profile_performance."
     }
   ],
   "historical_rust_export_corrections": [

@@ -11,7 +11,7 @@ use crate::common::constants::{
 };
 use crate::CaptureLoader;
 use base64::{engine::general_purpose::STANDARD, Engine};
-pub use designer::{RxMerDesign, RxMerDesignPosition, MAX_RXMER_RECIPE_BYTES};
+pub use designer::{RxMerDesign, RxMerDesignLimits, RxMerDesignPosition, MAX_RXMER_RECIPE_BYTES};
 use docsis_ofdm_fec::{api::*, transmission::TransmissionSettings};
 pub(crate) use full_loop::{original_byte_count, prepare};
 use serde::{Deserialize, Serialize};

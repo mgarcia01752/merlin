@@ -117,6 +117,40 @@ impl PyProfileView {
 
 #[pymethods]
 impl PyProfileCapture {
+    /// Previews explicit synthetic unity H through the public Rust numerical owner.
+    /// # Arguments
+    /// * `profile_id` - Original byte identity, independent of simulation-ID admission.
+    /// * `metric` - gain_db, phase_degrees, real or imaginary.
+    /// * `start`, `count` - Original source offsets; zero count restores full span.
+    /// # Returns
+    /// Owned synthetic reference/grid/view dictionary without invented capture provenance.
+    /// # Errors
+    /// Shared identity/viewport/projection errors raise ApiError; work releases the GIL.
+    #[pyo3(signature=(profile_id, metric="gain_db", start=0, count=0))]
+    fn unity_response_preview(
+        &self,
+        py: Python<'_>,
+        profile_id: u8,
+        metric: &str,
+        start: usize,
+        count: usize,
+    ) -> PyResult<Py<PyAny>> {
+        let metric = crate::measurement::response_metric(metric)?;
+        let text = py
+            .detach(|| {
+                let report = self.0.unity_response_preview(
+                    profile_id,
+                    api::MeasurementViewport { start, count },
+                    metric,
+                )?;
+                serde_json::to_string(&report).map_err(|cause| {
+                    api::ApiError::new(api::ErrorCode::InvalidInput, cause.to_string())
+                })
+            })
+            .map_err(error)?;
+        object_from_json(py, &text)
+    }
+
     /// Loads an original binary/JSON profile capture through the existing native decoder.
     /// # Arguments
     /// * `path` - Original caller-selected file; no output is written.

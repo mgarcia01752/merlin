@@ -281,3 +281,10 @@ and [paired evidence](validation.md#uiu-ds-01-profile-performance-observation-ap
 move actual carrier MER/Shannon and scoped report projection behind one typed
 FullLoopResult operation, reusing CarrierMer/FecReport and keeping original source
 coordinates. Qt viewer and bounded QAM-history adoption remain separate units.
+
+The [measured-input prerequisite gaps](design.md#uiu-ds-01-measured-input-prerequisite-gaps)
+are exactly the missing source-grid synthetic-unity projection and existing
+Designer-domain report. [Paired acceptance](validation.md#uiu-ds-01-measured-input-prerequisite-apis-accepted)
+precedes the remaining measured-input/session consumer adoption. These operations
+reuse current numerical/validation owners, preserve raw byte identities and never
+create measured provenance for unity. No speculative operation or new parent task.

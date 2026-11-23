@@ -20,6 +20,26 @@ fn snapshot(py: Python<'_>, value: api::MeasurementPreview) -> PyResult<Py<PyAny
     object_from_json(py, &text)
 }
 
+/// Converts one native projection name to the existing typed Rust selector.
+/// # Arguments
+/// * `metric` - Exact gain_db, phase_degrees, real or imaginary spelling.
+/// # Returns
+/// The shared public selector, without evaluating or inferring scientific values.
+/// # Errors
+/// Raises the existing InvalidInput ApiError for an unknown projection name.
+pub(crate) fn response_metric(metric: &str) -> PyResult<api::ChannelResponseMetric> {
+    match metric {
+        "gain_db" => Ok(api::ChannelResponseMetric::GainDb),
+        "phase_degrees" => Ok(api::ChannelResponseMetric::PhaseDegrees),
+        "real" => Ok(api::ChannelResponseMetric::Real),
+        "imaginary" => Ok(api::ChannelResponseMetric::Imaginary),
+        _ => Err(error(api::ApiError::new(
+            api::ErrorCode::InvalidInput,
+            "Unknown channel response projection",
+        ))),
+    }
+}
+
 #[pymethods]
 impl PyRxMer {
     /// Previews original RxMER via Rust's bounded measurement owner without running a job.
@@ -64,18 +84,7 @@ impl PyChannelEstimate {
         start: usize,
         count: usize,
     ) -> PyResult<Py<PyAny>> {
-        let metric = match metric {
-            "gain_db" => api::ChannelResponseMetric::GainDb,
-            "phase_degrees" => api::ChannelResponseMetric::PhaseDegrees,
-            "real" => api::ChannelResponseMetric::Real,
-            "imaginary" => api::ChannelResponseMetric::Imaginary,
-            _ => {
-                return Err(error(api::ApiError::new(
-                    api::ErrorCode::InvalidInput,
-                    "Unknown channel response projection",
-                )))
-            }
-        };
+        let metric = response_metric(metric)?;
         let result = py
             .detach(|| {
                 self.0

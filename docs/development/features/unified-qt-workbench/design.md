@@ -2967,3 +2967,46 @@ QML interactions, Qt formatting/Clippy/optimized build and boundary/traceability
 The already accepted paired APIs need no new wheel or repeated unrelated suites.
 Retire complete files only after no direct scientific owner remains; record the
 remaining diagnostics roots explicitly. Parent Level 2 and final Level 3 remain.
+
+## UIU-DS-01 measured-input prerequisite gaps
+
+REQ-UIU-02/03/08/09/21/24/27 and UIU-DS-01 own two concrete remaining gaps before
+measurement/Designer/session adoption. The current unity-channel chart in
+measurement_input/model.rs computes response projections privately; existing
+ChannelEstimate.preview requires a measured original, and ChannelPreview supplies
+only configured gain. Do not manufacture a capture or provenance for unity.
+ADD ProfileCapture.unity_response_preview(profile_id, viewport, metric), returning
+a ConfiguredResponsePreview with original grid/identity, existing bounded view,
+explicit synthetic-unity reference and projection. Reuse response_value and
+measurement_view numerical owners for all four existing projections. This operation
+claims no measured response or numerology compatibility beyond the source grid.
+
+The Designer currently repeats -30..120 dB, 256-capture and 4,000,000-value limits
+and invokes private recipe validation. Existing RxMerDesign owns evaluation but
+does not expose its complete admitted limits. ADD RxMerDesign.limits returning
+an immutable RxMerDesignLimits report of existing baseline, capture/value/edit,
+variation, tilt/ripple/notch and echo-distance domains. REUSE scientific constants;
+centralize only the existing native Designer aggregate-value guard in its common
+constants owner. Keep it distinct from equal-valued playback budgets. Change no
+domain value, evaluator, saved recipe or acceptance semantics.
+
+Rust signatures:
+`ProfileCapture::unity_response_preview(u8, MeasurementViewport, ChannelResponseMetric)
+-> ApiResult<ConfiguredResponsePreview>` and
+`RxMerDesign::limits() -> RxMerDesignLimits`. Native mirrors the first with
+`unity_response_preview(profile_id, metric="gain_db", start=0, count=0) -> dict`
+and the second with `RxMerDesign.limits() -> dict`. No native class is added.
+Keep crate/facade ownership and original import compatibility. Independent unity
+values, raw byte IDs, viewports/ownership, existing Designer bounds and baseline
+vectors, complete exact inventories and direct Rust/native process parity precede
+Qt adoption. Rust tests pass before binding implementation; commit the paired
+prerequisite first. No other speculative API extension belongs to this unit.
+Parent Level 2 and final Level 3 remain pending.
+
+The complete native acceptance runner must generate all five current optional
+downstream reference processes, including these views and the preceding profile
+performance operation. Wire those existing examples without relaxing its strict
+no-skipped-tests rule. A focused runner contract discovers optional reference
+guards and verifies complete wiring to real Rust example sources. Level 1 runs
+the affected new process/current native cases and runner tests; complete native
+acceptance remains a milestone/final gate.

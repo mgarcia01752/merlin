@@ -99,6 +99,22 @@ fn downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior() {
     ) -> downstream::ApiResult<&'a downstream::SourceProfileFrame> =
         downstream::ProfileCapture::frame;
     let _ = source_frame;
+    let unity: fn(
+        &downstream::ProfileCapture,
+        u8,
+        downstream::MeasurementViewport,
+        downstream::ChannelResponseMetric,
+    ) -> downstream::ApiResult<downstream::ConfiguredResponsePreview> =
+        downstream::ProfileCapture::unity_response_preview;
+    let legacy_unity: fn(
+        &docsis_ofdm_fec::api::ProfileCapture,
+        u8,
+        docsis_ofdm_fec::api::MeasurementViewport,
+        docsis_ofdm_fec::api::ChannelResponseMetric,
+    ) -> docsis_ofdm_fec::api::ApiResult<
+        docsis_ofdm_fec::api::ConfiguredResponsePreview,
+    > = unity;
+    let _ = legacy_unity;
     assert_eq!(
         TypeId::of::<downstream::ChannelEstimateFrame>(),
         TypeId::of::<docsis_ofdm_fec::scenario::ChannelFrame>()
@@ -756,4 +772,14 @@ fn upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs() 
         TypeId::of::<upstream::CellRole>(),
         TypeId::of::<docsis_ofdma::resources::CellRole>()
     );
+}
+
+#[cfg(feature = "native-input")]
+#[test]
+fn native_designer_limits_keep_exact_owner_type_through_facade() {
+    let limits: fn() -> downstream::inputs::RxMerDesignLimits =
+        downstream::inputs::RxMerDesign::limits;
+    let original: fn() -> pnm_input::RxMerDesignLimits = limits;
+    assert_eq!(original().maximum_values, 4_000_000);
+    assert_eq!(original().maximum_captures, 256);
 }

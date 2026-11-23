@@ -63,6 +63,19 @@ impl PyDesignPosition {
 
 #[pymethods]
 impl PyDesign {
+    /// Reads existing Designer input/scientific bounds through the public Rust owner.
+    /// # Returns
+    /// Owned named limit dictionary; no baseline, recipe, source or simulation changes.
+    /// # Errors
+    /// Raises ApiError for JSON transport failure, without admitting any recipe.
+    #[staticmethod]
+    fn limits(py: Python<'_>) -> PyResult<Py<PyAny>> {
+        let text = serde_json::to_string(&RxMerDesign::limits())
+            .map_err(transport_error)
+            .map_err(error)?;
+        object_from_json(py, &text)
+    }
+
     /// Loads an exact saved Designer envelope through the public native Rust owner.
     /// # Arguments
     /// * `name` - Original display identity, never a format hint.

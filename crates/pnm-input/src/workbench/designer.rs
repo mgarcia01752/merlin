@@ -4,6 +4,7 @@
  */
 //! Saved Designer input adapter; numerical evaluation stays in the Rust engine.
 mod admission;
+mod limits;
 use super::{invalid, unsupported, Stored};
 use crate::CaptureLoader;
 pub use admission::{RxMerDesign, RxMerDesignPosition, MAX_RXMER_RECIPE_BYTES};
@@ -13,6 +14,7 @@ use docsis_ofdm_fec::{
     scenario::{RxMerFrame, ScenarioKey, SourceProvenance},
     signal_processing::rxmer_designer::RxmerRecipe,
 };
+pub use limits::RxMerDesignLimits;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 
@@ -96,7 +98,7 @@ pub(super) fn load(input: &NamedCapture) -> ApiResult<RxMer> {
     if record
         .capture_count
         .checked_mul(key.grid.sample_count)
-        .is_none_or(|count| count > 4_000_000)
+        .is_none_or(|count| count > crate::common::constants::MAX_DESIGNER_COLLECTION_VALUES)
     {
         return Err(invalid("Designer collection exceeds 4,000,000 values"));
     }

@@ -529,6 +529,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [channel/RX observations facade](features/unified-qt-workbench/validation.md#uiu-ds-01-channel-and-receiver-observations-facade-accepted) retires four further files and the private response calculation. Remaining frozen inventory: 14 files/66 sites, comprising measurement/Designer/channel-configuration/session owners (54 sites) and bounded receiver QAM/soft-history owners (12 sites), then removal of the three scientific dependencies. These are remaining UIU-DS-01 owners, not new parent tasks. Full downstream acceptance precedes UIU-SESSION-01 and the dual-tab shell.
 
+  The [measured-input prerequisite contracts](features/unified-qt-workbench/validation.md#uiu-ds-01-measured-input-prerequisite-apis-accepted) add explicit synthetic-unity views and authoritative Designer domain reports before Qt adoption. Frozen inventory and parent acceptance stay unchanged.
+
 - [ ] **UIU-SESSION-01** Make direction sessions explicit and serialize initial dispatch.
   Requirements: [REQ-UIU-03](../requirements.md#req-uiu-03), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-07](../requirements.md#req-uiu-07).
   Dependencies: [UIU-DS-01](#task-uiu-ds-01).

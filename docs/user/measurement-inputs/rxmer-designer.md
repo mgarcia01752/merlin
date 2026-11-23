@@ -192,3 +192,11 @@ capture and explicitly run each one. They use the encoded values directly;
 they neither reapply the recipe nor start simulation while loading. Native
 binary loading does not automatically read the sidecar, so keep it alongside
 the binary to preserve the synthetic-origin declaration and design settings.
+
+The Basic Rust API exposes `RxMerDesign::limits() -> RxMerDesignLimits` through
+`merlin::downstream::inputs`; the Basic Python API mirrors it as
+`merlin.downstream.RxMerDesign.limits() -> dict`. This passive report names the
+existing MER, collection/value/edit, variation, tilt/ripple/notch and echo-distance
+bounds, with units in the field names. It starts no design or simulation and
+changes no validation rule. Returned native dictionaries are independent copies.
+The Designer collection-value ceiling is separate from playback and UI budgets.
