@@ -3401,3 +3401,32 @@ wheel, unrelated complete workspace/CLI/project/packaging and full QML suites
 are not required for these three dispatch substitutions. Actual host charges,
 upstream adoption/registration and complete session Level 2 plus final Level 3
 remain mandatory; UIU-SESSION-01 stays unchecked.
+
+## UIU-SESSION-01 upstream controller target admission
+
+The [planned controller consumer](design.md#next-application-consumer-proven-upstream-controller-admission)
+now replaces caller-asserted reservations with actual public Simulation metadata,
+checked concrete wrapper quantities and session-bound BatchReport preflight.
+Preparation stays off-GUI before the global lease; dispatch validates the exact
+session/key and uses the already accepted bounded operation. The [source handoff](agent-handoffs/controller-admission.md)
+records its isolated preparation and finite remaining host-owner map.
+
+Executed in the primary checkout: **48 combined Rust cases**, comprising 35 shell
+and 13 real upstream controller cases; warning-denied compilation and Clippy,
+formatting and final API boundary. New cases reject each report dimension before
+lease/control acquisition, reject foreign prepared owners/keys while returning
+the genuine unstarted lease, and check wrapper root replacement/overflow. Existing
+completion, partial cancel, paused Busy, stale callbacks, disconnected queue,
+nonblocking destruction and unwind restoration still pass. The [receipt](session-upstream-admission-evidence.json)
+records commands, source/artifact identities and scope. Initial compilation used
+a stale cached facade artifact and failed; selecting the current Qt cache artifact
+passed without rebuilding or changing sources. Both attempts are preserved.
+
+The component remains unregistered. Backend/native evidence at 1841d92 and the
+latest production Qt executable/probes at 171b7aa are reused: none of those linked
+sources or public/persistence contracts changes. Another wheel, production Qt
+build, full QML or unrelated workspace/CLI/packaging suites are not required for
+this unregistered application-controller change. Outer application, budget,
+control, transport, input/presentation/error owners and canonical host wiring
+remain mandatory before shared aggregate/session acceptance. UIU-SESSION-01 stays
+unchecked; complete Level 2 and milestone/final Level 3 gates remain intact.

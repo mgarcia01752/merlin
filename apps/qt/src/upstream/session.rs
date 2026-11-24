@@ -4,15 +4,20 @@
  */
 //! Actual upstream sessions and reports, without another scientific interface.
 use crate::shell::{
-    spawn_worker, Direction, Retained, RetentionReservation, RunCancellation, RunLease, RunToken,
-    SessionKey, WorkerEvent, WorkerTerminal,
+    spawn_worker, Direction, Retained, RetainedResources, RetentionBudget, RetentionError,
+    RetentionReservation, RunCancellation, RunLease, RunToken, SessionKey, WorkerEvent,
+    WorkerTerminal,
 };
-use merlin::upstream::{
-    ApiError, ConfigurationDocument, ProgressSnapshot, ReceiverObservationPolicy, RunControl,
-    Simulation,
+use merlin::{
+    common::RetainedFootprint,
+    upstream::{
+        ApiError, BatchReport, ConfigurationDocument, ProgressSnapshot, ReceiverObservationPolicy,
+        RunControl, Simulation,
+    },
 };
 use std::{
     io,
+    mem::size_of,
     sync::{
         atomic::{AtomicBool, Ordering},
         mpsc::{Receiver, TryRecvError},
@@ -30,14 +35,32 @@ type SharedSession = Arc<Retained<Mutex<SessionStorage>>>;
 type Events = Receiver<WorkerEvent<RetainedReport, ApiError>>;
 
 struct SessionStorage {
-    // The reservation owns the original document even during failed preparation.
-    preparing: Option<ConfigurationDocument>,
     simulation: Option<Simulation>,
 }
 
-/// Off-GUI admitted scientific session, carrying its host's ownership charge.
+/// Off-GUI admitted scientific session, carrying a backend-derived ownership charge.
 pub struct PreparedSession {
     session: SharedSession,
+    budget: RetentionBudget,
+}
+
+/// Target reservation prepared off-GUI for one exact immutable controller session.
+///
+/// Not cloneable: Start consumes this report reservation. Dropping an unused or
+/// rejected preparation releases its target while keeping other owners charged.
+pub struct PreparedRun {
+    key: SessionKey,
+    owner: SharedSession,
+    backend_limit: RetainedFootprint,
+    reservation: RetentionReservation,
+}
+
+/// Typed off-GUI admission failure; previously accepted ownership is unchanged.
+#[derive(Debug)]
+pub enum AdmissionError {
+    Backend(ApiError),
+    Retention(RetentionError),
+    Controller(ControllerError),
 }
 
 /// Nonblocking public control adapter shared with global dispatch admission.
@@ -56,6 +79,7 @@ pub enum ControllerError {
     WrongDirection,
     Busy,
     StaleToken,
+    StalePreparation,
     WorkerDisconnected,
 }
 
@@ -94,8 +118,10 @@ struct Active {
 ///
 /// Replacement is host-owned: prepare a new controller off-GUI and adopt only
 /// after the shell rechecks the generation/Open guard. This owner never changes
-/// accepted science under an unchanged key. It owns no budget; reservations are
-/// trusted host inputs, not estimates or proof of a backend memory ceiling.
+/// accepted science under an unchanged key. Its shared budget admits actual
+/// scientific root quantities and fixed retained-wrapper storage before adoption.
+/// This is a partial application proof: outer controller/control/preparation,
+/// transport, DTO and shared budget-accounting owners need separate host charges.
 pub struct UpstreamController {
     key: SessionKey,
 
@@ -103,6 +129,7 @@ pub struct UpstreamController {
     // worker finishes through the shared transport's terminal acknowledgement.
     active: Option<Active>,
     session: SharedSession,
+    budget: RetentionBudget,
     report: Option<(RunToken, RetainedReport)>,
 }
 
@@ -112,40 +139,51 @@ struct RunningSession {
 }
 
 impl PreparedSession {
-    /// Admits an actual configuration document through public upstream operations.
+    /// Builds a real public session off-GUI, then admits its final retained owner.
     ///
     /// # Arguments
-    /// * `document` - Owned source document; admission retains its exact provenance.
+    /// * `document` - Owned source document; admission preserves its exact provenance.
     /// * `observations` - Explicit validated receiver retention policy.
-    /// * `reservation` - Host charge reserved before document/preparation allocation;
-    ///   it must cover reachable session data and preparation peak ownership.
+    /// * `budget` - Shared application policy enforcing all three dimensions.
     ///
     /// # Returns
-    /// An idle scientific session; call off-GUI because public admission allocates.
-    /// No source, run, worker or output file is started. External input aliases
-    /// remain the host's separately charged responsibility.
+    /// An idle session reserved from actual Simulation metadata plus checked
+    /// fixed Mutex/Option/Retained storage and its outer shared root. The incoming
+    /// document owner remains the caller's separately charged input responsibility.
+    /// Temporary backend builders retain their existing finite execution limits;
+    /// this does not claim an aggregate preparation-peak or scratch-byte bound.
+    /// No source, run, backend control or output file is started.
     ///
     /// # Errors
-    /// Preserves the original public validation error; no existing owner changes.
+    /// Preserves typed public admission errors and budget/checked-layout failures.
+    /// Failure drops only the candidate; accepted controllers/reports survive.
     pub fn from_document(
         document: ConfigurationDocument,
         observations: ReceiverObservationPolicy,
-        reservation: RetentionReservation,
-    ) -> Result<Self, ApiError> {
+        budget: &RetentionBudget,
+    ) -> Result<Self, AdmissionError> {
+        let (_, options) = document.prepare().map_err(AdmissionError::Backend)?;
+        let mut simulation = Simulation::new(options).map_err(AdmissionError::Backend)?;
+        simulation
+            .configure_document(document)
+            .map_err(AdmissionError::Backend)?;
+        simulation
+            .set_receiver_observation_policy(observations)
+            .map_err(AdmissionError::Backend)?;
+        let scientific = simulation
+            .retained_footprint()
+            .map_err(AdmissionError::Backend)?;
+        let resources = session_resources(scientific).map_err(AdmissionError::Retention)?;
+        let reservation = budget
+            .reserve_resources(resources)
+            .map_err(AdmissionError::Retention)?;
         let session = Arc::new(reservation.retain(Mutex::new(SessionStorage {
-            preparing: Some(document),
-            simulation: None,
+            simulation: Some(simulation),
         })));
-        let document = lock(session.value())
-            .preparing
-            .take()
-            .expect("Preparation owns its source document");
-        let (_, options) = document.prepare()?;
-        let mut simulation = Simulation::new(options)?;
-        simulation.configure_document(document)?;
-        simulation.set_receiver_observation_policy(observations)?;
-        lock(session.value()).simulation = Some(simulation);
-        Ok(Self { session })
+        Ok(Self {
+            session,
+            budget: budget.clone(),
+        })
     }
 }
 
@@ -206,6 +244,7 @@ impl UpstreamController {
             key,
             active: None,
             session: prepared.session,
+            budget: prepared.budget,
             report: None,
         })
     }
@@ -236,28 +275,73 @@ impl UpstreamController {
         Ok(inspect(simulation))
     }
 
-    /// Dispatches only the existing public `Simulation::run_with_control` operation.
+    /// Preflights and reserves the actual public report target off-GUI while idle.
+    ///
+    /// # Returns
+    /// A single-use reservation bound to this exact immutable session and key.
+    /// The future host moves the idle controller to a preparation worker for this
+    /// potentially expensive public query, then returns both owners to the GUI.
+    /// Call before acquiring a global lease. Existing accepted reports and source
+    /// state are unchanged; independently retained old/queued aliases stay charged.
+    /// Temporary public preflight builders have separate finite backend limits.
+    ///
+    /// # Errors
+    /// Busy while any worker/terminal is active or the scientific slot is held.
+    /// Preserves typed backend preflight and all checked budget-dimension errors.
+    pub fn prepare_run(&self) -> Result<PreparedRun, AdmissionError> {
+        if self.active.is_some() {
+            return Err(AdmissionError::Controller(ControllerError::Busy));
+        }
+        let storage = match self.session.value().try_lock() {
+            Ok(storage) => storage,
+            Err(TryLockError::Poisoned(cause)) => cause.into_inner(),
+            Err(TryLockError::WouldBlock) => {
+                return Err(AdmissionError::Controller(ControllerError::Busy))
+            }
+        };
+        let simulation = storage
+            .simulation
+            .as_ref()
+            .ok_or(AdmissionError::Controller(ControllerError::Busy))?;
+        let backend_limit = simulation
+            .batch_report_retained_bound()
+            .map_err(AdmissionError::Backend)?;
+        let resources = report_resources(backend_limit).map_err(AdmissionError::Retention)?;
+        let reservation = self
+            .budget
+            .reserve_resources(resources)
+            .map_err(AdmissionError::Retention)?;
+        Ok(PreparedRun {
+            key: self.key,
+            owner: Arc::clone(&self.session),
+            backend_limit,
+            reservation,
+        })
+    }
+
+    /// Dispatches the existing public bounded run using its pre-reserved target.
     ///
     /// # Arguments
-    /// * `lease` - Genuine global admission for this exact key; never a tab-derived ID.
-    /// * `control` - Same adapter Arc admitted by the shell gate for this run.
-    /// * `result_reservation` - Independently audited host charge reserved before
-    ///   running; it must cover all actual result allocations and queued ownership.
+    /// * `lease` - Genuine global admission for this exact host session/generation.
+    /// * `control` - Same control adapter Arc admitted by the shell for this run.
+    /// * `prepared` - Off-GUI target admitted before acquiring the global lease.
     /// * `capacity` - Host-validated bounded callback-count policy; no default here.
     ///
     /// # Returns
-    /// Immediately after shared transport dispatch; polling never joins the worker.
-    /// The configuration charge survives all worker aliases. Previous reports stay
-    /// accepted until an identified actual report is received.
+    /// Immediately after shared transport dispatch; polling never joins workers.
+    /// Source/configuration and target charges survive every worker/queued/old
+    /// alias. No oversized-result rejection occurs after scientific execution.
+    /// Shared channel/control/host owners require separate application accounting.
     ///
     /// # Errors
-    /// Busy, mismatched identity or OS spawn failure returns the original lease.
-    /// The host must acknowledge unstarted failure; no active lease is abandoned.
+    /// Busy, stale identity/preparation or OS spawn failure returns the original
+    /// unstarted lease. The consumed target releases on rejection; old reports
+    /// survive. The host acknowledges unstarted failure before another Start.
     pub fn start(
         &mut self,
         lease: RunLease,
         control: Arc<UpstreamControl>,
-        result_reservation: RetentionReservation,
+        prepared: PreparedRun,
         capacity: usize,
     ) -> Result<(), StartError> {
         let token = lease.token();
@@ -265,6 +349,8 @@ impl UpstreamController {
             Some(ControllerError::Busy)
         } else if token.key != self.key {
             Some(ControllerError::StaleToken)
+        } else if prepared.key != self.key || !Arc::ptr_eq(&prepared.owner, &self.session) {
+            Some(ControllerError::StalePreparation)
         } else {
             None
         };
@@ -274,19 +360,24 @@ impl UpstreamController {
                 lease,
             });
         }
-        let owner = Arc::clone(&self.session);
         let backend = Arc::clone(&control);
         let events = spawn_worker("merlin-upstream", capacity, lease, move |publisher| {
+            let PreparedRun {
+                key: _,
+                owner,
+                backend_limit,
+                reservation,
+            } = prepared;
             let mut session = RunningSession::take(owner)?;
             let report = session
                 .simulation
                 .as_mut()
                 .expect("Running guard owns its session")
-                .run_with_control(&backend.backend)?;
+                .run_with_control_bounded(&backend.backend, backend_limit)?;
 
             // Restore accepted configuration before publishing independent results.
             drop(session);
-            let report = Arc::new(result_reservation.retain(report));
+            let report = Arc::new(reservation.retain(report));
 
             // Receiver destruction discards the actual report with its charge.
             let _ = publisher.send(report);
@@ -455,6 +546,37 @@ impl Drop for UpstreamController {
             active.control.request_cancel();
         }
     }
+}
+
+// Scientific root metadata already includes its fixed value. The concrete target
+// wrapper's fixed layout replaces that root exactly once; no guessed multiplier.
+// The outer Arc is one new shared allocation root. Budget-counter pointees and
+// all other application Arc handles remain separately owned by the host.
+fn wrapped_resources<Wrapper, Scientific>(
+    scientific: RetainedFootprint,
+) -> Result<RetainedResources, RetentionError> {
+    let children = scientific
+        .payload_bytes
+        .checked_sub(size_of::<Scientific>())
+        .ok_or(RetentionError::ArithmeticOverflow)?;
+    Ok(RetainedResources {
+        payload_bytes: size_of::<Wrapper>()
+            .checked_add(children)
+            .ok_or(RetentionError::ArithmeticOverflow)?,
+        ordered_entries: scientific.ordered_entries,
+        shared_roots: scientific
+            .shared_roots
+            .checked_add(1)
+            .ok_or(RetentionError::ArithmeticOverflow)?,
+    })
+}
+
+fn session_resources(scientific: RetainedFootprint) -> Result<RetainedResources, RetentionError> {
+    wrapped_resources::<Retained<Mutex<SessionStorage>>, Simulation>(scientific)
+}
+
+fn report_resources(scientific: RetainedFootprint) -> Result<RetainedResources, RetentionError> {
+    wrapped_resources::<Retained<BatchReport>, BatchReport>(scientific)
 }
 
 fn lock<T>(mutex: &Mutex<T>) -> MutexGuard<'_, T> {

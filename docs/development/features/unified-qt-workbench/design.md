@@ -3709,8 +3709,11 @@ documents, root adoption and executed acceptance. Private backend structures and
 new public scientific operations are excluded. Include typed scientific and
 application-wrapper quantities with checked arithmetic and no guessed multipliers;
 list remaining host/control/channel/DTO owners explicitly instead of claiming
-complete aggregate acceptance. Production registration, downstream/preview/archive
-adoption and complete Level 2 acceptance remain later integration gates.
+complete aggregate acceptance. Production registration and complete Level 2
+acceptance remain later integration gates. The [primary controller evidence](validation.md#uiu-session-01-upstream-controller-target-admission)
+now validates this scope against the accepted bounded backend; the separate
+[downstream dispatch adoption](validation.md#uiu-session-01-downstream-qt-retained-target-adoption)
+uses bounded targets without claiming shared aggregate host admission.
 
 ### Downstream Qt retained-target operation adoption
 

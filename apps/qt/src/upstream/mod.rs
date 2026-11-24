@@ -7,12 +7,13 @@
 //! UIU-SESSION-01 preparation for REQ-UIU-03/06/07, reusable by later UIU-US-02
 //! and REQ-UIU-12; no task acceptance or Qt registration is established here.
 //! The host supplies genuine shell identities, one shared dispatch
-//! gate, explicit transport policy, and independently audited reservations.
-//! Backend public counts do not yet establish a deep reachable-allocation bound;
-//! this module preserves charges but does not establish aggregate acceptance.
+//! gate and explicit transport policy. Public metadata/report bounds now admit
+//! scientific roots and concrete retained wrappers; outer application, control,
+//! transport, DTO and budget owners still need separate host charges. This
+//! unregistered component does not establish aggregate session acceptance.
 mod session;
 
 pub use session::{
-    ControllerError, ControllerEvent, PreparedSession, RetainedReport, StartError, StartFailure,
-    UpstreamControl, UpstreamController,
+    AdmissionError, ControllerError, ControllerEvent, PreparedRun, PreparedSession, RetainedReport,
+    StartError, StartFailure, UpstreamControl, UpstreamController,
 };

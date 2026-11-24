@@ -1612,10 +1612,14 @@ The [upstream application controller](development/features/unified-qt-workbench/
 under `apps/qt/src/upstream/` owns a real public `Simulation` and actual retained
 reports. It uses the shared terminal transport, exact-token controls and charged
 shared owners; an unwind guard restores its exclusively executing scientific
-session. [Focused primary-checkout evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-actual-upstream-controller-preparation)
-includes real public runs. Qt registration, canonical host token revalidation and
-audited aggregate admission remain pending; this source-only consumer does not
-accept SESSION or upstream Workbench execution.
+session. [Initial primary-checkout evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-actual-upstream-controller-preparation)
+includes real public runs. The [controller admission update](development/features/unified-qt-workbench/validation.md#uiu-session-01-upstream-controller-target-admission)
+uses actual public session metadata and prepared report bounds, checked concrete
+wrapper charges and exact session-bound targets before bounded dispatch. Prepare
+potentially expensive targets off-GUI before acquiring a global lease. Outer
+application/control/transport/DTO owners, Qt registration, canonical host token
+revalidation and complete aggregate admission remain pending; this unregistered
+consumer does not accept SESSION or upstream Workbench execution.
 
 Normal project files remain direction-specific. Open validates/detects direction
 and guards that target tab's dirty state before mutation. Schema 1/2 retain DS
