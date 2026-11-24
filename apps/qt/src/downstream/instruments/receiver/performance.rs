@@ -14,7 +14,9 @@ use crate::downstream::{
     simulation::closed_loop::ResultData,
 };
 use crate::shared::presentation::constants::HERTZ_PER_MEGAHERTZ;
-use merlin::downstream::{FecReport, ProfileCarrierRole, SourceProfileFrame};
+use crate::shell::{Retained, RetentionError};
+mod retention;
+use merlin::downstream::{FecReport, SourceProfileFrame};
 use serde_json::{json, Value};
 
 pub(crate) use crate::downstream::common::constants::MAX_RETAINED_RECEIVER_PROFILES as MAX_PROFILES;
@@ -35,6 +37,9 @@ pub(crate) struct Entry {
     points: Vec<Point>,
     error: Option<String>,
     fec_details: Option<Value>,
+
+    // All charged entry buffers drop before their reservation.
+    _retained: Retained<()>,
 }
 /// Clears all transient profile results after new accepted input or Start.
 pub(crate) fn clear(context: &Context) {
@@ -43,29 +48,93 @@ pub(crate) fn clear(context: &Context) {
         .performance
         .with(|entries| entries.borrow_mut().clear());
 }
+
+/// Reads assigned stored-history charges for surrounding lifecycle fixtures.
+///
+/// # Arguments
+/// * `context` - Exact performance and QAM registry owner.
+///
+/// # Returns
+/// Existing reservations only, not an independent storage-layout oracle.
+#[cfg(test)]
+pub(crate) fn fixture_reserved_resources(context: &Context) -> crate::shell::RetainedResources {
+    context.performance.with(|entries| {
+        let mut total = super::qam_history::fixture_reserved_resources(context);
+        for entry in entries.borrow().iter() {
+            fixture_add(&mut total, entry._retained.fixture_reserved_resources());
+        }
+        total
+    })
+}
+
+/// Measures actual initial-entry reservations under an independent fixture policy.
+///
+/// # Arguments
+/// * `'profile` - Borrow lifetime of the unchanged selected source frames.
+/// * `profiles` - Exact selected catalog used by the real Model fixture.
+///
+/// # Returns
+/// Concrete initial-entry overhead; no guessed payload allowance or engine run.
+#[cfg(test)]
+pub(crate) fn fixture_initial_resources<'profile>(
+    profiles: impl IntoIterator<Item = &'profile SourceProfileFrame>,
+) -> crate::shell::RetainedResources {
+    let budget = crate::shell::RetentionBudget::with_limits(crate::shell::RetainedResources {
+        payload_bytes: usize::MAX,
+        ordered_entries: usize::MAX,
+        shared_roots: usize::MAX,
+    });
+    let mut total = crate::shell::RetainedResources::default();
+    for profile in profiles {
+        let entry = retention::PreparedEntry::not_started(profile)
+            .admit(&budget)
+            .unwrap();
+        fixture_add(&mut total, entry._retained.fixture_reserved_resources());
+    }
+    assert_eq!(budget.usage(), crate::shell::RetainedResources::default());
+    total
+}
+
+#[cfg(test)]
+fn fixture_add(
+    total: &mut crate::shell::RetainedResources,
+    charge: crate::shell::RetainedResources,
+) {
+    total.payload_bytes = total
+        .payload_bytes
+        .checked_add(charge.payload_bytes)
+        .unwrap();
+    total.ordered_entries = total
+        .ordered_entries
+        .checked_add(charge.ordered_entries)
+        .unwrap();
+    total.shared_roots = total.shared_roots.checked_add(charge.shared_roots).unwrap();
+}
 /// Registers the finite profile catalog so unstarted jobs remain visible after Stop.
 /// # Arguments
 /// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `profiles` - Prevalidated captured identities, bounded by MAX_PROFILES.
-pub(crate) fn begin(context: &Context, profiles: &[SourceProfileFrame]) {
+/// # Returns
+/// Unit after all initial entries are admitted and the old histories are cleared.
+/// # Errors
+/// Host/arithmetic failure preserves every prior performance and QAM history entry.
+pub(crate) fn begin(
+    context: &Context,
+    profiles: &[SourceProfileFrame],
+) -> Result<(), RetentionError> {
+    let entries = profiles
+        .iter()
+        .take(MAX_PROFILES)
+        .map(|profile| {
+            retention::PreparedEntry::not_started(profile).admit(context.application.budget())
+        })
+        .collect::<Result<Vec<_>, _>>()?;
     clear(context);
     super::qam_history::begin(context, profiles);
-    for profile in profiles.iter().take(MAX_PROFILES) {
-        insert(
-            context,
-            Entry {
-                fec_details: None,
-                id: profile.profile_id,
-                channel: profile.key.channel_id,
-                status: "not_started".into(),
-                fec: None,
-                ber: None,
-                pending: 0,
-                points: vec![],
-                error: None,
-            },
-        );
+    for entry in entries {
+        insert(context, entry);
     }
+    Ok(())
 }
 fn insert(context: &Context, entry: Entry) {
     context.performance.with(|entries| {
@@ -82,7 +151,15 @@ fn insert(context: &Context, entry: Entry) {
 /// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `profile` - Exact applied profile for this independent run.
 /// * `result` - Actual completed or partial job, including observation power sums.
-pub(crate) fn retain(context: &Context, profile: &SourceProfileFrame, result: &ResultData) {
+/// # Returns
+/// Unit after target admission; original query errors produce the existing failed entry.
+/// # Errors
+/// Host/arithmetic failure preserves the prior performance entry and completed science.
+pub(crate) fn retain(
+    context: &Context,
+    profile: &SourceProfileFrame,
+    result: &ResultData,
+) -> Result<(), RetentionError> {
     if let Err(reason) = super::qam_history::retain(context, profile.profile_id, result) {
         log::warn!(
             "Receiver history unavailable for profile {}: {reason}",
@@ -92,63 +169,38 @@ pub(crate) fn retain(context: &Context, profile: &SourceProfileFrame, result: &R
     let performance = match result.backend().profile_performance() {
         Ok(performance) => performance,
         Err(error) => {
-            reject(
+            return reject(
                 context,
                 profile.profile_id,
                 profile.key.channel_id,
                 error.to_string(),
             );
-            return;
         }
     };
-    let points = performance
-        .points
-        .iter()
-        .map(|point| Point {
-            hz: point.frequency_hz.value(),
-            mer: point.measurement.mer().map(|mer| mer.value()),
-            samples: point.measurement.samples().value(),
-            plc: point.role == ProfileCarrierRole::Plc,
-            ideal: point.ideal_shannon_mer_db.map(|mer| mer.value()),
-        })
-        .collect();
-    let entry = Entry {
-        fec_details: Some(super::fec::snapshot(result)),
-        id: performance.profile_id.value(),
-        channel: performance.key.channel_id,
-        status: serde_json::to_value(performance.status)
-            .unwrap()
-            .as_str()
-            .unwrap()
-            .into(),
-        fec: Some(performance.fec),
-        ber: performance.ber.map(|ber| ber.value()),
-        pending: performance.unrecovered_generated_payloads,
-        points,
-        error: performance.error,
-    };
+    let entry = retention::PreparedEntry::from_result(performance, result)
+        .admit(context.application.budget())?;
     insert(context, entry);
+    Ok(())
 }
 /// Records an explicit per-profile setup failure without fabricated decoder counters.
 /// # Arguments
 /// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `id`, `channel` - Captured identities.
 /// * `error` - Bounded setup diagnostic.
-pub(crate) fn reject(context: &Context, id: u8, channel: u8, error: String) {
-    insert(
-        context,
-        Entry {
-            fec_details: None,
-            id,
-            channel,
-            status: "failed".into(),
-            fec: None,
-            ber: None,
-            pending: 0,
-            points: vec![],
-            error: Some(error),
-        },
-    );
+/// # Returns
+/// Unit after the full original error and failed entry are admitted.
+/// # Errors
+/// Host/arithmetic failure preserves the previous accepted performance entry.
+pub(crate) fn reject(
+    context: &Context,
+    id: u8,
+    channel: u8,
+    error: String,
+) -> Result<(), RetentionError> {
+    let entry =
+        retention::PreparedEntry::failed(id, channel, error).admit(context.application.budget())?;
+    insert(context, entry);
+    Ok(())
 }
 /// Queries one profile on its original frequency grid, independently of other instruments.
 /// # Arguments

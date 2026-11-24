@@ -217,6 +217,16 @@ impl<T> Retained<T> {
     pub fn value(&self) -> &T {
         &self.value
     }
+
+    /// Reads the assigned reservation for surrounding ownership fixtures only.
+    ///
+    /// # Returns
+    /// Exact ledger quantities, not an independent measurement of the payload.
+    /// Production admission and scientific footprint validation do not use this hook.
+    #[cfg(test)]
+    pub(crate) fn fixture_reserved_resources(&self) -> RetainedResources {
+        self.reservation.resources
+    }
 }
 
 impl Drop for RetentionReservation {

@@ -3760,3 +3760,51 @@ suites. Reuse the exact 42d177e backend/native record and unchanged inventories.
 Performance, Entry diagnostics/registry capacity, input/editor/project, independent
 instrument/transport and infrastructure owners remain open, along with complete
 SESSION Level2 and applicable milestone/finalLevel3. This unit accepts no parent.
+
+
+## UIU-SESSION-01 copied receiver performance admission
+
+The [concrete performance design](design.md#uiu-session-01-copied-receiver-performance-admission)
+reuses the existing finite public profile query and FEC builders as temporary
+preparation, then normalizes and admits actual final Entry/text/Point/JSON storage
+before registry adoption. It assumes no collect/clone capacity or multiplier.
+Existing source and old entries remain charged. The last guard follows stored
+children through replacement/clear/final drop; no payload Arc is introduced.
+All initial entries must be admitted before either history is cleared. Host
+rejection preserves prior entries; existing query errors keep their admitted
+failed-entry behavior and complete error text.
+
+The real Model returns its genuine unstarted lease on initial Entry failure,
+before token/timing changes or dispatch. Profile callbacks surface display
+admission failures and still publish completed science; setup callbacks retain
+the original scientific error while logging secondary display rejection.
+Independent QA reviews both source and integration wiring; its review is not
+runtime evidence.
+
+[Exact primary execution record](session-performance-admission-evidence.json)
+retains an initial fixture import compile failure, then the wider 71-case run
+(68 passed/three failed) and corrected 15-case rerun (all passed). The failures
+were existing accounting fixtures omitting the newly admitted initial entries:
+one paused exact-total assertion and two tight budgets preventing their intended
+first scientific run. Actual initial/stored reservation helpers correct these
+fixtures without guessed allowances or weaker scientific/lifetime assertions.
+Those cfg(test) helpers read assigned ledger charges, explicitly separate from
+independent storage-layout/scientific verification. Histories are explicitly
+cleared before isolating the original final-backend-alias assertions.
+All 71 selected unique cases have passing results across the runs; 12 repeated
+cases are excluded from that total. The failed commands remain labeled failed.
+
+Six new owner tests and one real Model no-dispatch/lease/history test pass, along
+with the affected receiver/closed-loop/context/project consumers. Four QML
+behaviors/two hooks, final all-target Clippy, formatting, boundary/traceability,
+optimized build and six native probes pass. Two existing unsuppressed QML focus
+warnings remain recorded. Public values, original plotting/PLC assertions,
+scientific outcomes and historical receipts/checklist states survive.
+
+No backend/binding/signature, science, schema, registration or dependency change
+requires another wheel or unrelated complete scientific/CLI/packaging suites.
+Reuse the exact 42d177e backend/native record and unchanged inventories. Accepted
+input/editor/Designer/saved-project, registry spare capacity/QAM diagnostics,
+independently returned query/UI transport and infrastructure owners remain open,
+with complete SESSION Level2 and applicable milestone/finalLevel3 gates. This
+focused unit does not accept the parent.

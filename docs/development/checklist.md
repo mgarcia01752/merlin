@@ -570,6 +570,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [detached receiver-history unit](features/unified-qt-workbench/validation.md#uiu-session-01-detached-receiver-history-admission) passes 29 selected Rust cases, four QML behaviors, Clippy, optimized build and six desktop probes. Public target admission includes the actual Snapshot wrapper/root before copy; the archive moves without an extra clone and selected old aliases retain their charge. Host rejection preserves existing history/science. Performance, input/editor/project, independent instrument/transport and outer infrastructure owners remain open; SESSION stays unchecked.
 
+  The [copied performance unit](features/unified-qt-workbench/validation.md#uiu-session-01-copied-receiver-performance-admission) records 71 unique selected Rust passes across the wider run and corrected 15-case rerun, four QML behaviors, Clippy, optimized build and six desktop probes. Final normalized Entry storage is admitted before adoption; initial catalog failure preserves both histories and returns the unstarted lease. Completed science survives later display rejection. Three historical fixtures now include actual initial/cache reservations; failed initial logs remain. Input/editor/project, registry/query/transport and infrastructure owners remain open; SESSION stays unchecked.
+
 
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.

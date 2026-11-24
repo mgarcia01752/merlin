@@ -28,6 +28,12 @@ available and the completed scientific report is preserved. Selected history
 views keep their data alive until those views release it, including after the
 history registry is cleared.
 
+Stored performance curves and FEC details also share that budget. Start checks
+its initial history entries before dispatching a run. If those entries cannot
+be admitted, the previous report and histories remain available. A display-copy
+failure after completion preserves the scientific report and reports the error
+through the existing run status.
+
 The application selects palette-aware controls directly at startup, including
 on Windows. Dark/light appearance applies to selector backgrounds, text,
 dropdown lists and number editors. Disabled controls retain readable muted text.

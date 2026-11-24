@@ -1607,6 +1607,13 @@ registry and selected old aliases through replacement, clearing and final drop.
 Host rejection preserves the prior entry and scientific result. Entry diagnostics,
 registry capacity and independently returned instrument views remain separate owners.
 
+[Stored profile performance](development/features/unified-qt-workbench/validation.md#uiu-session-01-copied-receiver-performance-admission)
+uses finite public query/FEC preparation, then admits actual normalized Entry
+storage before registry adoption. All initial entries must fit before Start
+clears history; rejection returns the unstarted global lease and preserves the
+accepted report. A later display admission failure still publishes completed
+science. Outer registry capacity and independently returned views remain separate.
+
 Explicit [accepted-edit cancellation transitions](development/features/unified-qt-workbench/design.md#uiu-session-01-accepted-edits-during-cancellation)
 preflight immutable candidates and checked revisions before cancelling the old
 generation. They preserve the legacy downstream edit/invalidation contract while

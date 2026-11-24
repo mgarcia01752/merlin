@@ -152,6 +152,14 @@ fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Model, String)
     };
     let plan = prepare_sweep(&transmission, &inputs, &options, &sections).unwrap();
     let request = plan.request(0).unwrap();
+    let initial = crate::downstream::instruments::receiver::performance::fixture_initial_resources(
+        inputs.profiles.iter().filter(|profile| {
+            plan.info()
+                .selected_profile_ids
+                .iter()
+                .any(|id| id.value() == profile.profile_id)
+        }),
+    );
     let actual = sum(
         resources::<FullLoopRequest>(request.retained_footprint().unwrap()).unwrap(),
         resources::<FullLoopSweepPlan>(plan.retained_footprint().unwrap()).unwrap(),
@@ -162,7 +170,7 @@ fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Model, String)
         // result and active working-request charges before pressuring a new candidate.
         limited(
             sum(
-                base_resources(),
+                sum(base_resources(), initial),
                 sum(
                     actual,
                     sum(working_allowance(&request), report_allowance(&request)),
@@ -306,7 +314,12 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     assert_eq!(
         application.budget().usage(),
         sum(
-            base_resources(),
+            sum(
+                base_resources(),
+                crate::downstream::instruments::receiver::performance::fixture_reserved_resources(
+                    &model.context
+                )
+            ),
             sum(old_charge, sum(old_working_charge, old_result_charge))
         )
     );

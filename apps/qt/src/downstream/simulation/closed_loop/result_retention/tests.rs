@@ -124,6 +124,14 @@ fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedRe
     };
     let plan = prepare_sweep(&transmission, &inputs, &options, &sections).unwrap();
     let request = plan.request(0).unwrap();
+    let initial = crate::downstream::instruments::receiver::performance::fixture_initial_resources(
+        inputs.profiles.iter().filter(|profile| {
+            plan.info()
+                .selected_profile_ids
+                .iter()
+                .any(|id| id.value() == profile.profile_id)
+        }),
+    );
     let report_charge = resources(request.result_retained_bound().unwrap()).unwrap();
     let working_charge = working_allowance(&request);
     let source = fixture_budget();
@@ -139,7 +147,7 @@ fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedRe
     // actual target must reject while the first immutable report remains owned.
     let maximum = limited(
         sum(
-            metadata,
+            sum(metadata, initial),
             sum(accepted_charge, sum(working_charge, report_charge)),
         ),
         dimension,
@@ -361,7 +369,15 @@ fn rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension(
         let charge = sum(charge, old.observations.fixture_resources());
         let before = serde_json::to_value(old.backend().report()).unwrap();
         let key = model.generation;
-        assert_eq!(context.application.budget().usage(), sum(baseline, charge));
+        assert_eq!(
+            context.application.budget().usage(),
+            sum(
+                sum(baseline, charge),
+                crate::downstream::instruments::receiver::performance::fixture_reserved_resources(
+                    &context
+                )
+            )
+        );
         model.start();
         let new_token = context.application.active().unwrap().token;
         assert_ne!(old_token, new_token);
@@ -374,9 +390,18 @@ fn rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension(
             serde_json::to_value(old.backend().report()).unwrap(),
             before
         );
-        assert_eq!(context.application.budget().usage(), sum(baseline, charge));
+        assert_eq!(
+            context.application.budget().usage(),
+            sum(
+                sum(baseline, charge),
+                crate::downstream::instruments::receiver::performance::fixture_reserved_resources(
+                    &context
+                )
+            )
+        );
         assert!(context.application.active().is_none());
         publish(&context, None);
+        crate::downstream::instruments::receiver::performance::clear(&context);
         drop(model);
         let metadata = ApplicationSessions::new(fixture_budget_limits())
             .unwrap()

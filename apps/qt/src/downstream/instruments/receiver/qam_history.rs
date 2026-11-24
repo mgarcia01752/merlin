@@ -120,6 +120,37 @@ pub(crate) fn catalog(context: &Context) -> Value {
         }).collect::<Vec<_>>())
     })
 }
+
+/// Reads assigned archive charges for surrounding lifecycle fixtures.
+///
+/// # Arguments
+/// * `context` - Actual registry; selected external aliases are not counted again.
+///
+/// # Returns
+/// Existing reservations only, not an independent scientific footprint oracle.
+#[cfg(test)]
+pub(crate) fn fixture_reserved_resources(context: &Context) -> crate::shell::RetainedResources {
+    context.qam.with(|entries| {
+        let mut total = crate::shell::RetainedResources::default();
+        for snapshot in entries
+            .borrow()
+            .iter()
+            .filter_map(|entry| entry.snapshot.as_ref())
+        {
+            let charge = snapshot._retained.fixture_reserved_resources();
+            total.payload_bytes = total
+                .payload_bytes
+                .checked_add(charge.payload_bytes)
+                .unwrap();
+            total.ordered_entries = total
+                .ordered_entries
+                .checked_add(charge.ordered_entries)
+                .unwrap();
+            total.shared_roots = total.shared_roots.checked_add(charge.shared_roots).unwrap();
+        }
+        total
+    })
+}
 #[cfg(test)]
 mod tests {
     use super::*;

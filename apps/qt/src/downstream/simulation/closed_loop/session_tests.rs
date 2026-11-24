@@ -307,3 +307,65 @@ fn destroyed_downstream_adapter_cancels_its_actual_worker_before_releasing_admis
     assert!(application.validate_callback(token).is_err());
     assert!(latest(&context).is_none());
 }
+
+#[test]
+fn rejected_initial_performance_admission_returns_the_lease_without_dispatch_or_history_loss() {
+    // Accounting-only ceiling; this fixture executes the original supported short run.
+    const FIXTURE_LIMIT: crate::shell::RetainedResources = crate::shell::RetainedResources {
+        payload_bytes: usize::MAX,
+        ordered_entries: usize::MAX,
+        shared_roots: usize::MAX,
+    };
+    const OBSERVATION_MS: u64 = 1;
+    let mut context = Context::isolated();
+    context.application = crate::shell::ApplicationSessions::new(FIXTURE_LIMIT).unwrap();
+    let mut model = prepared_model_with_duration(context.clone(), OBSERVATION_MS);
+    model.start();
+    wait_for(|| model.poll()["busy"] == false);
+    let report = latest(&context).expect("Original scientific run must complete");
+    let id = report
+        .job
+        .settings
+        .playback
+        .as_ref()
+        .unwrap()
+        .profile
+        .profile_id;
+    let history =
+        crate::downstream::instruments::receiver::qam_history::get(&context, i32::from(id))
+            .unwrap();
+    let performance =
+        crate::downstream::instruments::receiver::performance::fec_view(&context, i32::from(id));
+    let token = model.token;
+    let key = model.generation;
+    let budget = context.application.budget();
+    let before = budget.usage();
+
+    // Fill only the accounting counter, so the actual initial Entry must reject.
+    let pressure = budget
+        .reserve_resources(crate::shell::RetainedResources {
+            payload_bytes: FIXTURE_LIMIT.payload_bytes - before.payload_bytes,
+            ..Default::default()
+        })
+        .unwrap();
+    let pressured = budget.usage();
+    model.start();
+    assert!(model.worker.is_none());
+    assert!(context.application.active().is_none());
+    assert_eq!(model.token, token);
+    assert_eq!(model.generation, key);
+    assert!(model.error.contains("retained-data limit"));
+    assert!(Arc::ptr_eq(&report, &latest(&context).unwrap()));
+    assert!(Arc::ptr_eq(
+        &history,
+        &crate::downstream::instruments::receiver::qam_history::get(&context, i32::from(id),)
+            .unwrap()
+    ));
+    assert_eq!(
+        crate::downstream::instruments::receiver::performance::fec_view(&context, i32::from(id),),
+        performance
+    );
+    assert_eq!(budget.usage(), pressured);
+    drop(pressure);
+    assert_eq!(budget.usage(), before);
+}

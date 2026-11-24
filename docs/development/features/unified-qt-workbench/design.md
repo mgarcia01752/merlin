@@ -3998,3 +3998,28 @@ This is snapshot-only admission: Entry diagnostics, registry Vec capacity,
 performance records, other independent display/transport/input/project and outer
 infrastructure owners remain separate. Complete SESSION Level2 and applicable
 milestone/finalLevel3 acceptance are still required; keep the parent unchecked.
+
+
+### UIU-SESSION-01 copied receiver performance admission
+
+REQ-UIU-03/06/07 and UIU-SESSION-01 own selective adoption of the
+[performance source preparation](agent-handoffs/receiver-performance-admission.md).
+REUSE profile_performance and existing FEC builders as finite temporary preparation,
+without assuming collect/clone capacities. Normalize final stored Point/text/JSON
+capacities, measure actual Entry layout and JSON map population, then admit before
+registry adoption. Retain the independently charged scientific source and old
+entries throughout preparation/admission. A last Retained guard follows child
+disposal; no new scientific/public operation or presentation Arc is introduced.
+
+EDIT performance.rs; ADD its focused retention/test children. Make begin/retain/
+reject host-fallible. Admit every initial entry before clearing either history;
+original query errors retain their admitted failed-entry behavior. Root EDITS
+closed_loop.rs: remove the premature clear, return the genuine acquired lease on
+begin rejection before token/state mutation, surface display admission failures
+while still adopting completed science. Setup errors keep their original text.
+Add an actual Model rejection/no-dispatch case, plus six source owner cases and
+all affected receiver/closed-loop/project/context/shared lifecycle tests. Check
+QML, Clippy/format/boundary/traceability and optimized/native execution. Reuse
+unchanged backend/native evidence; no wheel rebuild. Registry capacities, QAM
+status/catalog, other input/editor/project/query/transport and infrastructure
+owners and full SESSION Level2/milestone acceptance remain explicitly open.

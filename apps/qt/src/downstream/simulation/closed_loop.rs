@@ -186,14 +186,19 @@ impl Model {
                 return;
             }
         };
+        if let Err(error) =
+            crate::downstream::instruments::receiver::performance::begin(&self.context, &catalog)
+        {
+            let _ = self.context.application.finish(lease);
+            self.error = application_error(ApplicationError::Retention(error));
+            return;
+        }
         self.error.clear();
         self.diagnostic = None;
         self.timing = None;
 
         // Retain accepted science until a new identified Profile replaces it.
         self.token = self.token.wrapping_add(1);
-        crate::downstream::instruments::receiver::performance::clear(&self.context);
-        crate::downstream::instruments::receiver::performance::begin(&self.context, &catalog);
         let timing = Arc::new(RunTiming::new());
         match Worker::spawn(
             settings,
@@ -249,20 +254,30 @@ impl Model {
                     value: WorkerMessage::Profile(result),
                 }) => {
                     if self.accepts_callback(token) {
-                        if let Some(playback) = &result.job.settings.playback {
+                        let retention_error = if let Some(playback) = &result.job.settings.playback
+                        {
                             crate::downstream::instruments::receiver::performance::retain(
                                 &self.context,
                                 &playback.profile,
                                 &result,
-                            );
-                        }
+                            )
+                            .err()
+                        } else {
+                            None
+                        };
                         self.error = result
                             .backend()
                             .report()
                             .error
                             .as_ref()
                             .map(ToString::to_string)
-                            .unwrap_or_default();
+                            .unwrap_or_else(|| {
+                                retention_error
+                                    .map(|error| {
+                                        application_error(ApplicationError::Retention(error))
+                                    })
+                                    .unwrap_or_default()
+                            });
                         self.diagnostic = result
                             .job
                             .error
@@ -280,12 +295,19 @@ impl Model {
                     value: WorkerMessage::Rejected(id, channel, error),
                 }) => {
                     if self.accepts_callback(token) {
-                        crate::downstream::instruments::receiver::performance::reject(
-                            &self.context,
-                            id,
-                            channel,
-                            error.clone(),
-                        );
+                        if let Err(retention_error) =
+                            crate::downstream::instruments::receiver::performance::reject(
+                                &self.context,
+                                id,
+                                channel,
+                                error.clone(),
+                            )
+                        {
+                            log::warn!(
+                                "Failed profile display unavailable: {}",
+                                application_error(ApplicationError::Retention(retention_error))
+                            );
+                        }
                         self.error = error;
                         self.token = self.token.wrapping_add(1);
                     }
