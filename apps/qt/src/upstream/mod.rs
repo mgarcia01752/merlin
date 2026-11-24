@@ -5,13 +5,14 @@
 //! Upstream application ownership over the existing public scientific session.
 //!
 //! UIU-SESSION-01 preparation for REQ-UIU-03/06/07, reusable by later UIU-US-02
-//! and REQ-UIU-12; no task acceptance or Qt registration is established here.
+//! and REQ-UIU-12; the registered bridge delegates to the workbench model.
 //! The host supplies genuine shell identities, one shared dispatch
 //! gate and explicit transport policy. Public metadata/report bounds now admit
 //! scientific roots and concrete retained wrappers; outer application, control,
 //! transport, DTO and budget owners still need separate host charges. This
-//! unregistered component does not establish aggregate session acceptance.
+//! component and its QObject registration do not establish aggregate acceptance.
 mod session;
+pub(crate) mod workbench;
 
 pub use session::{
     AdmissionError, ControllerError, ControllerEvent, PreparedRun, PreparedSession, RetainedReport,

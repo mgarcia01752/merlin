@@ -50,6 +50,33 @@ pub struct RunToken {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct IdentityExhausted;
 
+impl std::fmt::Display for SessionId {
+    /// Writes the opaque identity as lossless decimal text for UI transports.
+    /// # Returns
+    /// Formatter status; the number is never converted through JavaScript floating point.
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(formatter)
+    }
+}
+
+impl std::fmt::Display for ConfigurationGeneration {
+    /// Writes the checked configuration generation as lossless decimal text.
+    /// # Returns
+    /// Formatter status without changing the accepted owner.
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(formatter)
+    }
+}
+
+impl std::fmt::Display for RunId {
+    /// Writes the checked run identity as lossless decimal text.
+    /// # Returns
+    /// Formatter status without narrowing or reissuing the identity.
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(formatter)
+    }
+}
+
 impl SessionId {
     /// Allocates a process-unique application identity without wrapping.
     ///
@@ -75,6 +102,21 @@ fn allocate_from(sequence: &AtomicU64) -> Result<u64, IdentityExhausted> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn application_identity_text_preserves_integers_beyond_javascript_precision() {
+        // Independent first inexact IEEE-754 integer and full unsigned-width anchors.
+        const FIRST_INEXACT_JS_INTEGER: u64 = 9_007_199_254_740_993;
+        assert_eq!(
+            SessionId(FIRST_INEXACT_JS_INTEGER).to_string(),
+            "9007199254740993"
+        );
+        assert_eq!(
+            ConfigurationGeneration(u64::MAX).to_string(),
+            "18446744073709551615"
+        );
+        assert_eq!(RunId(u64::MAX).to_string(), "18446744073709551615");
+    }
 
     #[test]
     fn process_identity_exhaustion_never_wraps() {

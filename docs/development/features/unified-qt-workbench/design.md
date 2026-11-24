@@ -3789,3 +3789,40 @@ The new configuration/admission methods live in focused
 `closed_loop/lifecycle.rs`; the existing runner retains execution/state
 presentation. Public operations precede private helpers in each implementation.
 This placement changes no operation, signature or scientific expression.
+
+
+### UIU-SESSION-01 concrete direction adapter and request-owner closure
+
+REQ-UIU-03/06/07 retain the existing acceptance gates. The demonstrated next
+runtime gaps are the missing upstream QObject consumer and uncharged accepted
+and worker downstream request/plan owners. Reuse the existing public APIs,
+retention reservations, canonical host and common terminal transport. Add no
+scientific API, algorithm or general accounting framework.
+
+| Owner / disposition | Contract and focused acceptance |
+| --- | --- |
+| ADD `apps/qt/src/upstream/workbench/` | A GUI-thread model owns its accepted controller and last token/report. Configuration parsing/PreparedSession construction and PreparedRun preflight run in finite background preparation workers. Preserve accepted state on rejection; prevent detached callbacks from adopting after owner destruction or replacement. Start acquires the same ApplicationSessions lease; public pause/cancel/progress remain direction-specific. Revalidate canonical tokens immediately before GUI report adoption and finish genuine terminals, including stale/error paths. |
+| ADD `apps/qt/src/bridge/upstream_session.rs`; EDIT `bridge/mod.rs`, `build.rs`, `upstream/mod.rs` | Thin registered UpstreamSession QObject delegates to the application model. Apply accepts the existing public configuration document, with a named finite byte policy. State exposes bounded scalar status/error and decimal-string identities; never full scientific arrays. Use the same fixed downstream construction host, not selected-tab routing. No QML layout change in this unit. |
+| EDIT downstream `closed_loop.rs`, `closed_loop/lifecycle.rs`, `closed_loop/worker.rs`; ADD focused owner tests | Charge real accepted request/plan metadata through existing Retained/Arc reservations. Share immutable admitted owners with workers instead of uncharged payload clones. Keep candidates and old aliases charged through replacement/final drop. Test each aggregate dimension rejecting a real accepted candidate without changing old request/generation/report; preserve original science assertions. Per-profile working requests and results remain distinct owners requiring their actual admission; do not claim complete closure for this partial unit. |
+
+Lead owns upstream model/bridge/native registration and canonical records. The
+session agent owns only the listed downstream request/plan paths plus adjacent
+focused tests and its unique handoff in the existing isolated worktree. No agent
+may edit shared host/budget primitives, manifests, registration or canonical docs.
+Source-only preparation does not pass acceptance. Lead adopts exact reviewed
+paths, executes relevant real-engine/lifecycle and all affected registration
+consumers, formatting, Clippy, boundary/traceability, fresh Qt build/native probes,
+and saves independently testable focused units. Existing scientific/native API
+and persisted contracts remain unchanged; full session Level 2 is still required.
+
+
+The upstream preparation completion carries the canonical configuration key
+captured when Apply starts; a later host generation rejects that stale candidate.
+Stop during target preparation suppresses dispatch while restoring the same idle
+controller when its finite preflight completes. Destruction drops the completion
+receiver and never joins. Immutable controller ownership remains in a guarded slot
+during target preflight so a preparation unwind/disconnection can restore it.
+Normal reports validate against the host before UI adoption, and stale terminals
+still consume their genuine lease. Session/generation/run values cross QML as
+lossless decimal strings; absent BER remains null. Full retained-owner closure is
+still required and must not be inferred from this registered adapter.

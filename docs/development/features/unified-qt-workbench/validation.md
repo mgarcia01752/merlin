@@ -3490,3 +3490,45 @@ remaining retained-owner closure are finite open gates; UIU-SESSION-01 remains
 unchecked. Source-only independent QA found no concrete lifecycle defect; disk
 is 80% used with 24 GiB free and 13% inode use, with no confidently obsolete
 cleanup candidate and all active caches preserved.
+
+
+## UIU-SESSION-01 upstream QObject and background preparation
+
+The [concrete direction-adapter design](design.md#uiu-session-01-concrete-direction-adapter-and-request-owner-closure)
+is now consumed by a thin registered UpstreamSession QObject. Main constructs it
+on the same fixed desktop host as downstream. Its application model parses and
+admits public configuration documents off-GUI, and preflights report targets in a
+separate bounded preparation before acquiring the genuine global run lease.
+Stop suppresses pending preparation adoption/dispatch without joining; the same
+idle controller is restored after target preparation. Rejected candidates and
+stale configuration completions preserve accepted owners. Actual reports validate
+canonical tokens before UI adoption; every genuine terminal is acknowledged.
+Scalar state preserves null BER and uses lossless decimal application IDs.
+
+Executed Level 1: **59 unique Rust cases** (36 shell, 13 existing upstream
+controller, six new upstream-model and four actual shared-host cases), warnings-
+denied all-target Clippy, formatting and final API boundary. Six model cases use
+real public configurations/results for complete recovery, invalid Apply, cancelled
+target preparation, stale configuration, paused cancellation/partial retention,
+abandoned preparation final-drop and pre-copy input admission rejection. Synthetic
+counter pressure is explicitly an admission fixture, not allocated scientific data.
+Independent identity text anchors cover numbers beyond JavaScript precision.
+**91 QML runner cases**, including fixture hooks, pass with no failures/skips;
+existing activeFocusOnTab warnings remain visible. The optimized executable passes
+**six native startup/Open probes**, constructing the new QObject. The [receipt](session-upstream-qobject-evidence.json)
+retains commands, case discovery, artifact hashes and failures. The initial compile
+failed on a new fixture include depth and QString len representation; corrected
+without relaxing any scientific assertion. The final test-only delta reuses the
+unchanged production build; subsequent source edits are documentation banners only.
+
+The retained preparation input uses an exact boxed byte slice admitted before its
+copy. Existing session/report wrappers use their accepted public metadata/bounds;
+outer model/preparation/control/transport/DTO ownership still requires closure.
+Do not infer complete aggregate/RSS acceptance from adapter registration. No public
+scientific/native API, calculation, project schema, default or existing invokable
+changes; accepted backend/native evidence at 1841d92 remains applicable. Another
+wheel/full unrelated core/CLI/package run is not required for this Qt-only unit.
+Full relevant Level 2/milestone Level 3 remain open. Source-only QA found no concrete
+adapter lifecycle defect and ran no tests. Disk remains 80% used, 24 GiB free and
+13% inodes; active artifacts/caches are preserved. No visual control/layout changes
+are exposed, so user-guide screenshots remain unchanged. UIU-SESSION-01 stays open.

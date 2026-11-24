@@ -28,6 +28,7 @@ ApplicationWindow {
     MeasurementInputs { id: measurementInputs }
     ReceiverInstruments { id: receiverInstruments }
     ClosedLoop { id: closedLoop }
+    UpstreamSession { id: upstreamSession }
     WorkbenchFile { id: workbenchFile }
     TransmitterAnalyzer { id: transmitterAnalyzer }
     Theme { id: theme; onDarkChanged: branding.update_icon(dark) }

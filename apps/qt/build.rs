@@ -50,6 +50,7 @@ fn main() {
                 "src/bridge/closed_loop.rs",
                 "src/bridge/workbench_file.rs",
                 "src/bridge/transmitter_analyzer.rs",
+                "src/bridge/upstream_session.rs",
             ],
             qml_files: &[
                 "qml/Main.qml",

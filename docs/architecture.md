@@ -1539,7 +1539,8 @@ resource reservations. Its [focused acceptance](development/features/unified-qt-
 tests the pure application contracts. The [actual downstream host adoption](development/features/unified-qt-workbench/validation.md#uiu-session-01-actual-downstream-host-and-terminal-adoption)
 now registers these Rust application components in the existing native binary,
 binds Context/Model to canonical direction generations and uses the common worker
-terminal. Upstream QObject/configuration wiring remains pending. Actual direction
+terminal. The [upstream QObject consumer](development/features/unified-qt-workbench/validation.md#uiu-session-01-upstream-qobject-and-background-preparation) now delegates configuration and report-target preparation
+off-GUI to the public upstream controller on the same host. Actual direction
 adapters must reserve
 all reachable payload ownership and container/shared-root populations, retain the lease outside panic unwinding and consume a
 real terminal envelope before reopening admission. Source-only primitive tests
@@ -1554,8 +1555,8 @@ transfer store, avoiding retained-owner cycles. Existing public queries, worker
 semantics and project bytes remain unchanged. Its
 [consumer evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-explicit-downstream-context-migration)
 is the historical context-only checkpoint. The later host adoption establishes
-downstream dispatch and identity wiring; aggregate admission and upstream QObject
-wiring remain pending.
+downstream dispatch and identity wiring; the subsequent upstream adapter adds
+canonical GUI adoption. Complete aggregate admission remains pending.
 
 The shared [terminal transport](development/features/unified-qt-workbench/design.md#uiu-session-01-terminal-worker-transport)
 under `shell/worker.rs` keeps genuine run leases outside worker unwinding and
@@ -1576,7 +1577,8 @@ preflight immutable candidates and checked revisions before cancelling the old
 generation. They preserve the legacy downstream edit/invalidation contract while
 retaining Busy until old-worker termination; ordinary reject-while-Busy configure
 operations remain available. Real downstream adapter adoption now uses the canonical host and terminal transport;
-upstream QObject adoption is pending. The separate
+the upstream QObject uses the same host with independent preparation/control
+state. The separate
 [approved retention accounting contract](development/features/unified-qt-workbench/retention-contract-decision.md)
 bounds retained payload bytes, ordered-container entries and shared allocation
 roots independently. Payload bytes include fixed owned values, requested storage
@@ -1629,10 +1631,12 @@ includes real public runs. The [controller admission update](development/feature
 uses actual public session metadata and prepared report bounds, checked concrete
 wrapper charges and exact session-bound targets before bounded dispatch. Prepare
 potentially expensive targets off-GUI before acquiring a global lease. Outer
-application/control/transport/DTO owners, Qt registration, canonical host token
-revalidation in upstream QObject adapters and complete aggregate admission remain
-pending. The Rust component now compiles in the native binary and participates in
-real two-engine shared-host tests; upstream GUI execution is not yet accepted.
+application/control/transport/DTO owners and complete aggregate admission remain
+pending. A registered UpstreamSession QObject now owns a direction model with
+background preparation, exact-token controls, canonical callback validation and
+genuine terminal acknowledgement. Main creates the independent adapter on the
+fixed desktop host; upstream controls/layout and complete session acceptance
+remain separate gates.
 
 Normal project files remain direction-specific. Open validates/detects direction
 and guards that target tab's dirty state before mutation. Schema 1/2 retain DS

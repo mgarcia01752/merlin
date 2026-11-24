@@ -12,6 +12,7 @@ pub(crate) mod profile_input;
 pub(crate) mod receiver_instruments;
 pub(crate) mod source_input;
 pub(crate) mod transmitter_analyzer;
+pub(crate) mod upstream_session;
 pub(crate) mod workbench_file;
 
 pub(crate) mod update_info;
