@@ -34,6 +34,6 @@ impl Model {
             "progress":progress.map(|(token,snapshot)|json!({"run":token.run.to_string(),"status":snapshot.status,
                 "completed_grants":snapshot.completed_grants,"emitted_samples":snapshot.emitted_samples,
                 "compared_bits":snapshot.compared_bits,"elapsed_ms":snapshot.elapsed_ms})),
-            "has_result":self.report.is_some(),"result":result,"error":self.error})
+            "has_result":self.report.is_some(),"result":result,"error":self.error.message()})
     }
 }

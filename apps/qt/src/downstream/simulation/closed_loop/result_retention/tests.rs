@@ -8,6 +8,7 @@ use super::super::{
     ResultData,
 };
 use super::*;
+use crate::shared::worker_failure::WorkerFailure;
 use crate::shell::{ApplicationSessions, WorkerEvent};
 use merlin::downstream::{ChannelJobStatus, ErrorCode, FullLoopState};
 use std::{
@@ -406,13 +407,21 @@ fn rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension(
         );
         let before = serde_json::to_value(old.backend().report()).unwrap();
         let key = model.generation;
+        // The exact first-report budget may retain the original display error.
+        // Keep its real charge alongside unchanged scientific/history owners.
         assert_eq!(
             context.application.budget().usage(),
             sum(
-                sum(baseline, live_charge),
-                crate::downstream::instruments::receiver::performance::fixture_reserved_resources(
-                    &context
-                )
+                sum(
+                    sum(baseline, live_charge),
+                    crate::downstream::instruments::receiver::performance::fixture_reserved_resources(
+                        &context
+                    ),
+                ),
+                match &model.error {
+                    WorkerFailure::Detailed(error) => error.fixture_reserved_resources(),
+                    _ => RetainedResources::default(),
+                },
             )
         );
         model.start();
@@ -424,7 +433,7 @@ fn rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension(
         assert_ne!(old_token, new_token);
         assert!(Arc::ptr_eq(&latest(&context).unwrap(), &old));
         wait_for(|| model.poll()["busy"] == false);
-        assert!(model.error.contains("retained-data limit"));
+        assert!(model.error.message().contains("retained-data limit"));
         assert_eq!(model.generation, key);
         assert!(Arc::ptr_eq(&latest(&context).unwrap(), &old));
         assert_eq!(
@@ -433,12 +442,15 @@ fn rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension(
         );
         assert_eq!(
             context.application.budget().usage(),
-            sum(
+            sum(sum(
                 sum(baseline, live_charge),
                 crate::downstream::instruments::receiver::performance::fixture_reserved_resources(
                     &context
                 )
-            )
+            ), match &model.error {
+                WorkerFailure::Detailed(error) => error.fixture_reserved_resources(),
+                _ => RetainedResources::default(),
+            })
         );
         assert!(context.application.active().is_none());
         publish(&context, None);

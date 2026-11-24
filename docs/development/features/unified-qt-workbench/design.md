@@ -4732,6 +4732,14 @@ assertions to accommodate the accounting changes. Other runtime/transport,
 loader paths, persistent QML and pending policy answers remain outside this unit;
 complete SESSION and its Level 2/3 gates stay open.
 
+The frozen [source handoff](agent-handoffs/direction-model-metadata.md) and
+[primary receipt](session-direction-model-metadata-evidence.json) distinguish
+source-only preparation from current execution. [C1 validation](validation.md#uiu-session-01-persistent-direction-model-metadata)
+records 369 distinct Qt Rust passes, six fresh desktop probes and preserved
+initial compile/fixture failures. Original science/budgets/assertions remain.
+Both policy questions are now resolved; the [frozen closure list](session-closure.md)
+limits remaining required work to C2–C6 without expanding this metadata unit.
+
 ### UIU-SESSION-01 approved presentation and channel boundaries
 
 The user's 2026-11-24 [approved clarification](retention-contract-decision.md#approved-presentation-and-channel-boundaries)
@@ -4746,3 +4754,15 @@ REQ-UIU-07 and UIU-SESSION-01 retain the same IDs and acceptance owners. Earlier
 scoped receipts' pending-policy wording is historical, not a current blocker.
 No prior test is rerun or credited by this documentation clarification, and the
 parent remains unchecked until complete Level 2/3 gates pass.
+
+
+### UIU-SESSION-01 frozen acceptance closure
+
+The user's 2026-11-24 close-session directive freezes the [six-condition closure
+list](session-closure.md). It maps only existing REQ-UIU-03/06/07 blockers to exact
+owners, minimum fixes and acceptance tests. Current functional dispatch does not
+need another subsystem. Persistent tabs/actions, new file/recovery delivery and
+the final numeric audit remain their existing tasks. No new owner category,
+public API or generic framework is authorized without a demonstrated existing
+requirement failure. Finish C1–C6, accept SESSION with current evidence and
+immediately continue UIU-SHELL-01.

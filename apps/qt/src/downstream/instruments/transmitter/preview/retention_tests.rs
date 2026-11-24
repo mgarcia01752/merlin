@@ -306,6 +306,20 @@ fn configuration_and_new_product_pressure_keep_the_same_accepted_source_result_a
         );
         assert_eq!(model.status()["status"], "error");
         drop(pressure);
+        let mut with_status = baseline;
+        crate::downstream::inputs::retention::append(
+            &mut with_status,
+            match &model.error {
+                WorkerFailure::Detailed(error) => error.fixture_reserved_resources(),
+                _ => RetainedResources::default(),
+            },
+        )
+        .unwrap();
+        assert_eq!(budget.usage(), with_status);
+
+        // Dispose only the new persistent status after checking its actual charge;
+        // preserve the historical remaining science/alias baseline independently.
+        model.error = WorkerFailure::default();
         assert_eq!(budget.usage(), baseline);
     }
     let product = retention::product_resources(
@@ -349,6 +363,20 @@ fn configuration_and_new_product_pressure_keep_the_same_accepted_source_result_a
         );
         assert!(Arc::ptr_eq(model.prepared.as_ref().unwrap(), &accepted));
         drop(pressure);
+        let mut with_status = baseline;
+        crate::downstream::inputs::retention::append(
+            &mut with_status,
+            match &model.error {
+                WorkerFailure::Detailed(error) => error.fixture_reserved_resources(),
+                _ => RetainedResources::default(),
+            },
+        )
+        .unwrap();
+        assert_eq!(budget.usage(), with_status);
+
+        // Dispose only the new persistent status after checking its actual charge;
+        // preserve the historical remaining science/alias baseline independently.
+        model.error = WorkerFailure::default();
         assert_eq!(budget.usage(), baseline);
     }
 }

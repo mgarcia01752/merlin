@@ -1761,6 +1761,11 @@ scratch use separate finite execution limits; no aggregate scratch-byte or RSS
 guarantee is claimed. Final retained capacities still require pre-production
 enforcement and admission.
 
+The [frozen SESSION closure list](development/features/unified-qt-workbench/session-closure.md)
+limits remaining work to six existing acceptance conditions. Functional dispatch
+is implemented; complete its concrete ownership gaps and current acceptance,
+then proceed to the persistent-tab shell without adding unrelated infrastructure.
+
 The user-approved [presentation/channel clarification](development/features/unified-qt-workbench/retention-contract-decision.md#approved-presentation-and-channel-boundaries)
 adds explicit logical UTF-16 bytes, array/object entries and open/retained-view
 limits for persistent QML, while Rust keeps actual-capacity accounting. Standard
@@ -1831,11 +1836,14 @@ encoding and atomic writes remain compatible, with [primary evidence](developmen
 Other loader/project path copies and complete SESSION acceptance remain pending.
 
 The [persistent model metadata unit](development/features/unified-qt-workbench/design.md#uiu-session-01-persistent-direction-model-metadata)
-reuses admitted application failures for GUI error/Diagnostic pointees and will
-bound receiver options' actual dynamic children. The separate bridge Apply-help
-owner has [focused primary evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-apply-help-owner);
-its guard does not cover core Model errors or opaque Qt/QML copies. Core metadata
-and target-budget project-transfer validation remain pending.
+reuses admitted application failures for persistent GUI error/Diagnostic pointees
+and charges receiver options' actual dynamic children. Every configured Options
+has an exact target-host witness, including zero-child options. Strict foreign
+transfer reserves actual copies before mutating the source; same-host queued
+failures move without readmission. Static notices borrow text. The separate
+bridge Apply-help owner remains independently charged. [Primary C1 evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-persistent-direction-model-metadata)
+preserves scientific/status/target-adoption behavior. C2–C6 in the frozen closure
+list remain required; complete SESSION acceptance and persistent QML stay open.
 
 The [pre-production archive pair](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds)
 computes exact detached target quantities and checks every limit before copying.

@@ -130,8 +130,22 @@ fn timing_rejection_after_adapter_admission_preserves_actual_old_model_and_histo
             performance::view(&context, LATEST_PROFILE, FIRST_POINT, FULL_SPAN),
             history
         );
-        assert!(model.error.contains("retained-data limit"));
+        assert!(model.error.message().contains("retained-data limit"));
         drop(pressure);
+        let mut with_status = baseline;
+        crate::downstream::inputs::retention::append(
+            &mut with_status,
+            match &model.error {
+                WorkerFailure::Detailed(error) => error.fixture_reserved_resources(),
+                _ => RetainedResources::default(),
+            },
+        )
+        .unwrap();
+        assert_eq!(budget.usage(), with_status);
+
+        // Dispose only the new persistent status after checking its actual charge;
+        // preserve the historical remaining science/alias baseline independently.
+        model.error = WorkerFailure::default();
         assert_eq!(budget.usage(), baseline);
     }
 }

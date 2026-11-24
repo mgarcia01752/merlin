@@ -96,7 +96,7 @@ fn failed_control_admission_preserves_actual_old_result_configuration_and_notice
     let prepared = Arc::clone(model.prepared.as_ref().unwrap());
     let old = model.result.as_ref().unwrap().value() as *const _;
     let token = model.result_token;
-    let notice = model.notice.clone();
+    let notice = model.notice;
     let budget = model.context.application.budget().clone();
     let baseline = budget.usage();
     for bytes in [true, false] {
@@ -120,8 +120,22 @@ fn failed_control_admission_preserves_actual_old_result_configuration_and_notice
         assert_eq!(model.result.as_ref().unwrap().value() as *const _, old);
         assert_eq!(model.result_token, token);
         assert_eq!(model.notice, notice);
-        assert!(model.error.contains("retained-data limit"));
+        assert!(model.error.message().contains("retained-data limit"));
         drop(pressure);
+        let mut with_status = baseline;
+        crate::downstream::inputs::retention::append(
+            &mut with_status,
+            match &model.error {
+                WorkerFailure::Detailed(error) => error.fixture_reserved_resources(),
+                _ => RetainedResources::default(),
+            },
+        )
+        .unwrap();
+        assert_eq!(budget.usage(), with_status);
+
+        // Dispose only the new persistent status after checking its actual charge;
+        // preserve the historical remaining science/alias baseline independently.
+        model.error = WorkerFailure::default();
         assert_eq!(budget.usage(), baseline);
     }
 }

@@ -106,3 +106,78 @@ fn static_payload_and_selected_fallback_need_no_owned_text_reservation() {
     assert!(borrowed.diagnostic().is_none());
     assert_eq!(budget.usage(), RetainedResources::default());
 }
+
+#[test]
+fn strict_target_copy_rejection_keeps_original_help_and_normal_replacement_falls_back() {
+    let source = RetentionBudget::with_limits(RetainedResources {
+        payload_bytes: usize::MAX,
+        ordered_entries: usize::MAX,
+        shared_roots: usize::MAX,
+    });
+    let original = WorkerFailure::try_admit(
+        AdmissionError {
+            diagnostic: Some(Box::new(
+                help::catalog_diagnostic("QamRunUnavailable").unwrap(),
+            )),
+            ..plain()
+        },
+        &source,
+    )
+    .unwrap();
+    let before = json!({"message":original.message(),"help":original.diagnostic()});
+    let used = source.usage();
+    let blocked = RetentionBudget::with_limits(RetainedResources::default());
+    assert!(original.try_copy_for_budget(&blocked).is_err());
+    assert_eq!(
+        json!({"message":original.message(),"help":original.diagnostic()}),
+        before
+    );
+    assert_eq!(source.usage(), used);
+    assert_eq!(blocked.usage(), RetainedResources::default());
+    let replacement = original.replace_message(MESSAGE.to_owned(), &blocked, FALLBACK);
+    assert_eq!(replacement.message(), FALLBACK);
+    assert!(replacement.diagnostic().is_none());
+    assert_eq!(source.usage(), used);
+    drop(original);
+    assert_eq!(source.usage(), RetainedResources::default());
+}
+
+#[test]
+fn message_only_replacement_admits_actual_help_clone_while_original_stays_charged() {
+    let budget = RetentionBudget::with_limits(RetainedResources {
+        payload_bytes: usize::MAX,
+        ordered_entries: usize::MAX,
+        shared_roots: usize::MAX,
+    });
+    let original = WorkerFailure::try_admit(
+        AdmissionError {
+            diagnostic: Some(Box::new(
+                help::catalog_diagnostic("QamRunUnavailable").unwrap(),
+            )),
+            ..plain()
+        },
+        &budget,
+    )
+    .unwrap();
+    let original_charge = budget.usage();
+    let help = serde_json::to_value(original.diagnostic()).unwrap();
+    let replacement = original.replace_static_message(MESSAGE, &budget, FALLBACK);
+    let WorkerFailure::Detailed(retained) = &replacement else {
+        panic!("Real guidance replacement must admit its own pointee");
+    };
+    let replacement_charge = retained.fixture_reserved_resources();
+    let mut combined = original_charge;
+    crate::downstream::inputs::retention::append(&mut combined, replacement_charge).unwrap();
+    assert_eq!(budget.usage(), combined);
+    assert_eq!(
+        serde_json::to_value(replacement.diagnostic()).unwrap(),
+        help
+    );
+    assert_eq!(replacement.message(), MESSAGE);
+    drop(original);
+    assert_eq!(budget.usage(), replacement_charge);
+    drop(replacement);
+    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(WorkerFailure::default().message(), "");
+    assert!(WorkerFailure::default().diagnostic().is_none());
+}

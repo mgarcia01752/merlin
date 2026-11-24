@@ -264,6 +264,8 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         ..Default::default()
     };
     let settings = prepare(&transmission, &inputs, &options, &sections).unwrap();
+    let options_guard =
+        metadata::reserve_options(Some(&options), context.application.budget()).unwrap();
     let mut model = Model {
         context: (*context).clone(),
         options: Some(options),
@@ -274,8 +276,8 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         plan: None,
         worker: None,
         timing: None,
-        error: String::new(),
-        diagnostic: None,
+        error: WorkerFailure::default(),
+        options_guard,
         token: 0,
         generation: Some(context.application.configure_downstream(true).unwrap()),
     };
@@ -782,6 +784,8 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
             .collect::<Vec<_>>(),
         vec![0, 1, 2, 3]
     );
+    let options_guard =
+        metadata::reserve_options(Some(&options), context.application.budget()).unwrap();
     let mut model = Model {
         context: (*context).clone(),
         options: Some(options.clone()),
@@ -796,8 +800,8 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
         plan: Some(request_retention::admit_plan(plan, context.application.budget()).unwrap()),
         worker: None,
         timing: None,
-        error: String::new(),
-        diagnostic: None,
+        error: WorkerFailure::default(),
+        options_guard,
         token: 0,
         generation: Some(context.application.configure_downstream(true).unwrap()),
     };
@@ -1108,6 +1112,8 @@ fn invalidated_paused_worker_never_publishes_a_late_result() {
         ..Default::default()
     };
     let request = prepare(&transmission, &inputs, &options, &sections).unwrap();
+    let options_guard =
+        metadata::reserve_options(Some(&options), context.application.budget()).unwrap();
     let mut model = Model {
         context: (*context).clone(),
         options: Some(options),
@@ -1118,8 +1124,8 @@ fn invalidated_paused_worker_never_publishes_a_late_result() {
         plan: None,
         worker: None,
         timing: None,
-        error: String::new(),
-        diagnostic: None,
+        error: WorkerFailure::default(),
+        options_guard,
         token: 0,
         generation: Some(context.application.configure_downstream(true).unwrap()),
     };
@@ -1137,7 +1143,7 @@ fn invalidated_paused_worker_never_publishes_a_late_result() {
     assert!(latest(context).is_none());
     assert_eq!(model.state()["has_result"], false);
     assert!(model.state()["timing"].is_null());
-    assert!(model.error.is_empty());
+    assert!(model.error.message().is_empty());
 }
 
 #[test]

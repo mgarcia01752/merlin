@@ -183,7 +183,7 @@ fn target_check_and_attachment_require_consistent_owners_and_the_stamped_key() {
         incomplete.check_prepared_target(target.application.budget()),
         Ok(false)
     );
-    assert!(!incomplete.error.is_empty());
+    assert!(!incomplete.error.message().is_empty());
     assert_eq!(incomplete.generation, None);
 }
 

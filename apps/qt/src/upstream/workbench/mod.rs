@@ -6,6 +6,9 @@
 mod preparation;
 mod presentation;
 
+use crate::shared::{
+    presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE, worker_failure::WorkerFailure,
+};
 use crate::shell::{
     ApplicationSessions, Direction, Retained, RetainedResources, RunToken, SessionKey, WorkerStatus,
 };
@@ -30,7 +33,7 @@ pub(crate) struct Model {
     preparation_cancelled: bool,
     key: Option<SessionKey>,
     report: Option<(RunToken, RetainedReport)>,
-    error: String,
+    error: WorkerFailure,
 }
 
 impl Model {
@@ -47,7 +50,7 @@ impl Model {
             preparation_cancelled: false,
             key: None,
             report: None,
-            error: String::new(),
+            error: WorkerFailure::default(),
         }
     }
 
@@ -82,7 +85,7 @@ impl Model {
             self.application.snapshot(Direction::Upstream).key,
         )?);
         self.preparation_cancelled = false;
-        self.error.clear();
+        self.error = WorkerFailure::default();
         Ok(())
     }
 
@@ -109,7 +112,7 @@ impl Model {
             }
         }
         self.preparation_cancelled = false;
-        self.error.clear();
+        self.error = WorkerFailure::default();
         Ok(())
     }
 
@@ -162,7 +165,7 @@ impl Model {
         if let Some(prepared) = self.pending.as_ref().and_then(Pending::poll) {
             self.pending = None;
             if let Err(error) = self.adopt_prepared(prepared) {
-                self.error = error_text(error);
+                self.error = error;
             }
         }
         if let Some(controller) = self.controller.as_ref() {
@@ -189,21 +192,24 @@ impl Model {
                 if self.application.validate_callback(terminal.token()).is_ok() {
                     match terminal.status() {
                         WorkerStatus::Completed => {}
-                        WorkerStatus::Failed(error) => self.error = error_text(error.to_string()),
+                        WorkerStatus::Failed(error) => {
+                            self.error = self.admit_error(error.to_string())
+                        }
                         WorkerStatus::Panicked => {
-                            self.error = "Upstream worker stopped unexpectedly.".into()
+                            self.error =
+                                WorkerFailure::Static("Upstream worker stopped unexpectedly.")
                         }
                     }
                 }
                 let _ = self.application.finish(terminal.into_lease());
             }
-            Some(Err(error)) => self.error = error_text(format!("{error:?}")),
+            Some(Err(error)) => self.error = self.admit_error(format!("{error:?}")),
             _ => {}
         }
         self.state()
     }
 
-    fn adopt_prepared(&mut self, prepared: Prepared) -> Result<(), String> {
+    fn adopt_prepared(&mut self, prepared: Prepared) -> Result<(), WorkerFailure> {
         match prepared {
             Prepared::Configuration {
                 expected,
@@ -213,15 +219,17 @@ impl Model {
                     return Ok(());
                 }
                 if self.application.snapshot(Direction::Upstream).key != expected {
-                    return Err("Upstream configuration changed during preparation.".into());
+                    return Err(WorkerFailure::Static(
+                        "Upstream configuration changed during preparation.",
+                    ));
                 }
-                let candidate = candidate.map_err(|error| error.message().to_owned())?;
+                let candidate = candidate?;
                 let key = self
                     .application
                     .configure_upstream(true)
-                    .map_err(|error| format!("{error:?}"))?;
+                    .map_err(|error| self.admit_error(format!("{error:?}")))?;
                 let controller = UpstreamController::new(key, candidate)
-                    .map_err(|error| format!("{error:?}"))?;
+                    .map_err(|error| self.admit_error(format!("{error:?}")))?;
                 self.controller = Some(controller);
                 self.key = Some(key);
                 self.report = None;
@@ -231,7 +239,8 @@ impl Model {
                 if self.preparation_cancelled {
                     return Ok(());
                 }
-                self.dispatch(target.map_err(|error| error.message().to_owned())?)?;
+                self.dispatch(target?)
+                    .map_err(|error| self.admit_error(error))?;
             }
         }
         Ok(())
@@ -257,6 +266,14 @@ impl Model {
         Ok(())
     }
 
+    fn admit_error(&self, message: String) -> WorkerFailure {
+        WorkerFailure::admit_with_fallback(
+            error_text(message).into(),
+            self.application.budget(),
+            WORKER_FAILURE_ADMISSION_MESSAGE,
+        )
+    }
+
     fn current(&self) -> bool {
         self.key
             .is_some_and(|key| self.application.snapshot(Direction::Upstream).key == key)
@@ -277,7 +294,7 @@ impl Model {
 ///
 /// # Returns
 /// The unchanged bounded prefix. Retained worker text is separately admitted before
-/// enqueue; later GUI-owned copies remain a distinct concrete owner.
+/// enqueue; independent GUI copies use the same admitted error owner.
 pub(super) fn error_text(error: String) -> String {
     error.chars().take(MAX_ERROR_CHARACTERS).collect()
 }

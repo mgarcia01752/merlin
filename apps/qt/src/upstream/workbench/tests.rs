@@ -67,7 +67,7 @@ fn complete_run_uses_actual_recovery_and_invalid_apply_preserves_accepted_owners
     let report = Arc::clone(report);
     model.apply(b"{}").unwrap();
     wait_for(|| model.poll()["preparing"] == false);
-    assert!(!model.error.is_empty());
+    assert!(!model.error.message().is_empty());
     assert_eq!(model.key, key);
     assert!(Arc::ptr_eq(&model.report.as_ref().unwrap().1, &report));
     assert!(model.state()["can_start"].as_bool().unwrap());
@@ -100,7 +100,7 @@ fn queued_configuration_cannot_overwrite_a_newer_canonical_generation() {
     wait_for(|| model.poll()["preparing"] == false);
     assert_eq!(model.key, old);
     assert_eq!(application.snapshot(Direction::Upstream).key, replacement);
-    assert!(model.error.contains("changed during preparation"));
+    assert!(model.error.message().contains("changed during preparation"));
     assert!(model.start().is_err());
     assert!(application.active().is_none());
 }
@@ -248,7 +248,10 @@ fn stale_configuration_error_keeps_its_charge_until_discard_without_replacing_ol
         expected,
         candidate: Err(error),
     });
-    assert!(result.unwrap_err().contains("changed during preparation"));
+    assert!(result
+        .unwrap_err()
+        .message()
+        .contains("changed during preparation"));
     assert_eq!(model.key, key);
     assert_eq!(model.report.as_ref().unwrap().0, token);
     assert!(Arc::ptr_eq(&model.report.as_ref().unwrap().1, &report));
@@ -280,7 +283,7 @@ fn target_preparation_fallback_restores_controller_and_same_completed_report() {
     assert!(model.pending.is_some());
     wait_for(|| model.poll()["preparing"] == false);
     assert_eq!(
-        model.error,
+        model.error.message(),
         crate::shared::presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE
     );
     assert_eq!(model.key, key);
@@ -294,4 +297,38 @@ fn target_preparation_fallback_restores_controller_and_same_completed_report() {
     );
     drop(pressure);
     assert_eq!(budget.usage(), before);
+}
+
+#[test]
+fn queued_preparation_error_moves_to_persistent_status_without_recharging_under_pressure() {
+    const MESSAGE: &str = "Original admitted upstream preparation detail.";
+    let application = ApplicationSessions::new(FAILURE_TEST_LIMITS).unwrap();
+    let budget = application.budget().clone();
+    let baseline = budget.usage();
+    let mut model = Model::new(application.clone());
+    let failure = WorkerFailure::try_admit(MESSAGE.to_owned().into(), &budget).unwrap();
+    let used = budget.usage();
+    let pressure = budget
+        .reserve_resources(RetainedResources {
+            payload_bytes: FAILURE_TEST_LIMITS.payload_bytes - used.payload_bytes,
+            ordered_entries: FAILURE_TEST_LIMITS.ordered_entries - used.ordered_entries,
+            shared_roots: FAILURE_TEST_LIMITS.shared_roots - used.shared_roots,
+        })
+        .unwrap();
+    let prepared = Prepared::Configuration {
+        expected: application.snapshot(Direction::Upstream).key,
+        candidate: Err(failure),
+    };
+    let error = model.adopt_prepared(prepared).unwrap_err();
+    assert!(error.owns(&budget));
+    model.error = error;
+    assert_eq!(model.error.message(), MESSAGE);
+    assert_eq!(model.state()["error"], MESSAGE);
+    assert!(model.controller.is_none());
+    assert!(model.report.is_none());
+    assert_eq!(budget.usage(), FAILURE_TEST_LIMITS);
+    drop(pressure);
+    assert_eq!(budget.usage(), used);
+    drop(model);
+    assert_eq!(budget.usage(), baseline);
 }

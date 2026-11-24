@@ -4,18 +4,23 @@
  */
 //! Transactional receiver configuration and canonical application generations.
 use super::{
-    application_error, prepare_sweep, publish, request_retention, AdmissionError, Context, Inputs,
-    Model, Options, Sections, SessionKey, TransmissionSettings,
+    application_error, metadata, prepare_sweep, publish, request_retention, AdmissionError,
+    Context, Inputs, Model, Options, Sections, SessionKey, TransmissionSettings,
 };
-use crate::shell::RetentionBudget;
+use crate::{
+    shared::{
+        presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE, worker_failure::WorkerFailure,
+    },
+    shell::RetentionBudget,
+};
 
-type PreparedConfiguration = Option<
+type PreparedConfiguration<Error = AdmissionError> = Option<
     Result<
         (
             request_retention::SharedPlan,
             request_retention::SharedRequest,
         ),
-        AdmissionError,
+        Error,
     >,
 >;
 
@@ -27,7 +32,7 @@ impl Model {
         let key = match self.context.application.configure_downstream(false) {
             Ok(key) => key,
             Err(error) => {
-                self.error = application_error(error);
+                self.set_message(application_error(error));
                 return false;
             }
         };
@@ -62,7 +67,7 @@ impl Model {
         let inputs = crate::downstream::workbench::session::snapshot(&self.context);
         let result = self.configure_owned(settings, &inputs, inputs.sections(), options, verify);
         if let Err(message) = &result {
-            self.error = message.clone();
+            self.set_message(message.clone());
         }
         result
     }
@@ -82,7 +87,7 @@ impl Model {
             self.options.clone(),
             self.verify,
         ) {
-            self.error = message;
+            self.set_message(message);
         }
     }
 
@@ -108,13 +113,47 @@ impl Model {
         budget: &RetentionBudget,
     ) -> Result<(), String> {
         self.check_prepared_idle()?;
+        let replacement_guard = if options_owned(self, budget) {
+            None
+        } else {
+            Some(metadata::reserve_options(self.options.as_ref(), budget)?)
+        };
         let prepared = prepare_admitted(settings, inputs, sections, self.options.as_ref(), budget)?;
+        let prepared = try_admit_error(prepared, budget)?;
         self.request = None;
         self.plan = None;
         self.generation = None;
-        self.error.clear();
-        self.diagnostic = None;
+        self.error = WorkerFailure::default();
+        if let Some(guard) = replacement_guard {
+            self.options_guard = guard;
+        }
         self.accept_prepared(prepared);
+        Ok(())
+    }
+
+    /// Admits inline options for a fresh detached project/fixture candidate.
+    /// # Arguments
+    /// * `options`, `verify` - Existing saved receiver/comparison choices.
+    /// * `budget` - Actual accepting host, before scientific target preparation.
+    /// # Returns
+    /// Unit after moving options then their child-only guard. Every Some has a
+    /// witness, even with zero children; fixed witness/Options bytes stay in Model.
+    /// # Errors
+    /// Rejects accepted/executing models or target capacity before any field changes.
+    pub(crate) fn prepare_options_for_budget(
+        &mut self,
+        options: Option<Options>,
+        verify: bool,
+        budget: &RetentionBudget,
+    ) -> Result<(), String> {
+        self.check_prepared_idle()?;
+        if self.generation.is_some() || self.request.is_some() || self.plan.is_some() {
+            return Err("Only a fresh receiver candidate can stage project options.".into());
+        }
+        let guard = metadata::reserve_options(options.as_ref(), budget)?;
+        self.options = options;
+        self.options_guard = guard;
+        self.verify = verify;
         Ok(())
     }
 
@@ -131,6 +170,7 @@ impl Model {
     /// Rejects tracked execution, inconsistent root presence or any foreign reservation.
     pub(crate) fn check_prepared_target(&self, budget: &RetentionBudget) -> Result<bool, String> {
         self.check_prepared_idle()?;
+        self.check_metadata_target(budget)?;
         if self.request.is_some() != self.plan.is_some() {
             return Err("Prepared receiver request and plan are inconsistent.".into());
         }
@@ -207,6 +247,22 @@ impl Model {
                 .snapshot(crate::shell::Direction::Downstream)
                 .key
                 .session;
+        let replacement_guard = if options_owned(self, context.application.budget()) {
+            None
+        } else {
+            Some(metadata::reserve_options(
+                self.options.as_ref(),
+                context.application.budget(),
+            )?)
+        };
+        let replacement_error = if self.error.owns(context.application.budget()) {
+            None
+        } else {
+            Some(
+                self.error
+                    .try_copy_for_budget(context.application.budget())?,
+            )
+        };
         let (request, plan) = if same_host {
             (self.request.clone(), self.plan.clone())
         } else {
@@ -234,6 +290,12 @@ impl Model {
         publish(&context, None);
         crate::downstream::instruments::receiver::performance::clear(&context);
         self.context = context;
+        if let Some(guard) = replacement_guard {
+            self.options_guard = guard;
+        }
+        if let Some(error) = replacement_error {
+            self.error = error;
+        }
         self.request = request;
         self.plan = plan;
         self.generation = Some(key);
@@ -247,13 +309,10 @@ impl Model {
         options: Option<Options>,
         verify: bool,
     ) -> Result<(), String> {
-        let prepared = prepare_admitted(
-            settings,
-            inputs,
-            sections,
-            options.as_ref(),
-            self.context.application.budget(),
-        )?;
+        let budget = self.context.application.budget();
+        let options_guard = metadata::reserve_options(options.as_ref(), budget)?;
+        let prepared = prepare_admitted(settings, inputs, sections, options.as_ref(), budget)?;
+        let prepared = admit_error(prepared, budget);
         let ready = matches!(&prepared, Some(Ok(_)));
         let key = self
             .context
@@ -262,6 +321,7 @@ impl Model {
             .map_err(application_error)?;
         self.accept_generation(key);
         self.options = options;
+        self.options_guard = options_guard;
         self.verify = verify;
         self.accept_prepared(prepared);
         Ok(())
@@ -276,15 +336,14 @@ impl Model {
         Ok(())
     }
 
-    fn accept_prepared(&mut self, prepared: PreparedConfiguration) {
+    fn accept_prepared(&mut self, prepared: PreparedConfiguration<WorkerFailure>) {
         match prepared {
             Some(Ok((plan, request))) => {
                 self.request = Some(request);
                 self.plan = Some(plan);
             }
             Some(Err(error)) => {
-                self.error = error.message;
-                self.diagnostic = error.diagnostic;
+                self.error = error;
             }
             None => {}
         }
@@ -298,11 +357,40 @@ impl Model {
         self.request = None;
         self.plan = None;
         self.timing = None;
-        self.error.clear();
-        self.diagnostic = None;
+        self.error = WorkerFailure::default();
         publish(&self.context, None);
         crate::downstream::instruments::receiver::performance::clear(&self.context);
         self.token = self.token.wrapping_add(1);
+    }
+}
+
+fn options_owned(model: &Model, budget: &RetentionBudget) -> bool {
+    match (&model.options, &model.options_guard) {
+        (Some(_), Some(guard)) => budget.owns(guard),
+        (None, None) => true,
+        _ => false,
+    }
+}
+
+fn admit_error(
+    prepared: PreparedConfiguration,
+    budget: &RetentionBudget,
+) -> PreparedConfiguration<WorkerFailure> {
+    prepared.map(|outcome| {
+        outcome.map_err(|error| {
+            WorkerFailure::admit_with_fallback(error, budget, WORKER_FAILURE_ADMISSION_MESSAGE)
+        })
+    })
+}
+
+fn try_admit_error(
+    prepared: PreparedConfiguration,
+    budget: &RetentionBudget,
+) -> Result<PreparedConfiguration<WorkerFailure>, String> {
+    match prepared {
+        Some(Ok(roots)) => Ok(Some(Ok(roots))),
+        Some(Err(error)) => Ok(Some(Err(WorkerFailure::try_admit(error, budget)?))),
+        None => Ok(None),
     }
 }
 

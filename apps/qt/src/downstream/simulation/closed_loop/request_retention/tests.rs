@@ -5,6 +5,7 @@
 //! Real accepted request/plan quantities and partial application-owner lifetimes.
 use super::super::{latest, prepare_sweep, worker, Context, Model, Options, TransmissionSettings};
 use super::*;
+use crate::shared::worker_failure::WorkerFailure;
 use crate::shell::{ApplicationSessions, Direction, DispatchPhase};
 use merlin::downstream::ChannelJobStatus;
 use std::time::{Duration, Instant};
@@ -280,6 +281,27 @@ fn every_real_candidate_dimension_preserves_accepted_science_generation_and_repo
         let plan = Arc::clone(model.plan.as_ref().unwrap());
         let key = model.generation;
         let before = context.application.budget().usage();
+        let previous_status = match &model.error {
+            WorkerFailure::Detailed(error) => error.fixture_reserved_resources(),
+            _ => RetainedResources::default(),
+        };
+        // This exact scientific budget can already retain a prior display error.
+        // Its guard stays live through candidate admission, then replacement drops
+        // that old owner; the final ledger contains the actual new status once.
+        let previous_science = RetainedResources {
+            payload_bytes: before
+                .payload_bytes
+                .checked_sub(previous_status.payload_bytes)
+                .unwrap(),
+            ordered_entries: before
+                .ordered_entries
+                .checked_sub(previous_status.ordered_entries)
+                .unwrap(),
+            shared_roots: before
+                .shared_roots
+                .checked_sub(previous_status.shared_roots)
+                .unwrap(),
+        };
         let accepted_options = serde_json::to_value(&model.options).unwrap();
         let mut changed = model.options.clone().unwrap();
         changed.duration_ms = CHANGED_OBSERVATION_MS;
@@ -299,9 +321,19 @@ fn every_real_candidate_dimension_preserves_accepted_science_generation_and_repo
         assert!(Arc::ptr_eq(model.request.as_ref().unwrap(), &request));
         assert!(Arc::ptr_eq(model.plan.as_ref().unwrap(), &plan));
         assert!(Arc::ptr_eq(&latest(&context).unwrap(), &report));
-        assert_eq!(context.application.budget().usage(), before);
+        // The original target rejection may now retain its own detailed status.
+        assert_eq!(
+            context.application.budget().usage(),
+            sum(
+                previous_science,
+                match &model.error {
+                    WorkerFailure::Detailed(error) => error.fixture_reserved_resources(),
+                    _ => RetainedResources::default(),
+                }
+            )
+        );
         assert!(context.application.active().is_none());
-        assert!(model.error.contains("retained-data limit"));
+        assert!(model.error.message().contains("retained-data limit"));
     }
 }
 

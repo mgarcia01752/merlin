@@ -48,8 +48,8 @@ pub(crate) struct Analyzer {
     prepared: Option<SharedPrepared>,
     job: Option<Job>,
     result: Option<Retained<TransmitterPreview>>,
-    error: String,
-    notice: String,
+    error: WorkerFailure,
+    notice: &'static str,
 }
 
 impl Default for Analyzer {
@@ -75,8 +75,8 @@ impl Analyzer {
             prepared: None,
             job: None,
             result: None,
-            error: String::new(),
-            notice: String::new(),
+            error: WorkerFailure::default(),
+            notice: "",
         }
     }
 
@@ -90,8 +90,8 @@ impl Analyzer {
     /// Retention rejection preserves accepted configuration, revision, jobs and results.
     pub(crate) fn configure(&mut self, document: &str, source: &Value, profile: &Value) {
         let budget = self.context.application.budget().clone();
-        if let Err(error) = self.configure_owned(document, source, profile, &budget) {
-            self.error = error;
+        if let Err(error) = self.configure_owned(document, source, profile, &budget, false) {
+            self.set_error(error);
         }
     }
 
@@ -118,7 +118,7 @@ impl Analyzer {
         if self.job.is_some() || self.result.is_some() {
             return Err(PreviewError::TransferNotIdle.into_message());
         }
-        self.configure_owned(document, source, profile, budget)
+        self.configure_owned(document, source, profile, budget, true)
     }
 
     /// Checks target ownership before a project replaces any live application state.
@@ -138,6 +138,9 @@ impl Analyzer {
     ) -> Result<(), PreviewError> {
         if self.job.is_some() || self.result.is_some() {
             return Err(PreviewError::TransferNotIdle);
+        }
+        if !self.error.owns(budget) {
+            return Err(PreviewError::ForeignBudget);
         }
         if self
             .prepared
@@ -165,6 +168,15 @@ impl Analyzer {
         if self.job.is_some() || self.result.is_some() {
             return Err(PreviewError::TransferNotIdle);
         }
+        let error = if self.error.owns(context.application.budget()) {
+            None
+        } else {
+            Some(
+                self.error
+                    .try_copy_for_budget(context.application.budget())
+                    .map_err(PreviewError::PersistentMetadata)?,
+            )
+        };
         let prepared = self
             .prepared
             .as_ref()
@@ -178,6 +190,9 @@ impl Analyzer {
             .transpose()?;
         self.prepared = prepared;
         self.context = context;
+        if let Some(error) = error {
+            self.error = error;
+        }
         Ok(())
     }
 
@@ -201,12 +216,12 @@ impl Analyzer {
         let control = match retention::admit_control(&budget) {
             Ok(control) => control,
             Err(error) => {
-                self.error = error.into_message();
+                self.set_error(error.into_message());
                 return;
             }
         };
-        self.error.clear();
-        self.notice.clear();
+        self.error = WorkerFailure::default();
+        self.notice = "";
         let worker_control = Arc::clone(&control);
         let (sender, receiver) = mpsc::sync_channel(IDLE_PREVIEW_COMPLETION_CAPACITY);
         let spawn = std::thread::Builder::new()
@@ -231,7 +246,7 @@ impl Analyzer {
                     receiver,
                 })
             }
-            Err(error) => self.error = format!("Cannot start TX worker: {error}"),
+            Err(error) => self.set_error(format!("Cannot start TX worker: {error}")),
         }
     }
 
@@ -258,25 +273,30 @@ impl Analyzer {
                         .expect("Completion requires a tracked worker");
                     if job.revision == self.revision {
                         if job.control.value().snapshot().cancellation_requested {
-                            self.notice =
-                                "Preview cancelled; accepted inputs are unchanged.".into();
+                            self.notice = "Preview cancelled; accepted inputs are unchanged.";
                         } else {
                             match result {
                                 Ok(result) => {
                                     self.result = Some(*result);
                                     self.result_token = self.result_token.wrapping_add(1);
                                     self.notice =
-                                        "Completed TX sample snapshot before channel impairments."
-                                            .into();
+                                        "Completed TX sample snapshot before channel impairments.";
                                 }
-                                Err(error) => self.error = error.message().to_owned(),
+                                Err(error) => {
+                                    self.error = if error.owns(self.context.application.budget()) {
+                                        error
+                                    } else {
+                                        self.admit_error(error.message().to_owned())
+                                    };
+                                }
                             }
                         }
                     }
                 }
                 Err(TryRecvError::Disconnected) => {
                     self.job = None;
-                    self.error = "TX spectrum worker ended without a result.".into();
+                    self.error =
+                        WorkerFailure::Static("TX spectrum worker ended without a result.");
                 }
                 Err(TryRecvError::Empty) => {}
             }
@@ -288,8 +308,8 @@ impl Analyzer {
     /// # Returns
     /// Stable status/reason and a result token for bounded viewport refresh.
     pub(crate) fn status(&self) -> Value {
-        let (status, reason) = if !self.error.is_empty() {
-            ("error", self.error.as_str())
+        let (status, reason) = if !self.error.message().is_empty() {
+            ("error", self.error.message())
         } else if self.has_request() {
             (
                 "complete",
@@ -313,10 +333,10 @@ impl Analyzer {
             0.0
         } else {
             done as f64/total as f64
-        },"message":if self.error.is_empty() {
-            self.notice.as_str()
+        },"message":if self.error.message().is_empty() {
+            self.notice
         } else {
-            self.error.as_str()
+            self.error.message()
         }})
     }
 
@@ -408,12 +428,22 @@ impl Analyzer {
         source: &Value,
         profile: &Value,
         budget: &RetentionBudget,
+        strict_metadata: bool,
     ) -> Result<(), String> {
         let candidate = match prepare(document, source, profile) {
             Ok(candidate) => candidate,
             Err(error) => {
                 // Preserve legacy invalid-input invalidation; host rejection below
                 // instead leaves the prior configuration, revision and result intact.
+                let error = if strict_metadata {
+                    WorkerFailure::try_admit(error.into(), budget)?
+                } else {
+                    WorkerFailure::admit_with_fallback(
+                        error.into(),
+                        budget,
+                        WORKER_FAILURE_ADMISSION_MESSAGE,
+                    )
+                };
                 self.invalidate();
                 self.error = error;
                 return Ok(());
@@ -425,13 +455,25 @@ impl Analyzer {
         Ok(())
     }
 
+    fn admit_error(&self, message: String) -> WorkerFailure {
+        WorkerFailure::admit_with_fallback(
+            message.into(),
+            self.context.application.budget(),
+            WORKER_FAILURE_ADMISSION_MESSAGE,
+        )
+    }
+
+    fn set_error(&mut self, message: String) {
+        self.error = self.admit_error(message);
+    }
+
     fn invalidate(&mut self) {
         self.cancel();
         self.revision = self.revision.wrapping_add(1);
         self.result = None;
         self.prepared = None;
-        self.error.clear();
-        self.notice.clear();
+        self.error = WorkerFailure::default();
+        self.notice = "";
     }
 
     fn viewport(&self, start: i32, count: i32, capture_axis: bool) -> Result<Value, String> {

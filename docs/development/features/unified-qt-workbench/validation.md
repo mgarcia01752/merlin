@@ -4441,3 +4441,41 @@ their preceding API/wheel/QML evidence is explicitly reused. No repeated complet
 Qt/scientific workspace, wheel, unrelated CLI/package or standalone QML execution
 is claimed. The isolated core error/options unit, remaining fixed runtime/transport,
 loader paths, persistent QML/policy decisions and full SESSION/final gates stay open.
+
+
+## UIU-SESSION-01 persistent direction-model metadata
+
+[C1 in the frozen closure list](session-closure.md) is accepted as a focused owner
+unit. The [design](design.md#uiu-session-01-persistent-direction-model-metadata)
+reuses boxed admitted failures for downstream/preview/upstream persistent status,
+actual-capacity child-only Options witnesses and strict target-host preflight.
+Eligible preparation errors move under full pressure; message/help copies admit
+while their sources remain covered. Static notices and resets borrow text.
+Normal rejected detail still publishes science with the established fallback;
+strict transfer rejects before source/Context mutation. Existing JSON/status,
+upstream error categories, accepted results and independent bridge Apply help
+remain compatible. No scientific/public API, CXX registration or schema changed.
+
+The [receipt](session-direction-model-metadata-evidence.json) records actual primary
+execution separately from source-only `ff088c2`. Initial compilation identified
+three old Model literals and one old error accessor; their four fixture updates
+use actual Options guards and unchanged assertions. One complete Qt Rust run then
+passed 367 cases and failed two old exact-ledger fixtures. Those fixtures had an
+already retained first-report status: one omitted it, and replacement counted
+both old and new status after the old guard had dropped. Expectations now use
+the actual guards without changing science budgets, original dispatch rejection
+boundaries or scientific/status assertions. Only those two cases reran; both
+pass. Thus 369 distinct current Qt cases pass, including eight new owner cases;
+failed compilation/runtime logs remain. Unchanged 367 cases were not repeated.
+
+Qt all-target Clippy, formatting, final API boundary, optimized build and six
+fresh desktop probes pass; probe stderr is empty. Read-only QA found no concrete
+source defect and ran no duplicate suites. Sixteen accepted scientific/native
+source hashes and all standalone QML/test inputs are unchanged: paired API,
+installed-wheel and prior QML evidence are explicitly reused. No new wheel,
+scientific workspace, unrelated CLI/package or standalone QML run is claimed.
+
+Five required frozen closure conditions C2–C6 remain. Both user policy questions
+are resolved; no new owner category or API is justified by this unit. Native
+invokable Apply/help under pressure and the complete current SESSION Level 2 /
+applicable milestone gate remain pending. SESSION stays unchecked.

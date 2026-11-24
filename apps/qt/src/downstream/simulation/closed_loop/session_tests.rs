@@ -120,7 +120,7 @@ fn rejected_host_metadata_preserves_the_accepted_real_report_and_request() {
     );
     assert!(Arc::ptr_eq(&latest(&context).unwrap(), &report));
     assert!(context.application.active().is_none());
-    assert!(model.error.contains("retained-data limit"));
+    assert!(model.error.message().contains("retained-data limit"));
     drop(pressure);
     model
         .accept_options(Some(changed), false, &settings)
@@ -216,6 +216,7 @@ fn actual_engines_share_paused_and_cancelling_admission_without_overwriting_resu
     assert!(Arc::ptr_eq(&latest(&context).unwrap(), &old_downstream));
     assert!(downstream
         .error
+        .message()
         .contains("upstream simulation is already active"));
     assert_eq!(backend.progress().status, RunStatus::Paused);
 
@@ -266,7 +267,7 @@ fn canonical_generation_rejects_an_old_model_and_rebound_projects_use_the_target
     old.start();
     assert!(old.worker.is_none());
     assert!(target.application.active().is_none());
-    assert!(old.error.contains("Configuration changed"));
+    assert!(old.error.message().contains("Configuration changed"));
     assert_eq!(old.state()["can_start"], false);
     candidate.start();
     candidate.pause();
@@ -358,7 +359,7 @@ fn rejected_initial_performance_admission_returns_the_lease_without_dispatch_or_
     assert!(context.application.active().is_none());
     assert_eq!(model.token, token);
     assert_eq!(model.generation, key);
-    assert!(model.error.contains("retained-data limit"));
+    assert!(model.error.message().contains("retained-data limit"));
     assert!(Arc::ptr_eq(&report, &latest(&context).unwrap()));
     assert!(Arc::ptr_eq(
         &history,

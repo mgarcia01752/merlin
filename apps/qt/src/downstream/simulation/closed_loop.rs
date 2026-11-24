@@ -4,6 +4,7 @@
  */
 //! Public-request admission and bounded downstream workbench lifecycle.
 mod lifecycle;
+mod metadata;
 mod observations;
 mod request;
 mod request_retention;
@@ -11,8 +12,11 @@ mod result_projection;
 mod result_retention;
 mod worker;
 use super::run_timing::RunTiming;
-use crate::downstream::help::{AdmissionError, Diagnostic};
+use crate::downstream::help::AdmissionError;
 use crate::downstream::workbench::session::{Context, Inputs};
+use crate::shared::{
+    presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE, worker_failure::WorkerFailure,
+};
 use crate::shell::{
     ApplicationError, Direction, DispatchError, Retained, SessionError, SessionKey, WorkerEvent,
     WorkerStatus,
@@ -124,10 +128,12 @@ pub(crate) struct Model {
     plan: Option<SharedPlan>,
     worker: Option<Worker>,
     timing: Option<Arc<RunTiming>>,
-    error: String,
-    diagnostic: Option<Box<Diagnostic>>,
+    error: WorkerFailure,
     token: u64,
     generation: Option<SessionKey>,
+
+    // Options buffers drop before their child-only identity witness.
+    options_guard: Option<Retained<()>>,
 }
 
 impl Default for Model {
@@ -154,10 +160,10 @@ impl Model {
             plan: None,
             worker: None,
             timing: None,
-            error: String::new(),
-            diagnostic: None,
+            error: WorkerFailure::default(),
             token: Default::default(),
             generation: None,
+            options_guard: None,
         }
     }
 
@@ -171,7 +177,7 @@ impl Model {
             return;
         };
         let Some(key) = self.generation else {
-            self.error = "Configure the receiver before starting this session.".into();
+            self.set_static_message("Configure the receiver before starting this session.");
             return;
         };
         let plan = self.plan.clone();
@@ -195,7 +201,7 @@ impl Model {
             match profiles {
                 Ok(profiles) => profiles,
                 Err(error) => {
-                    self.error = error;
+                    self.set_message(error);
                     return;
                 }
             }
@@ -211,21 +217,21 @@ impl Model {
         let control = match DownstreamControl::new(self.context.application.budget()) {
             Ok(control) => control,
             Err(error) => {
-                self.error = application_error(ApplicationError::Retention(error));
+                self.set_message(application_error(ApplicationError::Retention(error)));
                 return;
             }
         };
         let prepared_timing = match RunTiming::prepare(self.context.application.budget()) {
             Ok(prepared) => prepared,
             Err(error) => {
-                self.error = application_error(ApplicationError::Retention(error));
+                self.set_message(application_error(ApplicationError::Retention(error)));
                 return;
             }
         };
         let lease = match self.context.application.begin(key, control.clone()) {
             Ok(lease) => lease,
             Err(error) => {
-                self.error = application_error(error);
+                self.set_message(application_error(error));
                 return;
             }
         };
@@ -233,11 +239,10 @@ impl Model {
             crate::downstream::instruments::receiver::performance::begin(&self.context, &catalog)
         {
             let _ = self.context.application.finish(lease);
-            self.error = application_error(ApplicationError::Retention(error));
+            self.set_message(application_error(ApplicationError::Retention(error)));
             return;
         }
-        self.error.clear();
-        self.diagnostic = None;
+        self.error = WorkerFailure::default();
         self.timing = None;
 
         // Retain accepted science until a new identified Profile replaces it.
@@ -258,7 +263,7 @@ impl Model {
             Err(error) => {
                 let (cause, lease) = error.into_parts();
                 let _ = self.context.application.finish(lease);
-                self.error = cause.to_string();
+                self.set_message(cause.to_string());
             }
         }
     }
@@ -308,7 +313,7 @@ impl Model {
                         } else {
                             None
                         };
-                        self.error = result
+                        let message = result
                             .backend()
                             .report()
                             .error
@@ -321,7 +326,7 @@ impl Model {
                                     })
                                     .unwrap_or_default()
                             });
-                        self.diagnostic = result
+                        let diagnostic = result
                             .job
                             .error
                             .as_ref()
@@ -329,6 +334,18 @@ impl Model {
                                 crate::downstream::help::catalog_diagnostic(error.code)
                             })
                             .map(Box::new);
+                        self.error = if message.is_empty() && diagnostic.is_none() {
+                            WorkerFailure::default()
+                        } else {
+                            WorkerFailure::admit_with_fallback(
+                                AdmissionError {
+                                    message,
+                                    diagnostic,
+                                },
+                                self.context.application.budget(),
+                                WORKER_FAILURE_ADMISSION_MESSAGE,
+                            )
+                        };
                         publish(&self.context, Some(Arc::new(*result)));
                         self.token = self.token.wrapping_add(1);
                     }
@@ -351,7 +368,7 @@ impl Model {
                                 application_error(ApplicationError::Retention(retention_error))
                             );
                         }
-                        self.error = error.message().to_owned();
+                        self.set_queued_error(error);
                         self.token = self.token.wrapping_add(1);
                     }
                 }
@@ -360,7 +377,7 @@ impl Model {
                     value: WorkerMessage::Finished(reason),
                 }) => {
                     if self.accepts_callback(token) && !reason.is_empty() {
-                        self.error = reason.to_owned();
+                        self.set_static_message(reason);
                     }
                     // This is sweep status, not proof that its closure has returned.
                     self.token = self.token.wrapping_add(1);
@@ -369,9 +386,11 @@ impl Model {
                     if self.accepts_callback(terminal.token()) {
                         match terminal.status() {
                             WorkerStatus::Completed => {}
-                            WorkerStatus::Failed(error) => self.error = error.message().to_owned(),
+                            WorkerStatus::Failed(error) => {
+                                self.set_message(error.message().to_owned())
+                            }
                             WorkerStatus::Panicked => {
-                                self.error = "Receiver worker stopped unexpectedly.".into()
+                                self.set_static_message("Receiver worker stopped unexpectedly.")
                             }
                         }
                     }
@@ -387,7 +406,7 @@ impl Model {
                         timing.finish();
                     }
                     self.worker = None;
-                    self.error = "Receiver worker disconnected.".into();
+                    self.set_static_message("Receiver worker disconnected.");
                 }
                 Err(mpsc::TryRecvError::Empty) => {}
             }
@@ -417,8 +436,8 @@ impl Model {
             "mean_iterations":r.job.summary.payload_mean_ldpc_iterations,"ncp_fields":r.job.summary.accepted_ncp_fields,
             "plc_frames":r.job.summary.plc_frames,"unrecovered":r.job.unrecovered_generated_payloads,"observation_warnings":r.observation_warnings()}));
         json!({"receiver_status":if ready {"complete"} else {"attention"},"verify_status":if self.verify {"complete"} else {"attention"},
-            "reason":if !self.error.is_empty(){self.error.as_str()} else if let Some(message) = result.as_ref().and_then(|result|result.observation_error) {message} else if ready {"Validated source/channel/receiver configuration ready."} else {"Configure WB and Receiver after accepting OCD, DPD, PRBS-TX and RxMER."},
-            "diagnostic":self.diagnostic,"timing":self.timing.as_ref().map(|timing|timing.snapshot()),
+            "reason":if !self.error.message().is_empty(){self.error.message()} else if let Some(message) = result.as_ref().and_then(|result|result.observation_error) {message} else if ready {"Validated source/channel/receiver configuration ready."} else {"Configure WB and Receiver after accepting OCD, DPD, PRBS-TX and RxMER."},
+            "diagnostic":self.error.diagnostic(),"timing":self.timing.as_ref().map(|timing|timing.snapshot()),
             "busy":self.worker.is_some(),"paused":progress.is_some_and(|value| value.0),
             "profile_index":progress.map_or(0, |value| value.1 + 1),
             "profile_id":progress.map(|value| value.2),
@@ -461,3 +480,6 @@ mod session_tests;
 
 #[cfg(test)]
 mod timing_retention_tests;
+
+#[cfg(test)]
+mod metadata_tests;

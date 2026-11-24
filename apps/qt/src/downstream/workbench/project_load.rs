@@ -123,8 +123,11 @@ impl PreparedProject {
         let settings =
             serde_json::to_string(&project.transmission).map_err(|error| error.to_string())?;
         let mut receiver = Model::for_context(candidate_context.clone());
-        receiver.options = project.receiver.clone();
-        receiver.verify = project.comparison_enabled;
+        receiver.prepare_options_for_budget(
+            project.receiver.clone(),
+            project.comparison_enabled,
+            budget,
+        )?;
         receiver.prepare_inputs_for_budget(&settings, &inputs, &project.sections, budget)?;
         let mut transmitter = Analyzer::for_context(candidate_context);
         transmitter.configure_for_budget(
@@ -682,3 +685,7 @@ mod admission_tests;
 #[cfg(test)]
 #[path = "project_load/target_tests.rs"]
 mod target_tests;
+
+#[cfg(test)]
+#[path = "project_load/metadata_tests.rs"]
+mod metadata_tests;
