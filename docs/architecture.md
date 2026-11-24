@@ -1589,9 +1589,9 @@ Untouched measurement defaults borrow static decimal text; parsed text retains
 its own capacity charge. The thin profile QObject owns its Context and admitted
 model independently, preserving existing invokables. See the
 [editor ownership design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-editor-candidates-and-prepared-transfer).
-Designer Origin children retained by captures are counted here; separate Designer
-sessions/workers/exports, retained QML presentation and outer infrastructure still
-require closure before UIU-SESSION-01 acceptance.
+Designer Origin children retained by captures are counted here. Retained QML
+presentation and outer infrastructure still require closure before
+UIU-SESSION-01 acceptance.
 
 Receiver QAM registries admit their actual Vec slot and status-string capacities
 before replacement; selected immutable Snapshot aliases retain their original
@@ -1605,8 +1605,8 @@ The GUI RxMER Designer Session and independently cloned generation/export Sessio
 inputs use the same actual-capacity admission. Begin preserves its previous owner
 on rejection; workers keep their input guard through actual completion even after
 GUI replacement or destruction. Existing preview/build/export operations borrow
-these owners. Request/control envelopes, generated capture queues and export
-Prepared products remain distinct pending owners. See the
+these owners. Control/closure/channel/fixed infrastructure and retained presentation
+remain distinct pending owners. See the
 [Designer input design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-designer-session-copies).
 
 Immutable export Prepared products admit complete frame/JSON/error capacities
@@ -1614,8 +1614,7 @@ before terminal queue publication. A charged shared root keeps the product alive
 across Ready/save-worker aliases. Working retains previous Ready until known
 completion, restoring it on rejection/cancellation/disconnection; failed spawn
 does not consume it. Thin QObject calls delegate the existing public-API lifecycle
-to `bridge/rxmer_export/lifecycle.rs`. Saved Value/error envelopes and outer worker
-infrastructure remain pending. See the
+to `bridge/rxmer_export/lifecycle.rs`. Outer worker infrastructure and retained presentation remain pending. See the
 [export-product design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-export-products-and-ready-state-rollback).
 
 Generated Designer capture batches admit their actual original/frame/Origin
@@ -1623,7 +1622,7 @@ storage before entering a single-slot completion queue. A concrete staging hando
 keeps the source reservation until independent editor admission succeeds; rejected,
 cancelled or stale completions preserve the old model and dispose the guarded
 batch. Existing mapping, selection and scientific staging behavior is preserved.
-Request/control/error envelopes and outer infrastructure remain pending. See the
+Control/closure/channel/fixed infrastructure and retained presentation remain pending. See the
 [capture-batch design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-designer-capture-batches).
 
 Generation workers independently admit parsed recipe requests and GUI work
@@ -1632,8 +1631,8 @@ Export preparation admits its parsed Request and fixed Selection together. These
 input guards survive detached execution and overlap final output admission;
 input rejection and spawn failure preserve prior accepted/Ready data. Child
 traversals are reused from the existing Session/Model owners, without a new
-accounting framework. Terminal error/Saved payloads and outer control/closure/
-channel infrastructure remain pending. See the
+accounting framework. Outer control/closure/channel infrastructure and retained
+presentation remain pending. See the
 [worker-input design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-designer-worker-inputs).
 
 Designer generation/export terminal errors now carry admitted actual message and
@@ -1642,8 +1641,19 @@ response construction. If metadata or admission rejects that error, its owned
 payload drops before a fixed rejection variant is published; no uncharged dynamic
 error is retained as a fallback. Existing cancellation/disconnection text remains
 static, and admitted original error text/help remains unchanged. Fixed transport/
-control infrastructure, Saved completion Value and persistent QML remain pending.
+control infrastructure and persistent QML remain pending.
 See the [error-completion design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-worker-error-completions).
+
+Export save completions independently admit their actual Value/JSON storage before
+queueing. The guard survives response construction; normal path/summary/cancel/
+error fields remain unchanged. If status details cannot fit after publication, a
+payload-free Copy status preserves whether export succeeded, was cancelled or
+failed. Its static message reports that actual outcome without an unavailable
+saved/path pair. The original Ready product remains guarded. A narrow picker seam
+exercises real public-API JSON publication and no-overwrite behavior without
+changing production native selection. Fixed control/transport/closure infrastructure
+and retained presentation remain pending. See the
+[save-completion design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-save-completion-data).
 
 The shared [terminal transport](development/features/unified-qt-workbench/design.md#uiu-session-01-terminal-worker-transport)
 under `shell/worker.rs` keeps genuine run leases outside worker unwinding and

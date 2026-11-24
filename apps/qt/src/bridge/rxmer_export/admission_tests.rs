@@ -23,7 +23,12 @@ const TEST_LIMIT: RetainedResources = RetainedResources {
 // Existing one-based single-capture JSON export selection.
 const SELECTION: &str = r#"{"first":1,"last":1,"clamp":true,"collection":false}"#;
 
-fn prepared_owner() -> (MeasurementInputsRust, String) {
+/// Reuses the original single-capture, validated Session and Ready export fixture.
+/// # Returns
+/// Actual owner with admitted Session/Prepared and its unchanged recipe document.
+/// # Panics
+/// Panics if the checked workbench or existing preflight no longer loads.
+pub(super) fn prepared_owner() -> (MeasurementInputsRust, String) {
     let mut context = Context::isolated();
     context.application = ApplicationSessions::new(TEST_LIMIT).unwrap();
     let project: Project = serde_json::from_slice(include_bytes!(
@@ -54,7 +59,14 @@ fn prepared_owner() -> (MeasurementInputsRust, String) {
     (owner, document)
 }
 
-fn ready(owner: &MeasurementInputsRust) -> &SharedPrepared {
+/// Borrows the actual prepared product from the original Ready-state fixture.
+/// # Arguments
+/// * `owner` - Adapter after successful existing preflight/poll.
+/// # Returns
+/// Shared immutable product borrowed for this owner's lifetime.
+/// # Panics
+/// Panics when the test precondition is not Ready.
+pub(super) fn ready(owner: &MeasurementInputsRust) -> &SharedPrepared {
     let Some(State::Ready(prepared)) = &owner.designer_export else {
         panic!("Existing actual Ready product");
     };

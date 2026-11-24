@@ -44,6 +44,16 @@ pub(crate) const DESIGNER_CAPTURE_QUEUE_CAPACITY: usize = 1;
 pub(crate) const DESIGNER_WORKER_ERROR_ADMISSION_MESSAGE: &str =
     "Designer completion exceeds retained-data limits.";
 
+/// Publication succeeded, but its queued path/summary could not fit admission.
+pub(crate) const DESIGNER_SAVED_STATUS_ADMISSION_MESSAGE: &str =
+    "Export saved; its result details exceed retained-data limits.";
+/// Independent cancellation outcome when detailed completion cannot be retained.
+pub(crate) const DESIGNER_CANCELLED_STATUS_ADMISSION_MESSAGE: &str =
+    "Export cancelled; its result details exceed retained-data limits.";
+/// Publication failed; this fallback does not incorrectly claim a successful save.
+pub(crate) const DESIGNER_FAILED_STATUS_ADMISSION_MESSAGE: &str =
+    "Export failed; its error details exceed retained-data limits.";
+
 /// Backpressure permits one completed profile envelope before GUI collection.
 /// Independent of the idle-preview channel, although both capacities are one.
 pub(crate) const PROFILE_COMPLETION_CAPACITY: usize = 1;

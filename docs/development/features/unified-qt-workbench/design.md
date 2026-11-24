@@ -4321,3 +4321,28 @@ scientific/cancellation behavior. Fixed transport/control infrastructure, Saved
 completion Value and persistent QML remain separate pending owners. Execute affected
 Rust/QML, Clippy/format/boundary/traceability and fresh executable checks. Reuse
 unchanged scientific/native evidence; complete SESSION gates remain open.
+
+
+### UIU-SESSION-01 retained save-completion data
+
+REQ-UIU-03/06/07 and the open UIU-SESSION-01 also cover queued export save replies:
+path, summary or publication-error JSON remains independent of guarded Prepared.
+Admit the actual completed Value through existing JSON children and Retained/model
+layout helpers before queue publication. Keep its guard through reply construction;
+normal saved/cancelled/error keys and values remain unchanged.
+
+| Path/symbol and disposition | Contract and focused acceptance |
+| --- | --- |
+| ADD `bridge/rxmer_export/saved.rs`; EDIT Outcome and lifecycle | Concrete Detailed(Retained<Value>) or payload-free rejected-status variant. Actual fixed Value/JSON capacity and ordered entries are admitted; no invented shared-root demand. Rejected metadata drops before publication, retaining only a Copy status and the already charged Prepared alias. |
+| EDIT `downstream/common/constants.rs` | Distinct static messages identify whether publication succeeded, was cancelled or failed when detailed status cannot fit. A successful file write must never be reported as failed merely because later status admission failed. |
+| EDIT export save handler; ADD focused saved-completion tests | Add a narrow native-picker seam, preserving the existing production picker and public Rust save operation. Test actual JSON file publication, queued status, cancellation, existing-file rejection/no overwrite, and payload/entry admission rejection after successful publication. Source/Ready owners and output bytes remain preserved. |
+
+The fixed fallback deliberately omits the normal saved/path pair when no path can
+be retained. The existing dialog renders its precise static message without a
+missing-path assignment or presentation rewrite. It reports completed publication
+in text; no false failure or automatic re-export is introduced. The frontend's
+normal fields remain unchanged whenever admitted. Temporary JSON/reply construction
+continues under separate finite execution limits; fixed control/transport/closure
+infrastructure and persistent QML remain pending. Execute relevant Rust/QML,
+Clippy/format/boundary/traceability and fresh executable checks; no new scientific
+API, binding/schema/dependency or memory framework. SESSION full gates stay open.

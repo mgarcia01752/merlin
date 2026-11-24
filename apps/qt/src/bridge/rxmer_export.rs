@@ -6,6 +6,7 @@
 mod input;
 mod lifecycle;
 mod retention;
+mod saved;
 use super::measurement_input::bridge;
 use super::worker_failure::WorkerFailure;
 use crate::downstream::common::constants::{
@@ -62,7 +63,7 @@ impl Prepared {
 
 pub(super) enum Outcome {
     Ready(SharedPrepared),
-    Saved(Value, SharedPrepared),
+    Saved(saved::Saved, SharedPrepared),
 }
 pub(super) enum State {
     Working {
@@ -146,3 +147,7 @@ impl bridge::MeasurementInputs {
 #[cfg(test)]
 #[path = "rxmer_export/admission_tests.rs"]
 mod admission_tests;
+
+#[cfg(test)]
+#[path = "rxmer_export/saved_tests.rs"]
+mod saved_tests;

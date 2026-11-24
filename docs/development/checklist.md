@@ -591,6 +591,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [worker-error unit](features/unified-qt-workbench/validation.md#uiu-session-01-retained-worker-error-completions) admits actual message/private diagnostic storage before generation/export queueing, preserving detailed responses and previous accepted owners. A rejected error publishes only a fixed fallback after dropping unadmitted data. Focused execution and remaining Saved/presentation/fixed-infrastructure acceptance are linked there; keep this parent unchecked.
 
+  The [save-completion unit](features/unified-qt-workbench/validation.md#uiu-session-01-retained-save-completion-data) admits queued Value/JSON capacity and preserves actual publication status if details are rejected. Real public-API JSON file, null/grid/value/time preservation, cancellation and existing-output no-overwrite cases support the focused unit. Remaining control/transport/closure/fixed infrastructure, retained presentation and full SESSION gates remain pending; keep this parent unchecked. Earlier unit frontier descriptions remain checkpoint history.
+
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
   Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).

@@ -4091,3 +4091,34 @@ workspace/unrelated CLI/packaging run. Saved completion Value, fixed transport/
 control infrastructure and retained presentation remain pending. UIU-SESSION-01
 stays unchecked until complete Level 2 and applicable milestone/final Level 3
 acceptance, preserving all completed downstream history.
+
+
+## UIU-SESSION-01 retained save-completion data
+
+The [focused design](design.md#uiu-session-01-retained-save-completion-data)
+admits actual save-reply Value/JSON storage before terminal queueing. Detailed
+normal fields remain unchanged and guarded through reply construction. Rejected
+metadata retains only Copy saved/cancelled/failed status and the original guarded
+Prepared alias. Its static message reports the actual outcome; successful output
+is never described as failed because a later status could not fit. An unavailable
+path omits the saved/path pair, allowing the existing dialog to render the precise
+message without an undefined path or presentation rewrite.
+
+[Primary execution record](session-saved-completion-evidence.json) records all
+72 initial Rust passes, then three passing save-consumer cases after correcting
+an internal visibility mismatch caught by Clippy. Final all-target Clippy,
+formatting/final boundary, 17 QML behaviors/four hooks, optimized build and six
+fresh desktop probes pass. Failed warning/Clippy logs remain. Actual public-API
+JSON publication in owned temporary directories preserves full grid/null/value/
+time data. Byte/entry status rejection after a successful write leaves the output
+intact; cancellation and existing-destination rejection preserve exact Ready and
+sentinel bytes. Native picker results are injected; no OS chooser interaction is
+claimed. Independent review is source-only; documentation/traceability joins the
+receipt. Current architecture frontier lists now exclude these accepted owners.
+
+No scientific/API/binding, saved-workbench schema, dependency or registration
+changed. Exact native/scientific/binary publisher evidence is reused without a
+new wheel, Python/full root workspace/unrelated CLI/packaging or repeat binary
+publisher run. Control/closure/channel/fixed infrastructure and retained
+presentation remain pending. UIU-SESSION-01 stays unchecked until complete Level 2
+and applicable milestone/final Level 3 acceptance, preserving completed history.

@@ -322,8 +322,13 @@ parent Apply action to accept it. Parsed generation/export recipes and selection
 snapshots also remain admitted until their worker completes; cancellation keeps
 those charges while the worker is still finishing. Queued failure details are
 also admitted. If those details cannot fit, MERLIN reports a fixed retained-data
-limit message and preserves the previous accepted editor or ready export. This
-change does not alter the recipe, measured source data or export formats. Full unified-session acceptance remains pending.
+limit message and preserves the previous accepted editor or ready export.
+A completed export also retains its queued path/summary status. If those details
+cannot fit after a successful write, the message explicitly says **Export saved**;
+the output remains intact, and the unavailable path is not displayed. Cancelled
+and failed exports have distinct messages. Existing destinations remain protected
+from overwrite. This change does not alter the recipe, measured source data or
+export formats. Full unified-session acceptance remains pending.
 
 ## Help and chart details
 

@@ -187,7 +187,8 @@ pub(super) fn poll(state: &mut Option<State>) -> Value {
             *state = Some(State::Ready(prepared));
             value
         }
-        Ok(Outcome::Saved(mut value, prepared)) => {
+        Ok(Outcome::Saved(saved, prepared)) => {
+            let mut value = saved.reply();
             value["can_json"] = json!(true);
             value["can_export"] = json!(prepared.value().pnm_error.is_none());
             value["json_summary"] = prepared.value().json_summary.clone();
@@ -215,6 +216,30 @@ pub(super) fn save(
     format: ExportFormat,
     start: impl FnOnce(Task) -> io::Result<()>,
 ) -> Result<(), String> {
+    save_with_picker(
+        owner,
+        format,
+        start,
+        crate::platform::native_file_picker::export_rxmer,
+    )
+}
+
+/// Starts the unchanged save operation with an explicit destination-picker seam.
+/// # Arguments
+/// * `owner` - Exact GUI state retaining its current Ready product.
+/// * `format` - Existing public Rust JSON/PNM format choice.
+/// * `start` - Native launcher or deterministic test launcher.
+/// * `picker` - Existing native chooser, or bounded test URI/cancellation result.
+/// # Returns
+/// Unit after worker publication; selection and filesystem work remain off the GUI.
+/// # Errors
+/// Same Ready/range/spawn errors as save, preserving old state before publication.
+pub(super) fn save_with_picker(
+    owner: &mut MeasurementInputsRust,
+    format: ExportFormat,
+    start: impl FnOnce(Task) -> io::Result<()>,
+    picker: impl FnOnce(bool, bool) -> Result<Option<String>, String> + Send + 'static,
+) -> Result<(), String> {
     let Some(State::Ready(prepared)) = owner.designer_export.as_ref() else {
         return Err("Check the current export selection first.".into());
     };
@@ -224,17 +249,18 @@ pub(super) fn save(
         }
     }
     let prepared = Arc::clone(prepared);
+    let budget = owner.context.application.budget().clone();
     let task = spawn(
         Some(Arc::clone(&prepared)),
-        owner.context.application.budget().clone(),
+        budget.clone(),
         move |cancel, completed| {
-            let Some(uri) = crate::platform::native_file_picker::export_rxmer(
+            let Some(uri) = picker(
                 prepared.value().collection,
                 matches!(format, ExportFormat::Json),
             )?
             else {
                 return Ok(Outcome::Saved(
-                    json!({"running":false,"cancelled":true}),
+                    saved::Saved::admit(json!({"running":false,"cancelled":true}), &budget),
                     prepared,
                 ));
             };
@@ -271,7 +297,10 @@ pub(super) fn save(
                 }
                 Err(error) => json!({"running":false,"error":error.to_string()}),
             };
-            Ok(Outcome::Saved(result, prepared))
+            Ok(Outcome::Saved(
+                saved::Saved::admit(result, &budget),
+                prepared,
+            ))
         },
         start,
     )?;
