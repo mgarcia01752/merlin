@@ -4,16 +4,20 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-617 explicit public Rust operations and 588 installed native Python entries with
+626 explicit public Rust operations and 597 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/session-archive-bound-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/session-control-metadata-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 115 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
 150-case historical acceptance. Named
 owner regressions establish behavioral scope; metadata alone is not scientific
 execution or exhaustive getter-branch coverage.
+The [control metadata prerequisite](../unified-qt-workbench/validation.md#uiu-session-01-scientific-control-allocation-metadata)
+adds exactly three Rust/native control methods with direct Rust-process parity;
+all earlier actual export/member/signature facts remain. Complete Qt aggregate
+session admission is still pending.
 Individual unit summaries below retain their historical checkpoint counts and
 states; the [official checklist](../../checklist.md#unified-qt-workbench-delivery)
 owns current task acceptance.

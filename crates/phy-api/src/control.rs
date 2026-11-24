@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! One-way cooperative cancellation without exposing mutable flag handles.
+use crate::{retention_support::RetainedPayload, RetainedFootprint};
 use std::sync::{
     atomic::{AtomicBool, Ordering},
     Arc,
@@ -70,3 +71,23 @@ impl Cancellation for AtomicBool {
         self.load(Ordering::Relaxed)
     }
 }
+
+impl RetainedPayload for RunControl {
+    /// Measures the private cancellation allocation without reading or changing it.
+    ///
+    /// # Returns
+    /// Atomic pointee bytes and one shared root. The enclosing owner counts this
+    /// common handle inline; private reference-count bookkeeping is excluded.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { cancel } = self;
+        let _: &Arc<AtomicBool> = cancel;
+        Some(RetainedFootprint {
+            payload_bytes: std::mem::size_of_val(cancel.as_ref()),
+            ordered_entries: 0,
+            shared_roots: 1,
+        })
+    }
+}
+
+#[cfg(test)]
+mod retention_tests;

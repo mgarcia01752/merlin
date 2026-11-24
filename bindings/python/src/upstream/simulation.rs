@@ -44,6 +44,25 @@ impl PyControl {
         };
         Self(control)
     }
+    /// Measures the existing Rust control and optional common cancellation child.
+    ///
+    /// # Returns
+    /// Immutable payload/entry/root quantities; releases the interpreter while
+    /// Rust takes short separate progress/pause locks without advancing state.
+    /// Python projections and private allocator/refcount bookkeeping are excluded.
+    ///
+    /// # Errors
+    /// Preserves structured Rust ResourceLimit and its retained_footprint field
+    /// through the existing upstream domain-to-ApiError conversion.
+    fn retained_footprint(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        py.detach(|| self.0.retained_footprint())
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
     /// Requests cooperative cancellation without discarding completed science.
     ///
     /// Returns None immediately; the Rust worker observes a safe boundary.

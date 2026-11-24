@@ -1,0 +1,105 @@
+{
+  "scope": "Fifteen new Rust owner/facade cases and three installed native cases actually executed on this paired control metadata candidate. Other affected consumer runs are recorded separately. No Qt aggregate acceptance.",
+  "runs": [
+    {
+      "language": "rust",
+      "exit_code": 0,
+      "passed": 15,
+      "commands_record": "docs/development/local/unified-qt-workbench/session-01-control-metadata/rust-initial-results.json",
+      "cases": [
+        {
+          "test_file": "crates/phy-api/src/control/retention_tests.rs",
+          "qualified_test_case": "common_child_counts_only_its_atomic_and_clones_keep_the_original_allocation"
+        },
+        {
+          "test_file": "crates/phy-api/src/control/retention_tests.rs",
+          "qualified_test_case": "independently_retained_aliases_repeat_the_same_atomic_without_mutation"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/control/retention_tests.rs",
+          "qualified_test_case": "full_loop_layout_and_alias_lifetime_include_the_nested_common_stop_once"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/control/retention_tests.rs",
+          "qualified_test_case": "requested_acknowledged_and_terminal_progress_are_not_advanced_by_metadata"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/control/retention_tests.rs",
+          "qualified_test_case": "poisoned_progress_metadata_recovers_without_clearing_poison_or_mutating_state"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/control/retention_tests.rs",
+          "qualified_test_case": "querying_control_preserves_real_complete_and_precancelled_request_behavior"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/transmitter/control/retention_tests.rs",
+          "qualified_test_case": "preview_control_layout_and_aliases_count_the_common_atomic_once"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/transmitter/control/retention_tests.rs",
+          "qualified_test_case": "progress_and_complete_failed_cancelled_states_are_passive_and_stay_one_shot"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/transmitter/control/retention_tests.rs",
+          "qualified_test_case": "metadata_queries_preserve_supported_preview_samples_psd_and_source_provenance"
+        },
+        {
+          "test_file": "crates/ofdma/src/simulation/control/retention_tests.rs",
+          "qualified_test_case": "optional_common_token_adds_only_its_atomic_and_one_root_and_aliases_survive"
+        },
+        {
+          "test_file": "crates/ofdma/src/simulation/control/retention_tests.rs",
+          "qualified_test_case": "metadata_does_not_claim_reset_pause_clocks_or_advance_progress"
+        },
+        {
+          "test_file": "crates/ofdma/src/simulation/control/retention_tests.rs",
+          "qualified_test_case": "separate_poisoned_progress_and_pause_locks_recover_without_clearing_them"
+        },
+        {
+          "test_file": "crates/ofdma/src/simulation/control/retention_tests.rs",
+          "qualified_test_case": "metadata_preserves_supported_completed_and_shared_precancelled_run_science"
+        },
+        {
+          "test_file": "crates/merlin/tests/control_footprints.rs",
+          "qualified_test_case": "downstream_controls_preserve_legacy_types_and_passive_shared_metadata"
+        },
+        {
+          "test_file": "crates/merlin/tests/control_footprints.rs",
+          "qualified_test_case": "upstream_metadata_preserves_owner_alias_optional_common_token_and_idle_state"
+        }
+      ]
+    },
+    {
+      "language": "python",
+      "exit_code": 0,
+      "passed": 3,
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-control-metadata-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_control_footprints.py",
+        "-v"
+      ],
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_control_footprints.py",
+          "qualified_test_case": "ControlFootprintTests.test_direct_rust_process_matches_quantities_and_idle_control_observations"
+        },
+        {
+          "test_file": "bindings/python/tests/test_control_footprints.py",
+          "qualified_test_case": "ControlFootprintTests.test_metadata_is_native_immutable_owned_and_rejects_extra_arguments"
+        },
+        {
+          "test_file": "bindings/python/tests/test_control_footprints.py",
+          "qualified_test_case": "ControlFootprintTests.test_paused_native_worker_keeps_control_metadata_and_cancelled_report"
+        }
+      ]
+    }
+  ]
+}

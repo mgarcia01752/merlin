@@ -4,6 +4,10 @@
  */
 //! One-shot preview control; no worker, global result store or interpreter callback.
 use super::*;
+use merlin_api::{
+    retention_support::{self as retention, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::Serialize;
 use std::sync::atomic::{AtomicU8, AtomicUsize, Ordering};
 
@@ -45,6 +49,21 @@ impl TransmitterPreviewControl {
     /// A fresh control; clones share the same single generation admission.
     pub fn new() -> Self {
         Self::default()
+    }
+
+    /// Measures current preview-control storage without claiming or advancing it.
+    ///
+    /// # Returns
+    /// Exact root/Shared/common-stop payload layouts, two shared roots and zero
+    /// ordered entries. Clones report the same conservative footprint independently.
+    /// Excludes private allocator/refcount bookkeeping; no atomic is read or stored,
+    /// no worker starts and existing progress/cancellation remains unchanged.
+    ///
+    /// # Errors
+    /// ResourceLimit if checked retained_footprint arithmetic overflows.
+    pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint> {
+        retention::retained_footprint(self)
+            .ok_or_else(|| ApiError::new(ErrorCode::ResourceLimit, "retained_footprint overflow"))
     }
 
     /// Requests cooperative cancellation at the existing bounded TX/analysis boundaries.
@@ -100,3 +119,34 @@ impl TransmitterPreviewControl {
         );
     }
 }
+
+impl RetainedPayload for TransmitterPreviewControl {
+    /// Visits its shared preview owner beyond the enclosing fixed handle.
+    ///
+    /// # Returns
+    /// Complete private child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self(shared) = self;
+        shared.retained_children()
+    }
+}
+
+impl RetainedPayload for Shared {
+    /// Audits the private atomics and the separate common cancellation child.
+    ///
+    /// # Returns
+    /// Common stop child quantities; all scalar synchronization storage is inline.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            stop,
+            state,
+            completed,
+            total,
+        } = self;
+        let _: (&AtomicU8, &AtomicUsize, &AtomicUsize) = (state, completed, total);
+        stop.retained_children()
+    }
+}
+
+#[cfg(test)]
+mod retention_tests;

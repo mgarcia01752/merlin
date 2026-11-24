@@ -4185,3 +4185,38 @@ Scientific control metadata, concrete worker/transport owners, other metadata an
 persistent presentation remain pending. Channel-bookkeeping and QML policy
 clarifications remain open. UIU-SESSION-01 stays unchecked until complete Level 2
 and applicable milestone/final Level 3 acceptance.
+
+
+## UIU-SESSION-01 scientific control allocation metadata
+
+The [focused design](design.md#uiu-session-01-scientific-control-allocation-metadata-prerequisite)
+adds exactly three public Rust/native metadata operations for the existing
+FullLoopControl, TransmitterPreviewControl and upstream RunControl Qt consumers.
+The common cancellation child reuses its hidden support trait without another
+inherent operation. Exact private layouts, optional common atomic ownership and
+inline overlap are audited without mutating lifecycle, reading clocks or starting
+work. Upstream progress/pause locks are separate and recover existing poison.
+No new mode, algorithm, dependency, class registration or Qt adapter is introduced.
+
+The [primary evidence](session-control-metadata-evidence.json) records 50 distinct
+Rust passes plus two independent-direction feature executions, 20 installed-native
+passes with no skips, 17 affected Qt passes and six fresh rebuilt-desktop probes
+with empty stderr. All relevant Clippy/format/boundary checks pass. Rust owner tests
+ran before native exposure. Native parity uses a freshly built archive-matched
+wheel and a separate Rust process for all control quantities and four idle/control
+observations; returned metadata remains immutable and usable after owner release.
+Real complete/pre-cancel science, Busy, pause/resume/cancel, partial results,
+Weak/final-alias lifetime, poison and independent legacy/facade imports pass.
+
+The [operation cases](session-control-metadata-operation-test-results.json) join the
+single [API matrix](../high-level-api/operation-matrix.json): 626 Rust and 597 native
+rows. Removing only these three added methods restores every prior actual Rust
+and native inventory fact. Existing scientific references/vectors, original
+production bodies, project formats and completed checklist states remain.
+
+Full workspace/QML/unrelated Python/CLI/packaging suites were not required or
+reported as executed for this passive API unit. Previous full Qt/QML evidence and
+its two receiver focus warnings remain historical final-QA inputs. Actual Qt
+control/wrapper/worker/transport admission, other retained metadata and persistent
+presentation are separate work. Channel and QML policy answers remain pending.
+UIU-SESSION-01 stays unchecked until complete Level 2 and applicable Level 3 gates.

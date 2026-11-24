@@ -18,6 +18,11 @@ pinning](integration.md).
 The [generated Basic Python API reference](../../reference/api-reference.md) provides
 searchable native class, method, constructor-signature and property pages.
 
+[Retained resource metadata](../api/retained-resources.md) covers immutable Rust
+quantities for inputs, results and the existing downstream full-loop/preview and
+upstream run controls. These methods preserve lifecycle state and share the Rust
+validation; Python performs no storage calculations.
+
 ## Runnable examples
 
 The [matching Rust/Python example inventory](../../../examples/api/README.md)

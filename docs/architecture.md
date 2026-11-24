@@ -1769,6 +1769,16 @@ FullLoopReceiverArchive, and upstream Simulation and BatchReport expose passive
 metadata through their existing public API and native Python wrappers; walker implementation
 support is excluded from the facade. This does not change scientific algorithms,
 project schemas, historical archive statistics or existing downstream exports.
+The [scientific control metadata prerequisite](development/features/unified-qt-workbench/design.md#uiu-session-01-scientific-control-allocation-metadata-prerequisite)
+exposes passive retained_footprint operations for the three existing
+FullLoopControl, TransmitterPreviewControl and upstream RunControl consumers.
+Their scientific owners audit private shared allocations and optional common
+cancellation children; the facade remains re-export-only. Paired native methods
+reuse existing common quantities and error categories. The
+[integrated evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-scientific-control-allocation-metadata)
+validates Rust/native parity and affected consumers. Subsequent Qt admission and
+complete SESSION acceptance remain separate pending work.
+
 The [pre-production archive pair](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds)
 computes exact detached target quantities and checks every limit before copying.
 It preserves the legacy archive operation/statistic and scientific queries.

@@ -2,13 +2,13 @@
   "schema_version": 1,
   "authority": "This is the complete per-operation row data for compatibility-matrix.md; docs/development/checklist.md alone owns delivery completion.",
   "scope": "Complete per-operation Rust and installed native Python rows, including aliases, macro-expanded methods, language-specific constructors, fields and constants. Named regressions establish their declared owner scope; metadata alone is not scientific execution.",
-  "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
+  "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-qt-workbench/session-01-control-metadata/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "3825388 plus bounded session outputs candidate",
-    "inventory_command": "Exact installed wheel; session-01-output-bound-native/results.json",
-    "native_sha256": "bca3a29c525a525f37d6d0fdd61f7819277a03c21652f02a5d40b0fda8a65850",
-    "scope": "Six additive paired bounded-output operations; all earlier types/members preserved.48 native tests/no skips,18 direct process cases; full session/host acceptance pending."
+    "revision": "fe04f22 plus exact ff062c1/f873607 paired control metadata candidate",
+    "inventory_command": "Archive-matched installed native_api_inventory.py; session-01-control-metadata-native/results.json",
+    "native_sha256": "5fafd17cc3e722829fb402ecd786d2a011c99b37841672d8f09dcefc998a2356",
+    "scope": "Three additive control metadata methods, twenty selected native cases/no skips. All prior native classes/members/signatures and Rust inventory exactly preserved after removing the three additions. Complete SESSION acceptance remains open."
   },
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
@@ -176,7 +176,12 @@
     "units.session.outputs.bound": "Target-layout retained payload bytes including fixed values/requested capacity/private caches/repeated shared payload, ordered entries and shared allocation edges. Excludes allocator/private bookkeeping and temporary construction/numerical scratch under separate finite execution limits; not total heap or RSS.",
     "errors.session.outputs.bound": "Checked overflow or any insufficient target quantity yields ResourceLimit before control/run claim. Preserve original Busy/admission/cancellation and partial-report semantics; interpreter signals remain cooperative cancellation through existing native workers.",
     "evidence.session.outputs.bound": "../unified-qt-workbench/session-output-bound-evidence.json, session-output-bound-operation-test-results.json and validation.md#uiu-session-01-pre-production-session-output-bounds:115 unique Rust/48 native cases,18 independent process cases and strict additive export tracing.",
-    "status.session.outputs.bound": "Locally accepted paired full-loop/upstream-report/idle-preview bounds and bounded operations. Real Qt consumer charges, host wiring, Level2 session and finalLevel3 acceptance remain pending."
+    "status.session.outputs.bound": "Locally accepted paired full-loop/upstream-report/idle-preview bounds and bounded operations. Real Qt consumer charges, host wiring, Level2 session and finalLevel3 acceptance remain pending.",
+    "ownership.session.control.resources": "Borrow the existing directional control and private shared children. No clone/copy/serialization or lifecycle transition. Each independent alias query conservatively repeats the same fixed root/pointee quantities.",
+    "units.session.control.resources": "Compiled target payload bytes, ordered-container entries and shared roots. Includes common stop atomic but counts inline handles/state once; excludes private allocator/refcount bookkeeping, Python projection and temporary execution storage. No total heap/RSS guarantee.",
+    "errors.session.control.resources": "Checked ResourceLimit overflow: downstream ApiResult/ApiError and upstream PhyResult/PhyError retained_footprint field. Native wrappers release the interpreter and preserve existing structured conversion; Python argument errors remain separate.",
+    "evidence.session.control.resources": "docs/development/features/unified-qt-workbench/session-control-metadata-evidence.json and session-control-metadata-operation-test-results.json: actual Rust owner/legacy/facade and exact archive-matched installed native parity, plus affected Qt/CLI compatibility. Source commits alone establish no runtime evidence.",
+    "status.session.control.resources": "Scoped paired operation accepted in the unified workspace. Qt wrapper/worker/transport/presentation admission and complete UIU-SESSION-01 acceptance remain open; completed tasks are not reopened."
   },
   "type_exports": {
     "downstream": [
@@ -35589,6 +35594,165 @@
       },
       "evidence": "evidence.session.outputs.bound",
       "status": "status.session.outputs.bound"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopControl::retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/full_loop/control.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopControl.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "FullLoopControl.retained_footprint(self, /)",
+        "native_operation": "merlin.downstream.FullLoopControl.retained_footprint"
+      },
+      "input_ownership": "ownership.session.control.resources",
+      "units": "units.session.control.resources",
+      "error_behavior": "errors.session.control.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Passive existing control and private shared children; same quantities across aliases and lifecycle states. No future-result bound or application reservation."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-06",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/phy-api/src/control/retention_tests.rs::common_child_counts_only_its_atomic_and_clones_keep_the_original_allocation",
+          "crates/phy-api/src/control/retention_tests.rs::independently_retained_aliases_repeat_the_same_atomic_without_mutation",
+          "crates/ofdm/src/api/full_loop/control/retention_tests.rs::full_loop_layout_and_alias_lifetime_include_the_nested_common_stop_once",
+          "crates/ofdm/src/api/full_loop/control/retention_tests.rs::requested_acknowledged_and_terminal_progress_are_not_advanced_by_metadata",
+          "crates/ofdm/src/api/full_loop/control/retention_tests.rs::poisoned_progress_metadata_recovers_without_clearing_poison_or_mutating_state",
+          "crates/ofdm/src/api/full_loop/control/retention_tests.rs::querying_control_preserves_real_complete_and_precancelled_request_behavior",
+          "crates/merlin/tests/control_footprints.rs::downstream_controls_preserve_legacy_types_and_passive_shared_metadata"
+        ],
+        "python": {
+          "status": "exact installed-wheel direct Rust-process parity and native immutable ownership",
+          "cases": [
+            "bindings/python/tests/test_control_footprints.py::ControlFootprintTests.test_direct_rust_process_matches_quantities_and_idle_control_observations",
+            "bindings/python/tests/test_control_footprints.py::ControlFootprintTests.test_metadata_is_native_immutable_owned_and_rejects_extra_arguments"
+          ]
+        }
+      },
+      "evidence": "evidence.session.control.resources",
+      "status": "status.session.control.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::TransmitterPreviewControl::retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/transmitter/control.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.TransmitterPreviewControl.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "TransmitterPreviewControl.retained_footprint(self, /)",
+        "native_operation": "merlin.downstream.TransmitterPreviewControl.retained_footprint"
+      },
+      "input_ownership": "ownership.session.control.resources",
+      "units": "units.session.control.resources",
+      "error_behavior": "errors.session.control.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Passive existing control and private shared children; same quantities across aliases and lifecycle states. No future-result bound or application reservation."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-06",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/phy-api/src/control/retention_tests.rs::common_child_counts_only_its_atomic_and_clones_keep_the_original_allocation",
+          "crates/phy-api/src/control/retention_tests.rs::independently_retained_aliases_repeat_the_same_atomic_without_mutation",
+          "crates/ofdm/src/api/transmitter/control/retention_tests.rs::preview_control_layout_and_aliases_count_the_common_atomic_once",
+          "crates/ofdm/src/api/transmitter/control/retention_tests.rs::progress_and_complete_failed_cancelled_states_are_passive_and_stay_one_shot",
+          "crates/ofdm/src/api/transmitter/control/retention_tests.rs::metadata_queries_preserve_supported_preview_samples_psd_and_source_provenance",
+          "crates/merlin/tests/control_footprints.rs::downstream_controls_preserve_legacy_types_and_passive_shared_metadata"
+        ],
+        "python": {
+          "status": "exact installed-wheel direct Rust-process parity and native immutable ownership",
+          "cases": [
+            "bindings/python/tests/test_control_footprints.py::ControlFootprintTests.test_direct_rust_process_matches_quantities_and_idle_control_observations",
+            "bindings/python/tests/test_control_footprints.py::ControlFootprintTests.test_metadata_is_native_immutable_owned_and_rejects_extra_arguments"
+          ]
+        }
+      },
+      "evidence": "evidence.session.control.resources",
+      "status": "status.session.control.resources"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::RunControl::retained_footprint",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> PhyResult<RetainedFootprint>",
+        "source_file": "crates/ofdma/src/simulation/control.rs",
+        "rustdoc": "docsis_ofdma/simulation/struct.RunControl.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "RunControl.retained_footprint(self, /)",
+        "native_operation": "merlin.upstream.RunControl.retained_footprint"
+      },
+      "input_ownership": "ownership.session.control.resources",
+      "units": "units.session.control.resources",
+      "error_behavior": "errors.session.control.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "PhyResult<RetainedFootprint>",
+        "scope": "Passive existing control and private shared children; same quantities across aliases and lifecycle states. No future-result bound or application reservation."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-06",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/phy-api/src/control/retention_tests.rs::common_child_counts_only_its_atomic_and_clones_keep_the_original_allocation",
+          "crates/phy-api/src/control/retention_tests.rs::independently_retained_aliases_repeat_the_same_atomic_without_mutation",
+          "crates/ofdma/src/simulation/control/retention_tests.rs::optional_common_token_adds_only_its_atomic_and_one_root_and_aliases_survive",
+          "crates/ofdma/src/simulation/control/retention_tests.rs::metadata_does_not_claim_reset_pause_clocks_or_advance_progress",
+          "crates/ofdma/src/simulation/control/retention_tests.rs::separate_poisoned_progress_and_pause_locks_recover_without_clearing_them",
+          "crates/ofdma/src/simulation/control/retention_tests.rs::metadata_preserves_supported_completed_and_shared_precancelled_run_science",
+          "crates/merlin/tests/control_footprints.rs::upstream_metadata_preserves_owner_alias_optional_common_token_and_idle_state"
+        ],
+        "python": {
+          "status": "exact installed-wheel direct Rust-process parity and native immutable ownership",
+          "cases": [
+            "bindings/python/tests/test_control_footprints.py::ControlFootprintTests.test_direct_rust_process_matches_quantities_and_idle_control_observations",
+            "bindings/python/tests/test_control_footprints.py::ControlFootprintTests.test_metadata_is_native_immutable_owned_and_rejects_extra_arguments",
+            "bindings/python/tests/test_control_footprints.py::ControlFootprintTests.test_paused_native_worker_keeps_control_metadata_and_cancelled_report"
+          ]
+        }
+      },
+      "evidence": "evidence.session.control.resources",
+      "status": "status.session.control.resources"
     }
   ],
   "executed_records": [
@@ -35639,7 +35803,8 @@
     "docs/development/features/unified-qt-workbench/session-input-metadata-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/session-archive-bound-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/session-output-bound-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/session-query-envelope-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/session-query-envelope-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/session-control-metadata-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -74162,6 +74327,183 @@
       },
       "evidence": "evidence.session.outputs.bound",
       "status": "status.session.outputs.bound"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopControl.retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopControl",
+        "source_file": "bindings/python/src/full_loop/control.rs",
+        "symbol": "PyFullLoopControl",
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Thin existing native owner with interpreter release and structured Rust error conversion; no Python sizing or new registration.",
+        "delegated_operation": "merlin::downstream::FullLoopControl::retained_footprint",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopControl.retained_footprint"
+      },
+      "input_ownership": "ownership.session.control.resources",
+      "units": "units.session.control.resources",
+      "error_behavior": "errors.session.control.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Owned immutable target-layout metadata remains usable after control release; existing common class and legacy root identities preserved."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-06",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/phy-api/src/control/retention_tests.rs::common_child_counts_only_its_atomic_and_clones_keep_the_original_allocation",
+          "crates/phy-api/src/control/retention_tests.rs::independently_retained_aliases_repeat_the_same_atomic_without_mutation",
+          "crates/ofdm/src/api/full_loop/control/retention_tests.rs::full_loop_layout_and_alias_lifetime_include_the_nested_common_stop_once",
+          "crates/ofdm/src/api/full_loop/control/retention_tests.rs::requested_acknowledged_and_terminal_progress_are_not_advanced_by_metadata",
+          "crates/ofdm/src/api/full_loop/control/retention_tests.rs::poisoned_progress_metadata_recovers_without_clearing_poison_or_mutating_state",
+          "crates/ofdm/src/api/full_loop/control/retention_tests.rs::querying_control_preserves_real_complete_and_precancelled_request_behavior",
+          "crates/merlin/tests/control_footprints.rs::downstream_controls_preserve_legacy_types_and_passive_shared_metadata"
+        ],
+        "python": {
+          "status": "exact installed-wheel direct Rust-process parity and native immutable ownership",
+          "cases": [
+            "bindings/python/tests/test_control_footprints.py::ControlFootprintTests.test_direct_rust_process_matches_quantities_and_idle_control_observations",
+            "bindings/python/tests/test_control_footprints.py::ControlFootprintTests.test_metadata_is_native_immutable_owned_and_rejects_extra_arguments"
+          ]
+        }
+      },
+      "evidence": "evidence.session.control.resources",
+      "status": "status.session.control.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.TransmitterPreviewControl.retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::TransmitterPreviewControl",
+        "source_file": "bindings/python/src/transmitter.rs",
+        "symbol": "PyTransmitterControl",
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Thin existing native owner with interpreter release and structured Rust error conversion; no Python sizing or new registration.",
+        "delegated_operation": "merlin::downstream::TransmitterPreviewControl::retained_footprint",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "TransmitterPreviewControl.retained_footprint"
+      },
+      "input_ownership": "ownership.session.control.resources",
+      "units": "units.session.control.resources",
+      "error_behavior": "errors.session.control.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Owned immutable target-layout metadata remains usable after control release; existing common class and legacy root identities preserved."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-06",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/phy-api/src/control/retention_tests.rs::common_child_counts_only_its_atomic_and_clones_keep_the_original_allocation",
+          "crates/phy-api/src/control/retention_tests.rs::independently_retained_aliases_repeat_the_same_atomic_without_mutation",
+          "crates/ofdm/src/api/transmitter/control/retention_tests.rs::preview_control_layout_and_aliases_count_the_common_atomic_once",
+          "crates/ofdm/src/api/transmitter/control/retention_tests.rs::progress_and_complete_failed_cancelled_states_are_passive_and_stay_one_shot",
+          "crates/ofdm/src/api/transmitter/control/retention_tests.rs::metadata_queries_preserve_supported_preview_samples_psd_and_source_provenance",
+          "crates/merlin/tests/control_footprints.rs::downstream_controls_preserve_legacy_types_and_passive_shared_metadata"
+        ],
+        "python": {
+          "status": "exact installed-wheel direct Rust-process parity and native immutable ownership",
+          "cases": [
+            "bindings/python/tests/test_control_footprints.py::ControlFootprintTests.test_direct_rust_process_matches_quantities_and_idle_control_observations",
+            "bindings/python/tests/test_control_footprints.py::ControlFootprintTests.test_metadata_is_native_immutable_owned_and_rejects_extra_arguments"
+          ]
+        }
+      },
+      "evidence": "evidence.session.control.resources",
+      "status": "status.session.control.resources"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.RunControl.retained_footprint",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::RunControl",
+        "source_file": "bindings/python/src/upstream/simulation.rs",
+        "symbol": "PyControl",
+        "signature": "pub fn retained_footprint(&self) -> PhyResult<RetainedFootprint>",
+        "mapping": "Thin existing native owner with interpreter release and structured Rust error conversion; no Python sizing or new registration.",
+        "delegated_operation": "merlin::upstream::RunControl::retained_footprint",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "RunControl.retained_footprint"
+      },
+      "input_ownership": "ownership.session.control.resources",
+      "units": "units.session.control.resources",
+      "error_behavior": "errors.session.control.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Owned immutable target-layout metadata remains usable after control release; existing common class and legacy root identities preserved."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-06",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/phy-api/src/control/retention_tests.rs::common_child_counts_only_its_atomic_and_clones_keep_the_original_allocation",
+          "crates/phy-api/src/control/retention_tests.rs::independently_retained_aliases_repeat_the_same_atomic_without_mutation",
+          "crates/ofdma/src/simulation/control/retention_tests.rs::optional_common_token_adds_only_its_atomic_and_one_root_and_aliases_survive",
+          "crates/ofdma/src/simulation/control/retention_tests.rs::metadata_does_not_claim_reset_pause_clocks_or_advance_progress",
+          "crates/ofdma/src/simulation/control/retention_tests.rs::separate_poisoned_progress_and_pause_locks_recover_without_clearing_them",
+          "crates/ofdma/src/simulation/control/retention_tests.rs::metadata_preserves_supported_completed_and_shared_precancelled_run_science",
+          "crates/merlin/tests/control_footprints.rs::upstream_metadata_preserves_owner_alias_optional_common_token_and_idle_state"
+        ],
+        "python": {
+          "status": "exact installed-wheel direct Rust-process parity and native immutable ownership",
+          "cases": [
+            "bindings/python/tests/test_control_footprints.py::ControlFootprintTests.test_direct_rust_process_matches_quantities_and_idle_control_observations",
+            "bindings/python/tests/test_control_footprints.py::ControlFootprintTests.test_metadata_is_native_immutable_owned_and_rejects_extra_arguments",
+            "bindings/python/tests/test_control_footprints.py::ControlFootprintTests.test_paused_native_worker_keeps_control_metadata_and_cancelled_report"
+          ]
+        }
+      },
+      "evidence": "evidence.session.control.resources",
+      "status": "status.session.control.resources"
     }
   ],
   "native_type_exports": {
@@ -75432,6 +75774,13 @@
       "inventory_command": "Exact installed wheel; session-01-archive-bound-native/results.json",
       "native_sha256": "ed21158af0f21b85102d82616595efbed3e5bf9c64e7da0d784369271c2543e6",
       "scope": "Bounded/legacy archive/full-loop, both retained-root metadata and namespaces;24 independent Rust/native cases. Native literal constructibility added; all preceding methods/properties unchanged."
+    },
+    {
+      "version": "0.4.0",
+      "revision": "3825388 plus bounded session outputs candidate",
+      "inventory_command": "Exact installed wheel; session-01-output-bound-native/results.json",
+      "native_sha256": "bca3a29c525a525f37d6d0fdd61f7819277a03c21652f02a5d40b0fda8a65850",
+      "scope": "Six additive paired bounded-output operations; all earlier types/members preserved.48 native tests/no skips,18 direct process cases; full session/host acceptance pending."
     }
   ],
   "historical_rust_export_corrections": [

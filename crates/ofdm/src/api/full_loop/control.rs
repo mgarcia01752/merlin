@@ -5,6 +5,10 @@
 //! Direction-specific one-shot control; acknowledged pause is separate from requested pause.
 use super::*;
 pub use crate::simulation::channel::{ChannelJobStatus, ChannelPhase, ChannelProgress};
+use merlin_api::{
+    retention_support::{self as retention, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::Serialize;
 use std::{
     sync::{
@@ -74,6 +78,22 @@ impl FullLoopControl {
     pub fn new() -> Self {
         Self::default()
     }
+    /// Measures current control storage without advancing its one-shot lifecycle.
+    ///
+    /// # Returns
+    /// Exact root/Shared/common-stop payload layouts, two shared roots and zero
+    /// ordered entries. Clones share storage but report the same conservative
+    /// footprint independently. Private allocator/refcount bookkeeping is excluded.
+    /// Takes only the short progress lock; no clock, worker or scientific result
+    /// is queried, and pause/cancellation/progress state remains unchanged.
+    ///
+    /// # Errors
+    /// ResourceLimit if checked retained_footprint arithmetic overflows.
+    pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint> {
+        retention::retained_footprint(self)
+            .ok_or_else(|| ApiError::new(ErrorCode::ResourceLimit, "retained_footprint overflow"))
+    }
+
     /// Requests pause before dispatch or at the next completed scientific step.
     /// # Returns
     /// Unit; snapshot distinguishes requested pause from acknowledged Paused state.
@@ -179,3 +199,88 @@ impl FullLoopControl {
         };
     }
 }
+
+impl RetainedPayload for FullLoopControl {
+    /// Visits its shared control owner beyond the enclosing fixed handle.
+    ///
+    /// # Returns
+    /// Complete private child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self(shared) = self;
+        shared.retained_children()
+    }
+}
+
+impl RetainedPayload for Shared {
+    /// Audits every private field without recounting inline synchronization data.
+    ///
+    /// # Returns
+    /// Common stop allocation and progress children, or None on overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            stop,
+            paused,
+            state,
+        } = self;
+        let _: &AtomicBool = paused;
+        let progress = {
+            let state = state.lock().unwrap_or_else(|cause| cause.into_inner());
+            progress_children(&state)
+        };
+        retention::sum([stop.retained_children(), progress])
+    }
+}
+
+fn progress_children(value: &ProgressState) -> Option<RetainedFootprint> {
+    let ProgressState {
+        snapshot,
+        last_notification,
+    } = value;
+    let FullLoopProgress {
+        state,
+        pause_requested,
+        cancellation_requested,
+        progress,
+    } = snapshot;
+    let lifecycle = match state {
+        FullLoopState::Idle
+        | FullLoopState::Running
+        | FullLoopState::Paused
+        | FullLoopState::Completed
+        | FullLoopState::Cancelled
+        | FullLoopState::RuntimeExceeded
+        | FullLoopState::Failed => Some(RetainedFootprint::default()),
+    };
+    retention::sum([
+        lifecycle,
+        pause_requested.retained_children(),
+        cancellation_requested.retained_children(),
+        progress.as_ref().map_or(
+            Some(RetainedFootprint::default()),
+            channel_progress_children,
+        ),
+        retention::fixed_children(last_notification),
+    ])
+}
+
+fn channel_progress_children(value: &ChannelProgress) -> Option<RetainedFootprint> {
+    let ChannelProgress {
+        receiver_reliability,
+        phase,
+        completed_source_symbols,
+        requested_source_symbols,
+        recovered_payloads,
+        elapsed_ms,
+    } = value;
+    retention::sum([
+        receiver_reliability.retained_children(),
+        phase.retained_children(),
+        completed_source_symbols.retained_children(),
+        requested_source_symbols.retained_children(),
+        recovered_payloads.retained_children(),
+        elapsed_ms.retained_children(),
+    ])
+}
+
+#[cfg(test)]
+mod retention_tests;

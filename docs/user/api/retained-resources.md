@@ -1,7 +1,8 @@
 # Retained resource metadata
 
-Downstream requests, sweep plans, results and detached receiver archives, and
-upstream sessions and reports expose passive Rust-owned retention metadata through
+Downstream inputs, controls, requests, sweep plans, results and detached receiver
+archives, and upstream controls, sessions and reports expose passive Rust-owned
+metadata through
 `retained_footprint()`. Rust returns the shared `merlin::common::RetainedFootprint`;
 native Python returns an immutable `merlin.common.RetainedFootprint`. The operation
 does not run simulation, serialize a report or allocate copies of its payload.
@@ -57,6 +58,24 @@ Independent downstream `SourceInput`, `NamedCapture`, `CaptureProvenance`,
 `pnm_input::RxMerDesign` includes its original envelope, typed baseline/recipe and
 cached materialized observation. These quantities cover independently retained
 inputs and idle previews before a full-loop request exists.
+
+Downstream `FullLoopControl` and `TransmitterPreviewControl`, and upstream
+`RunControl`, also expose `retained_footprint()`. Each downstream control includes
+its private shared state and separate common cancellation atomic, with two shared
+roots and no ordered entries. The upstream control includes its private shared
+state with one root; `with_cancellation` additionally includes the common atomic
+and one root. Inline handles and synchronization fields are counted once.
+Clones report the same conservative quantities regardless of the number of aliases.
+Queries preserve idle, pause-request, running and terminal state and never claim a
+job, read a clock or change cancellation. Upstream progress/pause locks are short
+and taken separately. The common stop token has no new inherent operation.
+
+For example, Rust calls
+`merlin::downstream::FullLoopControl::new().retained_footprint()?`; Python calls
+`merlin.downstream.FullLoopControl().retained_footprint()` and reads the same three
+properties. The existing native classes and legacy root aliases are preserved.
+The [direct Rust control example](../../../crates/cli/examples/control_footprints.rs)
+compares all three directional controls without adding dependencies to the facade.
 
 Python exposes the method on its existing source, profile, response, preview and
 Designer classes. Rust's `NamedCapture` is represented by name/bytes arguments in

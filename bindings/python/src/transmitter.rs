@@ -45,6 +45,24 @@ impl PyTransmitterControl {
         Self(api::TransmitterPreviewControl::new())
     }
 
+    /// Measures the existing Rust preview control without claiming generation.
+    ///
+    /// # Returns
+    /// Immutable payload/entry/root quantities including private shared storage.
+    /// Releases the interpreter without reading or changing progress/cancellation.
+    /// Python projections and private allocator/refcount bookkeeping are excluded.
+    ///
+    /// # Errors
+    /// Preserves Rust ResourceLimit on checked retained_footprint overflow.
+    fn retained_footprint(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        py.detach(|| self.0.retained_footprint())
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
     /// Requests cooperative cancellation without locking a running native request.
     /// # Returns
     /// Unit; no pause/resume is exposed and prior results remain valid.

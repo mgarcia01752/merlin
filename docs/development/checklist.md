@@ -597,6 +597,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [canonical fixed host unit](features/unified-qt-workbench/validation.md#uiu-session-01-canonical-fixed-application-host) admits Accounting/gate/Sessions storage without double-counting inline readiness. Lease aliases preserve gate admission after host destruction; generic counters keep zero baselines. All321 Qt Rust cases, exact fixed-boundary/rollback/drop evidence and fresh native probes pass. Control metadata, concrete worker/transport, other metadata, persistent presentation and complete SESSION gates remain open; keep this parent unchecked.
 
+  [Scientific control metadata](features/unified-qt-workbench/validation.md#uiu-session-01-scientific-control-allocation-metadata) now passes paired acceptance for exactly three existing Qt consumers: 50 distinct Rust cases plus two direction-feature executions, 20 installed native cases, 17 Qt cases and six fresh desktop probes. Old inventories are preserved; no scientific mode or completed milestone changes. Commit this API prerequisite before actual Qt control/wrapper/worker admission. Other metadata, transport/QML policy and complete SESSION acceptance remain pending; keep the parent unchecked.
+
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
   Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).

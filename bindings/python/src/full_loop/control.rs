@@ -16,6 +16,24 @@ impl PyFullLoopControl {
     fn new() -> Self {
         Self(api::FullLoopControl::new())
     }
+    /// Measures the existing Rust control without advancing its lifecycle.
+    ///
+    /// # Returns
+    /// Immutable payload/entry/root quantities including private shared storage.
+    /// Releases the interpreter; no worker, clock or scientific result is queried.
+    /// Python projections and private allocator/refcount bookkeeping are excluded.
+    ///
+    /// # Errors
+    /// Preserves Rust ResourceLimit on checked retained_footprint overflow.
+    fn retained_footprint(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        py.detach(|| self.0.retained_footprint())
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
     /// Requests pause before dispatch or at the next completed scientific step.
     /// # Returns
     /// Unit; poll state to observe actual pause acknowledgement.

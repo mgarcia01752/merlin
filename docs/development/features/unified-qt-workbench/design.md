@@ -4402,3 +4402,62 @@ SESSION full Level 2 and applicable milestone/final gates stay open.
 
 The isolated [fixed-host preparation](agent-handoffs/fixed-host-owners.md) records
 the source-only boundary. Primary integration owns actual execution and acceptance.
+
+
+### UIU-SESSION-01 scientific control allocation metadata prerequisite
+
+REQ-UIU-03/06/07 already require complete admitted scientific owners. The frozen
+remaining-owner audit identifies exactly three existing Qt consumers whose public
+controls lack allocation metadata: downstream worker Dispatch.active/executing
+FullLoopControl, transmitter preview Job/worker TransmitterPreviewControl, and
+upstream session/workbench UpstreamControl containing upstream RunControl.
+Scalar snapshots cannot establish private allocation layouts. This is a concrete
+consumer prerequisite; completed planning/FEC/API milestones remain closed.
+
+Lead-owned acceptance files are ADD `crates/merlin/tests/control_footprints.rs`
+for typed legacy/facade imports and passive lifecycle/alias behavior, and ADD
+`crates/cli/examples/control_footprints.rs` for a separate-process Rust JSON
+reference. The CLI crate already owns serde_json; this avoids adding dependencies
+to the facade or either independent PHY. ADD native parity tests under
+`bindings/python/tests/` after Rust acceptance, then update the existing operation
+matrix and public API guides. No manifest or global registration changes.
+
+| Additive Rust operation | Native Python parity | Scientific owner / disposition |
+| --- | --- | --- |
+| FullLoopControl::retained_footprint(&self) -> ApiResult<RetainedFootprint> | merlin.downstream.FullLoopControl.retained_footprint(self) -> merlin.common.RetainedFootprint | EDIT `crates/ofdm/src/api/full_loop/control.rs`; ADD owner tests. Root + actual Shared + common stop atomic, two roots/zero ordered entries. |
+| TransmitterPreviewControl::retained_footprint(&self) -> ApiResult<RetainedFootprint> | merlin.downstream.TransmitterPreviewControl.retained_footprint(self) -> merlin.common.RetainedFootprint | EDIT `crates/ofdm/src/api/transmitter/control.rs`; ADD owner tests. Its own root/Shared layouts + common stop atomic, two roots/zero entries. |
+| Upstream RunControl::retained_footprint(&self) -> PhyResult<RetainedFootprint> | merlin.upstream.RunControl.retained_footprint(self) -> merlin.common.RetainedFootprint | EDIT `crates/ofdma/src/simulation/control.rs`; ADD owner tests. Root + actual State, one root; optional common cancellation adds its atomic and one root. |
+
+REUSE the existing hidden public RetainedPayload support trait at the common
+`crates/phy-api/src/control.rs` data owner for its private cancellation child.
+Neither PHY can implement a foreign trait on that foreign type, and a private
+visitor cannot cross crate boundaries. Add its owner-local implementation and
+tests, without a fourth inherent common operation or extra getters. Use exact
+compiled layouts, exhaustive field audits, checked sums and existing structured
+ResourceLimit mapping (upstream field retained_footprint). Keep lock lifetimes
+short and separate; metadata never waits/notifies, claims a job, advances clocks,
+starts work or mutates controls. Clone counts must not change reported quantities.
+Existing scientific algorithms, outcomes, namespace aliases and imports remain.
+
+Rust operations and owner tests land before native exposure. Then EDIT the three
+existing native class owners in `bindings/python/src/full_loop/control.rs`,
+`transmitter.rs` and `upstream/simulation.rs`, and their existing root/upstream
+stubs. Reuse existing common quantity conversion/error mapping and importable
+namespaces. Lead owns facade regression/direct-process Rust reference, installed
+native parity, operation matrix, public guides and acceptance evidence. No Qt
+adapter, registration, Cargo dependency or scientific mode changes in this unit.
+
+Acceptance checks independent private-layout formulas and literal root counts,
+optional-token delta, clone/Weak lifetime and unchanged idle/pause-request/cancel/
+terminal observations. Preserve actual run/Busy/partial-result cases; compare
+science independently of elapsed time. Native tests must execute a fresh wheel
+containing these Rust/binding changes and compare direct Rust reference results,
+owned immutable metadata and common-token behavior. Validate legacy/facade imports
+and affected Qt/CLI/native consumers; do not claim untouched complete suites ran.
+Commit this independently validated paired API extension before Qt adoption.
+Outer application control/wrapper/closure/queue admission and pending transport/
+QML policy are separate work; complete SESSION acceptance remains open.
+
+The [source preparation handoff](agent-handoffs/control-retention-api.md) records
+the frozen Rust/native commits and their source-only validation. Primary runtime
+evidence belongs to the [integrated validation record](validation.md#uiu-session-01-scientific-control-allocation-metadata).
