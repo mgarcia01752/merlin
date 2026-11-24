@@ -14,6 +14,8 @@ use std::{collections::BTreeMap, sync::Arc};
 /// Explicit downstream application owner; queries never follow tab selection.
 #[derive(Clone)]
 pub(crate) struct Context {
+    /// Canonical two-direction identities and global dispatch for this workbench.
+    pub(crate) application: crate::shell::ApplicationSessions,
     /// Accepted scientific input snapshots for this downstream owner.
     pub(crate) inputs: Store<Inputs>,
     /// Exact accepted editor sections and original embedded bytes.
@@ -49,6 +51,8 @@ impl Context {
     /// A new downstream owner, suitable for isolated preparation and tests.
     pub(crate) fn isolated() -> Self {
         Self {
+            application: crate::shell::ApplicationSessions::desktop()
+                .expect("Application session identities unavailable"),
             inputs: Store::default(),
             saved: Store::default(),
             result: Store::default(),

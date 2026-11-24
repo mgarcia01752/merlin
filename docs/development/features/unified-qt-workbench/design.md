@@ -3736,3 +3736,56 @@ cases and changed-path Clippy/format/boundary checks must pass; build the latest
 optimized executable. Native Python/Rust science evidence at 1841d92 is reused:
 this Qt-only dispatch adoption changes none of those linked APIs or algorithms.
 Complete session Level 2 and milestone/final Level 3 remain separate gates.
+
+### Actual downstream host and terminal adoption
+
+UIU-SESSION-01 / REQ-UIU-03/06/07 now prioritizes real consumer wiring. REUSE the
+existing ShellSessions, checked identities, DispatchGate and terminal transport;
+add no accounting abstraction or scientific API. The concrete application host
+tracks direction-specific readiness and callback generations. Actual scientific
+configurations/results remain in their existing downstream Context/Model and
+upstream controller owners; metadata readiness is never scientific acceptance or
+proof of aggregate resource closure.
+
+| Owner and disposition | Required behavior and reason |
+| --- | --- |
+| EDIT `apps/qt/src/main.rs` | Register the existing application shell/upstream Rust modules in the native binary, with reusable application contracts exported at its root. Normal Cargo binary tests compile the actual components; no new library target, Cargo crate/dependency, scientific facade or QML type is introduced. |
+| ADD `apps/qt/src/shell/application.rs`, `shell/constants.rs`; EDIT `shell/mod.rs` | One concrete clonable application host over existing ShellSessions, separate direction readiness, genuine global leases, canonical callback validation and existing retention budget. Fixed metadata charges use actual layouts. The host accepts explicit resource limits; normal desktop defaults are named application safety policies, not PHY limits or RSS claims. No aggregate acceptance until all existing scientific and application owners participate. |
+| EDIT `downstream/workbench/session.rs`, `simulation/closed_loop.rs` and `closed_loop/lifecycle.rs`, bridge restore | Bind each real context to its canonical host; isolated preparation/tests receive independent hosts. Reconfiguration cancels only the old owned generation. Rebound prepared models obtain the target host's actual key. Start acquires the shared lease before invalidating accepted results or dispatching science; a rejected second Start preserves them. |
+| EDIT `downstream/simulation/closed_loop/worker.rs`, adjacent worker tests | REUSE the existing scientific sweep/control/timing code through spawn_worker. Profile/Rejected/Finished remain data messages; only the common terminal releases the genuine lease. Every callback is checked against the canonical host immediately before adoption. Preserve actual complete/partial science, runtime narrowing, pause and bounded backpressure. |
+| REUSE existing upstream controller | Test both actual engines sharing this same host/gate, including paused/cancelling Busy, stale generations, terminal release and destroyed owners. Its QObject/configuration/presentation wiring follows; no fake scientific result establishes acceptance. |
+
+Root owns the host, Model/Context/bridge/native registration and canonical
+acceptance. The session agent exclusively prepares the worker and its tests in
+its existing worktree. The upstream UI agent owns recovered upstream QML/tests
+only; shared build/module registration remains root-owned. Existing caches and
+profiles stay intact; no repeated wheels or unrelated complete regressions.
+
+Level 1 requires both real direction consumers, existing changed-path downstream
+Rust cases, affected QML lifecycle cases, Clippy/format/boundary and optimized
+native build/probes. Public scientific/native/persistence contracts do not
+change, so reuse their exact accepted evidence. UIU-SESSION-01 remains unchecked
+until actual upstream QObject wiring, complete retained-owner closure and full
+relevant Level 2/milestone acceptance pass. Do not add further accounting helpers
+without a demonstrated owner or failing acceptance case.
+
+The first focused compile demonstrated that a separate library target in this
+package also links CXX-Qt's generated registration archive, which needs the
+binary's QObject implementations. Keep the existing binary target instead of
+changing CXX build/link ownership; register the application components there.
+The failed attempt remains in the local receipt. A new fixture also needed normal
+field assignment because Model implements Drop; no production behavior or
+existing assertion was changed to resolve that test-construction error.
+
+Final adoption is transactional at the actual Receiver Apply/Restore consumers:
+prepare the existing public request first, perform one host generation admission,
+then commit options/verification and clear old views. Rejected metadata admission
+preserves the old accepted request/key/report and reports failure to Apply.
+The new regression uses a valid changed transmission candidate under explicit
+synthetic counter pressure, then verifies later success after release. Existing
+scientific compatibility assertions remain unchanged.
+
+The new configuration/admission methods live in focused
+`closed_loop/lifecycle.rs`; the existing runner retains execution/state
+presentation. Public operations precede private helpers in each implementation.
+This placement changes no operation, signature or scientific expression.

@@ -274,6 +274,7 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         error: String::new(),
         diagnostic: None,
         token: 0,
+        generation: Some(context.application.configure_downstream(true).unwrap()),
     };
     model.start();
     let deadline = std::time::Instant::now() + Duration::from_secs(60);
@@ -789,6 +790,7 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
         error: String::new(),
         diagnostic: None,
         token: 0,
+        generation: Some(context.application.configure_downstream(true).unwrap()),
     };
     model.start();
     let deadline = std::time::Instant::now() + Duration::from_secs(180);
@@ -1108,6 +1110,7 @@ fn invalidated_paused_worker_never_publishes_a_late_result() {
         error: String::new(),
         diagnostic: None,
         token: 0,
+        generation: Some(context.application.configure_downstream(true).unwrap()),
     };
     model.start();
     model.pause();

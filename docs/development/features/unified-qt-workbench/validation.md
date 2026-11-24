@@ -3430,3 +3430,63 @@ this unregistered application-controller change. Outer application, budget,
 control, transport, input/presentation/error owners and canonical host wiring
 remain mandatory before shared aggregate/session acceptance. UIU-SESSION-01 stays
 unchecked; complete Level 2 and milestone/final Level 3 gates remain intact.
+
+## UIU-SESSION-01 actual downstream host and terminal adoption
+
+The [concrete host/worker design](design.md#actual-downstream-host-and-terminal-adoption)
+now registers the existing Rust application components in the native binary,
+binds real downstream Context/Model ownership to canonical generations, and
+migrates its scientific worker onto the existing shared terminal transport. Start
+acquires the genuine global lease before clearing accepted results. Every data
+adoption checks its actual worker token and the current host generation. Finished
+is data only; actual terminal/spawn-failure disposal acknowledges admission.
+Prepared project models rebind to the target host. The [worker source handoff](agent-handoffs/downstream-worker-resume.md)
+retains the isolated preparation scope and its originally unexecuted test claims.
+
+Executed in the primary checkout: **75 unique Rust cases through normal Cargo
+binary tests** (48 existing shell/upstream, ten downstream compatibility, four
+worker, four workbench-context, five project-load and four real shared-host cases), warnings-denied
+all-target Clippy, formatting and final API boundary. The new tests run both real
+engines through the same host, test pause/cancel exclusion, Busy preserving a
+previous actual report, canonical stale-generation/rebind and destroyed-adapter
+termination. Separate error/panic fixtures exercise transport only. The [receipt](session-host-dispatch-evidence.json)
+records exact case discovery, commands, failures and source/artifact identities.
+
+A fresh optimized executable passes **six native startup/project probes**, with
+current desktop credentials discovered rather than hardcoded. **Four QML
+behavior cases** plus two fixture hooks pass; two existing activeFocusOnTab
+warnings remain in retained-filter navigation. Initial compilation exposed the
+separate-library CXX registration-link dependency and a new Drop-type fixture
+construction error. Keeping the existing binary target and normal field
+assignment resolved those failures; no scientific assertion or CXX build/link
+contract was relaxed. Final rejection-path review then found pre-admission result
+clearing and Qt Apply/Restore option mutation. Configuration now commits only
+after one successful host admission; the real-report regression preserves options,
+verification, request, generation and report under synthetic counter pressure,
+then proves successful adoption when pressure releases. QA corrected its settings
+JSON fixture to the actual TransmissionSettings type, with independent successful
+scientific preflight. Only the affected 23 Model/context/project and final four
+host cases reran; unchanged 48 shell/upstream and four worker results are reused.
+The failed logs and all candidate/result scopes remain preserved. Final method
+placement in focused lifecycle.rs passes the four shared-host cases, all-target
+Clippy, formatting, boundary and a fresh optimized build. Six desktop probes
+repeat against that final executable; unchanged QML sources/signatures reuse
+the recorded four behavior cases and two hooks.
+
+Named desktop limits are independent application safety policies: two GiB payload,
+one million ordered entries and 65,536 shared roots, excluding allocator/private
+container/refcount bookkeeping and execution scratch. Explicit constructors
+accept independent limits. This unit charges the host's actual fixed readiness
+metadata; existing scientific roots, wrappers and application/transport/DTO
+owners still require complete common-budget participation. No aggregate or RSS
+acceptance follows from metadata flags or these defaults.
+
+Scientific/public/native/persistence sources and contracts are unchanged; reuse
+accepted backend/native evidence at 1841d92 without another wheel or unrelated
+complete workspace/CLI/package regressions. Full affected-feature Level 2 and
+milestone/final Level 3 remain mandatory. Upstream QML recovery remains isolated
+at 6b9519d, not integrated/registered. Upstream QObject/configuration wiring and
+remaining retained-owner closure are finite open gates; UIU-SESSION-01 remains
+unchecked. Source-only independent QA found no concrete lifecycle defect; disk
+is 80% used with 24 GiB free and 13% inode use, with no confidently obsolete
+cleanup candidate and all active caches preserved.

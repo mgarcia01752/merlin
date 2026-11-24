@@ -3,12 +3,16 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Public-request admission and bounded downstream workbench lifecycle.
+mod lifecycle;
 mod observations;
 mod request;
 mod worker;
 use super::run_timing::RunTiming;
 use crate::downstream::help::{AdmissionError, Diagnostic};
 use crate::downstream::workbench::session::{Context, Inputs};
+use crate::shell::{
+    ApplicationError, Direction, DispatchError, SessionError, SessionKey, WorkerEvent, WorkerStatus,
+};
 use merlin::downstream::{
     FullLoopReport, FullLoopRequest, FullLoopResult, FullLoopSweepPlan, TransmissionSettings,
 };
@@ -21,7 +25,7 @@ use std::{
 };
 #[cfg(test)]
 use worker::run_one;
-use worker::{Worker, WorkerMessage};
+use worker::{DownstreamControl, Worker, WorkerMessage};
 
 /// Read-only compatibility projection of the authoritative public result.
 pub(crate) struct JobView(FullLoopResult);
@@ -83,61 +87,9 @@ pub(crate) struct Model {
     error: String,
     diagnostic: Option<Box<Diagnostic>>,
     token: u64,
+    generation: Option<SessionKey>,
 }
 impl Model {
-    /// Cancels active work and invalidates observations after an accepted configuration change.
-    pub(crate) fn invalidate(&mut self) {
-        if let Some(worker) = &mut self.worker {
-            worker.cancel();
-            worker.stale = true;
-        }
-        self.request = None;
-        self.plan = None;
-        self.timing = None;
-        self.error.clear();
-        self.diagnostic = None;
-        publish(&self.context, None);
-        crate::downstream::instruments::receiver::performance::clear(&self.context);
-        self.token = self.token.wrapping_add(1);
-    }
-    /// Validates current accepted inputs against the saved receiver configuration.
-    /// # Arguments
-    /// * `settings` - Current OCD document.
-    pub(crate) fn configure(&mut self, settings: &str) {
-        self.invalidate();
-        self.prepare_inputs(
-            settings,
-            &crate::downstream::workbench::session::snapshot(&self.context),
-            &crate::downstream::workbench::session::saved_sections(&self.context),
-        );
-    }
-    /// Prepares requests from independent inputs without publishing GUI results.
-    /// # Arguments
-    /// * `settings` - Accepted OCD JSON.
-    /// * `inputs` - Frozen snapshot owned by the caller.
-    /// # Returns
-    /// Readiness is stored in this idle model; no simulation is started.
-    pub(crate) fn prepare_inputs(&mut self, settings: &str, inputs: &Inputs, sections: &Sections) {
-        if let Some(options) = &self.options {
-            let request = serde_json::from_str::<TransmissionSettings>(settings)
-                .map_err(|e| AdmissionError::from(e.to_string()))
-                .and_then(|settings| {
-                    let plan = prepare_sweep(&settings, inputs, options, sections)?;
-                    let request = plan.request(0).map_err(AdmissionError::classified)?;
-                    Ok((plan, request))
-                });
-            match request {
-                Ok((plan, request)) => {
-                    self.request = Some(request);
-                    self.plan = Some(plan);
-                }
-                Err(error) => {
-                    self.error = error.message;
-                    self.diagnostic = error.diagnostic;
-                }
-            }
-        }
-    }
     /// Starts one Rust job; inputs are frozen and repeated Start while busy is ignored.
     pub(crate) fn start(&mut self) {
         self.poll();
@@ -147,12 +99,10 @@ impl Model {
         let Some(settings) = self.request.clone() else {
             return;
         };
-        self.error.clear();
-        self.diagnostic = None;
-        self.timing = None;
-        publish(&self.context, None);
-        self.token = self.token.wrapping_add(1);
-        crate::downstream::instruments::receiver::performance::clear(&self.context);
+        let Some(key) = self.generation else {
+            self.error = "Configure the receiver before starting this session.".into();
+            return;
+        };
         let plan = self.plan.clone();
         let catalog = if let Some(plan) = &plan {
             let profiles = (0..plan.info().selected_profile_ids.len())
@@ -185,20 +135,38 @@ impl Model {
                 .map(|playback| vec![playback.profile.clone()])
                 .unwrap_or_default()
         };
+        let control = Arc::new(DownstreamControl::new());
+        let lease = match self.context.application.begin(key, control.clone()) {
+            Ok(lease) => lease,
+            Err(error) => {
+                self.error = application_error(error);
+                return;
+            }
+        };
+        self.error.clear();
+        self.diagnostic = None;
+        self.timing = None;
+        publish(&self.context, None);
+        self.token = self.token.wrapping_add(1);
+        crate::downstream::instruments::receiver::performance::clear(&self.context);
         crate::downstream::instruments::receiver::performance::begin(&self.context, &catalog);
         let timing = Arc::new(RunTiming::new());
-        match Worker::spawn(settings, plan, timing.clone()) {
+        match Worker::spawn(settings, plan, timing.clone(), control, lease) {
             Ok(worker) => {
                 self.timing = Some(timing);
                 self.worker = Some(worker);
             }
-            Err(error) => self.error = error.to_string(),
+            Err(error) => {
+                let (cause, lease) = error.into_parts();
+                let _ = self.context.application.finish(lease);
+                self.error = cause.to_string();
+            }
         }
     }
     /// Requests cooperative Stop; completed comparisons remain available when the worker finishes.
     pub(crate) fn stop(&self) {
         if let Some(worker) = &self.worker {
-            worker.cancel();
+            let _ = self.context.application.cancel(worker.token());
         }
     }
     /// Toggles pause without replacing source, RNG, interleaver or receiver state.
@@ -211,14 +179,25 @@ impl Model {
     /// # Returns
     /// Scalar JSON state; full retained samples remain behind Rust ownership.
     pub(crate) fn poll(&mut self) -> Value {
+        if let Some(worker) = &self.worker {
+            if let Some(paused) = worker.acknowledged_pause() {
+                let _ = self
+                    .context
+                    .application
+                    .acknowledge_pause(worker.token(), paused);
+            }
+        }
         if let Some(message) = self
             .worker
             .as_ref()
             .map(|worker| worker.receiver.try_recv())
         {
             match message {
-                Ok(WorkerMessage::Profile(result)) => {
-                    if !self.worker.as_ref().is_some_and(|w| w.stale) {
+                Ok(WorkerEvent::Message {
+                    token,
+                    value: WorkerMessage::Profile(result),
+                }) => {
+                    if self.accepts_callback(token) {
                         if let Some(playback) = &result.job.settings.playback {
                             crate::downstream::instruments::receiver::performance::retain(
                                 &self.context,
@@ -245,8 +224,11 @@ impl Model {
                         self.token = self.token.wrapping_add(1);
                     }
                 }
-                Ok(WorkerMessage::Rejected(id, channel, error)) => {
-                    if !self.worker.as_ref().is_some_and(|w| w.stale) {
+                Ok(WorkerEvent::Message {
+                    token,
+                    value: WorkerMessage::Rejected(id, channel, error),
+                }) => {
+                    if self.accepts_callback(token) {
                         crate::downstream::instruments::receiver::performance::reject(
                             &self.context,
                             id,
@@ -257,10 +239,30 @@ impl Model {
                         self.token = self.token.wrapping_add(1);
                     }
                 }
-                Ok(WorkerMessage::Finished(reason)) => {
-                    if !self.worker.as_ref().is_some_and(|w| w.stale) && !reason.is_empty() {
+                Ok(WorkerEvent::Message {
+                    token,
+                    value: WorkerMessage::Finished(reason),
+                }) => {
+                    if self.accepts_callback(token) && !reason.is_empty() {
                         self.error = reason;
                     }
+                    // This is sweep status, not proof that its closure has returned.
+                    self.token = self.token.wrapping_add(1);
+                }
+                Ok(WorkerEvent::Terminal(terminal)) => {
+                    if self.accepts_callback(terminal.token()) {
+                        match terminal.status() {
+                            WorkerStatus::Completed => {}
+                            WorkerStatus::Failed(error) => self.error = error.clone(),
+                            WorkerStatus::Panicked => {
+                                self.error = "Receiver worker stopped unexpectedly.".into()
+                            }
+                        }
+                    }
+                    if let Some(timing) = &self.timing {
+                        timing.finish();
+                    }
+                    let _ = self.context.application.finish(terminal.into_lease());
                     self.worker = None;
                     self.token = self.token.wrapping_add(1);
                 }
@@ -288,6 +290,9 @@ impl Model {
             .zip(self.timing.as_ref())
             .map(|(worker, timing)| worker.progress(timing));
         let ready = self.request.is_some();
+        let active = self.context.application.active();
+        let current =
+            self.generation == Some(self.context.application.snapshot(Direction::Downstream).key);
         let result = latest(&self.context);
         let summary=result.as_ref().map(|r|json!({"profile_id":r.job.settings.playback.as_ref().map(|p|p.profile.profile_id),"fec":r.job.summary.window.as_ref().map(|w|w.fec.snapshot()),"status":r.job.status,"elapsed_ms":r.job.elapsed_ms,
             "bits_tested":r.job.summary.comparison.bits_tested,"bit_errors":r.job.summary.comparison.bit_errors,
@@ -303,8 +308,26 @@ impl Model {
             "profile_id":progress.map(|value| value.2),
             "profile_count":self.worker.as_ref().map_or(0,|w|w.profile_count),
             "completed_symbols":progress.map_or(0, |value| value.3),
-            "can_start":ready&&self.verify&&self.worker.is_none(),"has_result":result.is_some(),"result_token":self.token.to_string(),"result":summary,
+            "can_start":ready&&self.verify&&self.worker.is_none()&&active.is_none()&&current,"has_result":result.is_some(),"result_token":self.token.to_string(),"result":summary,
+            "application_busy":active.is_some(),"active_direction":active.map(|run| match run.token.key.direction {Direction::Downstream=>"downstream",Direction::Upstream=>"upstream"}),
             "available_profile_ids":profile_ids,"applied_profile_id":applied_profile_id,"options":self.options.clone().unwrap_or_default(),"accepted_options":self.options,"verified":self.verify})
+    }
+    fn accepts_callback(&self, token: crate::shell::RunToken) -> bool {
+        self.worker
+            .as_ref()
+            .is_some_and(|worker| !worker.stale && worker.token() == token)
+            && self.context.application.validate_callback(token).is_ok()
+    }
+}
+fn application_error(error: ApplicationError) -> String {
+    match error {
+        ApplicationError::Session(SessionError::Dispatch(DispatchError::Busy(active))) => match active.token.key.direction {
+            Direction::Downstream => "A downstream simulation is already active. Stop it before starting another.".into(),
+            Direction::Upstream => "An upstream simulation is already active. Stop it before starting downstream.".into(),
+        },
+        ApplicationError::NotConfigured(_) | ApplicationError::Session(SessionError::StaleGuard) => "Configuration changed. Configure the receiver before starting this session.".into(),
+        ApplicationError::Retention(_) => "The session retained-data limit would be exceeded.".into(),
+        ApplicationError::Session(_) => "The session cannot accept this operation. Preserve the project and reopen the Workbench.".into(),
     }
 }
 impl Drop for Model {
@@ -315,3 +338,7 @@ impl Drop for Model {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+#[path = "closed_loop/session_tests.rs"]
+mod session_tests;

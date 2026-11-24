@@ -3,11 +3,15 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Explicit Qt application ownership, independent of either scientific engine.
-//! Not registered in the application yet; the integration lead owns that wiring.
+//! Scientific data stays in its direction owner; this module owns native lifecycle.
+mod application;
+mod constants;
 mod dispatch;
 mod identity;
 mod retention;
 mod worker;
+
+pub use application::{ApplicationError, ApplicationSessions};
 
 pub use dispatch::{
     ActiveRun, DispatchError, DispatchGate, DispatchPhase, RunCancellation, RunLease,

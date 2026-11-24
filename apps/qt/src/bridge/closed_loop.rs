@@ -174,13 +174,14 @@ impl bridge::ClosedLoop {
         };
         match prepare() {
             Ok(options) => {
+                let verified = self.rust().model.verify;
+                let accepted = self.as_mut().rust_mut().model.accept_options(
+                    Some(options),
+                    verified,
+                    &settings.to_string(),
+                );
                 self.as_mut().rust_mut().admission_diagnostic = None;
-                self.as_mut().rust_mut().model.options = Some(options);
-                self.as_mut()
-                    .rust_mut()
-                    .model
-                    .configure(&settings.to_string());
-                QString::from("")
+                QString::from(accepted.err().unwrap_or_default())
             }
             Err(error) => {
                 let message = error.to_string();
@@ -210,8 +211,9 @@ impl bridge::ClosedLoop {
             &self.rust().model.context,
             |prepared| prepared.receiver.take(),
         ) {
-            self.as_mut().rust_mut().model.invalidate();
-            model.context = self.rust().model.context.clone();
+            if model.rebind(self.rust().model.context.clone()).is_err() {
+                return;
+            }
             self.as_mut().rust_mut().model = model;
             return;
         }
@@ -219,12 +221,11 @@ impl bridge::ClosedLoop {
             return;
         }
         if let Ok(options) = serde_json::from_str::<Option<model::Options>>(&options.to_string()) {
-            self.as_mut().rust_mut().model.options = options;
-            self.as_mut().rust_mut().model.verify = verified;
-            self.as_mut()
-                .rust_mut()
-                .model
-                .configure(&settings.to_string());
+            let _ = self.as_mut().rust_mut().model.accept_options(
+                options,
+                verified,
+                &settings.to_string(),
+            );
         }
     }
     /// Accepts independent source comparison without generating data.

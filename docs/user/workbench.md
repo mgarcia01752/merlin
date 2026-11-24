@@ -116,7 +116,9 @@ API through a bounded serial worker. Each run retains its accepted original
 inputs and actual backend observations. Pause and cancellation preserve that
 session; changing accepted inputs invalidates old views and prevents a late
 worker result from replacing them. Independent response and RxMER epoch
-association tolerances remain separate.
+association tolerances remain separate. Pause and Stop keep the execution slot
+until the worker has stopped. If Receiver Apply cannot admit a changed
+configuration, the accepted receiver choices and previous result remain available.
 Receiver instruments read real retained observations, including matched NCP
 constellations and bounded profile/bin/symbol selection.
 

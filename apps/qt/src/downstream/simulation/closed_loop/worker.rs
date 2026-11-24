@@ -4,8 +4,13 @@
  */
 //! One bounded serial dispatcher using only public downstream jobs and controls.
 use super::{ResultData, RunTiming};
-use crate::downstream::common::constants::PROFILE_COMPLETION_CAPACITY;
-use merlin::downstream::{ChannelJobStatus, FullLoopControl, FullLoopRequest, FullLoopSweepPlan};
+use crate::{
+    downstream::common::constants::PROFILE_COMPLETION_CAPACITY,
+    shell::{spawn_worker, RunCancellation, RunLease, RunToken, WorkerEvent, WorkerSpawnError},
+};
+use merlin::downstream::{
+    ChannelJobStatus, FullLoopControl, FullLoopRequest, FullLoopState, FullLoopSweepPlan,
+};
 use std::sync::{mpsc, Arc, Mutex, MutexGuard};
 
 pub(super) enum WorkerMessage {
@@ -24,9 +29,16 @@ struct Dispatch {
     completed: u64,
 }
 
+/// Shared application cancellation adapter; scientific state stays backend-owned.
+#[derive(Default)]
+pub(super) struct DownstreamControl {
+    state: Mutex<Dispatch>,
+}
+
 pub(super) struct Worker {
-    state: Arc<Mutex<Dispatch>>,
-    pub receiver: mpsc::Receiver<WorkerMessage>,
+    control: Arc<DownstreamControl>,
+    token: RunToken,
+    pub receiver: mpsc::Receiver<WorkerEvent<WorkerMessage, String>>,
     pub profile_count: usize,
     pub stale: bool,
 }
@@ -61,21 +73,116 @@ pub(super) fn run_one(
         .map_err(|cause| cause.message().to_owned())
 }
 
+impl DownstreamControl {
+    /// Creates idle dispatch flags without starting or claiming scientific work.
+    ///
+    /// # Returns
+    /// Share this adapter with the canonical gate and its exact worker.
+    pub(super) fn new() -> Self {
+        Self::default()
+    }
+
+    /// Reads actual backend pause acknowledgement without changing execution.
+    ///
+    /// # Returns
+    /// Some(true) only for acknowledged Paused; Some(false) only for Running.
+    /// None before/between profiles, after completion or during cancellation.
+    pub(super) fn acknowledged_pause(&self) -> Option<bool> {
+        let dispatch = lock(&self.state);
+        if dispatch.cancelled {
+            return None;
+        }
+        let snapshot = dispatch.active.as_ref()?.snapshot();
+        if snapshot.cancellation_requested {
+            return None;
+        }
+        match snapshot.state {
+            FullLoopState::Paused => Some(true),
+            FullLoopState::Running => Some(false),
+            FullLoopState::Idle
+            | FullLoopState::Completed
+            | FullLoopState::Cancelled
+            | FullLoopState::RuntimeExceeded
+            | FullLoopState::Failed => None,
+        }
+    }
+
+    /// Cancels the active public control and prevents later profiles from starting.
+    fn cancel(&self) {
+        let mut dispatch = lock(&self.state);
+        if dispatch.cancelled {
+            return;
+        }
+        dispatch.cancelled = true;
+        if let Some(control) = &dispatch.active {
+            control.cancel();
+        }
+    }
+
+    /// Toggles the requested pause across profile boundaries without resetting state.
+    fn pause(&self) {
+        let mut dispatch = lock(&self.state);
+        dispatch.paused = !dispatch.paused;
+        if let Some(control) = &dispatch.active {
+            if dispatch.paused {
+                // A terminal control can race with this request; no later source is advanced.
+                let _ = control.pause();
+            } else {
+                control.resume();
+            }
+        }
+    }
+
+    /// Reads bounded UI progress from the current public control.
+    /// # Arguments
+    /// * `timing` - Presentation clock belonging to this worker's sweep.
+    /// # Returns
+    /// Requested pause, zero-based ordinal, original profile ID and completed symbols.
+    fn progress(&self, timing: &RunTiming) -> (bool, usize, u8, u64) {
+        let mut dispatch = lock(&self.state);
+        if let Some(control) = &dispatch.active {
+            dispatch.completed = timing.observe(control);
+        }
+        (
+            dispatch.paused,
+            dispatch.index,
+            dispatch.id,
+            dispatch.completed,
+        )
+    }
+}
+
+impl RunCancellation for DownstreamControl {
+    /// Requests cooperative stop without waiting or releasing global admission.
+    ///
+    /// The public active control is cancelled at most once by this adapter;
+    /// unstarted profiles remain skipped until the real worker terminal arrives.
+    fn request_cancel(&self) {
+        self.cancel();
+    }
+}
+
 impl Worker {
     /// Starts one serial dispatcher with bounded completion backpressure.
     /// # Arguments
     /// * `request` - Current public request; fallback for a single-profile run.
     /// * `plan` - Optional public preflighted sweep.
     /// * `timing` - Shared presentation clock, always locked after dispatch state.
+    /// * `control` - Same cancellation adapter admitted by the canonical gate.
+    /// * `lease` - Genuine exact-session admission retained until common termination.
     /// # Returns
-    /// Worker controls and its completion receiver; the GUI never joins a running thread.
+    /// Controls and identified data/terminal receiver; the GUI never joins.
+    /// Finished is data only: retain this Worker until its common terminal arrives.
     /// # Errors
-    /// Returns OS thread-start errors before publishing any active worker.
+    /// Returns OS thread-start failure with the original unstarted lease. The host
+    /// must acknowledge that failure; dropping a lease alone keeps the gate Busy.
     pub(super) fn spawn(
         request: FullLoopRequest,
         plan: Option<FullLoopSweepPlan>,
         timing: Arc<RunTiming>,
-    ) -> std::io::Result<Self> {
+        control: Arc<DownstreamControl>,
+        lease: RunLease,
+    ) -> Result<Self, WorkerSpawnError> {
         let ids = plan
             .as_ref()
             .map(|plan| {
@@ -94,15 +201,16 @@ impl Worker {
             });
         let profile_count = ids.len();
         let budget = request.options().max_runtime_ms;
-        let state = Arc::new(Mutex::new(Dispatch::default()));
-        let shared = state.clone();
-        let (sender, receiver) = mpsc::sync_channel(PROFILE_COMPLETION_CAPACITY);
-        std::thread::Builder::new()
-            .name("merlin-profile-sweep".into())
-            .spawn(move || {
+        let shared = Arc::clone(&control);
+        let token = lease.token();
+        let receiver = spawn_worker(
+            "merlin-profile-sweep",
+            PROFILE_COMPLETION_CAPACITY,
+            lease,
+            move |sender| {
                 let mut elapsed = 0_u64;
                 for (index, id) in ids.into_iter().enumerate() {
-                    if lock(&shared).cancelled || elapsed >= budget {
+                    if lock(&shared.state).cancelled || elapsed >= budget {
                         break;
                     }
                     let prepared = plan
@@ -110,7 +218,7 @@ impl Worker {
                         .map_or_else(|| Ok(request.clone()), |plan| plan.request(index));
                     let control = FullLoopControl::new();
                     {
-                        let mut dispatch = lock(&shared);
+                        let mut dispatch = lock(&shared.state);
                         if dispatch.cancelled {
                             break;
                         }
@@ -128,7 +236,7 @@ impl Worker {
                         .map_err(|cause| cause.message().to_owned())
                         .and_then(|request| run_one(&request, budget - elapsed, &control));
                     {
-                        let mut dispatch = lock(&shared);
+                        let mut dispatch = lock(&shared.state);
                         dispatch.completed = timing.observe(&control);
                         timing.end_profile(id);
                         dispatch.active = None;
@@ -145,7 +253,7 @@ impl Worker {
                                 .is_err()
                             {
                                 timing.finish();
-                                return;
+                                return Ok(());
                             }
                             if halt {
                                 break;
@@ -162,12 +270,12 @@ impl Worker {
                                 .is_err()
                             {
                                 timing.finish();
-                                return;
+                                return Ok(());
                             }
                         }
                     }
                 }
-                let reason = if lock(&shared).cancelled {
+                let reason = if lock(&shared.state).cancelled {
                     "Profile sweep cancelled; unstarted profiles remain marked Not Started."
                 } else if elapsed >= budget {
                     "Profile sweep active runtime budget reached."
@@ -176,54 +284,59 @@ impl Worker {
                 };
                 timing.finish();
                 let _ = sender.send(WorkerMessage::Finished(reason.into()));
-            })?;
+                Ok(())
+            },
+        )?;
         Ok(Self {
-            state,
+            control,
+            token,
             receiver,
             profile_count,
             stale: false,
         })
     }
 
-    /// Cancels the active public control and prevents later profiles from starting.
-    pub(super) fn cancel(&self) {
-        let mut dispatch = lock(&self.state);
-        dispatch.cancelled = true;
-        if let Some(control) = &dispatch.active {
-            control.cancel();
-        }
+    /// Reads this worker's immutable canonical callback identity.
+    ///
+    /// # Returns
+    /// Exact direction/session/generation/run supplied by the genuine lease.
+    pub(super) fn token(&self) -> RunToken {
+        self.token
     }
 
-    /// Toggles the requested pause across profile boundaries without resetting state.
+    /// Cancels public execution without releasing the terminal-owned lease.
+    ///
+    /// # Returns
+    /// Unit immediately after requesting cooperative stop; never joins.
+    pub(super) fn cancel(&self) {
+        self.control.request_cancel();
+    }
+
+    /// Toggles the requested pause while preserving the same scientific state.
+    ///
+    /// # Returns
+    /// Unit; actual pause acknowledgement is reported independently.
     pub(super) fn pause(&self) {
-        let mut dispatch = lock(&self.state);
-        dispatch.paused = !dispatch.paused;
-        if let Some(control) = &dispatch.active {
-            if dispatch.paused {
-                // A terminal control can race with this request; no later source is advanced.
-                let _ = control.pause();
-            } else {
-                control.resume();
-            }
-        }
+        self.control.pause();
+    }
+
+    /// Reads actual pause acknowledgement for the canonical gate.
+    ///
+    /// # Returns
+    /// Some(true) for Paused, Some(false) for Running, otherwise None.
+    pub(super) fn acknowledged_pause(&self) -> Option<bool> {
+        self.control.acknowledged_pause()
     }
 
     /// Reads bounded UI progress from the current public control.
+    ///
     /// # Arguments
     /// * `timing` - Presentation clock belonging to this worker's sweep.
+    ///
     /// # Returns
     /// Requested pause, zero-based ordinal, original profile ID and completed symbols.
     pub(super) fn progress(&self, timing: &RunTiming) -> (bool, usize, u8, u64) {
-        let mut dispatch = lock(&self.state);
-        if let Some(control) = &dispatch.active {
-            dispatch.completed = timing.observe(control);
-        }
-        (
-            dispatch.paused,
-            dispatch.index,
-            dispatch.id,
-            dispatch.completed,
-        )
+        self.control.progress(timing)
     }
 }
 
@@ -239,76 +352,4 @@ impl Drop for Worker {
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::downstream::simulation::closed_loop::{prepare, Options};
-    use merlin::downstream::FullLoopState;
-    use std::time::{Duration, Instant};
-
-    // Scheduling policies for this bounded GUI-control regression, independent
-    // of the one-second simulated observation and the 60-second active host budget.
-    const CONTROL_ACK_TIMEOUT: Duration = Duration::from_secs(15);
-    const CONTROL_POLL_INTERVAL: Duration = Duration::from_millis(5);
-    const PAUSED_OBSERVATION_INTERVAL: Duration = Duration::from_millis(30);
-
-    #[test]
-    fn paused_public_worker_cancels_and_retains_its_actual_partial_report() {
-        let (inputs, transmission, sections) = super::super::tests::accepted_inputs();
-        let request = prepare(
-            &transmission,
-            &inputs,
-            &Options {
-                duration_ms: 1000,
-                max_runtime_ms: 60000,
-                ..Default::default()
-            },
-            &sections,
-        )
-        .unwrap();
-        let timing = Arc::new(RunTiming::new());
-        let worker = Worker::spawn(request, None, timing.clone()).unwrap();
-        worker.pause();
-        let deadline = Instant::now() + CONTROL_ACK_TIMEOUT;
-        let control = loop {
-            if let Some(control) = lock(&worker.state).active.clone() {
-                if control.snapshot().state == FullLoopState::Paused {
-                    break control;
-                }
-            }
-            assert!(
-                Instant::now() < deadline,
-                "Public pause was not acknowledged"
-            );
-            std::thread::sleep(CONTROL_POLL_INTERVAL);
-        };
-        let before = control.snapshot().progress;
-        let age = control.last_progress_age_ms();
-        std::thread::sleep(PAUSED_OBSERVATION_INTERVAL);
-        assert_eq!(
-            serde_json::to_value(before).unwrap(),
-            serde_json::to_value(control.snapshot().progress).unwrap()
-        );
-        if let (Some(before), Some(after)) = (age, control.last_progress_age_ms()) {
-            assert!(after > before);
-        }
-        assert!(worker.progress(&timing).0);
-        worker.cancel();
-        let message = worker.receiver.recv_timeout(CONTROL_ACK_TIMEOUT).unwrap();
-        let WorkerMessage::Profile(result) = message else {
-            panic!("Cancellation must preserve the actual partial public report");
-        };
-        assert_eq!(result.job.status, ChannelJobStatus::Cancelled);
-        assert_eq!(
-            result.backend().report().summary.comparison.bits_tested,
-            result.job.summary.comparison.bits_tested
-        );
-        assert_eq!(control.snapshot().state, FullLoopState::Cancelled);
-        let WorkerMessage::Finished(reason) =
-            worker.receiver.recv_timeout(CONTROL_ACK_TIMEOUT).unwrap()
-        else {
-            panic!("Cancelled single-profile worker must finish without another run");
-        };
-        assert!(reason.contains("cancelled"));
-        assert_eq!(worker.progress(&timing).1, 0);
-    }
-}
+mod tests;

@@ -9,6 +9,10 @@ mod bridge;
 mod downstream;
 mod platform;
 mod shared;
+// Application ownership contracts are shared by the direction adapters;
+// scientific implementations remain exclusively behind the merlin facade.
+pub mod shell;
+pub mod upstream;
 use cxx_qt_lib::{QGuiApplication, QQmlApplicationEngine, QString, QUrl};
 pub(crate) use downstream::instruments::{
     spectrum as spectrum_view, transmitter as transmitter_instruments,
