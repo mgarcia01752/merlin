@@ -41,6 +41,63 @@ pub(super) fn inspect(family: Family, delivery: &[u8], first: usize) -> Result<I
     }
 }
 
+/// Projects an existing immutable source without copying its original bytes again.
+///
+/// # Arguments
+/// * `family`, `delivery` - The original typed source and exact delivery.
+/// * `original` - Admitted binary identity to verify against the public decoder.
+/// * `first`, `count` - Original page origin and independent RxMER plot span.
+///
+/// # Returns
+/// The same bounded inspector value while its caller retains the source guard.
+///
+/// # Errors
+/// Decoder, source-identity, table or plot-policy rejection preserves old values.
+pub(super) fn inspect_existing(
+    family: Family,
+    delivery: &[u8],
+    original: &[u8],
+    first: usize,
+    count: usize,
+) -> Result<Value, String> {
+    match family {
+        Family::Ucd => {
+            let capture = decode(
+                delivery,
+                UcdCapture::from_mac_management,
+                UcdCapture::from_source_json,
+            )?;
+            verify_original(capture.original_bytes(), original)?;
+            ucd_view(&capture, delivery, first)
+        }
+        Family::Rxmer => {
+            let capture = decode(
+                delivery,
+                RxmerCapture::from_pnm,
+                RxmerCapture::from_source_json,
+            )?;
+            verify_original(capture.original_bytes(), original)?;
+            rxmer_view(&capture, delivery, first, count)
+        }
+        Family::PreEq => {
+            let capture = decode(
+                delivery,
+                PreEqCapture::from_pnm,
+                PreEqCapture::from_source_json,
+            )?;
+            verify_original(capture.original_bytes(), original)?;
+            pre_eq_view(&capture, delivery, first)
+        }
+    }
+}
+
+fn verify_original(actual: &[u8], expected: &[u8]) -> Result<(), String> {
+    if actual != expected {
+        return Err("Upstream capture source changed during inspection.".into());
+    }
+    Ok(())
+}
+
 fn decode<T>(
     delivery: &[u8],
     binary: fn(&[u8]) -> ApiResult<T>,
@@ -135,6 +192,13 @@ fn ucd(delivery: &[u8], first: usize) -> Result<Inspection, String> {
         UcdCapture::from_mac_management,
         UcdCapture::from_source_json,
     )?;
+    Ok(Inspection {
+        view: ucd_view(&capture, delivery, first)?,
+        original: capture.original_bytes().into(),
+    })
+}
+
+fn ucd_view(capture: &UcdCapture, delivery: &[u8], first: usize) -> Result<Value, String> {
     let header = capture.header();
     let mut metadata = evidence(capture.original_bytes(), delivery);
     metadata.extend([
@@ -175,21 +239,48 @@ fn ucd(delivery: &[u8], first: usize) -> Result<Inspection, String> {
     records.sort_by_key(UcdRecord::offset);
     let (end, paging) = page(first, records.len())?;
     let rows: Vec<_> = records[first..end].iter().map(UcdRecord::view).collect();
-    Ok(Inspection {
-        original: capture.original_bytes().into(),
-        view: json!({"title":"Upstream UCD Capture","summary":"Structural inspection only; unassociated original UCD records do not establish executable configuration or readiness.",
+    Ok(
+        json!({"title":"Upstream UCD Capture","summary":"Structural inspection only; unassociated original UCD records do not establish executable configuration or readiness.",
             "reference_plane":"Original MAC-management envelope, DA through payload; no capture time or CM association is inferred.",
             "metadata_rows":metadata,"columns":["Original byte offset","Record","Value octets (hex)"],
             "data_rows":rows,"page":paging,"error":""}),
-    })
+    )
 }
 
 fn rxmer(delivery: &[u8], first: usize) -> Result<Inspection, String> {
+    rxmer_with_plot(delivery, first, 0)
+}
+
+/// Inspects an original RxMER viewport without changing its source or association.
+/// # Arguments
+/// * `delivery` - Original accepted binary/source JSON, never a reconstructed table.
+/// * `first`, `count` - Original record origin and finite plot span.
+/// # Returns
+/// Existing bounded table/evidence plus the original measurement plot viewport.
+/// # Errors
+/// Public source admission, original table/plot bounds or finite display policy.
+pub(super) fn rxmer_with_plot(
+    delivery: &[u8],
+    first: usize,
+    count: usize,
+) -> Result<Inspection, String> {
     let capture = decode(
         delivery,
         RxmerCapture::from_pnm,
         RxmerCapture::from_source_json,
     )?;
+    Ok(Inspection {
+        view: rxmer_view(&capture, delivery, first, count)?,
+        original: capture.original_bytes().into(),
+    })
+}
+
+fn rxmer_view(
+    capture: &RxmerCapture,
+    delivery: &[u8],
+    first: usize,
+    count: usize,
+) -> Result<Value, String> {
     let header = capture.header();
     let mut metadata = evidence(capture.original_bytes(), delivery);
     metadata.extend([
@@ -229,13 +320,12 @@ fn rxmer(delivery: &[u8], first: usize) -> Result<Inspection, String> {
             )
         })
         .collect();
-    Ok(Inspection {
-        original: capture.original_bytes().into(),
-        view: json!({"title":"Upstream RxMER Capture","summary":"Inspection only; these unassociated measured observations do not supply a complete measured plan or simulation readiness.",
+    Ok(
+        json!({"title":"Upstream RxMER Capture","summary":"Inspection only; these unassociated measured observations do not supply a complete measured plan or simulation readiness.",
             "reference_plane":"CMTS equalized upstream probe relative to ideal BPSK. Missing readings remain unavailable at their original physical subcarriers.",
             "metadata_rows":metadata,"columns":["Physical subcarrier","RxMER (dB)","Raw octet (hex)"],
-            "data_rows":rows,"page":paging,"error":""}),
-    })
+            "data_rows":rows,"page":paging,"plot":super::plot::viewport(capture,first,count)?,"error":""}),
+    )
 }
 
 fn pre_eq(delivery: &[u8], first: usize) -> Result<Inspection, String> {
@@ -244,6 +334,13 @@ fn pre_eq(delivery: &[u8], first: usize) -> Result<Inspection, String> {
         PreEqCapture::from_pnm,
         PreEqCapture::from_source_json,
     )?;
+    Ok(Inspection {
+        view: pre_eq_view(&capture, delivery, first)?,
+        original: capture.original_bytes().into(),
+    })
+}
+
+fn pre_eq_view(capture: &PreEqCapture, delivery: &[u8], first: usize) -> Result<Value, String> {
     let header = capture.header();
     let (kind, summary, reference) = match capture.kind() {
         PreEqCaptureKind::Applied => ("Applied C", "Inspection only; unassociated applied TX correction C, not a channel estimate or simulation readiness.", "Original applied CM transmit-correction bank C; coefficients alone do not establish a measured association."),
@@ -274,12 +371,11 @@ fn pre_eq(delivery: &[u8], first: usize) -> Result<Inspection, String> {
             )
         })
         .collect();
-    Ok(Inspection {
-        original: capture.original_bytes().into(),
-        view: json!({"title":"Upstream Pre-Eq Capture","summary":summary,"reference_plane":reference,
+    Ok(
+        json!({"title":"Upstream Pre-Eq Capture","summary":summary,"reference_plane":reference,
             "metadata_rows":metadata,"columns":["Physical subcarrier","Real coefficient","Imaginary coefficient"],
             "data_rows":rows,"page":paging,"error":""}),
-    })
+    )
 }
 
 #[cfg(test)]

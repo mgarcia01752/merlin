@@ -12,7 +12,7 @@ pub(crate) use constants::{MAX_DRAFT_CHANGE_BYTES, MAX_DRAFT_ID_CHARACTERS};
 use super::{Model, Pending};
 use crate::shell::{Direction, Retained, RetentionBudget, SessionKey};
 use crate::upstream::{PreparedSession, UpstreamController};
-use merlin::upstream::{ReceiverObservationPolicy, Simulation};
+use merlin::upstream::Simulation;
 use serde_json::{json, Value};
 use std::{
     mem::size_of,
@@ -92,7 +92,7 @@ impl Draft {
             .ok_or("Load a source configuration before applying edits.")?
             .clone();
         fields::merge(&mut document, &self.fields, changes)?;
-        PreparedSession::from_document(document, ReceiverObservationPolicy::default(), budget)
+        PreparedSession::from_document(document, super::observation_policy::estimates()?, budget)
             .map_err(|error| format!("{error:?}"))
     }
 }

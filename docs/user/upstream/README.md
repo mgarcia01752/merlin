@@ -2,6 +2,7 @@
 
 The independent upstream Rust engine has local synthetic backend acceptance:
 
+- [Native workbench scientific instruments](instruments.md).
 - [Configuration and continuous source](configuration.md).
 - [Transmitter](transmitter.md).
 - [Configured resource grid](resource-grid.md).

@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 import QtQuick
+import "../qml/shared/instruments"
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtTest

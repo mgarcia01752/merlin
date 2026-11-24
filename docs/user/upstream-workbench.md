@@ -143,6 +143,15 @@ current observation and cell inspection without advancing source or run state.
 
 ![Native configured upstream resource grid](../images/workbench/upstream-resource-grid-dark.png)
 
+## Inspect scientific observations
+
+Use **CM Transmitter → QAM / Spectrum** for actual retained observations.
+**Inspect Response** in Channel Simulator, CM Pre-Eq and CMTS Receiver separates
+configured H/C/C×H from actual received estimates. **RxMER → View Capture** also
+plots original dB/null readings on their physical-carrier grid. See the
+[upstream instruments guide](upstream/instruments.md) for controls, units, retention
+and unavailable states.
+
 ## Direction isolation
 
 Switching tabs preserves each direction's accepted settings. One simulation may
@@ -151,5 +160,6 @@ to control it. File project actions currently remain available on Downstream onl
 loading upstream configuration cannot replace the downstream project or its Save
 destination. Settings and About are shared.
 
-Shared scientific instruments retain their separate acceptance tasks. See the
+Shared FEC/verification presentation and final integration retain their separate
+acceptance tasks. See the
 [workbench overview](workbench.md) for shared controls and presentation limits.

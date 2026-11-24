@@ -8,7 +8,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../shared/components"
+import "../components"
 ColumnLayout {
     id: chart
     required property var theme

@@ -1380,7 +1380,7 @@ observations and unaliased causal echoes.
 | [Native input crate](../../../../crates/pnm-input/src/lib.rs), [workbench](../../../../crates/pnm-input/src/workbench) | Bounded binary/JSON, provenance, saved-workbench execution; Apache-2.0 | Initial facade exposure is now implemented; direction-aware unified project envelope remains pending | REUSE owners; optional facade input feature/re-exports, extend adapter-owned project contract, preserve existing imports. |
 | [Upstream session](../../../../crates/ofdma/src/api/session.rs), `preview`/`run_with_control` | Validated configuration and bounded controlled runs already accepted | Grid coordinates and some instrument views not public API | REUSE session; small observation extensions in upstream API, scientific construction stays in owning modules. |
 | [ResourcePlan](../../../../crates/ofdma/src/resources/grid.rs) | Authoritative physical cell/pilot allocation | High-level `ExperimentPreview` gives counts, not cell coordinates | ADAPT via bounded idle grid operation; no QML resource reconstruction. |
-| [SpectrumPlot](../../../../apps/qt/qml/downstream/instruments/spectrum/SpectrumPlot.qml), [scatter](../../../../apps/qt/qml/downstream/instruments/qam/TransmitterScatter.qml), [response](../../../../apps/qt/qml/downstream/instruments/response/ReceiverResponseDialog.qml) | Existing downstream Canvas/viewport presentation and QtTests | No real upstream consumers; direction-specific labels/overlays mixed in | DEFER scientific shared acceptance; extract proven presentation only after two real API-backed consumers and tests. |
+| [SpectrumPlot](../../../../apps/qt/qml/shared/instruments/SpectrumPlot.qml), [scatter](../../../../apps/qt/qml/downstream/instruments/qam/TransmitterScatter.qml), [response](../../../../apps/qt/qml/downstream/instruments/response/ReceiverResponseDialog.qml) | Existing downstream Canvas/viewport presentation and QtTests | No real upstream consumers; direction-specific labels/overlays mixed in | DEFER scientific shared acceptance; extract proven presentation only after two real API-backed consumers and tests. |
 | [FEC presentation](../../../../apps/qt/qml/downstream/instruments/fec), [receiver providers](../../../../apps/qt/src/downstream/instruments/receiver) | Actual downstream counters/LLR/iteration views | Upstream LDPC data differs from downstream BCH/control chains | ADAPT chart/table widgets; SEPARATE semantics, code families and unavailable states. |
 | [Platform](../../../../apps/qt/src/platform) | Native pickers, update HTTP/install/recovery, logging, theming | Recovery currently assumes one downstream project | REUSE infrastructure; adapt recovery after project API; no new install authorization. |
 
@@ -5295,3 +5295,73 @@ complete relevant Qt coverage and preserved downstream/editor/startup behavior.
 The [user guide](../../../user/upstream-workbench.md#inspect-configured-resources)
 contains a fresh actual dark screenshot. Final shared instruments, projects,
 restart recovery and full QA remain their existing delivery tasks.
+
+
+### UIU-SHARED-01 actual direction consumers and compatible drawing
+
+The remaining task implements REQ-UIU-15/16/17/18/21 after accepted DS-01,
+US-02 and US-03. It reuses the accepted public observations, with no demonstrated
+scientific API gap. FEC/verification, projects and recovery retain their separate
+tasks. Prepared isolated files are reviewed source candidates, not acceptance.
+
+| Inspected owner/symbol | Existing contract | Decision and concrete destination |
+| --- | --- | --- |
+| `TransmitterScatter.qml` and `ReceiverQamDialog.qml` Canvas | Rust supplies original normalized display coordinates; DS roles/selectors remain directional. | SHARE drawing only in `qml/shared/instruments/QamPlot.qml`; DS consumers retain selectors and exact default pixels; upstream QAM supplies real raw/reference/pairing data and separate series labels. |
+| `SpectrumPlot.qml`, DS spectrum/response dialogs | Existing finite line renderer, original-bin navigation, labelled units and optional bands. | SHARE renderer under `qml/shared/instruments/`; retain DS calibration/PLC overlays and supply linear upstream normalized PSD or explicitly labelled response/impulse values. |
+| `MeasurementPlot.qml`, DS measurement/Designer consumers | Backend supplies bounded original-coordinate readings, nulls and provenance; presentation draws/navigation only. | SHARE under `qml/shared/instruments/`; upstream RxMER uses its original decoded dB/null readings, without association or numerical reconstruction. |
+| `BatchReport::{qam,qam_constellation,qam_pairing,spectrum}` | Actual retained raw/normalized/exactly paired stage observations and rectangular linear PSD. | REUSE through `upstream/workbench/instruments.rs` and focused child modules; no report/source clone, source advance, logarithmic PSD or generic replacement constellation. |
+| Public configured-response and receiver-estimate operations | Configured H/C/C×H and periodic impulse remain distinct from actual received-pilot effective estimates. | REUSE in the upstream instrument projections; original unavailable/zero states, units, frame identities and unsupported static combinations remain explicit. |
+| Existing admitted controller-slot preparation and `grid_view` context | Finite off-GUI queries restore the exact owner on success/rejection/cancellation; canonical keys and backend identities differ. | SHARE the existing transport kernel for grid and instrument queries; `instrument_view.rs` owns native request/context validation and publication, thin QObject/host routes only. |
+
+Root owns Model/bridge/host/registration, public-consumer integration, canonical
+docs and acceptance. The isolated UI agent prepares the shared scatter, upstream QAM/spectrum/response
+dialogs/tests and native consumer probes. The isolated QA agent prepares public
+observation projections and the original RxMER plot. Primary adoption, owner
+routing, native builds and runtime acceptance remain root-owned. No agent writes protected/shared primary files.
+
+Each query retains one admitted JSON display under the existing budget, keeping
+original wide identities as strings. QAM copy/series/reference bounds and PSD
+extents remain finite; explicit unavailable results never reconstruct missing
+history. Selector availability comes from actual retained taps and public loading
+filters, including complementary cells, without reimplementing their modulation
+rules. Pixel transforms alone may provide plot zoom/pan/selection.
+
+The workbench needs actual received-pilot observations for its accepted response
+consumer. Newly loaded/edited upstream workbench sessions therefore opt into one
+complete estimate frame through the existing public observation policy and its
+scalar ceiling. This is a finite Qt observation choice, not a change to API
+or scientific defaults. Original input/options remain intact; views never feed
+transmitter truth into receiver processing. Inadequate retained sample history
+still reports spectrum unavailable rather than inventing samples.
+
+Acceptance requires real DS and US API-backed consumers for every extracted
+renderer, original numerical/transport anchors and unavailable states, exact
+reference-plane/units/identity checks, affected complete Qt/QML tests, native
+open/select/zoom/inspect checks and downstream compatibility. The public backend,
+Python and CLI are unchanged; reuse their scientific reference evidence with
+source checks, and independently compare actual UI observations through the
+installed public API. Final full regression remains UIU-QA-01.
+
+The native loading transition retains the previous display until a reply arrives;
+a ready reply adopts its own authoritative selector even when the loading envelope
+had another instrument's snapshot. Regression tests cover QAM, spectrum and response.
+Ordinary capture polling preserves an immutable view alias when original delivery/
+binary metadata, page, plot bounds and error are unchanged; changed sources, windows
+or diagnostics replace it. The capture dialog also retains its existing admission
+witness when Qt notifies the same original alias again; a previously rejected
+candidate still requires a successful new admission. Native polling and a direct
+repeated-notification regression cover both layers. This keeps actual RxMER hover
+readouts stable without a new data owner or cache framework. Capture range controls admit their bounded
+nonnegative-i32 text capacity through the existing presentation owner.
+
+Graphs precede detailed metadata in the new upstream windows. The shared line
+renderer preserves the downstream compact value axis and supplies an explicit
+wider upstream axis for complete linear-PSD and response labels. Native acceptance
+checks the graph rectangle against the actual popup viewport. All original source
+points, units, metadata and optional values remain unchanged.
+
+The [integrated acceptance](validation.md#uiu-shared-01-integrated-shared-instrument-acceptance)
+and [scoped receipt](shared-instruments-evidence.json) close UIU-SHARED-01 with
+actual API-backed consumers in both directions. The [instrument guide](../../../user/upstream/instruments.md)
+contains the four actual dark native captures. Continue UIU-SHARED-02 using the
+existing public FEC, soft-observation and verification operations.

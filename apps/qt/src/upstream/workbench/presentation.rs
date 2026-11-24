@@ -42,6 +42,7 @@ impl Model {
                 "compared_bits":snapshot.compared_bits,"elapsed_ms":snapshot.elapsed_ms})),
             "has_result":self.report.is_some(),"result":result,"error":self.error.message(),
             "draft":self.draft_state(),"configuration_view":configuration,"execution_view":execution,
-            "capture_view":self.capture_state(),"resource_grid_view":self.grid_state()})
+            "capture_view":self.capture_state(),"resource_grid_view":self.grid_state(),
+            "instrument_view":self.instrument_state()})
     }
 }

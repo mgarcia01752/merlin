@@ -48,8 +48,12 @@ pub(crate) const HEX_OFFSET_MIN_DIGITS: usize = 4;
 pub(crate) const MAX_SCATTER_PLOT_POINTS: usize = 2048;
 /// Ten-percent drawing margin around the selected I/Q extent; samples are unchanged.
 pub(crate) const SCATTER_HEADROOM_RATIO: f64 = 1.1;
-/// Midpoint of each normalized scatter axis, independent of physical I/Q zero units.
-pub(crate) const SCATTER_AXIS_CENTER: f64 = 0.5;
+/// Midpoint of a normalized screen axis, including a singleton original viewport.
+/// This geometry is shared by QAM, spectrum, response and measurement projections;
+/// it imposes no physical I/Q, power, phase or RxMER domain restriction.
+pub(crate) const NORMALIZED_AXIS_CENTER: f64 = 0.5;
+/// Existing scatter spelling preserves its downstream implementation imports.
+pub(crate) use NORMALIZED_AXIS_CENTER as SCATTER_AXIS_CENTER;
 
 /// Existing raw FFT power viewport grouping, independent of PSD bucket work limits.
 pub(crate) const FFT_POWER_VIEW_GROUPS: usize = 1024;
@@ -88,3 +92,8 @@ pub(crate) const MAX_PRESENTATION_VALUE_DEPTH: usize = 64;
 
 /// Decimal places in a displayed BER mantissa; underlying values remain unchanged.
 pub(crate) const BER_MANTISSA_DECIMAL_PLACES: usize = 3;
+
+/// Compact viewport/selector JSON and captured context copied from Qt requests.
+/// This application transport ceiling is independent of result populations,
+/// configuration documents, scientific work and numerical domain limits.
+pub(crate) const MAX_VIEW_REQUEST_JSON_BYTES: usize = 4096;

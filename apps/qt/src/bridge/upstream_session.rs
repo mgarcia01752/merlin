@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Thin QObject adapter; the direction model owns asynchronous public API calls.
+use crate::shared::presentation::constants::MAX_VIEW_REQUEST_JSON_BYTES;
 use crate::upstream::workbench::MAX_GRID_REQUEST_BYTES;
+use crate::upstream::workbench::MAX_INSTRUMENT_KIND_CHARACTERS;
 use crate::upstream::workbench::{CaptureFamily, MAX_CAPTURE_FAMILY_CHARACTERS};
 use crate::upstream::workbench::{Model, MAX_CONFIGURATION_BYTES};
 use crate::upstream::workbench::{MAX_DRAFT_CHANGE_BYTES, MAX_DRAFT_ID_CHARACTERS};
@@ -45,6 +47,21 @@ pub mod bridge {
         #[qinvokable]
         fn capture_page(self: Pin<&mut UpstreamSession>, family: &QString, first: i32) -> QString;
 
+        /// Requests original measured RxMER coordinates for a bounded shared plot.
+        /// # Arguments
+        /// * `family` - Explicit RxMER source destination, never another capture.
+        /// * `first`, `count` - Nonnegative original record viewport; zero span
+        ///   selects the remaining bounded prefix through the native projection.
+        /// # Returns
+        /// Empty after dispatch; errors retain the original source and old view.
+        #[qinvokable]
+        fn capture_plot(
+            self: Pin<&mut UpstreamSession>,
+            family: &QString,
+            first: i32,
+            count: i32,
+        ) -> QString;
+
         /// Requests the configured base grant's default public resource rectangle.
         /// # Returns
         /// Empty after background dispatch; Poll establishes actual acceptance.
@@ -60,6 +77,27 @@ pub mod bridge {
         fn resource_grid(
             self: Pin<&mut UpstreamSession>,
             request: &QString,
+            context: &QString,
+        ) -> QString;
+
+        /// Opens one finite public upstream observation without executing a run.
+        /// # Arguments
+        /// * `kind` - Existing QAM, spectrum or response presentation destination.
+        /// # Returns
+        /// Empty after background dispatch; the native diagnostic otherwise.
+        #[qinvokable]
+        fn begin_instrument(self: Pin<&mut UpstreamSession>, kind: &QString) -> QString;
+
+        /// Forwards an exact typed selector and captured observation context.
+        /// # Arguments
+        /// * `kind`, `selection`, `context` - Bounded application transport only.
+        /// # Returns
+        /// Empty after dispatch; errors preserve previously accepted observations.
+        #[qinvokable]
+        fn instrument(
+            self: Pin<&mut UpstreamSession>,
+            kind: &QString,
+            selection: &QString,
             context: &QString,
         ) -> QString;
 
@@ -187,6 +225,68 @@ impl UpstreamSessionRust {
 }
 
 impl bridge::UpstreamSession {
+    /// Dispatches one finite public observation from a compiled instrument tag.
+    /// # Arguments
+    /// * `kind` - Existing destination, bounded before copying Qt text.
+    /// # Returns
+    /// Empty after dispatch; actionable native feedback on rejection.
+    pub fn begin_instrument(mut self: core::pin::Pin<&mut Self>, kind: &QString) -> QString {
+        let mut owner = self.as_mut().rust_mut();
+        let Some(model) = owner.ensure_model() else {
+            return QString::from(
+                crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+            );
+        };
+        if kind.len() > MAX_INSTRUMENT_KIND_CHARACTERS {
+            const MESSAGE: &str = "Choose a supported upstream instrument.";
+            model.reject_instrument_request(MESSAGE);
+            return QString::from(MESSAGE);
+        }
+        QString::from(
+            model
+                .begin_instrument(&kind.to_string())
+                .err()
+                .unwrap_or_default(),
+        )
+    }
+
+    /// Routes only validated application selector/context transport to its owner.
+    /// # Arguments
+    /// * `kind`, `selection`, `context` - Existing destination and exact original context.
+    /// # Returns
+    /// Empty after dispatch; native error state settles rejected pending requests.
+    pub fn instrument(
+        mut self: core::pin::Pin<&mut Self>,
+        kind: &QString,
+        selection: &QString,
+        context: &QString,
+    ) -> QString {
+        let mut owner = self.as_mut().rust_mut();
+        let Some(model) = owner.ensure_model() else {
+            return QString::from(
+                crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+            );
+        };
+        if kind.len() > MAX_INSTRUMENT_KIND_CHARACTERS
+            || selection.len() > MAX_VIEW_REQUEST_JSON_BYTES as isize
+            || context.len() > MAX_VIEW_REQUEST_JSON_BYTES as isize
+        {
+            const MESSAGE: &str = "Instrument request exceeds its transport limit.";
+            model.reject_instrument_request(MESSAGE);
+            return QString::from(MESSAGE);
+        }
+        QString::from(
+            model
+                .request_instrument(
+                    &kind.to_string(),
+                    &selection.to_string(),
+                    &context.to_string(),
+                )
+                .err()
+                .unwrap_or_default(),
+        )
+    }
+
     /// Starts a passive configured-resource query without advancing the source.
     /// # Returns
     /// Empty after finite background dispatch; an actionable native error otherwise.
@@ -283,6 +383,36 @@ impl bridge::UpstreamSession {
                 .ensure_model()
                 .ok_or(crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE)?;
             model.capture_page(family, first)
+        })();
+        QString::from(result.err().unwrap_or_default())
+    }
+
+    /// Queues a bounded original-source measurement viewport off the GUI thread.
+    /// # Arguments
+    /// * `family` - Existing explicit capture family tag.
+    /// * `first`, `count` - Original nonnegative source range, without interpolation.
+    /// # Returns
+    /// Empty after dispatch; rejected requests leave accepted source/configuration.
+    pub fn capture_plot(
+        mut self: core::pin::Pin<&mut Self>,
+        family: &QString,
+        first: i32,
+        count: i32,
+    ) -> QString {
+        let result = (|| {
+            if family.len() > MAX_CAPTURE_FAMILY_CHARACTERS {
+                return Err("Choose a supported upstream capture family.".into());
+            }
+            let family = CaptureFamily::parse(&family.to_string())?;
+            let first =
+                usize::try_from(first).map_err(|_| "Capture plot origin must be nonnegative.")?;
+            let count =
+                usize::try_from(count).map_err(|_| "Capture plot span must be nonnegative.")?;
+            let mut owner = self.as_mut().rust_mut();
+            let model = owner
+                .ensure_model()
+                .ok_or(crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE)?;
+            model.capture_plot(family, first, count)
         })();
         QString::from(result.err().unwrap_or_default())
     }

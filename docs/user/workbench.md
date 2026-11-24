@@ -83,8 +83,9 @@ The Upstream tab shows the approved CM transmitter → channel → CMTS receiver
 layout. Its [configuration editors](upstream-workbench.md) load a native upstream
 JSON document and apply supported settings through Rust validation. The shared
 controls run upstream simulation; PRBS-RX shows its actual independent recovery
-and partial-report coverage. See [upstream execution](upstream-workbench.md#run-and-inspect-results). Scientific
-instrument bindings and upstream project actions remain under integration. Missing data
+and partial-report coverage. See [upstream execution](upstream-workbench.md#run-and-inspect-results)
+and the [QAM, spectrum, response and original RxMER instruments](upstream/instruments.md).
+Upstream project actions remain under integration. Missing data
 is shown as unavailable. File actions are currently enabled on Downstream only;
 selecting Upstream cannot save or replace the downstream project. Settings and
 About remain available from either tab.

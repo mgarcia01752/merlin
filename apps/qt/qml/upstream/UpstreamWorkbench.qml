@@ -23,7 +23,10 @@ Item {
     signal configurationLoadRequested()
     signal captureLoadRequested(string family)
     signal capturePageRequested(string family, int first)
+    signal capturePlotRequested(string family, int first, int count)
     signal resourceGridRequested()
+    signal instrumentOpenRequested(string kind)
+    signal instrumentRequested(string kind, var selection, var context)
     signal resourceGridViewRequested(var request, var context)
     signal resourceGrantRequested(var grantId, var context)
     readonly property var incomingPresentation: host && host.presentation ? host.presentation : ({})
@@ -149,6 +152,16 @@ Item {
         }
         captureDialog.family = family;
         return captureDialog.openChecked();
+    }
+
+    /** Open a direction-specific scientific consumer and request its native default. */
+    function openInstrument(kind) {
+        const popup = kind === "qam" ? qamDialog : kind === "spectrum" ? spectrumDialog : kind === "response" ? responseDialog : null;
+        if (!popup || !popup.openChecked()) {
+            return false;
+        }
+        instrumentOpenRequested(kind);
+        return true;
     }
 
     /** Open the configured-allocation instrument and request its native viewport. */
@@ -744,6 +757,10 @@ Item {
             transmitterDialog.close();
             workbench.openResourceGrid();
         }
+        onInstrumentRequested: function(kind) {
+            transmitterDialog.close();
+            workbench.openInstrument(kind);
+        }
         onSourceConfigurationRequested: {
             transmitterDialog.close();
             workbench.openSection("source");
@@ -760,6 +777,7 @@ Item {
         onDraftApplyRequested: function(sectionId, token, values) { workbench.draftApplyRequested(sectionId, token, values); }
         onDraftCancelled: function(token) { workbench.draftCancelled(token); }
         onConfigurationLoadRequested: workbench.configurationLoadRequested()
+        onResponseRequested: workbench.openInstrument("response")
     }
     ReceiverDialog {
         id: receiverDialog
@@ -772,6 +790,7 @@ Item {
         onDraftApplyRequested: function(sectionId, token, values) { workbench.draftApplyRequested(sectionId, token, values); }
         onDraftCancelled: function(token) { workbench.draftCancelled(token); }
         onConfigurationLoadRequested: workbench.configurationLoadRequested()
+        onResponseRequested: workbench.openInstrument("response")
     }
     SourceDialog {
         id: sourceDialog
@@ -797,6 +816,7 @@ Item {
         onDraftCancelled: function(token) { workbench.draftCancelled(token); }
         onConfigurationLoadRequested: workbench.configurationLoadRequested()
         onCaptureRequested: function(family) { workbench.openCapture(family); }
+        onResponseRequested: workbench.openInstrument("response")
     }
     RxmerDialog {
         id: rxmerDialog
@@ -823,6 +843,7 @@ Item {
         busy: workbench.host && workbench.host.upstreamState ? workbench.host.upstreamState.busy === true || workbench.host.upstreamState.application_busy === true : false
         onLoadRequested: function(family) { workbench.captureLoadRequested(family); }
         onPageRequested: function(family, first) { workbench.capturePageRequested(family, first); }
+        onPlotRequested: function(family, first, count) { workbench.capturePlotRequested(family, first, count); }
         onMeasuredPlanRequested: {
             captureDialog.close();
             workbench.configurationLoadRequested();
@@ -835,5 +856,26 @@ Item {
         host: workbench.host
         onViewRequested: function(request, context) { workbench.resourceGridViewRequested(request, context); }
         onGrantRequested: function(grantId, context) { workbench.resourceGrantRequested(grantId, context); }
+    }
+    UpstreamQamDialog {
+        id: qamDialog
+        objectName: "upstreamQamDialog"
+        theme: workbench.theme
+        host: workbench.host
+        onInstrumentRequested: function(kind, selection, context) { workbench.instrumentRequested(kind, selection, context); }
+    }
+    UpstreamSpectrumDialog {
+        id: spectrumDialog
+        objectName: "upstreamSpectrumDialog"
+        theme: workbench.theme
+        host: workbench.host
+        onInstrumentRequested: function(kind, selection, context) { workbench.instrumentRequested(kind, selection, context); }
+    }
+    UpstreamResponseDialog {
+        id: responseDialog
+        objectName: "upstreamResponseDialog"
+        theme: workbench.theme
+        host: workbench.host
+        onInstrumentRequested: function(kind, selection, context) { workbench.instrumentRequested(kind, selection, context); }
     }
 }

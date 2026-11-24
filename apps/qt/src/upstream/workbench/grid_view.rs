@@ -5,28 +5,17 @@
 //! Configured-grid query routing and scalar presentation; the public API owns cells.
 #[cfg(test)]
 mod tests;
-use super::{Model, Pending};
+use super::{Model, ObservationStatus, Pending};
 use crate::shell::{presentation::identity, Direction};
 use merlin::upstream::{ResourceGridRequest, MAX_RESOURCE_GRID_CELLS};
 use serde::Deserialize;
 use serde_json::{json, Value};
 
-/// Independent bounded Qt request/context transport, unrelated to cell capacity.
-pub(crate) const MAX_GRID_REQUEST_BYTES: usize = 4096;
+pub(crate) use crate::shared::presentation::constants::MAX_VIEW_REQUEST_JSON_BYTES as MAX_GRID_REQUEST_BYTES;
 /// Qt viewport population fits simultaneous old/new host and instrument copies.
 /// This presentation policy is smaller than the public scientific query ceiling;
 /// native 25 kHz full-span admission rejects the larger 16384-cell viewport.
 const MAX_GRID_VIEW_CELLS: usize = 4096;
-
-#[derive(Clone, Copy, Default)]
-pub(super) enum GridStatus {
-    #[default]
-    Unavailable,
-    Loading,
-    Ready,
-    Rejected,
-    Cancelled,
-}
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -102,7 +91,7 @@ impl Model {
     /// # Returns
     /// Unit after retaining the diagnostic under the existing error owner.
     pub(crate) fn reject_grid_request(&mut self, message: &str) {
-        self.grid_status = GridStatus::Rejected;
+        self.grid_status = ObservationStatus::Rejected;
         self.error = self.admit_error(message.to_owned());
     }
 
@@ -121,12 +110,12 @@ impl Model {
             .and_then(|value| value["configuration_generation"].as_str())
             .unwrap_or("");
         let (status, reason) = match self.grid_status {
-            GridStatus::Rejected => ("error", self.error.message()),
-            GridStatus::Cancelled => (
+            ObservationStatus::Rejected => ("error", self.error.message()),
+            ObservationStatus::Cancelled => (
                 "unavailable",
                 "Resource grid request cancelled; previous view retained.",
             ),
-            GridStatus::Loading => ("loading", "Preparing configured resource cells."),
+            ObservationStatus::Loading => ("loading", "Preparing configured resource cells."),
             _ if self.pending.is_some()
                 || self.is_running()
                 || self.application.active().is_some() =>
@@ -205,7 +194,7 @@ impl Model {
             }
         }
         self.grid_sequence = next;
-        self.grid_status = GridStatus::Loading;
+        self.grid_status = ObservationStatus::Loading;
         self.preparation_cancelled = false;
         self.error = Default::default();
         Ok(())

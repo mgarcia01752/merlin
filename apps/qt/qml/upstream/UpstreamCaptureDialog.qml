@@ -9,6 +9,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import "../shared/components"
 import "../shared/presentation"
+import "../shared/instruments"
 
 // Read-only capture inspection. Native Rust supplies source evidence, exact
 // display strings and bounded pages; decoding never establishes association here.
@@ -19,18 +20,45 @@ WorkbenchDialog {
     property bool busy: false
     signal loadRequested(string family)
     signal pageRequested(string family, int first)
+    signal plotRequested(string family, int first, int count)
     signal measuredPlanRequested
     property PresentationOwner presentationCoverage: PresentationOwner {
         id: coverage
         theme: dialog.theme
     }
     property bool presentationReady: false
+    // Each native range field is a nonnegative i32; ten decimal characters cover
+    // its complete transport domain. This is not a scientific reading-count limit.
+    readonly property int plotCoordinateCharacters: 10
+    property Binding plotFirstLength: Binding {
+        target: plotFirst.contentItem
+        property: "maximumLength"
+        value: dialog.plotCoordinateCharacters
+    }
+    property Binding plotCountLength: Binding {
+        target: plotCount.contentItem
+        property: "maximumLength"
+        value: dialog.plotCoordinateCharacters
+    }
+    property Binding plotFirstText: Binding {
+        target: plotFirst.contentItem
+        property: "text"
+        value: coverage.textAdmitted ? plotFirst.displayText : ""
+    }
+    property Binding plotCountText: Binding {
+        target: plotCount.contentItem
+        property: "text"
+        value: coverage.textAdmitted ? plotCount.displayText : ""
+    }
     readonly property var displayedPresentation: coverage.value ? coverage.value.presentation : ({})
     readonly property string displayedFamily: coverage.value ? coverage.value.family : ""
     readonly property var metadataRows: displayedPresentation.metadata_rows || []
     readonly property var columns: displayedPresentation.columns || []
     readonly property var dataRows: displayedPresentation.data_rows || []
     readonly property var page: displayedPresentation.page || ({})
+    readonly property var plot: displayedPresentation.plot || ({})
+    readonly property bool hasPlot: displayedFamily === "rxmer" && !!displayedPresentation.plot
+    readonly property bool plotAvailable: actionsAvailable && hasPlot && Number.isInteger(plot.total) && plot.total > 0 && Number.isInteger(plot.maximum_count) && plot.maximum_count > 0
     readonly property bool presentationRejected: coverage.rejected
     readonly property bool contextCurrent: !!coverage.value && displayedFamily === family && coverage.value.presentation === presentation
     readonly property bool actionsAvailable: contextCurrent && !busy && !coverage.rejected && validFamily(displayedFamily)
@@ -50,6 +78,7 @@ WorkbenchDialog {
     readonly property real footerSpacing: 10
     readonly property real bodyFontPixels: 13
     readonly property real captionFontPixels: 12
+    readonly property real plotHeight: 280
     title: displayedPresentation.title || "Upstream Capture"
     parent: Overlay.overlay
     anchors.centerIn: parent
@@ -74,6 +103,14 @@ WorkbenchDialog {
      * @returns False leaves the entire previously admitted inspection intact.
      */
     function adoptPresentation() {
+        // Qt may notify a binding again for the same immutable source alias.
+        // Keep its existing witness and pointer readout; actual source, family,
+        // page and viewport changes still require complete candidate admission.
+        if (presentationReady && coverage.value && !coverage.rejected
+                && coverage.value.family === family
+                && coverage.value.presentation === presentation) {
+            return true;
+        }
         return presentationReady && coverage.replace({
             family: family,
             presentation: presentation
@@ -104,11 +141,29 @@ WorkbenchDialog {
         }
     }
 
+    /**
+     * Request original records only; zero count restores the native bounded span.
+     * @param first Original zero-based reading index, never a reconstructed carrier.
+     * @param count Finite reading count; the native source remains authoritative.
+     * @returns Whether the current accepted source can dispatch this viewport.
+     */
+    function requestPlot(first, count) {
+        if (!plotAvailable || !Number.isInteger(first) || first < 0 || first >= plot.total || !Number.isInteger(count) || count < 0 || count > plot.maximum_count || count > plot.total - first) {
+            return false;
+        }
+        plotRequested(displayedFamily, first, count);
+        return true;
+    }
+
     onFamilyChanged: adoptPresentation()
     onPresentationChanged: adoptPresentation()
-    onOpened: adoptPresentation()
+    onOpened: {
+        coverage.reserveTextFields([plotFirst.contentItem, plotCount.contentItem]);
+        adoptPresentation();
+    }
     Component.onCompleted: {
         presentationReady = true;
+        coverage.reserveTextFields([plotFirst.contentItem, plotCount.contentItem]);
         adoptPresentation();
     }
     Component.onDestruction: {
@@ -170,6 +225,66 @@ WorkbenchDialog {
                 color: dialog.theme.accent
                 font.pixelSize: dialog.captionFontPixels
                 wrapMode: Text.WrapAnywhere
+            }
+            MeasurementPlot {
+                id: capturePlot
+                objectName: "upstreamCapturePlot"
+                visible: dialog.hasPlot
+                enabled: dialog.plotAvailable && coverage.textAdmitted
+                Layout.fillWidth: true
+                Layout.preferredHeight: dialog.plotHeight
+                theme: dialog.theme
+                viewport: dialog.plot
+                onViewportRequested: function (start, count) {
+                    dialog.requestPlot(start, count);
+                }
+            }
+            RowLayout {
+                visible: dialog.hasPlot
+                enabled: dialog.plotAvailable
+                Layout.fillWidth: true
+                spacing: dialog.rowSpacing
+                Label {
+                    text: "First original record"
+                    color: dialog.theme.muted
+                }
+                SpinBox {
+                    id: plotFirst
+                    objectName: "upstreamCapturePlotFirst"
+                    from: 0
+                    to: Math.max(0, (dialog.plot.total || 0) - 1)
+                    value: dialog.plot.start || 0
+                    onValueModified: {
+                        const count = Math.min(dialog.plot.count, dialog.plot.total - value);
+                        if (!dialog.requestPlot(value, count)) {
+                            value = Qt.binding(function() { return dialog.plot.start || 0; });
+                        }
+                    }
+                }
+                Label {
+                    text: "Original readings"
+                    color: dialog.theme.muted
+                }
+                SpinBox {
+                    id: plotCount
+                    objectName: "upstreamCapturePlotCount"
+                    from: dialog.plot.total > 0 ? 1 : 0
+                    to: Math.min(dialog.plot.maximum_count || 0, (dialog.plot.total || 0) - (dialog.plot.start || 0))
+                    value: dialog.plot.count || 0
+                    onValueModified: {
+                        if (!dialog.requestPlot(dialog.plot.start, value)) {
+                            value = Qt.binding(function() { return dialog.plot.count || 0; });
+                        }
+                    }
+                }
+                Item {
+                    Layout.fillWidth: true
+                }
+                Button {
+                    objectName: "upstreamCapturePlotFull"
+                    text: "Full Source"
+                    onClicked: dialog.requestPlot(0, 0)
+                }
             }
             Repeater {
                 id: metadataRepeater

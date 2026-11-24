@@ -160,3 +160,38 @@ responses and fresh images. The external reference comparison must inspect all
 original cells/metadata for the actual requested rectangles through the public
 API. Configuration queries do not establish waveform or recovery acceptance.
 Normal startup creates no probe; automatic update lookup is suppressed.
+
+## Shared scientific-instrument probes
+
+`--upstream-instruments-probe --upstream-instruments-image
+/absolute/fresh/spectrum.png` runs the bundled native Main instrument probe.
+Its owned native pickers request `instruments-50` and `instruments-25` through
+`MERLIN_UPSTREAM_INSTRUMENTS_PICKER`. Use the existing synthetic configurations
+with explicitly bounded retained taps and samples. The probe starts real upstream
+runs, then checks raw/reference/paired QAM, original normalized PSD and configured
+versus actually received responses. Zoom, inspection, selector acknowledgement,
+plot visibility and independent-tab checks use those actual observations.
+Require successful `MERLIN_UPSTREAM_INSTRUMENTS_PROBE` JSON, both picker responses
+and fresh images. Compare original values, identities, units and metadata through
+the installed public API; lifecycle completion alone does not establish recovery.
+The QAM, response and final spectrum capture markers allow separate actual Main
+window captures during finite grace periods.
+
+`--downstream-shared-probe --downstream-shared-image
+/absolute/fresh/measurements.png` loads the existing single workbench, starts its
+actual downstream run and checks preserved QAM, spectrum, response and original
+measurement consumers. It navigates through the actual parent workbench before
+opening nested instruments. Bounded phase diagnostics identify popup admission
+or window-attachment failures. Require successful `MERLIN_DOWNSTREAM_SHARED_PROBE`
+JSON and fresh content/Main images, using `MERLIN_DOWNSTREAM_SHARED_CAPTURE ready`
+for the latter. No picker input or arbitrary QML is accepted by this probe.
+
+The existing bundled `--upstream-inputs-probe --upstream-inputs-image
+/absolute/fresh/inputs.png` additionally checks original RxMER plot aliases,
+hover retention across polling, zoom and Full Source. Its external native-picker
+runner supplies the authored/sanitized binary/source-JSON fixtures and complete
+measured plans. Require successful `MERLIN_UPSTREAM_INPUTS_PROBE` JSON, original
+source/hash/value comparisons and fresh images. `MERLIN_UPSTREAM_RXMER_CAPTURE
+ready` identifies the actual RxMER Main-window capture. These are opt-in finite
+validation consumers; normal startup creates none of their probe owners. They
+change only their loaded test sessions and write explicitly requested new images.

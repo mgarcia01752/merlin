@@ -2121,6 +2121,25 @@ compatible semantics. Keep DS PLC/NCP/profile labels, DS H and US H/C/C×H,
 upstream LDPC versus downstream BCH/control chains, missing data and partial
 outcomes explicit. Detailed candidate decisions are in the migration plan.
 
+The compatible drawing owners are `apps/qt/qml/shared/instruments/QamPlot.qml`,
+`SpectrumPlot.qml` and `MeasurementPlot.qml`. Downstream adapters retain their
+existing signal selectors, electrical calibration, PLC overlays and H/Ĥ labels.
+Upstream QAM/spectrum/response dialogs consume independently admitted original
+observations from `upstream/workbench/instruments`; the capture inspector supplies
+original RxMER dB/null readings and physical-carrier coordinates. No unit conversion
+or scientific reconstruction is hidden in the renderers. Screen transforms and
+bounded original-coordinate queries are the only shared navigation behavior.
+
+`instrument_view` validates the exact native session, backend generation, report
+and query sequence before queueing/adoption. Grid and instruments reuse the same
+finite passive controller-slot worker in `preparation/query`; neither executes a
+simulation or mutates its source. Newly admitted native upstream sessions request
+one complete actual received-pilot estimate through the existing public retention
+policy, without changing public API defaults or scientific recovery. Missing or
+partial history remains explicit. Shared FEC/verification acceptance remains
+UIU-SHARED-02; [integrated instrument acceptance](development/features/unified-qt-workbench/validation.md#uiu-shared-01-integrated-shared-instrument-acceptance)
+closes UIU-SHARED-01 with actual consumers in both directions.
+
 Requirements: [REQ-UIU-15](requirements.md#req-uiu-15), [REQ-UIU-16](requirements.md#req-uiu-16), [REQ-UIU-17](requirements.md#req-uiu-17), [REQ-UIU-18](requirements.md#req-uiu-18), [REQ-UIU-19](requirements.md#req-uiu-19), [REQ-UIU-20](requirements.md#req-uiu-20), [REQ-UIU-21](requirements.md#req-uiu-21).
 Delivery: [UIU-SHARED-01](development/checklist.md#task-uiu-shared-01), [UIU-SHARED-02](development/checklist.md#task-uiu-shared-02).
 

@@ -11,6 +11,7 @@ UpstreamDetailDialog {
     id: dialog
     signal sourceConfigurationRequested
     signal resourceGridRequested
+    signal instrumentRequested(string kind)
     readonly property real footerPadding: 10
     readonly property real footerSpacing: 10
     title: "CM Transmitter"
@@ -22,6 +23,18 @@ UpstreamDetailDialog {
         background: Item {}
         contentItem: RowLayout {
             spacing: dialog.footerSpacing
+            WorkbenchActionButton {
+                objectName: "upstreamTransmitterQam"
+                theme: dialog.theme
+                text: "QAM"
+                onClicked: dialog.instrumentRequested("qam")
+            }
+            WorkbenchActionButton {
+                objectName: "upstreamTransmitterSpectrum"
+                theme: dialog.theme
+                text: "Spectrum"
+                onClicked: dialog.instrumentRequested("spectrum")
+            }
             WorkbenchActionButton {
                 objectName: "upstreamTransmitterResourceGrid"
                 theme: dialog.theme

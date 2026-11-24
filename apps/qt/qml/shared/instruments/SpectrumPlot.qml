@@ -5,12 +5,17 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../../../shared/components"
+import "../components"
 
 ColumnLayout {
     id: chart
     required property var theme
     property var viewport: ({points: [], x_ticks: [], y_ticks: []})
+    // Preserve compact downstream ticks; upstream linear PSD and signed response
+    // labels need more horizontal room without changing any original values.
+    readonly property real compactValueAxisWidth: 60
+    readonly property real extendedValueAxisWidth: 104
+    property real valueAxisWidth: compactValueAxisWidth
     property int selectedIndex: 0
     property bool zoomEnabled: false
     property string detailsText: ""
@@ -29,13 +34,13 @@ ColumnLayout {
             id: plot
             objectName: "saCanvas"
             anchors.fill: parent
-            readonly property real leftMargin: 60
+            readonly property real leftMargin: chart.valueAxisWidth
             readonly property real rightMargin: 20
             readonly property real topMargin: 20
             readonly property real bottomMargin: 40
             focus: true
             Accessible.role: Accessible.Graphic
-            Accessible.name: "OFDM sample spectrum"
+            Accessible.name: chart.viewport.axis_label || "Sample spectrum"
             Accessible.description: chart.selectedPoint ? chart.selectedPoint.readout : "Generate or select a sample snapshot to display its spectrum."
             Keys.onLeftPressed: chart.selectedIndex = Math.max(0, chart.selectedIndex - 1)
             Keys.onRightPressed: chart.selectedIndex = Math.min(chart.viewport.points.length - 1, chart.selectedIndex + 1)
@@ -80,6 +85,7 @@ ColumnLayout {
                 ctx.globalAlpha = 0.3
                 ctx.beginPath()
                 for (const point of chart.viewport.points) {
+                    if (point.y === null || point.minimum_y === null) { continue }
                     const x = leftMargin + point.x * width
                     ctx.moveTo(x, topMargin + point.y * height)
                     ctx.lineTo(x, topMargin + point.minimum_y * height)
@@ -88,14 +94,17 @@ ColumnLayout {
                 ctx.globalAlpha = 1
                 ctx.lineWidth = 1.2
                 ctx.beginPath()
+                let drawing = false
                 for (let index = 0; index < chart.viewport.points.length; ++index) {
                     const point = chart.viewport.points[index]
+                    if (point.y === null) { drawing = false; continue }
                     const x = leftMargin + point.x * width
                     const y = topMargin + point.y * height
-                    if (index === 0 || point.gap) { ctx.moveTo(x, y) } else { ctx.lineTo(x, y) }
+                    if (!drawing || point.gap) { ctx.moveTo(x, y) } else { ctx.lineTo(x, y) }
+                    drawing = true
                 }
                 ctx.stroke()
-                if (chart.selectedPoint) {
+                if (chart.selectedPoint && chart.selectedPoint.y !== null) {
                     const x = leftMargin + chart.selectedPoint.x * width
                     const y = topMargin + chart.selectedPoint.y * height
                     ctx.strokeStyle = chart.theme.muted; ctx.lineWidth = 1

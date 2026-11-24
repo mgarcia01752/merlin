@@ -5,6 +5,7 @@
 //! Independent source inspection over public native capture owners, never association.
 mod constants;
 mod inspection;
+mod plot;
 #[cfg(test)]
 mod tests;
 use constants::CAPTURE_SOURCE_SHARED_ROOTS;
@@ -51,6 +52,11 @@ pub(super) enum Request {
     Page {
         source: SharedSource,
         first: usize,
+    },
+    Plot {
+        source: SharedSource,
+        first: usize,
+        count: usize,
     },
 }
 
@@ -129,12 +135,31 @@ impl Request {
                 (source, inspected.view)
             }
             Self::Page { source, first } => {
-                let inspected =
-                    inspection::inspect(source.value().family, &source.value().delivery, first)?;
-                if inspected.original.as_ref() != source.value().original.as_ref() {
-                    return Err("Upstream capture source changed during inspection.".into());
+                let view = inspection::inspect_existing(
+                    source.value().family,
+                    &source.value().delivery,
+                    &source.value().original,
+                    first,
+                    0,
+                )?;
+                (source, view)
+            }
+            Self::Plot {
+                source,
+                first,
+                count,
+            } => {
+                if source.value().family != Family::Rxmer {
+                    return Err("Original capture plots are available only for RxMER.".into());
                 }
-                (source, inspected.view)
+                let view = inspection::inspect_existing(
+                    Family::Rxmer,
+                    &source.value().delivery,
+                    &source.value().original,
+                    first,
+                    count,
+                )?;
+                (source, view)
             }
         };
         let mut resources = json_children(&view)?;
@@ -209,6 +234,42 @@ impl Model {
         self.queue_capture(Request::Page {
             source: Arc::clone(&source.value().source),
             first,
+        })
+    }
+
+    /// Requests a bounded original RxMER plot on the existing passive capture queue.
+    ///
+    /// # Arguments
+    /// * `family` - Must match the retained RxMER source, never another input family.
+    /// * `first`, `count` - Original record viewport; zero count chooses its bounded prefix.
+    ///
+    /// # Returns
+    /// Unit after staging; the worker preserves the full inspector and exact source.
+    ///
+    /// # Errors
+    /// Busy, unsupported/foreign source, worker admission or viewport errors do not
+    /// replace the accepted inspector or scientific configuration.
+    pub(crate) fn capture_plot(
+        &mut self,
+        family: Family,
+        first: usize,
+        count: usize,
+    ) -> Result<(), String> {
+        self.ensure_configuration_idle()?;
+        if family != Family::Rxmer {
+            return Err("Original capture plots are available only for RxMER.".into());
+        }
+        let source = self
+            .capture
+            .as_ref()
+            .ok_or("Load an upstream capture first.")?;
+        if source.value().source.value().family != family {
+            return Err("This capture belongs to another input family.".into());
+        }
+        self.queue_capture(Request::Plot {
+            source: Arc::clone(&source.value().source),
+            first,
+            count,
         })
     }
 

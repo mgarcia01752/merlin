@@ -5047,3 +5047,81 @@ required for this Qt-only change: all backend/binding/root manifest sources rema
 unchanged from accepted UIU-US-03. Its scientific, native and CLI/project evidence
 is reused only within that unchanged scope. Remaining shared instruments, project
 Save/Open, recovery and final full acceptance retain their official tasks.
+
+## UIU-SHARED-01 integrated shared instrument acceptance
+
+The [implementation design](design.md#uiu-shared-01-actual-direction-consumers-and-compatible-drawing)
+closes the compatible drawing task for REQ-UIU-15/16/17/18/21. The shared
+`QamPlot`, `SpectrumPlot` and `MeasurementPlot` each have actual downstream and
+upstream API-backed consumers. Direction selectors, DS calibration/PLC overlays,
+upstream linear normalized PSD and H/C/C×H versus actually received estimates
+remain explicit. Qt supplies screen coordinates and finite display transport;
+all original scientific observations and numerical transforms remain public-API
+results. No backend, Python binding, root manifest or scientific default changes.
+
+The actual Linux Qt 6.8.3 XCB/software/Fusion application loads synthetic 50/25 kHz
+configurations through its owned native picker, runs both and inspects twenty-eight
+views. The independently installed native public API matches every original QAM
+raw/reference/pair detail, PSD bin/frequency/power, configured response/periodic
+impulse and actual received amplitude/phase point, identity, unit and metadata
+field. The native probe verifies selected-request acknowledgement, point inspection,
+display-only QAM zoom/pan/reset, spectrum navigation, visible graph rectangles and
+independent tabs. Newly admitted native sessions opt into one finite actual estimate
+frame through the existing policy; tests preserve source recovery and public defaults.
+Unavailable partial history, undefined values and received impulse stay unavailable.
+
+The actual downstream saved example runs and then navigates through its existing
+parent workbenches: twenty-two QAM selections, twelve spectrum views, five response
+views and five original-measurement views pass. It preserves accepted scientific
+settings, original measurement aliases and the independent upstream state. Shared
+drawing retains the existing DS pixels, signal selectors, units and PLC overlays;
+no render-only action starts another run or advances its source.
+
+Five actual upstream RxMER viewports match the original public decoder, including
+physical indices, dB readings, a null, original hashes/metadata, page origin, zoom
+and Full Source. Hover survives ordinary native polling. All six existing binary/
+source-JSON capture inspections, cancelled/rejected replacements and both measured
+50/25 kHz runs pass; the latter independently recover 1976/4216 compared bits with
+zero errors. These authored/sanitized fixtures and MERLIN closed loops establish
+no field-input or external interoperability claim. Four actual dark Main-window
+captures appear in the [instrument guide](../../../user/upstream/instruments.md).
+
+Acceptance preserved and resolved observed failures:
+
+- The first upstream instrument run exposed a loading-to-ready selector bug.
+  Ready replies now adopt their own authoritative selectors; QAM, spectrum and
+  response regressions and all twenty-eight native views pass.
+- Visual inspection found plots below long metadata and clipped linear-PSD labels.
+  Graphs now precede details; the wider upstream value-axis policy preserves the
+  original DS compact axis. Complete-label and actual viewport-containment checks pass.
+- The first downstream probe opened a detached nested instrument without its real
+  parent. Correct parent-first navigation and finite attachment/admission diagnostics
+  pass the actual views without a downstream product rewrite.
+- Original capture aliases and repeated same-alias Qt notifications reset hover.
+  Separate negative regressions fail before the host-alias/dialog-witness fixes.
+  Changed sources/windows/errors still replace the view, and rejected candidates
+  require successful readmission. Fresh native polling, zoom and reset now pass.
+
+The [scoped evidence receipt](shared-instruments-evidence.json) records all 512
+complete Qt Rust cases passing, 103 focused upstream cases, warnings-denied
+all-target Clippy, formatting and the zero-exception API boundary. Twenty-three
+affected QML suites have 374 current pass records; targeted complete suites rerun
+after each relevant presentation correction. The complete Rust pass is reused
+only after subsequent QML/probe/documentation changes, with no Rust source changes.
+The native QAM/PSD/response and downstream receipts retain their original artifact
+hashes: later changes affect only fixed validation probes and the isolated original
+capture-dialog notification guard. Those instrument/DS source owners are unchanged;
+the corrected RxMER path executes freshly against the final artifact.
+
+Fresh seven-editor configuration, downstream run/pause/menu/tab isolation, six
+startup/project probes and twenty-five packaging-resource checks pass. Final native
+executable SHA-256 is
+`6608630c6abfa4a49e2c8ab384931d75e4a58918281a14cf158733ec7e83faad`.
+Documentation/requirements/checklist/DAG/history/registration checks preserve all
+previous completion states; only UIU-SHARED-01 becomes complete, for 17/21 tasks.
+The root full workspace, CLI and new wheel builds are not required for these
+Qt-only sources; accepted unchanged backend/native evidence remains scoped reuse,
+not a claim that unexecuted suites passed. Full applicable final regression,
+line-by-line numeric audit and final correspondence remain UIU-QA-01.
+Continue UIU-SHARED-02 for actual FEC/LLR and verification presentation; project
+Save/Open and restart/update recovery retain their separate official tasks.

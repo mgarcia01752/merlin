@@ -18,6 +18,7 @@ QtObject {
     readonly property var upstreamState: presentation.upstreamState || ({})
     readonly property var draftState: upstreamState.draft || ({})
     readonly property var resourceGridState: upstreamState.resource_grid_view || ({})
+    readonly property var instrumentState: upstreamState.instrument_view || ({})
     // One scalar cursor over compiled section tags, never retained source text.
     readonly property int noRequestedSection: -1
     property int reopenConfigurationIndex: noRequestedSection
@@ -33,13 +34,19 @@ QtObject {
     function candidate(metadata, upstream, message, isError) {
         // A native query sequence changes with actual view requests. Preserve the
         // admitted envelope between polls so inspected/hovered cells stay visible.
-        const previousGrid = upstreamState.resource_grid_view
-        const nextGrid = upstream.resource_grid_view
-        if (previousGrid && nextGrid && previousGrid.query_sequence === nextGrid.query_sequence
-                && previousGrid.status === nextGrid.status && previousGrid.reason === nextGrid.reason
-                && previousGrid.session_token === nextGrid.session_token
-                && previousGrid.configuration_generation === nextGrid.configuration_generation) {
-            upstream.resource_grid_view = previousGrid
+        for (const name of ["resource_grid_view", "instrument_view"]) {
+            const previous = upstreamState[name]
+            const next = upstream[name]
+            if (previous && next && previous.query_sequence === next.query_sequence
+                    && previous.status === next.status && previous.reason === next.reason
+                    && previous.session_token === next.session_token
+                    && previous.configuration_generation === next.configuration_generation
+                    && previous.run === next.run) {
+                upstream[name] = previous
+            }
+        }
+        if (sameCaptureView(upstreamState.capture_view, upstream.capture_view)) {
+            upstream.capture_view = upstreamState.capture_view
         }
         const status = upstream.error || (upstream.execution_view ? upstream.execution_view.status
             : upstream.preparing ? "Preparing upstream work"
@@ -52,6 +59,36 @@ QtObject {
             feedbackMessage: message, feedbackIsError: isError,
             display: {executionStatus: metadata.executionStatus, feedback: message,
                 upstreamStatus: status}})
+    }
+
+    /**
+     * Reuse immutable original-source display aliases across unchanged polling.
+     * Native hashes/metadata identify exact delivery and binary source; page and
+     * plot bounds identify its deterministic view. New errors also replace it.
+     * Temporary metadata comparisons retain no second source or signature owner.
+     */
+    function sameCaptureView(previous, next) {
+        if (!previous || !next || previous.family !== next.family || !previous.view || !next.view) {
+            return false
+        }
+        const left = previous.view, right = next.view
+        if (!Array.isArray(left.metadata_rows) || !Array.isArray(right.metadata_rows)
+                || left.error !== right.error || !!left.plot !== !!right.plot
+                || JSON.stringify(left.metadata_rows) !== JSON.stringify(right.metadata_rows)
+                || JSON.stringify(left.page) !== JSON.stringify(right.page)) {
+            return false
+        }
+        const leftPlot = left.plot || {}, rightPlot = right.plot || {}
+        return leftPlot.start === rightPlot.start && leftPlot.count === rightPlot.count
+            && leftPlot.total === rightPlot.total && leftPlot.maximum_count === rightPlot.maximum_count
+    }
+
+    /** Request an original capture rectangle; decoding and bounds stay native. */
+    function capturePlot(family, first, count) {
+        const error = upstreamBackend.capture_plot(family, first, count) || ""
+        poll()
+        feedback(error)
+        return error.length === 0
     }
 
     /**
@@ -128,6 +165,28 @@ QtObject {
     function cancelDraft(token) {
         const error = upstreamBackend.cancel_draft(token) || ""
         poll()
+        return !error
+    }
+
+    /** Open an existing public observation through the direction-owned worker. */
+    function beginInstrument(kind) {
+        if (!accepts("upstream", presentation.upstreamIdentity)) {
+            return false
+        }
+        const error = upstreamBackend.begin_instrument(kind) || ""
+        poll()
+        feedback(error)
+        return !error
+    }
+
+    /** Forward finite native selectors with their exact admitted view context. */
+    function requestInstrument(kind, selection, context) {
+        if (!accepts("upstream", presentation.upstreamIdentity)) {
+            return false
+        }
+        const error = upstreamBackend.instrument(kind, JSON.stringify(selection), JSON.stringify(context)) || ""
+        poll()
+        feedback(error)
         return !error
     }
 

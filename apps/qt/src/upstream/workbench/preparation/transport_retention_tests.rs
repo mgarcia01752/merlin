@@ -26,7 +26,7 @@ fn channel_and_slot_rejection_return_same_idle_controller_without_scientific_pre
     let budget = application.budget();
     let source = PreparedSession::from_document(
         ConfigurationDocument::from_json(DOCUMENT).unwrap(),
-        ReceiverObservationPolicy::new(0, 0).unwrap(),
+        merlin::upstream::ReceiverObservationPolicy::new(0, 0).unwrap(),
         budget,
     )
     .unwrap(); // Existing fixture with receiver history disabled.

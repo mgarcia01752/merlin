@@ -10,13 +10,16 @@ mod drafts;
 mod execution_view;
 mod grid;
 mod grid_view;
+mod instrument_view;
+mod instruments;
 mod measured_view;
+mod observation_policy;
 mod preparation;
 mod presentation;
 pub(crate) use captures::{Family as CaptureFamily, MAX_CAPTURE_FAMILY_CHARACTERS};
 pub(crate) use drafts::{MAX_DRAFT_CHANGE_BYTES, MAX_DRAFT_ID_CHARACTERS};
-use grid_view::GridStatus;
 pub(crate) use grid_view::MAX_GRID_REQUEST_BYTES;
+pub(crate) use instrument_view::MAX_INSTRUMENT_KIND_CHARACTERS;
 
 use crate::shared::{
     presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE, worker_failure::WorkerFailure,
@@ -38,6 +41,17 @@ const MAX_ERROR_CHARACTERS: usize = 4096;
 // Report data and one terminal have separate identities and share bounded transport.
 const RUN_COMPLETION_CAPACITY: usize = 2;
 
+/// Existing finite passive-query lifecycle shared by grid and instrument views.
+#[derive(Clone, Copy, Default)]
+enum ObservationStatus {
+    #[default]
+    Unavailable,
+    Loading,
+    Ready,
+    Rejected,
+    Cancelled,
+}
+
 /// GUI-thread upstream owner; preparations and execution never block Qt polling.
 pub(crate) struct Model {
     application: ApplicationSessions,
@@ -51,8 +65,11 @@ pub(crate) struct Model {
     draft_outcome: drafts::Outcome,
     capture: Option<Retained<captures::CaptureDisplay>>,
     grid: Option<(SessionKey, Retained<grid::Display>)>,
-    grid_status: GridStatus,
+    grid_status: ObservationStatus,
     grid_sequence: u64,
+    instrument: Option<instrument_view::Observation>,
+    instrument_status: ObservationStatus,
+    instrument_sequence: u64,
 
     // Drop controllers, pending slots and data aliases before this containing charge.
     _fixed_guard: Retained<()>,
@@ -87,8 +104,11 @@ impl Model {
             draft_outcome: drafts::Outcome::default(),
             capture: None,
             grid: None,
-            grid_status: GridStatus::default(),
+            grid_status: ObservationStatus::default(),
             grid_sequence: 0,
+            instrument: None,
+            instrument_status: ObservationStatus::default(),
+            instrument_sequence: 0,
             _fixed_guard: fixed_guard,
         }))
     }
@@ -250,6 +270,42 @@ impl Model {
 
     fn adopt_prepared(&mut self, prepared: Prepared) -> Result<(), WorkerFailure> {
         match prepared {
+            Prepared::Instrument {
+                delivery: _delivery_guard,
+                expected,
+                run,
+                controller,
+                candidate,
+            } => {
+                self.controller = Some(controller);
+                if self.preparation_cancelled {
+                    self.instrument_status = ObservationStatus::Cancelled;
+                    return Ok(());
+                }
+                if self.application.snapshot(Direction::Upstream).key != expected
+                    || self.report.as_ref().map(|(token, _)| *token) != run
+                {
+                    self.instrument_status = ObservationStatus::Rejected;
+                    return Err(WorkerFailure::Static(
+                        "Upstream observation context changed during preparation.",
+                    ));
+                }
+                match candidate {
+                    Ok(display) => {
+                        self.instrument = Some(instrument_view::Observation {
+                            key: expected,
+                            run,
+                            display,
+                        });
+                        self.instrument_status = ObservationStatus::Ready;
+                        self.error = Default::default();
+                    }
+                    Err(error) => {
+                        self.instrument_status = ObservationStatus::Rejected;
+                        return Err(error);
+                    }
+                }
+            }
             Prepared::Grid {
                 delivery: _delivery_guard,
                 expected,
@@ -258,11 +314,11 @@ impl Model {
             } => {
                 self.controller = Some(controller);
                 if self.preparation_cancelled {
-                    self.grid_status = GridStatus::Cancelled;
+                    self.grid_status = ObservationStatus::Cancelled;
                     return Ok(());
                 }
                 if self.application.snapshot(Direction::Upstream).key != expected {
-                    self.grid_status = GridStatus::Rejected;
+                    self.grid_status = ObservationStatus::Rejected;
                     return Err(WorkerFailure::Static(
                         "Upstream configuration changed during resource observation.",
                     ));
@@ -270,11 +326,11 @@ impl Model {
                 match candidate {
                     Ok(display) => {
                         self.grid = Some((expected, display));
-                        self.grid_status = GridStatus::Ready;
+                        self.grid_status = ObservationStatus::Ready;
                         self.error = Default::default();
                     }
                     Err(error) => {
-                        self.grid_status = GridStatus::Rejected;
+                        self.grid_status = ObservationStatus::Rejected;
                         return Err(error);
                     }
                 }
@@ -345,7 +401,9 @@ impl Model {
                 self.key = Some(key);
                 self.report = None;
                 self.grid = None;
-                self.grid_status = GridStatus::Unavailable;
+                self.instrument = None;
+                self.instrument_status = ObservationStatus::Unavailable;
+                self.grid_status = ObservationStatus::Unavailable;
                 self.error = WorkerFailure::default();
                 self.draft_outcome = drafts::Outcome::Accepted;
             }
@@ -373,7 +431,9 @@ impl Model {
                 self.key = Some(key);
                 self.report = None;
                 self.grid = None;
-                self.grid_status = GridStatus::Unavailable;
+                self.instrument = None;
+                self.instrument_status = ObservationStatus::Unavailable;
+                self.grid_status = ObservationStatus::Unavailable;
                 if self.draft.is_some() {
                     self.draft_outcome = drafts::Outcome::Stale;
                 }

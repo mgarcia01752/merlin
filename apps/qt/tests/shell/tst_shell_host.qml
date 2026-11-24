@@ -200,6 +200,24 @@ Item {
             verify(value.runAction("stop","downstream",metadata.downstreamIdentity))
             compare(downstream.calls,["start","pause","stop"])
         }
+        function test_original_capture_alias_survives_poll_but_changes_with_source_viewport_or_error() {
+            const value=host()
+            const capture={family:"rxmer",view:{metadata_rows:[{label:"Original binary SHA-256",value:"source-one"}],
+                page:{summary:"Records 1–64 of 400",next_first:64},error:"",
+                plot:{start:0,count:400,total:400,maximum_count:4096,points:[]}}}
+            verify(value.adopt(value.candidate(JSON.parse(metadata.state()),{capture_view:capture},"",false)))
+            const same=JSON.parse(JSON.stringify(capture))
+            verify(value.candidate(JSON.parse(metadata.state()),{capture_view:same},"",false).upstreamState.capture_view===capture,
+                "Unchanged native polling must retain the parent plot alias and hovered readout.")
+            for (const change of ["source","viewport","error"]) {
+                const changed=JSON.parse(JSON.stringify(capture))
+                if (change==="source") {changed.view.metadata_rows[0].value="source-two"}
+                else if (change==="viewport") {changed.view.plot.start=64;changed.view.plot.count=100}
+                else {changed.view.error="Original new diagnostic"}
+                verify(value.candidate(JSON.parse(metadata.state()),{capture_view:changed},"",false).upstreamState.capture_view===changed)
+            }
+        }
+
         function test_native_error_is_not_reported_as_success() {
             const value=host()
             downstream.startError="Original native admission error"

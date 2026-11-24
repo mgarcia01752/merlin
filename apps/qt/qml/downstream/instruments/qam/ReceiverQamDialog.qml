@@ -7,6 +7,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import "../../../shared/components"
 import "../../../shared/presentation"
+import "../../../shared/instruments"
 
 WorkbenchDialog {
     id: dialog
@@ -144,31 +145,20 @@ WorkbenchDialog {
                             ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:estimateHover.hovered
                             ToolTip.text:"Nearest ideal point estimate. Dense constellations and incorrect decisions can make it too high, even when received symbols are badly impaired."
                         }
-                        Canvas {
-                            id: scatter
-                            Layout.fillWidth:true; Layout.fillHeight:true
-                            property bool raw: modelData.indexOf("Raw") === 0
-                            Connections { target: dialog; function onObservationChanged() { scatter.requestPaint() } }
-                            Connections { target: dialog.theme; function onDarkChanged() { scatter.requestPaint() } }
-                            onWidthChanged: requestPaint()
-                            onHeightChanged: requestPaint()
-                            onPaint: {
-                                const ctx=getContext("2d");ctx.reset()
-                                if (!dialog.observation.available) { return }
-                                const edge=Math.min(width,height)
-                                const left=(width-edge)/2
-                                const top=(height-edge)/2
-                                ctx.strokeStyle=dialog.theme.line;ctx.lineWidth=1
-                                ctx.beginPath();ctx.moveTo(left+edge/2,top);ctx.lineTo(left+edge/2,top+edge);ctx.moveTo(left,top+edge/2);ctx.lineTo(left+edge,top+edge/2);ctx.stroke()
-                                ctx.fillStyle=dialog.theme.muted;ctx.font="11px sans-serif"
-                                ctx.fillText("I",left+edge-10,top+edge/2-6);ctx.fillText("Q",left+edge/2+6,top+12)
-                                ctx.fillStyle=dialog.theme.accent
-                                for (const point of dialog.observation.points || []) {
-                                    const x = left + (raw ? point.raw_x : point.eq_x) * edge
-                                    const y = top + (raw ? point.raw_y : point.eq_y) * edge
-                                    ctx.beginPath(); ctx.arc(x, y, 0.85, 0, 2 * Math.PI); ctx.fill()
-                                }
-                            }
+                        QamPlot {
+                            objectName: modelData.indexOf("Raw") === 0 ? "receiverRawScatter" : "receiverEqualizedScatter"
+                            Layout.fillWidth: true; Layout.fillHeight: true
+                            theme: dialog.theme
+                            observation: dialog.observation
+                            xCoordinate: modelData.indexOf("Raw") === 0 ? "raw_x" : "eq_x"
+                            yCoordinate: modelData.indexOf("Raw") === 0 ? "raw_y" : "eq_y"
+                            receivedSamples: true
+                            roleMarkers: false
+                            showAxesWithoutData: false
+                            plotInset: 0
+                            axisFontPixels: 11
+                            horizontalLabelInset: 10
+                            verticalLabelOffset: 12
                         }
                         ContextualStatus { theme:dialog.theme;diagnostic:dialog.observation.diagnostic || null;onHelpRequested:function(code){dialog.contextHelpRequested(code)};objectName: "receiverQamUnavailable"; visible: !dialog.observation.available; text: dialog.observation.reason || "No retained receiver results"; color: dialog.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap; horizontalAlignment: Text.AlignHCenter }
                         Item { visible: !dialog.observation.available; Layout.fillHeight: true }

@@ -6,6 +6,7 @@ import QtQuick
 
 UpstreamConfigurationDraftDialog {
     sectionId: "channel"
+    responseInspection: true
     approvedFields: ["delay_samples", "noise_seed", "noise_variance", "phase_radians", "frequency_offset_hz"]
     title: "Channel Simulator"
     purpose: "Inspect the admitted upstream physical channel and measurement-driven impairment model."

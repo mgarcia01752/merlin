@@ -6,6 +6,8 @@
 mod capture;
 mod edit;
 mod grid;
+mod instrument;
+mod query;
 use super::captures::CaptureDisplay;
 use super::drafts::SharedDraft;
 use super::grid::Display as GridDisplay;
@@ -20,9 +22,7 @@ use crate::{
         RetainedResources, RetentionBudget, RetentionReservation, SessionKey,
     },
 };
-use merlin::upstream::{
-    inputs::MeasuredExperiment, ConfigurationDocument, ReceiverObservationPolicy,
-};
+use merlin::upstream::{inputs::MeasuredExperiment, ConfigurationDocument};
 use serde::Deserialize;
 use std::sync::{mpsc::TryRecvError, Arc, Mutex};
 
@@ -43,6 +43,12 @@ struct InputFormat {
 type ControllerSlot = Arc<Retained<Mutex<Option<UpstreamController>>>>;
 
 pub(super) enum Pending {
+    Instrument {
+        expected: SessionKey,
+        run: Option<crate::shell::RunToken>,
+        receiver: DeliveryReceiver<Result<Retained<super::instruments::Display>, WorkerFailure>>,
+        owner: ControllerSlot,
+    },
     Grid {
         expected: SessionKey,
         receiver: DeliveryReceiver<Result<Retained<GridDisplay>, WorkerFailure>>,
@@ -68,6 +74,13 @@ pub(super) enum Pending {
 }
 
 pub(super) enum Prepared {
+    Instrument {
+        expected: SessionKey,
+        run: Option<crate::shell::RunToken>,
+        controller: UpstreamController,
+        candidate: Result<Retained<super::instruments::Display>, WorkerFailure>,
+        delivery: Option<RetentionReservation>,
+    },
     Grid {
         expected: SessionKey,
         controller: UpstreamController,
@@ -231,6 +244,18 @@ impl Pending {
     /// None while pending; original owner and an explicit error after disconnection.
     pub(super) fn poll(&self) -> Option<Prepared> {
         match self {
+            Self::Instrument {
+                expected,
+                run,
+                receiver,
+                owner,
+            } => receive(receiver).map(|(delivery, candidate)| Prepared::Instrument {
+                expected: *expected,
+                run: *run,
+                controller: take_controller(owner),
+                candidate,
+                delivery,
+            }),
             Self::Grid {
                 expected,
                 receiver,
@@ -281,12 +306,12 @@ fn prepare_input(bytes: &[u8], budget: &RetentionBudget) -> Result<PreparedSessi
         .is_ok_and(|input| input.format == MEASURED_INPUT_FORMAT);
     if measured {
         let plan = MeasuredExperiment::from_json(bytes).map_err(|error| error.to_string())?;
-        PreparedSession::from_measured(plan, ReceiverObservationPolicy::default(), budget)
+        PreparedSession::from_measured(plan, super::observation_policy::estimates()?, budget)
             .map_err(|error| format!("{error:?}"))
     } else {
         let document =
             ConfigurationDocument::from_json(bytes).map_err(|error| error.to_string())?;
-        PreparedSession::from_document(document, ReceiverObservationPolicy::default(), budget)
+        PreparedSession::from_document(document, super::observation_policy::estimates()?, budget)
             .map_err(|error| format!("{error:?}"))
     }
 }

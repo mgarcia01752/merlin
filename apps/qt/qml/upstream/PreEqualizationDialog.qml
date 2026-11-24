@@ -6,6 +6,7 @@ import QtQuick
 
 UpstreamConfigurationDraftDialog {
     sectionId: "preEqualization"
+    responseInspection: true
     captureFamily: "pre_eq"
     approvedFields: ["initial_id"]
     title: "CM Pre-Eq"

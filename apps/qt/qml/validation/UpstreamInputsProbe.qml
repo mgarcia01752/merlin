@@ -24,6 +24,8 @@ QtObject {
     readonly property int captureSettleMs: 100
     readonly property int captureGraceMs: 2000
     readonly property int itemTraversalLimit: 8192
+    readonly property real plotZoomInFactor: 0.5
+    readonly property real plotAnchor: 0.5
     readonly property string downstream: "downstream"
     readonly property string upstream: "upstream"
     readonly property var captureCases: [
@@ -86,6 +88,10 @@ QtObject {
         property int requestedPageFirst: 0
         property var captures: []
         property var pages: []
+        property var plotViews: []
+        property string plotBefore: ""
+        property var plotRequest: null
+        property bool rxmerImageSaved: false
         property bool pickerCancelPreserved: false
         property bool invalidPreserved: false
         property string invalidDiagnostic: ""
@@ -355,6 +361,8 @@ QtObject {
             pickerTag: state.pickerTag,
             captures: state.captures,
             pages: state.pages,
+            measurementPlots: state.plotViews,
+            rxmerImageSaved: state.rxmerImageSaved,
             pickerCancelPreserved: state.pickerCancelPreserved,
             invalidPreserved: state.invalidPreserved,
             invalidDiagnostic: state.invalidDiagnostic,
@@ -478,8 +486,51 @@ QtObject {
                     }
                 ]);
                 state.pagingObserved = true;
+                const plot = findItem(state.capturePopup.contentItem, "upstreamCapturePlot");
+                const navigation = findItem(plot, "chartNavigation");
+                require(plot && plot.visible && plot.viewport === captured.view.plot && navigation && navigation.canZoom, "Original RxMER plot is not an actual shared native-data consumer.");
+                state.plotViews = state.plotViews.concat([{action:"paged",capture_view:captured}]);
+                state.plotBefore = JSON.stringify(captured.view);
+                navigation.zoom(plotZoomInFactor, plotAnchor);
+                next("capture-plot-zoom");
+            } else if (state.phase === "capture-plot-zoom") {
+                if (!inspectorCurrent() || JSON.stringify(nativeCapture().view) === state.plotBefore) return;
+                const captured = nativeCapture();
+                require(JSON.stringify(captured.view.metadata_rows) === state.metadataBefore && captured.view.plot.count > 0 && captured.view.plot.count < captured.view.plot.total, "RxMER zoom lost source provenance or original viewport bounds.");
+                const plot = findItem(state.capturePopup.contentItem, "upstreamCapturePlot");
+                require(plot && plot.viewport === captured.view.plot && findItem(plot,"measurementChart").available, "RxMER zoom no longer draws the exact admitted original viewport.");
+                const navigation = findItem(plot,"chartNavigation");
+                navigation.pointHovered(plotAnchor);
+                const readout = plot.readout;
+                require(readout.length > 0,"Actual original RxMER hover is unavailable.");
+                host.poll();
+                require(plot.readout === readout && plot.viewport === nativeCapture().view.plot,
+                    "Unchanged native polling cleared original RxMER hover or source alias.");
+                state.plotViews = state.plotViews.concat([{action:"zoom",capture_view:captured,hover_preserved:readout}]);
+                state.plotBefore = JSON.stringify(captured.view);
+                clickPopup(state.capturePopup, "upstreamCapturePlotFull");
+                next("capture-plot-reset");
+            } else if (state.phase === "capture-plot-reset") {
+                if (!inspectorCurrent() || JSON.stringify(nativeCapture().view) === state.plotBefore) return;
+                const captured = nativeCapture();
+                require(captured.view.plot.start === 0 && captured.view.plot.count === captured.view.plot.total, "RxMER reset did not restore original bounded capture coordinates.");
+                state.plotViews = state.plotViews.concat([{action:"reset",capture_view:captured}]);
+                next("capture-plot-image");
+                console.log("MERLIN_UPSTREAM_RXMER_CAPTURE ready");
+                require(state.capturePopup.contentItem.grabToImage(function(result) {
+                    if (state.done) return;
+                    try {
+                        require(result.saveToFile(screenshotPath + ".rxmer.png"), "Could not save actual original RxMER plot.");
+                        state.rxmerImageSaved = true;
+                        next("capture-plot-image-grace");
+                    } catch (error) { complete(false,String(error)); }
+                }), "Actual RxMER plot rejected capture.");
+            } else if (state.phase === "capture-plot-image-grace") {
+                if (Date.now() - state.phaseStartedAt < captureGraceMs) return;
                 clickPopup(state.capturePopup, "upstreamCaptureClose");
                 next("capture-closed");
+            } else if (state.phase === "capture-plot-image") {
+                return;
             } else if (state.phase === "capture-closed") {
                 if (state.capturePopup.visible) {
                     return;

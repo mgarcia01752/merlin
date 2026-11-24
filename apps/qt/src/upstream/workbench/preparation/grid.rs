@@ -23,55 +23,12 @@ impl Pending {
         expected: SessionKey,
         request: ResourceGridRequest,
     ) -> Result<Self, (UpstreamController, String)> {
-        let reservation = match budget.reserve_resources(RetainedResources {
-            payload_bytes: std::mem::size_of::<Retained<Mutex<Option<UpstreamController>>>>(),
-            shared_roots: CONTROLLER_SLOT_SHARED_ROOTS,
-            ..Default::default()
-        }) {
-            Ok(reservation) => reservation,
-            Err(error) => return Err((controller, error_text(format!("{error:?}")))),
-        };
-        let owner = Arc::new(reservation.retain(Mutex::new(Some(controller))));
-        let worker_owner = Arc::clone(&owner);
-        let transport = (|| {
-            let (sender, receiver) = bounded_channel(&budget, PREPARATION_COMPLETION_CAPACITY)?;
-            let delivery = sender.reserve()?;
-            let task_budget = budget.clone();
-            let task = admit_task(&task_budget, move || {
-                let result = {
-                    let slot = worker_owner
-                        .value()
-                        .lock()
-                        .unwrap_or_else(|error| error.into_inner());
-                    super::super::grid::observe(
-                        slot.as_ref()
-                            .expect("Grid preparation retains the original controller"),
-                        request,
-                        &budget,
-                    )
-                    .map_err(error_text)
-                    .map_err(|message| {
-                        WorkerFailure::admit_with_fallback(
-                            message.into(),
-                            &budget,
-                            WORKER_FAILURE_ADMISSION_MESSAGE,
-                        )
-                    })
-                };
-                let _ = delivery.send(result);
-            })?;
-            Ok::<_, crate::shell::RetentionError>((receiver, task))
-        })();
-        let (receiver, task) = match transport {
-            Ok(prepared) => prepared,
-            Err(error) => return Err((take_controller(&owner), error_text(format!("{error:?}")))),
-        };
-        if let Err(error) = std::thread::Builder::new()
-            .name("merlin-upstream-grid".into())
-            .spawn(move || run_task(task))
-        {
-            return Err((take_controller(&owner), error_text(error.to_string())));
-        }
+        let (owner, receiver) = super::query::controller_query(
+            controller,
+            budget,
+            "merlin-upstream-grid",
+            move |controller, budget| super::super::grid::observe(controller, request, budget),
+        )?;
         Ok(Self::Grid {
             expected,
             receiver,

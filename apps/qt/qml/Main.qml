@@ -84,6 +84,52 @@ ApplicationWindow {
     property QtObject upstreamExecutionProbe: null
     property QtObject upstreamInputsProbe: null
     property QtObject upstreamGridProbe: null
+    readonly property bool upstreamInstrumentsProbeRequested: Qt.application.arguments.indexOf("--upstream-instruments-probe") >= 0
+    property QtObject upstreamInstrumentsProbe: null
+    readonly property bool downstreamSharedProbeRequested: Qt.application.arguments.indexOf("--downstream-shared-probe") >= 0
+    property QtObject downstreamSharedProbe: null
+    property Component downstreamSharedProbeComponent: Component {
+        DownstreamSharedInstrumentsProbe {
+            onFinished: function(success, message) { Qt.exit(success ? 0 : 1) }
+        }
+    }
+    /** Exercise preserved downstream consumers with actual original/native data. */
+    function startDownstreamSharedProbe() {
+        const args = Qt.application.arguments
+        const imageArgument = args.indexOf("--downstream-shared-image")
+        if (imageArgument < 0 || imageArgument + 1 >= args.length) {
+            console.error("Downstream shared probe requires a fresh screenshot path.")
+            Qt.exit(1)
+            return
+        }
+        downstreamSharedProbe = downstreamSharedProbeComponent.createObject(window, {
+            rootWindow: window, workbench: workbench, tabs: directionTabs,
+            host: directionHost, controls: sharedControls, captureItem: unifiedFrame,
+            screenshotPath: args[imageArgument + 1]
+        })
+        if (!downstreamSharedProbe) { Qt.exit(1) }
+    }
+    property Component upstreamInstrumentsProbeComponent: Component {
+        UpstreamInstrumentsProbe {
+            onFinished: function(success, message) { Qt.exit(success ? 0 : 1) }
+        }
+    }
+    /** Run actual public-data consumers with an explicit fresh evidence destination. */
+    function startUpstreamInstrumentsProbe() {
+        const args = Qt.application.arguments
+        const imageArgument = args.indexOf("--upstream-instruments-image")
+        if (imageArgument < 0 || imageArgument + 1 >= args.length) {
+            console.error("Upstream instruments probe requires a fresh screenshot path.")
+            Qt.exit(1)
+            return
+        }
+        upstreamInstrumentsProbe = upstreamInstrumentsProbeComponent.createObject(window, {
+            rootWindow: window, workbench: workbench, tabs: directionTabs,
+            host: directionHost, controls: sharedControls, captureItem: unifiedFrame,
+            screenshotPath: args[imageArgument + 1]
+        })
+        if (!upstreamInstrumentsProbe) { Qt.exit(1) }
+    }
     property Component upstreamGridProbeComponent: Component {
         UpstreamResourceGridProbe {
             onFinished: function(success, message) {
@@ -258,6 +304,10 @@ ApplicationWindow {
             Qt.callLater(startUpstreamExecutionProbe)
         } else if (upstreamInputsProbeRequested) {
             Qt.callLater(startUpstreamInputsProbe)
+        } else if (downstreamSharedProbeRequested) {
+            Qt.callLater(startDownstreamSharedProbe)
+        } else if (upstreamInstrumentsProbeRequested) {
+            Qt.callLater(startUpstreamInstrumentsProbe)
         } else if (upstreamGridProbeRequested) {
             Qt.callLater(startUpstreamGridProbe)
         } else if (Qt.application.arguments.indexOf("--smoke-test") >= 0) {
@@ -348,7 +398,10 @@ ApplicationWindow {
                     onConfigurationLoadRequested: directionHost.loadConfiguration()
                     onCaptureLoadRequested: function(family) { directionHost.loadCapture(family) }
                     onCapturePageRequested: function(family, first) { directionHost.capturePage(family, first) }
+                    onCapturePlotRequested: function(family, first, count) { directionHost.capturePlot(family, first, count) }
                     onResourceGridRequested: directionHost.beginResourceGrid()
+                    onInstrumentOpenRequested: function(kind) { directionHost.beginInstrument(kind) }
+                    onInstrumentRequested: function(kind, selection, context) { directionHost.requestInstrument(kind, selection, context) }
                     onResourceGridViewRequested: function(request, context) { directionHost.requestResourceGrid(request, context) }
                     onResourceGrantRequested: function(grantId, context) { directionHost.selectResourceGrant(grantId, context) }
                 }
