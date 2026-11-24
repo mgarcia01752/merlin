@@ -14,6 +14,7 @@ from urllib.parse import unquote, urlsplit
 SOURCE_CRATES = {
     "docsis_ofdm_fec": "crates/ofdm",
     "docsis_ofdma": "crates/ofdma",
+    "merlin": "crates/merlin",
     "merlin_api": "crates/phy-api",
     "pnm_input": "crates/pnm-input",
 }
@@ -242,7 +243,7 @@ def resolve_reexport_owners(data, root, documentation_root=None):
         ValueError when an owner cannot be proven. Identical type names alone
         never establish identity across independent PHY crates.
     """
-    from implementation_evidence import rust_code
+    from implementation_evidence import block, rust_code
     exports = {item['export']: item for items in data.values() for item in items}
     for item in exports.values():
         missing = [method for method in item['methods'] if method['source_file'] is None]
@@ -256,12 +257,33 @@ def resolve_reexport_owners(data, root, documentation_root=None):
         module = directory.joinpath(*parts[1:-1])
         paths = [module.with_suffix('.rs'), module / 'mod.rs'] if len(parts) > 2 else [directory / 'lib.rs']
         source = next((path for path in paths if path.is_file()), None)
+        inline_facade = parts[:-1] == ['merlin', 'common'] and source is None
+        code = rust_code(source.read_text()) if source is not None else ''
+        if inline_facade and (directory / 'lib.rs').is_file():
+            # The facade's common namespace is declared inline. Only its exact
+            # top-level public module can establish these imports; another
+            # module containing the same type name is not source evidence.
+            facade = rust_code((directory / 'lib.rs').read_text())
+            # Find each whole public inline module opener, e.g. `pub mod common {`.
+            # No groups/flags; literal-masked code and brace depth exclude nested
+            # modules, comments and string decoys. Empty/multiple bodies prove none.
+            bodies = [block(facade, match.end() - 1)
+                      for match in re.finditer(r'\bpub\s+mod\s+common\s*\{', facade)
+                      if facade[:match.start()].count('{') == facade[:match.start()].count('}')]
+            if len(bodies) == 1:
+                code = bodies[0]
         origins = set()
-        if source is not None:
+        if code:
             # Explicit grouped pub use, e.g. docsis_ofdma::api::{ApiError, ApiResult}.
             # Groups are full source namespace and comma-delimited names/aliases.
-            for match in re.finditer(r'\bpub\s+use\s+([\w:]+)::\{([^{}]+)\}\s*;', rust_code(source.read_text())):
-                namespace = API_NAMESPACES.get(match[1], match[1])
+            for match in re.finditer(r'\bpub\s+use\s+([\w:]+)::\{([^{}]+)\}\s*;', code):
+                if (inline_facade
+                        and code[:match.start()].count('{') != code[:match.start()].count('}')):
+                    continue
+                # merlin_api normalizes to this very facade namespace. Resolve
+                # the facade's origin through the actual compiler crate index,
+                # never through its own missing-source inventory copy.
+                namespace = match[1] if inline_facade else API_NAMESPACES.get(match[1], match[1])
                 if match[1].split('::')[0] not in SOURCE_CRATES:
                     continue
                 for entry in match[2].split(','):
@@ -294,11 +316,27 @@ def resolve_reexport_owners(data, root, documentation_root=None):
                     for name, primitive in aliases.items():
                         signature = re.sub(r'\b' + re.escape(name) + r'\b', primitive, signature)
                 if signature == method['signature']:
-                    candidates.append(value)
+                    candidates.append((value, False))
+                    continue
+                # The exact import and compiler item kind above establish one
+                # nominal type. Rustdoc may spell that type as Self, its original
+                # name or its exposed alias. Preserve every other signature token.
+                # Whole-token substitutions, no flags/groups: Result<Self, E>
+                # and Result<Project, E> agree for the proven Project import;
+                # Selfish and elsewhere::Project remain distinct signatures.
+                original_name = original['export'].rsplit('::', 1)[-1]
+                canonical = re.sub(r'\bSelf\b', original_name, signature)
+                exposed = re.sub(r'\bSelf\b', original_name, method['signature'])
+                exposed = re.sub(r'\b' + re.escape(parts[-1]) + r'\b', original_name, exposed)
+                if canonical == exposed:
+                    candidates.append((value, True))
             if len(candidates) != 1:
                 raise ValueError(f"Re-export method has no exact canonical owner: {method['operation']}")
-            method['source_file'] = candidates[0]['source_file']
+            canonical, nominal_spelling = candidates[0]
+            method['source_file'] = canonical['source_file']
             method['reexport_origin'] = original['export']
+            if nominal_spelling:
+                method['reexport_canonical_signature'] = canonical['signature']
 
 
 def main():

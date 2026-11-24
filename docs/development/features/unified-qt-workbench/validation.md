@@ -4910,3 +4910,37 @@ completed grants, 16648 compared bits and 1136 unverified bits on cancellation,
 then again verifies all 505856 source bits in a distinct 256-grant run. Prefix
 length varies with actual scheduling; neither observed cancellation count is a
 required constant. The guide image comes from this final executable.
+
+
+## UIU-US-03 lossless capture-source API prerequisite
+
+The [demonstrated source JSON gap](upstream-capture-source-json.md) is implemented
+on the existing public UCD/RxMER/Pre-Eq owners and installed `merlin.upstream`
+classes. Existing inspection-only JSON remains unchanged. Strict source import
+preserves binary originals and native decoder diagnostics; it does not infer an
+association or create an executable measurement plan. Outer delivery JSON stays
+caller-owned. The [machine-readable receipt](upstream-capture-source-json-evidence.json)
+and [exact executed cases](us-03-source-json-operation-test-results.json) retain
+scope, source hashes, commands, original failures and corrected fresh metadata.
+
+Executed scoped validation:
+
+- Complete `pnm-input` tests: 113 pass, including twelve new source transport
+  cases, prior association/reassembly, independent vectors and saved-input tests.
+- Native-input facade tests: 31 pass. Input/facade and native binding Clippy,
+  both formatting checks, existing CLI compilation and workspace rustdoc pass.
+- One release wheel, installed into a fresh isolated Linux CPython 3.10
+  environment: ten new source tests plus twelve existing UCD/RxMER/Pre-Eq,
+  measured-plan and namespace cases pass. Four fresh separate Rust reference
+  runs supply inspection and 25/50 kHz measured science/provenance comparisons.
+- Fresh rustdoc exposed missing Source links and nominal `Self` spelling in
+  inline facade exports. The narrow inventory correction retains exact canonical
+  and exposed compiler signatures; sixteen independent inventory cases pass.
+  Metadata availability remains separate from scientific execution evidence.
+
+Qt source, manifests, registration and presentation are unchanged in this unit;
+Qt/QML rebuilding is not required. Original numerical algorithms are unchanged,
+so unrelated full workspace/FEC and all native Python suites are not repeated.
+Their existing milestone evidence and final acceptance gates remain intact.
+US03 stays unchecked for native acquisition/viewer interactions, source delivery
+retention, measured context through configuration and actual GUI acceptance.

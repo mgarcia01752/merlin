@@ -5,10 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-qt-workbench/session-01-control-metadata/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "fe04f22 plus exact ff062c1/f873607 paired control metadata candidate",
-    "inventory_command": "Archive-matched installed native_api_inventory.py; session-01-control-metadata-native/results.json",
-    "native_sha256": "5fafd17cc3e722829fb402ecd786d2a011c99b37841672d8f09dcefc998a2356",
-    "scope": "Three additive control metadata methods, twenty selected native cases/no skips. All prior native classes/members/signatures and Rust inventory exactly preserved after removing the three additions. Complete SESSION acceptance remains open."
+    "revision": "00d0ef4 plus exact capture-source candidate manifest",
+    "inventory_command": "Installed current candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/us-03-source-json/native/native-exports.json",
+    "native_sha256": "50c5a4b4b84b8b9cb87fdaa31c6fa95d94944263d55040164efbb9eddc2c3d1d",
+    "scope": "Six additive capture-source methods; installed source, legacy capture, measured admission, namespace and downstream import regressions."
   },
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
@@ -181,7 +181,9 @@
     "units.session.control.resources": "Compiled target payload bytes, ordered-container entries and shared roots. Includes common stop atomic but counts inline handles/state once; excludes private allocator/refcount bookkeeping, Python projection and temporary execution storage. No total heap/RSS guarantee.",
     "errors.session.control.resources": "Checked ResourceLimit overflow: downstream ApiResult/ApiError and upstream PhyResult/PhyError retained_footprint field. Native wrappers release the interpreter and preserve existing structured conversion; Python argument errors remain separate.",
     "evidence.session.control.resources": "docs/development/features/unified-qt-workbench/session-control-metadata-evidence.json and session-control-metadata-operation-test-results.json: actual Rust owner/legacy/facade and exact archive-matched installed native parity, plus affected Qt/CLI compatibility. Source commits alone establish no runtime evidence.",
-    "status.session.control.resources": "Scoped paired operation accepted in the unified workspace. Qt wrapper/worker/transport/presentation admission and complete UIU-SESSION-01 acceptance remain open; completed tasks are not reopened."
+    "status.session.control.resources": "Scoped paired operation accepted in the unified workspace. Qt wrapper/worker/transport/presentation admission and complete UIU-SESSION-01 acceptance remain open; completed tasks are not reopened.",
+    "evidence.uiu-us-03-source-json": "../unified-qt-workbench/upstream-capture-source-json-evidence.json and us-03-source-json-operation-test-results.json: actual scoped Rust/native source-envelope validation, unchanged inspection and independent literal binary fixtures. Qt adoption remains separate.",
+    "status.uiu-us-03-source-json": "Implemented additive Rust and installed native Linux CPython source transport; original binary science and inspection remain unchanged. UIU-US-03 remains open for native input/viewer acceptance."
   },
   "type_exports": {
     "downstream": [
@@ -35753,6 +35755,276 @@
       },
       "evidence": "evidence.session.control.resources",
       "status": "status.session.control.resources"
+    },
+    {
+      "direction": "upstream",
+      "operation": "pnm_input::upstream::UcdCapture::from_source_json",
+      "rust_namespace": "pnm_input::upstream",
+      "rust_type_method": {
+        "signature": "pub fn from_source_json(bytes: &[u8]) -> ApiResult<Self>",
+        "source_file": "crates/pnm-input/src/upstream/ucd.rs",
+        "rustdoc": "pnm_input/upstream/struct.UcdCapture.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "UcdCapture.from_source_json(bytes)",
+        "native_operation": "merlin.upstream.UcdCapture.from_source_json"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Owned lossless binary source transport; no association, reconstruction or execution; old inspection output unchanged."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-13",
+        "REQ-UIU-21"
+      ],
+      "checklist": [
+        "UIU-US-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_source_json.rs::ucd_source_round_trip_preserves_opaque_records_and_old_inspection"
+        ],
+        "python": {
+          "status": "installed native owner regression",
+          "cases": [
+            "bindings/python/tests/test_upstream_source_json.py::CaptureSourceJsonTests.test_literal_envelopes_match_binary_and_unchanged_inspection"
+          ]
+        }
+      },
+      "evidence": "evidence.uiu-us-03-source-json",
+      "status": "status.uiu-us-03-source-json"
+    },
+    {
+      "direction": "upstream",
+      "operation": "pnm_input::upstream::UcdCapture::to_source_json",
+      "rust_namespace": "pnm_input::upstream",
+      "rust_type_method": {
+        "signature": "pub fn to_source_json(&self) -> ApiResult<String>",
+        "source_file": "crates/pnm-input/src/upstream/ucd.rs",
+        "rustdoc": "pnm_input/upstream/struct.UcdCapture.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "UcdCapture.to_source_json(self, /)",
+        "native_operation": "merlin.upstream.UcdCapture.to_source_json"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<String>",
+        "scope": "Owned lossless binary source transport; no association, reconstruction or execution; old inspection output unchanged."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-13",
+        "REQ-UIU-21"
+      ],
+      "checklist": [
+        "UIU-US-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_source_json.rs::ucd_source_round_trip_preserves_opaque_records_and_old_inspection"
+        ],
+        "python": {
+          "status": "installed native owner regression",
+          "cases": [
+            "bindings/python/tests/test_upstream_source_json.py::CaptureSourceJsonTests.test_literal_envelopes_match_binary_and_unchanged_inspection"
+          ]
+        }
+      },
+      "evidence": "evidence.uiu-us-03-source-json",
+      "status": "status.uiu-us-03-source-json"
+    },
+    {
+      "direction": "upstream",
+      "operation": "pnm_input::upstream::RxmerCapture::from_source_json",
+      "rust_namespace": "pnm_input::upstream",
+      "rust_type_method": {
+        "signature": "pub fn from_source_json(bytes: &[u8]) -> ApiResult<Self>",
+        "source_file": "crates/pnm-input/src/upstream/rxmer.rs",
+        "rustdoc": "pnm_input/upstream/struct.RxmerCapture.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "RxmerCapture.from_source_json(bytes)",
+        "native_operation": "merlin.upstream.RxmerCapture.from_source_json"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Owned lossless binary source transport; no association, reconstruction or execution; old inspection output unchanged."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-13",
+        "REQ-UIU-21"
+      ],
+      "checklist": [
+        "UIU-US-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_source_json.rs::rxmer_source_round_trip_preserves_null_grid_header_and_old_inspection"
+        ],
+        "python": {
+          "status": "installed native owner regression",
+          "cases": [
+            "bindings/python/tests/test_upstream_source_json.py::CaptureSourceJsonTests.test_literal_envelopes_match_binary_and_unchanged_inspection"
+          ]
+        }
+      },
+      "evidence": "evidence.uiu-us-03-source-json",
+      "status": "status.uiu-us-03-source-json"
+    },
+    {
+      "direction": "upstream",
+      "operation": "pnm_input::upstream::RxmerCapture::to_source_json",
+      "rust_namespace": "pnm_input::upstream",
+      "rust_type_method": {
+        "signature": "pub fn to_source_json(&self) -> ApiResult<String>",
+        "source_file": "crates/pnm-input/src/upstream/rxmer.rs",
+        "rustdoc": "pnm_input/upstream/struct.RxmerCapture.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "RxmerCapture.to_source_json(self, /)",
+        "native_operation": "merlin.upstream.RxmerCapture.to_source_json"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<String>",
+        "scope": "Owned lossless binary source transport; no association, reconstruction or execution; old inspection output unchanged."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-13",
+        "REQ-UIU-21"
+      ],
+      "checklist": [
+        "UIU-US-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_source_json.rs::rxmer_source_round_trip_preserves_null_grid_header_and_old_inspection"
+        ],
+        "python": {
+          "status": "installed native owner regression",
+          "cases": [
+            "bindings/python/tests/test_upstream_source_json.py::CaptureSourceJsonTests.test_literal_envelopes_match_binary_and_unchanged_inspection"
+          ]
+        }
+      },
+      "evidence": "evidence.uiu-us-03-source-json",
+      "status": "status.uiu-us-03-source-json"
+    },
+    {
+      "direction": "upstream",
+      "operation": "pnm_input::upstream::PreEqCapture::from_source_json",
+      "rust_namespace": "pnm_input::upstream",
+      "rust_type_method": {
+        "signature": "pub fn from_source_json(bytes: &[u8]) -> ApiResult<Self>",
+        "source_file": "crates/pnm-input/src/upstream/pre_eq.rs",
+        "rustdoc": "pnm_input/upstream/struct.PreEqCapture.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "PreEqCapture.from_source_json(bytes)",
+        "native_operation": "merlin.upstream.PreEqCapture.from_source_json"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Owned lossless binary source transport; no association, reconstruction or execution; old inspection output unchanged."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-13",
+        "REQ-UIU-21"
+      ],
+      "checklist": [
+        "UIU-US-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_source_json.rs::both_pre_eq_source_kinds_preserve_signed_coefficients_and_old_inspection"
+        ],
+        "python": {
+          "status": "installed native owner regression",
+          "cases": [
+            "bindings/python/tests/test_upstream_source_json.py::CaptureSourceJsonTests.test_literal_envelopes_match_binary_and_unchanged_inspection"
+          ]
+        }
+      },
+      "evidence": "evidence.uiu-us-03-source-json",
+      "status": "status.uiu-us-03-source-json"
+    },
+    {
+      "direction": "upstream",
+      "operation": "pnm_input::upstream::PreEqCapture::to_source_json",
+      "rust_namespace": "pnm_input::upstream",
+      "rust_type_method": {
+        "signature": "pub fn to_source_json(&self) -> ApiResult<String>",
+        "source_file": "crates/pnm-input/src/upstream/pre_eq.rs",
+        "rustdoc": "pnm_input/upstream/struct.PreEqCapture.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "PreEqCapture.to_source_json(self, /)",
+        "native_operation": "merlin.upstream.PreEqCapture.to_source_json"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<String>",
+        "scope": "Owned lossless binary source transport; no association, reconstruction or execution; old inspection output unchanged."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-13",
+        "REQ-UIU-21"
+      ],
+      "checklist": [
+        "UIU-US-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_source_json.rs::both_pre_eq_source_kinds_preserve_signed_coefficients_and_old_inspection"
+        ],
+        "python": {
+          "status": "installed native owner regression",
+          "cases": [
+            "bindings/python/tests/test_upstream_source_json.py::CaptureSourceJsonTests.test_literal_envelopes_match_binary_and_unchanged_inspection"
+          ]
+        }
+      },
+      "evidence": "evidence.uiu-us-03-source-json",
+      "status": "status.uiu-us-03-source-json"
     }
   ],
   "executed_records": [
@@ -35804,7 +36076,8 @@
     "docs/development/features/unified-qt-workbench/session-archive-bound-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/session-output-bound-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/session-query-envelope-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/session-control-metadata-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/session-control-metadata-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/us-03-source-json-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -74504,6 +74777,360 @@
       },
       "evidence": "evidence.session.control.resources",
       "status": "status.session.control.resources"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.UcdCapture.from_source_json",
+      "rust_namespace": "pnm_input::upstream",
+      "rust_type_method": {
+        "export": "pnm_input::upstream::UcdCapture",
+        "source_file": "bindings/python/src/upstream/capture.rs",
+        "symbol": "PyUcdCapture",
+        "signature": "pub fn from_source_json(bytes: &[u8]) -> ApiResult<Self>",
+        "mapping": "Native checked argument/result conversion or composition over the named Rust type and listed public operations. Public field/variant/Serde projections have no invented core method; source_file names their actual Rust adapter.",
+        "delegated_operation": "pnm_input::upstream::UcdCapture::from_source_json",
+        "delegated_operations": [
+          {
+            "operation": "pnm_input::upstream::UcdCapture::from_source_json",
+            "signature": "pub fn from_source_json(bytes: &[u8]) -> ApiResult<Self>",
+            "source_file": "crates/pnm-input/src/upstream/ucd.rs"
+          }
+        ]
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "name": "from_source_json",
+        "kind": "method",
+        "signature": "(bytes)",
+        "availability": "installed native method",
+        "declaration": "UcdCapture.from_source_json(bytes)",
+        "result_annotation": "UcdCapture"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "python_return": "UcdCapture",
+        "rust_type": "pnm_input::upstream::UcdCapture",
+        "scope": "Native owned conversion of the declared Rust type/field/result. Optional values remain None; JSON preserves the shared versioned Rust schema. No separate Python scientific result."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-13",
+        "REQ-UIU-21"
+      ],
+      "checklist": [
+        "UIU-US-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_source_json.rs::ucd_source_round_trip_preserves_opaque_records_and_old_inspection"
+        ],
+        "python": {
+          "status": "installed native owner regression",
+          "cases": [
+            "bindings/python/tests/test_upstream_source_json.py::CaptureSourceJsonTests.test_literal_envelopes_match_binary_and_unchanged_inspection"
+          ]
+        }
+      },
+      "evidence": "evidence.uiu-us-03-source-json",
+      "status": "status.uiu-us-03-source-json"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.UcdCapture.to_source_json",
+      "rust_namespace": "pnm_input::upstream",
+      "rust_type_method": {
+        "export": "pnm_input::upstream::UcdCapture",
+        "source_file": "bindings/python/src/upstream/capture.rs",
+        "symbol": "PyUcdCapture",
+        "signature": "pub fn to_source_json(&self) -> ApiResult<String>",
+        "mapping": "Native checked argument/result conversion or composition over the named Rust type and listed public operations. Public field/variant/Serde projections have no invented core method; source_file names their actual Rust adapter.",
+        "delegated_operation": "pnm_input::upstream::UcdCapture::to_source_json",
+        "delegated_operations": [
+          {
+            "operation": "pnm_input::upstream::UcdCapture::to_source_json",
+            "signature": "pub fn to_source_json(&self) -> ApiResult<String>",
+            "source_file": "crates/pnm-input/src/upstream/ucd.rs"
+          }
+        ]
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "name": "to_source_json",
+        "kind": "method",
+        "signature": "(self, /)",
+        "availability": "installed native method",
+        "declaration": "UcdCapture.to_source_json(self, /)",
+        "result_annotation": "str"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "python_return": "str",
+        "rust_type": "pnm_input::upstream::UcdCapture",
+        "scope": "Native owned conversion of the declared Rust type/field/result. Optional values remain None; JSON preserves the shared versioned Rust schema. No separate Python scientific result."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-13",
+        "REQ-UIU-21"
+      ],
+      "checklist": [
+        "UIU-US-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_source_json.rs::ucd_source_round_trip_preserves_opaque_records_and_old_inspection"
+        ],
+        "python": {
+          "status": "installed native owner regression",
+          "cases": [
+            "bindings/python/tests/test_upstream_source_json.py::CaptureSourceJsonTests.test_literal_envelopes_match_binary_and_unchanged_inspection"
+          ]
+        }
+      },
+      "evidence": "evidence.uiu-us-03-source-json",
+      "status": "status.uiu-us-03-source-json"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.RxmerCapture.from_source_json",
+      "rust_namespace": "pnm_input::upstream",
+      "rust_type_method": {
+        "export": "pnm_input::upstream::RxmerCapture",
+        "source_file": "bindings/python/src/upstream/capture.rs",
+        "symbol": "PyRxmerCapture",
+        "signature": "pub fn from_source_json(bytes: &[u8]) -> ApiResult<Self>",
+        "mapping": "Native checked argument/result conversion or composition over the named Rust type and listed public operations. Public field/variant/Serde projections have no invented core method; source_file names their actual Rust adapter.",
+        "delegated_operation": "pnm_input::upstream::RxmerCapture::from_source_json",
+        "delegated_operations": [
+          {
+            "operation": "pnm_input::upstream::RxmerCapture::from_source_json",
+            "signature": "pub fn from_source_json(bytes: &[u8]) -> ApiResult<Self>",
+            "source_file": "crates/pnm-input/src/upstream/rxmer.rs"
+          }
+        ]
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "name": "from_source_json",
+        "kind": "method",
+        "signature": "(bytes)",
+        "availability": "installed native method",
+        "declaration": "RxmerCapture.from_source_json(bytes)",
+        "result_annotation": "RxmerCapture"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "python_return": "RxmerCapture",
+        "rust_type": "pnm_input::upstream::RxmerCapture",
+        "scope": "Native owned conversion of the declared Rust type/field/result. Optional values remain None; JSON preserves the shared versioned Rust schema. No separate Python scientific result."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-13",
+        "REQ-UIU-21"
+      ],
+      "checklist": [
+        "UIU-US-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_source_json.rs::rxmer_source_round_trip_preserves_null_grid_header_and_old_inspection"
+        ],
+        "python": {
+          "status": "installed native owner regression",
+          "cases": [
+            "bindings/python/tests/test_upstream_source_json.py::CaptureSourceJsonTests.test_literal_envelopes_match_binary_and_unchanged_inspection"
+          ]
+        }
+      },
+      "evidence": "evidence.uiu-us-03-source-json",
+      "status": "status.uiu-us-03-source-json"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.RxmerCapture.to_source_json",
+      "rust_namespace": "pnm_input::upstream",
+      "rust_type_method": {
+        "export": "pnm_input::upstream::RxmerCapture",
+        "source_file": "bindings/python/src/upstream/capture.rs",
+        "symbol": "PyRxmerCapture",
+        "signature": "pub fn to_source_json(&self) -> ApiResult<String>",
+        "mapping": "Native checked argument/result conversion or composition over the named Rust type and listed public operations. Public field/variant/Serde projections have no invented core method; source_file names their actual Rust adapter.",
+        "delegated_operation": "pnm_input::upstream::RxmerCapture::to_source_json",
+        "delegated_operations": [
+          {
+            "operation": "pnm_input::upstream::RxmerCapture::to_source_json",
+            "signature": "pub fn to_source_json(&self) -> ApiResult<String>",
+            "source_file": "crates/pnm-input/src/upstream/rxmer.rs"
+          }
+        ]
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "name": "to_source_json",
+        "kind": "method",
+        "signature": "(self, /)",
+        "availability": "installed native method",
+        "declaration": "RxmerCapture.to_source_json(self, /)",
+        "result_annotation": "str"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "python_return": "str",
+        "rust_type": "pnm_input::upstream::RxmerCapture",
+        "scope": "Native owned conversion of the declared Rust type/field/result. Optional values remain None; JSON preserves the shared versioned Rust schema. No separate Python scientific result."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-13",
+        "REQ-UIU-21"
+      ],
+      "checklist": [
+        "UIU-US-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_source_json.rs::rxmer_source_round_trip_preserves_null_grid_header_and_old_inspection"
+        ],
+        "python": {
+          "status": "installed native owner regression",
+          "cases": [
+            "bindings/python/tests/test_upstream_source_json.py::CaptureSourceJsonTests.test_literal_envelopes_match_binary_and_unchanged_inspection"
+          ]
+        }
+      },
+      "evidence": "evidence.uiu-us-03-source-json",
+      "status": "status.uiu-us-03-source-json"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.PreEqCapture.from_source_json",
+      "rust_namespace": "pnm_input::upstream",
+      "rust_type_method": {
+        "export": "pnm_input::upstream::PreEqCapture",
+        "source_file": "bindings/python/src/upstream/capture.rs",
+        "symbol": "PyPreEqCapture",
+        "signature": "pub fn from_source_json(bytes: &[u8]) -> ApiResult<Self>",
+        "mapping": "Native checked argument/result conversion or composition over the named Rust type and listed public operations. Public field/variant/Serde projections have no invented core method; source_file names their actual Rust adapter.",
+        "delegated_operation": "pnm_input::upstream::PreEqCapture::from_source_json",
+        "delegated_operations": [
+          {
+            "operation": "pnm_input::upstream::PreEqCapture::from_source_json",
+            "signature": "pub fn from_source_json(bytes: &[u8]) -> ApiResult<Self>",
+            "source_file": "crates/pnm-input/src/upstream/pre_eq.rs"
+          }
+        ]
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "name": "from_source_json",
+        "kind": "method",
+        "signature": "(bytes)",
+        "availability": "installed native method",
+        "declaration": "PreEqCapture.from_source_json(bytes)",
+        "result_annotation": "PreEqCapture"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "python_return": "PreEqCapture",
+        "rust_type": "pnm_input::upstream::PreEqCapture",
+        "scope": "Native owned conversion of the declared Rust type/field/result. Optional values remain None; JSON preserves the shared versioned Rust schema. No separate Python scientific result."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-13",
+        "REQ-UIU-21"
+      ],
+      "checklist": [
+        "UIU-US-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_source_json.rs::both_pre_eq_source_kinds_preserve_signed_coefficients_and_old_inspection"
+        ],
+        "python": {
+          "status": "installed native owner regression",
+          "cases": [
+            "bindings/python/tests/test_upstream_source_json.py::CaptureSourceJsonTests.test_literal_envelopes_match_binary_and_unchanged_inspection"
+          ]
+        }
+      },
+      "evidence": "evidence.uiu-us-03-source-json",
+      "status": "status.uiu-us-03-source-json"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.PreEqCapture.to_source_json",
+      "rust_namespace": "pnm_input::upstream",
+      "rust_type_method": {
+        "export": "pnm_input::upstream::PreEqCapture",
+        "source_file": "bindings/python/src/upstream/capture.rs",
+        "symbol": "PyPreEqCapture",
+        "signature": "pub fn to_source_json(&self) -> ApiResult<String>",
+        "mapping": "Native checked argument/result conversion or composition over the named Rust type and listed public operations. Public field/variant/Serde projections have no invented core method; source_file names their actual Rust adapter.",
+        "delegated_operation": "pnm_input::upstream::PreEqCapture::to_source_json",
+        "delegated_operations": [
+          {
+            "operation": "pnm_input::upstream::PreEqCapture::to_source_json",
+            "signature": "pub fn to_source_json(&self) -> ApiResult<String>",
+            "source_file": "crates/pnm-input/src/upstream/pre_eq.rs"
+          }
+        ]
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "name": "to_source_json",
+        "kind": "method",
+        "signature": "(self, /)",
+        "availability": "installed native method",
+        "declaration": "PreEqCapture.to_source_json(self, /)",
+        "result_annotation": "str"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.measurement",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "python_return": "str",
+        "rust_type": "pnm_input::upstream::PreEqCapture",
+        "scope": "Native owned conversion of the declared Rust type/field/result. Optional values remain None; JSON preserves the shared versioned Rust schema. No separate Python scientific result."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-13",
+        "REQ-UIU-21"
+      ],
+      "checklist": [
+        "UIU-US-03"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_source_json.rs::both_pre_eq_source_kinds_preserve_signed_coefficients_and_old_inspection"
+        ],
+        "python": {
+          "status": "installed native owner regression",
+          "cases": [
+            "bindings/python/tests/test_upstream_source_json.py::CaptureSourceJsonTests.test_literal_envelopes_match_binary_and_unchanged_inspection"
+          ]
+        }
+      },
+      "evidence": "evidence.uiu-us-03-source-json",
+      "status": "status.uiu-us-03-source-json"
     }
   ],
   "native_type_exports": {
@@ -75781,6 +76408,13 @@
       "inventory_command": "Exact installed wheel; session-01-output-bound-native/results.json",
       "native_sha256": "bca3a29c525a525f37d6d0fdd61f7819277a03c21652f02a5d40b0fda8a65850",
       "scope": "Six additive paired bounded-output operations; all earlier types/members preserved.48 native tests/no skips,18 direct process cases; full session/host acceptance pending."
+    },
+    {
+      "version": "0.4.0",
+      "revision": "fe04f22 plus exact ff062c1/f873607 paired control metadata candidate",
+      "inventory_command": "Archive-matched installed native_api_inventory.py; session-01-control-metadata-native/results.json",
+      "native_sha256": "5fafd17cc3e722829fb402ecd786d2a011c99b37841672d8f09dcefc998a2356",
+      "scope": "Three additive control metadata methods, twenty selected native cases/no skips. All prior native classes/members/signatures and Rust inventory exactly preserved after removing the three additions. Complete SESSION acceptance remains open."
     }
   ],
   "historical_rust_export_corrections": [

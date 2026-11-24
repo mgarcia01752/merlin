@@ -5200,3 +5200,19 @@ Terminal is covered independently. Shared BER precision belongs to
 16-grant workload instead of introducing a second definition. Continue US03
 measured inputs through existing native public owners, preserving provenance
 and avoiding synthetic reconstruction of captured context.
+
+### UIU-US-03 native input integration
+
+US02 is accepted at `00d0ef4e558add9738ab3183d2326d4ebad74abd`.
+The [capture-source JSON prerequisite](upstream-capture-source-json.md) records the
+specific public format gap required by US03's binary/JSON acceptance. Preserve
+inspection-only exports, existing native decoders and complete measured-plan
+admission. The same Rust/Python source operations have [scoped independent acceptance](validation.md#uiu-us-03-lossless-capture-source-api-prerequisite)
+before Qt consumer adoption. No new scientific algorithm or session framework is needed.
+
+Native integration must retain measured source context: existing synthetic draft
+preparation calls `configure_document`, which must not silently discard captured
+projection/provenance after `configure_measured`. Captured UCD settings and explicit
+association/update controls remain authoritative; do not fabricate defaults or
+permit unvalidated synthetic replacement. Input/viewer ownership and acceptance
+will follow the existing public plan/capture operations and C5 guarded renderers.

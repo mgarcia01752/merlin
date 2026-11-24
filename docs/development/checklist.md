@@ -655,6 +655,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Acceptance: Actual UCD/RxMER/Pre-Eq binary/JSON, exact original evidence/association, supported residual restrictions, explicit errors and no changed accepted state on failure.
   Evidence: [upstream acceptance plan](features/unified-qt-workbench/validation.md#upstream); pending implementation/acceptance.
 
+  Current work: [accepted capture-source JSON prerequisite](features/unified-qt-workbench/validation.md#uiu-us-03-lossless-capture-source-api-prerequisite) closes the demonstrated lossless JSON import gap through the public Rust/Python capture owners before Qt adoption. Preserve complete measured context and existing synthetic editor behavior; no session/framework expansion.
+
 <a id="task-uiu-us-04"></a>
 - [ ] **UIU-US-04** Render authoritative upstream allocation/pilot grid.
   Requirements: [REQ-UIU-14](../requirements.md#req-uiu-14).

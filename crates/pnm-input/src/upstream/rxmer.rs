@@ -188,6 +188,44 @@ impl RxmerCapture {
         })
     }
 
+    /// Imports a lossless source envelope through the original binary decoder.
+    ///
+    /// Loading never associates or executes a capture. The returned snapshot owns
+    /// the original binary bytes; callers retain outer delivery JSON separately.
+    ///
+    /// # Arguments
+    /// * `bytes` - Complete UTF-8 capture-source JSON, at most 1 MiB.
+    ///
+    /// # Returns
+    /// An immutable capture with the same original bytes and observations as
+    /// direct binary admission, independent of the caller's input buffer.
+    ///
+    /// # Errors
+    /// Rejects malformed/versioned/wrong-family envelopes, resource excess and
+    /// count/hash mismatches at the envelope boundary. Binary errors retain their
+    /// original category, field and offset. Inspection-only JSON is not accepted.
+    pub fn from_source_json(bytes: &[u8]) -> ApiResult<Self> {
+        let original = super::source_json::decode(bytes, super::source_json::CaptureKind::Rxmer)?;
+        Self::from_pnm(&original)
+    }
+
+    /// Exports the exact binary snapshot in a versioned lossless source envelope.
+    ///
+    /// The existing inspection-only `to_json` output remains separate and unchanged.
+    /// No configuration, association or scientific result is fabricated.
+    ///
+    /// # Returns
+    /// Owned JSON text containing the original bytes, byte count and SHA-256.
+    ///
+    /// # Errors
+    /// Returns a structured capture error if transport bounds or serialization fail.
+    pub fn to_source_json(&self) -> ApiResult<String> {
+        super::source_json::encode(
+            self.original_bytes(),
+            super::source_json::CaptureKind::Rxmer,
+        )
+    }
+
     /// Borrows the exact originally admitted file bytes for this capture's life.
     ///
     /// Unknown metadata, padding, null sentinels and original epoch are unchanged.

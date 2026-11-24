@@ -32,6 +32,28 @@ A matching version/tag alone does not establish a published unified wheel.
 
 `UcdCapture`, `RxmerCapture` and `PreEqCapture` inspect bounded original bytes.
 Their exported metadata and exact original bytes/hashes remain observations.
+For each capture type, `to_source_json()` exports a lossless source envelope and
+`from_source_json(bytes)` imports it through the same Rust binary decoder. Keep
+`to_json()` for inspection; it intentionally omits original byte payloads and is
+not a source importer. Python performs no decoding or hash validation itself.
+
+```python
+from pathlib import Path
+from merlin.upstream import UcdCapture
+
+original = bytes.fromhex(Path("examples/measurements/upstream/ucd/minimal.hex").read_text())
+capture = UcdCapture.from_mac_management(original)
+source_json = capture.to_source_json()
+restored = UcdCapture.from_source_json(source_json.encode("utf-8"))
+assert restored.original_bytes() == original
+assert restored.original_sha256() == capture.original_sha256()
+```
+
+The example uses an authored synthetic fixture from a source checkout. A loaded
+source JSON file's formatting remains caller-owned; `original_bytes()` returns
+its decoded binary capture. See the transport limits and evidence distinction in
+[measurement admission](../upstream/measurements.md).
+
 `configure_measured_json(bytes)` admits a complete explicit association plan through
 Rust's PNM adapter, then atomically accepts the prepared core input. It does not
 infer CM/CCAP identity, resample grids or reinterpret corrective C as physical H.

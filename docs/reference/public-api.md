@@ -15,6 +15,7 @@ Return to the [documentation index](../README.md) for other guides.
 
 | Public module | Responsibility |
 | --- | --- |
+| `merlin::upstream::inputs::{UcdCapture,RxmerCapture,PreEqCapture}` | Existing native binary inspection plus bounded `from_source_json`/`to_source_json` lossless source transport; immutable originals, unchanged inspection JSON and explicit association remain separate ([measurement contract](../user/upstream/measurements.md)) |
 | `merlin::common::RetainedFootprint` | [Passive retained-resource metadata](../user/api/retained-resources.md) from downstream inputs/Designer/controls/previews/requests/sweeps/results/archives and upstream controls/sessions/reports; payload bytes plus independent ordered-entry/shared-root counts, excluding private allocator/tree/refcount bookkeeping |
 | `merlin::downstream::{FullLoopReceiverArchivePolicy,FullLoopReceiverArchive}` | [Detached finite receiver histories](../user/api/full-loop-cells.md#detached-independent-histories), original cell/decoder context, compatible scientific queries and exact preflight/bounded-copy operations; no full job/input retention |
 | `signal_processing::receiver::channel_estimation::{MceSettings,ReliabilityEstimator,ReceiverReliability}` | Received-only MCE reliability policy, bounded continuous-pilot differences and training/tracking summary; no supplied H or exact simulator noise inputs |

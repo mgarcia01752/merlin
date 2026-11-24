@@ -16,6 +16,195 @@ from rust_api_inventory import inventory, main, resolve_reexport_owners
 class RustdocExportTests(unittest.TestCase):
     """Use independent minimal rustdoc shapes to verify public export discovery."""
 
+    def common_facade(self, root):
+        """Prepare a source-less inline facade trait and its original compiler page.
+
+        Args:
+            root: Independent temporary source/documentation root.
+        Returns:
+            Fresh inventory, facade source, documentation root and canonical page.
+        """
+        source = root / 'crates/merlin/src/lib.rs'
+        source.parent.mkdir(parents=True)
+        source.write_text('pub mod common { pub use merlin_api::{Cancellation}; }')
+        docs = root / 'doc'
+        facade = docs / 'merlin/common'
+        facade.mkdir(parents=True)
+        (facade / 'index.html').write_text(
+            '<a class="trait" href="trait.Cancellation.html" '
+            'title="trait merlin::common::Cancellation">Cancellation</a>')
+        (facade / 'trait.Cancellation.html').write_text(
+            '<h4 class="code-header">fn is_cancelled(&amp;self) -&gt; bool</h4>')
+        canonical = docs / 'merlin_api'
+        canonical.mkdir()
+        (canonical / 'index.html').write_text(
+            '<a class="trait" href="trait.Cancellation.html" '
+            'title="trait merlin_api::Cancellation">Cancellation</a>')
+        page = canonical / 'trait.Cancellation.html'
+        page.write_text(
+            '<a class="src" href="../src/merlin_api/control.rs.html#18">Source</a>'
+            '<h4 class="code-header">fn is_cancelled(&amp;self) -&gt; bool</h4>')
+        data = {'common': inventory('merlin::common', facade / 'index.html', docs)}
+        return data, source, docs, page
+
+    def test_inline_common_facade_without_source_uses_exact_original_trait_docs(self):
+        """The raw merlin_api origin avoids resolving back to the facade itself."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            data, _, docs, _ = self.common_facade(root)
+            method = data['common'][0]['methods'][0]
+            self.assertIsNone(method['source_file'])
+            resolve_reexport_owners(data, root, docs)
+            self.assertEqual(method['source_file'], 'crates/phy-api/src/control.rs')
+            self.assertEqual(method['reexport_origin'], 'merlin_api::Cancellation')
+            self.assertEqual(method['rustdoc'], 'merlin/common/trait.Cancellation.html')
+
+    def test_inline_common_facade_rejects_imports_in_other_or_nested_modules(self):
+        """Same-named imports outside the exact inline module never prove origin."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            data, source, docs, _ = self.common_facade(root)
+            for code in [
+                'pub mod other { pub use merlin_api::{Cancellation}; } pub mod common {}',
+                'pub mod other { pub mod common { pub use merlin_api::{Cancellation}; } }',
+                'pub mod common { mod other { pub use merlin_api::{Cancellation}; } }',
+                'pub mod common { /* pub use merlin_api::{Cancellation}; */ '
+                'const TEXT: &str = "pub use merlin_api::{Cancellation};"; }',
+            ]:
+                with self.subTest(source=code):
+                    source.write_text(code)
+                    with self.assertRaisesRegex(ValueError, 'unique explicit source'):
+                        resolve_reexport_owners(data, root, docs)
+            source.write_text('pub mod common { pub use merlin_api::different::{Cancellation}; }')
+            with self.assertRaisesRegex(ValueError, 'compiler inventory'):
+                resolve_reexport_owners(data, root, docs)
+
+    def test_inline_common_facade_rejects_ambiguous_import_and_compiler_sources(self):
+        """Neither source imports nor same-export compiler pages may be guessed."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            data, source, docs, page = self.common_facade(root)
+            source.write_text('pub mod common { pub use merlin_api::{Cancellation}; '
+                              'pub use docsis_ofdma::api::{Cancellation}; }')
+            with self.assertRaisesRegex(ValueError, 'unique explicit source'):
+                resolve_reexport_owners(data, root, docs)
+            source.write_text('pub mod common { pub use merlin_api::{Cancellation}; }')
+            (page.parent / 'index.html').write_text(
+                '<a class="trait" href="trait.Cancellation.html" '
+                'title="trait merlin_api::Cancellation">Cancellation</a>'
+                '<a class="trait" href="trait.Other.html" '
+                'title="trait merlin_api::Cancellation">Cancellation</a>')
+            (page.parent / 'trait.Other.html').write_text(
+                '<a class="src" href="../src/merlin_api/other.rs.html#18">Source</a>'
+                '<h4 class="code-header">fn is_cancelled(&amp;self) -&gt; bool</h4>')
+            with self.assertRaisesRegex(ValueError, 'compiler inventory'):
+                resolve_reexport_owners(data, root, docs)
+
+    def test_inline_common_facade_rejects_signature_kind_and_missing_source_drift(self):
+        """An exact import still requires the original compiler kind/signature/source."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            data, _, docs, page = self.common_facade(root)
+            page.write_text(
+                '<a class="src" href="../src/merlin_api/control.rs.html#18">Source</a>'
+                '<h4 class="code-header">fn is_cancelled(&amp;self) -&gt; usize</h4>')
+            with self.assertRaisesRegex(ValueError, 'exact canonical owner'):
+                resolve_reexport_owners(data, root, docs)
+            page.write_text('<h4 class="code-header">fn is_cancelled(&amp;self) -&gt; bool</h4>')
+            with self.assertRaisesRegex(ValueError, 'exact canonical owner'):
+                resolve_reexport_owners(data, root, docs)
+            (page.parent / 'index.html').write_text(
+                '<a class="struct" href="struct.Cancellation.html" '
+                'title="struct merlin_api::Cancellation">Cancellation</a>')
+            (page.parent / 'struct.Cancellation.html').write_text(
+                '<a class="src" href="../src/merlin_api/control.rs.html#18">Source</a>'
+                '<h4 class="code-header">pub fn is_cancelled(&amp;self) -&gt; bool</h4>')
+            with self.assertRaisesRegex(ValueError, 'kind/identity'):
+                resolve_reexport_owners(data, root, docs)
+
+    def project_facade(self, root, exposed_name='Project'):
+        """Prepare compiler constructor spellings over one proven nominal import.
+
+        Args:
+            root: Independent temporary source/documentation root.
+            exposed_name: Exact public name, optionally an explicit import alias.
+        Returns:
+            Documentation root and source-less facade item page.
+        """
+        source = root / 'crates/merlin/src/lib.rs'
+        source.parent.mkdir(parents=True)
+        entry = 'Project' if exposed_name == 'Project' else f'Project as {exposed_name}'
+        source.write_text(f'pub mod common {{ pub use pnm_input::project::{{{entry}}}; }}')
+        docs = root / 'doc'
+        facade = docs / 'merlin/common'
+        facade.mkdir(parents=True)
+        (facade / 'index.html').write_text(
+            f'<a class="struct" href="struct.{exposed_name}.html" '
+            f'title="struct merlin::common::{exposed_name}">{exposed_name}</a>')
+        page = facade / f'struct.{exposed_name}.html'
+        page.write_text('<h4 class="code-header">pub fn from_bytes(bytes: &amp;[u8]) '
+                        f'-&gt; Result&lt;{exposed_name}, ProjectError&gt;</h4>')
+        canonical = docs / 'pnm_input/project'
+        canonical.mkdir(parents=True)
+        (canonical / 'index.html').write_text(
+            '<a class="struct" href="struct.Project.html" '
+            'title="struct pnm_input::project::Project">Project</a>')
+        (canonical / 'struct.Project.html').write_text(
+            '<a class="src" href="../../src/pnm_input/project/mod.rs.html#99">Source</a>'
+            '<h4 class="code-header">pub fn from_bytes(bytes: &amp;[u8]) '
+            '-&gt; Result&lt;Self, ProjectError&gt;</h4>')
+        return docs, page
+
+    def test_nominal_constructor_self_spelling_keeps_both_compiler_signatures(self):
+        """A concrete facade return and canonical Self both remain exact compiler evidence."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs, page = self.project_facade(root)
+            data = {'common': inventory('merlin::common', page.parent / 'index.html', docs)}
+            method = data['common'][0]['methods'][0]
+            resolve_reexport_owners(data, root, docs)
+            self.assertEqual(method['signature'], 'pub fn from_bytes(bytes: &[u8]) -> Result<Project, ProjectError>')
+            self.assertEqual(method['reexport_canonical_signature'],
+                             'pub fn from_bytes(bytes: &[u8]) -> Result<Self, ProjectError>')
+            self.assertEqual(method['source_file'], 'crates/pnm-input/src/project/mod.rs')
+            self.assertEqual(method['reexport_origin'], 'pnm_input::project::Project')
+
+    def test_nominal_alias_constructor_uses_only_its_proven_original_type(self):
+        """An explicit public alias has the same Self identity without losing either spelling."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs, page = self.project_facade(root, 'SavedProject')
+            data = {'common': inventory('merlin::common', page.parent / 'index.html', docs)}
+            method = data['common'][0]['methods'][0]
+            resolve_reexport_owners(data, root, docs)
+            self.assertEqual(method['operation'], 'merlin::common::SavedProject::from_bytes')
+            self.assertEqual(method['signature'], 'pub fn from_bytes(bytes: &[u8]) -> Result<SavedProject, ProjectError>')
+            self.assertEqual(method['reexport_canonical_signature'],
+                             'pub fn from_bytes(bytes: &[u8]) -> Result<Self, ProjectError>')
+            self.assertEqual(method['reexport_origin'], 'pnm_input::project::Project')
+
+    def test_nominal_signature_equivalence_rejects_other_types_namespaces_and_parameters(self):
+        """Only whole nominal tokens change; all other compiler signature text must agree."""
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            docs, page = self.project_facade(root)
+            for signature in [
+                'pub fn from_bytes(bytes: &[u8]) -> Result<OtherProject, ProjectError>',
+                'pub fn from_bytes(bytes: &[u8]) -> Result<elsewhere::Project, ProjectError>',
+                'pub fn from_bytes(bytes: &[u8]) -> Result<Selfish, ProjectError>',
+                'pub fn from_bytes(bytes: &mut [u8]) -> Result<Project, ProjectError>',
+                'pub fn from_bytes(input: &[u8]) -> Result<Project, ProjectError>',
+                'pub fn from_bytes(bytes: &[u8]) -> Result<Project, OtherError>',
+            ]:
+                with self.subTest(signature=signature):
+                    page.write_text('<h4 class="code-header">' + signature.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;') + '</h4>')
+                    data = {'common': inventory('merlin::common', page.parent / 'index.html', docs)}
+                    with self.assertRaisesRegex(ValueError, 'exact canonical owner'):
+                        resolve_reexport_owners(data, root, docs)
+                    method = data['common'][0]['methods'][0]
+                    self.assertEqual(method['signature'], signature)
+                    self.assertNotIn('reexport_canonical_signature', method)
+
     def test_main_discovers_adapter_reexports_from_the_actual_common_facade(self):
         """A neutral leaf alone cannot enumerate additional facade-owned public exports."""
         with tempfile.TemporaryDirectory() as directory:

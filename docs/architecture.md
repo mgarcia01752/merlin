@@ -2066,6 +2066,14 @@ owns supported numerology, IUC, grant, receiver, channel and Pre-Eq semantics.
 Absent explicit correction remains native unity; measured capture/full-bank
 selection and resource-grid instruments remain their existing delivery tasks.
 
+The [US03 input design](development/features/unified-qt-workbench/design.md#uiu-us-03-native-input-integration)
+reuses native capture and measured-plan admission. Its independently validated
+[capture-source JSON adapter](development/features/unified-qt-workbench/upstream-capture-source-json.md)
+transports exact original binary octets through the existing typed capture owners,
+with paired Rust/Python validation before Qt adoption. Existing inspection-only
+JSON remains distinct. Applications retain outer source-file bytes separately,
+and measured context must survive later configuration operations.
+
 The OFDMA resource-grid viewer has symbol index on X and physical subcarrier
 index on Y. The accepted bounded idle upstream API observation exposes authoritative
 allocation/pilot coordinates and actual roles, grant/IUC/pattern metadata and

@@ -6,7 +6,9 @@
  * Changes: local ownership; explicit MERLIN schema identities.
  */
 //! MULPI I25 Table28/29 projection; no guessed assignment, bandwidth or epoch.
-use super::{ApiError, ApiResult, CaptureFailure, UcdCapture, UcdTlv};
+use super::{
+    constants::MAX_CAPTURE_SOURCE_BYTES, ApiError, ApiResult, CaptureFailure, UcdCapture, UcdTlv,
+};
 use docsis_ofdma::configuration::ucd::{
     Band, BurstDescriptor, IrPowerControl, OfdmaChannel, ProfileGroup, TimestampSnapshot,
 };
@@ -95,7 +97,7 @@ pub fn reassemble_ucd(fragments: &[Vec<u8>]) -> ApiResult<UcdCapture> {
     }
     let mut assembled = Vec::new();
     for (index, fragment) in fragments.iter().enumerate() {
-        if fragment.len() < 24 || fragment.len() > 65549 {
+        if fragment.len() < 24 || fragment.len() > MAX_CAPTURE_SOURCE_BYTES {
             return Err(invalid("ucd.fragment_size"));
         }
         let expected = ((fragments.len() - 1) << 4) | index;
@@ -110,7 +112,7 @@ pub fn reassemble_ucd(fragments: &[Vec<u8>]) -> ApiResult<UcdCapture> {
         } else if assembled[..12] != fragment[..12] || assembled[20..24] != fragment[20..24] {
             return Err(invalid("ucd.fragment_identity"));
         }
-        if assembled.len() + fragment.len() - 24 > 65549 {
+        if assembled.len() + fragment.len() - 24 > MAX_CAPTURE_SOURCE_BYTES {
             return Err(docsis_ofdma::PhyError::ResourceLimit {
                 field: "ucd.reassembled_bytes",
             }

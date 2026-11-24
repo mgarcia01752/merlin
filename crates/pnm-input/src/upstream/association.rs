@@ -6,7 +6,10 @@
  * Changes: local ownership; explicit MERLIN schema identities.
  */
 //! Explicit source-preserving measured association and model projection.
-use super::{bounded_json, reassemble_ucd, PreEqCapture, PreEqCaptureKind, RxmerCapture};
+use super::{
+    bounded_json, constants::MAX_CAPTURE_SOURCE_BYTES, reassemble_ucd, PreEqCapture,
+    PreEqCaptureKind, RxmerCapture,
+};
 use docsis_ofdma::api::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -20,7 +23,7 @@ pub struct CaptureSource {
     pub id: u64,
     /// Exact original source bytes, never canonicalized.
     #[serde(
-        deserialize_with = "docsis_ofdma::configuration::serde_limits::bounded_vec::<_, _, 65549>"
+        deserialize_with = "docsis_ofdma::configuration::serde_limits::bounded_vec::<_, _, MAX_CAPTURE_SOURCE_BYTES>"
     )]
     pub bytes: Vec<u8>,
 }
@@ -565,7 +568,7 @@ fn source_ids(sources: &[CaptureSource]) -> ApiResult<()> {
     let mut ids = BTreeSet::new();
     if sources
         .iter()
-        .any(|s| s.id == 0 || s.bytes.len() > 65549 || !ids.insert(s.id))
+        .any(|s| s.id == 0 || s.bytes.len() > MAX_CAPTURE_SOURCE_BYTES || !ids.insert(s.id))
     {
         return Err(invalid("measured.source_identity_or_size"));
     }

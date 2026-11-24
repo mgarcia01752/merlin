@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-626 explicit public Rust operations and 597 installed native Python entries with
+632 explicit public Rust operations and 603 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/session-control-metadata-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/upstream-capture-source-json-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 115 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -17,7 +17,7 @@ execution or exhaustive getter-branch coverage.
 The [control metadata prerequisite](../unified-qt-workbench/validation.md#uiu-session-01-scientific-control-allocation-metadata)
 adds exactly three Rust/native control methods with direct Rust-process parity;
 all earlier actual export/member/signature facts remain. Complete Qt aggregate
-session admission is still pending.
+session admission has [separate acceptance](../unified-qt-workbench/validation.md#uiu-session-01-integrated-acceptance).
 Individual unit summaries below retain their historical checkpoint counts and
 states; the [official checklist](../../checklist.md#unified-qt-workbench-delivery)
 owns current task acceptance.
@@ -185,6 +185,18 @@ These are verified existing owners, not hypothetical API names:
 | Native capture/workbench/export | [pnm-input/lib.rs](../../../../crates/pnm-input/src/lib.rs), [workbench.rs](../../../../crates/pnm-input/src/workbench.rs), [rxmer_export](../../../../crates/pnm-input/src/rxmer_export/mod.rs). Rust file admission, discovery and provenance remain authoritative. |
 | Python registrations | [lib.rs](../../../../bindings/python/src/lib.rs), [controller.rs](../../../../bindings/python/src/controller.rs), [inputs.rs](../../../../bindings/python/src/inputs.rs), [quantities.rs](../../../../bindings/python/src/quantities.rs), [options.rs](../../../../bindings/python/src/options.rs), [receiver.rs](../../../../bindings/python/src/receiver.rs), [reports.rs](../../../../bindings/python/src/reports.rs), [workbench.rs](../../../../bindings/python/src/workbench.rs), [rxmer_export.rs](../../../../bindings/python/src/rxmer_export.rs), and [upstream registration](../../../../bindings/python/src/upstream/mod.rs). One private binary serves the real package modules. |
 | Implemented upstream foundation | [fec-codec upstream_ldpc](../../../../crates/fec-codec/src/upstream_ldpc/mod.rs), three code families, shortening, independent source vectors, shared sparse encoder mechanism. [Executed acceptance](../unified-backend/fec-validation.md), committed in `343b07d9209dc10f3c21d80ae2222a60432f684a`. The independent upstream PHY/session and measured adapter now pass local Rust acceptance; native Python now passes its separate installed-wheel acceptance. More recent full regression evidence is linked from the official checklist. |
+
+## Upstream lossless capture-source transport
+
+The [US03 source transport prerequisite](../unified-qt-workbench/upstream-capture-source-json.md)
+adds `from_source_json` and `to_source_json` on each existing UCD, RxMER and Pre-Eq
+capture type, mirrored in installed `merlin.upstream` classes and declarations.
+The six Rust and six Python additions preserve all previous operation contracts,
+class identities, binary errors and inspection output. [Executed source cases](../unified-qt-workbench/us-03-source-json-operation-test-results.json)
+and the [scoped receipt](../unified-qt-workbench/upstream-capture-source-json-evidence.json)
+record actual source/wheel validation. Fresh metadata retains both canonical and
+facade compiler spellings when rustdoc inlines a proven nominal type. Native Qt
+input/viewer adoption remains the existing unchecked UIU-US-03 task.
 
 ## Downstream session operation rows
 

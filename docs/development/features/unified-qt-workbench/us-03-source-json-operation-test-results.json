@@ -1,0 +1,95 @@
+{
+  "exit_code": 0,
+  "passed": 22,
+  "cases": [
+    {
+      "test_file": "crates/pnm-input/tests/upstream_source_json.rs",
+      "qualified_test_case": "independent_literal_envelope_and_known_digest_admit_original_ucd"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_source_json.rs",
+      "qualified_test_case": "ucd_source_round_trip_preserves_opaque_records_and_old_inspection"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_source_json.rs",
+      "qualified_test_case": "rxmer_source_round_trip_preserves_null_grid_header_and_old_inspection"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_source_json.rs",
+      "qualified_test_case": "both_pre_eq_source_kinds_preserve_signed_coefficients_and_old_inspection"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_source_json.rs",
+      "qualified_test_case": "wrong_format_version_kind_count_and_exact_lowercase_hash_reject"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_source_json.rs",
+      "qualified_test_case": "every_typed_import_rejects_another_valid_capture_family_before_decoding"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_source_json.rs",
+      "qualified_test_case": "each_missing_duplicate_and_unknown_envelope_field_is_document_error"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_source_json.rs",
+      "qualified_test_case": "invalid_octets_wrong_types_and_malformed_documents_never_reach_binary_decoder"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_source_json.rs",
+      "qualified_test_case": "legacy_inspection_documents_are_not_silently_upgraded_to_sources"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_source_json.rs",
+      "qualified_test_case": "exact_text_ceiling_accepts_valid_padding_and_next_byte_rejects_before_parsing"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_source_json.rs",
+      "qualified_test_case": "source_octet_ceiling_accepts_largest_ucd_and_rejects_next_before_binary_decode"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/upstream_source_json.rs",
+      "qualified_test_case": "original_binary_failure_category_field_and_nonzero_offset_are_unchanged"
+    },
+    {
+      "test_file": "bindings/python/tests/test_upstream_source_json.py",
+      "qualified_test_case": "CaptureSourceJsonTests.test_existing_public_imports_expose_the_same_native_methods"
+    },
+    {
+      "test_file": "bindings/python/tests/test_upstream_source_json.py",
+      "qualified_test_case": "CaptureSourceJsonTests.test_literal_envelopes_match_binary_and_unchanged_inspection"
+    },
+    {
+      "test_file": "bindings/python/tests/test_upstream_source_json.py",
+      "qualified_test_case": "CaptureSourceJsonTests.test_roundtrip_results_own_their_binary_bytes_and_observations"
+    },
+    {
+      "test_file": "bindings/python/tests/test_upstream_source_json.py",
+      "qualified_test_case": "CaptureSourceJsonTests.test_wrong_envelope_fields_reject_without_changing_existing_capture"
+    },
+    {
+      "test_file": "bindings/python/tests/test_upstream_source_json.py",
+      "qualified_test_case": "CaptureSourceJsonTests.test_malformed_duplicate_unknown_and_missing_fields_reject_at_root"
+    },
+    {
+      "test_file": "bindings/python/tests/test_upstream_source_json.py",
+      "qualified_test_case": "CaptureSourceJsonTests.test_existing_inspection_json_is_never_silently_upgraded_to_source"
+    },
+    {
+      "test_file": "bindings/python/tests/test_upstream_source_json.py",
+      "qualified_test_case": "CaptureSourceJsonTests.test_text_limit_exact_and_plus_one_precede_binary_admission"
+    },
+    {
+      "test_file": "bindings/python/tests/test_upstream_source_json.py",
+      "qualified_test_case": "CaptureSourceJsonTests.test_original_limit_exact_and_plus_one_preserve_binary_error_ownership"
+    },
+    {
+      "test_file": "bindings/python/tests/test_upstream_source_json.py",
+      "qualified_test_case": "CaptureSourceJsonTests.test_underlying_binary_errors_keep_original_categories_fields_offsets"
+    },
+    {
+      "test_file": "bindings/python/tests/test_upstream_source_json.py",
+      "qualified_test_case": "CaptureSourceJsonTests.test_source_import_requires_bytes_and_export_is_owned_text"
+    }
+  ],
+  "scope": "Twelve actual Rust source-envelope cases and ten installed-native cases, not prepared tests or metadata alone."
+}
