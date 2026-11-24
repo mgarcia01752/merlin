@@ -55,19 +55,59 @@ pub mod bridge {
 
 /// Fixed-direction Qt owner; tab selection never changes its scientific session.
 pub struct UpstreamSessionRust {
-    model: Model,
+    application: crate::shell::ApplicationSessions,
+    model: Option<Box<Model>>,
 }
 
 impl Default for UpstreamSessionRust {
-    /// Binds the upstream adapter to the actual shared desktop application host.
+    /// Binds upstream controls to the canonical host without a panic fallback.
     /// # Returns
-    /// Independent idle upstream model sharing only lifecycle/resource admission.
+    /// Independent admitted state, or minimal references while fixed storage rejects.
     fn default() -> Self {
-        Self {
-            model: Model::new(
-                crate::downstream::workbench::session::Context::default().application,
-            ),
+        Self::for_application(crate::downstream::workbench::session::Context::default().application)
+    }
+}
+
+impl UpstreamSessionRust {
+    /// Preflights the actual fixed GUI model against this exact application.
+    /// # Arguments
+    /// * `application` - Canonical shared lifecycle and retention host.
+    /// # Returns
+    /// Only host references on rejection; no full uncharged model is constructed.
+    fn for_application(application: crate::shell::ApplicationSessions) -> Self {
+        let model = Model::new(application.clone()).ok();
+        Self { application, model }
+    }
+
+    /// Retries a rejected constructor without changing accepted readiness or data.
+    /// # Returns
+    /// Existing/admitted model or None while the same host remains at its limit.
+    fn ensure_model(&mut self) -> Option<&mut Model> {
+        if self.model.is_none() {
+            self.model = Model::new(self.application.clone()).ok();
         }
+        self.model.as_deref_mut()
+    }
+
+    /// Reads bounded control state, including canonical global admission.
+    /// # Returns
+    /// Normal model state or explicit unavailability without fabricated results.
+    fn current_state(&self) -> serde_json::Value {
+        self.model.as_deref().map_or_else(
+            || {
+                let active = self.application.active();
+                serde_json::json!({"configured":false,"preparing":false,"busy":false,
+                    "application_busy":active.is_some(),
+                    "active_direction":active.map(|run|match run.token.key.direction {
+                        crate::shell::Direction::Downstream=>"downstream",
+                        crate::shell::Direction::Upstream=>"upstream",
+                    }),
+                    "can_start":false,"session":null,"generation":null,"progress":null,
+                    "has_result":false,"result":null,
+                    "error":crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE})
+            },
+            Model::state,
+        )
     }
 }
 
@@ -81,10 +121,14 @@ impl bridge::UpstreamSession {
         if document.len() > MAX_CONFIGURATION_BYTES as isize {
             return QString::from("Upstream configuration exceeds the input byte limit.");
         }
+        let mut owner = self.as_mut().rust_mut();
+        let Some(model) = owner.ensure_model() else {
+            return QString::from(
+                crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+            );
+        };
         QString::from(
-            self.as_mut()
-                .rust_mut()
-                .model
+            model
                 .apply(document.to_string().as_bytes())
                 .err()
                 .unwrap_or_default(),
@@ -95,48 +139,60 @@ impl bridge::UpstreamSession {
     /// # Returns
     /// Empty after request; failure leaves previous results intact.
     pub fn start(mut self: core::pin::Pin<&mut Self>) -> QString {
-        QString::from(
-            self.as_mut()
-                .rust_mut()
-                .model
-                .start()
-                .err()
-                .unwrap_or_default(),
-        )
+        let mut owner = self.as_mut().rust_mut();
+        let Some(model) = owner.ensure_model() else {
+            return QString::from(
+                crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+            );
+        };
+        QString::from(model.start().err().unwrap_or_default())
     }
 
     /// Toggles the existing public upstream pause/resume control.
     /// # Returns
     /// Empty after request, or the original ownership/control error.
     pub fn pause(&self) -> QString {
-        QString::from(self.rust().model.pause().err().unwrap_or_default())
+        let Some(model) = self.rust().model.as_deref() else {
+            return QString::from(
+                crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+            );
+        };
+        QString::from(model.pause().err().unwrap_or_default())
     }
 
     /// Cancels owned preparation or active upstream work without joining.
     /// # Returns
     /// Empty after request; the actual terminal still owns active admission.
     pub fn stop(mut self: core::pin::Pin<&mut Self>) -> QString {
-        QString::from(
-            self.as_mut()
-                .rust_mut()
-                .model
-                .stop()
-                .err()
-                .unwrap_or_default(),
-        )
+        let mut owner = self.as_mut().rust_mut();
+        let Some(model) = owner.model.as_deref_mut() else {
+            return QString::from(
+                crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+            );
+        };
+        QString::from(model.stop().err().unwrap_or_default())
     }
 
     /// Polls application events and projects bounded authoritative metadata.
     /// # Returns
     /// Scalar JSON, excluding captures, sample arrays and full scientific reports.
     pub fn poll(mut self: core::pin::Pin<&mut Self>) -> QString {
-        QString::from(self.as_mut().rust_mut().model.poll().to_string())
+        let state = if let Some(model) = self.as_mut().rust_mut().ensure_model() {
+            model.poll()
+        } else {
+            self.rust().current_state()
+        };
+        QString::from(state.to_string())
     }
 
     /// Reads accepted scalar state independently of the selected tab.
     /// # Returns
     /// No simulated result is fabricated before an actual report exists.
     pub fn state(&self) -> QString {
-        QString::from(self.rust().model.state().to_string())
+        QString::from(self.rust().current_state().to_string())
     }
 }
+
+#[cfg(test)]
+#[path = "upstream_session/runtime_tests.rs"]
+mod runtime_tests;

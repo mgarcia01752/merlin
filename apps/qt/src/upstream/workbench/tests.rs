@@ -28,8 +28,8 @@ fn wait_for(mut predicate: impl FnMut() -> bool) {
     }
 }
 
-fn configured(application: ApplicationSessions) -> Model {
-    let mut model = Model::new(application);
+fn configured(application: ApplicationSessions) -> Box<Model> {
+    let mut model = Model::new(application).unwrap();
     model.apply(DOCUMENT).unwrap();
     wait_for(|| model.poll()["preparing"] == false);
     assert!(model.current(), "{}", model.state());
@@ -108,7 +108,7 @@ fn queued_configuration_cannot_overwrite_a_newer_canonical_generation() {
 #[test]
 fn paused_stop_keeps_the_real_global_lease_until_terminal_and_retains_partial_results() {
     let application = ApplicationSessions::desktop().unwrap();
-    let mut model = Model::new(application.clone());
+    let mut model = Model::new(application.clone()).unwrap();
     let mut document: serde_json::Value = serde_json::from_slice(DOCUMENT).unwrap();
     document["simulation"]["grants"] = PAUSE_FIXTURE_GRANTS.into();
     model
@@ -273,14 +273,18 @@ fn target_preparation_fallback_restores_controller_and_same_completed_report() {
 
     // Actual target preflight runs before shared admission. Synthetic byte pressure
     // rejects that reservation and then the detailed error, selecting borrowed text.
+    let slot_bytes = std::mem::size_of::<Retained<std::sync::Mutex<Option<UpstreamController>>>>();
     let pressure = budget
         .reserve_resources(RetainedResources {
-            payload_bytes: FAILURE_TEST_LIMITS.payload_bytes - before.payload_bytes,
+            payload_bytes: FAILURE_TEST_LIMITS.payload_bytes - before.payload_bytes - slot_bytes,
             ..Default::default()
         })
         .unwrap();
     model.start().unwrap();
-    assert!(model.pending.is_some());
+    let Some(Pending::Run { owner, .. }) = model.pending.as_ref() else {
+        panic!("The original report-target boundary must dispatch");
+    };
+    let slot = Arc::downgrade(owner);
     wait_for(|| model.poll()["preparing"] == false);
     assert_eq!(
         model.error.message(),
@@ -291,9 +295,13 @@ fn target_preparation_fallback_restores_controller_and_same_completed_report() {
     assert_eq!(model.report.as_ref().unwrap().0, token);
     assert!(Arc::ptr_eq(&model.report.as_ref().unwrap().1, &report));
     assert!(application.active().is_none());
+    wait_for(|| {
+        slot.upgrade().is_none()
+            && budget.usage().payload_bytes == FAILURE_TEST_LIMITS.payload_bytes - slot_bytes
+    });
     assert_eq!(
         budget.usage().payload_bytes,
-        FAILURE_TEST_LIMITS.payload_bytes
+        FAILURE_TEST_LIMITS.payload_bytes - slot_bytes
     );
     drop(pressure);
     assert_eq!(budget.usage(), before);
@@ -305,7 +313,7 @@ fn queued_preparation_error_moves_to_persistent_status_without_recharging_under_
     let application = ApplicationSessions::new(FAILURE_TEST_LIMITS).unwrap();
     let budget = application.budget().clone();
     let baseline = budget.usage();
-    let mut model = Model::new(application.clone());
+    let mut model = Model::new(application.clone()).unwrap();
     let failure = WorkerFailure::try_admit(MESSAGE.to_owned().into(), &budget).unwrap();
     let used = budget.usage();
     let pressure = budget

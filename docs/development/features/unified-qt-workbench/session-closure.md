@@ -38,7 +38,7 @@ fixed layout.
 | ID / requirement | Expected behavior and current gap | Exact affected owners / files | Minimum change and closure validation |
 | --- | --- | --- | --- |
 | **C1** / REQ-UIU-03/06/07 | Persistent direction errors/options retain their own coverage; strict target rejection preserves source state. Closed: reviewed source is integrated and focused current validation passes; see C1 evidence below. | `shared/worker_failure.rs`; `downstream/simulation/closed_loop.rs`, `closed_loop/{metadata,lifecycle}.rs`; `downstream/instruments/transmitter/preview.rs`, `preview/retention.rs`; `downstream/workbench/project_load.rs`; `upstream/workbench/{mod,presentation}.rs`. All source paths are under `apps/qt/src/`. Bridge Apply help already has its separate accepted receipt. | Finish the existing WorkerFailure/options-witness change and its eight prepared cases. Correct only obsolete fixture field/accessor construction; preserve original assertions. Execute affected direction/project/bridge coverage, Clippy/format/boundary, current executable probes and traceability. |
-| **C2** / REQ-UIU-07 | Existing fixed runtime storage remains outside admitted scientific children. Queued inline layouts overlap separately charged values. | `downstream/simulation/closed_loop.rs::Model/Worker`; `downstream/instruments/transmitter/preview.rs::Analyzer/Job` and `preview/retention.rs`; `downstream/workbench/project_load.rs::PreparedModels`; `upstream/session.rs::UpstreamController/Active`; `upstream/workbench/{mod,preparation}.rs::Model/ControllerSlot/Pending`; owning `bridge/{closed_loop,transmitter_analyzer,upstream_session}.rs` adapters. | Admit the concrete fixed complements with existing reservations. Separate queued receiver/preview storage only where necessary to avoid double counting; preserve existing product guards. Fallible construction must reject before canonical host mutation and leave a minimal unavailable adapter without panic or an uncharged full model. Verify exact/below limits, constructor rollback, original controller restoration, same-host transfer and final GUI/worker aliases. No generic mutable owner framework. |
+| **C2** / REQ-UIU-07 | Closed: concrete fixed runtime layouts and queued complements are admitted independently of scientific children; see C2 evidence below. | `downstream/simulation/closed_loop.rs::Model/Worker`; `downstream/instruments/transmitter/preview.rs::Analyzer/Job` and `preview/retention.rs`; `downstream/workbench/project_load.rs::PreparedModels`; `upstream/session.rs::UpstreamController/Active`; `upstream/workbench/{mod,preparation}.rs::Model/ControllerSlot/Pending`; owning `bridge/{closed_loop,transmitter_analyzer,upstream_session}.rs` adapters. | Admit the concrete fixed complements with existing reservations. Separate queued receiver/preview storage only where necessary to avoid double counting; preserve existing product guards. Fallible construction must reject before canonical host mutation and leave a minimal unavailable adapter without panic or an uncharged full model. Verify exact/below limits, constructor rollback, original controller restoration, same-host transfer and final GUI/worker aliases. No generic mutable owner framework. |
 | **C3** / REQ-UIU-07 | Existing retained worker closures/control metadata and channel/slot populations lack complete concrete coverage. Message scientific/error products already have their own guards. | `shell/worker.rs`; `downstream/simulation/closed_loop/worker.rs`; `downstream/instruments/transmitter/preview.rs::Job`; `upstream/workbench/preparation.rs`; `bridge/rxmer_designer.rs`; `bridge/rxmer_export/lifecycle.rs`; loader transport in `downstream/workbench/project_load.rs`. | Extend existing checked reservations for concrete closure payloads and explicit channel/slot populations. Keep standard bounded transport and exclude private synchronization bookkeeping. Verify rejection before dispatch, original lease/controller rollback, queued/stale/disconnected delivery and final sender/worker cleanup; retain original lifecycle assertions. |
 | **C4** / REQ-UIU-06/07 | Original-source registry is accepted; independent retained loader/Save paths, metadata and errors remain uncovered. | `downstream/workbench/project_load.rs::{PreparedProject,Loader,Job}`; `bridge/workbench_file.rs::WorkbenchFileRust.path`; existing retained startup/Save path copies in these owners. | Admit actual PathBuf capacities and retained metadata/error data before queue/adoption, using existing visitors. Preserve separately guarded scientific/editor owners and saved JSON. Verify failed/stale/cancelled Open and rejected Save-path adoption leave old inputs, path and metadata unchanged; final disposal releases charges. Coordinate loader transport with C3 rather than charging it twice. |
 | **C5** / REQ-UIU-07 | Existing persistent QML properties and derived arrays lack the approved aggregate logical presentation limits. | `apps/qt/qml/downstream/DownstreamWorkbench.qml`; existing measurement/Designer/export dialogs; transmitter stage/QAM/PLC views; receiver QAM/response/slicer/performance/FEC views; channel response/power/loss/taps and three spectrum instances; FAQ/help presentation. These are the already inventoried presentation consumers, not a new category. | Enforce logical UTF-16 bytes, array/object entries and retained/open-view populations on existing properties, reusing current DTO/count limits. Account for replacement overlap and retained hidden/closed views until clearing/disposal. Test exact/beyond bounds, rejected replacement, derived copies, hidden-view retention and final clear/destruction. Synchronous bounded responses alone are not persistent owners. Do not introduce another accounting framework or change scientific limits. |
@@ -122,3 +122,40 @@ and [validation](validation.md#uiu-session-01-persistent-direction-model-metadat
 record actual metadata integration, corrected fixture failures and passing affected
 checks. Five required conditions remain: C2, C3, C4, C5 and C6. No row was added.
 Official progress remains 10/21; SESSION is unchecked until C6 passes.
+
+## C5 existing presentation counting prerequisite
+
+The read-only view map confirms existing retained properties in the workbench,
+measurement/Designer/export, TX stage/QAM/messages, RX observation/FEC/performance,
+channel, three spectrum instances and FAQ. Child plots binding the same DTO share
+the parent witness. Independently built selector/filter/TLV wrappers, strings and
+arrays require their logical complement; hidden/closed properties stay retained.
+
+Prepare one application-private logical-count helper for those concrete C5
+consumers, not a scientific or public metadata API. Its explicit operation is
+`measure(value, limits)`, where limits supplies UTF-16 bytes, array/object entries
+and traversal depth. Return success/counts or a bounded static error; never guess
+Qt capacity. Count actual UTF-16 code units (including keys) and entries with
+checked finite arithmetic. Reject unsupported/cyclic/depth-exceeding graphs;
+shared plot bindings are handled by their parent and are not passed as new owners.
+The helper does not reserve resources, cache data, choose application ceilings or
+change input values. The lead-owned presentation adapter must still reserve the
+candidate through existing admission primitives before persistent replacement,
+cover old/candidate overlap and release only after actual logical clear/disposal.
+
+The isolated presentation agent may add only
+`apps/qt/qml/shared/presentation/LogicalFootprint.js`, its focused
+`apps/qt/tests/tst_presentation_footprint.qml` and one source handoff. Tests cover
+UTF-16 surrogate pairs, keys/entries, exact/beyond limits, cycles/unsupported
+values, bounded traversal and actual derived wrapper examples. It may execute
+only those Qt tests and source/format checks. Global registration, Rust admission,
+application limits and actual persistent consumers remain lead-owned, with C5
+open until all consumer tests pass. No Cargo/wheel/full regression is delegated.
+
+
+**C2 closed:** the [primary receipt](session-fixed-runtime-owners-evidence.json),
+[source-only handoff](agent-handoffs/fixed-runtime-owners.md) and
+[validation](validation.md#uiu-session-01-fixed-runtime-owners) record integrated
+fixed-layout, prepared transfer, unavailable/retry and final-alias acceptance.
+Four required conditions remain: C3, C4, C5 and C6. No row was added. C1's earlier
+five-condition count is checkpoint history; official progress remains 10/21.

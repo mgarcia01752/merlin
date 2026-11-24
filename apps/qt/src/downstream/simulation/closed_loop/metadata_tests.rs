@@ -85,8 +85,9 @@ fn zero_child_options_keep_host_identity_and_rejected_candidate_preserves_old_ow
     let foreign = context();
     let context = context();
     let budget = context.application.budget();
+    let empty = budget.usage();
+    let mut model = Model::for_context(context.clone()).unwrap();
     let baseline = budget.usage();
-    let mut model = Model::for_context(context.clone());
     model
         .prepare_options_for_budget(Some(Options::default()), true, budget)
         .unwrap();
@@ -119,14 +120,14 @@ fn zero_child_options_keep_host_identity_and_rejected_candidate_preserves_old_ow
     crate::downstream::inputs::retention::append(&mut expected, actual).unwrap();
     assert_eq!(budget.usage(), expected);
     drop(model);
-    assert_eq!(budget.usage(), baseline);
+    assert_eq!(budget.usage(), empty);
 }
 
 #[test]
 fn persistent_guidance_survives_message_only_update_and_strict_foreign_rebind_rejection() {
     let source = context();
     let target = context();
-    let mut model = Model::for_context(source.clone());
+    let mut model = Model::for_context(source.clone()).unwrap();
     model.error = WorkerFailure::try_admit(
         AdmissionError {
             message: MESSAGE.to_owned(),

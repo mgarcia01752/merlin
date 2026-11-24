@@ -18,8 +18,8 @@ use crate::shared::{
     presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE, worker_failure::WorkerFailure,
 };
 use crate::shell::{
-    ApplicationError, Direction, DispatchError, Retained, SessionError, SessionKey, WorkerEvent,
-    WorkerStatus,
+    ApplicationError, Direction, DispatchError, Retained, RetainedResources, RetentionBudget,
+    RetentionError, SessionError, SessionKey, WorkerEvent, WorkerStatus,
 };
 use merlin::downstream::{FullLoopReport, FullLoopResult, TransmissionSettings};
 use request::Sections;
@@ -134,25 +134,30 @@ pub(crate) struct Model {
 
     // Options buffers drop before their child-only identity witness.
     options_guard: Option<Retained<()>>,
-}
 
-impl Default for Model {
-    /// Creates the existing GUI model on its fixed bootstrap downstream Context.
-    /// # Returns
-    /// The same empty controls/request/result state as the original derived default.
-    fn default() -> Self {
-        Self::for_context(Context::default())
-    }
+    // Drop all mutable fields and child guards before their containing fixed charge.
+    fixed_guard: Retained<()>,
 }
 
 impl Model {
-    /// Creates an empty receiver model on an explicitly prepared downstream owner.
+    /// Admits an empty receiver's actual fixed layout before final Box allocation.
     /// # Arguments
-    /// * `context` - Already constructed canonical-budget Stores; no selected-tab lookup.
+    /// * `context` - Existing canonical-budget Stores, without a selected-tab lookup.
     /// # Returns
-    /// Original default fields without constructing another bootstrap host or run.
-    pub(crate) fn for_context(context: Context) -> Self {
-        Self {
+    /// Original empty mutable state with a final nonoptional fixed-layout witness.
+    /// Inline Worker/Options handles count once; separately guarded children do not.
+    /// # Errors
+    /// Fixed byte admission failure before allocation, readiness or host mutation.
+    pub(crate) fn for_context(context: Context) -> Result<Box<Self>, RetentionError> {
+        let fixed_guard = context
+            .application
+            .budget()
+            .reserve_resources(RetainedResources {
+                payload_bytes: std::mem::size_of::<Self>(),
+                ..Default::default()
+            })?
+            .retain(());
+        Ok(Box::new(Self {
             context,
             options: None,
             verify: false,
@@ -164,7 +169,23 @@ impl Model {
             token: Default::default(),
             generation: None,
             options_guard: None,
+            fixed_guard,
+        }))
+    }
+
+    fn fixed_target(
+        &self,
+        budget: &RetentionBudget,
+    ) -> Result<Option<Retained<()>>, RetentionError> {
+        if budget.owns(&self.fixed_guard) {
+            return Ok(None);
         }
+        budget
+            .reserve_resources(RetainedResources {
+                payload_bytes: std::mem::size_of::<Self>(),
+                ..Default::default()
+            })
+            .map(|guard| Some(guard.retain(())))
     }
 
     /// Starts one Rust job; inputs are frozen and repeated Start while busy is ignored.
@@ -483,3 +504,7 @@ mod timing_retention_tests;
 
 #[cfg(test)]
 mod metadata_tests;
+
+#[cfg(test)]
+#[path = "closed_loop/fixed_retention_tests.rs"]
+mod fixed_retention_tests;

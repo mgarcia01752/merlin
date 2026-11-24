@@ -61,7 +61,7 @@ fn prepared_options_are_target_guarded_and_foreign_zero_child_witness_rejects_be
 
     // A zero-child Options value still has a real foreign host identity. The
     // genuine project adoption checks it before accepted Inputs/readiness swap.
-    let mut replacement = Model::for_context(foreign.clone());
+    let mut replacement = Model::for_context(foreign.clone()).unwrap();
     replacement
         .prepare_options_for_budget(
             Some(Default::default()),

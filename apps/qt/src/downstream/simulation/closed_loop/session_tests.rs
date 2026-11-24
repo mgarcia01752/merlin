@@ -20,16 +20,15 @@ const DISABLED_ESTIMATE_POINTS: usize = 0;
 const UPSTREAM_DOCUMENT: &[u8] =
     include_bytes!("../../../../../../examples/cli/upstream/us-50khz.json");
 
-fn prepared_model(context: Context) -> Model {
+fn prepared_model(context: Context) -> Box<Model> {
     prepared_model_with_duration(context, LONG_SOURCE_DURATION_MS)
 }
 
-fn prepared_model_with_duration(context: Context, duration_ms: u64) -> Model {
+fn prepared_model_with_duration(context: Context, duration_ms: u64) -> Box<Model> {
     let (inputs, transmission, sections) = super::tests::accepted_inputs();
     crate::downstream::workbench::session::restore(&context, inputs.clone(), sections.clone())
         .unwrap();
-    let mut model = Model::default();
-    model.context = context;
+    let mut model = Model::for_context(context).unwrap();
     model.options = Some(Options {
         duration_ms,
         max_runtime_ms: ACTIVE_EXECUTION_LIMIT_MS,

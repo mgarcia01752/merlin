@@ -32,8 +32,8 @@ pub(crate) struct PreparedModels {
     pub measurements: Option<
         Box<crate::shell::Retained<crate::downstream::inputs::measurement_input::model::Model>>,
     >,
-    pub receiver: Option<Model>,
-    pub transmitter: Option<Analyzer>,
+    pub receiver: Option<Box<Model>>,
+    pub transmitter: Option<Box<Analyzer>>,
 }
 
 /// Moves one prepared model into its GUI adapter without decoding captures again.
@@ -122,14 +122,18 @@ impl PreparedProject {
         ) = project.prepare_for_context(candidate_context.clone())?;
         let settings =
             serde_json::to_string(&project.transmission).map_err(|error| error.to_string())?;
-        let mut receiver = Model::for_context(candidate_context.clone());
+        let mut receiver = Model::for_context(candidate_context.clone()).map_err(|_| {
+            crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE.to_owned()
+        })?;
         receiver.prepare_options_for_budget(
             project.receiver.clone(),
             project.comparison_enabled,
             budget,
         )?;
         receiver.prepare_inputs_for_budget(&settings, &inputs, &project.sections, budget)?;
-        let mut transmitter = Analyzer::for_context(candidate_context);
+        let mut transmitter = Analyzer::for_context(candidate_context).map_err(|_| {
+            crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE.to_owned()
+        })?;
         transmitter.configure_for_budget(
             &settings,
             project.sections.get("source").unwrap_or(&Value::Null),

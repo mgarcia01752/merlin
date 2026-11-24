@@ -1845,6 +1845,19 @@ bridge Apply-help owner remains independently charged. [Primary C1 evidence](dev
 preserves scientific/status/target-adoption behavior. C2–C6 in the frozen closure
 list remain required; complete SESSION acceptance and persistent QML stay open.
 
+The [concrete fixed runtime owners](development/features/unified-qt-workbench/session-closure.md#c2-concrete-fixed-layout-implementation)
+admit DS Model, preview Analyzer and upstream workbench Model layouts before their
+Box allocations. Each last nonoptional witness covers its inline worker/controller
+storage once; separately guarded children keep their original charges. Prepared
+Stores and GUI adapters hold Box handles, taking prepared owners before fresh
+construction and preserving same-host attachment without readmission. Failed
+construction leaves minimal unavailable controls and retries on the same host.
+The preview product keeps its already admitted Box. Upstream preparation admits
+its actual retained Mutex/controller slot and one root before publication; final
+worker aliases retain that guard. [C2 primary evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-fixed-runtime-owners)
+closes this fixed-layout condition. C3–C6 remain required; no new scientific API,
+transport replacement or framework is introduced.
+
 The [pre-production archive pair](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds)
 computes exact detached target quantities and checks every limit before copying.
 It preserves the legacy archive operation/statistic and scientific queries.

@@ -266,21 +266,13 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
     let settings = prepare(&transmission, &inputs, &options, &sections).unwrap();
     let options_guard =
         metadata::reserve_options(Some(&options), context.application.budget()).unwrap();
-    let mut model = Model {
-        context: (*context).clone(),
-        options: Some(options),
-        verify: true,
-        request: Some(
-            request_retention::admit_request(settings, context.application.budget()).unwrap(),
-        ),
-        plan: None,
-        worker: None,
-        timing: None,
-        error: WorkerFailure::default(),
-        options_guard,
-        token: 0,
-        generation: Some(context.application.configure_downstream(true).unwrap()),
-    };
+    let mut model = Model::for_context((*context).clone()).unwrap();
+    model.options = Some(options);
+    model.options_guard = options_guard;
+    model.verify = true;
+    model.request =
+        Some(request_retention::admit_request(settings, context.application.budget()).unwrap());
+    model.generation = Some(context.application.configure_downstream(true).unwrap());
     model.start();
     let deadline = std::time::Instant::now() + Duration::from_secs(60);
     while model.poll()["busy"] == true {
@@ -786,25 +778,19 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
     );
     let options_guard =
         metadata::reserve_options(Some(&options), context.application.budget()).unwrap();
-    let mut model = Model {
-        context: (*context).clone(),
-        options: Some(options.clone()),
-        verify: true,
-        request: Some(
-            request_retention::admit_request(
-                prepare(&transmission, &inputs, &options, &sections).unwrap(),
-                context.application.budget(),
-            )
-            .unwrap(),
-        ),
-        plan: Some(request_retention::admit_plan(plan, context.application.budget()).unwrap()),
-        worker: None,
-        timing: None,
-        error: WorkerFailure::default(),
-        options_guard,
-        token: 0,
-        generation: Some(context.application.configure_downstream(true).unwrap()),
-    };
+    let mut model = Model::for_context((*context).clone()).unwrap();
+    model.options = Some(options.clone());
+    model.options_guard = options_guard;
+    model.verify = true;
+    model.request = Some(
+        request_retention::admit_request(
+            prepare(&transmission, &inputs, &options, &sections).unwrap(),
+            context.application.budget(),
+        )
+        .unwrap(),
+    );
+    model.plan = Some(request_retention::admit_plan(plan, context.application.budget()).unwrap());
+    model.generation = Some(context.application.configure_downstream(true).unwrap());
     model.start();
     let deadline = std::time::Instant::now() + Duration::from_secs(180);
     while model.poll()["busy"] == true {
@@ -1114,21 +1100,13 @@ fn invalidated_paused_worker_never_publishes_a_late_result() {
     let request = prepare(&transmission, &inputs, &options, &sections).unwrap();
     let options_guard =
         metadata::reserve_options(Some(&options), context.application.budget()).unwrap();
-    let mut model = Model {
-        context: (*context).clone(),
-        options: Some(options),
-        verify: true,
-        request: Some(
-            request_retention::admit_request(request, context.application.budget()).unwrap(),
-        ),
-        plan: None,
-        worker: None,
-        timing: None,
-        error: WorkerFailure::default(),
-        options_guard,
-        token: 0,
-        generation: Some(context.application.configure_downstream(true).unwrap()),
-    };
+    let mut model = Model::for_context((*context).clone()).unwrap();
+    model.options = Some(options);
+    model.options_guard = options_guard;
+    model.verify = true;
+    model.request =
+        Some(request_retention::admit_request(request, context.application.budget()).unwrap());
+    model.generation = Some(context.application.configure_downstream(true).unwrap());
     model.start();
     model.pause();
     assert_eq!(model.state()["paused"], true);

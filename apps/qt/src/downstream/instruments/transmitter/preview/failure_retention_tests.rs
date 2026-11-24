@@ -29,7 +29,8 @@ fn real_target_failure_preserves_old_result_and_outlives_gui_until_payload_drop(
     let application = ApplicationSessions::new(LIMITS).unwrap();
     let budget = application.budget().clone();
     let host = budget.usage();
-    let mut model = Analyzer::for_context(Context::for_application(application.clone()).unwrap());
+    let mut model =
+        Analyzer::for_context(Context::for_application(application.clone()).unwrap()).unwrap();
     let settings = serde_json::to_string(&TransmissionSettings::default()).unwrap();
     tests::configure(&mut model, &settings, tests::inputs());
     model.generate();

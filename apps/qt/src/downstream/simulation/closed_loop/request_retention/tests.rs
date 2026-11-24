@@ -143,7 +143,7 @@ fn working_allowance(request: &FullLoopRequest) -> RetainedResources {
     actual
 }
 
-fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Model, String) {
+fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Box<Model>, String) {
     let (inputs, transmission, sections) = super::super::tests::accepted_inputs();
     let options = Options {
         duration_ms,
@@ -173,7 +173,19 @@ fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Model, String)
         let (adapter, profile) = worker::fixture_control_resources();
         limited(
             sum(
-                sum(sum(base_resources(), input_charge), initial),
+                sum(
+                    sum(
+                        sum(
+                            base_resources(),
+                            RetainedResources {
+                                payload_bytes: std::mem::size_of::<Model>(),
+                                ..Default::default()
+                            },
+                        ),
+                        input_charge,
+                    ),
+                    initial,
+                ),
                 sum(
                     actual,
                     sum(
@@ -195,8 +207,7 @@ fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Model, String)
     let key = context.application.configure_downstream(true).unwrap();
     let request = admit_request(request, context.application.budget()).unwrap();
     let plan = admit_plan(plan, context.application.budget()).unwrap();
-    let mut model = Model::default();
-    model.context = context;
+    let mut model = Model::for_context(context).unwrap();
     model.options = Some(options);
     model.verify = true;
     model.request = Some(request);
@@ -257,7 +268,10 @@ fn exact_public_quantities_and_cross_budget_aliases_cover_both_real_roots() {
     assert_eq!(
         source.budget().usage(),
         sum(
-            base_resources(),
+            sum(
+                base_resources(),
+                model.fixed_guard.fixture_reserved_resources()
+            ),
             crate::downstream::workbench::session::fixture_reserved_resources(&model.context)
         )
     );
@@ -342,7 +356,10 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     let (mut model, settings) = prepared_model(PAUSABLE_OBSERVATION_MS, None);
     let application = model.context.application.clone();
     let base = sum(
-        base_resources(),
+        sum(
+            base_resources(),
+            model.fixed_guard.fixture_reserved_resources(),
+        ),
         crate::downstream::workbench::session::fixture_reserved_resources(&model.context),
     );
     let old_charge = owners(&model);
@@ -436,10 +453,11 @@ fn rebind_reserves_both_target_roots_before_replacing_source_ownership() {
     let charge = owners(&model);
     let key = model.generation;
     let source_usage = source.budget().usage();
+    let fixed = model.fixed_guard.fixture_reserved_resources();
     for dimension in [Dimension::Payload, Dimension::Entries, Dimension::Roots] {
         let target = Context::for_application(
             ApplicationSessions::new(limited(
-                one_less(sum(base_resources(), charge), dimension),
+                one_less(sum(sum(base_resources(), fixed), charge), dimension),
                 dimension,
             ))
             .unwrap(),
@@ -471,17 +489,26 @@ fn rebind_reserves_both_target_roots_before_replacing_source_ownership() {
         model.plan.as_ref().unwrap().value(),
         plan.value()
     ));
-    assert_eq!(source.budget().usage(), source_usage);
+    assert_eq!(
+        source.budget().usage(),
+        RetainedResources {
+            payload_bytes: source_usage
+                .payload_bytes
+                .checked_sub(fixed.payload_bytes)
+                .unwrap(),
+            ..source_usage
+        }
+    );
     assert_eq!(
         target_application.budget().usage(),
-        sum(base_resources(), charge)
+        sum(sum(base_resources(), fixed), charge)
     );
     let rebound = Arc::clone(model.request.as_ref().unwrap());
     model.rebind(target).unwrap();
     assert!(Arc::ptr_eq(model.request.as_ref().unwrap(), &rebound));
     assert_eq!(
         target_application.budget().usage(),
-        sum(base_resources(), charge)
+        sum(sum(base_resources(), fixed), charge)
     );
     drop(request);
     drop(plan);
@@ -498,12 +525,15 @@ fn rebind_reserves_both_target_roots_before_replacing_source_ownership() {
     assert_eq!(
         target_application.budget().usage(),
         sum(
-            base_resources(),
+            sum(base_resources(), fixed),
             resources::<FullLoopRequest>(rebound.value().retained_footprint().unwrap()).unwrap()
         )
     );
     drop(rebound);
-    assert_eq!(target_application.budget().usage(), base_resources());
+    assert_eq!(
+        target_application.budget().usage(),
+        sum(base_resources(), fixed)
+    );
 }
 
 #[test]

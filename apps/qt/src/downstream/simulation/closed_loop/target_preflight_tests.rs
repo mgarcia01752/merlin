@@ -28,9 +28,8 @@ fn context() -> Context {
     Context::for_application(ApplicationSessions::new(FIXTURE_LIMIT).unwrap()).unwrap()
 }
 
-fn candidate() -> Model {
-    let mut model = Model::default();
-    model.context = Context::isolated();
+fn candidate() -> Box<Model> {
+    let mut model = Model::for_context(Context::isolated()).unwrap();
     model.options = Some(Options {
         duration_ms: OBSERVATION_MS,
         max_runtime_ms: ACTIVE_EXECUTION_LIMIT_MS,
@@ -110,8 +109,18 @@ fn target_preparation_preserves_context_and_all_dimension_rejection_preserves_ro
         );
         drop(guard);
     }
+    let fixed = model.fixed_guard.fixture_reserved_resources();
     drop(model);
-    assert_eq!(budget.usage(), usage);
+    assert_eq!(
+        budget.usage(),
+        RetainedResources {
+            payload_bytes: usage
+                .payload_bytes
+                .checked_sub(fixed.payload_bytes)
+                .unwrap(),
+            ..usage
+        }
+    );
     drop(request);
     drop(plan);
     assert_eq!(budget.usage(), baseline);

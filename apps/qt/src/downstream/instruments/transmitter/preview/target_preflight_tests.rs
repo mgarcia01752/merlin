@@ -28,7 +28,7 @@ fn target_preparation_charges_actual_roots_and_each_positive_dimension_rejects_a
     let budget = target.application.budget();
     let baseline = budget.usage();
     let target_key = target.application.snapshot(Direction::Downstream).key;
-    let mut model = Analyzer::default();
+    let mut model = Analyzer::for_context(Context::default()).unwrap();
     let source_key = model
         .context
         .application
@@ -99,8 +99,18 @@ fn target_preparation_charges_actual_roots_and_each_positive_dimension_rejects_a
         );
         drop(guard);
     }
+    let fixed = model.fixed_guard.fixture_reserved_resources();
     drop(model);
-    assert_eq!(budget.usage(), usage);
+    assert_eq!(
+        budget.usage(),
+        RetainedResources {
+            payload_bytes: usage
+                .payload_bytes
+                .checked_sub(fixed.payload_bytes)
+                .unwrap(),
+            ..usage
+        }
+    );
     drop(prepared);
     assert_eq!(budget.usage(), baseline);
 }
@@ -109,7 +119,7 @@ fn target_preparation_charges_actual_roots_and_each_positive_dimension_rejects_a
 fn same_budget_transfer_reuses_the_exact_guard_under_full_pressure() {
     let target = context();
     let foreign = context();
-    let mut model = Analyzer::default();
+    let mut model = Analyzer::for_context(Context::default()).unwrap();
     let (source, profile) = tests::inputs();
     model
         .configure_for_budget(&settings(), &source, &profile, target.application.budget())
@@ -150,8 +160,8 @@ fn ordinary_readiness_survives_and_tracked_real_preview_cannot_transfer() {
     let target = context();
     let budget = target.application.budget();
     let (source, profile) = tests::inputs();
-    let mut candidate = Analyzer::default();
-    let mut legacy = Analyzer::default();
+    let mut candidate = Analyzer::for_context(Context::default()).unwrap();
+    let mut legacy = Analyzer::for_context(Context::default()).unwrap();
     for (document, source, profile) in [
         ("{}".to_owned(), source.clone(), profile.clone()),
         (settings(), Value::Null, Value::Null),
@@ -196,7 +206,7 @@ fn ordinary_readiness_survives_and_tracked_real_preview_cannot_transfer() {
 fn invalid_target_metadata_is_strict_and_persistent_error_rebind_preserves_source_on_rejection() {
     const INVALID_DOCUMENT: &str = "not a transmission document";
     let target = context();
-    let mut model = Analyzer::for_context(context());
+    let mut model = Analyzer::for_context(context()).unwrap();
     let source_key = model
         .context
         .application
@@ -216,7 +226,9 @@ fn invalid_target_metadata_is_strict_and_persistent_error_rebind_preserves_sourc
         .application
         .budget()
         .reserve_resources(RetainedResources {
-            payload_bytes: FIXTURE_LIMIT.payload_bytes - usage.payload_bytes,
+            payload_bytes: FIXTURE_LIMIT.payload_bytes
+                - usage.payload_bytes
+                - std::mem::size_of::<Analyzer>(),
             ..Default::default()
         })
         .unwrap();

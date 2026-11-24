@@ -4479,3 +4479,47 @@ Five required frozen closure conditions C2–C6 remain. Both user policy questio
 are resolved; no new owner category or API is justified by this unit. Native
 invokable Apply/help under pressure and the complete current SESSION Level 2 /
 applicable milestone gate remain pending. SESSION stays unchecked.
+
+
+## UIU-SESSION-01 fixed runtime owners
+
+[C2](session-closure.md#c2-concrete-fixed-layout-implementation) closes the existing
+fixed-runtime gap. Three mutable direction models reserve exact containing layouts
+before Box construction, with final nonoptional witnesses. Inline Worker/Job/
+Pending/controller/Active storage counts once; scientific and application children
+retain separate guards. Prepared queues and bridges move the same admitted Box,
+taking it before attempting fresh construction. Strict foreign coverage precedes
+mutation. Unavailable adapters keep only exact host references/static feedback,
+retry without a fallback full model, and preserve existing invokable declarations.
+The preview keeps its queued product Box to prevent overlap with Analyzer bytes.
+The real upstream preparation slot charges its actual pointee and one shared root;
+rejection returns the identical scientific controller and final aliases retain it.
+
+The [primary receipt](session-fixed-runtime-owners-evidence.json) separates frozen
+source `d5562ae` from current integration. One complete Qt Rust run passed 366
+cases and found twelve old fixed-owner fixture expectations. Their corrections
+include the actual containing layouts and remove those charges on transfer/drop.
+Exact one-report budgets add only the measured model storage. Metadata and upstream
+failure tests leave only the actual fixed-model/slot allowance so their original
+later target/detail failure still dispatches; they do not accept earlier failure.
+Slot cleanup observes actual Weak/counter disposal. Original numerical values,
+scientific assertions, rejection boundaries and prior results are preserved.
+One unused mutable fixture binding is removed. The twelve corrected cases pass
+in a targeted rerun; unchanged 366 cases are not repeated. Initial failures remain
+recorded. All 378 distinct cases pass, including six new concrete owner cases and
+three actual unavailable/retry bridge-owner cases. No production correction was
+needed after source adoption, apart from integrating its required adapters/callers.
+
+All-target Qt Clippy, formatting, final API boundary, optimized build and six
+fresh native desktop probes pass with empty probe stderr. Read-only QA found no
+concrete lead-adapter defect and ran no duplicate suites. All three CXX invokable
+modules and standalone QML/test inputs are byte-identical; sixteen accepted
+scientific/native source hashes are unchanged. Prior paired API, installed-wheel
+and QML evidence is explicitly reused. No fresh wheel, scientific workspace,
+unrelated CLI/package or standalone QML suite is claimed.
+
+Four frozen required conditions remain: C3 transport/closures, C4 loader paths/
+metadata, C5 persistent QML and C6 current complete SESSION acceptance. Native
+invokable Apply/help under pressure and the applicable milestone/final gates
+remain pending. These owner tests and normal native probes do not establish that
+interaction or Windows runtime acceptance. SESSION stays unchecked.

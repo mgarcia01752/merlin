@@ -11,7 +11,7 @@ use crate::shared::{
     presentation::constants::{MIN_SPECTRUM_DISPLAY_BINS, WORKER_FAILURE_ADMISSION_MESSAGE},
     worker_failure::WorkerFailure,
 };
-use crate::shell::{Retained, RetentionBudget};
+use crate::shell::{Retained, RetainedResources, RetentionBudget, RetentionError};
 use merlin::downstream::{
     ChannelConfiguration, ChannelConfigurationInput, PhysicalLayoutView, TransmissionConfiguration,
     TransmitterPreview, TransmitterPreviewControl, TransmitterPreviewRequest,
@@ -47,28 +47,33 @@ pub(crate) struct Analyzer {
     result_token: u64,
     prepared: Option<SharedPrepared>,
     job: Option<Job>,
-    result: Option<Retained<TransmitterPreview>>,
+    result: Option<Box<Retained<TransmitterPreview>>>,
     error: WorkerFailure,
     notice: &'static str,
-}
 
-impl Default for Analyzer {
-    /// Creates the existing GUI preview owner on its bootstrap downstream Context.
-    /// # Returns
-    /// Original empty revision/result/job/error defaults without generating samples.
-    fn default() -> Self {
-        Self::for_context(Context::default())
-    }
+    // Mutable data and every separate child guard drop before this fixed charge.
+    fixed_guard: Retained<()>,
 }
 
 impl Analyzer {
-    /// Creates an empty preview adapter against explicit canonical-budget Stores.
+    /// Admits an empty analyzer's actual fixed layout before final Box allocation.
     /// # Arguments
-    /// * `context` - Independent prepared downstream owner; no bootstrap lookup occurs.
+    /// * `context` - Existing canonical-budget Stores without a bootstrap lookup.
     /// # Returns
-    /// Original default state with no request, result, worker or revision advance.
-    pub(crate) fn for_context(context: Context) -> Self {
-        Self {
+    /// Original empty mutable state; separately guarded preview pointees remain boxed.
+    /// Inline Job/handles count once, with a last nonoptional fixed-layout witness.
+    /// # Errors
+    /// Fixed byte admission failure before allocation, revision or host mutation.
+    pub(crate) fn for_context(context: Context) -> Result<Box<Self>, RetentionError> {
+        let fixed_guard = context
+            .application
+            .budget()
+            .reserve_resources(RetainedResources {
+                payload_bytes: std::mem::size_of::<Self>(),
+                ..Default::default()
+            })?
+            .retain(());
+        Ok(Box::new(Self {
             context,
             revision: Default::default(),
             result_token: Default::default(),
@@ -77,7 +82,23 @@ impl Analyzer {
             result: None,
             error: WorkerFailure::default(),
             notice: "",
+            fixed_guard,
+        }))
+    }
+
+    fn fixed_target(
+        &self,
+        budget: &RetentionBudget,
+    ) -> Result<Option<Retained<()>>, RetentionError> {
+        if budget.owns(&self.fixed_guard) {
+            return Ok(None);
         }
+        budget
+            .reserve_resources(RetainedResources {
+                payload_bytes: std::mem::size_of::<Self>(),
+                ..Default::default()
+            })
+            .map(|guard| Some(guard.retain(())))
     }
 
     /// Freezes accepted settings/inputs and invalidates older sample results.
@@ -139,7 +160,7 @@ impl Analyzer {
         if self.job.is_some() || self.result.is_some() {
             return Err(PreviewError::TransferNotIdle);
         }
-        if !self.error.owns(budget) {
+        if !budget.owns(&self.fixed_guard) || !self.error.owns(budget) {
             return Err(PreviewError::ForeignBudget);
         }
         if self
@@ -168,6 +189,9 @@ impl Analyzer {
         if self.job.is_some() || self.result.is_some() {
             return Err(PreviewError::TransferNotIdle);
         }
+        let fixed_guard = self
+            .fixed_target(context.application.budget())
+            .map_err(PreviewError::Retention)?;
         let error = if self.error.owns(context.application.budget()) {
             None
         } else {
@@ -190,6 +214,9 @@ impl Analyzer {
             .transpose()?;
         self.prepared = prepared;
         self.context = context;
+        if let Some(guard) = fixed_guard {
+            self.fixed_guard = guard;
+        }
         if let Some(error) = error {
             self.error = error;
         }
@@ -277,7 +304,7 @@ impl Analyzer {
                         } else {
                             match result {
                                 Ok(result) => {
-                                    self.result = Some(*result);
+                                    self.result = Some(result);
                                     self.result_token = self.result_token.wrapping_add(1);
                                     self.notice =
                                         "Completed TX sample snapshot before channel impairments.";
@@ -430,6 +457,9 @@ impl Analyzer {
         budget: &RetentionBudget,
         strict_metadata: bool,
     ) -> Result<(), String> {
+        let fixed_guard = self
+            .fixed_target(budget)
+            .map_err(|error| PreviewError::Retention(error).into_message())?;
         let candidate = match prepare(document, source, profile) {
             Ok(candidate) => candidate,
             Err(error) => {
@@ -446,12 +476,18 @@ impl Analyzer {
                 };
                 self.invalidate();
                 self.error = error;
+                if let Some(guard) = fixed_guard {
+                    self.fixed_guard = guard;
+                }
                 return Ok(());
             }
         };
         let prepared = retention::admit(candidate, budget).map_err(PreviewError::into_message)?;
         self.invalidate();
         self.prepared = Some(prepared);
+        if let Some(guard) = fixed_guard {
+            self.fixed_guard = guard;
+        }
         Ok(())
     }
 
@@ -479,7 +515,7 @@ impl Analyzer {
     fn viewport(&self, start: i32, count: i32, capture_axis: bool) -> Result<Value, String> {
         let result = self
             .result
-            .as_ref()
+            .as_deref()
             .map(Retained::value)
             .ok_or("Generate a TX sample snapshot first.")?;
         let prepared = self
@@ -614,7 +650,7 @@ mod tests {
     #[test]
     fn readiness_cancellation_and_stale_generation_preserve_accepted_inputs() {
         let settings = serde_json::to_string(&TransmissionSettings::default()).unwrap();
-        let mut model = Analyzer::default();
+        let mut model = Analyzer::for_context(Context::default()).unwrap();
         configure(&mut model, &settings, Default::default());
         assert_eq!(model.status()["status"], "attention");
         configure(&mut model, &settings, inputs());
@@ -645,7 +681,7 @@ mod tests {
 
     #[test]
     fn accepted_timing_refreshes_without_simulation_and_vf_changes_only_distance() {
-        let mut model = Analyzer::default();
+        let mut model = Analyzer::for_context(Context::default()).unwrap();
         let settings = TransmissionSettings::default();
         configure(
             &mut model,
@@ -679,7 +715,7 @@ mod tests {
     #[test]
     fn generated_baseband_and_capture_axes_share_one_immutable_spectrum() {
         let settings = serde_json::to_string(&TransmissionSettings::default()).unwrap();
-        let mut model = Analyzer::default();
+        let mut model = Analyzer::for_context(Context::default()).unwrap();
         configure(&mut model, &settings, inputs());
         model.generate();
         wait(&mut model);
@@ -734,3 +770,7 @@ mod control_retention_tests;
 
 #[cfg(test)]
 mod failure_retention_tests;
+
+#[cfg(test)]
+#[path = "preview/fixed_retention_tests.rs"]
+mod fixed_retention_tests;

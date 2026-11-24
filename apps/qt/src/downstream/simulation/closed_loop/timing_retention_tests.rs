@@ -27,11 +27,11 @@ const LATEST_PROFILE: i32 = -1;
 const FIRST_POINT: i32 = 0;
 const FULL_SPAN: i32 = 0;
 
-fn prepared_model(duration_ms: u64) -> Model {
+fn prepared_model(duration_ms: u64) -> Box<Model> {
     let context = Context::for_application(ApplicationSessions::new(LIMITS).unwrap()).unwrap();
     let (inputs, transmission, sections) = tests::accepted_inputs();
     crate::downstream::workbench::session::restore(&context, inputs, sections).unwrap();
-    let mut model = Model::for_context(context);
+    let mut model = Model::for_context(context).unwrap();
     model
         .accept_options(
             Some(Options {

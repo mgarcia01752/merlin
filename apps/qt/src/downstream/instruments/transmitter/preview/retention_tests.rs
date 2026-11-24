@@ -109,9 +109,8 @@ fn candidate() -> PreparedPreview {
         preview: Some(PreviewInput { request, layout }),
     }
 }
-fn configured() -> Analyzer {
-    let mut model = Analyzer::default();
-    model.context = context();
+fn configured() -> Box<Analyzer> {
+    let mut model = Analyzer::for_context(context()).unwrap();
     tests::configure(&mut model, &settings(), tests::inputs());
     assert_eq!(model.status()["status"], "complete");
     model
@@ -459,7 +458,13 @@ fn genuine_box_queue_and_stale_discard_release_only_the_final_product_owner() {
     assert!(stale.result.is_none());
     let prepared = retention::prepared_resources(stale.prepared.as_ref().unwrap().value()).unwrap();
     let metadata = context().application.budget().usage();
-    assert_eq!(budget.usage(), plus(metadata, prepared));
+    assert_eq!(
+        budget.usage(),
+        plus(
+            plus(metadata, prepared),
+            stale.fixed_guard.fixture_reserved_resources()
+        )
+    );
 }
 
 #[test]
@@ -509,8 +514,21 @@ fn analyzer_rebind_is_transactional_and_rejects_active_or_result_bearing_transfe
         model.prepared.as_ref().unwrap().value(),
         old.value()
     ));
-    assert_eq!(source_budget.usage(), source_before);
-    assert_eq!(target_budget.usage(), plus(target_baseline, resources));
+    let fixed = model.fixed_guard.fixture_reserved_resources();
+    assert_eq!(
+        source_budget.usage(),
+        RetainedResources {
+            payload_bytes: source_before
+                .payload_bytes
+                .checked_sub(fixed.payload_bytes)
+                .unwrap(),
+            ..source_before
+        }
+    );
+    assert_eq!(
+        target_budget.usage(),
+        plus(plus(target_baseline, resources), fixed)
+    );
     model.generate();
     let untouched = context();
     let destination = untouched.application.budget().usage();

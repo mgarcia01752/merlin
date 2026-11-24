@@ -19,9 +19,9 @@ const LIMITS: RetainedResources = RetainedResources {
 };
 const WATCHDOG: Duration = Duration::from_secs(30);
 
-fn configured() -> Analyzer {
+fn configured() -> Box<Analyzer> {
     let context = Context::for_application(ApplicationSessions::new(LIMITS).unwrap()).unwrap();
-    let mut model = Analyzer::for_context(context);
+    let mut model = Analyzer::for_context(context).unwrap();
     tests::configure(
         &mut model,
         &serde_json::to_string(&TransmissionSettings::default()).unwrap(),

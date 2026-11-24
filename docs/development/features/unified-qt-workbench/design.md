@@ -4766,3 +4766,10 @@ the final numeric audit remain their existing tasks. No new owner category,
 public API or generic framework is authorized without a demonstrated existing
 requirement failure. Finish C1–C6, accept SESSION with current evidence and
 immediately continue UIU-SHELL-01.
+
+
+The frozen closure's [C2 concrete layouts](session-closure.md#c2-concrete-fixed-layout-implementation)
+now have [primary evidence](session-fixed-runtime-owners-evidence.json) and
+[validation](validation.md#uiu-session-01-fixed-runtime-owners), distinct from the
+[source-only handoff](agent-handoffs/fixed-runtime-owners.md). C3–C6 remain required;
+no new category or scientific API expands the frozen scope.

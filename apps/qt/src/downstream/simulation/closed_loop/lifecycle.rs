@@ -113,6 +113,7 @@ impl Model {
         budget: &RetentionBudget,
     ) -> Result<(), String> {
         self.check_prepared_idle()?;
+        let fixed_guard = self.fixed_target(budget).map_err(fixed_error)?;
         let replacement_guard = if options_owned(self, budget) {
             None
         } else {
@@ -128,6 +129,9 @@ impl Model {
             self.options_guard = guard;
         }
         self.accept_prepared(prepared);
+        if let Some(guard) = fixed_guard {
+            self.fixed_guard = guard;
+        }
         Ok(())
     }
 
@@ -150,9 +154,13 @@ impl Model {
         if self.generation.is_some() || self.request.is_some() || self.plan.is_some() {
             return Err("Only a fresh receiver candidate can stage project options.".into());
         }
+        let fixed_guard = self.fixed_target(budget).map_err(fixed_error)?;
         let guard = metadata::reserve_options(options.as_ref(), budget)?;
         self.options = options;
         self.options_guard = guard;
+        if let Some(guard) = fixed_guard {
+            self.fixed_guard = guard;
+        }
         self.verify = verify;
         Ok(())
     }
@@ -170,6 +178,11 @@ impl Model {
     /// Rejects tracked execution, inconsistent root presence or any foreign reservation.
     pub(crate) fn check_prepared_target(&self, budget: &RetentionBudget) -> Result<bool, String> {
         self.check_prepared_idle()?;
+        if !budget.owns(&self.fixed_guard) {
+            return Err(
+                "Prepared receiver fixed storage belongs to another application host.".into(),
+            );
+        }
         self.check_metadata_target(budget)?;
         if self.request.is_some() != self.plan.is_some() {
             return Err("Prepared receiver request and plan are inconsistent.".into());
@@ -247,6 +260,9 @@ impl Model {
                 .snapshot(crate::shell::Direction::Downstream)
                 .key
                 .session;
+        let fixed_guard = self
+            .fixed_target(context.application.budget())
+            .map_err(fixed_error)?;
         let replacement_guard = if options_owned(self, context.application.budget()) {
             None
         } else {
@@ -290,6 +306,9 @@ impl Model {
         publish(&context, None);
         crate::downstream::instruments::receiver::performance::clear(&context);
         self.context = context;
+        if let Some(guard) = fixed_guard {
+            self.fixed_guard = guard;
+        }
         if let Some(guard) = replacement_guard {
             self.options_guard = guard;
         }
@@ -310,6 +329,7 @@ impl Model {
         verify: bool,
     ) -> Result<(), String> {
         let budget = self.context.application.budget();
+        let fixed_guard = self.fixed_target(budget).map_err(fixed_error)?;
         let options_guard = metadata::reserve_options(options.as_ref(), budget)?;
         let prepared = prepare_admitted(settings, inputs, sections, options.as_ref(), budget)?;
         let prepared = admit_error(prepared, budget);
@@ -322,6 +342,9 @@ impl Model {
         self.accept_generation(key);
         self.options = options;
         self.options_guard = options_guard;
+        if let Some(guard) = fixed_guard {
+            self.fixed_guard = guard;
+        }
         self.verify = verify;
         self.accept_prepared(prepared);
         Ok(())
@@ -362,6 +385,10 @@ impl Model {
         crate::downstream::instruments::receiver::performance::clear(&self.context);
         self.token = self.token.wrapping_add(1);
     }
+}
+
+fn fixed_error(error: crate::shell::RetentionError) -> String {
+    application_error(crate::shell::ApplicationError::Retention(error))
 }
 
 fn options_owned(model: &Model, budget: &RetentionBudget) -> bool {

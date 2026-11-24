@@ -9,7 +9,7 @@ use crate::{
     shared::{
         presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE, worker_failure::WorkerFailure,
     },
-    shell::{Retained, RetentionBudget, SessionKey},
+    shell::{Retained, RetainedResources, RetentionBudget, SessionKey},
 };
 use merlin::upstream::{ConfigurationDocument, ReceiverObservationPolicy};
 use std::sync::{
@@ -20,7 +20,10 @@ use std::sync::{
 // One preparation per model and one completion; unrelated to scientific callbacks.
 const PREPARATION_COMPLETION_CAPACITY: usize = 1;
 
-type ControllerSlot = Arc<Mutex<Option<UpstreamController>>>;
+// One additional Arc pointee while the controller lives outside its GUI model.
+const CONTROLLER_SLOT_SHARED_ROOTS: usize = 1;
+
+type ControllerSlot = Arc<Retained<Mutex<Option<UpstreamController>>>>;
 
 pub(super) enum Pending {
     Configuration {
@@ -94,12 +97,22 @@ impl Pending {
     /// # Returns
     /// Pending result retaining the original owner even if preflight unwinds.
     /// # Errors
-    /// Spawn failure returns the original controller for immediate restoration.
+    /// Slot admission or spawn failure returns the original controller unchanged.
+    /// Fixed slot storage is reserved before Arc/channel/spawn; worker aliases
+    /// retain it through cancellation, disconnect or GUI-owner destruction.
     pub(super) fn run(
         controller: UpstreamController,
         budget: RetentionBudget,
     ) -> Result<Self, (UpstreamController, String)> {
-        let owner = Arc::new(Mutex::new(Some(controller)));
+        let reservation = match budget.reserve_resources(RetainedResources {
+            payload_bytes: std::mem::size_of::<Retained<Mutex<Option<UpstreamController>>>>(),
+            ordered_entries: 0,
+            shared_roots: CONTROLLER_SLOT_SHARED_ROOTS,
+        }) {
+            Ok(reservation) => reservation,
+            Err(error) => return Err((controller, error_text(format!("{error:?}")))),
+        };
+        let owner = Arc::new(reservation.retain(Mutex::new(Some(controller))));
         let worker_owner = Arc::clone(&owner);
         let (sender, receiver) = mpsc::sync_channel(PREPARATION_COMPLETION_CAPACITY);
         let spawned = std::thread::Builder::new()
@@ -107,6 +120,7 @@ impl Pending {
             .spawn(move || {
                 let target = {
                     let slot = worker_owner
+                        .value()
                         .lock()
                         .unwrap_or_else(|error| error.into_inner());
                     slot.as_ref()
@@ -161,6 +175,7 @@ fn receive<T>(receiver: &Receiver<Result<T, WorkerFailure>>) -> Option<Result<T,
 
 fn take_controller(owner: &ControllerSlot) -> UpstreamController {
     owner
+        .value()
         .lock()
         .unwrap_or_else(|error| error.into_inner())
         .take()

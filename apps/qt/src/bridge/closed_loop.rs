@@ -78,35 +78,62 @@ pub mod bridge {
 }
 /// GUI-thread lifecycle owner; worker jobs use frozen scientific snapshots.
 pub struct ClosedLoopRust {
-    pub(crate) model: model::Model,
+    context: crate::downstream::workbench::session::Context,
+    pub(crate) model: Option<Box<model::Model>>,
     admission_failure: crate::shared::worker_failure::WorkerFailure,
 }
 impl Default for ClosedLoopRust {
-    /// Creates the original receiver model with no retained Apply diagnostic.
-    ///
+    /// Creates controls on the canonical host, with an explicit unavailable state.
     /// # Returns
-    /// The unchanged downstream construction owner and allocation-free empty help.
+    /// An admitted model, or only host references and borrowed failure text.
     fn default() -> Self {
-        Self {
-            model: model::Model::default(),
-            admission_failure: crate::shared::worker_failure::WorkerFailure::Static(""),
-        }
+        Self::for_context(crate::downstream::workbench::session::Context::default())
     }
 }
 impl ClosedLoopRust {
+    /// Constructs the adapter without panicking when fixed model storage rejects.
+    /// # Arguments
+    /// * `context` - Exact host retained for same-host retry and prepared transfer.
+    /// # Returns
+    /// Thin handles; no full uncharged model is retained on failure.
+    fn for_context(context: crate::downstream::workbench::session::Context) -> Self {
+        let model = model::Model::for_context(context.clone()).ok();
+        Self {
+            context,
+            model,
+            admission_failure: crate::shared::worker_failure::WorkerFailure::default(),
+        }
+    }
+
+    /// Retries fixed admission without changing any accepted host state.
+    /// # Returns
+    /// The existing/admitted owner, or None while the exact host limit rejects.
+    fn ensure_model(&mut self) -> Option<&mut model::Model> {
+        if self.model.is_none() {
+            self.model = model::Model::for_context(self.context.clone()).ok();
+        }
+        self.model.as_deref_mut()
+    }
+
+    /// Projects a minimal unavailable control state without a replacement model.
+    /// # Returns
+    /// Static failure and false readiness; no scientific outcome is fabricated.
+    fn unavailable_state() -> serde_json::Value {
+        serde_json::json!({"receiver_status":"attention","verify_status":"attention",
+            "reason":crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+            "diagnostic":null,"timing":null,"busy":false,"paused":false,
+            "can_start":false,"has_result":false})
+    }
+
     /// Retains actual Apply help independently of the receiver's status owner.
-    ///
     /// # Arguments
     /// * `error` - Original bounded Apply failure and optional known-code help.
-    ///
     /// # Returns
-    /// Unchanged admitted message, or the existing static fallback when detail
-    /// admission fails. The returned copy is a temporary Qt response; the stored
-    /// pointee remains charged until replacement or this adapter's destruction.
+    /// Admitted message, or borrowed fallback after rejected detail is disposed.
     fn admit_failure(&mut self, error: crate::downstream::help::AdmissionError) -> String {
         let failure = crate::shared::worker_failure::WorkerFailure::admit_with_fallback(
             error,
-            self.model.context.application.budget(),
+            self.context.application.budget(),
             crate::shared::presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE,
         );
         let message = failure.message().to_owned();
@@ -121,13 +148,16 @@ impl bridge::ClosedLoop {
     /// # Returns
     /// Next-run status, never a fabricated scientific result.
     pub fn configure(mut self: core::pin::Pin<&mut Self>, settings: &QString) -> QString {
-        if settings.to_string().len() <= MAX_TRANSMISSION_DOCUMENT_BYTES {
-            self.as_mut()
-                .rust_mut()
-                .model
-                .configure(&settings.to_string());
-        }
-        QString::from(self.rust().model.state().to_string())
+        let mut owner = self.as_mut().rust_mut();
+        let state = if let Some(model) = owner.ensure_model() {
+            if settings.to_string().len() <= MAX_TRANSMISSION_DOCUMENT_BYTES {
+                model.configure(&settings.to_string());
+            }
+            model.state()
+        } else {
+            ClosedLoopRust::unavailable_state()
+        };
+        QString::from(state.to_string())
     }
     /// Projects the current accepted channel model independently of retained runs.
     /// # Arguments
@@ -147,10 +177,14 @@ impl bridge::ClosedLoop {
             .map_err(|error| {
                 crate::downstream::help::AdmissionError::from(error.message().to_owned())
             })?;
-            let options = self.rust().model.options.clone().unwrap_or_default();
+            let model =
+                self.rust().model.as_deref().ok_or(
+                    crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+                )?;
+            let options = model.options.clone().unwrap_or_default();
             crate::downstream::inputs::channel_model::combined_preview(
                 transmission.settings(),
-                &crate::downstream::workbench::session::snapshot(&self.rust().model.context),
+                &crate::downstream::workbench::session::snapshot(&self.rust().context),
                 &options.channel_filter,
             )
         })();
@@ -167,8 +201,17 @@ impl bridge::ClosedLoop {
         options: &QString,
         settings: &QString,
     ) -> QString {
+        if self.as_mut().rust_mut().ensure_model().is_none() {
+            return QString::from(
+                crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+            );
+        }
         let prepare = || -> Result<model::Options, crate::downstream::help::AdmissionError> {
-            if self.rust().model.state()["busy"].as_bool() == Some(true) {
+            let model =
+                self.rust().model.as_deref().ok_or(
+                    crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+                )?;
+            if model.state()["busy"].as_bool() == Some(true) {
                 return Err(
                     "Stop the simulation before changing receiver or channel settings.".into(),
                 );
@@ -187,8 +230,7 @@ impl bridge::ClosedLoop {
                 .mce
                 .validate()
                 .map_err(crate::downstream::help::AdmissionError::classified)?;
-            let inputs =
-                crate::downstream::workbench::session::snapshot(&self.rust().model.context);
+            let inputs = crate::downstream::workbench::session::snapshot(&self.rust().context);
             options.validate(&inputs)?;
             if inputs.source.is_some() && inputs.profile.is_some() && inputs.playback.is_some() {
                 model::prepare(
@@ -202,14 +244,15 @@ impl bridge::ClosedLoop {
         };
         match prepare() {
             Ok(options) => {
-                let verified = self.rust().model.verify;
-                let accepted = self.as_mut().rust_mut().model.accept_options(
-                    Some(options),
-                    verified,
-                    &settings.to_string(),
-                );
-                self.as_mut().rust_mut().admission_failure =
-                    crate::shared::worker_failure::WorkerFailure::Static("");
+                let mut owner = self.as_mut().rust_mut();
+                let Some(model) = owner.model.as_deref_mut() else {
+                    return QString::from(
+                        crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+                    );
+                };
+                let verified = model.verify;
+                let accepted = model.accept_options(Some(options), verified, &settings.to_string());
+                owner.admission_failure = crate::shared::worker_failure::WorkerFailure::Static("");
                 QString::from(accepted.err().unwrap_or_default())
             }
             Err(error) => QString::from(self.as_mut().rust_mut().admit_failure(error)),
@@ -232,51 +275,60 @@ impl bridge::ClosedLoop {
         verified: bool,
         settings: &QString,
     ) {
-        if let Some(mut model) = crate::downstream::workbench::project_load::take(
-            &self.rust().model.context,
-            |prepared| prepared.receiver.take(),
-        ) {
-            if model
-                .attach_prepared(self.rust().model.context.clone())
-                .is_err()
-            {
+        if let Some(mut model) =
+            crate::downstream::workbench::project_load::take(&self.rust().context, |prepared| {
+                prepared.receiver.take()
+            })
+        {
+            if model.attach_prepared(self.rust().context.clone()).is_err() {
                 return;
             }
-            self.as_mut().rust_mut().model = model;
+            self.as_mut().rust_mut().model = Some(model);
             return;
         }
         if options.to_string().len() > MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES {
             return;
         }
         if let Ok(options) = serde_json::from_str::<Option<model::Options>>(&options.to_string()) {
-            let _ = self.as_mut().rust_mut().model.accept_options(
-                options,
-                verified,
-                &settings.to_string(),
-            );
+            if let Some(model) = self.as_mut().rust_mut().ensure_model() {
+                let _ = model.accept_options(options, verified, &settings.to_string());
+            }
         }
     }
     /// Accepts independent source comparison without generating data.
     pub fn verify(mut self: core::pin::Pin<&mut Self>) {
-        self.as_mut().rust_mut().model.verify = true;
+        if let Some(model) = self.as_mut().rust_mut().ensure_model() {
+            model.verify = true;
+        }
     }
     /// Starts at most one bounded Rust worker.
     pub fn start(mut self: core::pin::Pin<&mut Self>) {
-        self.as_mut().rust_mut().model.start();
+        if let Some(model) = self.as_mut().rust_mut().ensure_model() {
+            model.start();
+        }
     }
     /// Stops active work cooperatively, including while paused.
     pub fn stop(&self) {
-        self.rust().model.stop();
+        if let Some(model) = self.rust().model.as_deref() {
+            model.stop();
+        }
     }
     /// Toggles a step-boundary pause gate without resetting the engine.
     pub fn pause(&self) {
-        self.rust().model.pause();
+        if let Some(model) = self.rust().model.as_deref() {
+            model.pause();
+        }
     }
     /// Collects bounded completion and progress metadata.
     /// # Returns
     /// JSON status and genuine decoder/comparison totals.
     pub fn poll(mut self: core::pin::Pin<&mut Self>) -> QString {
-        QString::from(self.as_mut().rust_mut().model.poll().to_string())
+        let state = self
+            .as_mut()
+            .rust_mut()
+            .ensure_model()
+            .map_or_else(ClosedLoopRust::unavailable_state, model::Model::poll);
+        QString::from(state.to_string())
     }
 }
 

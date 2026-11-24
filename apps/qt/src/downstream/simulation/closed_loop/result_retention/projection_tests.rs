@@ -96,8 +96,7 @@ fn actual_worker_preserves_completed_science_and_static_warning_when_projection_
     let current = Arc::new(*queued);
     let context = Context::for_application(application.clone()).unwrap();
     publish(&context, Some(Arc::clone(&current)));
-    let mut model = Model::default();
-    model.context = context.clone();
+    let model = Model::for_context(context.clone()).unwrap();
     let state = model.state();
     assert_eq!(state["reason"], current.observation_error.unwrap());
     assert_eq!(

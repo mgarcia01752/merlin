@@ -10,7 +10,8 @@ use crate::shared::{
     presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE, worker_failure::WorkerFailure,
 };
 use crate::shell::{
-    ApplicationSessions, Direction, Retained, RetainedResources, RunToken, SessionKey, WorkerStatus,
+    ApplicationSessions, Direction, Retained, RetainedResources, RetentionError, RunToken,
+    SessionKey, WorkerStatus,
 };
 use crate::upstream::{
     ControllerEvent, PreparedRun, RetainedReport, UpstreamControl, UpstreamController,
@@ -34,16 +35,29 @@ pub(crate) struct Model {
     key: Option<SessionKey>,
     report: Option<(RunToken, RetainedReport)>,
     error: WorkerFailure,
+
+    // Drop controllers, pending slots and data aliases before this containing charge.
+    _fixed_guard: Retained<()>,
 }
 
 impl Model {
-    /// Creates an unconfigured upstream owner on the actual shared desktop host.
+    /// Admits an idle upstream model's actual layout before final Box allocation.
     /// # Arguments
-    /// * `application` - Same host used by the downstream adapter.
+    /// * `application` - Actual shared host, including its canonical budget.
     /// # Returns
-    /// Idle independent state; no invented configuration or worker starts.
-    pub(crate) fn new(application: ApplicationSessions) -> Self {
-        Self {
+    /// Independent mutable state with a last nonoptional fixed-layout witness.
+    /// Inline controller/Pending/Active storage counts once, without scientific copies.
+    /// # Errors
+    /// Fixed byte admission failure before allocation, readiness or worker changes.
+    pub(crate) fn new(application: ApplicationSessions) -> Result<Box<Self>, RetentionError> {
+        let fixed_guard = application
+            .budget()
+            .reserve_resources(RetainedResources {
+                payload_bytes: std::mem::size_of::<Self>(),
+                ..Default::default()
+            })?
+            .retain(());
+        Ok(Box::new(Self {
             application,
             controller: None,
             pending: None,
@@ -51,7 +65,8 @@ impl Model {
             key: None,
             report: None,
             error: WorkerFailure::default(),
-        }
+            _fixed_guard: fixed_guard,
+        }))
     }
 
     /// Stages a bounded public configuration for background parsing/admission.
@@ -301,3 +316,6 @@ pub(super) fn error_text(error: String) -> String {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod fixed_retention_tests;

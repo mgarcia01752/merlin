@@ -71,3 +71,8 @@ pub(crate) const PERCENT_PER_UNIT: f64 = 100.0;
 /// This is application feedback, not a scientific failure category or channel policy.
 pub(crate) const WORKER_FAILURE_ADMISSION_MESSAGE: &str =
     "Worker failure details exceed retained-data limits.";
+
+/// Borrowed feedback when a concrete GUI runtime model cannot be admitted.
+/// Distinct from rejected worker error details: no simulation/configuration starts.
+pub(crate) const RUNTIME_MODEL_ADMISSION_MESSAGE: &str =
+    "Session controls are unavailable within the retained-data limit.";

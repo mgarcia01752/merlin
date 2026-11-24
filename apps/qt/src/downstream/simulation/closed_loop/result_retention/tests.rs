@@ -116,7 +116,7 @@ fn working_allowance(request: &FullLoopRequest) -> RetainedResources {
     actual
 }
 
-fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedResources) {
+fn prepared_model(dimension: Dimension) -> (Box<Model>, RetainedResources, RetainedResources) {
     let (inputs, transmission, sections) = super::super::tests::accepted_inputs();
     let options = Options {
         duration_ms: OBSERVATION_MS,
@@ -150,9 +150,13 @@ fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedRe
     // actual target must reject while the first immutable report remains owned.
     let input_charge =
         crate::downstream::workbench::session::fixture_candidate_resources(&inputs, &sections);
+    let fixed = RetainedResources {
+        payload_bytes: std::mem::size_of::<Model>(),
+        ..Default::default()
+    };
     let maximum = limited(
         sum(
-            sum(sum(metadata, input_charge), initial),
+            sum(sum(sum(metadata, fixed), input_charge), initial),
             sum(
                 accepted_charge,
                 sum(sum(working_charge, report_charge), {
@@ -178,8 +182,7 @@ fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedRe
         request_retention::rebind_request(&request, context.application.budget()).unwrap();
     let plan = request_retention::rebind_plan(&plan, context.application.budget()).unwrap();
     let key = context.application.configure_downstream(true).unwrap();
-    let mut model = Model::default();
-    model.context = context;
+    let mut model = Model::for_context(context).unwrap();
     model.options = Some(options);
     model.verify = true;
     model.request = Some(request);
@@ -187,7 +190,7 @@ fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedRe
     model.generation = Some(key);
     (
         model,
-        sum(sum(metadata, input_charge), accepted_charge),
+        sum(sum(sum(metadata, fixed), input_charge), accepted_charge),
         report_charge,
     )
 }
