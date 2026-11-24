@@ -20,7 +20,11 @@ const TEST_MAXIMUM: RetainedResources = RetainedResources {
     slot_count: usize::MAX,
 };
 
-fn populated() -> WorkbenchFileRust {
+/// Creates the real accepted downstream fixture with its original protected path.
+///
+/// # Returns
+/// A file-action owner sharing the fixture's actual host, models and path guard.
+pub(super) fn populated() -> WorkbenchFileRust {
     let context =
         Context::for_application(ApplicationSessions::new(TEST_MAXIMUM).unwrap()).unwrap();
     PreparedProject::prepare(
@@ -43,6 +47,7 @@ fn populated() -> WorkbenchFileRust {
         PROJECT.len(),
     )
     .unwrap();
+    let path = project_path::admit(path, context.application.budget()).unwrap();
     WorkbenchFileRust {
         context,
         path: Some(path),
@@ -57,7 +62,7 @@ fn rejected_new_with_only_empty_input_capacity_preserves_old_alias_editors_and_s
     let old = session::snapshot(&owner.context);
     let saved = session::saved_sections(&owner.context);
     let key = owner.context.application.snapshot(Direction::Downstream);
-    let path = owner.path.clone().unwrap();
+    let path = owner.path.as_ref().unwrap().value().clone();
     let original = std::fs::read(&path).unwrap();
     let baseline = budget.usage();
     // This independent actual empty-State charge made the old New commit possible
@@ -76,7 +81,7 @@ fn rejected_new_with_only_empty_input_capacity_preserves_old_alias_editors_and_s
         owner.context.application.snapshot(Direction::Downstream),
         key
     );
-    assert_eq!(owner.path.as_ref(), Some(&path));
+    assert_eq!(owner.path.as_ref().map(|path| path.value()), Some(&path));
     assert!(crate::platform::input_file::is_original(
         &owner.context.application,
         &path
@@ -105,11 +110,12 @@ fn rejected_new_with_only_empty_input_capacity_preserves_old_alias_editors_and_s
 fn successful_new_transfers_all_blank_editors_under_full_pressure_and_preserves_theme_choice() {
     let mut owner = populated();
     let budget = owner.context.application.budget().clone();
-    let path = owner.path.clone().unwrap();
+    let path = owner.path.as_ref().unwrap().value().clone();
     let result = owner.create_blank().unwrap();
-    assert_eq!(result["created"], true);
-    assert_eq!(result["prepared"], true);
-    assert!(result["dark"].is_null());
+    assert_eq!(result.value()["created"], true);
+    assert_eq!(result.value()["prepared"], true);
+    assert!(result.value()["dark"].is_null());
+    drop(result);
     assert!(owner.path.is_none());
     assert!(!crate::platform::input_file::is_original(
         &owner.context.application,
@@ -163,14 +169,14 @@ fn successful_new_transfers_all_blank_editors_under_full_pressure_and_preserves_
 #[test]
 fn successful_new_releases_downstream_flags_but_preserves_shared_upstream_protection() {
     let mut owner = populated();
-    let path = owner.path.clone().unwrap();
+    let path = owner.path.as_ref().unwrap().value().clone();
     let application = owner.context.application.clone();
     let upstream = application.snapshot(Direction::Upstream);
     application
         .register_input_path(Direction::Upstream, path.canonicalize().unwrap())
         .unwrap();
     let original = std::fs::read(&path).unwrap();
-    assert_eq!(owner.create_blank().unwrap()["created"], true);
+    assert_eq!(owner.create_blank().unwrap().value()["created"], true);
     assert!(owner.path.is_none());
     assert!(crate::platform::input_file::is_original(
         &application,

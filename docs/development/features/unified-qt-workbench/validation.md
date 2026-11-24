@@ -4569,3 +4569,48 @@ SESSION acceptance remain required. Native invokable Apply/help under pressure,
 the applicable milestone/final gates and Windows runtime acceptance remain
 pending. Normal desktop probes and owner tests do not establish those behaviors.
 SESSION stays unchecked; no new requirement or closure row expands the task.
+
+
+## UIU-SESSION-01 project paths and metadata
+
+Frozen [C4](session-closure.md#c4-minimum-project-ownership-implementation) is closed
+by the [primary receipt](session-project-metadata-evidence.json). Actual PathBuf
+capacities and boxed retained layouts are charged before persistent startup,
+loader capture or Save adoption. JSON children and the actual boxed metadata
+layout are independent of PreparedProject's inline complement and existing
+science/editor/snapshot/C3 guards. All target witnesses validate before the
+existing atomic transaction. New metadata flags finalize before admission. Open
+and startup move original guards; Save borrows its existing destination or keeps
+normalized candidate/old guards together until the unchanged writer succeeds.
+
+All 36 affected project/bridge/startup/path Qt Rust cases pass, including 14 new
+cases. The first run passed 35 and found one obsolete lifetime ledger: the
+prepared inline wrapper now ends at adoption while returned metadata survives.
+Its corrected exact-guard assertion passes without changing original accepted
+state, source protection or final-disposal assertions. All-target Clippy found
+raw prepare had no production callers after guarded loader transfer; the original
+fixture signature is now test-only, with no warning suppression. Compile/runtime
+and failed script/check logs are retained in the receipt's ignored raw directory.
+
+A real current UI Save output loads and executes through the public Rust API and
+the accepted installed native Python artifact. Original bytes, resolved request
+settings, status, complete scientific summary, errors and unrecovered payloads
+match; wall-clock elapsed is excluded. Ten existing installed saved-input tests
+also pass, covering legacy schemas, owned settings, filled sources, timelines,
+association, invalid inputs, bounds and nonregular files. The first parity script
+used the wrong settings field for noise_seed; correcting it to the existing
+options contract changed no application behavior. Cached wheel/native hashes are
+verified; no fresh wheel is claimed.
+
+Qt all-target Clippy, format, final API boundary, optimized build and six fresh
+native startup/project probes pass. The writer, project schema, scientific/native
+sources, five CXX declaration modules, QML/test inputs, registration and manifests
+are unchanged. Standalone QML and scientific evidence is explicitly reused;
+unrelated full workspace/CLI/package suites were not required for this owner.
+The complete SESSION Level 2 gate remains C6. Read-only QA found no concrete
+Save/startup/loader defect; post-adoption move pressure is distinguished from
+full-budget readiness admission. Original readiness pressure tests also pass.
+
+C5 persistent logical presentation and C6 current SESSION acceptance remain open.
+Normal desktop probes do not establish native Apply/help under pressure. No new
+scientific API, owner category, requirement or official task expands this unit.

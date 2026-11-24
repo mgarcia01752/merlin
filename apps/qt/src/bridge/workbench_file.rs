@@ -3,9 +3,17 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Native project Open/Save coordinator with validation before adoption.
-use crate::downstream::workbench::{project_file::Project, session as workbench_session};
+use crate::downstream::{
+    common::constants::{MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES, WORKBENCH_FILE_SUFFIX},
+    workbench::{project_file::Project, session as workbench_session},
+};
+use crate::{
+    shared::project_path::{self, ProjectPath},
+    shell::Retained,
+};
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::{QString, QUrl};
+use merlin::downstream::MAX_TRANSMISSION_DOCUMENT_BYTES;
 use serde_json::json;
 use std::path::PathBuf;
 #[cxx_qt::bridge]
@@ -84,30 +92,109 @@ pub mod bridge {
 #[derive(Default)]
 pub struct WorkbenchFileRust {
     pub(super) context: crate::downstream::workbench::session::Context,
-    path: Option<PathBuf>,
+    path: Option<ProjectPath>,
     loader: crate::downstream::workbench::project_load::Loader,
 }
 
 impl WorkbenchFileRust {
-    fn create_blank(&mut self) -> Result<serde_json::Value, String> {
+    fn create_blank(&mut self) -> Result<Box<Retained<serde_json::Value>>, String> {
         if self.loader.is_loading() {
             return Err("Wait for workbench loading to finish.".into());
         }
         let candidate =
             crate::downstream::workbench::project_load::PreparedProject::blank(&self.context)?;
-        let mut metadata = candidate.adopt(&self.context)?;
-        // New preserves the global appearance choice and has no Save destination.
-        metadata["created"] = json!(true);
-        metadata["opened"] = json!(false);
-        metadata["dark"] = serde_json::Value::Null;
-        self.path = None;
-        Ok(metadata)
+        let adopted = candidate.adopt(&self.context)?;
+        self.path = adopted.path;
+        Ok(adopted.metadata)
     }
+
+    fn save_to(
+        &mut self,
+        destination: Option<PathBuf>,
+        settings: &str,
+        receiver: &str,
+        verified: bool,
+        dark: bool,
+    ) -> Result<serde_json::Value, String> {
+        validate_project_options(settings, receiver)?;
+        let candidate = match destination {
+            Some(destination) => Some(project_path::admit(
+                normalize_destination(destination)?,
+                self.context.application.budget(),
+            )?),
+            None => {
+                let current = self.path.as_ref().ok_or("Missing project destination")?;
+                if current
+                    .value()
+                    .to_string_lossy()
+                    .ends_with(WORKBENCH_FILE_SUFFIX)
+                {
+                    None
+                } else {
+                    Some(project_path::admit(
+                        append_destination_suffix(current.value())?,
+                        self.context.application.budget(),
+                    )?)
+                }
+            }
+        };
+        let target = candidate
+            .as_ref()
+            .or(self.path.as_ref())
+            .ok_or("Missing project destination")?;
+        let project = Project {
+            schema_version: crate::downstream::common::constants::WORKBENCH_SCHEMA_VERSION,
+            application: "MERLIN".into(),
+            transmission: serde_json::from_str(settings).map_err(|error| error.to_string())?,
+            sections: workbench_session::saved_sections(&self.context),
+            receiver: serde_json::from_str(receiver).map_err(|error| error.to_string())?,
+            comparison_enabled: verified,
+            dark,
+        };
+        project.write(target.value(), &self.context.application)?;
+        let result = json!({"saved":true,"path":target.value().to_string_lossy()});
+        if let Some(candidate) = candidate {
+            self.path = Some(candidate);
+        }
+        Ok(result)
+    }
+}
+
+fn normalize_destination(mut destination: PathBuf) -> Result<PathBuf, String> {
+    if !destination
+        .to_string_lossy()
+        .ends_with(WORKBENCH_FILE_SUFFIX)
+    {
+        destination = append_destination_suffix(&destination)?;
+    }
+    Ok(destination)
+}
+
+fn append_destination_suffix(destination: &std::path::Path) -> Result<PathBuf, String> {
+    let destination = PathBuf::from(format!("{}{WORKBENCH_FILE_SUFFIX}", destination.display()));
+    if destination.exists() {
+        return Err(
+            "Choose the full .merlin.json filename to confirm replacement of that project.".into(),
+        );
+    }
+    Ok(destination)
+}
+
+fn validate_project_options(settings: &str, receiver: &str) -> Result<(), String> {
+    if settings.len() > MAX_TRANSMISSION_DOCUMENT_BYTES
+        || receiver.len() > MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES
+    {
+        return Err("Project options exceed bounds".into());
+    }
+    Ok(())
 }
 
 #[cfg(test)]
 #[path = "workbench_file/editor_tests.rs"]
 mod editor_tests;
+#[cfg(test)]
+#[path = "workbench_file/path_tests.rs"]
+mod path_tests;
 fn path(url: &str) -> Result<PathBuf, String> {
     QUrl::from(&QString::from(url))
         .to_local_file()
@@ -161,11 +248,10 @@ impl bridge::WorkbenchFile {
     /// Default settings for editor reload, with no accepted inputs or run options.
     pub fn new_workbench(mut self: core::pin::Pin<&mut Self>) -> QString {
         let result = self.as_mut().rust_mut().create_blank();
-        QString::from(
-            result
-                .unwrap_or_else(|error| json!({"error":error}))
-                .to_string(),
-        )
+        match result {
+            Ok(metadata) => QString::from(metadata.value().to_string()),
+            Err(error) => QString::from(json!({"error":error}).to_string()),
+        }
     }
 
     /// Stores a private recovery WB without overwriting a user-selected file.
@@ -185,7 +271,9 @@ impl bridge::WorkbenchFile {
             return QString::from("{\"error\":\"Wait for workbench loading to finish.\"}");
         }
         let save = || -> Result<(), String> {
-            if settings.to_string().len() > 4096 || receiver.to_string().len() > 4096 {
+            if settings.to_string().len() > MAX_TRANSMISSION_DOCUMENT_BYTES
+                || receiver.to_string().len() > MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES
+            {
                 return Err("Recovery configuration exceeds limits.".into());
             }
             let project = Project {
@@ -261,11 +349,10 @@ impl bridge::WorkbenchFile {
     pub fn poll_open(mut self: core::pin::Pin<&mut Self>) -> QString {
         let (status, prepared) = self.as_mut().rust_mut().loader.poll();
         let result = if let Some(prepared) = prepared {
-            let path = prepared.path.clone();
             match prepared.adopt(&self.rust().context) {
-                Ok(metadata) => {
-                    self.as_mut().rust_mut().path = path;
-                    metadata
+                Ok(adopted) => {
+                    self.as_mut().rust_mut().path = adopted.path;
+                    return QString::from(adopted.metadata.value().to_string());
                 }
                 Err(error) => json!({"error":error}),
             }
@@ -300,49 +387,28 @@ impl bridge::WorkbenchFile {
         if self.rust().loader.is_loading() {
             return QString::from("{\"error\":\"Wait for workbench loading to finish.\"}");
         }
-        let save = || -> Result<Option<PathBuf>, String> {
-            if settings.to_string().len() > 4096 || receiver.to_string().len() > 4096 {
-                return Err("Project options exceed bounds".into());
+        let settings = settings.to_string();
+        let receiver = receiver.to_string();
+        if let Err(error) = validate_project_options(&settings, &receiver) {
+            return QString::from(json!({"error":error}).to_string());
+        }
+        let destination = if save_as || self.rust().path.is_none() {
+            match crate::platform::native_file_picker::save("Save MERLIN Workbench") {
+                Ok(Some(uri)) => match path(&uri) {
+                    Ok(path) => Some(path),
+                    Err(error) => return QString::from(json!({"error":error}).to_string()),
+                },
+                Ok(None) => return QString::from("{\"cancelled\":true}"),
+                Err(error) => return QString::from(json!({"error":error}).to_string()),
             }
-            let mut destination = if save_as || self.rust().path.is_none() {
-                let Some(uri) = crate::platform::native_file_picker::save("Save MERLIN Workbench")?
-                else {
-                    return Ok(None);
-                };
-                path(&uri)?
-            } else {
-                self.rust()
-                    .path
-                    .clone()
-                    .ok_or("Missing project destination")?
-            };
-            if !destination.to_string_lossy().ends_with(".merlin.json") {
-                destination = PathBuf::from(format!("{}.merlin.json", destination.display()));
-                if destination.exists() {
-                    return Err("Choose the full .merlin.json filename to confirm replacement of that project.".into());
-                }
-            }
-            let project = Project {
-                schema_version: crate::downstream::common::constants::WORKBENCH_SCHEMA_VERSION,
-                application: "MERLIN".into(),
-                transmission: serde_json::from_str(&settings.to_string())
-                    .map_err(|e| e.to_string())?,
-                sections: workbench_session::saved_sections(&self.rust().context),
-                receiver: serde_json::from_str(&receiver.to_string()).map_err(|e| e.to_string())?,
-                comparison_enabled: verified,
-                dark,
-            };
-            project.write(&destination, &self.rust().context.application)?;
-            Ok(Some(destination))
+        } else {
+            None
         };
-        let result = match save() {
-            Ok(Some(path)) => {
-                self.as_mut().rust_mut().path = Some(path.clone());
-                json!({"saved":true,"path":path.to_string_lossy()})
-            }
-            Ok(None) => json!({"cancelled":true}),
-            Err(error) => json!({"error":error}),
-        };
+        let result = self
+            .as_mut()
+            .rust_mut()
+            .save_to(destination, &settings, &receiver, verified, dark)
+            .unwrap_or_else(|error| json!({"error":error}));
         QString::from(result.to_string())
     }
 }

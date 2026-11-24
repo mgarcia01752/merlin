@@ -15,6 +15,7 @@ use crate::{
         presentation::constants::{
             WORKER_FAILURE_ADMISSION_MESSAGE, WORKER_TRANSPORT_ADMISSION_MESSAGE,
         },
+        project_path::{self, ProjectPath},
         worker_controls,
         worker_failure::WorkerFailure,
     },
@@ -64,13 +65,28 @@ pub(crate) fn take<T>(
         .with(|prepared| take(&mut prepared.borrow_mut()))
 }
 
+/// Guarded project products transferred to the file adapter after atomic adoption.
+#[derive(Debug)]
+pub(crate) struct AdoptedProject {
+    pub(crate) path: Option<ProjectPath>,
+    pub(crate) metadata: Box<Retained<Value>>,
+}
+
+enum MetadataKind {
+    Opened,
+    Created,
+}
+
 pub(crate) struct PreparedProject {
-    pub path: Option<PathBuf>,
+    pub path: Option<ProjectPath>,
     accepted: AcceptedState,
     target: crate::shell::SessionKey,
     expected: Snapshot,
     models: PreparedModels,
-    metadata: Value,
+    metadata: Box<Retained<Value>>,
+
+    // All owned data and independently guarded children drop before this layout.
+    _fixed_guard: Retained<()>,
 }
 impl PreparedProject {
     /// Preflights a blank workbench and all editor resets against the current target.
@@ -84,7 +100,7 @@ impl PreparedProject {
     /// # Errors
     /// Any editor/scientific/input admission or validation failure preserves old state.
     pub(crate) fn blank(context: &Context) -> Result<Self, String> {
-        Self::prepare(
+        Self::prepare_guarded(
             Project {
                 schema_version: crate::downstream::common::constants::WORKBENCH_SCHEMA_VERSION,
                 application: "MERLIN".into(),
@@ -101,6 +117,7 @@ impl PreparedProject {
                 .snapshot(crate::shell::Direction::Downstream)
                 .key,
             super::session::snapshot(context),
+            MetadataKind::Created,
         )
     }
 
@@ -112,9 +129,10 @@ impl PreparedProject {
     /// * `target` - Exact downstream identity/generation captured when Open started.
     /// * `expected` - Original accepted owner captured at the same request boundary.
     /// # Returns
-    /// Validated models and bounded readiness metadata; never starts a run.
+    /// Validated models and guarded path/readiness metadata; never starts a run.
     /// # Errors
-    /// Preserves project validation errors without publishing partial state.
+    /// Preserves validation or ownership-admission errors without publishing partial state.
+    #[cfg(test)]
     pub(crate) fn prepare(
         project: Project,
         path: Option<PathBuf>,
@@ -122,7 +140,31 @@ impl PreparedProject {
         target: crate::shell::SessionKey,
         expected: Snapshot,
     ) -> Result<Self, String> {
+        let path = path
+            .map(|path| project_path::admit(path, application.budget()))
+            .transpose()?;
+        Self::prepare_guarded(
+            project,
+            path,
+            application,
+            target,
+            expected,
+            MetadataKind::Opened,
+        )
+    }
+
+    fn prepare_guarded(
+        project: Project,
+        path: Option<ProjectPath>,
+        application: &crate::shell::ApplicationSessions,
+        target: crate::shell::SessionKey,
+        expected: Snapshot,
+        kind: MetadataKind,
+    ) -> Result<Self, String> {
         let budget = application.budget();
+        if path.as_ref().is_some_and(|path| !budget.owns(path)) {
+            return Err("Prepared project path belongs to another application host.".into());
+        }
         let candidate_context = Context::for_application(application.clone())
             .map_err(|_| "The session retained-data limit would be exceeded.".to_owned())?;
         let (
@@ -153,11 +195,24 @@ impl PreparedProject {
             project.sections.get("profile").unwrap_or(&Value::Null),
             budget,
         )?;
-        let metadata = json!({"opened":true,"prepared":true,"path":path.as_ref().map(|p|p.to_string_lossy()),
+        let mut metadata = json!({"opened":true,"prepared":true,"path":path.as_ref().map(|p|p.value().to_string_lossy()),
             "transmission":project.transmission,"receiver":project.receiver,
             "verified":project.comparison_enabled,"dark":project.dark,
             "source_state":source.state(),"profile_state":profile.state(&settings),
             "measurement_state":measurements.state(Ok(project.transmission.clone()), &inputs)});
+        if matches!(kind, MetadataKind::Created) {
+            metadata["created"] = json!(true);
+            metadata["opened"] = json!(false);
+            metadata["dark"] = Value::Null;
+        }
+        let metadata = admit_metadata(metadata, budget)?;
+        let fixed_guard = budget
+            .reserve_resources(RetainedResources {
+                payload_bytes: std::mem::size_of::<Self>(),
+                ..Default::default()
+            })
+            .map_err(|_| "The session retained-data limit would be exceeded.".to_owned())?
+            .retain(());
         let accepted = super::session::prepare_accepted(inputs, project.sections, budget)?;
         let source = source.admit(budget)?;
         let profile = profile.admit(budget)?;
@@ -175,6 +230,7 @@ impl PreparedProject {
                 transmitter: Some(transmitter),
             },
             metadata,
+            _fixed_guard: fixed_guard,
         })
     }
 
@@ -182,12 +238,12 @@ impl PreparedProject {
     /// # Arguments
     /// * `context` - Validated target owner; other contexts and transfers stay untouched.
     /// # Returns
-    /// Small adoption metadata; original bytes and requests remain in Rust.
+    /// Guarded original path and metadata; original bytes and requests remain in Rust.
     /// # Errors
     /// Rejects a stale generation or foreign host before any target state changes.
     /// Scientific roots and final readiness are checked before the owner swap;
     /// subsequent GUI attachment needs no new reservation or generation advance.
-    pub(crate) fn adopt(mut self, context: &Context) -> Result<Value, String> {
+    pub(crate) fn adopt(mut self, context: &Context) -> Result<AdoptedProject, String> {
         if context
             .application
             .snapshot(crate::shell::Direction::Downstream)
@@ -199,6 +255,14 @@ impl PreparedProject {
         // All scientific target roots already participate in the accepting host.
         // Check them before the last fallible readiness transition or data mutation.
         let budget = context.application.budget();
+        if !budget.owns(&self._fixed_guard)
+            || !budget.owns(&self.metadata)
+            || self.path.as_ref().is_some_and(|path| !budget.owns(path))
+        {
+            return Err(
+                "Prepared project metadata or path belongs to another application host.".into(),
+            );
+        }
         if !self
             .models
             .source
@@ -253,9 +317,26 @@ impl PreparedProject {
         context
             .prepared
             .with(|prepared| *prepared.borrow_mut() = self.models);
-        Ok(self.metadata)
+        Ok(AdoptedProject {
+            path: self.path,
+            metadata: self.metadata,
+        })
     }
 }
+
+fn admit_metadata(value: Value, budget: &RetentionBudget) -> Result<Box<Retained<Value>>, String> {
+    let mut resources = crate::downstream::inputs::retention::json_children(&value)?;
+    resources.payload_bytes = resources
+        .payload_bytes
+        .checked_add(std::mem::size_of::<Retained<Value>>())
+        .ok_or("Project metadata ownership size overflowed.")?;
+    let reservation = budget
+        .reserve_resources(resources)
+        .map_err(|_| "The session retained-data limit would be exceeded.".to_owned())?;
+    Ok(Box::new(reservation.retain(value)))
+}
+
+const LOADER_BUSY_MESSAGE: &str = "A workbench is already loading.";
 
 // One loader completion; independent of scientific progress callback capacity.
 const LOADER_COMPLETION_CAPACITY: usize = 1;
@@ -283,27 +364,33 @@ impl Loader {
     /// Starts the native picker or recovery read on a background thread.
     /// # Arguments
     /// * `context` - Exact target captured before background work.
-    /// * `recovery` - Private recovery path; None selects an explicit project.
+    /// * `recovery` - Raw recovery path admitted before capture; None selects a project.
     /// # Returns
     /// Loading metadata, or a busy/spawn diagnostic; repeated Open is rejected.
     pub(crate) fn start(&mut self, context: &Context, recovery: Option<PathBuf>) -> Value {
-        self.start_source(
-            context,
-            recovery.map(crate::platform::startup::WorkbenchSource::File),
-            false,
-        )
+        if self.is_loading() {
+            return json!({"error": LOADER_BUSY_MESSAGE});
+        }
+        let source = match recovery
+            .map(|path| project_path::admit(path, context.application.budget()))
+            .transpose()
+        {
+            Ok(source) => source.map(crate::platform::startup::AdmittedSource::File),
+            Err(error) => return json!({"error": error}),
+        };
+        self.start_source(context, source, false)
     }
 
     /// Starts a command-line file or redirected standard-input workbench.
     /// # Arguments
     /// * `context` - Exact target captured before background work.
-    /// * `source` - Owned input request; stdin never becomes a Save destination.
+    /// * `source` - Same-host admitted request; stdin never becomes a Save destination.
     /// # Returns
     /// Immediate loading status; validation and reads run on the single worker.
     pub(crate) fn start_requested(
         &mut self,
         context: &Context,
-        source: crate::platform::startup::WorkbenchSource,
+        source: crate::platform::startup::AdmittedSource,
     ) -> Value {
         self.start_source(context, Some(source), true)
     }
@@ -311,9 +398,17 @@ impl Loader {
     fn start_source(
         &mut self,
         context: &Context,
-        source: Option<crate::platform::startup::WorkbenchSource>,
+        source: Option<crate::platform::startup::AdmittedSource>,
         remember_path: bool,
     ) -> Value {
+        if self.is_loading() {
+            return json!({"error": LOADER_BUSY_MESSAGE});
+        }
+        if let Some(crate::platform::startup::AdmittedSource::File(path)) = &source {
+            if !context.application.budget().owns(path) {
+                return json!({"error":"Project source path belongs to another application host."});
+            }
+        }
         // Only the host and immutable identity cross this boundary. Retaining
         // the target Context inside its own prepared-model store would form a cycle.
         let application = context.application.clone();
@@ -324,53 +419,54 @@ impl Loader {
         let expected = super::session::snapshot(context);
         let budget = application.budget().clone();
         self.start_with(&budget, move |stage, cancelled| {
-            use crate::platform::startup::WorkbenchSource;
+            use crate::platform::startup::AdmittedSource;
             use std::io::IsTerminal;
-            let (mut reader, destination): (Box<dyn std::io::Read>, Option<PathBuf>) = match source
-            {
-                Some(WorkbenchSource::Stdin) => {
-                    if std::io::stdin().is_terminal() {
-                        return Err("Redirect workbench JSON with --workbench - < FILE.".into());
+            let (mut reader, destination): (Box<dyn std::io::Read>, Option<ProjectPath>) =
+                match source {
+                    Some(AdmittedSource::Stdin) => {
+                        if std::io::stdin().is_terminal() {
+                            return Err("Redirect workbench JSON with --workbench - < FILE.".into());
+                        }
+                        stage.store(1, Ordering::Relaxed);
+                        (Box::new(std::io::stdin()), None)
                     }
-                    stage.store(1, Ordering::Relaxed);
-                    (Box::new(std::io::stdin()), None)
-                }
-                other => {
-                    let (path, remember) = if let Some(WorkbenchSource::File(path)) = other {
-                        (path, remember_path)
-                    } else {
-                        let Some(uri) = crate::platform::native_file_picker::choose_workbench(
-                            "Open MERLIN Workbench",
-                        )?
-                        else {
-                            return Ok(None);
+                    other => {
+                        let (path, remember) = if let Some(AdmittedSource::File(path)) = other {
+                            (path, remember_path)
+                        } else {
+                            let Some(uri) = crate::platform::native_file_picker::choose_workbench(
+                                "Open MERLIN Workbench",
+                            )?
+                            else {
+                                return Ok(None);
+                            };
+                            let path = cxx_qt_lib::QUrl::from(&cxx_qt_lib::QString::from(uri))
+                                .to_local_file()
+                                .map(|path| PathBuf::from(path.to_string()))
+                                .ok_or("Choose a local project path.")?;
+                            (project_path::admit(path, application.budget())?, true)
                         };
-                        let path = cxx_qt_lib::QUrl::from(&cxx_qt_lib::QString::from(uri))
-                            .to_local_file()
-                            .map(|path| PathBuf::from(path.to_string()))
-                            .ok_or("Choose a local project path.")?;
-                        (path, true)
-                    };
-                    if cancelled.load(Ordering::Relaxed) {
-                        return Ok(None);
+                        if cancelled.load(Ordering::Relaxed) {
+                            return Ok(None);
+                        }
+                        stage.store(1, Ordering::Relaxed);
+                        if !std::fs::metadata(path.value())
+                            .map_err(|error| error.to_string())?
+                            .is_file()
+                        {
+                            return Err("Choose a regular workbench file.".into());
+                        }
+                        let file =
+                            std::fs::File::open(path.value()).map_err(|error| error.to_string())?;
+                        let metadata = file.metadata().map_err(|error| error.to_string())?;
+                        if !metadata.is_file() || metadata.len() > MAX_PROJECT_BYTES as u64 {
+                            return Err(
+                                "Choose a regular workbench file within the input limit.".into()
+                            );
+                        }
+                        (Box::new(file), remember.then_some(path))
                     }
-                    stage.store(1, Ordering::Relaxed);
-                    if !std::fs::metadata(&path)
-                        .map_err(|error| error.to_string())?
-                        .is_file()
-                    {
-                        return Err("Choose a regular workbench file.".into());
-                    }
-                    let file = std::fs::File::open(&path).map_err(|error| error.to_string())?;
-                    let metadata = file.metadata().map_err(|error| error.to_string())?;
-                    if !metadata.is_file() || metadata.len() > MAX_PROJECT_BYTES as u64 {
-                        return Err(
-                            "Choose a regular workbench file within the input limit.".into()
-                        );
-                    }
-                    (Box::new(file), remember.then_some(path))
-                }
-            };
+                };
             let Some(bytes) = read_bounded(&mut reader, cancelled, MAX_PROJECT_BYTES)? else {
                 return Ok(None);
             };
@@ -382,7 +478,15 @@ impl Loader {
                 return Ok(None);
             }
             stage.store(3, Ordering::Relaxed);
-            PreparedProject::prepare(project, destination, &application, target, expected).map(Some)
+            PreparedProject::prepare_guarded(
+                project,
+                destination,
+                &application,
+                target,
+                expected,
+                MetadataKind::Opened,
+            )
+            .map(Some)
         })
     }
 
@@ -394,7 +498,7 @@ impl Loader {
             + 'static,
     ) -> Value {
         if self.job.is_some() {
-            return json!({"error":"A workbench is already loading."});
+            return json!({"error": LOADER_BUSY_MESSAGE});
         }
         let prepare = || {
             let (sender, receiver) = bounded_channel(budget, LOADER_COMPLETION_CAPACITY)?;
@@ -559,6 +663,9 @@ fn read_bounded(
 }
 
 #[cfg(test)]
+mod project_retention_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use std::sync::mpsc;
@@ -609,18 +716,27 @@ mod tests {
         let mut loader = Loader::default();
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../examples/workbench/single/workbench.merlin.json");
+        let context = Context::isolated();
         loader.start_requested(
-            &Context::isolated(),
-            crate::platform::startup::WorkbenchSource::File(path.clone()),
+            &context,
+            crate::platform::startup::AdmittedSource::admit(
+                crate::platform::startup::WorkbenchSource::File(path.clone()),
+                context.application.budget(),
+            )
+            .unwrap(),
         );
         let (status, prepared) = drain(&mut loader);
         assert!(prepared.is_some(), "{status}");
-        assert_eq!(prepared.unwrap().path, Some(path));
+        assert_eq!(prepared.unwrap().path.unwrap().value(), &path);
         loader.start_requested(
-            &Context::isolated(),
-            crate::platform::startup::WorkbenchSource::File(
-                PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml"),
-            ),
+            &context,
+            crate::platform::startup::AdmittedSource::admit(
+                crate::platform::startup::WorkbenchSource::File(
+                    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml"),
+                ),
+                context.application.budget(),
+            )
+            .unwrap(),
         );
         assert!(drain(&mut loader).0["error"]
             .as_str()
@@ -738,9 +854,9 @@ mod tests {
                 > 100
         );
         assert!(prepared.models.receiver.is_some());
-        assert_eq!(prepared.metadata["prepared"], true);
-        assert_eq!(prepared.metadata["measurement_state"]["channel"]["status"],"complete","Background readiness must use restored inputs, not the worker's empty thread-local session");
-        assert!(prepared.metadata.to_string().len() < 8192);
+        assert_eq!(prepared.metadata.value()["prepared"], true);
+        assert_eq!(prepared.metadata.value()["measurement_state"]["channel"]["status"],"complete","Background readiness must use restored inputs, not the worker's empty thread-local session");
+        assert!(prepared.metadata.value().to_string().len() < 8192);
     }
 }
 

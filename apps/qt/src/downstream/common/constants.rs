@@ -18,6 +18,10 @@ pub(crate) const MAX_VERIFICATION_WORD_BARS: usize = 64;
 /// Legacy readers and independent compatibility vectors retain their older versions.
 pub(crate) const WORKBENCH_SCHEMA_VERSION: u32 = 2;
 
+/// Existing native saved-project filename suffix, including its leading dot.
+/// This file-naming contract is independent of the schema-version integer.
+pub(crate) const WORKBENCH_FILE_SUFFIX: &str = ".merlin.json";
+
 /// Fixed adjacent-window graph padding preserving the existing full-view time scale.
 /// This prefix allowance is a display policy, not a validator or a claimed PHY limit.
 pub(crate) const TIMING_PREFIX_ALLOWANCE_SAMPLES: usize = 1024;

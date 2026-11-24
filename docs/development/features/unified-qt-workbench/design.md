@@ -4820,3 +4820,43 @@ actual task cleanup replace assumptions that terminal receipt implies closure
 exit. No numerical expectation, tolerance or scientific behavior changes. C4–C6
 remain required; standalone source checks and normal native probes do not complete
 SESSION or its native Apply/help-pressure interaction.
+
+### UIU-SESSION-01 C4 project paths and metadata
+
+The remaining [C4](session-closure.md) gap is existing REQ-UIU-06/07 ownership,
+without a schema or scientific change. Reuse `RetentionBudget`, `Retained`, actual
+PathBuf capacity and `downstream/inputs/retention.rs::json_children`. A small
+application-private `shared/project_path.rs` operation admits a boxed path for
+three actual consumers; the original-source registry retains its distinct record
+layout and protection semantics.
+
+| Inspected owner | Existing contract / gap | Minimum disposition |
+| --- | --- | --- |
+| `downstream/workbench/project_load.rs::PreparedProject` | Admitted editors/science, but independent path, JSON metadata and containing complement lack guards. | ADAPT with separate boxed path/metadata guards and a final fixed witness; do not revisit existing guarded graphs. Validate all target witnesses before the existing accepted-state transaction. Move admitted path and metadata out on success. Build New's existing metadata overrides before admission. |
+| `bridge/workbench_file.rs` | Existing Open/New/Save actions and atomic public-project writer; path clones lose coverage. | ADAPT Open by moving the admitted path. Borrow an existing Save path; admit a normalized Save As/first-Save candidate before writing, preserving the previous path until success. Keep existing output/schema and native picker behavior. |
+| `platform/startup.rs`, one `main.rs` callsite | Pure parsed CLI path is currently stored before loader capture without admission. | REUSE parser; convert to an admitted runtime request using the same main-thread Context budget before storing it. Transfer the original guard to the loader; create no second application host. |
+
+The source agent owns only the loader/project owner, adjacent new C4 tests and a
+[source handoff](agent-handoffs/project-metadata.md) in its isolated worktree.
+The lead owns the shared path helper,
+startup/main, file bridge and old-fixture compatibility, canonical records and
+all integrated checks. Loader transport/errors already have C3 guards and must
+not be charged a second time. Saved `Project::write`, public Rust/Python inputs,
+original protection and atomic rename semantics remain unchanged.
+
+Acceptance covers actual spare path/JSON capacities, byte/entry and foreign-host
+rejection before mutation/write, queued/stale/cancelled disposal, same-host move
+under pressure, failed Open preservation, Save path rejection before filesystem
+changes and final release. Run affected project/bridge/startup tests, relevant
+Clippy/format/API boundary and current native probes. Validate saved-input Rust/
+installed-Python compatibility using unchanged cached artifacts; no fresh wheel
+is necessary without a linked-code/package change. C5/C6 remain separate.
+
+
+C4's [primary validation](validation.md#uiu-session-01-project-paths-and-metadata)
+and [executed receipt](session-project-metadata-evidence.json) now close this
+owner. The fixture-only raw prepare signature remains under `cfg(test)`; production
+moves admitted paths through the private guarded builder. One previous fixture
+ledger now explicitly observes prepared-inline disposal and returned-metadata
+retention before final metadata disposal. Source-only checks are separate from
+primary acceptance. C5/C6 remain required; no new requirement or task is created.

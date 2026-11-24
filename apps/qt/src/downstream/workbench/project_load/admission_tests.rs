@@ -49,9 +49,23 @@ fn queued_input_owner_stays_charged_until_disposal_or_successful_target_transfer
     drop(prepared);
     assert_eq!(budget.usage(), before);
     let prepared = candidate(&context);
-    prepared.adopt(&context).unwrap();
+    let fixed = prepared._fixed_guard.fixture_reserved_resources();
+    let metadata = prepared.metadata.fixture_reserved_resources();
+    let adopted = prepared.adopt(&context).unwrap();
     assert!(session::snapshot(&context).source.is_some());
-    assert_eq!(budget.usage(), complete);
+    // The PreparedProject inline witness ends at adoption; returned metadata
+    // remains independently charged until the bridge finishes serialization.
+    assert_eq!(budget.usage().checked_add(fixed).unwrap(), complete);
+    drop(adopted);
+    assert_eq!(
+        budget
+            .usage()
+            .checked_add(fixed)
+            .unwrap()
+            .checked_add(metadata)
+            .unwrap(),
+        complete,
+    );
     drop(context);
     assert_eq!(
         budget.usage(),

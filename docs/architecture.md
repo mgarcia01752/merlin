@@ -1833,7 +1833,8 @@ Its guarded shared registry is a fourth host root, separate from the unchanged
 counter/gate/Sessions core. Save checks both direction flags; successful guarded
 downstream Open/New clears only downstream ownership. Existing inputs, project
 encoding and atomic writes remain compatible, with [primary evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-original-source-path-ownership).
-Other loader/project path copies and complete SESSION acceptance remain pending.
+Other loader/project path copies now have the separate C4 evidence below;
+complete SESSION acceptance remains pending.
 
 The [persistent model metadata unit](development/features/unified-qt-workbench/design.md#uiu-session-01-persistent-direction-model-metadata)
 reuses admitted application failures for persistent GUI error/Diagnostic pointees
@@ -1843,8 +1844,8 @@ transfer reserves actual copies before mutating the source; same-host queued
 failures move without readmission. Static notices borrow text. The separate
 bridge Apply-help owner remains independently charged. [Primary C1 evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-persistent-direction-model-metadata)
 preserves scientific/status/target-adoption behavior. Subsequent C2/C3 evidence
-below closes those conditions. C4–C6 remain required; complete SESSION acceptance
-and persistent QML stay open.
+below closes those conditions; C4 is separately closed below. Complete SESSION
+acceptance and persistent QML stay open.
 
 The [concrete fixed runtime owners](development/features/unified-qt-workbench/session-closure.md#c2-concrete-fixed-layout-implementation)
 admit DS Model, preview Analyzer and upstream workbench Model layouts before their
@@ -1857,7 +1858,8 @@ The preview product keeps its already admitted Box. Upstream preparation admits
 its actual retained Mutex/controller slot and one root before publication; final
 worker aliases retain that guard. [C2 primary evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-fixed-runtime-owners)
 closes this fixed-layout condition. The subsequent C3 evidence is separate;
-C4–C6 remain required. No new scientific API or framework is introduced.
+C4 closes separately below; C5/C6 remain required. No new scientific API or
+framework is introduced.
 
 The [concrete worker transport](development/features/unified-qt-workbench/session-closure.md#c3-concrete-transport-integration)
 uses the same application counter for actual retained task/frame bytes, channel
@@ -1872,8 +1874,22 @@ Work/State/Job complements retain their own guards. Existing std transport,
 original timing, scientific calls, partial results and lease acknowledgement
 semantics remain. Rejection precedes dispatch/accepted-owner mutation. [C3 primary
 evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-concrete-worker-transport)
-closes this condition. C4 paths/metadata, C5 persistent QML and C6 complete SESSION
-acceptance remain required; the parent task stays unchecked.
+closes this condition. The separate C4 evidence below closes paths/metadata.
+C5 persistent QML and C6 complete SESSION acceptance remain required.
+
+The [project-path/metadata unit](development/features/unified-qt-workbench/design.md#uiu-session-01-c4-project-paths-and-metadata)
+admits actual PathBuf capacity and its boxed retained pointee before startup
+storage, loader capture or Save candidate adoption. Startup uses the same
+main-thread canonical host as GUI adapters. PreparedProject independently guards
+its JSON metadata and fixed inline complement, preserving existing scientific,
+editor, snapshot and C3 guards. Witness validation precedes the original atomic
+accepted-state transition. Open/New move guarded products to the bridge; New's
+flags finalize before admission. Existing Save borrows its destination; normalized
+Save candidates overlap the previous path until the unchanged atomic writer
+succeeds. Schema, original-source protection and scientific semantics remain.
+[C4 primary evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-project-paths-and-metadata)
+includes current UI-saved bytes through Rust and cached installed Python. C5/C6
+remain required; SESSION stays unchecked.
 
 The [pre-production archive pair](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds)
 computes exact detached target quantities and checks every limit before copying.

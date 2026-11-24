@@ -1,0 +1,627 @@
+{
+  "schema_version": 1,
+  "task": "UIU-SESSION-01",
+  "closure": "C4",
+  "requirements": [
+    "REQ-UIU-06",
+    "REQ-UIU-07"
+  ],
+  "status": "C4 project path/metadata accepted; C5/C6 remain; SESSION unchecked",
+  "integration_base": "6f005c8e776cd0bb0485c38b10ad9472bcb34ff7",
+  "architecture": "docs/architecture.md#unified-qt-session-and-file-lifecycle",
+  "design": "docs/development/features/unified-qt-workbench/design.md#uiu-session-01-c4-project-paths-and-metadata",
+  "source_preparation": {
+    "commit": "7487cc2d88c04b9133b55f1d227ca1cfc2312bf7",
+    "parent": "6f005c8e776cd0bb0485c38b10ad9472bcb34ff7",
+    "paths": [
+      "apps/qt/src/downstream/workbench/project_load.rs",
+      "apps/qt/src/downstream/workbench/project_load/project_retention_tests.rs",
+      "docs/development/features/unified-qt-workbench/agent-handoffs/project-metadata.md"
+    ],
+    "scope": "Source-only formatting/body checks. Selectively adopted after parent, exact allowlist and baseline-byte checks; all root changes preserved. Runtime acceptance is primary-only."
+  },
+  "source_files": [
+    {
+      "path": "apps/qt/src/bridge/workbench_file/path_tests.rs",
+      "sha256": "5b405a9708f4470e9a9b667c02e61e844e2259fea414f684f8736a64f0b657ff"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/project_load/project_retention_tests.rs",
+      "sha256": "0a806628442b6178321c0aadb41c74b96666582d92da4abf0fcaa2775a7dbb6f"
+    },
+    {
+      "path": "apps/qt/src/shared/project_path.rs",
+      "sha256": "27fed615ca320181048d171ac28c06340ff8ae28793e746367194b9e1283b7f3"
+    },
+    {
+      "path": "apps/qt/src/shared/project_path/tests.rs",
+      "sha256": "d94be663dbe0c1dde832e9914db498d214266f95d21ac45c42bc0bb7d159d20d"
+    },
+    {
+      "path": "docs/development/features/unified-qt-workbench/agent-handoffs/project-metadata.md",
+      "sha256": "946983ecb9ee08ba6e58f12c52cee1f576d9b5ce384e2dff2b5cb137edf42c8a"
+    },
+    {
+      "path": "apps/qt/src/bridge/workbench_file.rs",
+      "sha256": "2048c5950e89df44397259d97ff408c797dbc96f4da886933d6e9077b9b78033"
+    },
+    {
+      "path": "apps/qt/src/bridge/workbench_file/editor_tests.rs",
+      "sha256": "f53bc6f3773b3170e65c9b1014b72545a63a0ff1d755650279d8c14503961e45"
+    },
+    {
+      "path": "apps/qt/src/downstream/common/constants.rs",
+      "sha256": "5bcc0748ba7d332edb0240577300ca7b6b5e308aef4f5f0bdb20cb2356f832d9"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/project_load.rs",
+      "sha256": "5f6545952e1cb03a07b1931be801dd2391bd86599f042358c4d3588ca4a3f0c3"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/project_load/admission_tests.rs",
+      "sha256": "4245a99211937ccb832fc9b15f5ba15e319869a83cd70af9b2d4ba9b766b035a"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/project_load/metadata_tests.rs",
+      "sha256": "6dfe8478edde936b80ace0084bd562ef151c8b5cf5fd151940eacbfe921ba0e9"
+    },
+    {
+      "path": "apps/qt/src/main.rs",
+      "sha256": "81cc8bb92551372cec1e35a1cfe928fdec79d594d1f3f44ebfc9be20d318572c"
+    },
+    {
+      "path": "apps/qt/src/platform/startup.rs",
+      "sha256": "1739f9627852ba41302d476569630f3d7df42a6e8b4462254f6dbff720f92cf5"
+    },
+    {
+      "path": "apps/qt/src/shared/mod.rs",
+      "sha256": "792bcfda8a4e65d60041832f13edad40a13b804ee377896fd5e3603609bb50f1"
+    }
+  ],
+  "unchanged_cxx_declarations": {
+    "apps/qt/src/bridge/closed_loop.rs": "1633d8953aad7d0941e16f9adbb59fab969a25c53ef969d509f5600caee03032",
+    "apps/qt/src/bridge/transmitter_analyzer.rs": "af23201baa8179a56bdadbc1c40bb585aec140a27db5d428b7cf996522a4c616",
+    "apps/qt/src/bridge/upstream_session.rs": "e42caf1c165b9a580b0c5b58a9067e8e6541f1633b0dfa77fed7aee8c2182fb2",
+    "apps/qt/src/bridge/measurement_input.rs": "83abb8447f34012e3cc3023e86bd3ced999e27261ff3a1a968997a0011a436e5",
+    "apps/qt/src/bridge/workbench_file.rs": "3b950bfd95a415355977740b2b3212c5e355857f40b1cda254f0a8c966b3ec5d"
+  },
+  "unchanged_project_owner": {
+    "path": "apps/qt/src/downstream/workbench/project_file.rs",
+    "sha256": "fa65d86005a85887d43a43d0b7a357a6fc435f9887a4ea526455164997d37919"
+  },
+  "implementation": [
+    "Actual PathBuf capacity plus actual boxed Retained<PathBuf> pointee is admitted on the canonical budget before startup storage, loader capture or normalized Save candidate adoption. Existing Save borrows its current witness; candidate/old paths overlap until unchanged atomic Project::write succeeds.",
+    "PreparedProject guards actual JSON children plus its actual boxed Retained<Value>, and exactly sizeof<Self> for independent inline handles. Existing accepted/scientific/editor/snapshot/C3 children keep separate original guards. New flags finalize before metadata admission.",
+    "Path, metadata and fixed witness identities are checked before the existing atomic accepted-state transaction. Guarded products move to the bridge without clones or post-commit admission. Queued/cancelled/stale products retain coverage through final disposal.",
+    "main startup uses the same main-thread Context host as CXX defaults. Runtime options retain an admitted original request, then move it through Loader to the accepted Save path. Parsed raw options and bounded serialization/read/normalization temporaries remain separate finite construction."
+  ],
+  "validation": {
+    "level": 1,
+    "risk_expansion": "Saved-project path/loader changes expand to public Rust and cached installed native Python on actual current UI-produced bytes, plus legacy saved-input validation. No scientific source or format change.",
+    "rust": {
+      "distinct_passed": 36,
+      "added_cases": 14,
+      "cases": [
+        "bridge::workbench_file::editor_tests::rejected_new_with_only_empty_input_capacity_preserves_old_alias_editors_and_save_path",
+        "bridge::workbench_file::editor_tests::successful_new_releases_downstream_flags_but_preserves_shared_upstream_protection",
+        "bridge::workbench_file::editor_tests::successful_new_transfers_all_blank_editors_under_full_pressure_and_preserves_theme_choice",
+        "bridge::workbench_file::path_tests::actual_ui_saved_project_loads_and_runs_through_the_public_rust_api",
+        "bridge::workbench_file::path_tests::normalized_path_rejects_before_file_creation_and_failed_writer_preserves_old_guard",
+        "bridge::workbench_file::path_tests::rejected_save_path_preserves_old_destination_state_and_existing_file_bytes",
+        "bridge::workbench_file::path_tests::successful_save_moves_candidate_and_borrows_same_guard_at_full_pressure",
+        "downstream::workbench::project_load::admission_tests::intervening_accepted_edit_rejects_open_even_before_the_canonical_generation_advances",
+        "downstream::workbench::project_load::admission_tests::queued_input_owner_stays_charged_until_disposal_or_successful_target_transfer",
+        "downstream::workbench::project_load::admission_tests::real_background_loader_rejection_preserves_current_inputs_original_paths_and_releases_candidate",
+        "downstream::workbench::project_load::admission_tests::stale_identity_foreign_identity_and_foreign_budget_preserve_target_inputs_and_models",
+        "downstream::workbench::project_load::admission_tests::successful_open_releases_only_downstream_path_records_and_preserves_original_files",
+        "downstream::workbench::project_load::metadata_tests::prepared_options_are_target_guarded_and_foreign_zero_child_witness_rejects_before_adoption",
+        "downstream::workbench::project_load::project_retention_tests::actual_path_and_json_spare_storage_are_passive_and_count_pointees_once",
+        "downstream::workbench::project_load::project_retention_tests::foreign_product_guards_and_stale_identity_reject_before_accepted_state_changes",
+        "downstream::workbench::project_load::project_retention_tests::metadata_bytes_entries_and_raw_recovery_path_reject_before_target_mutation",
+        "downstream::workbench::project_load::project_retention_tests::opened_products_move_under_pressure_and_new_flags_are_final_before_admission",
+        "downstream::workbench::project_load::project_retention_tests::received_project_stays_charged_after_loader_cancel_until_final_delivery_drop",
+        "downstream::workbench::project_load::project_retention_tests::requested_file_moves_original_guard_through_loader_and_adoption_without_capacity_clone",
+        "downstream::workbench::project_load::target_tests::every_target_dimension_rejects_before_project_key_inputs_or_pending_models_change",
+        "downstream::workbench::project_load::target_tests::fully_prepared_cancelled_load_releases_all_target_owners_only_when_its_worker_is_drained",
+        "downstream::workbench::project_load::target_tests::late_readiness_metadata_rejection_keeps_the_real_old_report_inputs_key_and_pending_models",
+        "downstream::workbench::project_load::target_tests::prepared_receiver_and_preview_attach_under_full_counter_pressure_without_another_generation",
+        "downstream::workbench::project_load::target_tests::successful_edit_and_new_discard_old_prepared_models_but_rejected_edit_keeps_them",
+        "downstream::workbench::project_load::tests::bounded_stream_preserves_bytes_limits_and_cancellation",
+        "downstream::workbench::project_load::tests::command_line_file_preserves_destination_and_rejects_invalid_json",
+        "downstream::workbench::project_load::tests::errors_and_cancelled_success_do_not_publish_partial_inputs",
+        "downstream::workbench::project_load::tests::polling_does_not_wait_and_cancel_retains_single_worker_guard",
+        "downstream::workbench::project_load::tests::real_multi_capture_workbench_prepares_editors_off_thread",
+        "downstream::workbench::project_load::transport_tests::exhausted_channel_or_slots_reject_before_loader_work_and_keep_accepted_host",
+        "platform::startup::tests::invalid_or_conflicting_requests_are_rejected_before_gui_startup",
+        "platform::startup::tests::rejected_runtime_path_does_not_retain_or_change_the_canonical_host",
+        "platform::startup::tests::runtime_request_retains_original_path_and_moves_under_full_host_pressure",
+        "platform::startup::tests::startup_inputs_preserve_paths_and_require_explicit_stdin",
+        "shared::project_path::tests::actual_path_capacity_and_wrapper_admit_exactly_without_population_charges",
+        "shared::project_path::tests::one_byte_short_or_old_candidate_overlap_rejects_without_losing_previous_path"
+      ],
+      "commands": [
+        {
+          "label": "format",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "fmt",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.6678005610010587
+        },
+        {
+          "label": "adopted-product-lifetimes",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "downstream::workbench::project_load::admission_tests::queued_input_owner_stays_charged_until_disposal_or_successful_target_transfer",
+            "--",
+            "--test-threads=2"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 13.923917888008873
+        },
+        {
+          "label": "clippy",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "clippy",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--all-targets",
+            "--locked",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 8.929607683996437
+        },
+        {
+          "label": "format-check",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "fmt",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.6681866160070058
+        },
+        {
+          "label": "boundary",
+          "command": [
+            "python3",
+            "-B",
+            "/home/dev01/Projects/merlin/tools/validation/qt_api_boundary.py",
+            "--final"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.37037790099566337
+        },
+        {
+          "label": "build",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/qt-desktop.sh",
+            "build"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 93.45087110799795
+        },
+        {
+          "label": "desktop-probes",
+          "command": [
+            "python3",
+            "-B",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/run_native_ui_smokes.py",
+            "session-01-project-metadata"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 5.006528029000037
+        }
+      ],
+      "initial_commands": [
+        {
+          "label": "format",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "fmt",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.6944911649916321
+        },
+        {
+          "label": "project-consumers",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "--",
+            "downstream::workbench::project_load",
+            "bridge::workbench_file",
+            "shared::project_path",
+            "platform::startup",
+            "--test-threads=2"
+          ],
+          "exit_code": 101,
+          "elapsed_seconds": 102.56404273399676
+        }
+      ]
+    },
+    "failure_history": [
+      "Initial Qt feature run:35 passed/1 obsolete post-adoption accounting assertion. Corrected exact actual fixed/metadata lifetime checks pass, preserving original accepted-state and final counter assertions.",
+      "Initial all-target Clippy found raw prepare had no remaining production caller. It is now fixture-only cfg(test), retaining its fixture signature rather than suppressing dead code.",
+      "Initial Python validation script incorrectly read noise_seed from scientific settings instead of request.options.settings. Script corrected; no application/API behavior changed.",
+      "Initial documentation reachability check found the new source handoff lacked an incoming link; the C4 design now links it. All ten corrected documentation checks pass. Initial/corrected logs remain in ignored session-01-project-metadata-documentation directories."
+    ],
+    "installed_python": {
+      "reused_wheel": "/home/dev01/Projects/merlin/local/python-wheels-control-metadata/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+      "wheel_sha256": "c7c4ec03a7bc42f3b92196fc6350476e919aa12b65ed53ffbc0757f5a2b136a9",
+      "native_sha256": "5fafd17cc3e722829fb402ecd786d2a011c99b37841672d8f09dcefc998a2356",
+      "commands": [
+        {
+          "label": "actual-ui-saved-parity",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-control-metadata-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-c",
+            "import hashlib,json,sys\nfrom pathlib import Path\nimport merlin,merlin._native as native\nfrom merlin import downstream,upstream,common\np=Path(native.__file__).resolve()\nassert p.is_relative_to(Path(sys.prefix).resolve())\nassert hashlib.sha256(p.read_bytes()).hexdigest()==sys.argv[1]\nassert merlin.Simulation is downstream.Simulation\nartifact=Path(sys.argv[2]);data=(artifact/'saved-workbench.merlin.json').read_bytes()\nplan=downstream.Workbench.prepare_full_loop(data)\nrequest=plan.request(0)\nassert request.options.settings['noise_seed']==json.loads(data)['receiver']['noise_seed']\nreport=request.run().report()\nreference=json.loads((artifact/'rust-result.json').read_text())\nactual={key:report.get(key) for key in reference}\nassert actual==reference,(actual,reference)\nproject=common.Project.from_bytes(data)\nassert project.direction=='downstream' and project.original_document==data\nassert project.downstream_plan().request(0).settings==request.settings\nprint(json.dumps({'native':str(p),'saved_sha256':hashlib.sha256(data).hexdigest(),'status':report['status'],'summary':report['summary']},indent=2))\n",
+            "5fafd17cc3e722829fb402ecd786d2a011c99b37841672d8f09dcefc998a2356",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-project-metadata/saved-project"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.7847059479972813
+        },
+        {
+          "label": "installed-saved-compatibility",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-control-metadata-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-c",
+            "import sys,unittest\nsys.path.insert(0,sys.argv[1])\nnames=[\n 'test_workbench.WorkbenchTests.test_self_contained_file_bytes_and_copied_settings',\n 'test_workbench.WorkbenchTests.test_saved_mode_mce_tuning_selection_and_structured_failures',\n 'test_workbench_full_loop.WorkbenchFullLoopTests.test_installed_idle_preparation_settings_ownership_and_precancel',\n 'test_workbench_full_loop.WorkbenchFullLoopTests.test_unnamed_saved_file_keeps_original_label_recovery_and_capture_names',\n 'test_workbench_full_loop.WorkbenchFullLoopTests.test_saved_file_fill_and_timeline_settings_and_legacy_behavior',\n 'test_workbench_full_loop.WorkbenchFullLoopTests.test_response_tolerance_is_independent_and_original_constructor_is_compatible',\n 'test_workbench_full_loop.WorkbenchFullLoopTests.test_invalid_project_rejection_preserves_accepted_plan',\n 'test_project.ProjectTests.test_real_common_namespace_legacy_originals_idle_ownership_and_precancel',\n 'test_project.ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic',\n 'test_project.ProjectTests.test_readonly_file_limits_and_nonregular_inputs',\n]\nresult=unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromNames(names))\nassert result.testsRun==len(names)\nraise SystemExit(not result.wasSuccessful())\n",
+            "/home/dev01/Projects/merlin/bindings/python/tests"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.20394076599041
+        }
+      ]
+    },
+    "saved_project": {
+      "path": "docs/development/local/unified-qt-workbench/session-01-project-metadata/saved-project/saved-workbench.merlin.json",
+      "sha256": "897e2f9c6836575462a2184f77061dac88a52370536bd6f24b45d1acb15380d0",
+      "rust_reference_sha256": "e83513031884298535a12b513ebde9be6154ddb3ae0996c54aa23fc9bea28fa3",
+      "claims": "Actual current UI writer output loads/runs through public Rust and installed Python; deterministic status/complete summary/error/unrecovered payloads agree. Original bytes and resolved project/request settings remain. Wall-clock elapsed excluded."
+    },
+    "desktop": {
+      "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+      "sha256": "94722b7978b96842f0ea6c0e65083e95bad93ac3e55b68c30ef0d1137529bcb2",
+      "display": ":0",
+      "display_dimensions": [
+        "dimensions:    1280x800 pixels (338x211 millimeters)"
+      ],
+      "qt_sdk_version": "6.8.3",
+      "commands": [
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.04945965300430544,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.06259237499034498,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.5122547339997254,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.03401317300449591,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.9333082509983797,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test",
+            "--workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.1580544710013783,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        }
+      ]
+    },
+    "raw_records": "docs/development/local/unified-qt-workbench/session-01-project-metadata",
+    "reused_science": {
+      "receipt": "docs/development/features/unified-qt-workbench/session-control-metadata-evidence.json",
+      "all_16_sources_unchanged": true,
+      "claims": "Cached installed wheel/native hashes verified; no fresh wheel or full scientific suite claimed."
+    },
+    "reused_qml": {
+      "receipt": "docs/development/features/unified-qt-workbench/session-worker-transport-evidence.json",
+      "unchanged_files": 93,
+      "claims": "QML/tests/global registration/manifests/CXX signatures unchanged. Existing standalone QML evidence explicitly reused; rebuilt native startup/project probes are fresh."
+    },
+    "documentation": [
+      {
+        "label": "final-boundary",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.42755749900243245
+      },
+      {
+        "label": "strict-matrix",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/api_operation_matrix.py",
+          "--exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-control-metadata/rust-exports.json",
+          "--native-exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-control-metadata-native/native-exports.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/namespace-test-results.json",
+          "--executed-record",
+          "docs/development/features/pnm-measurement-inputs/decoder-test-results.json",
+          "--executed-record",
+          "docs/development/features/pnm-measurement-inputs/association-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/python-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/python-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-estimate-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-soft-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-resource-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-downstream-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-input-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-archive-bound-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-output-bound-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-query-envelope-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-control-metadata-operation-test-results.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.95491216800292
+      },
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 14.893311706997338
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.374437090998981
+      },
+      {
+        "label": "uiu-history",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/audit_foundation_uiu_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.13722779900126625
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.06618220800010022
+      },
+      {
+        "label": "guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.0668779700063169
+      },
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.2753999320120784
+      },
+      {
+        "label": "diff",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03495346600539051
+      },
+      {
+        "label": "staged-diff",
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.014091447010287084
+      }
+    ]
+  },
+  "independent_review": "Read-only QA found no concrete defect in root Save/startup or adopted loader ownership. Pressure move test explicitly proves post-adoption transfer, not full-budget readiness admission. Existing readiness pressure gates also pass. Review ran no builds/tests.",
+  "not_required": [
+    {
+      "checks": "Fresh wheel and full scientific workspace/CLI/package regressions",
+      "reason": "Scientific/API/native sources, schema, Project writer, packaging and CLI unchanged. Actual changed saved-path consumer compatibility executed with accepted installed artifact."
+    },
+    {
+      "checks": "Unrelated full Qt Rust and unchanged standalone QML suites",
+      "reason": "Focused complete affected project/bridge/startup/path features executed. C6 retains the complete SESSION acceptance gate; all QML/registration/invokables unchanged."
+    }
+  ],
+  "deferred": [
+    "C5 persistent QML logical admission; C6 complete SESSION and actual native Apply/help pressure interaction.",
+    "UIU-SHELL-01 follows SESSION acceptance. Milestone/final Level3 and Windows runtime remain separate."
+  ],
+  "no_push_merge_release_or_system_install": true
+}

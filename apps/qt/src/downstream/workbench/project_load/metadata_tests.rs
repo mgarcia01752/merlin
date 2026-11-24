@@ -59,7 +59,7 @@ fn prepared_options_are_target_guarded_and_foreign_zero_child_witness_rejects_be
         serde_json::to_value(&receiver.options).unwrap(),
         original_options
     );
-    assert_eq!(prepared.metadata["receiver"], original_options);
+    assert_eq!(prepared.metadata.value()["receiver"], original_options);
 
     // A zero-child Options value still has a real foreign host identity. The
     // genuine project adoption checks it before accepted Inputs/readiness swap.
