@@ -21,6 +21,13 @@ IFFT/prefix/window use retained frame diagnostics; TX Output uses the continuous
 output boundary. Their separate sample budgets and sampling meanings are
 explained in the [Spectrum Analyzer guide](spectrum-analyzer.md).
 
+The transmitter-only preview shares the application's retained-data budget.
+If accepting a replacement configuration or generating a new preview exceeds
+that budget, the analyzer reports the error and keeps its accepted inputs and
+previous preview. Loading a prepared transmitter checks the destination budget
+before replacing the current analyzer. Ordinary invalid-input handling and the
+scientific preview remain unchanged.
+
 ![TX output Spectrum Analyzer](../images/workbench/transmitter-output-sa-dark.png)
 
 Use main **Start** to capture the other stages. Missing data is reported explicitly.

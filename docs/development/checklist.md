@@ -566,6 +566,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   The [stored observation/capture unit](features/unified-qt-workbench/validation.md#uiu-session-01-stored-observation-and-capture-admission) passes 107 selected Rust cases, one focused final diagnostic confirmation, four QML behaviors, all-target Clippy, fresh optimized build and six desktop probes. Query overlap and exact typed/JSON targets are pre-admitted; real-worker rejection preserves completed science, static warnings and final-alias charges. Independent instrument/transport, input/editor/project, preview/history and infrastructure owners remain open; SESSION stays unchecked.
 
 
+  The [idle transmitter-preview unit](features/unified-qt-workbench/validation.md#uiu-session-01-idle-transmitter-preview-owner-admission) passes 23 selected Rust cases, four QML behaviors, all-target Clippy, optimized build and six desktop probes. Prepared requests/layouts share charged immutable owners; the actual queued/current product is pre-admitted. Cross-host rebind precedes live cancellation/replacement. The failed initial fixture assertion and corrected source-host lifetime check are retained. Input/history, independently escaping presentation/transport and infrastructure owners remain open; SESSION stays unchecked.
+
 
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.

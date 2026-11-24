@@ -3692,3 +3692,36 @@ accepted 42d177e backend/native record and unchanged 623/594 operation inventori
 Independent instrument/transport copies, input/editor/project, preview/history and
 infrastructure owners remain open. SESSION Level2/milestone/finalLevel3 acceptance
 is still required; all historical receipts and checklist checkbox states survive.
+
+
+## UIU-SESSION-01 idle transmitter preview owner admission
+
+The [prepared/product design](design.md#uiu-session-01-idle-transmitter-preview-owner-admission)
+reuses existing public metadata and bounded generation. Concrete timing, request
+children, actual carrier/span capacities and both prepared Arc roots are admitted
+before sharing immutable inputs with the worker. Product target admission precedes
+public control claim/generation and follows Box queue, current/stale/cancelled
+completion and final disposal. Target-host admission precedes cancellation or
+replacement of the live analyzer; failed rebind preserves its accepted work.
+
+[Exact primary execution record](session-preview-admission-evidence.json) records
+23 selected Rust passes, including seven new owner cases, original preview science,
+project/context transfer and actual shared-direction lifecycle tests. The initial
+command passed 22 cases and failed one fixture assertion: transfer also released
+the final source host's readiness metadata. The corrected fixture independently
+retains that host, verifies unchanged source charge through rebind, then verifies
+separate final drops of the prepared alias and host. The complete corrected run
+passes all 23; the initial failed command remains recorded as failed.
+
+Four QML behaviors/two hooks pass with the two existing unsuppressed focus warnings.
+All-target Clippy, formatting, boundary/traceability, optimized build and six native
+desktop probes pass. Original numerical assertions, values, invalid-input handling,
+historical evidence and checklist checkbox states survive. Root changes also apply
+the required comment spacing; the isolated source handoff remains source-only.
+
+No backend/binding/public signature, project schema, registration or dependency
+change requires another wheel or unrelated full scientific/CLI/packaging suites.
+Reuse the exact accepted 42d177e backend/native artifact and unchanged operation
+inventories. Independent input/editor/project, history/performance, instrument/
+transport and outer infrastructure owners, complete SESSION Level2 and applicable
+milestone/final Level3 remain open. This focused unit does not accept the parent.

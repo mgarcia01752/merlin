@@ -3949,3 +3949,29 @@ real DS/US/project/instrument compatibility, QML, Clippy/format/boundary/traceab
 and fresh optimized/native checks. Reuse unchanged backend/native acceptance.
 Independent instrument-query/transport, input/preview/history and infrastructure
 owners and complete SESSION Level2/milestone acceptance remain separate open gates.
+
+
+### UIU-SESSION-01 idle transmitter preview owner admission
+
+Adopt the isolated [preview source preparation](agent-handoffs/idle-preview-admission.md)
+without changing scientific generation or presentation values. REUSE public
+TransmitterPreviewRequest metadata and preview_retained_bound/generate_bounded.
+The concrete prepared owner contains fixed accepted timing, optional request and
+only the public PhysicalLayoutView actually consumed by the analyzer; drop the
+unused configured key/provenance wrapper during finite preparation. Count actual
+carrier/span capacities, opaque request metadata and both real Arc wrappers.
+Worker dispatch shares the admitted immutable root without deep input clones.
+Pre-admit the backend product plus its Retained wrapper before generation; the
+same charge follows Box queue, accepted/stale product and final disposal.
+
+Root EDITS bridge/transmitter_analyzer.rs to attempt fallible prepared rebind before
+cancelling/replacing the accepted model. Target failure must preserve active
+accepted work. Rebind supports the sole idle prepared-project consumer; reserve
+complete target coverage before aliasing the same scientific inner root. Retain
+ordinary invalid-input behavior and the original three scientific test bodies.
+REQ-UIU-03/06/07 and UIU-SESSION-01 own this focused prepared/product closure.
+Run seven new owner cases, existing preview science/readiness/timing, affected
+project/context/shared-direction lifecycle, QML, Clippy/format/boundary/traceability
+and optimized/native checks. No backend API or wheel rebuild is needed. Remaining
+outer control/channel/diagnostic/transport and independent input/history owners
+and full SESSION Level2/milestone acceptance stay open.

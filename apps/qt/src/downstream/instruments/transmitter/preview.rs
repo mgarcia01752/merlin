@@ -3,38 +3,49 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! GUI-thread lifecycle and viewport formatting over immutable Rust worker results.
+mod retention;
 use crate::downstream::common::constants::IDLE_PREVIEW_COMPLETION_CAPACITY;
 use crate::downstream::inputs::public_inputs::transmitter_inputs;
 use crate::downstream::workbench::session::Context;
 use crate::shared::presentation::constants::MIN_SPECTRUM_DISPLAY_BINS;
+use crate::shell::Retained;
 use merlin::downstream::{
-    ChannelConfiguration, ChannelConfigurationInput, ConfiguredPhysicalLayout,
-    TransmissionConfiguration, TransmitterPreview, TransmitterPreviewControl,
-    TransmitterPreviewRequest, MAX_TRANSMISSION_DOCUMENT_BYTES,
+    ChannelConfiguration, ChannelConfigurationInput, PhysicalLayoutView, TransmissionConfiguration,
+    TransmitterPreview, TransmitterPreviewControl, TransmitterPreviewRequest,
+    MAX_TRANSMISSION_DOCUMENT_BYTES,
 };
+pub(crate) use retention::PreviewError;
+use retention::SharedPrepared;
 use serde_json::{json, Value};
-use std::sync::mpsc::{self, Receiver, TryRecvError};
+use std::sync::{
+    mpsc::{self, Receiver, TryRecvError},
+    Arc,
+};
+
+struct PreviewInput {
+    request: TransmitterPreviewRequest,
+    layout: PhysicalLayoutView,
+}
 
 struct PreparedPreview {
-    request: TransmitterPreviewRequest,
-    layout: ConfiguredPhysicalLayout,
+    timing: TransmissionConfiguration,
+    preview: Option<PreviewInput>,
 }
 
 struct Job {
     revision: u64,
     control: TransmitterPreviewControl,
-    receiver: Receiver<Result<Box<TransmitterPreview>, String>>,
+    receiver: Receiver<Result<Box<Retained<TransmitterPreview>>, String>>,
 }
 
 #[derive(Default)]
 pub(crate) struct Analyzer {
     pub(crate) context: Context,
     revision: u64,
-    timing_settings: Option<TransmissionConfiguration>,
     result_token: u64,
-    request: Option<PreparedPreview>,
+    prepared: Option<SharedPrepared>,
     job: Option<Job>,
-    result: Option<TransmitterPreview>,
+    result: Option<Retained<TransmitterPreview>>,
     error: String,
     notice: String,
 }
@@ -47,46 +58,80 @@ impl Analyzer {
     /// * `profile` - Accepted original profile section, or null before Apply.
     /// # Returns
     /// No result; status reports missing prerequisites or core configuration errors.
+    /// Retention rejection preserves accepted configuration, revision, jobs and results.
     pub(crate) fn configure(&mut self, document: &str, source: &Value, profile: &Value) {
-        self.cancel();
-        self.revision = self.revision.wrapping_add(1);
-        self.result = None;
-        self.request = None;
-        self.timing_settings = None;
-        self.error.clear();
-        self.notice.clear();
-        let prepare = || -> Result<(TransmissionConfiguration, Option<PreparedPreview>), String> {
+        let prepare = || -> Result<PreparedPreview, String> {
             if document.len() > MAX_TRANSMISSION_DOCUMENT_BYTES {
                 return Err(format!(
                     "OCD request exceeds {MAX_TRANSMISSION_DOCUMENT_BYTES} bytes."
                 ));
             }
-            let transmission = TransmissionConfiguration::from_json(document.as_bytes())
+            let timing = TransmissionConfiguration::from_json(document.as_bytes())
                 .map_err(|cause| cause.message().to_owned())?;
-            let request = if let Some(inputs) = transmitter_inputs(source, profile)? {
+            let preview = if let Some(inputs) = transmitter_inputs(source, profile)? {
                 let request = TransmitterPreviewRequest::from_capture(
-                    &transmission,
+                    &timing,
                     &inputs.capture,
                     inputs.profile_id,
                     &inputs.source,
                 )
                 .map_err(|cause| cause.message().to_owned())?;
-                let layout = transmission
+
+                // Only public fixed-leaf carrier/span vectors feed the analyzer.
+                // Unused configured key/provenance owners drop with this temporary.
+                let layout = timing
                     .physical_layout_capture(&inputs.capture, inputs.profile_id, 0, 0, 0)
-                    .map_err(|cause| cause.message().to_owned())?;
-                Some(PreparedPreview { request, layout })
+                    .map_err(|cause| cause.message().to_owned())?
+                    .layout;
+                Some(PreviewInput { request, layout })
             } else {
                 None
             };
-            Ok((transmission, request))
+            Ok(PreparedPreview { timing, preview })
         };
-        match prepare() {
-            Ok((settings, request)) => {
-                self.timing_settings = Some(settings);
-                self.request = request;
+        let candidate = match prepare() {
+            Ok(candidate) => candidate,
+            Err(error) => {
+                // Preserve legacy invalid-input invalidation; retention rejection below
+                // instead leaves the prior accepted configuration and result intact.
+                self.invalidate();
+                self.error = error;
+                return;
             }
-            Err(error) => self.error = error,
+        };
+        match retention::admit(candidate, self.context.application.budget()) {
+            Ok(prepared) => {
+                self.invalidate();
+                self.prepared = Some(prepared);
+            }
+            Err(error) => self.error = error.into_message(),
         }
+    }
+
+    /// Transfers only an idle prepared project into another host after target admission.
+    ///
+    /// # Arguments
+    /// * `context` - Exact destination host; never inferred from the selected tab.
+    ///
+    /// # Returns
+    /// Unit after reserving target coverage and aliasing the same immutable prepared
+    /// root. Source aliases keep their independent original reservations until drop.
+    ///
+    /// # Errors
+    /// Rejects active/result-bearing analyzers, metadata and any target dimension
+    /// before changing context, accepted state or original budget ownership.
+    pub(crate) fn rebind_prepared(&mut self, context: Context) -> Result<(), PreviewError> {
+        if self.job.is_some() || self.result.is_some() {
+            return Err(PreviewError::TransferNotIdle);
+        }
+        let prepared = self
+            .prepared
+            .as_ref()
+            .map(|prepared| retention::rebind(prepared, context.application.budget()))
+            .transpose()?;
+        self.prepared = prepared;
+        self.context = context;
+        Ok(())
     }
 
     /// Starts at most one bounded worker; repeated calls while busy are ignored.
@@ -97,10 +142,11 @@ impl Analyzer {
         if self.job.is_some() {
             return;
         }
-        let Some(request) = self
-            .request
+        let Some(prepared) = self
+            .prepared
             .as_ref()
-            .map(|prepared| prepared.request.clone())
+            .filter(|prepared| prepared.value().preview.is_some())
+            .map(Arc::clone)
         else {
             return;
         };
@@ -108,15 +154,14 @@ impl Analyzer {
         self.notice.clear();
         let control = TransmitterPreviewControl::new();
         let worker_control = control.clone();
+        let budget = self.context.application.budget().clone();
         let (sender, receiver) = mpsc::sync_channel(IDLE_PREVIEW_COMPLETION_CAPACITY);
         let spawn = std::thread::Builder::new()
             .name("merlin-tx-spectrum".into())
             .spawn(move || {
-                let result = request
-                    .preview_retained_bound()
-                    .and_then(|target| request.generate_bounded(&worker_control, target))
+                let result = retention::generate(prepared, &worker_control, &budget)
                     .map(Box::new)
-                    .map_err(|cause| cause.message().to_owned());
+                    .map_err(PreviewError::into_message);
                 let _ = sender.send(result);
             });
         match spawn {
@@ -186,7 +231,7 @@ impl Analyzer {
     pub(crate) fn status(&self) -> Value {
         let (status, reason) = if !self.error.is_empty() {
             ("error", self.error.as_str())
-        } else if self.request.is_some() {
+        } else if self.has_request() {
             (
                 "complete",
                 "Accepted OCD, DPD and PRBS-TX form a supported transmitter configuration.",
@@ -205,7 +250,7 @@ impl Analyzer {
                 (progress.completed_symbols, progress.total_symbols)
             })
             .unwrap_or_default();
-        json!({"status":status,"reason":reason,"tap_name":"TX Output","tap_id":"tx.overlap_add.samples","tap_description":"Complex baseband I/Q · post-prefix, window and overlap · before channel","busy":self.job.is_some(),"can_generate":self.request.is_some()&&self.job.is_none(),"has_result":self.result.is_some(),"result_token":self.result_token.to_string(),"configuration_token":self.revision.to_string(),"progress":if total==0 {
+        json!({"status":status,"reason":reason,"tap_name":"TX Output","tap_id":"tx.overlap_add.samples","tap_description":"Complex baseband I/Q · post-prefix, window and overlap · before channel","busy":self.job.is_some(),"can_generate":self.has_request()&&self.job.is_none(),"has_result":self.result.is_some(),"result_token":self.result_token.to_string(),"configuration_token":self.revision.to_string(),"progress":if total==0 {
             0.0
         } else {
             done as f64/total as f64
@@ -247,14 +292,15 @@ impl Analyzer {
                 )
             } else if let Some(result) = self.result.as_ref() {
                 (
-                    TransmissionConfiguration::new(result.info().settings)
+                    TransmissionConfiguration::new(result.value().info().settings)
                         .map_err(|cause| cause.message().to_owned())?,
                     "Transmitter preview",
                 )
             } else {
                 (
-                    self.timing_settings
-                        .clone()
+                    self.prepared
+                        .as_ref()
+                        .map(|prepared| prepared.value().timing.clone())
                         .ok_or("Apply an OFDM configuration to show symbol timing.")?,
                     "Current configuration",
                 )
@@ -291,14 +337,31 @@ impl Analyzer {
         prepare().unwrap_or_else(|error| json!({"error":error,"points":[],"ticks":[]}))
     }
 
+    fn has_request(&self) -> bool {
+        self.prepared
+            .as_ref()
+            .is_some_and(|prepared| prepared.value().preview.is_some())
+    }
+
+    fn invalidate(&mut self) {
+        self.cancel();
+        self.revision = self.revision.wrapping_add(1);
+        self.result = None;
+        self.prepared = None;
+        self.error.clear();
+        self.notice.clear();
+    }
+
     fn viewport(&self, start: i32, count: i32, capture_axis: bool) -> Result<Value, String> {
         let result = self
             .result
             .as_ref()
+            .map(Retained::value)
             .ok_or("Generate a TX sample snapshot first.")?;
         let prepared = self
-            .request
+            .prepared
             .as_ref()
+            .and_then(|prepared| prepared.value().preview.as_ref())
             .ok_or("No accepted TX configuration.")?;
         let info = result.info();
         let start = usize::try_from(start).map_err(|_| "Invalid spectrum start.")?;
@@ -322,7 +385,7 @@ impl Analyzer {
         Ok(crate::shared::presentation::spectrum::viewport(
             &spectrum,
             &full,
-            &prepared.layout.layout,
+            &prepared.layout,
             start,
             count,
             capture_axis,
@@ -351,7 +414,11 @@ mod tests {
     const WORKER_TEST_TIMEOUT_SECONDS: u64 = 30;
     const WORKER_TEST_POLL_MILLISECONDS: u64 = 10;
 
-    fn inputs() -> (Value, Value) {
+    /// Builds the original source/catalog presentation fixture for preview tests.
+    ///
+    /// # Returns
+    /// Accepted original all-ones PRBS15 and unchanged captured profile JSON.
+    pub(super) fn inputs() -> (Value, Value) {
         // Independent original all-ones PRBS15 source fixture; dormant fill stays disabled.
         // Its equally valued fill seed is a separate inactive fixture choice.
         let source = json!({"options":{"mode":"prbs15","seed":32767,"append":false,
@@ -361,11 +428,28 @@ mod tests {
         (source, profile)
     }
 
-    fn configure(model: &mut Analyzer, settings: &str, inputs: (Value, Value)) {
+    /// Applies the existing real fixture through the production configuration path.
+    ///
+    /// # Arguments
+    /// * `model`, `settings`, `inputs` - Isolated analyzer and original accepted data.
+    ///
+    /// # Returns
+    /// Unit; the caller asserts the same scalar admission/readiness state as production.
+    pub(super) fn configure(model: &mut Analyzer, settings: &str, inputs: (Value, Value)) {
         model.configure(settings, &inputs.0, &inputs.1);
     }
 
-    fn wait(model: &mut Analyzer) {
+    /// Polls the real bounded worker within the existing test scheduling watchdog.
+    ///
+    /// # Arguments
+    /// * `model` - Analyzer owning the actual one-shot worker and completion channel.
+    ///
+    /// # Returns
+    /// Unit once the original completion/cancellation path is drained.
+    ///
+    /// # Panics
+    /// Panics if the real worker misses the existing test watchdog.
+    pub(super) fn wait(model: &mut Analyzer) {
         let deadline = Instant::now() + Duration::from_secs(WORKER_TEST_TIMEOUT_SECONDS);
         while model.poll()["busy"] == true {
             assert!(Instant::now() < deadline, "TX worker did not terminate");
@@ -482,3 +566,7 @@ mod tests {
         assert!(model.result.is_some());
     }
 }
+
+#[cfg(test)]
+#[path = "preview/retention_tests.rs"]
+mod retention_tests;

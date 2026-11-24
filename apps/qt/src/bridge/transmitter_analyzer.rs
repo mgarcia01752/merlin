@@ -195,8 +195,12 @@ impl bridge::TransmitterAnalyzer {
             &self.rust().model.context,
             |prepared| prepared.transmitter.take(),
         ) {
+            if let Err(error) = model.rebind_prepared(self.rust().model.context.clone()) {
+                return QString::from(
+                    serde_json::json!({"status":"error","reason":error.into_message()}).to_string(),
+                );
+            }
             self.as_mut().rust_mut().model.cancel();
-            model.context = self.rust().model.context.clone();
             self.as_mut().rust_mut().model = model;
             return QString::from(self.rust().model.status().to_string());
         }

@@ -1592,6 +1592,14 @@ static Receiver diagnostic. Display fields/guards drop before the enclosing
 backend/fixed-layout reservation. Independently requested instrument/transport
 outputs and other application owners still require separate admission.
 
+The [idle transmitter preview](development/features/unified-qt-workbench/validation.md#uiu-session-01-idle-transmitter-preview-owner-admission)
+shares an admitted immutable prepared request/layout with its worker and reserves
+the public preview target before generation. The reservation follows the actual
+queued/current product until disposal. Prepared-project transfer admits target
+coverage before cancelling or replacing the live analyzer; old source aliases
+keep their own charge. Control, diagnostic and independently requested display
+owners remain separate from these prepared/product charges.
+
 Explicit [accepted-edit cancellation transitions](development/features/unified-qt-workbench/design.md#uiu-session-01-accepted-edits-during-cancellation)
 preflight immutable candidates and checked revisions before cancelling the old
 generation. They preserve the legacy downstream edit/invalidation contract while
