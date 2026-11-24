@@ -4,11 +4,15 @@
  */
 
 //! Shared passive actual-capacity leaves for the existing input owners.
-use crate::shell::RetainedResources as Resources;
+mod model_children;
+use crate::shell::{
+    Retained, RetainedResources as Resources, RetentionBudget, RetentionReservation,
+};
 use merlin::{
     common::RetainedFootprint,
     downstream::{FrequencyGrid, RxMerFrame, ScenarioKey, SourceProfileFrame},
 };
+pub(crate) use model_children::{recipe_children, response_frame_children};
 use serde_json::Value;
 use std::mem::size_of;
 
@@ -17,6 +21,38 @@ fn overflow() -> String {
 }
 fn product(count: usize, bytes: usize) -> Result<usize, String> {
     count.checked_mul(bytes).ok_or_else(overflow)
+}
+
+/// Admits one actual editor candidate for queue storage and later GUI adoption.
+///
+/// # Arguments
+/// * `T`, `model` - Existing concrete editor payload after finite preparation.
+/// * `resources` - Complete actual candidate metadata counting sizeof(T) once.
+/// * `budget` - Canonical target counter shared with old and accepted owners.
+///
+/// # Returns
+/// The model and live guard. Coverage uses the larger of its two actual layouts:
+/// queued Retained<T>, or GUI T followed by Option<RetentionReservation>.
+/// No new shared allocation or guessed growth multiplier is introduced.
+///
+/// # Errors
+/// Checked layout/metadata overflow or any aggregate dimension rejection.
+pub(crate) fn admit_model<T>(
+    model: T,
+    mut resources: Resources,
+    budget: &RetentionBudget,
+) -> Result<Retained<T>, String> {
+    let gui_layout = size_of::<(T, Option<RetentionReservation>)>();
+    let fixed_layout = size_of::<Retained<T>>().max(gui_layout);
+    resources.payload_bytes = resources
+        .payload_bytes
+        .checked_sub(size_of::<T>())
+        .and_then(|children| children.checked_add(fixed_layout))
+        .ok_or_else(overflow)?;
+    let reservation = budget
+        .reserve_resources(resources)
+        .map_err(|_| "The session retained-data limit would be exceeded.".to_owned())?;
+    Ok(reservation.retain(model))
 }
 
 /// Adds actual child quantities without counting either containing fixed root again.

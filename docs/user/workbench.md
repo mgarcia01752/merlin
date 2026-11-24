@@ -277,6 +277,10 @@ Open rejects a prepared input replacement if its target changed during loading.
 It also checks the prepared receiver and transmitter against the destination's
 retained-data limits before replacing the current project or Save destination.
 If that admission fails, the previous configuration and results remain available.
+The same protection applies to New: a failed blank-workbench admission preserves
+the current project, editor state and Save destination. Opening or modifying an
+input editor can also report a retained-data limit; its previous accepted input
+remains available. New keeps the current light/dark appearance choice.
 Save continues to use the accepted original input bytes and hashes.
 
 The bar indicates activity, not a completion percentage. Timing is hidden during

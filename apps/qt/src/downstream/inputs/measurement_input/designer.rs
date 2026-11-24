@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Synthetic RxMER envelopes and immutable designer sessions; input files stay intact.
+mod retention;
 use super::document::{Capture, Measurement, MAX_INPUT_BYTES, MAX_TOTAL_BYTES};
 use crate::downstream::help::AdmissionError;
 use crate::downstream::{
@@ -67,6 +68,20 @@ pub(crate) struct Session {
     pub catalog: ProfileCapture,
     origins: Vec<Origin>,
     pub request: Request,
+}
+
+/// Measures one immutable Designer record/design already retained by a capture.
+///
+/// # Arguments
+/// * `origin` - Actual private owner, including independent original/recipe children.
+///
+/// # Returns
+/// Complete fixed owner plus checked payload capacities and container/root counts.
+///
+/// # Errors
+/// Public metadata or checked resource overflow; no source is materialized or mutated.
+pub(crate) fn origin_resources(origin: &Origin) -> Result<crate::shell::RetainedResources, String> {
+    retention::origin_resources(origin)
 }
 fn hash(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))

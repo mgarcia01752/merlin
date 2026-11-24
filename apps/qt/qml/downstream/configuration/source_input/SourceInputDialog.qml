@@ -27,6 +27,10 @@ WorkbenchDialog {
     title: "Transmit Source (PRBS-TX)"
     onOpened: {
         const initial = JSON.parse(backend.begin())
+        if (initial.error) {
+            errorMessage = initial.error
+            return
+        }
         draft = initial.options
         fileInfo = initial.file
         sourceBranch.checked = true

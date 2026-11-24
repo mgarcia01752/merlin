@@ -3,9 +3,11 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Rust-owned source draft, immutable input and accepted core configuration.
+mod retention;
 use crate::downstream::common::constants::{
     INITIAL_CONTINUOUS_SOURCE_SEED, INITIAL_FILE_FILL_SEED, MAX_SOURCE_OPTIONS_DOCUMENT_BYTES,
 };
+use crate::shell::{Retained, RetainedResources, RetentionBudget, RetentionReservation};
 use merlin::downstream::{FileFillPolicy, NamedCapture, PrbsSeed, SourceFileInfo, SourceInput};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -54,6 +56,34 @@ pub(crate) struct SourceModel {
 }
 
 impl SourceModel {
+    /// Admits this actual source editor before retaining or publishing its candidate.
+    ///
+    /// # Arguments
+    /// * `budget` - Exact target counter, covering old, candidate and queued owners.
+    ///
+    /// # Returns
+    /// Existing Retained owner with complete model children and concrete storage layouts.
+    /// Transfer its parts together; the reservation must outlive all charged model data.
+    ///
+    /// # Errors
+    /// Public metadata, checked layout arithmetic or any aggregate dimension rejection.
+    pub(crate) fn admit(self, budget: &RetentionBudget) -> Result<Retained<Self>, String> {
+        let resources = self.retained_resources()?;
+        crate::downstream::inputs::retention::admit_model(self, resources, budget)
+    }
+
+    /// Measures the actual retained source draft and accepted model without mutation.
+    ///
+    /// # Returns
+    /// Complete model fixed layout once, actual capacities and conservative shared children.
+    /// This passive query neither generates source bits nor reserves application policy.
+    ///
+    /// # Errors
+    /// Existing public metadata or checked payload/population overflow.
+    pub(crate) fn retained_resources(&self) -> Result<RetainedResources, String> {
+        retention::resources(self)
+    }
+
     /// Serializes accepted source choices and original bytes for project persistence.
     /// # Returns
     /// A bounded Rust-owned document, or null before acceptance.
@@ -113,6 +143,26 @@ impl SourceModel {
         json!({"options":options, "file":self.file_summary()})
     }
 
+    /// Prepares and admits a restored edit draft while the current model stays charged.
+    ///
+    /// # Arguments
+    /// * `budget` - Canonical target policy, including the current adapter's reservation.
+    ///
+    /// # Returns
+    /// Independently admitted candidate and unchanged existing begin metadata.
+    /// The caller commits the candidate and its guard together after success.
+    ///
+    /// # Errors
+    /// Metadata or aggregate rejection preserves this model's draft and acceptance.
+    pub(crate) fn begin_admitted(
+        &self,
+        budget: &RetentionBudget,
+    ) -> Result<(Retained<Self>, Value), String> {
+        let mut candidate = self.clone();
+        let metadata = candidate.begin();
+        Ok((candidate.admit(budget)?, metadata))
+    }
+
     /// Stages exact original bytes without committing accepted source.
     /// # Arguments
     /// * `name` - Display basename only, never a scientific input path.
@@ -130,6 +180,29 @@ impl SourceModel {
         .map_err(|error| error.message().to_owned())?;
         self.file = Some(SourceFile { payload });
         Ok(())
+    }
+
+    /// Validates and admits an independent staged file before replacing the old draft.
+    ///
+    /// # Arguments
+    /// * `budget` - Exact target policy covering simultaneous current/candidate owners.
+    /// * `name`, `bytes` - Existing bounded original payload inputs, preserved unchanged.
+    ///
+    /// # Returns
+    /// Charged candidate ready for infallible adapter model/guard replacement.
+    /// No accepted Inputs or saved source section is published by staging.
+    ///
+    /// # Errors
+    /// Existing scientific validation, metadata or aggregate rejection preserves self.
+    pub(crate) fn stage_admitted(
+        &self,
+        budget: &RetentionBudget,
+        name: String,
+        bytes: Vec<u8>,
+    ) -> Result<Retained<Self>, String> {
+        let mut candidate = self.clone();
+        candidate.stage(name, bytes)?;
+        candidate.admit(budget)
     }
 
     /// Queries bounded original-file metadata without exporting payload bytes.
@@ -241,27 +314,30 @@ impl SourceModel {
     /// * `document` - Existing bounded source options; original staged bytes stay unchanged.
     ///
     /// # Returns
-    /// Unit after complete Inputs/section admission and infallible editor replacement.
+    /// The model reservation after complete Inputs/section admission and editor replacement.
+    /// The adapter must store this guard after its model field before returning to Qt.
     ///
     /// # Errors
     /// Scientific validation or host rejection preserves accepted editor/Inputs/section.
-    /// Temporary editor preparation is separate; model-graph admission remains follow-up.
+    /// Candidate editor data stays inside Retained until all fallible work succeeds.
     pub(crate) fn apply_transactional(
         &mut self,
         context: &crate::downstream::workbench::session::Context,
         document: &str,
-    ) -> Result<(), String> {
+    ) -> Result<RetentionReservation, String> {
         let mut candidate = self.clone();
         candidate.accept(document)?;
-        let source = candidate.snapshot();
-        let section = candidate.export();
+        let candidate = candidate.admit(context.application.budget())?;
+        let source = candidate.value().snapshot();
+        let section = candidate.value().export();
         crate::downstream::workbench::session::update(context, |inputs, sections| {
             inputs.source = source;
             sections.insert("source".into(), section);
             Ok(())
         })?;
-        *self = candidate;
-        Ok(())
+        let (model, reservation) = candidate.into_parts();
+        *self = model;
+        Ok(reservation)
     }
 
     /// Reports explicit source acceptance rather than simulation completion.
@@ -286,6 +362,10 @@ impl SourceModel {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "model/admission_tests.rs"]
+mod admission_tests;
 
 #[cfg(test)]
 mod tests {

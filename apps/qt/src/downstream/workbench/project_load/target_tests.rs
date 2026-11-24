@@ -68,7 +68,11 @@ fn every_target_dimension_rejects_before_project_key_inputs_or_pending_models_ch
             Ok(())
         })
         .unwrap();
-        context.prepared.borrow_mut().source = Some(Default::default());
+        context.prepared.borrow_mut().source = Some(
+            crate::downstream::inputs::source_input::model::SourceModel::default()
+                .admit(context.application.budget())
+                .unwrap(),
+        );
         let key = context.application.snapshot(Direction::Downstream);
         let usage = context.application.budget().usage();
         let guard = context
@@ -80,7 +84,7 @@ fn every_target_dimension_rejects_before_project_key_inputs_or_pending_models_ch
         assert!(candidate(&context).is_err());
         assert_eq!(context.application.snapshot(Direction::Downstream), key);
         assert_eq!(session::saved(&context, "source")["accepted"], "preserve");
-        assert!(take(&context, |models| models.source.take()).is_some());
+        assert!(context.prepared.borrow().source.is_some());
         assert_eq!(context.application.budget().usage(), before);
         drop(guard);
         assert_eq!(context.application.budget().usage(), usage);

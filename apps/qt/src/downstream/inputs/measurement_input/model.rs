@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Shared editor state; accepted measurements are independent of transient drafts.
+mod retention;
 use super::document::{Capture, Measurement, MAX_TOTAL_BYTES};
 use crate::downstream::{
     common::constants::{
-        DEFAULT_REPLAY_INTERVAL_SYMBOLS, DEFAULT_RESPONSE_ASSOCIATION_SECONDS,
+        DEFAULT_REPLAY_INTERVAL_TEXT, DEFAULT_RESPONSE_ASSOCIATION_SECONDS,
         DEFAULT_RXMER_ASSOCIATION_SECONDS, MEASUREMENT_GAIN_PROJECTION,
         MEASUREMENT_IMAGINARY_PROJECTION, MEASUREMENT_PHASE_PROJECTION,
         MEASUREMENT_REAL_PROJECTION,
@@ -22,12 +23,13 @@ use merlin::downstream::{
 };
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use std::borrow::Cow;
 
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct Options {
     pub mode: PlaybackMode,
-    pub interval_symbols: String,
+    pub interval_symbols: Cow<'static, str>,
     pub tolerance_seconds: u32,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub selected_captures: Option<Vec<String>>,
@@ -36,7 +38,7 @@ impl Default for Options {
     fn default() -> Self {
         Self {
             mode: PlaybackMode::Single,
-            interval_symbols: DEFAULT_REPLAY_INTERVAL_SYMBOLS.to_string(),
+            interval_symbols: Cow::Borrowed(DEFAULT_REPLAY_INTERVAL_TEXT),
             tolerance_seconds: DEFAULT_RXMER_ASSOCIATION_SECONDS,
             selected_captures: None,
         }
@@ -146,6 +148,35 @@ pub(crate) struct ChartRequest {
     pub options: Options,
 }
 impl Model {
+    /// Measures this actual editor including original, frame and Designer children.
+    ///
+    /// # Returns
+    /// Checked capacities and container/root counts without cloning or materialization.
+    ///
+    /// # Errors
+    /// Public metadata or checked resource overflow.
+    pub(crate) fn retained_resources(&self) -> Result<crate::shell::RetainedResources, String> {
+        retention::resources(self)
+    }
+
+    /// Admits this finite editor before persistent replacement or queued transfer.
+    ///
+    /// # Arguments
+    /// * `budget` - Exact canonical target shared with accepted and old owners.
+    ///
+    /// # Returns
+    /// Actual model with its transferable live reservation.
+    ///
+    /// # Errors
+    /// Metadata or aggregate failure, without altering any other editor/input owner.
+    pub(crate) fn admit(
+        self,
+        budget: &crate::shell::RetentionBudget,
+    ) -> Result<crate::shell::Retained<Self>, String> {
+        let resources = self.retained_resources()?;
+        crate::downstream::inputs::retention::admit_model(self, resources, budget)
+    }
+
     /// Derives scalar readiness from independent accepted inputs.
     /// # Arguments
     /// * `settings` - Parsed OCD or its validation error.
@@ -305,18 +336,19 @@ impl Model {
     /// * `options`, `settings` - Parsed bounded draft controls and accepted OCD.
     ///
     /// # Returns
-    /// Unit after playback/response/tolerance/section adoption, then editor replacement.
+    /// Live editor reservation after input/section adoption and editor replacement.
+    /// The caller stores the guard after its model, preserving the charge until drop.
     ///
     /// # Errors
     /// Existing scientific validation, preparation or aggregate failure preserves all
-    /// accepted editor/Inputs/saved state. Editor graph admission remains separate.
+    /// accepted editor/Inputs/saved state. Both owners admit before replacement.
     pub(crate) fn apply_transactional(
         &mut self,
         context: &crate::downstream::workbench::session::Context,
         rxmer: bool,
         options: Options,
         settings: &TransmissionSettings,
-    ) -> Result<(), String> {
+    ) -> Result<crate::shell::RetentionReservation, String> {
         let mut candidate = self.clone();
         if rxmer {
             candidate.accepted_rx = candidate.draft_rx.clone();
@@ -326,33 +358,35 @@ impl Model {
             candidate.response_tolerance = options.tolerance_seconds;
         }
         let section = candidate.export();
+        let candidate = candidate.admit(context.application.budget())?;
         crate::downstream::workbench::session::update(context, |inputs, sections| {
             if rxmer {
                 Self::playback(
-                    &candidate.accepted_rx,
-                    &candidate.options,
+                    &candidate.value().accepted_rx,
+                    &candidate.value().options,
                     settings,
                     inputs.profile.as_ref(),
                     inputs.profile_capture.as_ref(),
                 )?;
             } else {
                 Self::response(
-                    candidate.accepted_response.as_ref(),
+                    candidate.value().accepted_response.as_ref(),
                     settings,
                     inputs.profile.as_ref(),
-                    candidate.response_tolerance,
+                    candidate.value().response_tolerance,
                     inputs.profile_capture.as_ref(),
                 )?;
             }
-            let published = candidate.published(inputs.profile.as_ref())?;
+            let published = candidate.value().published(inputs.profile.as_ref())?;
             inputs.playback = published.playback;
             inputs.response = published.response;
-            inputs.response_tolerance = candidate.response_tolerance;
+            inputs.response_tolerance = candidate.value().response_tolerance;
             sections.insert("measurements".into(), section);
             Ok(())
         })?;
+        let (candidate, reservation) = candidate.into_parts();
         *self = candidate;
-        Ok(())
+        Ok(reservation)
     }
 
     /// Refreshes the existing profile-presence publication dependency only when needed.
@@ -776,15 +810,15 @@ mod tests {
         assert!(symbols > 1);
         let mut options = Options {
             mode: PlaybackMode::Hold,
-            interval_symbols: (symbols - 1).to_string(),
+            interval_symbols: (symbols - 1).to_string().into(),
             ..Default::default()
         };
         assert_eq!(options.capacity(&settings, 1).unwrap(), 2);
-        options.interval_symbols = symbols.to_string();
+        options.interval_symbols = symbols.to_string().into();
         assert_eq!(options.capacity(&settings, 1).unwrap(), 1);
         options.interval_symbols = "0".into();
         assert!(options.capacity(&settings, 1).is_err());
-        options.interval_symbols = u64::MAX.to_string();
+        options.interval_symbols = u64::MAX.to_string().into();
         assert_eq!(options.capacity(&settings, 1).unwrap(), 1);
         options.mode = PlaybackMode::Single;
         assert_eq!(options.capacity(&settings, 1).unwrap(), 1);

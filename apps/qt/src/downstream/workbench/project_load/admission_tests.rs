@@ -67,9 +67,13 @@ fn stale_identity_foreign_identity_and_foreign_budget_preserve_target_inputs_and
         })
         .unwrap();
         // A populated pending editor proves rejection does not overwrite the transfer store.
-        target
-            .prepared
-            .with(|models| models.borrow_mut().source = Some(Default::default()));
+        target.prepared.with(|models| {
+            models.borrow_mut().source = Some(
+                crate::downstream::inputs::source_input::model::SourceModel::default()
+                    .admit(target.application.budget())
+                    .unwrap(),
+            );
+        });
         let original = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml");
         let original_bytes = std::fs::read(&original).unwrap();
         crate::platform::input_file::read_local(
@@ -104,7 +108,7 @@ fn stale_identity_foreign_identity_and_foreign_budget_preserve_target_inputs_and
         assert!(crate::platform::input_file::is_original(&original));
         assert_eq!(std::fs::read(&original).unwrap(), original_bytes);
         assert_eq!(&*session::saved_sections(&target), &*before);
-        assert!(take(&target, |models| models.source.take()).is_some());
+        assert!(target.prepared.borrow().source.is_some());
         assert_eq!(target.application.budget().usage(), baseline);
     }
 }

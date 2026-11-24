@@ -60,13 +60,18 @@ Pane {
     }
     QtObject {
         id: sourceBackend
+        property string beginError: ""
         property bool acceptedSource: false
         property var acceptedOptions: ({mode: "prbs15", seed: 32767, append: false, target_bits: 0, fill_seed: 32767})
         property bool fileSelected: false
         property bool acceptedFile: false
         function fileView() { return {selected: fileSelected, name: fileSelected ? "test.bin" : "", bytes: fileSelected ? 2 : null, bits: fileSelected ? 16 : null, sha256: fileSelected ? "test-hash" : ""} }
         function reload() {}
-        function begin() { fileSelected = acceptedFile; return JSON.stringify({options: acceptedOptions, file: fileView()}) }
+        function begin() {
+            if (beginError) { return JSON.stringify({error: beginError}) }
+            fileSelected = acceptedFile
+            return JSON.stringify({options: acceptedOptions, file: fileView()})
+        }
         function choose_file() { fileSelected = true; return JSON.stringify(fileView()) }
         function describe(document) {
             const options = JSON.parse(document)
@@ -244,7 +249,9 @@ Pane {
     QtObject {
         id: fileBackend
         property var openResponse: ({cancelled:true})
+        property string newError: ""
         function new_workbench() {
+            if (newError) { return JSON.stringify({error: newError}) }
             profileBackend.acceptedId=-1;sourceBackend.acceptedSource=false;measurementBackend.acceptedRx=false
             return JSON.stringify({created:true,transmission:JSON.parse(backend.defaults()),receiver:null,verified:false,dark:null})
         }
@@ -634,6 +641,50 @@ Pane {
             mouseClick(appMenu.itemAt(2))
             mouseClick(findChild(appMenu,"terminologyAction"))
             compare(String(appMenu.openedTerminology),"https://github.com/mgarcia01752/merlin/blob/master/docs/user/terminology.md")
+        }
+        function test_new_admission_rejection_keeps_workbench_and_displays_file_error() {
+            const hadProject = workbench.hasProject
+            const profile = profileBackend.acceptedId
+            const source = sourceBackend.acceptedSource
+            const measurement = measurementBackend.acceptedRx
+            fileBackend.newError = "The session retained-data limit would be exceeded."
+            const feedback = findChild(workbench, "workbenchFileFeedback")
+            verify(feedback)
+            try {
+                compare(workbench.newProject(), false)
+                compare(workbench.fileMessage, fileBackend.newError)
+                tryCompare(feedback, "opened", true)
+                compare(workbench.hasProject, hadProject)
+                compare(profileBackend.acceptedId, profile)
+                compare(sourceBackend.acceptedSource, source)
+                compare(measurementBackend.acceptedRx, measurement)
+            } finally {
+                fileBackend.newError = ""
+                feedback.close()
+                tryCompare(feedback, "opened", false)
+            }
+        }
+        function test_source_admission_rejection_preserves_dialog_values_and_shows_error() {
+            const dialog = workbench.sourcePopup
+            dialog.open()
+            tryCompare(dialog, "opened", true)
+            dialog.edit("seed", 1) // Independent valid seed retained in this UI draft.
+            const draft = JSON.stringify(dialog.draft)
+            const file = JSON.stringify(dialog.fileInfo)
+            dialog.close()
+            tryCompare(dialog, "opened", false)
+            sourceBackend.beginError = "The session retained-data limit would be exceeded."
+            try {
+                dialog.open()
+                tryCompare(dialog, "opened", true)
+                compare(dialog.errorMessage, sourceBackend.beginError)
+                compare(JSON.stringify(dialog.draft), draft)
+                compare(JSON.stringify(dialog.fileInfo), file)
+            } finally {
+                sourceBackend.beginError = ""
+                dialog.close()
+                tryCompare(dialog, "opened", false)
+            }
         }
         function test_source_options_and_accepted_readiness() {
             const dialog = workbench.sourcePopup

@@ -4116,3 +4116,59 @@ test-only legacy transfer helpers. The actual primary
 owns acceptance of this focused unit; source-only checks do not establish runtime
 acceptance. Ordinary legacy rebind remains test-only compatibility coverage;
 production Open uses the pre-admitted target path.
+
+### UIU-SESSION-01 retained editor candidates and prepared transfer
+
+The next concrete owners are the existing source, profile and measurement models:
+their original input/catalog/decoded frame/JSON owners persist independently of
+accepted Inputs and public scientific requests. Reuse existing Retained and
+RetentionReservation; add no accounting framework or scientific API. Measure each
+actual finite clone after validation, admit before persistent replacement, and
+keep old/model/input/document charges together until their actual final drops.
+REQ-UIU-03/06/07 and the still-open UIU-SESSION-01 own this continuation.
+
+| Owning paths | Change and acceptance |
+| --- | --- |
+| EDIT `apps/qt/src/shell/retention.rs` and its existing tests | Consume an exclusively owned Retained into payload/reservation parts without releasing its charge. This concrete queue-to-GUI transfer preserves data-before-guard drop ordering. |
+| EDIT `apps/qt/src/downstream/inputs/retention.rs`; ADD `retention/model_children.rs` and focused tests | Reuse actual JSON/profile/RxMER leaves; add current response/recipe children. One helper covers the maximum of the two actual editor storage layouts (queued Retained versus GUI model plus optional reservation), with checked fixed-root replacement. No guessed multiplier or private allocator layout. |
+| EDIT `apps/qt/src/downstream/inputs/source_input/model.rs`, `profile_input/mod.rs`, `measurement_input/model.rs`; ADD their `retention.rs`/tests | Adapt frozen passive visitors from `6d20fa7a3a6b05398b766529531ef3e7fb0b70a1`, register actual owner metadata and admit concrete candidates. Apply reserves the editor before the existing complete Inputs/document transaction, then transfers its guard after success. Failed admission/publication preserves both. |
+| EDIT `apps/qt/src/downstream/inputs/measurement_input/designer.rs`; ADD `designer/retention.rs`/tests | Count optional Designer Origin children already retained in measurement captures. Session/worker/export admission remains a separate concrete owner; passive Session metadata alone does not accept it. |
+| EDIT `apps/qt/src/bridge/source_input.rs`, `profile_input.rs`, `measurement_input.rs`, `rxmer_designer.rs` | Preserve all existing invokable signatures and UI behavior. Cover begin/stage/edit/cancel/reload/Apply and Designer completion candidate replacement. Store a reservation after each model field; guard queued-to-GUI transfer without re-admission. Profile gets a thin QObject owner rather than aliasing a mutable scientific-input model. |
+| EDIT `apps/qt/src/downstream/workbench/project_load.rs` and its tests | Admit all three actual editor candidates against the target before queue/publication, retain isolated Contexts and verify exact target ownership. Failed/cancelled/stale loads release candidates without changing accepted state/path; GUI take transfers existing guards. |
+
+Integration lead owns shared leaves, profile/measurement adapters, project wiring
+and all acceptance records. The isolated session agent owns only source model/
+bridge/test paths; its [source-only handoff](agent-handoffs/source-editor-admission.md)
+records the frozen proposal before primary validation. No concurrent edits to manifests, registrations, architecture
+or checklist. Test actual independent spare capacities, every positive aggregate
+dimension, old/new overlap, rejected Apply after editor admission, target transfer
+under pressure, cancellation and final disposal. Preserve existing original-byte,
+schema, scientific and legacy sweep assertions. Run changed editor/project/model
+Rust and relevant Qt/QML, Clippy/format/boundary/traceability and fresh executable
+checks. Reuse unchanged native wheel/reference for affected project compatibility;
+full SESSION Level 2/milestone gates and remaining retained owners stay pending.
+
+Read-only QA found that legacy New committed empty Inputs before its now-fallible
+editor reloads. New therefore uses the same complete PreparedProject preflight
+and guarded adoption as Open; `apps/qt/src/bridge/workbench_file.rs` publishes its
+cleared Save path only after success. Empty editor transfers remain admitted
+through GUI reload even under full counter pressure. Global appearance stays
+unchanged (`dark: null` in New metadata). The existing downstream shell displays
+New rejection through its file-feedback dialog. Tests retain old snapshot aliases
+and leave exactly the actual empty accepted-State charge, reproducing the former
+partial-commit condition without guessing editor sizes.
+
+The untouched measurement default interval previously allocated before any guard.
+`Options.interval_symbols` now borrows named static default text through internal
+Cow storage; parsed/editor-owned text uses its actual String capacity. The existing
+unsigned-decimal JSON and numerical default are unchanged. Untouched defaults own
+no heap children; fixed QObject/Context infrastructure remains separately scoped.
+`apps/qt/src/downstream/common/constants.rs` owns that default text and the current
+native schema version shared by New/Save/recovery. Existing independent schema
+and numerical fixtures retain their historical values.
+
+`apps/qt/qml/downstream/configuration/source_input/SourceInputDialog.qml` now
+handles an admitted-Begin error before replacing controls. Focused rendering/
+interaction tests in `apps/qt/tests/tst_workbench.qml` preserve existing control
+values and exercise both Source Begin and New rejection. This changes failure
+handling through existing banners/dialogs, with no layout or theme change.

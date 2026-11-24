@@ -220,6 +220,7 @@ pub(crate) fn saved_sections(context: &Context) -> SectionSnapshot {
 ///
 /// # Errors
 /// Metadata or aggregate rejection preserves the old state and aliases.
+#[cfg(test)]
 pub(crate) fn restore(
     context: &Context,
     inputs: Inputs,

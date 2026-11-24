@@ -87,6 +87,27 @@ pub struct WorkbenchFileRust {
     path: Option<PathBuf>,
     loader: crate::downstream::workbench::project_load::Loader,
 }
+
+impl WorkbenchFileRust {
+    fn create_blank(&mut self) -> Result<serde_json::Value, String> {
+        if self.loader.is_loading() {
+            return Err("Wait for workbench loading to finish.".into());
+        }
+        let candidate =
+            crate::downstream::workbench::project_load::PreparedProject::blank(&self.context)?;
+        let mut metadata = candidate.adopt(&self.context)?;
+        // New preserves the global appearance choice and has no Save destination.
+        metadata["created"] = json!(true);
+        metadata["opened"] = json!(false);
+        metadata["dark"] = serde_json::Value::Null;
+        self.path = None;
+        Ok(metadata)
+    }
+}
+
+#[cfg(test)]
+#[path = "workbench_file/editor_tests.rs"]
+mod editor_tests;
 fn path(url: &str) -> Result<PathBuf, String> {
     QUrl::from(&QString::from(url))
         .to_local_file()
@@ -139,18 +160,12 @@ impl bridge::WorkbenchFile {
     /// # Returns
     /// Default settings for editor reload, with no accepted inputs or run options.
     pub fn new_workbench(mut self: core::pin::Pin<&mut Self>) -> QString {
-        if self.rust().loader.is_loading() {
-            return QString::from("{\"error\":\"Wait for workbench loading to finish.\"}");
-        }
-        if let Err(error) =
-            workbench_session::restore(&self.rust().context, Default::default(), Default::default())
-        {
-            return QString::from(json!({"error":error}).to_string());
-        }
-        crate::platform::input_file::clear_original_paths();
-        self.as_mut().rust_mut().path = None;
-        QString::from(json!({"created":true,"transmission":merlin::downstream::TransmissionSettings::default(),
-            "receiver":null,"verified":false,"dark":null}).to_string())
+        let result = self.as_mut().rust_mut().create_blank();
+        QString::from(
+            result
+                .unwrap_or_else(|error| json!({"error":error}))
+                .to_string(),
+        )
     }
 
     /// Stores a private recovery WB without overwriting a user-selected file.
@@ -174,7 +189,7 @@ impl bridge::WorkbenchFile {
                 return Err("Recovery configuration exceeds limits.".into());
             }
             let project = Project {
-                schema_version: 2,
+                schema_version: crate::downstream::common::constants::WORKBENCH_SCHEMA_VERSION,
                 application: "MERLIN".into(),
                 transmission: serde_json::from_str(&settings.to_string())
                     .map_err(|error| error.to_string())?,
@@ -308,7 +323,7 @@ impl bridge::WorkbenchFile {
                 }
             }
             let project = Project {
-                schema_version: 2,
+                schema_version: crate::downstream::common::constants::WORKBENCH_SCHEMA_VERSION,
                 application: "MERLIN".into(),
                 transmission: serde_json::from_str(&settings.to_string())
                     .map_err(|e| e.to_string())?,

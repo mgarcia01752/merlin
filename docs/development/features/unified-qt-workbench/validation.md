@@ -3885,3 +3885,35 @@ No unrelated full workspace/CLI/packaging suite is claimed executed. Prepared
 editor/Designer graphs, independently retained transport/infrastructure owners,
 complete SESSION Level 2 and applicable milestone/final Level 3 gates remain open.
 UIU-SESSION-01 remains unchecked; completed downstream history is preserved.
+
+
+## UIU-SESSION-01 retained editor candidates and prepared transfer
+
+The [focused design](design.md#uiu-session-01-retained-editor-candidates-and-prepared-transfer)
+now admits actual independent source/profile/measurement editor candidates before
+GUI replacement and coupled Apply publication. Original bytes, decoded frames,
+catalog/JSON/options buffers and capture Designer Origin children participate in
+the existing three-dimensional budget. Queued Open/New models retain their guards;
+exclusive payload/guard transfer preserves data-before-reservation disposal and
+does not reserve again during GUI reload. Rejected candidates preserve both editor
+and accepted input/document state. New now preflights the complete reset before
+changing the project or Save destination, preserving appearance. Untouched interval
+text borrows the unchanged static default; owned parsed text remains charged.
+
+[Primary execution record](session-editor-models-evidence.json) records 95 passing
+unique Rust cases, then 13 passing affected cases after restricting the unused
+legacy restore helper to tests. Initial compile and Clippy failures remain
+recorded; no runtime failure was hidden. Eight QML behaviors/two hooks pass without
+warnings, including rejected Source Begin and New preserving existing state.
+Six installed-native saved-project cases, final all-target Clippy, formatting,
+boundary, optimized build and six fresh desktop probes pass. The existing exact
+wheel/reference/export inventories are reused because backend/binding APIs and
+schemas did not change. Documentation/traceability checks are recorded separately
+in the same receipt. Independent read-only review found the New/default gaps;
+their concrete fixes and regression coverage are included here.
+
+Source-only agent preparations are separately identified and do not establish
+MERLIN runtime acceptance. Designer Session/work/export, registry/presentation/
+infrastructure owners and full SESSION Level 2/milestone Level 3 remain pending.
+UIU-SESSION-01 stays unchecked; no unrelated full workspace/CLI/packaging execution
+is claimed and all historical tests, vectors and completed tasks are preserved.

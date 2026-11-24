@@ -172,7 +172,13 @@ impl bridge::MeasurementInputs {
         let work = self.as_mut().rust_mut().designer_work.take().unwrap();
         let inputs = crate::downstream::workbench::session::snapshot(&self.rust().context);
         let profile = inputs.profile.as_ref();
-        let result = adopt(work, result, &mut self.as_mut().rust_mut().model, profile);
+        let mut candidate = self.rust().model.clone();
+        let result = adopt(work, result, &mut candidate, profile).and_then(|metadata| {
+            if metadata["staged"] == true {
+                self.as_mut().rust_mut().replace_model(candidate)?;
+            }
+            Ok(metadata)
+        });
         response(result)
     }
     /// Cancels pending generation; already accepted captures are never modified.

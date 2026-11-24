@@ -1579,6 +1579,20 @@ open under UIU-SESSION-01. See the
 [target preflight design](development/features/unified-qt-workbench/design.md#uiu-session-01-prepared-project-target-preflight).
 See the [focused design](development/features/unified-qt-workbench/design.md#uiu-session-01-atomic-accepted-inputs-and-prepared-projects).
 
+Source/profile/measurement editor models now carry independent actual-capacity
+reservations. Begin/stage/edit/cancel/Apply prepare and admit a finite candidate
+before replacing the GUI model; coupled Apply admits both model and accepted
+Inputs/documents before committing. Queued Open/New transfers hold these guards
+and use the existing target check. New preflights every reset before changing
+inputs or the Save destination, preserving appearance and old snapshot aliases.
+Untouched measurement defaults borrow static decimal text; parsed text retains
+its own capacity charge. The thin profile QObject owns its Context and admitted
+model independently, preserving existing invokables. See the
+[editor ownership design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-editor-candidates-and-prepared-transfer).
+Designer Origin children retained by captures are counted here; separate Designer
+sessions/workers/exports, retained QML presentation and outer infrastructure still
+require closure before UIU-SESSION-01 acceptance.
+
 The shared [terminal transport](development/features/unified-qt-workbench/design.md#uiu-session-01-terminal-worker-transport)
 under `shell/worker.rs` keeps genuine run leases outside worker unwinding and
 tags queued callbacks explicitly. Known completion can release admission after

@@ -231,6 +231,8 @@ pub mod bridge {
 pub struct MeasurementInputsRust {
     pub(super) context: crate::downstream::workbench::session::Context,
     pub(super) model: Model,
+    // Release independently retained model data before its covering reservation.
+    pub(super) model_guard: Option<crate::shell::RetentionReservation>,
     pub(super) designer: Option<crate::downstream::inputs::measurement_input::designer::Session>,
     pub(super) designer_work: Option<super::rxmer_designer::Work>,
     pub(super) designer_export: Option<super::rxmer_export::State>,
@@ -250,6 +252,44 @@ fn parse_selection<T: serde::de::DeserializeOwned>(document: &str) -> Result<T, 
     serde_json::from_str(document).map_err(|error| error.to_string())
 }
 impl MeasurementInputsRust {
+    fn apply_measurement(
+        &mut self,
+        rxmer: bool,
+        options: Options,
+        settings: &TransmissionSettings,
+    ) -> Result<(), String> {
+        let guard = self
+            .model
+            .apply_transactional(&self.context, rxmer, options, settings)?;
+        self.model_guard = Some(guard);
+        Ok(())
+    }
+
+    /// Admits a finite edited candidate before replacing the current draft/accepted owner.
+    ///
+    /// # Arguments
+    /// * `candidate` - Actual validated editor after finite preparation.
+    ///
+    /// # Returns
+    /// Unit after one model/guard replacement; prior owners coexist until success.
+    ///
+    /// # Errors
+    /// Metadata or aggregate rejection preserves all current model fields and charges.
+    pub(super) fn replace_model(&mut self, candidate: Model) -> Result<(), String> {
+        let admitted = candidate.admit(self.context.application.budget())?;
+        self.adopt_model(admitted)
+    }
+
+    fn adopt_model(&mut self, admitted: crate::shell::Retained<Model>) -> Result<(), String> {
+        if !self.context.application.budget().owns(&admitted) {
+            return Err("Prepared measurements belong to another application host.".into());
+        }
+        let (model, guard) = admitted.into_parts();
+        self.model = model;
+        self.model_guard = Some(guard);
+        Ok(())
+    }
+
     /// Reads draft metadata while borrowing the exact admitted profile owner.
     ///
     /// # Arguments
@@ -288,7 +328,9 @@ impl MeasurementInputsRust {
                     .map_err(|error| format!("{name}: {error}"))?,
             );
         }
-        self.model.stage(captures, rxmer)
+        let mut candidate = self.model.clone();
+        candidate.stage(captures, rxmer)?;
+        self.replace_model(candidate)
     }
     fn admission(
         &self,
@@ -445,12 +487,12 @@ impl bridge::MeasurementInputs {
                 prepared.measurements.take()
             })
         {
-            self.as_mut().rust_mut().model = model;
+            let _ = self.as_mut().rust_mut().adopt_model(model);
         } else if let Ok(model) = Model::from_saved(&crate::downstream::workbench::session::saved(
             &self.rust().context,
             "measurements",
         )) {
-            self.as_mut().rust_mut().model = model;
+            let _ = self.as_mut().rust_mut().replace_model(model);
         }
     }
 
@@ -460,8 +502,14 @@ impl bridge::MeasurementInputs {
     /// # Returns
     /// Bounded files/options JSON.
     pub fn begin(mut self: core::pin::Pin<&mut Self>, rxmer: bool) -> QString {
-        self.as_mut().rust_mut().model.begin(rxmer);
-        QString::from(self.rust().metadata(rxmer).to_string())
+        let mut candidate = self.rust().model.clone();
+        candidate.begin(rxmer);
+        let result = self.as_mut().rust_mut().replace_model(candidate);
+        let mut metadata = self.rust().metadata(rxmer);
+        if let Err(error) = result {
+            metadata["error"] = json!(error);
+        }
+        QString::from(metadata.to_string())
     }
     /// Runs a native single/multiple chooser and atomically stages its selection.
     /// # Arguments
@@ -515,7 +563,8 @@ impl bridge::MeasurementInputs {
         index: i32,
         delta: i32,
     ) -> QString {
-        let model = &mut self.as_mut().rust_mut().model;
+        let mut candidate = self.rust().model.clone();
+        let model = &mut candidate;
         if rxmer {
             if delta == 2 {
                 model.draft_rx.sort_by_key(Capture::epoch);
@@ -534,7 +583,12 @@ impl bridge::MeasurementInputs {
         } else {
             model.draft_response = None;
         }
-        QString::from(self.rust().metadata(rxmer).to_string())
+        let result = self.as_mut().rust_mut().replace_model(candidate);
+        let mut metadata = self.rust().metadata(rxmer);
+        if let Err(error) = result {
+            metadata["error"] = json!(error);
+        }
+        QString::from(metadata.to_string())
     }
     /// Validates draft combination/schedule options through the scientific core.
     /// # Arguments
@@ -596,13 +650,11 @@ impl bridge::MeasurementInputs {
         options: &QString,
         settings: &QString,
     ) -> QString {
-        let context = self.rust().context.clone();
         let result = parse_selection::<Options>(&options.to_string()).and_then(|options| {
             let settings = parse::<TransmissionSettings>(&settings.to_string())?;
             self.as_mut()
                 .rust_mut()
-                .model
-                .apply_transactional(&context, rxmer, options, &settings)
+                .apply_measurement(rxmer, options, &settings)
         });
         QString::from(result.err().unwrap_or_default())
     }
@@ -684,6 +736,10 @@ impl bridge::MeasurementInputs {
         QString::from(value.to_string())
     }
 }
+
+#[cfg(test)]
+#[path = "measurement_input/retention_tests.rs"]
+mod retention_tests;
 
 impl bridge::MeasurementInputs {
     /// Returns accepted electrical settings without capture arrays.

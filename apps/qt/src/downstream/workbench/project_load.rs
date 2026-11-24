@@ -24,9 +24,12 @@ use std::{
 /// Owned editor/request transfer consumed synchronously during GUI adoption.
 #[derive(Default)]
 pub(crate) struct PreparedModels {
-    pub source: Option<crate::downstream::inputs::source_input::model::SourceModel>,
-    pub profile: Option<crate::downstream::inputs::profile_input::ProfileModel>,
-    pub measurements: Option<crate::downstream::inputs::measurement_input::model::Model>,
+    pub source:
+        Option<crate::shell::Retained<crate::downstream::inputs::source_input::model::SourceModel>>,
+    pub profile:
+        Option<crate::shell::Retained<crate::downstream::inputs::profile_input::ProfileModel>>,
+    pub measurements:
+        Option<crate::shell::Retained<crate::downstream::inputs::measurement_input::model::Model>>,
     pub receiver: Option<Model>,
     pub transmitter: Option<Analyzer>,
 }
@@ -55,6 +58,37 @@ pub(crate) struct PreparedProject {
     metadata: Value,
 }
 impl PreparedProject {
+    /// Preflights a blank workbench and all editor resets against the current target.
+    ///
+    /// # Arguments
+    /// * `context` - Exact downstream owner; no inputs, paths or GUI models change here.
+    ///
+    /// # Returns
+    /// Complete admitted blank candidate, using the same guarded adoption as Open.
+    ///
+    /// # Errors
+    /// Any editor/scientific/input admission or validation failure preserves old state.
+    pub(crate) fn blank(context: &Context) -> Result<Self, String> {
+        Self::prepare(
+            Project {
+                schema_version: crate::downstream::common::constants::WORKBENCH_SCHEMA_VERSION,
+                application: "MERLIN".into(),
+                transmission: Default::default(),
+                sections: Default::default(),
+                receiver: None,
+                comparison_enabled: false,
+                dark: true,
+            },
+            None,
+            context.application.budget(),
+            context
+                .application
+                .snapshot(crate::shell::Direction::Downstream)
+                .key,
+            super::session::snapshot(context),
+        )
+    }
+
     /// Validates and prepares a project independently of the GUI session.
     /// # Arguments
     /// * `project` - Bounded, decoded file document.
@@ -104,6 +138,9 @@ impl PreparedProject {
             "source_state":source.state(),"profile_state":profile.state(&settings),
             "measurement_state":measurements.state(Ok(project.transmission.clone()), &inputs)});
         let accepted = super::session::prepare_accepted(inputs, project.sections, budget)?;
+        let source = source.admit(budget)?;
+        let profile = profile.admit(budget)?;
+        let measurements = measurements.admit(budget)?;
         Ok(Self {
             path,
             accepted,
@@ -140,6 +177,27 @@ impl PreparedProject {
         }
         // All scientific target roots already participate in the accepting host.
         // Check them before the last fallible readiness transition or data mutation.
+        let budget = context.application.budget();
+        if !self
+            .models
+            .source
+            .as_ref()
+            .is_some_and(|owner| budget.owns(owner))
+            || !self
+                .models
+                .profile
+                .as_ref()
+                .is_some_and(|owner| budget.owns(owner))
+            || !self
+                .models
+                .measurements
+                .as_ref()
+                .is_some_and(|owner| budget.owns(owner))
+        {
+            return Err(
+                "Prepared editors are missing or belong to another application host.".into(),
+            );
+        }
         let receiver = self
             .models
             .receiver
@@ -602,6 +660,7 @@ mod tests {
                 .measurements
                 .as_ref()
                 .unwrap()
+                .value()
                 .accepted_rx
                 .len()
                 > 100

@@ -14,6 +14,10 @@ pub(crate) const MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES: usize = 4096;
 /// omitted comparisons remain explicitly counted when more details are retained.
 pub(crate) const MAX_VERIFICATION_WORD_BARS: usize = 64;
 
+/// Current native saved-workbench format written by New, Save and recovery.
+/// Legacy readers and independent compatibility vectors retain their older versions.
+pub(crate) const WORKBENCH_SCHEMA_VERSION: u32 = 2;
+
 /// Fixed adjacent-window graph padding preserving the existing full-view time scale.
 /// This prefix allowance is a display policy, not a validator or a claimed PHY limit.
 pub(crate) const TIMING_PREFIX_ALLOWANCE_SAMPLES: usize = 1024;
@@ -201,8 +205,9 @@ pub(crate) const MIN_RESPONSE_VELOCITY_PERCENT: u32 = 1;
 /// Maximum integer percentage; the public backend independently validates (0, 1].
 pub(crate) const MAX_RESPONSE_VELOCITY_PERCENT: u32 = 100;
 
-/// Initial editor replay interval in physical OFDM symbols; not a run duration.
-pub(crate) const DEFAULT_REPLAY_INTERVAL_SYMBOLS: u64 = 1000;
+/// Initial editor replay interval as unsigned physical-OFDM-symbol decimal text.
+/// Borrow static text for untouched editors; parsed scientific units stay unchanged.
+pub(crate) const DEFAULT_REPLAY_INTERVAL_TEXT: &str = "1000";
 /// Existing RxMER/profile original-epoch association default, independent of H.
 pub(crate) const DEFAULT_RXMER_ASSOCIATION_SECONDS: u32 = 90000;
 /// Existing H/profile original-epoch association default; independently editable.

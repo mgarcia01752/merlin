@@ -25,6 +25,38 @@ fn quantities(
 }
 
 #[test]
+fn exclusive_payload_and_guard_transfer_keeps_charge_through_payload_destruction() {
+    struct Probe {
+        budget: RetentionBudget,
+        dropped: Arc<AtomicBool>,
+    }
+    impl Drop for Probe {
+        fn drop(&mut self) {
+            assert!(self.budget.usage().payload_bytes > 0);
+            self.dropped.store(true, Ordering::SeqCst);
+        }
+    }
+    // Independent counter-only fixture; this does not estimate any scientific root.
+    const FIXTURE_BYTES: usize = 13;
+    let budget = RetentionBudget::new(RetainedBytes(FIXTURE_BYTES));
+    let dropped = Arc::new(AtomicBool::new(false));
+    let owner = budget
+        .reserve(RetainedBytes(FIXTURE_BYTES))
+        .unwrap()
+        .retain(Probe {
+            budget: budget.clone(),
+            dropped: dropped.clone(),
+        });
+    let (payload, guard) = owner.into_parts();
+    assert_eq!(budget.usage().payload_bytes, FIXTURE_BYTES);
+    drop(payload);
+    assert!(dropped.load(Ordering::SeqCst));
+    assert_eq!(budget.usage().payload_bytes, FIXTURE_BYTES);
+    drop(guard);
+    assert_eq!(budget.usage(), RetainedResources::default());
+}
+
+#[test]
 fn each_inclusive_limit_rejects_one_more_without_partial_counter_changes() {
     // Independent synthetic ceilings: seven bytes, two entries, three roots.
     let maximum = quantities(7, 2, 3);

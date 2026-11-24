@@ -18,6 +18,72 @@ fn text(value: &str) -> String {
 }
 
 #[test]
+fn actual_editor_storage_layout_and_transfer_keep_the_same_guard_and_buffer() {
+    let mut model = Vec::<u8>::with_capacity(SPARE_BYTES);
+    model.extend_from_slice(b"actual");
+    let pointer = model.as_ptr();
+    let capacity = model.capacity();
+    let fixed =
+        size_of::<Retained<Vec<u8>>>().max(size_of::<(Vec<u8>, Option<RetentionReservation>)>());
+    let resources = Resources {
+        payload_bytes: size_of::<Vec<u8>>() + capacity,
+        ..Default::default()
+    };
+    let maximum = Resources {
+        payload_bytes: fixed + capacity,
+        ..Default::default()
+    };
+    let budget = RetentionBudget::with_limits(maximum);
+    let admitted = admit_model(model, resources, &budget).unwrap();
+    assert!(budget.owns(&admitted));
+    assert_eq!(admitted.value().as_ptr(), pointer);
+    assert_eq!(budget.usage(), maximum);
+    let (model, guard) = admitted.into_parts();
+    assert_eq!(model.as_ptr(), pointer);
+    drop(model);
+    assert_eq!(budget.usage(), maximum);
+    drop(guard);
+    assert_eq!(budget.usage(), Resources::default());
+}
+
+#[test]
+fn editor_root_underflow_and_every_dimension_reject_without_counter_changes() {
+    let budget = RetentionBudget::with_limits(Resources {
+        payload_bytes: usize::MAX,
+        ordered_entries: usize::MAX,
+        shared_roots: usize::MAX,
+    });
+    assert!(admit_model(Vec::<u8>::new(), Resources::default(), &budget).is_err());
+    assert_eq!(budget.usage(), Resources::default());
+    // Independent population fixtures exercise arithmetic/admission, not science.
+    let resources = Resources {
+        payload_bytes: size_of::<Vec<u8>>(),
+        ordered_entries: 1,
+        shared_roots: 1,
+    };
+    for pressure in [
+        Resources {
+            payload_bytes: usize::MAX,
+            ..Default::default()
+        },
+        Resources {
+            ordered_entries: usize::MAX,
+            ..Default::default()
+        },
+        Resources {
+            shared_roots: usize::MAX,
+            ..Default::default()
+        },
+    ] {
+        let guard = budget.reserve_resources(pressure).unwrap();
+        assert!(admit_model(Vec::<u8>::new(), resources, &budget).is_err());
+        assert_eq!(budget.usage(), pressure);
+        drop(guard);
+    }
+    assert_eq!(budget.usage(), Resources::default());
+}
+
+#[test]
 fn actual_json_capacity_map_population_and_all_dimension_arithmetic_are_passive() {
     let key = text("items");
     let label = text("unchanged");

@@ -49,6 +49,7 @@ Item {
     function newProject() {
         if (runState.busy || loadingProject) { return }
         const result=JSON.parse(fileBackend.new_workbench())
+        if (result.error) { fileMessage=result.error;fileFeedback.open();return false }
         if (result.created) { adoptProject(result);fileMessage="New workbench" }
         return !!result.created
     }
@@ -412,7 +413,7 @@ Item {
         onCancelRequested: workbench.fileBackend.cancel_open()
     }
     Timer { interval: 100; running: workbench.loadingProject; repeat: true; onTriggered: workbench.pollOpen() }
-    WorkbenchFileFeedback { id: fileFeedback; theme:workbench.theme; message:workbench.fileMessage }
+    WorkbenchFileFeedback { id: fileFeedback; objectName: "workbenchFileFeedback"; theme:workbench.theme; message:workbench.fileMessage }
     SettingsDialog { id: settingsDialog; theme: workbench.theme }
     AboutDialog { id: aboutDialog; theme: workbench.theme; backend: workbench.aboutBackend; iconRoot: workbench.iconRoot; onUpdatesRequested: workbench.updatesRequested(); onLinkRequested: function(target) { workbench.externalLinkRequested(target) } }
     OfdmSettingsDialog {

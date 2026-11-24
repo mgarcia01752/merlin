@@ -5,6 +5,7 @@
 //! Profile draft/accepted state and independent project restoration.
 pub(crate) mod document;
 pub(crate) mod plot;
+mod retention;
 use document::Capture;
 use merlin::downstream::{
     TransmissionConfiguration, TransmissionSettings, MAX_TRANSMISSION_DOCUMENT_BYTES,
@@ -38,6 +39,35 @@ pub(crate) fn settings(document: &str) -> Result<TransmissionSettings, String> {
 }
 
 impl ProfileModel {
+    /// Measures this actual editor including original/catalog/presentation children.
+    ///
+    /// # Returns
+    /// Checked payload capacities and container/root counts without parsing or cloning.
+    ///
+    /// # Errors
+    /// Public metadata or checked resource overflow.
+    pub(crate) fn retained_resources(&self) -> Result<crate::shell::RetainedResources, String> {
+        retention::resources(self)
+    }
+
+    /// Admits this finite editor candidate before queueing or GUI replacement.
+    ///
+    /// # Arguments
+    /// * `budget` - Exact target budget; old owners stay charged during admission.
+    ///
+    /// # Returns
+    /// Actual model and reservation, reusable during final GUI transfer.
+    ///
+    /// # Errors
+    /// Metadata overflow or aggregate rejection, without changing another owner.
+    pub(crate) fn admit(
+        self,
+        budget: &crate::shell::RetentionBudget,
+    ) -> Result<crate::shell::Retained<Self>, String> {
+        let resources = self.retained_resources()?;
+        crate::downstream::inputs::retention::admit_model(self, resources, budget)
+    }
+
     /// Queries profile readiness without changing accepted inputs.
     /// # Arguments
     /// * `document` - Bounded accepted OCD JSON.
@@ -137,16 +167,17 @@ impl ProfileModel {
     /// * `document` - Existing bounded accepted transmission document.
     ///
     /// # Returns
-    /// Unit after target admission and infallible candidate editor replacement.
+    /// Editor reservation after target admission and infallible replacement.
+    /// Its caller stores the guard after the adopted model fields.
     ///
     /// # Errors
     /// Validation/publication rejection preserves accepted editor, Inputs and section.
-    /// Temporary clones are preparation; this does not admit the editor model graph.
+    /// Both editor and accepted Inputs/document admission precede replacement.
     pub(crate) fn apply_transactional(
         &mut self,
         profile_id: i32,
         document: &str,
-    ) -> Result<(), String> {
+    ) -> Result<crate::shell::RetentionReservation, String> {
         let mut candidate = self.clone();
         candidate.accept(profile_id, document)?;
         let profiles = candidate
@@ -168,6 +199,7 @@ impl ProfileModel {
             "file":crate::downstream::workbench::project_file::encode(&capture.name,capture.original.bytes()),
             "profile_id":id
         })).unwrap_or(Value::Null);
+        let candidate = candidate.admit(self.context.application.budget())?;
         crate::downstream::workbench::session::update(&self.context, |inputs, sections| {
             inputs.profile = selected;
             inputs.profiles = profiles;
@@ -175,8 +207,9 @@ impl ProfileModel {
             sections.insert("profile".into(), section);
             Ok(())
         })?;
+        let (candidate, reservation) = candidate.into_parts();
         *self = candidate;
-        Ok(())
+        Ok(reservation)
     }
 }
 

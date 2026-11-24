@@ -218,6 +218,15 @@ impl<T> Retained<T> {
         &self.value
     }
 
+    /// Transfers an exclusive queued payload and its live reservation to an editor.
+    ///
+    /// # Returns
+    /// The same payload and guard, without cloning data or releasing the charge.
+    /// The caller must store the payload before the guard so data drops first.
+    pub(crate) fn into_parts(self) -> (T, RetentionReservation) {
+        (self.value, self.reservation)
+    }
+
     /// Reads the assigned reservation for surrounding ownership fixtures only.
     ///
     /// # Returns
