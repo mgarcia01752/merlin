@@ -8,7 +8,7 @@ use crate::downstream::common::constants::IDLE_PREVIEW_COMPLETION_CAPACITY;
 use crate::downstream::inputs::public_inputs::transmitter_inputs;
 use crate::downstream::workbench::session::Context;
 use crate::shared::presentation::constants::MIN_SPECTRUM_DISPLAY_BINS;
-use crate::shell::Retained;
+use crate::shell::{Retained, RetentionBudget};
 use merlin::downstream::{
     ChannelConfiguration, ChannelConfigurationInput, PhysicalLayoutView, TransmissionConfiguration,
     TransmitterPreview, TransmitterPreviewControl, TransmitterPreviewRequest,
@@ -60,52 +60,64 @@ impl Analyzer {
     /// No result; status reports missing prerequisites or core configuration errors.
     /// Retention rejection preserves accepted configuration, revision, jobs and results.
     pub(crate) fn configure(&mut self, document: &str, source: &Value, profile: &Value) {
-        let prepare = || -> Result<PreparedPreview, String> {
-            if document.len() > MAX_TRANSMISSION_DOCUMENT_BYTES {
-                return Err(format!(
-                    "OCD request exceeds {MAX_TRANSMISSION_DOCUMENT_BYTES} bytes."
-                ));
-            }
-            let timing = TransmissionConfiguration::from_json(document.as_bytes())
-                .map_err(|cause| cause.message().to_owned())?;
-            let preview = if let Some(inputs) = transmitter_inputs(source, profile)? {
-                let request = TransmitterPreviewRequest::from_capture(
-                    &timing,
-                    &inputs.capture,
-                    inputs.profile_id,
-                    &inputs.source,
-                )
-                .map_err(|cause| cause.message().to_owned())?;
-
-                // Only public fixed-leaf carrier/span vectors feed the analyzer.
-                // Unused configured key/provenance owners drop with this temporary.
-                let layout = timing
-                    .physical_layout_capture(&inputs.capture, inputs.profile_id, 0, 0, 0)
-                    .map_err(|cause| cause.message().to_owned())?
-                    .layout;
-                Some(PreviewInput { request, layout })
-            } else {
-                None
-            };
-            Ok(PreparedPreview { timing, preview })
-        };
-        let candidate = match prepare() {
-            Ok(candidate) => candidate,
-            Err(error) => {
-                // Preserve legacy invalid-input invalidation; retention rejection below
-                // instead leaves the prior accepted configuration and result intact.
-                self.invalidate();
-                self.error = error;
-                return;
-            }
-        };
-        match retention::admit(candidate, self.context.application.budget()) {
-            Ok(prepared) => {
-                self.invalidate();
-                self.prepared = Some(prepared);
-            }
-            Err(error) => self.error = error.into_message(),
+        let budget = self.context.application.budget().clone();
+        if let Err(error) = self.configure_owned(document, source, profile, &budget) {
+            self.error = error;
         }
+    }
+
+    /// Prepares an idle project candidate against its actual accepting host counter.
+    ///
+    /// # Arguments
+    /// * `document` - Bounded accepted OCD JSON.
+    /// * `source`, `profile` - Matching original-byte accepted sections, or null.
+    /// * `budget` - Target counter covering old, queued and candidate prepared owners.
+    ///
+    /// # Returns
+    /// Existing invalid/missing-input readiness in this independent analyzer. The target
+    /// Context and canonical readiness are untouched; no preview generation starts.
+    ///
+    /// # Errors
+    /// Rejects tracked jobs/results or target admission without changing this candidate.
+    pub(crate) fn configure_for_budget(
+        &mut self,
+        document: &str,
+        source: &Value,
+        profile: &Value,
+        budget: &RetentionBudget,
+    ) -> Result<(), String> {
+        if self.job.is_some() || self.result.is_some() {
+            return Err(PreviewError::TransferNotIdle.into_message());
+        }
+        self.configure_owned(document, source, profile, budget)
+    }
+
+    /// Checks target ownership before a project replaces any live application state.
+    ///
+    /// # Arguments
+    /// * `budget` - Exact accepting counter; equal limits are insufficient.
+    ///
+    /// # Returns
+    /// Unit for an idle result-free candidate, including an unconfigured candidate.
+    /// No aliases, reservations, Context handles or readiness values are changed.
+    ///
+    /// # Errors
+    /// Rejects tracked jobs/results and any foreign prepared-owner reservation.
+    pub(crate) fn check_prepared_target(
+        &self,
+        budget: &RetentionBudget,
+    ) -> Result<(), PreviewError> {
+        if self.job.is_some() || self.result.is_some() {
+            return Err(PreviewError::TransferNotIdle);
+        }
+        if self
+            .prepared
+            .as_ref()
+            .is_some_and(|prepared| !budget.owns(prepared.as_ref()))
+        {
+            return Err(PreviewError::ForeignBudget);
+        }
+        Ok(())
     }
 
     /// Transfers only an idle prepared project into another host after target admission.
@@ -114,8 +126,8 @@ impl Analyzer {
     /// * `context` - Exact destination host; never inferred from the selected tab.
     ///
     /// # Returns
-    /// Unit after reserving target coverage and aliasing the same immutable prepared
-    /// root. Source aliases keep their independent original reservations until drop.
+    /// Unit after reusing a same-budget owner, or reserving foreign-host target coverage
+    /// and aliasing its immutable inner root. Original aliases retain their source charge.
     ///
     /// # Errors
     /// Rejects active/result-bearing analyzers, metadata and any target dimension
@@ -127,7 +139,13 @@ impl Analyzer {
         let prepared = self
             .prepared
             .as_ref()
-            .map(|prepared| retention::rebind(prepared, context.application.budget()))
+            .map(|prepared| {
+                if context.application.budget().owns(prepared.as_ref()) {
+                    Ok(Arc::clone(prepared))
+                } else {
+                    retention::rebind(prepared, context.application.budget())
+                }
+            })
             .transpose()?;
         self.prepared = prepared;
         self.context = context;
@@ -343,6 +361,29 @@ impl Analyzer {
             .is_some_and(|prepared| prepared.value().preview.is_some())
     }
 
+    fn configure_owned(
+        &mut self,
+        document: &str,
+        source: &Value,
+        profile: &Value,
+        budget: &RetentionBudget,
+    ) -> Result<(), String> {
+        let candidate = match prepare(document, source, profile) {
+            Ok(candidate) => candidate,
+            Err(error) => {
+                // Preserve legacy invalid-input invalidation; host rejection below
+                // instead leaves the prior configuration, revision and result intact.
+                self.invalidate();
+                self.error = error;
+                return Ok(());
+            }
+        };
+        let prepared = retention::admit(candidate, budget).map_err(PreviewError::into_message)?;
+        self.invalidate();
+        self.prepared = Some(prepared);
+        Ok(())
+    }
+
     fn invalidate(&mut self) {
         self.cancel();
         self.revision = self.revision.wrapping_add(1);
@@ -395,6 +436,36 @@ impl Analyzer {
             ),
         ))
     }
+}
+
+fn prepare(document: &str, source: &Value, profile: &Value) -> Result<PreparedPreview, String> {
+    if document.len() > MAX_TRANSMISSION_DOCUMENT_BYTES {
+        return Err(format!(
+            "OCD request exceeds {MAX_TRANSMISSION_DOCUMENT_BYTES} bytes."
+        ));
+    }
+    let timing = TransmissionConfiguration::from_json(document.as_bytes())
+        .map_err(|cause| cause.message().to_owned())?;
+    let preview = if let Some(inputs) = transmitter_inputs(source, profile)? {
+        let request = TransmitterPreviewRequest::from_capture(
+            &timing,
+            &inputs.capture,
+            inputs.profile_id,
+            &inputs.source,
+        )
+        .map_err(|cause| cause.message().to_owned())?;
+
+        // Only public fixed-leaf carrier/span vectors feed the analyzer.
+        // Unused configured key/provenance owners drop with this temporary.
+        let layout = timing
+            .physical_layout_capture(&inputs.capture, inputs.profile_id, 0, 0, 0)
+            .map_err(|cause| cause.message().to_owned())?
+            .layout;
+        Some(PreviewInput { request, layout })
+    } else {
+        None
+    };
+    Ok(PreparedPreview { timing, preview })
 }
 
 impl Drop for Analyzer {
@@ -570,3 +641,7 @@ mod tests {
 #[cfg(test)]
 #[path = "preview/retention_tests.rs"]
 mod retention_tests;
+
+#[cfg(test)]
+#[path = "preview/target_preflight_tests.rs"]
+mod target_preflight_tests;

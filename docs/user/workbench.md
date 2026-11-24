@@ -274,6 +274,9 @@ Source, profile and measurement Apply accepts the matching simulation inputs and
 saved section together. A retained-data limit error keeps the previous accepted
 configuration; the staged edit remains available for correction or cancellation.
 Open rejects a prepared input replacement if its target changed during loading.
+It also checks the prepared receiver and transmitter against the destination's
+retained-data limits before replacing the current project or Save destination.
+If that admission fails, the previous configuration and results remain available.
 Save continues to use the accepted original input bytes and hashes.
 
 The bar indicates activity, not a completion percentage. Timing is hidden during

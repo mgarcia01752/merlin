@@ -25,6 +25,7 @@ pub(crate) enum PreviewError {
     Retention(RetentionError),
     Unavailable,
     TransferNotIdle,
+    ForeignBudget,
 }
 
 impl PreviewError {
@@ -44,6 +45,9 @@ impl PreviewError {
             ) => "The session retained-data limit would be exceeded.".into(),
             Self::Unavailable => "No accepted TX configuration.".into(),
             Self::TransferNotIdle => "Only an idle prepared transmitter can change host.".into(),
+            Self::ForeignBudget => {
+                "Prepared transmitter belongs to another application host.".into()
+            }
         }
     }
 }

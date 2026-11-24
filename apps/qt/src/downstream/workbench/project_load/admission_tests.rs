@@ -27,28 +27,31 @@ fn queued_input_owner_stays_charged_until_disposal_or_successful_target_transfer
     let before = budget.usage();
     let prepared = candidate(&context);
     let charge = prepared.accepted.fixture_reserved_resources();
-    assert_eq!(
-        budget.usage().payload_bytes,
-        before.payload_bytes + charge.payload_bytes
-    );
-    assert_eq!(
-        budget.usage().ordered_entries,
-        before.ordered_entries + charge.ordered_entries
-    );
-    assert_eq!(
-        budget.usage().shared_roots,
-        before.shared_roots + charge.shared_roots
-    );
+    let complete = budget.usage();
+    assert!(complete.payload_bytes >= before.payload_bytes + charge.payload_bytes);
+    assert!(complete.ordered_entries >= before.ordered_entries + charge.ordered_entries);
+    assert!(complete.shared_roots >= before.shared_roots + charge.shared_roots);
+    assert!(prepared
+        .models
+        .receiver
+        .as_ref()
+        .unwrap()
+        .check_prepared_target(&budget)
+        .unwrap());
+    prepared
+        .models
+        .transmitter
+        .as_ref()
+        .unwrap()
+        .check_prepared_target(&budget)
+        .unwrap();
     assert!(session::snapshot(&context).source.is_none());
     drop(prepared);
     assert_eq!(budget.usage(), before);
     let prepared = candidate(&context);
     prepared.adopt(&context).unwrap();
     assert!(session::snapshot(&context).source.is_some());
-    assert_eq!(
-        budget.usage().payload_bytes,
-        before.payload_bytes + charge.payload_bytes
-    );
+    assert_eq!(budget.usage(), complete);
     drop(context);
     assert_eq!(budget.usage(), RetainedResources::default());
 }
@@ -84,6 +87,7 @@ fn stale_identity_foreign_identity_and_foreign_budget_preserve_target_inputs_and
             ),
             _ => (foreign.application.budget(), key),
         };
+        let baseline = target.application.budget().usage();
         let prepared = PreparedProject::prepare(
             serde_json::from_slice(PROJECT).unwrap(),
             None,
@@ -96,25 +100,12 @@ fn stale_identity_foreign_identity_and_foreign_budget_preserve_target_inputs_and
             target.application.configure_downstream(false).unwrap();
         }
         let before = session::saved_sections(&target);
-        let usage = target.application.budget().usage();
-        let candidate_charge = if rejection == 2 {
-            RetainedResources::default()
-        } else {
-            prepared.accepted.fixture_reserved_resources()
-        };
         assert!(prepared.adopt(&target).is_err());
         assert!(crate::platform::input_file::is_original(&original));
         assert_eq!(std::fs::read(&original).unwrap(), original_bytes);
         assert_eq!(&*session::saved_sections(&target), &*before);
         assert!(take(&target, |models| models.source.take()).is_some());
-        assert_eq!(
-            target.application.budget().usage(),
-            RetainedResources {
-                payload_bytes: usage.payload_bytes - candidate_charge.payload_bytes,
-                ordered_entries: usage.ordered_entries - candidate_charge.ordered_entries,
-                shared_roots: usage.shared_roots - candidate_charge.shared_roots,
-            }
-        );
+        assert_eq!(target.application.budget().usage(), baseline);
     }
 }
 

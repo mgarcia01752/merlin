@@ -3850,3 +3850,38 @@ model graphs, all-target receiver/preview readiness before project publication,
 registry/instrument/transport and infrastructure owners, complete SESSION Level 2
 and applicable milestone/final Level 3 acceptance remain open. This unit leaves
 UIU-SESSION-01 unchecked and preserves historical completed tasks.
+
+
+## UIU-SESSION-01 prepared project target preflight
+
+The [focused design](design.md#uiu-session-01-prepared-project-target-preflight)
+closes concrete late receiver/preview admission after project publication.
+Background Open now admits actual request/plan and transmitter input roots against
+the destination budget while old and queued owners remain charged. Candidates
+retain isolated Contexts. Adoption checks idle/root ownership and the captured
+target, then holds the original accepted-owner lock through the guarded canonical
+readiness commit. Only success publishes inputs/results/transfers and permits the
+caller to update the native Save path. GUI attachment reuses those owners and
+the genuine committed key without another reservation or generation change.
+Successful edits/New discard old unconsumed transfers; failed edits preserve them.
+The old worker retains its genuine global lease until known terminal even when
+project adoption requests cancellation. Independent QA reviewed these paths
+read-only; primary runtime evidence is separate from source preparation.
+
+[Exact primary execution record](session-project-preflight-evidence.json) retains
+the initial compile failure, 127 passes/one new rollback watchdog failure, and
+the corrected 23-case pass. All 128 selected unique Rust cases have passing
+results across those runs. The rollback fixture explicitly runs its applied
+profile to obtain one real old report; existing legacy sweep coverage remains
+unchanged. Six installed native saved-project cases, four QML behaviors/two
+hooks, all-target Clippy, formatting/boundary, optimized build and six fresh
+desktop probes pass. Two existing QML focus warnings remain unsuppressed.
+Documentation and requirement/checklist history checks are recorded separately
+in the same receipt.
+
+Public scientific/binding APIs, algorithms, schemas, dependencies and registration
+remain unchanged; reuse the exact native wheel/reference and export inventories.
+No unrelated full workspace/CLI/packaging suite is claimed executed. Prepared
+editor/Designer graphs, independently retained transport/infrastructure owners,
+complete SESSION Level 2 and applicable milestone/final Level 3 gates remain open.
+UIU-SESSION-01 remains unchecked; completed downstream history is preserved.

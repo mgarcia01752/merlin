@@ -1568,8 +1568,15 @@ Queued Open inputs use the target budget, captured downstream key and original
 accepted snapshot; a compare/swap checks owner identity under one store lock,
 covering intervening Apply before generation refresh. Adoption
 rejects stale/foreign targets before replacing inputs, transfer storage or the
-native Save path. Prepared editor/scientific model target preflight and other
-retained transport/infrastructure closure remain open under UIU-SESSION-01.
+native Save path. Receiver requests/plans and idle transmitter inputs now admit
+against that target budget during background preparation. Adoption holds the
+accepted-owner lock through the guarded canonical readiness transition, then
+stamps the genuine key and publishes the project. GUI attachment reuses those
+owners without a new reservation or generation change. Successful Apply/New
+discards unconsumed older transfers; rejected edits preserve them. Prepared
+editor/Designer graphs and other retained transport/infrastructure closure remain
+open under UIU-SESSION-01. See the
+[target preflight design](development/features/unified-qt-workbench/design.md#uiu-session-01-prepared-project-target-preflight).
 See the [focused design](development/features/unified-qt-workbench/design.md#uiu-session-01-atomic-accepted-inputs-and-prepared-projects).
 
 The shared [terminal transport](development/features/unified-qt-workbench/design.md#uiu-session-01-terminal-worker-transport)

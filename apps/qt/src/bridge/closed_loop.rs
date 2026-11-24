@@ -207,7 +207,10 @@ impl bridge::ClosedLoop {
             &self.rust().model.context,
             |prepared| prepared.receiver.take(),
         ) {
-            if model.rebind(self.rust().model.context.clone()).is_err() {
+            if model
+                .attach_prepared(self.rust().model.context.clone())
+                .is_err()
+            {
                 return;
             }
             self.as_mut().rust_mut().model = model;

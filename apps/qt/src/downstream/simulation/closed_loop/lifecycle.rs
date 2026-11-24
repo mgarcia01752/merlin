@@ -7,6 +7,17 @@ use super::{
     application_error, prepare_sweep, publish, request_retention, AdmissionError, Context, Inputs,
     Model, Options, Sections, SessionKey, TransmissionSettings,
 };
+use crate::shell::RetentionBudget;
+
+type PreparedConfiguration = Option<
+    Result<
+        (
+            request_retention::SharedPlan,
+            request_retention::SharedRequest,
+        ),
+        AdmissionError,
+    >,
+>;
 
 impl Model {
     /// Cancels active work after the new unconfigured generation is admitted.
@@ -62,6 +73,7 @@ impl Model {
     /// * `sections` - Matching original-byte editor sections.
     /// # Returns
     /// Readiness in this model; no simulation starts or foreign context changes.
+    #[cfg(test)]
     pub(crate) fn prepare_inputs(&mut self, settings: &str, inputs: &Inputs, sections: &Sections) {
         if let Err(message) = self.configure_owned(
             settings,
@@ -73,6 +85,107 @@ impl Model {
             self.error = message;
         }
     }
+
+    /// Prepares an independent receiver candidate against its accepting host budget.
+    ///
+    /// # Arguments
+    /// * `settings` - Accepted OCD JSON, interpreted by the existing scientific builder.
+    /// * `inputs`, `sections` - Matching frozen inputs and original-byte documents.
+    /// * `budget` - Target counter covering old, queued and candidate scientific owners.
+    ///
+    /// # Returns
+    /// Candidate readiness and existing incomplete-input diagnostics in this model.
+    /// Its Context stays independent and its generation remains unset until host adoption.
+    /// No target readiness, results, histories or active control are changed.
+    ///
+    /// # Errors
+    /// Rejects tracked execution or target admission before changing this candidate.
+    pub(crate) fn prepare_inputs_for_budget(
+        &mut self,
+        settings: &str,
+        inputs: &Inputs,
+        sections: &Sections,
+        budget: &RetentionBudget,
+    ) -> Result<(), String> {
+        self.check_prepared_idle()?;
+        let prepared = prepare_admitted(settings, inputs, sections, self.options.as_ref(), budget)?;
+        self.request = None;
+        self.plan = None;
+        self.generation = None;
+        self.error.clear();
+        self.diagnostic = None;
+        self.accept_prepared(prepared);
+        Ok(())
+    }
+
+    /// Checks an independent candidate before any target project state is replaced.
+    ///
+    /// # Arguments
+    /// * `budget` - Exact accepting counter; equal limits alone do not establish ownership.
+    ///
+    /// # Returns
+    /// Whether both admitted scientific roots provide receiver readiness.
+    /// Missing prerequisites remain a valid unconfigured project candidate.
+    ///
+    /// # Errors
+    /// Rejects tracked execution, inconsistent root presence or any foreign reservation.
+    pub(crate) fn check_prepared_target(&self, budget: &RetentionBudget) -> Result<bool, String> {
+        self.check_prepared_idle()?;
+        if self.request.is_some() != self.plan.is_some() {
+            return Err("Prepared receiver request and plan are inconsistent.".into());
+        }
+        if self
+            .request
+            .as_ref()
+            .is_some_and(|request| !budget.owns(request.as_ref()))
+            || self
+                .plan
+                .as_ref()
+                .is_some_and(|plan| !budget.owns(plan.as_ref()))
+        {
+            return Err("Prepared receiver belongs to another application host.".into());
+        }
+        Ok(self.request.is_some())
+    }
+
+    /// Records the genuine project generation after guarded host adoption succeeds.
+    ///
+    /// # Arguments
+    /// * `key` - Canonical key returned by the accepting host after target preflight.
+    ///
+    /// # Returns
+    /// Unit after stamping the detached candidate; no allocation or host mutation.
+    /// Call only after checking its idle state and target scientific owners.
+    pub(crate) fn commit_prepared_generation(&mut self, key: SessionKey) {
+        self.generation = Some(key);
+    }
+
+    /// Attaches a pre-admitted receiver after the host commits its genuine generation.
+    ///
+    /// # Arguments
+    /// * `context` - Exact target, with the candidate's already committed canonical key.
+    ///
+    /// # Returns
+    /// Unit after changing only this model's Context handle. No reservation, science,
+    /// generation advancement, cancellation or result/history mutation occurs here.
+    ///
+    /// # Errors
+    /// Preserves the candidate and both contexts on ownership, idle or stale-key rejection.
+    pub(crate) fn attach_prepared(&mut self, context: Context) -> Result<(), String> {
+        self.check_prepared_target(context.application.budget())?;
+        if self.generation
+            != Some(
+                context
+                    .application
+                    .snapshot(crate::shell::Direction::Downstream)
+                    .key,
+            )
+        {
+            return Err("Prepared receiver generation does not match its target.".into());
+        }
+        self.context = context;
+        Ok(())
+    }
     /// Rebinds an independently validated project model to its actual GUI owner.
     /// # Arguments
     /// * `context` - Target downstream context after guarded project adoption.
@@ -81,6 +194,7 @@ impl Model {
     /// Original aliases keep their source reservations until their final drop.
     /// # Errors
     /// Preserves source ownership on target coverage or host identity rejection.
+    #[cfg(test)]
     pub(crate) fn rebind(&mut self, context: Context) -> Result<(), String> {
         let same_host = self
             .context
@@ -133,28 +247,13 @@ impl Model {
         options: Option<Options>,
         verify: bool,
     ) -> Result<(), String> {
-        let prepared = options.as_ref().map(|options| {
-            serde_json::from_str::<TransmissionSettings>(settings)
-                .map_err(|error| AdmissionError::from(error.to_string()))
-                .and_then(|settings| {
-                    let plan = prepare_sweep(&settings, inputs, options, sections)?;
-                    let request = plan.request(0).map_err(AdmissionError::classified)?;
-                    Ok((plan, request))
-                })
-        });
-        let prepared = match prepared {
-            Some(Ok((plan, request))) => {
-                // Final candidates coexist with accepted and worker owners until commit.
-                let request =
-                    request_retention::admit_request(request, self.context.application.budget())
-                        .map_err(owner_error)?;
-                let plan = request_retention::admit_plan(plan, self.context.application.budget())
-                    .map_err(owner_error)?;
-                Some(Ok((plan, request)))
-            }
-            Some(Err(error)) => Some(Err(error)),
-            None => None,
-        };
+        let prepared = prepare_admitted(
+            settings,
+            inputs,
+            sections,
+            options.as_ref(),
+            self.context.application.budget(),
+        )?;
         let ready = matches!(&prepared, Some(Ok(_)));
         let key = self
             .context
@@ -164,6 +263,20 @@ impl Model {
         self.accept_generation(key);
         self.options = options;
         self.verify = verify;
+        self.accept_prepared(prepared);
+        Ok(())
+    }
+
+    fn check_prepared_idle(&self) -> Result<(), String> {
+        if self.worker.is_some() || self.timing.is_some() {
+            return Err(
+                "Only a receiver without tracked execution can transfer preparation.".into(),
+            );
+        }
+        Ok(())
+    }
+
+    fn accept_prepared(&mut self, prepared: PreparedConfiguration) {
         match prepared {
             Some(Ok((plan, request))) => {
                 self.request = Some(request);
@@ -175,7 +288,6 @@ impl Model {
             }
             None => {}
         }
-        Ok(())
     }
     fn accept_generation(&mut self, key: SessionKey) {
         self.generation = Some(key);
@@ -194,6 +306,34 @@ impl Model {
     }
 }
 
+fn prepare_admitted(
+    settings: &str,
+    inputs: &Inputs,
+    sections: &Sections,
+    options: Option<&Options>,
+    budget: &RetentionBudget,
+) -> Result<PreparedConfiguration, String> {
+    let prepared = options.map(|options| {
+        serde_json::from_str::<TransmissionSettings>(settings)
+            .map_err(|error| AdmissionError::from(error.to_string()))
+            .and_then(|settings| {
+                let plan = prepare_sweep(&settings, inputs, options, sections)?;
+                let request = plan.request(0).map_err(AdmissionError::classified)?;
+                Ok((plan, request))
+            })
+    });
+    match prepared {
+        Some(Ok((plan, request))) => {
+            // Final candidates coexist with accepted and worker owners until commit.
+            let request = request_retention::admit_request(request, budget).map_err(owner_error)?;
+            let plan = request_retention::admit_plan(plan, budget).map_err(owner_error)?;
+            Ok(Some(Ok((plan, request))))
+        }
+        Some(Err(error)) => Ok(Some(Err(error))),
+        None => Ok(None),
+    }
+}
+
 fn owner_error(error: request_retention::OwnerError) -> String {
     match error {
         request_retention::OwnerError::Metadata(error) => error.message().to_owned(),
@@ -202,3 +342,7 @@ fn owner_error(error: request_retention::OwnerError) -> String {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "target_preflight_tests.rs"]
+mod target_preflight_tests;

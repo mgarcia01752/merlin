@@ -119,6 +119,37 @@ impl ApplicationSessions {
         Ok(sessions.open_target(Direction::Downstream).key)
     }
 
+    /// Commits downstream project readiness only while its captured key is current.
+    ///
+    /// # Arguments
+    /// * `expected` - Exact downstream session/generation captured before preparation.
+    /// * `ready` - Whether all pre-admitted project receiver roots are usable.
+    ///
+    /// # Returns
+    /// New genuine key after the guarded revision/cancellation transition. The old
+    /// worker retains its execution lease until actual terminal acknowledgement.
+    ///
+    /// # Errors
+    /// Rejects wrong/stale keys, metadata admission, shutdown or revision exhaustion
+    /// before changing readiness or requesting cancellation.
+    pub fn configure_downstream_if(
+        &self,
+        expected: SessionKey,
+        ready: bool,
+    ) -> Result<SessionKey, ApplicationError> {
+        let candidate = metadata(&self.budget, DownstreamReadiness(ready))?;
+        let mut sessions = lock(&self.sessions);
+        if expected.direction != Direction::Downstream
+            || sessions.open_target(Direction::Downstream).key != expected
+        {
+            return Err(ApplicationError::Session(SessionError::StaleGuard));
+        }
+        sessions
+            .configure_downstream_cancelling(candidate)
+            .map_err(ApplicationError::Session)?;
+        Ok(sessions.open_target(Direction::Downstream).key)
+    }
+
     /// Adopts readiness after the upstream owner accepts its public configuration.
     ///
     /// # Arguments
@@ -244,3 +275,6 @@ fn metadata<T>(budget: &RetentionBudget, value: T) -> Result<Retained<T>, Applic
 fn lock<T>(mutex: &Mutex<T>) -> MutexGuard<'_, T> {
     mutex.lock().unwrap_or_else(|cause| cause.into_inner())
 }
+
+#[cfg(test)]
+mod tests;

@@ -89,14 +89,15 @@ impl PreparedProject {
         profile.context = candidate_context.clone();
         receiver.options = project.receiver.clone();
         receiver.verify = project.comparison_enabled;
-        receiver.prepare_inputs(&settings, &inputs, &project.sections);
+        receiver.prepare_inputs_for_budget(&settings, &inputs, &project.sections, budget)?;
         let mut transmitter = Analyzer::default();
         transmitter.context = candidate_context;
-        transmitter.configure(
+        transmitter.configure_for_budget(
             &settings,
             project.sections.get("source").unwrap_or(&Value::Null),
             project.sections.get("profile").unwrap_or(&Value::Null),
-        );
+            budget,
+        )?;
         let metadata = json!({"opened":true,"prepared":true,"path":path.as_ref().map(|p|p.to_string_lossy()),
             "transmission":project.transmission,"receiver":project.receiver,
             "verified":project.comparison_enabled,"dark":project.dark,
@@ -126,8 +127,9 @@ impl PreparedProject {
     /// Small adoption metadata; original bytes and requests remain in Rust.
     /// # Errors
     /// Rejects a stale generation or foreign host before any target state changes.
-    /// Editor/scientific model rebind remains a separate checked transfer.
-    pub(crate) fn adopt(self, context: &Context) -> Result<Value, String> {
+    /// Scientific roots and final readiness are checked before the owner swap;
+    /// subsequent GUI attachment needs no new reservation or generation advance.
+    pub(crate) fn adopt(mut self, context: &Context) -> Result<Value, String> {
         if context
             .application
             .snapshot(crate::shell::Direction::Downstream)
@@ -136,7 +138,36 @@ impl PreparedProject {
         {
             return Err("The prepared workbench target is stale.".into());
         }
-        super::session::adopt_accepted(context, self.accepted, &self.expected)?;
+        // All scientific target roots already participate in the accepting host.
+        // Check them before the last fallible readiness transition or data mutation.
+        let receiver = self
+            .models
+            .receiver
+            .as_ref()
+            .ok_or("Prepared receiver is missing.")?;
+        let ready = receiver.check_prepared_target(context.application.budget())?;
+        self.models
+            .transmitter
+            .as_ref()
+            .ok_or("Prepared transmitter is missing.")?
+            .check_prepared_target(context.application.budget())
+            .map_err(|error| error.into_message())?;
+        let key = super::session::adopt_project(
+            context,
+            self.accepted,
+            &self.expected,
+            self.target,
+            ready,
+        )?;
+        // Detached models still hold isolated Contexts. Only the genuine key is
+        // stamped here; the GUI attaches its Context after removing each model.
+        self.models
+            .receiver
+            .as_mut()
+            .expect("Receiver was checked above")
+            .commit_prepared_generation(key);
+        *context.result.borrow_mut() = None;
+        crate::downstream::instruments::receiver::performance::clear(context);
         crate::platform::input_file::clear_original_paths();
         context
             .prepared
@@ -585,3 +616,7 @@ mod tests {
 #[cfg(test)]
 #[path = "project_load/admission_tests.rs"]
 mod admission_tests;
+
+#[cfg(test)]
+#[path = "project_load/target_tests.rs"]
+mod target_tests;

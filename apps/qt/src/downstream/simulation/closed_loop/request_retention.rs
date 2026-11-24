@@ -101,6 +101,7 @@ pub(super) fn admit_plan(
 ///
 /// # Errors
 /// Rejection allocates no target wrapper/alias and preserves the source owner.
+#[cfg(test)]
 pub(super) fn rebind_request(
     request: &SharedRequest,
     budget: &RetentionBudget,
@@ -120,6 +121,7 @@ pub(super) fn rebind_request(
 ///
 /// # Errors
 /// Rejection allocates no target wrapper/alias and preserves the source owner.
+#[cfg(test)]
 pub(super) fn rebind_plan(
     plan: &SharedPlan,
     budget: &RetentionBudget,

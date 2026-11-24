@@ -4081,3 +4081,38 @@ same store lock. It preserves intervening edits without copied JSON fingerprints
 or target Context cycles. [Primary execution and limitations](validation.md#uiu-session-01-atomic-accepted-input-and-saved-document-admission)
 cover this source-audited gap and the focused unit; remaining all-target project
 preflight stays separate.
+
+
+### UIU-SESSION-01 prepared project target preflight
+
+The concrete remaining consumer performs receiver/preview target reservations
+inside GUI reload after the project inputs/path already changed. Reuse existing
+public root metadata/admission and the accepted-owner transaction; preflight all
+three scientific prepared owners against the target budget on the load worker.
+Retain isolated candidate Contexts in stored models, preventing a target/prepared
+cycle. No scientific/public API, schema or Qt registration change is needed.
+REQ-UIU-03/06/07 and UIU-SESSION-01 own this focused continuation.
+
+| Owning files | Concrete change |
+| --- | --- |
+| EDIT closed_loop/lifecycle.rs and transmitter/preview.rs; ADD focused tests | Existing scientific preparation takes an explicit target budget, propagating host rejection while retaining legacy incomplete scientific readiness. Check idle roots/budget ownership before adoption. Final attachment uses a precommitted genuine key and the same guard aliases, with no second reservation, science or generation advance. |
+| EDIT shell/application.rs and focused host tests | Guard the existing downstream readiness commit with the expected key under its session lock. Retain existing metadata/cancel/lease behavior; wrong/stale keys and admission failures preserve the old host. |
+| EDIT workbench/session/accepted.rs, session.rs, project_load.rs and focused project tests | Hold the original accepted-owner check through the last fallible target readiness commit, then swap the admitted input owner. Stamp the detached receiver's genuine key, publish transfer state/results/path only after all preflight succeeds. Successful ordinary Apply/New invalidates unconsumed older prepared models; failed edits retain them. |
+| EDIT bridge/closed_loop.rs and existing preview attachment caller only as needed | Consume already-target-admitted models without generation/readiness changes or another root reservation. Preserve receiver-first reload order and downstream actions. |
+
+Test all target dimensions, stale key/accepted-owner rejection, late readiness
+pressure, queued/cancelled/drop and unchanged generation during attachment; retain
+existing complete/incomplete project, old report/paths, public science and no-cycle
+assertions. Run relevant model/project/shared lifecycle, QML/boundary/Clippy/format,
+traceability and fresh optimized/native checks. Reuse unchanged scientific/native
+inventories; do not rebuild a wheel. Editor/Designer graph and independently
+retained transport/infrastructure closure plus complete SESSION acceptance remain
+separate concrete owners, rather than being accepted by this preflight unit.
+
+Selective preparation source: `f8a576e6bdb43712a4b69d677ae1858b79596121`,
+with primary integration fixes for model encapsulation, Drop-safe fixtures and
+test-only legacy transfer helpers. The actual primary
+[validation record](validation.md#uiu-session-01-prepared-project-target-preflight)
+owns acceptance of this focused unit; source-only checks do not establish runtime
+acceptance. Ordinary legacy rebind remains test-only compatibility coverage;
+production Open uses the pre-admitted target path.

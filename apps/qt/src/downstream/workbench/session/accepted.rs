@@ -202,6 +202,9 @@ pub(super) fn update(
         context.application.budget(),
     )?;
     *current = Some(admitted);
+    // A successful edit invalidates unconsumed project models from the previous
+    // accepted owner. Rejected candidates leave those transfers untouched.
+    *context.prepared.borrow_mut() = Default::default();
     Ok(())
 }
 
@@ -228,23 +231,28 @@ pub(super) fn admit(
     Ok(Arc::new(reservation.retain(state)))
 }
 
-/// Adopts the candidate only if the original accepted owner is still current.
+/// Commits the last fallible project operation while its original owner is locked.
 ///
 /// # Arguments
-/// * `context` - Exact target, checked independently from any selected tab.
-/// * `candidate` - Already admitted target owner.
-/// * `expected` - Charged original snapshot captured before asynchronous Open.
+/// * `ResultValue` - Small operation result, normally the genuine readiness key.
+/// * `context` - Exact target; selected tabs do not redirect the operation.
+/// * `candidate` - Already admitted complete replacement.
+/// * `expected` - Charged original owner captured before asynchronous preparation.
+/// * `commit` - Final fallible readiness transition. It must not re-enter accepted
+///   storage or mutate target project/results/paths before succeeding.
 ///
 /// # Returns
-/// Unit after one checked-lock owner swap, without copying any data.
+/// Operation result after one infallible accepted-owner swap.
 ///
 /// # Errors
-/// Foreign budget or changed accepted owner; old inputs/documents remain untouched.
-pub(super) fn adopt(
+/// Foreign budget, intervening accepted edit or final readiness rejection preserves
+/// current inputs/documents and their unconsumed prepared transfer.
+pub(super) fn adopt_with<ResultValue>(
     context: &Context,
     candidate: Shared,
     expected: &Snapshot,
-) -> Result<(), String> {
+    commit: impl FnOnce() -> Result<ResultValue, String>,
+) -> Result<ResultValue, String> {
     if !context.application.budget().owns(candidate.as_ref()) {
         return Err("Prepared inputs belong to another application host.".into());
     }
@@ -257,8 +265,9 @@ pub(super) fn adopt(
     if !matches {
         return Err("The prepared workbench input state is stale.".into());
     }
+    let result = commit()?;
     *current = Some(candidate);
-    Ok(())
+    Ok(result)
 }
 
 /// Measures the actual complete input/document candidate without copying it.

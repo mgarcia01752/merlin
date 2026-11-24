@@ -227,6 +227,7 @@ pub(crate) fn restore(
 ) -> Result<(), String> {
     let candidate = accepted::admit(inputs, sections, context.application.budget())?;
     *context.accepted.borrow_mut() = Some(candidate);
+    *context.prepared.borrow_mut() = Default::default();
     Ok(())
 }
 
@@ -261,12 +262,48 @@ pub(crate) fn prepare_accepted(
 ///
 /// # Errors
 /// Rejects a foreign budget or changed accepted owner before target mutation.
+#[cfg(test)]
 pub(crate) fn adopt_accepted(
     context: &Context,
     state: AcceptedState,
     expected: &Snapshot,
 ) -> Result<(), String> {
-    accepted::adopt(context, state, expected)
+    accepted::adopt_with(context, state, expected, || Ok(()))
+}
+
+/// Adopts a target-admitted project with its final guarded readiness transition.
+///
+/// # Arguments
+/// * `context`, `state`, `expected` - Exact target, replacement and captured original.
+/// * `target` - Captured canonical downstream identity/generation.
+/// * `ready` - Receiver readiness after all concrete target-root preflight succeeds.
+///
+/// # Returns
+/// Genuine committed key. No scientific preparation or new data copy occurs here.
+///
+/// # Errors
+/// Ownership/staleness or final metadata/revision failure preserves the old project.
+pub(crate) fn adopt_project(
+    context: &Context,
+    state: AcceptedState,
+    expected: &Snapshot,
+    target: crate::shell::SessionKey,
+    ready: bool,
+) -> Result<crate::shell::SessionKey, String> {
+    accepted::adopt_with(context, state, expected, || {
+        context
+            .application
+            .configure_downstream_if(target, ready)
+            .map_err(|error| match error {
+                crate::shell::ApplicationError::Retention(_) => {
+                    "The session retained-data limit would be exceeded.".into()
+                }
+                crate::shell::ApplicationError::Session(crate::shell::SessionError::StaleGuard) => {
+                    "The prepared workbench target is stale.".into()
+                }
+                _ => "The workbench target cannot accept this project.".into(),
+            })
+    })
 }
 
 /// Reads the actual current accepted owner's test ledger, without estimating science.
