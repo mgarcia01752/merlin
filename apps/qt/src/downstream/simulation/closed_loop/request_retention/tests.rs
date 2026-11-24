@@ -327,7 +327,12 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     // Cancellation can finish the numerical call before Profile delivery. Only
     // that call's execution-input charge may already have dropped; queued science
     // and accepted source aliases remain charged until the original terminal gate.
-    assert!(actual == stable || actual == sum(stable, old_working_charge));
+    // Display query/target copies may now coexist after cancellation. The stable
+    // source/result floor remains; only the execution input adds scientific roots.
+    assert!(actual.payload_bytes >= stable.payload_bytes);
+    assert!(actual.ordered_entries >= stable.ordered_entries);
+    assert!(actual.shared_roots >= stable.shared_roots);
+    assert!(actual.shared_roots <= sum(stable, old_working_charge).shared_roots);
     assert_eq!(
         application.active().unwrap().phase,
         DispatchPhase::Cancelling

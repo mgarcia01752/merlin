@@ -223,7 +223,7 @@ fn exact_complete_and_precancelled_science_retain_the_preexecution_target() {
         }
         let prepared = PreparedResult::new(&request, &budget).unwrap();
         assert_eq!(budget.usage(), expected);
-        let result = ResultData::from_retained(prepared.run(&control).unwrap());
+        let result = ResultData::from_retained(prepared.run(&control).unwrap(), &budget);
         let reference = request.run(&reference_control).unwrap();
         assert_eq!(result.job.status, reference.report().status);
         assert_eq!(
@@ -268,12 +268,19 @@ fn public_busy_failure_releases_only_the_new_target_and_preserves_old_aliases() 
             .unwrap()
             .run(&control)
             .unwrap(),
+        &budget,
     ));
     let old = Arc::clone(&current);
     let charge = budget.usage();
     let before = serde_json::to_value(current.backend().report()).unwrap();
     let attempt = PreparedResult::new(&request, &budget).unwrap();
-    assert_eq!(budget.usage(), sum(charge, charge));
+    assert_eq!(
+        budget.usage(),
+        sum(
+            charge,
+            resources(request.result_retained_bound().unwrap()).unwrap()
+        )
+    );
     let Err(ResultError::Backend(error)) = attempt.run(&control) else {
         panic!("Existing one-shot public control must reject Busy");
     };
@@ -320,6 +327,7 @@ fn genuine_worker_queue_and_final_result_alias_keep_the_target_after_terminal_di
         panic!("Actual worker must deliver its pre-admitted report");
     };
     application.validate_callback(token).unwrap();
+    let expected = sum(expected, queued.observations.fixture_resources());
     assert_eq!(budget.usage(), sum(baseline, expected));
     assert_eq!(queued.job.status, ChannelJobStatus::Complete);
     let current = Arc::new(*queued);
@@ -350,6 +358,7 @@ fn rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension(
         let old_token = context.application.active().unwrap().token;
         wait_for(|| model.poll()["busy"] == false);
         let old = latest(&context).unwrap();
+        let charge = sum(charge, old.observations.fixture_resources());
         let before = serde_json::to_value(old.backend().report()).unwrap();
         let key = model.generation;
         assert_eq!(context.application.budget().usage(), sum(baseline, charge));
@@ -409,3 +418,6 @@ fn fixed_result_layout_counts_the_embedded_retained_reservation_once_and_checks_
         Err(RetentionError::ArithmeticOverflow)
     );
 }
+
+#[path = "projection_tests.rs"]
+mod projection_tests;

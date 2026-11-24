@@ -3837,8 +3837,9 @@ charge replaces the FullLoopResult fixed root with the actual ResultData layout
 once and adds the final Arc root; backend entries/roots otherwise pass through.
 The reservation survives queued Box, current Arc and old aliases until final drop.
 Start preserves accepted science until a genuine new Profile replaces it; target
-rejection never discards the previous report. Dynamic ResultData observations
-remain a separate open owner. See [primary acceptance](validation.md#uiu-session-01-downstream-backend-result-target-admission).
+rejection never discards the previous report. Stored ResultData observations now
+have [separate admission](#uiu-session-01-stored-observation-and-capture-admission);
+independent instrument/transport copies remain separate open owners. See [primary acceptance](validation.md#uiu-session-01-downstream-backend-result-target-admission).
 No completed scientific result may be discarded because a later presentation
 copy cannot be admitted.
 The isolated [source preparation](agent-handoffs/downstream-result-admission.md)
@@ -3846,7 +3847,7 @@ retains its historical source-only checks; primary runtime acceptance is separat
 
 The existing observation/capture projectors are application-owned copies, not new
 scientific algorithms. Their concrete typed vectors/maps/JSON and intermediate
-query copies require explicit pre-copy admission, exact field/variant walks and
+query copies now use explicit pre-copy admission, exact field/variant walks and
 finite existing query policies. Preserve the same observed values, nulls, source
 coordinates, messages, paging and instrument behavior. If a target bound cannot
 be proved from the existing public contract, report the exact consumer/dependency
@@ -3922,3 +3923,29 @@ consumers, QML run/instrument behavior, Clippy/format/boundary/traceability and
 fresh optimized/native checks. Reuse the unchanged backend wheel/scientific
 acceptance. REQ-UIU-03/06/07 and UIU-SESSION-01 own this partial closure; all other
 retained owners and full task/milestone acceptance remain open.
+
+
+### UIU-SESSION-01 stored observation and capture admission
+
+REUSE the accepted existing query envelope and shared Retained budget. Adopt the
+isolated [observation/capture preparation](agent-handoffs/downstream-observation-admission.md)
+into the primary checkout. Inventory, accumulator, page and replacement each
+reserve separate source-envelope storage across both immutable passes. An
+allocation-free typed/JSON selection plan reserves the exact final display target
+before its existing serializer/copy builders run; normalize final capacities.
+No scientific algorithms or public APIs are added. REQ-UIU-03/06/07 and
+UIU-SESSION-01 own this stored projection closure.
+
+Root EDITS ResultData/worker to pass the canonical budget. Projection rejection
+keeps the same completed backend, empty display containers and a borrowed static
+diagnostic, borrowed by the existing Receiver reason and projected into the
+observation_warnings UI response without
+retaining a fallback Vec/String. Declare ResultData's backend/fixed-layout guard
+last, after display buffers/guard. Existing pressure/lifetime fixtures account for
+actual newly charged projection children and asynchronous query/target overlap;
+keep their scientific assertions and final exact cleanup. ADD one actual worker
+fallback/queue/old-alias test; run all new prepared helper/owner cases, affected
+real DS/US/project/instrument compatibility, QML, Clippy/format/boundary/traceability
+and fresh optimized/native checks. Reuse unchanged backend/native acceptance.
+Independent instrument-query/transport, input/preview/history and infrastructure
+owners and complete SESSION Level2/milestone acceptance remain separate open gates.

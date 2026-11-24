@@ -138,6 +138,7 @@ pub(super) fn fixture_budget() -> RetentionBudget {
 ///
 /// # Arguments
 /// * `result` - Actual fixture result, produced before this test-only constructor.
+/// * `budget` - Same independent fixture policy as its presentation copies.
 ///
 /// # Returns
 /// Actual metadata charge for legacy query fixtures, never a pre-execution proof.
@@ -145,9 +146,12 @@ pub(super) fn fixture_budget() -> RetentionBudget {
 /// # Panics
 /// A metadata/arithmetic error violates the small fixture's existing expectations.
 #[cfg(test)]
-pub(super) fn retain_fixture(result: FullLoopResult) -> Retained<FullLoopResult> {
+pub(super) fn retain_fixture(
+    result: FullLoopResult,
+    budget: &RetentionBudget,
+) -> Retained<FullLoopResult> {
     let footprint = result.retained_footprint().expect("Real fixture metadata");
-    fixture_budget()
+    budget
         .reserve_resources(resources(footprint).expect("Fixture wrapper layout"))
         .expect("Independent fixture policy")
         .retain(result)

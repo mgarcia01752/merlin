@@ -3,12 +3,15 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Finite copies of existing transmitter boundaries, never simulation inputs.
+mod json_storage;
+mod plan;
 use crate::downstream::common::constants::{
     MAX_INSTRUMENT_TIME_SAMPLES, MAX_TRANSMITTER_MESSAGE_FRAMES, MAX_TX_FRAME_SEQUENCE_SAMPLES,
 };
 use merlin::downstream::{
     FullLoopStage as TestPointId, FullLoopStageData as ProbeData, FullLoopStageSnapshot,
 };
+pub(crate) use plan::{Plan, PlanError};
 type IqPair = [f64; 2];
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -96,8 +99,40 @@ impl Capture {
                 total: event.total_elements,
                 offset: event.element_start,
                 symbol: event.context.channel_symbol_index,
-                phase: format!("{:?}", event.context.phase),
+                phase: plan::phase(event.context.phase).to_owned(),
                 source_symbol: event.context.source_symbol_index,
             });
+    }
+
+    /// Normalizes unchanged copied data into the preplanned exact final storage.
+    ///
+    /// # Returns
+    /// Unit; all owned vectors/text have capacity equal to length. Serializer and
+    /// collection builders remain separate finite temporary execution storage.
+    pub(crate) fn normalize(&mut self) {
+        let Self {
+            snapshots,
+            waves,
+            frames,
+        } = self;
+        for snapshot in snapshots.values_mut() {
+            let Snapshot {
+                data,
+                total: _,
+                offset: _,
+                symbol: _,
+                phase,
+                source_symbol: _,
+            } = snapshot;
+            json_storage::normalize(data);
+            *phase = String::from(std::mem::take(phase).into_boxed_str());
+        }
+        for wave in waves {
+            *wave = Vec::from(std::mem::take(wave).into_boxed_slice());
+        }
+        for (_, bytes) in frames.iter_mut() {
+            *bytes = Vec::from(std::mem::take(bytes).into_boxed_slice());
+        }
+        *frames = Vec::from(std::mem::take(frames).into_boxed_slice());
     }
 }

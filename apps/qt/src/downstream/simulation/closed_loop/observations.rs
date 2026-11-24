@@ -3,11 +3,13 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Bounded copies of authoritative public observations for existing presentation consumers.
+mod plan;
+mod queries;
 use crate::downstream::common::constants::MAX_INSTRUMENT_TIME_SAMPLES;
+use crate::shell::{Retained, RetentionBudget, RetentionError};
 use merlin::downstream::{
-    ApiError, ApiResult, ErrorCode, FullLoopResult, FullLoopStage as Stage,
-    FullLoopStageData as Data, FullLoopStagePhase, FullLoopStageSnapshot, FullLoopStageViewport,
-    MAX_STAGE_QUERY_ELEMENTS,
+    ApiError, FullLoopResult, FullLoopStage as Stage, FullLoopStageData as Data,
+    FullLoopStagePhase, FullLoopStageSnapshot,
 };
 
 const RX_TAPS: &[Stage] = &[
@@ -32,80 +34,93 @@ pub(crate) struct Observations {
     pub decoder_llrs: Vec<f64>,
     pub decoder_word: Option<u64>,
     pub warnings: Vec<String>,
+
+    // Rust drops fields in declaration order: all charged buffers go first.
+    retained: Option<Retained<()>>,
 }
 
-fn append(target: &mut Data, source: Data) -> ApiResult<()> {
-    match (target, source) {
-        (Data::Bits(a), Data::Bits(b)) | (Data::Bytes(a), Data::Bytes(b)) => a.extend(b),
-        (Data::Iq(a), Data::Iq(b)) => a.extend(b),
-        (Data::OptionalIq(a), Data::OptionalIq(b)) => a.extend(b),
-        (Data::QamLabels(a), Data::QamLabels(b)) => a.extend(b),
-        (Data::TransportCells(a), Data::TransportCells(b)) => a.extend(b),
-        (Data::Pilots(a), Data::Pilots(b)) => a.extend(b),
-        (Data::Llrs(a), Data::Llrs(b)) => a.extend(b),
-        // Keep future unsupported representations explicit rather than inventing values.
-        _ => {
-            return Err(ApiError::new(
-                ErrorCode::UnsupportedCapability,
-                "Unsupported public stage representation during presentation paging",
-            ))
-        }
-    }
-    Ok(())
+/// Presentation admission never changes or rejects the completed scientific owner.
+#[derive(Debug)]
+pub(crate) enum ObservationError {
+    Backend(ApiError),
+    Retention(RetentionError),
+    UnsupportedRepresentation,
 }
 
-fn snapshot(
-    result: &FullLoopResult,
-    stage: Stage,
-    index: usize,
-) -> ApiResult<FullLoopStageSnapshot> {
-    let mut event = result.stage(stage, index, FullLoopStageViewport::default())?;
-    let cap = result
-        .observation_policy()
-        .map(|policy| policy.settings().max_elements_per_event)
-        .unwrap_or(event.data.len());
-    let mut page_len = event.data.len();
-    while page_len == MAX_STAGE_QUERY_ELEMENTS && event.data.len() < cap {
-        let next = result.stage(
-            stage,
-            index,
-            FullLoopStageViewport {
-                start: event.data.len(),
-                count: 0,
-            },
-        );
-        match next {
-            Ok(page) => {
-                page_len = page.data.len();
-                append(&mut event.data, page.data)?;
-            }
-            // A count-zero query at the exact end of this immutable event is exhausted.
-            // The public policy caps work even if the original producer total is larger.
-            Err(cause) if cause.code() == ErrorCode::InvalidInput => break,
-            Err(cause) => return Err(cause),
-        }
-    }
-    Ok(event)
+fn exact<T>(values: &mut Vec<T>) {
+    *values = Vec::from(std::mem::take(values).into_boxed_slice());
+}
+
+fn text(value: &mut String) {
+    *value = String::from(std::mem::take(value).into_boxed_str());
 }
 
 impl Observations {
-    /// Copies retained public stage windows without rerunning or reconstructing science.
+    /// Builds admitted display copies while retaining every simultaneous query owner.
+    ///
     /// # Arguments
-    /// * `result` - Authoritative completed or partial public result with bounded retention.
+    /// * `result` - Immutable completed or partial science, already independently charged.
+    /// * `budget` - Canonical host policy shared with source, queued and old results.
+    ///
     /// # Returns
-    /// Existing instrument containers; unavailable snapshots remain absent. Projection
-    /// failures are separate warnings and never discard completed FEC trials.
-    pub(crate) fn from_result(result: &FullLoopResult) -> Self {
+    /// Existing instrument values with exact final capacities and an owned dynamic
+    /// payload/ordered-entry reservation. Fixed storage belongs to ResultData's
+    /// separately reserved layout. Temporary builders keep existing finite policies.
+    ///
+    /// # Errors
+    /// Returns checked metadata, query, unsupported-representation or admission errors.
+    /// The caller must keep the scientific result and use an admitted or static
+    /// diagnostic; this method allocates no fallback warning on admission failure.
+    pub(crate) fn from_result_admitted(
+        result: &FullLoopResult,
+        budget: &RetentionBudget,
+    ) -> Result<Self, ObservationError> {
+        let queries = queries::Queries::new(result, budget)?;
+        let mut plan = plan::Plan::default();
+        queries.visit(|event| match event {
+            Ok(event) => plan.observe(event),
+            Err(error) => plan.warning(error.message()),
+        })?;
+        let reservation = budget
+            .reserve_resources(plan.resources()?)
+            .map_err(ObservationError::Retention)?;
         let mut output = Self::default();
-        for info in result.stage_inventory() {
-            for index in 0..info.snapshots {
-                match snapshot(result, info.stage, index) {
-                    Ok(event) => output.observe(&event),
-                    Err(cause) => output.warnings.push(cause.message().to_owned()),
-                }
+        queries.visit(|event| {
+            match event {
+                Ok(event) => output.observe(event),
+                Err(error) => output.warnings.push(error.message().to_owned()),
             }
+            Ok(())
+        })?;
+        output.normalize();
+        output.retained = Some(reservation.retain(()));
+        Ok(output)
+    }
+
+    /// Measures normalized fixture children independently of the admission planner.
+    ///
+    /// # Returns
+    /// Actual display payload and entries for surrounding owner-lifetime assertions.
+    /// This test-only walk is not a production pre-copy bound or admission fallback.
+    #[cfg(test)]
+    pub(super) fn fixture_resources(&self) -> crate::shell::RetainedResources {
+        tests::measured(self)
+    }
+
+    fn normalize(&mut self) {
+        self.tx.normalize();
+        for tap in &mut self.taps {
+            exact(&mut tap.values);
         }
-        output
+        for (_, values) in &mut self.responses {
+            exact(values);
+        }
+        exact(&mut self.responses);
+        exact(&mut self.decoder_llrs);
+        for warning in &mut self.warnings {
+            text(warning);
+        }
+        exact(&mut self.warnings);
     }
 
     fn observe(&mut self, event: &FullLoopStageSnapshot) {
@@ -155,3 +170,6 @@ impl Observations {
             .and_then(|start| start.checked_add(values.len() as u64));
     }
 }
+
+#[cfg(test)]
+mod tests;

@@ -3655,3 +3655,40 @@ No backend/binding/signature/schema/registration change required a new wheel or
 unrelated full scientific/CLI/packaging runs; reuse the accepted 42d177e artifact.
 Other retained owners, complete SESSION Level 2 and milestone/final Level 3 remain
 open; this unit does not mark the parent complete.
+
+## UIU-SESSION-01 stored observation and capture admission
+
+The [stored projection design](design.md#uiu-session-01-stored-observation-and-capture-admission)
+uses four individually reserved inventory/accumulator/page/replacement slots,
+then an allocation-free first pass to admit exact final typed/JSON display storage
+before the existing second-pass copies. Final capacities are normalized. Original
+values/nulls/tags/coordinates, first/contiguous/phase/frame/decoder selection and
+scientific reports survive. Dynamic guards drop after their buffers; the enclosing
+ResultData backend/fixed-layout reservation drops last. Independent QA reviewed
+both isolated source and primary wiring; neither source review is runtime evidence.
+
+[Exact source/primary case record](session-observation-admission-evidence.json)
+records 107 selected primary Rust cases with no failures/ignores. Eleven new
+cases cover all eight JSON variants, arithmetic, phases, paging/slot overlap,
+independent target measurement, exact source/query/target ceilings, alias disposal,
+selection edges, precancel and actual worker fallback. One final one-case rerun
+also verifies the completed result's static diagnostic through actual Model state;
+it is excluded from the unique count. An unused fixture-only constructor warning
+from initial compilation was removed before final all-target Clippy; no runtime
+behavior relied on that helper.
+
+Four QML behavior cases/two hooks pass, with two existing unsuppressed focus
+warnings. Formatting, final dependency boundary/traceability, all-target Clippy,
+fresh optimized build and six native workbench/launch probes pass. The completed
+backend remains available when display admission rejects; no uncharged fallback
+warning Vec/String is retained. The existing Receiver reason and warning response
+borrow/project its static diagnostic. Exact pressure fixtures include real new
+projection storage or assert stable retained floors during asynchronous query/target
+construction, retaining all scientific and exact final-cleanup assertions.
+
+No backend/binding/API signature, schema, registration or dependency change required
+another wheel or unrelated complete scientific/CLI/packaging suites. Reuse the
+accepted 42d177e backend/native record and unchanged 623/594 operation inventories.
+Independent instrument/transport copies, input/editor/project, preview/history and
+infrastructure owners remain open. SESSION Level2/milestone/finalLevel3 acceptance
+is still required; all historical receipts and checklist checkbox states survive.

@@ -563,6 +563,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [per-profile execution request unit](features/unified-qt-workbench/validation.md#uiu-session-01-per-profile-execution-request-admission) records 95 unique selected Rust passes across the initial run and corrected seven-case rerun, four QML behaviors, Clippy, fresh optimized build and six desktop probes. Final narrowed candidates use existing current-root admission; intermediate copies release before execution. Test-only zero-entry and cancel-lifetime corrections retain the failed initial logs. Working requests are now covered; dynamic projections, inputs, preview/history and infrastructure remain open.
 
+  The [stored observation/capture unit](features/unified-qt-workbench/validation.md#uiu-session-01-stored-observation-and-capture-admission) passes 107 selected Rust cases, one focused final diagnostic confirmation, four QML behaviors, all-target Clippy, fresh optimized build and six desktop probes. Query overlap and exact typed/JSON targets are pre-admitted; real-worker rejection preserves completed science, static warnings and final-alias charges. Independent instrument/transport, input/editor/project, preview/history and infrastructure owners remain open; SESSION stays unchecked.
+
 
 
 <a id="task-uiu-shell-01"></a>

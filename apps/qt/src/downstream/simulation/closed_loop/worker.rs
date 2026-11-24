@@ -85,7 +85,7 @@ pub(super) fn run_one_admitted(
     let prepared =
         PreparedResult::new(request.value(), budget).map_err(ResultError::into_message)?;
     let result = prepared.run(control).map_err(ResultError::into_message)?;
-    Ok(ResultData::from_retained(result))
+    Ok(ResultData::from_retained(result, budget))
 }
 
 /// Preserves existing scientific fixture calls through the admitted real path.

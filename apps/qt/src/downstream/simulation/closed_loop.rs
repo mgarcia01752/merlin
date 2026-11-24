@@ -7,6 +7,7 @@ mod lifecycle;
 mod observations;
 mod request;
 mod request_retention;
+mod result_projection;
 mod result_retention;
 mod worker;
 use super::run_timing::RunTiming;
@@ -42,8 +43,10 @@ impl Deref for JobView {
 }
 
 pub(crate) struct ResultData {
-    pub job: JobView,
     pub observations: observations::Observations,
+    observation_error: Option<&'static str>,
+    // Keep the backend/fixed ResultData reservation until all display fields drop.
+    pub job: JobView,
 }
 impl ResultData {
     /// Preserves legacy already-completed scientific query fixtures only.
@@ -58,22 +61,39 @@ impl ResultData {
     /// Panics if the small fixture's checked metadata or wrapper arithmetic fails.
     #[cfg(test)]
     pub(crate) fn new(result: FullLoopResult) -> Self {
-        Self::from_retained(result_retention::retain_fixture(result))
+        let budget = result_retention::fixture_budget();
+        Self::from_retained(result_retention::retain_fixture(result, &budget), &budget)
     }
 
     /// Moves an already pre-admitted backend result into its fixed presentation owner.
     ///
     /// # Arguments
     /// * `result` - Actual complete/partial science with its pre-execution reservation.
+    /// * `budget` - Same canonical policy for the source and all stored display copies.
     ///
     /// # Returns
-    /// Immutable result; dynamic observation/capture copies remain separate unclosed
-    /// owners. Existing projection warnings never reject completed scientific output.
-    fn from_retained(result: Retained<FullLoopResult>) -> Self {
-        let observations = observations::Observations::from_result(result.value());
+    /// Immutable science and separately admitted observation/capture copies. Admission
+    /// failure retains science with an empty projection and a borrowed static diagnostic.
+    fn from_retained(
+        result: Retained<FullLoopResult>,
+        budget: &crate::shell::RetentionBudget,
+    ) -> Self {
+        let (observations, observation_error) = result_projection::admit(result.value(), budget);
         Self {
-            job: JobView(result),
             observations,
+            observation_error,
+            job: JobView(result),
+        }
+    }
+
+    /// Projects existing diagnostics into the bounded UI response without retaining a copy.
+    ///
+    /// # Returns
+    /// Original warning strings, or one static admission diagnostic; science is unchanged.
+    fn observation_warnings(&self) -> Value {
+        match self.observation_error {
+            Some(message) => json!([message]),
+            None => json!(self.observations.warnings),
         }
     }
 
@@ -330,9 +350,9 @@ impl Model {
             "ber":r.job.summary.payload_ber,"recovered_payloads":r.job.summary.recovered_payloads,
             "ldpc_failures":r.job.summary.payload_ldpc_failures,"bch_failures":r.job.summary.payload_bch_failures,
             "mean_iterations":r.job.summary.payload_mean_ldpc_iterations,"ncp_fields":r.job.summary.accepted_ncp_fields,
-            "plc_frames":r.job.summary.plc_frames,"unrecovered":r.job.unrecovered_generated_payloads,"observation_warnings":r.observations.warnings}));
+            "plc_frames":r.job.summary.plc_frames,"unrecovered":r.job.unrecovered_generated_payloads,"observation_warnings":r.observation_warnings()}));
         json!({"receiver_status":if ready {"complete"} else {"attention"},"verify_status":if self.verify {"complete"} else {"attention"},
-            "reason":if !self.error.is_empty(){self.error.as_str()} else if ready {"Validated source/channel/receiver configuration ready."} else {"Configure WB and Receiver after accepting OCD, DPD, PRBS-TX and RxMER."},
+            "reason":if !self.error.is_empty(){self.error.as_str()} else if let Some(message) = result.as_ref().and_then(|result|result.observation_error) {message} else if ready {"Validated source/channel/receiver configuration ready."} else {"Configure WB and Receiver after accepting OCD, DPD, PRBS-TX and RxMER."},
             "diagnostic":self.diagnostic,"timing":self.timing.as_ref().map(|timing|timing.snapshot()),
             "busy":self.worker.is_some(),"paused":progress.is_some_and(|value| value.0),
             "profile_index":progress.map_or(0, |value| value.1 + 1),

@@ -1585,7 +1585,12 @@ final shared root. Rejected targets preserve accepted science.
 finish finite selection/runtime preparation, release the intermediate candidate,
 and admit the final actual public footprint before execution. Their charged
 immutable owners survive until that call returns; accepted sources remain charged.
-Dynamic DTOs and other application owners still require separate admission.
+The [stored observation/capture graph](development/features/unified-qt-workbench/validation.md#uiu-session-01-stored-observation-and-capture-admission)
+now reserves individual query overlap and its exact normalized display target.
+Projection rejection retains backend science with empty display buffers and a
+static Receiver diagnostic. Display fields/guards drop before the enclosing
+backend/fixed-layout reservation. Independently requested instrument/transport
+outputs and other application owners still require separate admission.
 
 Explicit [accepted-edit cancellation transitions](development/features/unified-qt-workbench/design.md#uiu-session-01-accepted-edits-during-cancellation)
 preflight immutable candidates and checked revisions before cancelling the old
