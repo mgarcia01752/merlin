@@ -267,7 +267,9 @@ fn accepted_measurements_run_real_closed_loop_and_invalidate_views() {
         context: (*context).clone(),
         options: Some(options),
         verify: true,
-        request: Some(settings),
+        request: Some(
+            request_retention::admit_request(settings, context.application.budget()).unwrap(),
+        ),
         plan: None,
         worker: None,
         timing: None,
@@ -783,8 +785,14 @@ fn independent_sweep_preserves_each_profile_and_legacy_run_options() {
         context: (*context).clone(),
         options: Some(options.clone()),
         verify: true,
-        request: Some(prepare(&transmission, &inputs, &options, &sections).unwrap()),
-        plan: Some(plan),
+        request: Some(
+            request_retention::admit_request(
+                prepare(&transmission, &inputs, &options, &sections).unwrap(),
+                context.application.budget(),
+            )
+            .unwrap(),
+        ),
+        plan: Some(request_retention::admit_plan(plan, context.application.budget()).unwrap()),
         worker: None,
         timing: None,
         error: String::new(),
@@ -1103,7 +1111,9 @@ fn invalidated_paused_worker_never_publishes_a_late_result() {
         context: (*context).clone(),
         options: Some(options),
         verify: true,
-        request: Some(request),
+        request: Some(
+            request_retention::admit_request(request, context.application.budget()).unwrap(),
+        ),
         plan: None,
         worker: None,
         timing: None,

@@ -4,8 +4,8 @@
  */
 //! Transactional receiver configuration and canonical application generations.
 use super::{
-    application_error, prepare_sweep, publish, AdmissionError, Context, Inputs, Model, Options,
-    Sections, SessionKey, TransmissionSettings,
+    application_error, prepare_sweep, publish, request_retention, AdmissionError, Context, Inputs,
+    Model, Options, Sections, SessionKey, TransmissionSettings,
 };
 
 impl Model {
@@ -77,16 +77,52 @@ impl Model {
     /// Rebinds an independently validated project model to its actual GUI owner.
     /// # Arguments
     /// * `context` - Target downstream context after guarded project adoption.
+    /// # Returns
+    /// Unit after target coverage and generation admission, without scientific copies.
+    /// Original aliases keep their source reservations until their final drop.
     /// # Errors
-    /// Preserves host admission/identity failure and prevents a stale Start.
+    /// Preserves source ownership on target coverage or host identity rejection.
     pub(crate) fn rebind(&mut self, context: Context) -> Result<(), String> {
+        let same_host = self
+            .context
+            .application
+            .snapshot(crate::shell::Direction::Downstream)
+            .key
+            .session
+            == context
+                .application
+                .snapshot(crate::shell::Direction::Downstream)
+                .key
+                .session;
+        let (request, plan) = if same_host {
+            (self.request.clone(), self.plan.clone())
+        } else {
+            // Reserve both target owners while all source/worker aliases stay charged.
+            let request = self
+                .request
+                .as_ref()
+                .map(|request| {
+                    request_retention::rebind_request(request, context.application.budget())
+                })
+                .transpose()
+                .map_err(owner_error)?;
+            let plan = self
+                .plan
+                .as_ref()
+                .map(|plan| request_retention::rebind_plan(plan, context.application.budget()))
+                .transpose()
+                .map_err(owner_error)?;
+            (request, plan)
+        };
         let key = context
             .application
-            .configure_downstream(self.request.is_some())
+            .configure_downstream(request.is_some())
             .map_err(application_error)?;
         publish(&context, None);
         crate::downstream::instruments::receiver::performance::clear(&context);
         self.context = context;
+        self.request = request;
+        self.plan = plan;
         self.generation = Some(key);
         Ok(())
     }
@@ -107,6 +143,19 @@ impl Model {
                     Ok((plan, request))
                 })
         });
+        let prepared = match prepared {
+            Some(Ok((plan, request))) => {
+                // Final candidates coexist with accepted and worker owners until commit.
+                let request =
+                    request_retention::admit_request(request, self.context.application.budget())
+                        .map_err(owner_error)?;
+                let plan = request_retention::admit_plan(plan, self.context.application.budget())
+                    .map_err(owner_error)?;
+                Some(Ok((plan, request)))
+            }
+            Some(Err(error)) => Some(Err(error)),
+            None => None,
+        };
         let ready = matches!(&prepared, Some(Ok(_)));
         let key = self
             .context
@@ -143,5 +192,14 @@ impl Model {
         publish(&self.context, None);
         crate::downstream::instruments::receiver::performance::clear(&self.context);
         self.token = self.token.wrapping_add(1);
+    }
+}
+
+fn owner_error(error: request_retention::OwnerError) -> String {
+    match error {
+        request_retention::OwnerError::Metadata(error) => error.message().to_owned(),
+        request_retention::OwnerError::Retention(error) => {
+            application_error(crate::shell::ApplicationError::Retention(error))
+        }
     }
 }

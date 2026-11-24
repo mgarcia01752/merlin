@@ -7,8 +7,8 @@ use super::*;
 use crate::{
     downstream::simulation::closed_loop::{prepare, Options},
     shell::{
-        Direction, DispatchError, DispatchGate, DispatchPhase, RetainedBytes, RetentionBudget,
-        SessionError, ShellSessions, WorkerSender, WorkerStatus, WorkerTerminal,
+        Direction, DispatchError, DispatchGate, DispatchPhase, RetainedBytes, RetainedResources,
+        RetentionBudget, SessionError, ShellSessions, WorkerSender, WorkerStatus, WorkerTerminal,
     },
 };
 use std::time::{Duration, Instant};
@@ -24,12 +24,21 @@ const FIXTURE_ACTIVE_RUNTIME_MS: u64 = 60000;
 // Small accepted observation used only to reach genuine complete worker delivery.
 const COMPLETE_OBSERVATION_MS: u64 = 1;
 
+// Test-only ceilings; real request ownership is still derived from public metadata.
+const TEST_OWNER_LIMITS: RetainedResources = RetainedResources {
+    payload_bytes: usize::MAX,
+    ordered_entries: usize::MAX,
+    shared_roots: usize::MAX,
+};
+
 type Identities = ShellSessions<(), (), (), ()>;
 
-fn admit(control: &Arc<DownstreamControl>) -> (DispatchGate, Identities, RunLease) {
+fn admit(
+    control: &Arc<DownstreamControl>,
+) -> (RetentionBudget, DispatchGate, Identities, RunLease) {
     // Unit configuration payloads occupy zero bytes and issue genuine identities.
     // They neither stand in for scientific ownership nor claim aggregate admission.
-    let budget = RetentionBudget::new(RetainedBytes(0));
+    let budget = RetentionBudget::with_limits(TEST_OWNER_LIMITS);
     let gate = DispatchGate::default();
     let mut identities = ShellSessions::new(
         budget.clone(),
@@ -41,12 +50,12 @@ fn admit(control: &Arc<DownstreamControl>) -> (DispatchGate, Identities, RunLeas
     let lease = identities
         .begin(Direction::Downstream, control.clone())
         .unwrap();
-    (gate, identities, lease)
+    (budget, gate, identities, lease)
 }
 
-fn request(duration_ms: u64) -> FullLoopRequest {
+fn request(duration_ms: u64, budget: &RetentionBudget) -> SharedRequest {
     let (inputs, transmission, sections) = super::super::tests::accepted_inputs();
-    prepare(
+    let request = prepare(
         &transmission,
         &inputs,
         &Options {
@@ -56,7 +65,8 @@ fn request(duration_ms: u64) -> FullLoopRequest {
         },
         &sections,
     )
-    .unwrap()
+    .unwrap();
+    super::super::request_retention::admit_request(request, budget).unwrap()
 }
 
 fn spawned(result: Result<Worker, WorkerSpawnError>) -> Worker {
@@ -111,9 +121,9 @@ fn paused_public_worker_cancels_and_retains_its_actual_partial_report() {
     let timing = Arc::new(RunTiming::new());
     let adapter = Arc::new(DownstreamControl::new());
     assert_eq!(adapter.acknowledged_pause(), None);
-    let (gate, mut identities, lease) = admit(&adapter);
+    let (budget, gate, mut identities, lease) = admit(&adapter);
     let worker = spawned(Worker::spawn(
-        request(PAUSED_OBSERVATION_MS),
+        request(PAUSED_OBSERVATION_MS, &budget),
         None,
         timing.clone(),
         adapter,
@@ -182,9 +192,9 @@ fn paused_public_worker_cancels_and_retains_its_actual_partial_report() {
 #[test]
 fn finished_data_keeps_real_completion_busy_until_terminal_disposal() {
     let adapter = Arc::new(DownstreamControl::new());
-    let (gate, mut identities, lease) = admit(&adapter);
+    let (budget, gate, mut identities, lease) = admit(&adapter);
     let worker = spawned(Worker::spawn(
-        request(COMPLETE_OBSERVATION_MS),
+        request(COMPLETE_OBSERVATION_MS, &budget),
         None,
         Arc::new(RunTiming::new()),
         adapter,
@@ -218,7 +228,7 @@ fn transport_worker(
     operation: impl FnOnce(WorkerSender<WorkerMessage, String>) -> Result<(), String> + Send + 'static,
 ) -> (DispatchGate, Identities, Worker) {
     let control = Arc::new(DownstreamControl::new());
-    let (gate, identities, lease) = admit(&control);
+    let (_budget, gate, identities, lease) = admit(&control);
     let token = lease.token();
     let receiver = spawn_worker(
         "downstream-terminal-fixture",

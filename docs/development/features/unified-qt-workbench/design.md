@@ -3826,3 +3826,41 @@ Normal reports validate against the host before UI adoption, and stale terminals
 still consume their genuine lease. Session/generation/run values cross QML as
 lossless decimal strings; absent BER remains null. Full retained-owner closure is
 still required and must not be inferred from this registered adapter.
+
+
+### UIU-SESSION-01 actual downstream result and presentation owners
+
+The next concrete retention gap is Worker run_one returning a FullLoopResult and
+ResultData observation copies without a common-budget reservation. REUSE the public
+result_retained_bound/run_bounded pair and existing Retained/Arc lifetimes. Admit
+the backend result target before scientific execution and carry its reservation
+through queued/latest/old result aliases. Charge actual ResultData/application
+wrapper layouts separately from the public root. No completed scientific result
+may be discarded because a later presentation copy cannot be admitted.
+
+The existing observation/capture projectors are application-owned copies, not new
+scientific algorithms. Their concrete typed vectors/maps/JSON and intermediate
+query copies require explicit pre-copy admission, exact field/variant walks and
+finite existing query policies. Preserve the same observed values, nulls, source
+coordinates, messages, paging and instrument behavior. If a target bound cannot
+be proved from the existing public contract, report the exact consumer/dependency
+instead of inventing a multiplier, private backend read or public API.
+
+Session agent owns only closed_loop.rs, closed_loop/worker.rs and adjacent tests,
+focused result-retention modules, closed_loop/observations.rs, transmitter/capture.rs
+and their focused tests plus a unique handoff in its existing isolated worktree.
+Root retains all shared primitives, bridge/registration, canonical records and
+acceptance. Input/editor, independent preview/history and infrastructure owners
+remain separately enumerated; this scope must not claim their closure. Source-only
+agent preparation is followed by lead consumer tests, Clippy/format/boundary,
+traceability and fresh optimized/native checks. No repeated wheel or unrelated
+complete scientific suite is needed without a linked scientific/API change.
+
+
+The accepted request/plan unit uses two real allocations per admitted owner:
+Arc<T> for immutable science and Arc<Retained<Arc<T>>> for charged application
+ownership. The public footprint includes T once; add the actual retained-wrapper
+layout and two shared roots. Rebind reserves full target coverage before cloning
+only the inner handle. This is a concrete project-transfer owner, not a general
+accounting abstraction. Its primary acceptance is linked from the official
+checklist; all independent source-agent checks remain historically source-only.

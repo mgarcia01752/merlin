@@ -3,14 +3,15 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! One bounded serial dispatcher using only public downstream jobs and controls.
-use super::{ResultData, RunTiming};
+use super::{
+    request_retention::{SharedPlan, SharedRequest},
+    ResultData, RunTiming,
+};
 use crate::{
     downstream::common::constants::PROFILE_COMPLETION_CAPACITY,
     shell::{spawn_worker, RunCancellation, RunLease, RunToken, WorkerEvent, WorkerSpawnError},
 };
-use merlin::downstream::{
-    ChannelJobStatus, FullLoopControl, FullLoopRequest, FullLoopState, FullLoopSweepPlan,
-};
+use merlin::downstream::{ChannelJobStatus, FullLoopControl, FullLoopRequest, FullLoopState};
 use std::sync::{mpsc, Arc, Mutex, MutexGuard};
 
 pub(super) enum WorkerMessage {
@@ -165,8 +166,8 @@ impl RunCancellation for DownstreamControl {
 impl Worker {
     /// Starts one serial dispatcher with bounded completion backpressure.
     /// # Arguments
-    /// * `request` - Current public request; fallback for a single-profile run.
-    /// * `plan` - Optional public preflighted sweep.
+    /// * `request` - Admitted immutable owner; no payload clone at worker dispatch.
+    /// * `plan` - Optional admitted sweep owner, shared until the closure returns.
     /// * `timing` - Shared presentation clock, always locked after dispatch state.
     /// * `control` - Same cancellation adapter admitted by the canonical gate.
     /// * `lease` - Genuine exact-session admission retained until common termination.
@@ -177,8 +178,8 @@ impl Worker {
     /// Returns OS thread-start failure with the original unstarted lease. The host
     /// must acknowledge that failure; dropping a lease alone keeps the gate Busy.
     pub(super) fn spawn(
-        request: FullLoopRequest,
-        plan: Option<FullLoopSweepPlan>,
+        request: SharedRequest,
+        plan: Option<SharedPlan>,
         timing: Arc<RunTiming>,
         control: Arc<DownstreamControl>,
         lease: RunLease,
@@ -186,7 +187,8 @@ impl Worker {
         let ids = plan
             .as_ref()
             .map(|plan| {
-                plan.info()
+                plan.value()
+                    .info()
                     .selected_profile_ids
                     .into_iter()
                     .map(|id| id.value())
@@ -194,13 +196,14 @@ impl Worker {
             })
             .unwrap_or_else(|| {
                 vec![request
+                    .value()
                     .settings()
                     .playback
                     .as_ref()
                     .map_or(0, |playback| playback.profile.profile_id)]
             });
         let profile_count = ids.len();
-        let budget = request.options().max_runtime_ms;
+        let budget = request.value().options().max_runtime_ms;
         let shared = Arc::clone(&control);
         let token = lease.token();
         let receiver = spawn_worker(
@@ -213,9 +216,12 @@ impl Worker {
                     if lock(&shared.state).cancelled || elapsed >= budget {
                         break;
                     }
-                    let prepared = plan
-                        .as_ref()
-                        .map_or_else(|| Ok(request.clone()), |plan| plan.request(index));
+                    // Per-profile working requests retain the existing public copy
+                    // behavior; their separate admission is outside this owner unit.
+                    let prepared = plan.as_ref().map_or_else(
+                        || Ok(request.value().as_ref().clone()),
+                        |plan| plan.value().request(index),
+                    );
                     let control = FullLoopControl::new();
                     {
                         let mut dispatch = lock(&shared.state);
@@ -261,6 +267,7 @@ impl Worker {
                         }
                         Err(error) => {
                             let channel = request
+                                .value()
                                 .settings()
                                 .playback
                                 .as_ref()

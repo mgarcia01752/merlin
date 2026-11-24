@@ -3532,3 +3532,39 @@ Full relevant Level 2/milestone Level 3 remain open. Source-only QA found no con
 adapter lifecycle defect and ran no tests. Disk remains 80% used, 24 GiB free and
 13% inodes; active artifacts/caches are preserved. No visual control/layout changes
 are exposed, so user-guide screenshots remain unchanged. UIU-SESSION-01 stays open.
+
+
+## UIU-SESSION-01 downstream request and plan owner admission
+
+The [concrete owner design](design.md#uiu-session-01-concrete-direction-adapter-and-request-owner-closure)
+and [source handoff](agent-handoffs/downstream-request-admission.md) now admit
+accepted public requests/plans in the common host budget. Actual public metadata
+plus Retained<Arc<T>> storage and two real shared roots cover each immutable owner.
+Model and Worker share outer Arcs; cross-host rebind reserves conservative target
+coverage before aliasing the exact same inner scientific allocations. Source and
+target reservations survive their respective queued/old aliases through final drop.
+No scientific payload clone or clone-capacity assumption is needed for rebind.
+Candidates are fully reserved before the host generation/configuration commits.
+
+Executed in the primary checkout: **87 unique Rust cases**, all-target warnings-
+denied Clippy, formatting/final boundary, optimized Qt build and **six native
+startup/Open probes**. Five new functions cover real exact-root admission and
+three-dimensional rejection, valid changed candidates preserving actual completed
+reports, old worker/new candidate overlap, cross-host rejection/alias/final-drop,
+and checked wrapper arithmetic. Original scientific assertions remain; existing
+fixtures change only owner typing and explicit test ceilings to admit real roots.
+A prior metadata-pressure fixture now uses explicit unbounded test-only counters
+before filling them synthetically; it still proves rejection and old-state
+preservation. New exact-owner tests independently exercise each finite ceiling.
+
+The [receipt](session-downstream-request-admission-evidence.json) records exact
+source-agent provenance and primary execution. Agent source/rustfmt checks did not
+establish runtime acceptance. QML source, imports, registration and invokable shapes
+are unchanged from the 91-case registered-adapter run at 6f4b3fe; reuse those QML
+results with that scope. Backend/native scientific contracts are unchanged; reuse
+1841d92 without a new wheel or unrelated full workspace/CLI/package regression.
+Full task Level 2/milestone Level 3 remain mandatory. Per-profile working copies,
+result/queued/DTO targets, input/editor/saved JSON, previews/history and application
+infrastructure remain concrete open owners. This unit does not accept aggregate
+retention or UIU-SESSION-01. Disk remains 80% used, 24 GiB free and 13% inodes;
+active caches/artifacts are preserved.

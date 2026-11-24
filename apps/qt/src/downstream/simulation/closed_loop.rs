@@ -6,6 +6,7 @@
 mod lifecycle;
 mod observations;
 mod request;
+mod request_retention;
 mod worker;
 use super::run_timing::RunTiming;
 use crate::downstream::help::{AdmissionError, Diagnostic};
@@ -13,11 +14,10 @@ use crate::downstream::workbench::session::{Context, Inputs};
 use crate::shell::{
     ApplicationError, Direction, DispatchError, SessionError, SessionKey, WorkerEvent, WorkerStatus,
 };
-use merlin::downstream::{
-    FullLoopReport, FullLoopRequest, FullLoopResult, FullLoopSweepPlan, TransmissionSettings,
-};
+use merlin::downstream::{FullLoopReport, FullLoopResult, TransmissionSettings};
 use request::Sections;
 pub(crate) use request::{prepare, prepare_sweep, Options, MAX_DURATION_MS};
+use request_retention::{SharedPlan, SharedRequest};
 use serde_json::{json, Value};
 use std::{
     ops::Deref,
@@ -80,8 +80,8 @@ pub(crate) struct Model {
     pub(crate) context: Context,
     pub options: Option<Options>,
     pub verify: bool,
-    request: Option<FullLoopRequest>,
-    plan: Option<FullLoopSweepPlan>,
+    request: Option<SharedRequest>,
+    plan: Option<SharedPlan>,
     worker: Option<Worker>,
     timing: Option<Arc<RunTiming>>,
     error: String,
@@ -105,9 +105,10 @@ impl Model {
         };
         let plan = self.plan.clone();
         let catalog = if let Some(plan) = &plan {
-            let profiles = (0..plan.info().selected_profile_ids.len())
+            let profiles = (0..plan.value().info().selected_profile_ids.len())
                 .map(|index| {
                     let request = plan
+                        .value()
                         .request(index)
                         .map_err(|cause| cause.message().to_owned())?;
                     request
@@ -129,6 +130,7 @@ impl Model {
             }
         } else {
             settings
+                .value()
                 .settings()
                 .playback
                 .as_ref()

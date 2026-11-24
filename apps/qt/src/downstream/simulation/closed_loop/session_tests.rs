@@ -46,14 +46,15 @@ fn prepared_model_with_duration(context: Context, duration_ms: u64) -> Model {
 
 #[test]
 fn rejected_host_metadata_preserves_the_accepted_real_report_and_request() {
-    // Deliberately small application policy and synthetic counter pressure test
-    // rejection transactionality, not a scientific payload-size estimate.
-    const TEST_HOST_PAYLOAD_LIMIT: usize = 1024 * 1024;
+    // Explicit test-only ceiling plus synthetic pressure checks transactionality,
+    // never a scientific payload-size estimate or an application policy default.
+    const TEST_HOST_PAYLOAD_LIMIT: usize = usize::MAX;
     const COMPLETE_SOURCE_DURATION_MS: u64 = 1;
     let mut context = Context::isolated();
     context.application = crate::shell::ApplicationSessions::new(crate::shell::RetainedResources {
         payload_bytes: TEST_HOST_PAYLOAD_LIMIT,
-        ..Default::default()
+        ordered_entries: usize::MAX,
+        shared_roots: usize::MAX,
     })
     .unwrap();
     let mut model = prepared_model_with_duration(context.clone(), COMPLETE_SOURCE_DURATION_MS);
@@ -65,7 +66,7 @@ fn rejected_host_metadata_preserves_the_accepted_real_report_and_request() {
         merlin::downstream::ChannelJobStatus::Complete
     );
     let key = model.generation;
-    let request = serde_json::to_value(model.request.as_ref().unwrap().settings()).unwrap();
+    let request = serde_json::to_value(model.request.as_ref().unwrap().value().settings()).unwrap();
     let accepted_options = serde_json::to_value(&model.options).unwrap();
     let verified = model.verify;
     let usage = context.application.budget().usage();
@@ -82,8 +83,16 @@ fn rejected_host_metadata_preserves_the_accepted_real_report_and_request() {
     const REJECTED_SOURCE_DURATION_MS: u64 = 2;
     let mut changed = model.options.clone().unwrap();
     changed.duration_ms = REJECTED_SOURCE_DURATION_MS;
-    let settings =
-        serde_json::to_string(&model.request.as_ref().unwrap().settings().transmission).unwrap();
+    let settings = serde_json::to_string(
+        &model
+            .request
+            .as_ref()
+            .unwrap()
+            .value()
+            .settings()
+            .transmission,
+    )
+    .unwrap();
     let transmission = serde_json::from_str::<TransmissionSettings>(&settings).unwrap();
     prepare_sweep(
         &transmission,
@@ -103,7 +112,7 @@ fn rejected_host_metadata_preserves_the_accepted_real_report_and_request() {
     assert!(!model.invalidate());
     assert_eq!(model.generation, key);
     assert_eq!(
-        serde_json::to_value(model.request.as_ref().unwrap().settings()).unwrap(),
+        serde_json::to_value(model.request.as_ref().unwrap().value().settings()).unwrap(),
         request
     );
     assert!(Arc::ptr_eq(&latest(&context).unwrap(), &report));
