@@ -3228,8 +3228,9 @@ input/result lookup may use the selected direction as an implicit fallback.
 
 Accepted/queued/candidate/old payloads retain their reservations until actual
 release, including replacement failure and destroyed presentation owners. Host
-admission must bound every reachable allocation; reservation wrappers alone do
-not prove aggregate memory acceptance. Configurations remain immutable snapshots;
+admission must bound reachable payload bytes and container/shared-root counts
+under the [approved contract](retention-contract-decision.md); reservation wrappers
+alone do not prove aggregate memory acceptance. Configurations remain immutable snapshots;
 executing mutable backend sessions stay worker-owned. Configuration changes are
 atomic and rejected while that same owner is Busy in this primitive; the actual
 adapter must preserve the accepted edit/cancellation contract when adopting it.
@@ -3315,9 +3316,9 @@ required before checking UIU-SESSION-01. No scientific/public API change justifi
 a wheel rebuild or repeated full workspace regression in this source-only unit.
 
 The subsequent [retention accounting decision](retention-contract-decision.md)
-records the demonstrated public metadata gap and a proposed clarification of
-payload-byte versus private container bookkeeping guarantees. It is pending;
-neither a source audit nor the existing transport tests accepts that clarification.
+records the demonstrated public metadata gap and the subsequently approved
+payload-byte/container/root contract. The decision does not accept runtime
+aggregate admission; actual public metadata and host integration remain required.
 
 ## UIU-SESSION-01 accepted edits during cancellation
 
@@ -3334,8 +3335,8 @@ remain with existing public owners; no scientific API or run default changes.
 Extend `apps/qt/src/shell/tests.rs` with accepted-edit/stale-callback/terminal,
 other-direction isolation and failure-before-cancellation cases. Reuse terminal
 transport tests. This source-only prerequisite traces REQ-UIU-03/06/07 through
-UIU-SESSION-01; real direction wiring and the pending aggregate accounting
-decision remain required. Validate standalone tests/Clippy/format, final boundary
+UIU-SESSION-01; real direction wiring and implementation of the subsequently
+approved aggregate accounting contract remain required. Validate standalone tests/Clippy/format, final boundary
 and canonical traceability without rebuilding unchanged scientific consumers.
 
 ## UIU-SESSION-01 actual upstream controller preparation
@@ -3359,5 +3360,31 @@ byte estimates/defaults. It must not establish aggregate acceptance using fixtur
 counter ticks. Run actual public-API tests and warnings-denied Clippy with existing
 compiled libraries, plus format/boundary/traceability. No changed scientific/API/
 binding/layout source requires a new wheel or full workspace regression. Real Qt
-registration, canonical two-direction integration, the pending retention decision
+registration, canonical two-direction integration, audited aggregate admission
 and complete Level 2 session acceptance remain mandatory before checking the task.
+
+
+## UIU-SESSION-01 approved multidimensional retention admission
+
+The user approved [payload bytes and container/root counts](retention-contract-decision.md)
+on 2026-11-23. This unit implements the application accounting primitive for
+[REQ-UIU-07](../../../requirements.md#req-uiu-07), under the existing
+[session task](../../checklist.md#task-uiu-session-01) and
+[architecture](../../../architecture.md#unified-qt-session-and-file-lifecycle).
+It does not accept aggregate backend or direction-host memory admission.
+
+| Disposition / inspected owner | Contract / gap / decision |
+| --- | --- |
+| ADAPT `apps/qt/src/shell/retention.rs`, `RetentionBudget` | Existing checked bytes-only shared reservations gain independent payload-byte, ordered-entry and shared-root ceilings. Preflight all checked additions and limits under one lock before changing any counter. No guessed production defaults. |
+| REUSE `Retained`, `RetentionReservation` | Reservations move with ownership and release all three charges only after data drops; shared aliases retain one charge until final drop. Independently cloned roots require separate reservations. |
+| PRESERVE existing `new`, `reserve`, `used` | Bytes-only primitive compatibility; the constructor admits zero entries/roots rather than silently granting unlimited populations. These operations alone cannot account for real backend roots. |
+| ADD `apps/qt/src/shell/retention_tests.rs`; EDIT `shell/mod.rs` | Export the application quantity model and test exact/exceeded limits, each overflow, transactional failures, concurrent admission and queued/old/final-drop ownership. Existing coordinator/transport/real upstream controller cases remain. |
+| DEFER public scientific metadata and host adoption | Scientific owner crates must expose audited root footprints and pre-production bounds through public Rust/native Python APIs before Qt uses them. No private structures or serialized-size estimates. |
+
+Level 1 runs all combined primary-checkout ownership/controller cases, production
+and test Clippy with warnings denied, format, final API-boundary and requirement/
+link/history checks. No registered Qt, scientific API, Python, serialization or
+presentation code changes in this unit; reuse cached scientific artifacts and
+the current Qt executable. Complete Qt/feature/compatibility Level 2 acceptance
+still precedes checking UIU-SESSION-01. Historical validation receipts remain
+unchanged; previous archive byte statistics keep their original meaning.

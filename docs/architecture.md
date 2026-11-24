@@ -1534,10 +1534,10 @@ tests, not shared scientific configuration or a different API architecture.
 The [explicit ownership foundation](development/features/unified-qt-workbench/design.md#uiu-session-01-explicit-ownership-foundation)
 under `apps/qt/src/shell/` provides separate typed configuration/result owners,
 checked callback identities, a shared terminal-acknowledged run lease and retained
-byte reservations. Its [focused acceptance](development/features/unified-qt-workbench/validation.md#uiu-session-01-explicit-ownership-foundation)
+resource reservations. Its [focused acceptance](development/features/unified-qt-workbench/validation.md#uiu-session-01-explicit-ownership-foundation)
 tests the pure application contracts. This source is not yet registered or wired
 to the existing downstream stores/workers. Actual direction adapters must reserve
-all reachable ownership, retain the lease outside panic unwinding and consume a
+all reachable payload ownership and container/shared-root populations, retain the lease outside panic unwinding and consume a
 real terminal envelope before reopening admission. Source-only primitive tests
 do not establish direction-session or aggregate-memory runtime acceptance.
 
@@ -1557,15 +1557,23 @@ tags queued callbacks explicitly. Known completion can release admission after
 GUI disposal; cancellation alone cannot. OS spawn failure returns its unstarted
 lease. [Transport evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-terminal-worker-transport)
 validates this source-only component; real direction consumers and aggregate
-reachable-byte admission are still required for session acceptance.
+payload-byte/container/root admission are still required for session acceptance.
 
 Explicit [accepted-edit cancellation transitions](development/features/unified-qt-workbench/design.md#uiu-session-01-accepted-edits-during-cancellation)
 preflight immutable candidates and checked revisions before cancelling the old
 generation. They preserve the legacy downstream edit/invalidation contract while
 retaining Busy until old-worker termination; ordinary reject-while-Busy configure
 operations remain available. Real adapter adoption is pending. The separate
-[retention accounting proposal](development/features/unified-qt-workbench/retention-contract-decision.md)
-does not change the accepted memory contract until its decision is recorded.
+[approved retention accounting contract](development/features/unified-qt-workbench/retention-contract-decision.md)
+bounds retained payload bytes, ordered-container entries and shared allocation
+roots independently. Payload bytes include fixed owned values, requested storage
+capacity and nested/cached/shared payloads; shared roots may be conservatively
+counted repeatedly. Allocator, private tree-node and reference-count bookkeeping
+are excluded from bytes; this is not a total-heap or RSS guarantee. Each dimension
+uses checked aggregate admission before allocation/copy, and reservations survive
+queued, replaced and aliased ownership until final drop. Scientific roots must
+provide typed footprint metadata and pre-production bounds through public APIs;
+Qt must not inspect private storage or infer bounds from serialized JSON.
 
 The [upstream application controller](development/features/unified-qt-workbench/design.md#uiu-session-01-actual-upstream-controller-preparation)
 under `apps/qt/src/upstream/` owns a real public `Simulation` and actual retained

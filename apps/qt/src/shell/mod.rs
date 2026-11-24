@@ -16,7 +16,8 @@ pub use identity::{
     ConfigurationGeneration, Direction, EditRevision, RunId, RunToken, SessionId, SessionKey,
 };
 pub use retention::{
-    Retained, RetainedBytes, RetentionBudget, RetentionError, RetentionReservation,
+    Retained, RetainedBytes, RetainedResources, RetentionBudget, RetentionError,
+    RetentionReservation,
 };
 pub use worker::{
     spawn_worker, WorkerEvent, WorkerSender, WorkerSpawnError, WorkerStatus, WorkerTerminal,

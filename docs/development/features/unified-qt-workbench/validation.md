@@ -3095,3 +3095,42 @@ The optimized executable remains the current accepted downstream artifact.
 Canonical two-direction host wiring, actual downstream shared-worker migration,
 Qt runtime/Level 2 and all later checklist gates remain pending; no task checkbox
 changes. No push, merge, release or installation occurs.
+
+
+## UIU-SESSION-01 approved multidimensional retention admission
+
+[Design](design.md#uiu-session-01-approved-multidimensional-retention-admission),
+[approved decision](retention-contract-decision.md),
+[architecture](../../../architecture.md#unified-qt-session-and-file-lifecycle),
+[exact evidence](session-retention-dimensions-evidence.json) and
+[UIU-SESSION-01](../../checklist.md#task-uiu-session-01) trace REQ-UIU-03/06/07.
+The user selected bounded payload bytes plus independent ordered-entry and
+shared-root counts on 2026-11-23. This supersedes the pending-decision wording
+in prior unit receipts; their executed tests and historical byte statistics
+remain unchanged. Bytes explicitly exclude allocator/tree/refcount bookkeeping
+and do not promise total heap or RSS.
+
+The shared application primitive preflights all checked additions and three
+inclusive ceilings atomically before changing any counter. Reservations survive
+queued, replaced and aliased ownership, releasing all quantities after payload
+destruction. Existing byte-only operations preserve their tests; their constructor
+admits zero entries/roots rather than unlimited populations.
+
+All **45 combined primary-checkout cases** pass, including eight new accounting
+cases and the existing ten real public upstream controller cases. Independent
+exact/limit-plus-one and overflow anchors cover every dimension; failed combined
+admission leaves all counters unchanged. Real threads test shared atomic admission,
+queued/final aliases and destructor/unwind ordering. A nonzero three-dimension
+lifecycle case verifies paused cancellation, rejected replacement and owner
+destruction without premature charge or run-lease release. Production/test Clippy with
+all warnings denied, format and the zero-scientific-dependency boundary pass;
+requirement/link/history checks are recorded in the evidence. No lint allowances.
+
+This is Level 1 primitive acceptance only. Synthetic charges do not estimate
+scientific allocations. Actual public root metadata, pre-production bounds and
+two-direction host adoption remain mandatory before aggregate acceptance. No
+registered Qt, scientific/API/binding/schema/QML/manifest source changes, so a
+Qt/QML/executable rebuild, wheel, workspace/CLI/package regression is not required
+for this unit. Existing compiled artifacts are reused and the latest accepted
+Qt executable stays current. UIU-SESSION-01 remains unchecked pending complete
+Level 2 runtime/compatibility acceptance; no historical checkbox changes.
