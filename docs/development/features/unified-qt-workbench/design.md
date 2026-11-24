@@ -4731,3 +4731,18 @@ status/help JSON and rejected Apply/Open/host transfers. Do not alter scientific
 assertions to accommodate the accounting changes. Other runtime/transport,
 loader paths, persistent QML and pending policy answers remain outside this unit;
 complete SESSION and its Level 2/3 gates stay open.
+
+### UIU-SESSION-01 approved presentation and channel boundaries
+
+The user's 2026-11-24 [approved clarification](retention-contract-decision.md#approved-presentation-and-channel-boundaries)
+resolves both pending policy questions. Persistent QML uses explicit logical
+UTF-16 bytes, array/object entries and open/retained-view counts; Rust keeps actual
+capacities. Standard channels charge message data and explicit channel/slot
+counts, excluding private synchronization bookkeeping. Reuse the existing bounded
+transport and admission primitives. The finite remaining owner inventory is
+unchanged; implementation and consumer validation are still required.
+
+REQ-UIU-07 and UIU-SESSION-01 retain the same IDs and acceptance owners. Earlier
+scoped receipts' pending-policy wording is historical, not a current blocker.
+No prior test is rerun or credited by this documentation clarification, and the
+parent remains unchecked until complete Level 2/3 gates pass.

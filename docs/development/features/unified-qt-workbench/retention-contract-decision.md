@@ -1,6 +1,7 @@
 # Session retention accounting decision
 
-Status: approved clarification, 2026-11-23; implementation acceptance is pending.
+Status: approved clarifications, 2026-11-23 and 2026-11-24;
+complete implementation acceptance is pending.
 Owner: [UIU-SESSION-01](../../checklist.md#task-uiu-session-01),
 [REQ-UIU-07](../../../requirements.md#req-uiu-07),
 [session architecture](../../../architecture.md#unified-qt-session-and-file-lifecycle).
@@ -122,3 +123,37 @@ Public root metadata and bounded-owner implementation may proceed. Actual host
 admission and its complete compatibility/lifecycle tests remain acceptance gates.
 Keep existing scientific limits and tests; establish explicit finite construction
 limits where the owning backend does not already enforce them.
+
+## Approved presentation and channel boundaries
+
+On 2026-11-24 the user selected both following clarifications for the remaining
+SESSION presentation/transport owners:
+
+- **Persistent QML:** use explicit logical UTF-16 byte limits, array/object entry
+  limits and open/retained-view population limits. Rust retains its actual-capacity
+  accounting. Hidden/closed views that keep data must continue covering that data
+  until it is cleared or disposed; visibility alone does not release ownership.
+  Logical presentation quantities do not claim Qt JavaScript allocation capacity,
+  engine object headers, total heap or RSS.
+- **Standard channels:** charge message data and explicit channel/slot counts;
+  exclude private standard-library synchronization bookkeeping. Reuse existing
+  bounded transport, with no private queue-layout guesses or replacement transport
+  required solely to measure that bookkeeping. Payload guards and channel/slot
+  charges must survive queued messages, worker/sender aliases and disconnection
+  until their corresponding owners are disposed.
+
+These clarify [REQ-UIU-07](../../../requirements.md#req-uiu-07), the
+[session architecture](../../../architecture.md#unified-qt-session-and-file-lifecycle)
+and [UIU-SESSION-01](../../checklist.md#task-uiu-session-01). They preserve the
+approved Rust payload/container/shared-root quantities, temporary-execution
+boundary, scientific limits and all existing acceptance gates. Implement concrete
+logical presentation and channel populations with existing checked admission
+primitives; do not introduce another accounting framework or infer one domain's
+limit from an unrelated equal number.
+
+Acceptance must test each added population/quantity at and beyond its bound,
+replacement and source/target overlap, hidden-view retention, cancelled/stale/
+disconnected delivery and final alias cleanup in actual consumers. Earlier scoped
+receipts that list these questions as pending remain historical evidence; this
+approval resolves the policy questions without retroactively executing tests or
+accepting their remaining implementation. Complete SESSION stays unchecked.

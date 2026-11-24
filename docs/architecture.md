@@ -1761,6 +1761,15 @@ scratch use separate finite execution limits; no aggregate scratch-byte or RSS
 guarantee is claimed. Final retained capacities still require pre-production
 enforcement and admission.
 
+The user-approved [presentation/channel clarification](development/features/unified-qt-workbench/retention-contract-decision.md#approved-presentation-and-channel-boundaries)
+adds explicit logical UTF-16 bytes, array/object entries and open/retained-view
+limits for persistent QML, while Rust keeps actual-capacity accounting. Standard
+channels charge message data plus channel/slot populations and exclude private
+synchronization bookkeeping. Existing bounded transport remains appropriate;
+hidden data and queued/worker aliases remain covered until disposal. Concrete
+consumer implementation/acceptance is pending; no JavaScript capacity or total
+heap/RSS guarantee is claimed.
+
 The [retained-root metadata prerequisite](development/features/unified-qt-workbench/design.md#uiu-session-01-public-retained-root-metadata-prerequisite)
 uses a typed `RetainedFootprint` in the independent `merlin-api` leaf, re-exported
 through `merlin::common`. Each scientific owner audits its own private/cached
