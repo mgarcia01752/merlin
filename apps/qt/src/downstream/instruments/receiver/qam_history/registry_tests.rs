@@ -22,9 +22,7 @@ const TEST_LIMIT: RetainedResources = RetainedResources {
 };
 
 fn context() -> Context {
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(TEST_LIMIT).unwrap();
-    context
+    Context::for_application(ApplicationSessions::new(TEST_LIMIT).unwrap()).unwrap()
 }
 
 #[test]

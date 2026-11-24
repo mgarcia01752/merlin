@@ -84,9 +84,7 @@ fn budget() -> RetentionBudget {
     RetentionBudget::with_limits(FIXTURE_LIMIT)
 }
 fn context() -> Context {
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(FIXTURE_LIMIT).unwrap();
-    context
+    Context::for_application(ApplicationSessions::new(FIXTURE_LIMIT).unwrap()).unwrap()
 }
 fn settings() -> String {
     serde_json::to_string(&TransmissionSettings::default()).unwrap()
@@ -372,10 +370,7 @@ fn genuine_box_queue_and_stale_discard_release_only_the_final_product_owner() {
     tests::wait(&mut stale);
     assert!(stale.result.is_none());
     let prepared = retention::prepared_resources(stale.prepared.as_ref().unwrap().value()).unwrap();
-    let metadata = ApplicationSessions::new(FIXTURE_LIMIT)
-        .unwrap()
-        .budget()
-        .usage();
+    let metadata = context().application.budget().usage();
     assert_eq!(budget.usage(), plus(metadata, prepared));
 }
 
@@ -450,10 +445,7 @@ fn analyzer_rebind_is_transactional_and_rejects_active_or_result_bearing_transfe
         old.value()
     ));
     drop(old);
-    let source_metadata = ApplicationSessions::new(FIXTURE_LIMIT)
-        .unwrap()
-        .budget()
-        .usage();
+    let source_metadata = context().application.budget().usage();
     assert_eq!(source_budget.usage(), source_metadata);
     drop(source_context);
     assert_eq!(source_budget.usage(), RetainedResources::default());

@@ -116,7 +116,6 @@ fn publish(context: &Context, result: Option<Arc<ResultData>>) {
     context.result.with(|stored| *stored.borrow_mut() = result);
 }
 
-#[derive(Default)]
 pub(crate) struct Model {
     pub(crate) context: Context,
     pub options: Option<Options>,
@@ -130,7 +129,38 @@ pub(crate) struct Model {
     token: u64,
     generation: Option<SessionKey>,
 }
+
+impl Default for Model {
+    /// Creates the existing GUI model on its fixed bootstrap downstream Context.
+    /// # Returns
+    /// The same empty controls/request/result state as the original derived default.
+    fn default() -> Self {
+        Self::for_context(Context::default())
+    }
+}
+
 impl Model {
+    /// Creates an empty receiver model on an explicitly prepared downstream owner.
+    /// # Arguments
+    /// * `context` - Already constructed canonical-budget Stores; no selected-tab lookup.
+    /// # Returns
+    /// Original default fields without constructing another bootstrap host or run.
+    pub(crate) fn for_context(context: Context) -> Self {
+        Self {
+            context,
+            options: None,
+            verify: false,
+            request: None,
+            plan: None,
+            worker: None,
+            timing: None,
+            error: String::new(),
+            diagnostic: None,
+            token: Default::default(),
+            generation: None,
+        }
+    }
+
     /// Starts one Rust job; inputs are frozen and repeated Start while busy is ignored.
     pub(crate) fn start(&mut self) {
         self.poll();

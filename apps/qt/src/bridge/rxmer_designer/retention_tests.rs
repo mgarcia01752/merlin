@@ -25,8 +25,7 @@ enum Dimension {
 }
 
 fn owner() -> MeasurementInputsRust {
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(TEST_LIMIT).unwrap();
+    let context = Context::for_application(ApplicationSessions::new(TEST_LIMIT).unwrap()).unwrap();
     MeasurementInputsRust {
         context,
         ..Default::default()

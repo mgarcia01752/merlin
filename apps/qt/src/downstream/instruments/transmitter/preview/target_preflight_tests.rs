@@ -15,9 +15,7 @@ const FIXTURE_LIMIT: RetainedResources = RetainedResources {
 };
 
 fn context() -> Context {
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(FIXTURE_LIMIT).unwrap();
-    context
+    Context::for_application(ApplicationSessions::new(FIXTURE_LIMIT).unwrap()).unwrap()
 }
 
 fn settings() -> String {

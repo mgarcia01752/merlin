@@ -593,6 +593,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [save-completion unit](features/unified-qt-workbench/validation.md#uiu-session-01-retained-save-completion-data) admits queued Value/JSON capacity and preserves actual publication status if details are rejected. Real public-API JSON file, null/grid/value/time preservation, cancellation and existing-output no-overwrite cases support the focused unit. Remaining control/transport/closure/fixed infrastructure, retained presentation and full SESSION gates remain pending; keep this parent unchecked. Earlier unit frontier descriptions remain checkpoint history.
 
+  The [fixed Context Store unit](features/unified-qt-workbench/validation.md#uiu-session-01-canonical-fixed-downstream-stores) admits all five shared Store pointees/roots on the canonical budget. Detached project Stores remain independent; explicit construction and boxed editors preserve acyclic ownership and separate charges. Boundary/rollback/final-alias, complete affected Qt/QML and compatibility evidence are linked there. Fixed host/control/transport, other metadata, persistent presentation and full SESSION acceptance remain pending; keep this parent unchecked.
+
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
   Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).

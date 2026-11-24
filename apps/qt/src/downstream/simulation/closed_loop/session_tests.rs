@@ -51,12 +51,14 @@ fn rejected_host_metadata_preserves_the_accepted_real_report_and_request() {
     // never a scientific payload-size estimate or an application policy default.
     const TEST_HOST_PAYLOAD_LIMIT: usize = usize::MAX;
     const COMPLETE_SOURCE_DURATION_MS: u64 = 1;
-    let mut context = Context::isolated();
-    context.application = crate::shell::ApplicationSessions::new(crate::shell::RetainedResources {
-        payload_bytes: TEST_HOST_PAYLOAD_LIMIT,
-        ordered_entries: usize::MAX,
-        shared_roots: usize::MAX,
-    })
+    let context = Context::for_application(
+        crate::shell::ApplicationSessions::new(crate::shell::RetainedResources {
+            payload_bytes: TEST_HOST_PAYLOAD_LIMIT,
+            ordered_entries: usize::MAX,
+            shared_roots: usize::MAX,
+        })
+        .unwrap(),
+    )
     .unwrap();
     let mut model = prepared_model_with_duration(context.clone(), COMPLETE_SOURCE_DURATION_MS);
     model.start();
@@ -318,8 +320,9 @@ fn rejected_initial_performance_admission_returns_the_lease_without_dispatch_or_
         shared_roots: usize::MAX,
     };
     const OBSERVATION_MS: u64 = 1;
-    let mut context = Context::isolated();
-    context.application = crate::shell::ApplicationSessions::new(FIXTURE_LIMIT).unwrap();
+    let context =
+        Context::for_application(crate::shell::ApplicationSessions::new(FIXTURE_LIMIT).unwrap())
+            .unwrap();
     let mut model = prepared_model_with_duration(context.clone(), OBSERVATION_MS);
     model.start();
     wait_for(|| model.poll()["busy"] == false);

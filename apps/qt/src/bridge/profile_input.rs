@@ -184,7 +184,7 @@ impl bridge::ProfileInput {
     pub fn reload(mut self: core::pin::Pin<&mut Self>) {
         let prepared =
             crate::downstream::workbench::project_load::take(&self.rust().context, |models| {
-                models.profile.take()
+                models.profile.take().map(|model| *model)
             });
         if let Some(model) = prepared {
             let _ = self.as_mut().rust_mut().adopt_model(model);

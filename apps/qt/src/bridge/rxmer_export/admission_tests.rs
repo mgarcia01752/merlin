@@ -29,8 +29,7 @@ const SELECTION: &str = r#"{"first":1,"last":1,"clamp":true,"collection":false}"
 /// # Panics
 /// Panics if the checked workbench or existing preflight no longer loads.
 pub(super) fn prepared_owner() -> (MeasurementInputsRust, String) {
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(TEST_LIMIT).unwrap();
+    let context = Context::for_application(ApplicationSessions::new(TEST_LIMIT).unwrap()).unwrap();
     let project: Project = serde_json::from_slice(include_bytes!(
         "../../../../../examples/workbench/single/workbench.merlin.json"
     ))

@@ -96,7 +96,7 @@ impl bridge::SourceInput {
     pub fn reload(mut self: core::pin::Pin<&mut Self>) {
         let context = self.rust().context.clone();
         let candidate = crate::downstream::workbench::project_load::take(&context, |prepared| {
-            prepared.source.take()
+            prepared.source.take().map(|model| *model)
         })
         .map(Ok)
         .unwrap_or_else(|| {
@@ -223,9 +223,7 @@ mod admission_tests {
     };
 
     fn context() -> Context {
-        let mut context = Context::isolated();
-        context.application = ApplicationSessions::new(FIXTURE_LIMIT).unwrap();
-        context
+        Context::for_application(ApplicationSessions::new(FIXTURE_LIMIT).unwrap()).unwrap()
     }
 
     fn candidate(context: &Context, name: &str) -> Retained<SourceModel> {

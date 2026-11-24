@@ -76,8 +76,7 @@ fn actual_worker_preserves_completed_science_and_static_warning_when_projection_
     );
     let report = serde_json::to_value(queued.backend().report()).unwrap();
     let current = Arc::new(*queued);
-    let mut context = Context::isolated();
-    context.application = application.clone();
+    let context = Context::for_application(application.clone()).unwrap();
     publish(&context, Some(Arc::clone(&current)));
     let mut model = Model::default();
     model.context = context.clone();

@@ -21,9 +21,7 @@ const DRAFT_BYTES: &[u8] = b"\0draft\n";
 const REPLACEMENT_BYTES: &[u8] = b"\0replacement\r\n";
 
 fn context() -> Context {
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(FIXTURE_LIMIT).unwrap();
-    context
+    Context::for_application(ApplicationSessions::new(FIXTURE_LIMIT).unwrap()).unwrap()
 }
 
 fn options() -> String {

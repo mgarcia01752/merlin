@@ -12,12 +12,14 @@ const PROFILE: &[u8] = include_bytes!(
     "../../../../../../../examples/measurements/single-channel/modulation_profile.bin"
 );
 fn prepared() -> (Context, ProfileModel, Model) {
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(RetainedResources {
-        payload_bytes: usize::MAX,
-        ordered_entries: usize::MAX,
-        shared_roots: usize::MAX,
-    })
+    let context = Context::for_application(
+        ApplicationSessions::new(RetainedResources {
+            payload_bytes: usize::MAX,
+            ordered_entries: usize::MAX,
+            shared_roots: usize::MAX,
+        })
+        .unwrap(),
+    )
     .unwrap();
     let mut profile = ProfileModel {
         context: context.clone(),

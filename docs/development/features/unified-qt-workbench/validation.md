@@ -4122,3 +4122,33 @@ new wheel, Python/full root workspace/unrelated CLI/packaging or repeat binary
 publisher run. Control/closure/channel/fixed infrastructure and retained
 presentation remain pending. UIU-SESSION-01 stays unchecked until complete Level 2
 and applicable milestone/final Level 3 acceptance, preserving completed history.
+
+
+## UIU-SESSION-01 canonical fixed downstream Stores
+
+The [focused design](design.md#uiu-session-01-canonical-fixed-downstream-stores)
+admits each actual shared Store pointee and root before allocation. Context aliases
+share the same five guards; partial construction rolls back. Detached preparation
+uses independent Stores on the target application budget, with explicit editor/
+receiver/preview construction. Boxed queued editors keep existing wrapper charges
+separate from fixed Store storage. Original take-before-attach avoids cycles.
+
+[Primary execution record](session-fixed-context-evidence.json) records 308 unique
+Qt Rust passes across a full 304-pass/four-failure run and 21 corrected fixture
+cases. Five new exact-boundary/rollback/alias/drop-order tests pass. The four failed
+fixtures now distinguish actual live Context Stores from surviving host metadata,
+without changing science or pressure/final-alias assertions. Initial compiler and
+fixture failures remain recorded; no second complete Qt execution is claimed.
+A later Clippy-only redundant fixture binding was removed and its two actual
+Apply cases rerun. All-target Clippy, formatting/final boundary, all 93 QML checks,
+six installed-native saved-project checks, optimized build and six fresh desktop
+probes pass. The complete
+QML run emits two Qt activeFocusOnTab warnings in unchanged receiver navigation;
+logs are preserved for UIU-QA-01, and all fresh native probes have empty stderr.
+Independent review is source-only; documentation/traceability checks join this receipt.
+
+No scientific/public API/binding, schema, dependency or registration changed.
+The existing wheel is reused; no new wheel, full root workspace or unrelated
+CLI/packaging suite ran. Fixed host/gate/accounting, worker infrastructure, other
+metadata and persistent presentation remain pending. UIU-SESSION-01 stays open
+until complete Level 2 and applicable milestone/final Level 3 acceptance.

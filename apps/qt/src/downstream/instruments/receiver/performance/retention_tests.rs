@@ -58,9 +58,7 @@ fn profile(result: &ResultData) -> SourceProfileFrame {
         .clone()
 }
 fn context() -> Context {
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(FIXTURE_LIMIT).unwrap();
-    context
+    Context::for_application(ApplicationSessions::new(FIXTURE_LIMIT).unwrap()).unwrap()
 }
 fn candidate(result: &ResultData) -> PreparedEntry {
     PreparedEntry::from_result(result.backend().profile_performance().unwrap(), result)

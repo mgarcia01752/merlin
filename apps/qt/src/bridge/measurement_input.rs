@@ -521,7 +521,7 @@ impl bridge::MeasurementInputs {
     pub fn reload(mut self: core::pin::Pin<&mut Self>) {
         if let Some(model) =
             crate::downstream::workbench::project_load::take(&self.rust().context, |prepared| {
-                prepared.measurements.take()
+                prepared.measurements.take().map(|model| *model)
             })
         {
             let _ = self.as_mut().rust_mut().adopt_model(model);

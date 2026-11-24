@@ -17,8 +17,8 @@ const TEST_MAXIMUM: RetainedResources = RetainedResources {
 };
 
 fn new_owner() -> ProfileInputRust {
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(TEST_MAXIMUM).unwrap();
+    let context =
+        Context::for_application(ApplicationSessions::new(TEST_MAXIMUM).unwrap()).unwrap();
     ProfileInputRust {
         context,
         ..Default::default()

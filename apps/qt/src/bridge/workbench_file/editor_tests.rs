@@ -19,12 +19,12 @@ const TEST_MAXIMUM: RetainedResources = RetainedResources {
 };
 
 fn populated() -> WorkbenchFileRust {
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(TEST_MAXIMUM).unwrap();
+    let context =
+        Context::for_application(ApplicationSessions::new(TEST_MAXIMUM).unwrap()).unwrap();
     PreparedProject::prepare(
         serde_json::from_slice(PROJECT).unwrap(),
         None,
-        context.application.budget(),
+        &context.application,
         context.application.snapshot(Direction::Downstream).key,
         session::snapshot(&context),
     )
@@ -111,10 +111,18 @@ fn successful_new_transfers_all_blank_editors_under_full_pressure_and_preserves_
             shared_roots: usize::MAX - usage.shared_roots,
         })
         .unwrap();
-    let source = project_load::take(&owner.context, |models| models.source.take()).unwrap();
-    let profile = project_load::take(&owner.context, |models| models.profile.take()).unwrap();
-    let measurements =
-        project_load::take(&owner.context, |models| models.measurements.take()).unwrap();
+    let source = project_load::take(&owner.context, |models| {
+        models.source.take().map(|model| *model)
+    })
+    .unwrap();
+    let profile = project_load::take(&owner.context, |models| {
+        models.profile.take().map(|model| *model)
+    })
+    .unwrap();
+    let measurements = project_load::take(&owner.context, |models| {
+        models.measurements.take().map(|model| *model)
+    })
+    .unwrap();
     assert!(source.value().snapshot().is_none());
     assert!(profile.value().accepted.is_none());
     assert!(measurements.value().accepted_rx.is_empty());

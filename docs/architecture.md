@@ -1573,9 +1573,9 @@ against that target budget during background preparation. Adoption holds the
 accepted-owner lock through the guarded canonical readiness transition, then
 stamps the genuine key and publishes the project. GUI attachment reuses those
 owners without a new reservation or generation change. Successful Apply/New
-discards unconsumed older transfers; rejected edits preserve them. Prepared
-editor/Designer graphs and other retained transport/infrastructure closure remain
-open under UIU-SESSION-01. See the
+discards unconsumed older transfers; rejected edits preserve them. Other
+application metadata, control/transport infrastructure and persistent presentation
+closure remain open under UIU-SESSION-01. See the
 [target preflight design](development/features/unified-qt-workbench/design.md#uiu-session-01-prepared-project-target-preflight).
 See the [focused design](development/features/unified-qt-workbench/design.md#uiu-session-01-atomic-accepted-inputs-and-prepared-projects).
 
@@ -1598,7 +1598,8 @@ before replacement; selected immutable Snapshot aliases retain their original
 scientific guards. Performance registries normalize retained buffers to occupied
 slots already covered by each Entry, and clear drops the full buffer. Initial
 catalog preparation admits both registries before replacing either old history.
-The fixed Store/Context graph remains separately pending. See the
+Fixed Store/Context admission is recorded in the
+[canonical Store unit](development/features/unified-qt-workbench/design.md#uiu-session-01-canonical-fixed-downstream-stores). See the
 [registry storage design](development/features/unified-qt-workbench/design.md#uiu-session-01-receiver-registry-storage).
 
 The GUI RxMER Designer Session and independently cloned generation/export Session
@@ -1668,6 +1669,18 @@ their direction owners. Reconfiguration cancels only its old generation, and
 prepared projects rebind to their actual target host. Aggregate scientific and
 application owner admission remains required; readiness metadata charges do not
 establish that closure.
+
+The [canonical fixed downstream Stores](development/features/unified-qt-workbench/design.md#uiu-session-01-canonical-fixed-downstream-stores)
+admit each actual `Arc<Retained<Mutex<T>>>` pointee and one shared root before
+allocation. The five Stores share their reservations through Context aliases;
+dynamic children retain their separate existing guards. Detached project loading
+creates independent Stores against the target application's same counter and
+passes only that host across the worker boundary. Explicit-context editor,
+receiver and preview construction avoids unused worker bootstrap hosts. Three
+queued editor wrappers are boxed, keeping their already charged storage separate
+from the fixed PreparedModels Store. Take-before-attach preserves acyclic target
+ownership. Fixed application/gate/accounting, worker infrastructure and persistent
+presentation admission remain separate pending acceptance gates.
 
 The [downstream request/plan admission](development/features/unified-qt-workbench/validation.md#uiu-session-01-downstream-request-and-plan-owner-admission)
 uses actual public root metadata with concrete wrapper storage and two added Arc

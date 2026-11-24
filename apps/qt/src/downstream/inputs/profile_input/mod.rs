@@ -39,6 +39,19 @@ pub(crate) fn settings(document: &str) -> Result<TransmissionSettings, String> {
 }
 
 impl ProfileModel {
+    /// Creates an empty profile editor on explicitly prepared downstream Stores.
+    /// # Arguments
+    /// * `context` - Actual canonical-budget owner, without a bootstrap/default lookup.
+    /// # Returns
+    /// Empty draft and accepted selection, preserving the existing default behavior.
+    pub(crate) fn for_context(context: crate::downstream::workbench::session::Context) -> Self {
+        Self {
+            context,
+            draft: None,
+            accepted: None,
+        }
+    }
+
     /// Measures this actual editor including original/catalog/presentation children.
     ///
     /// # Returns
@@ -101,8 +114,23 @@ impl ProfileModel {
     /// # Errors
     /// Rejects malformed saved data, capture bytes or unavailable profile IDs.
     pub(crate) fn from_saved(value: &Value) -> Result<Self, String> {
+        Self::from_saved_for_context(value, Default::default())
+    }
+
+    /// Reconstructs the existing saved profile on an explicit prepared owner.
+    /// # Arguments
+    /// * `value` - Original embedded file/profile selection or null.
+    /// * `context` - Canonical-budget candidate Stores, independent of the target Stores.
+    /// # Returns
+    /// Same decoded original draft/accepted pair without another default host.
+    /// # Errors
+    /// Original saved-format, capture and profile-selection validation errors.
+    pub(crate) fn from_saved_for_context(
+        value: &Value,
+        context: crate::downstream::workbench::session::Context,
+    ) -> Result<Self, String> {
         if value.is_null() {
-            return Ok(Self::default());
+            return Ok(Self::for_context(context));
         }
         #[derive(serde::Deserialize)]
         #[serde(deny_unknown_fields)]
@@ -115,7 +143,7 @@ impl ProfileModel {
         let capture = Capture::decode(name, bytes)?;
         capture.profile(saved.profile_id)?;
         Ok(Self {
-            context: Default::default(),
+            context,
             draft: Some(capture.clone()),
             accepted: Some((capture, saved.profile_id)),
         })

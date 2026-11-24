@@ -13,7 +13,7 @@ fn candidate(context: &Context) -> PreparedProject {
     PreparedProject::prepare(
         serde_json::from_slice(PROJECT).unwrap(),
         None,
-        context.application.budget(),
+        &context.application,
         context.application.snapshot(Direction::Downstream).key,
         session::snapshot(context),
     )
@@ -68,11 +68,11 @@ fn stale_identity_foreign_identity_and_foreign_budget_preserve_target_inputs_and
         .unwrap();
         // A populated pending editor proves rejection does not overwrite the transfer store.
         target.prepared.with(|models| {
-            models.borrow_mut().source = Some(
+            models.borrow_mut().source = Some(Box::new(
                 crate::downstream::inputs::source_input::model::SourceModel::default()
                     .admit(target.application.budget())
                     .unwrap(),
-            );
+            ));
         });
         let original = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml");
         let original_bytes = std::fs::read(&original).unwrap();
@@ -83,19 +83,19 @@ fn stale_identity_foreign_identity_and_foreign_budget_preserve_target_inputs_and
         .unwrap();
         assert!(crate::platform::input_file::is_original(&original));
         let key = target.application.snapshot(Direction::Downstream).key;
-        let (budget, identity) = match rejection {
-            0 => (target.application.budget(), key),
+        let (application, identity) = match rejection {
+            0 => (&target.application, key),
             1 => (
-                target.application.budget(),
+                &target.application,
                 foreign.application.snapshot(Direction::Downstream).key,
             ),
-            _ => (foreign.application.budget(), key),
+            _ => (&foreign.application, key),
         };
         let baseline = target.application.budget().usage();
         let prepared = PreparedProject::prepare(
             serde_json::from_slice(PROJECT).unwrap(),
             None,
-            budget,
+            application,
             identity,
             session::snapshot(&target),
         )
@@ -118,12 +118,14 @@ fn real_background_loader_rejection_preserves_current_inputs_original_paths_and_
 {
     // Accounting-only pressure fills the actual remaining byte policy; finite
     // scientific/capture preparation remains the unchanged worker implementation.
-    let mut context = Context::isolated();
-    context.application = crate::shell::ApplicationSessions::new(RetainedResources {
-        payload_bytes: usize::MAX,
-        ordered_entries: usize::MAX,
-        shared_roots: usize::MAX,
-    })
+    let context = Context::for_application(
+        crate::shell::ApplicationSessions::new(RetainedResources {
+            payload_bytes: usize::MAX,
+            ordered_entries: usize::MAX,
+            shared_roots: usize::MAX,
+        })
+        .unwrap(),
+    )
     .unwrap();
     session::update(&context, |_, sections| {
         sections.insert("source".into(), json!({"accepted":"preserve"}));

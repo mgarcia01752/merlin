@@ -138,10 +138,12 @@ fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedRe
     let request = request_retention::admit_request(request, &source).unwrap();
     let plan = request_retention::admit_plan(plan, &source).unwrap();
     let accepted_charge = source.usage();
-    let metadata = ApplicationSessions::new(fixture_budget_limits())
-        .unwrap()
-        .budget()
-        .usage();
+    let metadata =
+        Context::for_application(ApplicationSessions::new(fixture_budget_limits()).unwrap())
+            .unwrap()
+            .application
+            .budget()
+            .usage();
 
     // Exactly one complete report fits in the selected dimension. A second
     // actual target must reject while the first immutable report remains owned.
@@ -154,8 +156,7 @@ fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedRe
         ),
         dimension,
     );
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(maximum).unwrap();
+    let context = Context::for_application(ApplicationSessions::new(maximum).unwrap()).unwrap();
     crate::downstream::workbench::session::restore(&context, inputs, sections).unwrap();
     let request =
         request_retention::rebind_request(&request, context.application.budget()).unwrap();
@@ -410,8 +411,9 @@ fn rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension(
         crate::downstream::instruments::receiver::performance::clear(&context);
         drop(model);
         let metadata = sum(
-            ApplicationSessions::new(fixture_budget_limits())
+            Context::for_application(ApplicationSessions::new(fixture_budget_limits()).unwrap())
                 .unwrap()
+                .application
                 .budget()
                 .usage(),
             crate::downstream::workbench::session::fixture_reserved_resources(&context),

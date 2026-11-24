@@ -38,7 +38,6 @@ struct Job {
     receiver: Receiver<Result<Box<Retained<TransmitterPreview>>, String>>,
 }
 
-#[derive(Default)]
 pub(crate) struct Analyzer {
     pub(crate) context: Context,
     revision: u64,
@@ -50,7 +49,34 @@ pub(crate) struct Analyzer {
     notice: String,
 }
 
+impl Default for Analyzer {
+    /// Creates the existing GUI preview owner on its bootstrap downstream Context.
+    /// # Returns
+    /// Original empty revision/result/job/error defaults without generating samples.
+    fn default() -> Self {
+        Self::for_context(Context::default())
+    }
+}
+
 impl Analyzer {
+    /// Creates an empty preview adapter against explicit canonical-budget Stores.
+    /// # Arguments
+    /// * `context` - Independent prepared downstream owner; no bootstrap lookup occurs.
+    /// # Returns
+    /// Original default state with no request, result, worker or revision advance.
+    pub(crate) fn for_context(context: Context) -> Self {
+        Self {
+            context,
+            revision: Default::default(),
+            result_token: Default::default(),
+            prepared: None,
+            job: None,
+            result: None,
+            error: String::new(),
+            notice: String::new(),
+        }
+    }
+
     /// Freezes accepted settings/inputs and invalidates older sample results.
     /// # Arguments
     /// * `document` - Bounded accepted OCD JSON.

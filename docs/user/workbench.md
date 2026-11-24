@@ -18,6 +18,11 @@ configure a partial WB while blocks are yellow; Start still requires all green
 and a nonempty compatible profile selection. See
 [WB configuration](workbench-configuration.md).
 
+Opening a project prepares its editors independently while the current project
+remains available. Both sets of retained data share the application's resource
+limits. If preparation cannot fit, Open preserves the accepted project, results
+and Save destination; cancelling a load also preserves them.
+
 Actions throughout the workbench and its windows share rounded buttons with
 consistent spacing and visible keyboard focus. Apply accepts an editor's draft;
 Cancel or X discards it. Close dismisses a viewer. Tabs, diagram symbols and

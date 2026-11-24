@@ -22,9 +22,7 @@ const TEST_MAXIMUM: RetainedResources = RetainedResources {
 const TEST_TRANSFER_CAPACITY: usize = 1;
 
 fn context() -> Context {
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(TEST_MAXIMUM).unwrap();
-    context
+    Context::for_application(ApplicationSessions::new(TEST_MAXIMUM).unwrap()).unwrap()
 }
 fn project() -> Project {
     let mut value: Value = serde_json::from_slice(PROJECT).unwrap();
@@ -35,7 +33,7 @@ fn candidate(context: &Context) -> Result<PreparedProject, String> {
     PreparedProject::prepare(
         project(),
         None,
-        context.application.budget(),
+        &context.application,
         context.application.snapshot(Direction::Downstream).key,
         session::snapshot(context),
     )
@@ -68,11 +66,11 @@ fn every_target_dimension_rejects_before_project_key_inputs_or_pending_models_ch
             Ok(())
         })
         .unwrap();
-        context.prepared.borrow_mut().source = Some(
+        context.prepared.borrow_mut().source = Some(Box::new(
             crate::downstream::inputs::source_input::model::SourceModel::default()
                 .admit(context.application.budget())
                 .unwrap(),
-        );
+        ));
         let key = context.application.snapshot(Direction::Downstream);
         let usage = context.application.budget().usage();
         let guard = context
@@ -137,7 +135,7 @@ fn late_readiness_metadata_rejection_keeps_the_real_old_report_inputs_key_and_pe
     PreparedProject::prepare(
         old_project,
         None,
-        context.application.budget(),
+        &context.application,
         context.application.snapshot(Direction::Downstream).key,
         session::snapshot(&context),
     )
@@ -194,7 +192,7 @@ fn late_readiness_metadata_rejection_keeps_the_real_old_report_inputs_key_and_pe
 fn fully_prepared_cancelled_load_releases_all_target_owners_only_when_its_worker_is_drained() {
     let context = context();
     let budget = context.application.budget().clone();
-    let captured_budget = budget.clone();
+    let application = context.application.clone();
     let key = context.application.snapshot(Direction::Downstream).key;
     let expected = session::snapshot(&context);
     let baseline = budget.usage();
@@ -202,7 +200,7 @@ fn fully_prepared_cancelled_load_releases_all_target_owners_only_when_its_worker
     let (release, wait_release) = mpsc::sync_channel(TEST_TRANSFER_CAPACITY);
     let mut loader = Loader::default();
     loader.start_with(move |_, _| {
-        let prepared = PreparedProject::prepare(project(), None, &captured_budget, key, expected)?;
+        let prepared = PreparedProject::prepare(project(), None, &application, key, expected)?;
         ready.send(()).unwrap();
         wait_release.recv_timeout(HOST_WATCHDOG).unwrap();
         Ok(Some(prepared))

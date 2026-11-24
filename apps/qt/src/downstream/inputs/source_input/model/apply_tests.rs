@@ -8,14 +8,15 @@ use super::*;
 use crate::downstream::workbench::session::{self, Context};
 use crate::shell::{ApplicationSessions, RetainedResources};
 fn context() -> Context {
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(RetainedResources {
-        payload_bytes: usize::MAX,
-        ordered_entries: usize::MAX,
-        shared_roots: usize::MAX,
-    })
-    .unwrap();
-    context
+    Context::for_application(
+        ApplicationSessions::new(RetainedResources {
+            payload_bytes: usize::MAX,
+            ordered_entries: usize::MAX,
+            shared_roots: usize::MAX,
+        })
+        .unwrap(),
+    )
+    .unwrap()
 }
 fn options() -> String {
     // Existing valid independent continuous/fill seeds; append remains disabled.

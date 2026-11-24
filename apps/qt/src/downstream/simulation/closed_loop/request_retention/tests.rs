@@ -92,8 +92,9 @@ fn rejected<T>(result: Result<T, OwnerError>, dimension: Dimension) {
 }
 
 fn base_resources() -> RetainedResources {
-    ApplicationSessions::new(TEST_MAXIMUM)
+    Context::for_application(ApplicationSessions::new(TEST_MAXIMUM).unwrap())
         .unwrap()
+        .application
         .budget()
         .usage()
 }
@@ -179,8 +180,7 @@ fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Model, String)
             dimension,
         )
     });
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(maximum).unwrap();
+    let context = Context::for_application(ApplicationSessions::new(maximum).unwrap()).unwrap();
     crate::downstream::workbench::session::restore(&context, inputs, sections).unwrap();
     // Admit canonical metadata while the actual prepared scientific candidates
     // still belong to their finite preparation builders, before final wrappers.
@@ -382,11 +382,13 @@ fn rebind_reserves_both_target_roots_before_replacing_source_ownership() {
     let key = model.generation;
     let source_usage = source.budget().usage();
     for dimension in [Dimension::Payload, Dimension::Entries, Dimension::Roots] {
-        let mut target = Context::isolated();
-        target.application = ApplicationSessions::new(limited(
-            one_less(sum(base_resources(), charge), dimension),
-            dimension,
-        ))
+        let target = Context::for_application(
+            ApplicationSessions::new(limited(
+                one_less(sum(base_resources(), charge), dimension),
+                dimension,
+            ))
+            .unwrap(),
+        )
         .unwrap();
         let snapshot = target.application.snapshot(Direction::Downstream);
         assert!(model.rebind(target.clone()).is_err());
@@ -429,7 +431,14 @@ fn rebind_reserves_both_target_roots_before_replacing_source_ownership() {
     drop(request);
     drop(plan);
     drop(source_context);
-    assert_eq!(source.budget().usage(), base_resources());
+    // The source Context is gone; only its independently retained host remains.
+    assert_eq!(
+        source.budget().usage(),
+        ApplicationSessions::new(TEST_MAXIMUM)
+            .unwrap()
+            .budget()
+            .usage()
+    );
     assert!(model.invalidate());
     assert_eq!(
         target_application.budget().usage(),

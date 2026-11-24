@@ -6,6 +6,7 @@
 mod accepted;
 use super::store::Store;
 use crate::downstream::common::constants::DEFAULT_RESPONSE_ASSOCIATION_SECONDS;
+use crate::shell::{ApplicationSessions, RetentionError};
 pub(crate) use accepted::{Section, SectionSnapshot, Shared as AcceptedState, Snapshot};
 use merlin::downstream::{
     AdditionalLoss, ChannelEstimate, MeasurementMode, PowerConditioning, ProfileCapture,
@@ -50,15 +51,38 @@ impl Context {
     /// # Returns
     /// A new downstream owner, suitable for isolated preparation and tests.
     pub(crate) fn isolated() -> Self {
-        Self {
-            application: crate::shell::ApplicationSessions::desktop()
-                .expect("Application session identities unavailable"),
-            accepted: Store::default(),
-            result: Store::default(),
-            qam: Store::default(),
-            performance: Store::default(),
-            prepared: Store::default(),
-        }
+        let application =
+            ApplicationSessions::desktop().expect("Application session identities unavailable");
+        Self::for_application(application).expect("Application fixed Store admission unavailable")
+    }
+
+    /// Creates independent empty Stores on an existing canonical application host.
+    /// # Arguments
+    /// * `application` - Shared lifecycle host and exact accepting resource counter.
+    /// # Returns
+    /// Five separately charged empty Store allocations, without creating a host,
+    /// advancing generations, changing readiness or cloning scientific payloads.
+    /// Each Store covers its fixed pointee only; dynamic children remain separate.
+    /// # Errors
+    /// Rejects byte/root admission or accounting overflow. Any earlier Store
+    /// allocations and reservations are released before returning the error.
+    pub(crate) fn for_application(
+        application: ApplicationSessions,
+    ) -> Result<Self, RetentionError> {
+        let budget = application.budget();
+        let accepted = Store::new(None, budget)?;
+        let result = Store::new(None, budget)?;
+        let qam = Store::new(Default::default(), budget)?;
+        let performance = Store::new(Vec::new(), budget)?;
+        let prepared = Store::new(Default::default(), budget)?;
+        Ok(Self {
+            application,
+            accepted,
+            result,
+            qam,
+            performance,
+            prepared,
+        })
     }
 }
 
@@ -381,6 +405,10 @@ pub(crate) fn put_saved(context: &Context, key: &str, value: serde_json::Value) 
 }
 
 #[cfg(test)]
+#[path = "session/fixed_tests.rs"]
+mod fixed_tests;
+
+#[cfg(test)]
 mod tests {
     use super::*;
     use crate::downstream::instruments::receiver::{qam_history, selection};
@@ -471,7 +499,7 @@ mod tests {
             let prepared = super::super::project_load::PreparedProject::prepare(
                 project,
                 None,
-                target.application.budget(),
+                &target.application,
                 target
                     .application
                     .snapshot(crate::shell::Direction::Downstream)

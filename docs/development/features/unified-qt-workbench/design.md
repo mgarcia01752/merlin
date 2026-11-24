@@ -4346,3 +4346,31 @@ continues under separate finite execution limits; fixed control/transport/closur
 infrastructure and persistent QML remain pending. Execute relevant Rust/QML,
 Clippy/format/boundary/traceability and fresh executable checks; no new scientific
 API, binding/schema/dependency or memory framework. SESSION full gates stay open.
+
+
+### UIU-SESSION-01 canonical fixed downstream Stores
+
+REQ-UIU-03/06/07 and the open UIU-SESSION-01 require each Context's five shared
+Store allocations to participate in its actual application budget. The existing
+Store owns accepted inputs, latest result, QAM Registry, performance slots and
+queued PreparedModels. Context clones must share these existing guards; detached
+preparation needs separate Stores against the same canonical application host.
+
+| Path/symbol and disposition | Contract and focused acceptance |
+| --- | --- |
+| EDIT `downstream/workbench/store.rs`, `session.rs`; ADD owner tests | Existing Store becomes Arc<Retained<Mutex<T>>> and admits exact fixed storage/one root before allocation. Add fallible Context::for_application; isolated/default preserve their intended independent/bootstrap construction. Partial construction rolls back, clone/final-drop lifetimes stay exact. Dynamic child payloads retain their existing separate owner guards. |
+| EDIT `downstream/workbench/project_load.rs`, project file, profile/receiver/transmitter constructors | Detached preparation receives ApplicationSessions, never target Context, and creates separate canonical-budget Stores. Explicit-context construction avoids initializing unused worker-thread bootstrap hosts. Keep actual preflight/readiness and callback identity checks unchanged. Take prepared models before attaching the target Context to prevent a Store-to-model-to-same-Store cycle. |
+| EDIT queued editor storage and affected test fixtures | Box the three already charged Retained editor values so fixed Store layout and editor wrappers occupy distinct actual storage. Preserve original adapter take/adopt imports and saved JSON. Construct fixtures against their intended host rather than replacing only Context.application; update measured fixed-owner baselines without weakening original science or final-alias assertions. |
+
+Test exact byte/root rejection (zero ordered entries for fixed Stores), partial
+construction rollback, source/target identity, independent detached stores, stale/
+cancelled adoption and actual final alias disposal. Broaden to all affected Qt
+Rust/project/lifecycle consumers and QML/native compatibility because construction
+and shared ownership change. Preserve saved-workbench formats, numerical vectors,
+completed checklist history and stable caches. Application session/gate/accounting
+allocations, worker control/closure/transport and retained presentation remain
+separate pending owners; complete SESSION Level 2/milestone gates stay open.
+
+The isolated [source handoff](agent-handoffs/fixed-context-stores.md) preserves
+its preparation-only boundary; primary execution is in the
+[validation record](validation.md#uiu-session-01-canonical-fixed-downstream-stores).

@@ -1,0 +1,652 @@
+{
+  "schema_version": 1,
+  "task": "UIU-SESSION-01",
+  "requirements": [
+    "REQ-UIU-03",
+    "REQ-UIU-06",
+    "REQ-UIU-07"
+  ],
+  "status": "Focused Level 1 fixed Context Store integration; parent remains unchecked",
+  "integration_base": "dbc7e95c1a532bf9ae67666a6998b646509cd177",
+  "source_preparation": "99991d6df99d613927de6686e059ba6c35b791e0; exact five source paths adopted after parent/base equality checks; isolated preparation was source-only",
+  "design": "docs/development/features/unified-qt-workbench/design.md#uiu-session-01-canonical-fixed-downstream-stores",
+  "architecture": "docs/architecture.md#unified-qt-session-and-file-lifecycle",
+  "source_files": [
+    {
+      "path": "apps/qt/src/bridge/measurement_input.rs",
+      "sha256": "21dc98a52d6bfc0d1c8d88984b394c8abe1feca88e504b2b6c9ec20a58e0ab56"
+    },
+    {
+      "path": "apps/qt/src/bridge/measurement_input/retention_tests.rs",
+      "sha256": "c3214ccd78188f79d38b65e3b940a9888b1470a5d2316a0eac713ed991e2c539"
+    },
+    {
+      "path": "apps/qt/src/bridge/profile_input.rs",
+      "sha256": "bfab4023e86526cff59925d0445f1eb4d054900f79a3e030dcdad4e69c978403"
+    },
+    {
+      "path": "apps/qt/src/bridge/profile_input/retention_tests.rs",
+      "sha256": "63c7cc5cf3e1593f001fe5d8287e2e023161290266417149d3537931b399bde1"
+    },
+    {
+      "path": "apps/qt/src/bridge/rxmer_designer/capture_batch_tests.rs",
+      "sha256": "41506921784810e5ff3501dda346e339092ef58bc58ed68ea0e13528691823f1"
+    },
+    {
+      "path": "apps/qt/src/bridge/rxmer_designer/retention_tests.rs",
+      "sha256": "7ed5f966d35f5181e9d0cf77a979a0272a721b64be320681f6a1067513a8e8e3"
+    },
+    {
+      "path": "apps/qt/src/bridge/rxmer_export/admission_tests.rs",
+      "sha256": "b8b5c1f76f5bbd8e0b298d1179946ad43b7ecf7bc8d78ccab0b4b4a4ce650f7c"
+    },
+    {
+      "path": "apps/qt/src/bridge/source_input.rs",
+      "sha256": "abe354c8784e6c19b1c1df27e35b68fab90b0bbbe2052c92cc7932bf5ec47961"
+    },
+    {
+      "path": "apps/qt/src/bridge/workbench_file/editor_tests.rs",
+      "sha256": "0912ad686904c86dd00f9fb57f49454cae04d46db1aa799b104e9b71133a4f32"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/measurement_input/model/apply_tests.rs",
+      "sha256": "0b995884f9b00a0cafa24d8cfcc33f7643aa8980f6548887d3ff5871cfbcd787"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/profile_input/apply_tests.rs",
+      "sha256": "c02c239619ab73d4a9c828b728b81d2f0680dd2731f321fda11c5ff75929d669"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/profile_input/mod.rs",
+      "sha256": "dcc16620eb9deaa5ad289b8152b4a31cf3a99325591c20ee4c44d36161aeda74"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/source_input/model/admission_tests.rs",
+      "sha256": "21dcd4f3ffaa1a8d691b284498755578744fbabf12d82b13ad953bdbe7f925ed"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/source_input/model/apply_tests.rs",
+      "sha256": "450a423a4fc451755e3d6006b30a28aa99333704891a20aa57dbc790d90dd2d1"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/performance/retention_tests.rs",
+      "sha256": "a6e39f148b6d3b686d77b88cf6ef72addfccd96119d2dd9a9989e4e61cbf3033"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/qam_history/registry_tests.rs",
+      "sha256": "54618824541d864ad3fd5075173c43adc57db8e3e191ed75762be2a569a4f330"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/qam_history/retention_tests.rs",
+      "sha256": "92d0f5e7bf137961f524e114ee018f0793b605f81c364afe50f656c178a8d488"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/preview.rs",
+      "sha256": "4f55107693b94124e85bb082aff15bcf6d80f22f1feee385acd6349353007afd"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/preview/retention_tests.rs",
+      "sha256": "0c53eccddd1b3bfc6b10ccd44b710a8f028bbe31a8065f353852b0443a8878b5"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/preview/target_preflight_tests.rs",
+      "sha256": "18c2bc075acd5a423649462e024ef07fe9c4a441a0006f6d47c5ad665c9c4313"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop.rs",
+      "sha256": "ece2a10ebc2d9ac846f8818ecdbbd6ffab9e02c840dadaac1368975d24b1b78d"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop/request_retention/tests.rs",
+      "sha256": "519adb237bbb64b7852203e9d4ccf1ec9f25b9eba0d67ae335a38151998c963c"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop/result_retention/projection_tests.rs",
+      "sha256": "88707140b60651235d10e6baaa5c7c2d589a3eb3cb63fee2ad4651f4274d1a0d"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop/result_retention/tests.rs",
+      "sha256": "3c2294db90158c8f0be377adbd3d37cadd5b0e6ea1f8631eb3e0efb78a1ba68b"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop/session_tests.rs",
+      "sha256": "3f9a13d4a31c740b80f3c5b4ca46bd94f5765e29e73dfbeac5c19b2422ad772d"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop/target_preflight_tests.rs",
+      "sha256": "ebb2b807afe09cdac92b3ec61138917d71c76cd1759682bc3a492db62be84258"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/project_file.rs",
+      "sha256": "3ce5e46060691d597fefe30fd4ab09dcb981bb19f4436ccb71617cee85245197"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/project_load.rs",
+      "sha256": "a93ea63376a103a58d25903aef224f55516aae424ebae29a71a17667d99f9e89"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/project_load/admission_tests.rs",
+      "sha256": "c9e73161b21b163029e4d0cc8bd9184253d246cd5b85ce6c0836807caffdb7ca"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/project_load/target_tests.rs",
+      "sha256": "81f6114daf6f45bd5ebb0bf88669a24be20fbed6d572f3f4884f140292f3ceb9"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/session.rs",
+      "sha256": "190c9e8438aa89034c03d744c39692ad230a63bbcb79444dfc1b9b51521c423a"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/session/accepted/tests.rs",
+      "sha256": "b384c096888c154e8b59f7de232a659b1c21859cea289a3d19882fbb527e9674"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/session/fixed_tests.rs",
+      "sha256": "fe26fe3f9c8d8d4edea166f6fa76fbe7884399a26ce35c6fb64a2070aabeeb9a"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/store.rs",
+      "sha256": "027f95a3b4a47b4d31f4ca103771e5237050f4528640b85222632f4449d53034"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/store/retention_tests.rs",
+      "sha256": "acd569c2afbb99ba573940cc22fe60e883326c3863e80fe8a1c6b92e0441cb90"
+    }
+  ],
+  "implementation": [
+    "Each of the five shared Stores admits exact sizeof(Retained<Mutex<T>>) plus one root before Arc allocation. Context clones share these guards; dynamic children keep separate existing admission. Partial construction releases every prior Store.",
+    "Detached project preparation receives only ApplicationSessions plus immutable target identity and accepted Snapshot. It constructs independent Stores on that same canonical budget. Explicit receiver/preview/profile/project constructors avoid unused worker bootstrap hosts.",
+    "Three queued Retained editor wrappers are boxed, making their actual storage separate from fixed PreparedModels. Adapters unbox before existing adoption. Original take-before-attach order prevents target Store-to-model-to-same-Store cycles.",
+    "Fixtures construct Stores on the intended host instead of replacing Context.application. Measured live-Context and host-only baselines follow actual alias lifetimes; scientific, pressure, generation, pointer identity, no-overwrite and final-drop assertions remain."
+  ],
+  "independent_review": {
+    "agent": "qa_audit",
+    "scope": "Read-only production graph/double-charge/cycle/default preservation and four failed fixture corrections reviewed; no concrete defect or weakened scientific assertion found. No reviewer runtime claimed."
+  },
+  "validation": {
+    "rust_unique_passed": 308,
+    "initial_full_qt": {
+      "passed": 304,
+      "failed": 4,
+      "duration_seconds": 303.21,
+      "reason": "Four fixture baselines omitted live Stores, retained Stores after actual disposal, or lacked fixed Store headroom in a tight report fixture."
+    },
+    "corrected": {
+      "passed": 21,
+      "failed": 0,
+      "scope": "Three affected preview/request/result retention modules; production scientific code unchanged by fixture corrections. Pure fixture return simplification is nonsemantic. Unchanged full-run cases are reused; no second complete Qt run claimed.",
+      "cases": [
+        "downstream::instruments::transmitter::preview::retention_tests::actual_prepared_candidate_rejects_each_positive_dimension_and_aliases_keep_old_charge",
+        "downstream::instruments::transmitter::preview::retention_tests::analyzer_rebind_is_transactional_and_rejects_active_or_result_bearing_transfer",
+        "downstream::instruments::transmitter::preview::retention_tests::configuration_and_new_product_pressure_keep_the_same_accepted_source_result_and_revision",
+        "downstream::instruments::transmitter::preview::retention_tests::genuine_box_queue_and_stale_discard_release_only_the_final_product_owner",
+        "downstream::instruments::transmitter::preview::retention_tests::prepared_layout_uses_actual_spare_capacities_and_complete_option_wrapper_storage",
+        "downstream::instruments::transmitter::preview::retention_tests::prepared_rebind_precedes_aliasing_and_preserves_source_and_target_on_each_rejection",
+        "downstream::instruments::transmitter::preview::retention_tests::target_rejection_and_precancel_happen_without_replacing_current_science",
+        "downstream::simulation::closed_loop::request_retention::tests::actual_worker_retains_old_owners_while_a_new_candidate_is_accepted",
+        "downstream::simulation::closed_loop::request_retention::tests::every_real_candidate_dimension_preserves_accepted_science_generation_and_report",
+        "downstream::simulation::closed_loop::request_retention::tests::exact_public_quantities_and_cross_budget_aliases_cover_both_real_roots",
+        "downstream::simulation::closed_loop::request_retention::tests::execution_tests::insufficient_execution_input_rejects_its_owned_dimensions_before_control_and_preserves_source",
+        "downstream::simulation::closed_loop::request_retention::tests::execution_tests::narrowed_execution_owner_keeps_exact_public_charge_and_independent_source_until_final_drop",
+        "downstream::simulation::closed_loop::request_retention::tests::rebind_reserves_both_target_roots_before_replacing_source_ownership",
+        "downstream::simulation::closed_loop::request_retention::tests::wrapper_layout_adds_scientific_root_once_and_checks_every_arithmetic_boundary",
+        "downstream::simulation::closed_loop::result_retention::tests::every_actual_result_dimension_rejects_before_public_control_or_source_advance",
+        "downstream::simulation::closed_loop::result_retention::tests::exact_complete_and_precancelled_science_retain_the_preexecution_target",
+        "downstream::simulation::closed_loop::result_retention::tests::fixed_result_layout_counts_the_embedded_retained_reservation_once_and_checks_overflow",
+        "downstream::simulation::closed_loop::result_retention::tests::genuine_worker_queue_and_final_result_alias_keep_the_target_after_terminal_disposal",
+        "downstream::simulation::closed_loop::result_retention::tests::projection_tests::actual_worker_preserves_completed_science_and_static_warning_when_projection_admission_rejects",
+        "downstream::simulation::closed_loop::result_retention::tests::public_busy_failure_releases_only_the_new_target_and_preserves_old_aliases",
+        "downstream::simulation::closed_loop::result_retention::tests::rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension"
+      ]
+    },
+    "fixed_store_cases": [
+      "downstream::workbench::session::fixed_tests::context_admits_exact_fixed_bytes_and_roots_without_changing_readiness",
+      "downstream::workbench::session::fixed_tests::independent_contexts_share_the_host_and_clones_share_all_five_stores",
+      "downstream::workbench::session::fixed_tests::partial_context_construction_rolls_back_every_prior_store_on_pressure",
+      "downstream::workbench::store::retention_tests::final_alias_drops_payload_before_releasing_its_store_reservation",
+      "downstream::workbench::store::retention_tests::fixed_store_admits_exact_bytes_and_root_without_ordered_entries"
+    ],
+    "initial_compile": {
+      "status": "failed",
+      "reason": "New loader attempted Display on existing RetentionError. Reused the established retained-data rejection text; original failed logs retained."
+    },
+    "final_style_correction": "Clippy rejected a redundant test-fixture binding; returned the same constructor directly and reran its two actual Apply tests plus all-target Clippy. Original failure retained.",
+    "checks": [
+      {
+        "label": "format-request-admission-final",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.7536480999988271
+      },
+      {
+        "label": "rust-request-admission-final",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "--",
+          "--test-threads=2",
+          "downstream::inputs::source_input::model::apply_tests::"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.505595866998192
+      },
+      {
+        "label": "clippy-request-admission-final",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 8.263632988004247
+      },
+      {
+        "label": "format-request-check-final",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.5713997900020331
+      },
+      {
+        "label": "boundary-request-admission-final",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.27586754300864413
+      },
+      {
+        "label": "build-request-admission-final",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/qt-desktop.sh",
+          "build"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 92.38028259799466
+      }
+    ],
+    "qml": {
+      "passed": 93,
+      "warnings": [
+        "QWARN  : qmltestrunner::Workbench::test_receiver_retained_filters_response_soft_and_fec_navigation() QQuickItem: Cannot set activeFocusOnTab to false once item is the active focus item.",
+        "QWARN  : qmltestrunner::Workbench::test_receiver_retained_filters_response_soft_and_fec_navigation() QQuickItem: Cannot set activeFocusOnTab to false once item is the active focus item."
+      ],
+      "warning_disposition": "Two Qt focus warnings in the unchanged receiver navigation QML test; preserved for UIU-QA-01. No QML source changed; six fresh native probes have empty stderr.",
+      "commands": [
+        {
+          "label": "qml-all-initial",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 29.578248035992146
+        }
+      ]
+    },
+    "desktop": {
+      "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+      "sha256": "8eae93c1977f2dd20682ffb3e43e781fba787e4080bade6e47a5f1c2ef8d8691",
+      "display": ":0",
+      "display_dimensions": [
+        "dimensions:    1280x800 pixels (338x211 millimeters)"
+      ],
+      "qt_sdk_version": "6.8.3",
+      "commands": [
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.051554475008742884,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.10820805700495839,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.5475789390038699,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.03270703500311356,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.107968358002836,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test",
+            "--workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.9478840000083437,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        }
+      ]
+    },
+    "installed_native_saved": {
+      "passed": 6,
+      "record": {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_workbench_full_loop.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.234827951004263,
+        "unchanged_reference": {
+          "path": "docs/development/local/unified-qt-workbench/session-01-downstream-metadata/saved-full-loop-reference-final.stdout",
+          "sha256": "fa28da35df3fdadf658da023e121d3f60d75513cc6d611525c2b2e8a018b5e12"
+        },
+        "artifact": "Existing installed native wheel from accepted unchanged backend42d177; no wheel rebuilt"
+      }
+    },
+    "raw_records": "docs/development/local/unified-qt-workbench/session-01-fixed-context-stores",
+    "failed_attempts_preserved": true,
+    "initial_documentation": {
+      "status": "failed",
+      "reason": "Isolated source handoff lacked a reachable design link. Added focused design/validation references without restructuring; original failed validator logs retained."
+    },
+    "documentation_traceability": [
+      {
+        "label": "final-boundary",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.4437527870031772
+      },
+      {
+        "label": "strict-matrix",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/api_operation_matrix.py",
+          "--exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-query-envelope/rust-exports.json",
+          "--native-exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-query-envelope-native/native-exports.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/namespace-test-results.json",
+          "--executed-record",
+          "docs/development/features/pnm-measurement-inputs/decoder-test-results.json",
+          "--executed-record",
+          "docs/development/features/pnm-measurement-inputs/association-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/python-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/python-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-estimate-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-soft-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-resource-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-downstream-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-input-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-archive-bound-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-output-bound-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-query-envelope-operation-test-results.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.276587423999445
+      },
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.929130958000314
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 9.46524519000377
+      },
+      {
+        "label": "uiu-history",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/audit_foundation_uiu_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.10901878299773671
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03349032800178975
+      },
+      {
+        "label": "guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.033592262989259325
+      },
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.594590844004415
+      },
+      {
+        "label": "diff",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03594831100781448
+      },
+      {
+        "label": "staged-diff",
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.010198741991189308
+      }
+    ]
+  },
+  "not_required": [
+    {
+      "checks": "New Python wheel, full root workspace, unrelated CLI/packaging regressions",
+      "reason": "Only private Qt Store/context and project preparation ownership changes. Scientific/public API/bindings, encoded schema, dependencies and registration are unchanged. All Qt Rust consumers, complete QML, installed saved-project/native compatibility and fresh executable probes covered."
+    }
+  ],
+  "reused": {
+    "backend_checkpoint": "42d177e24c476f5a3bfe532e0ad7f48d0e47fd26",
+    "rust_native_export_counts": [
+      623,
+      594
+    ],
+    "artifact": "Unchanged installed native wheel; six saved-project tests actually executed now. No new wheel or root scientific suite claimed."
+  },
+  "deferred": [
+    "Fixed ApplicationSessions/gate/accounting graph and worker control/closure/transport owners",
+    "Other retained application metadata and persistent presentation; QML policy clarification pending",
+    "Two unchanged QML navigation focus warnings for UIU-QA-01 review",
+    "Complete UIU-SESSION-01 Level 2 and applicable milestone/final Level 3"
+  ],
+  "preservation": "Existing source bytes, grids/nulls, independent numerical vectors and completed checklist states remain. No new scientific API or generic memory framework.",
+  "no_push_merge_release_or_system_install": true
+}

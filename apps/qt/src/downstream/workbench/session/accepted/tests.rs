@@ -22,9 +22,7 @@ const OLD_SEED: u16 = 17;
 const NEW_SEED: u16 = 31;
 
 fn context() -> Context {
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(TEST_MAXIMUM).unwrap();
-    context
+    Context::for_application(ApplicationSessions::new(TEST_MAXIMUM).unwrap()).unwrap()
 }
 fn accept(context: &Context, seed: u16) -> Result<(), String> {
     session::update(context, |inputs, sections| {

@@ -25,9 +25,7 @@ const WATCHDOG: Duration = Duration::from_secs(20);
 const POLL_INTERVAL: Duration = Duration::from_millis(5);
 
 fn context() -> Context {
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(FIXTURE_LIMIT).unwrap();
-    context
+    Context::for_application(ApplicationSessions::new(FIXTURE_LIMIT).unwrap()).unwrap()
 }
 
 fn candidate() -> Model {

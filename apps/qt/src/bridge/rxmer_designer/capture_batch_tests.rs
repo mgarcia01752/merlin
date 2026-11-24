@@ -26,8 +26,7 @@ enum Dimension {
 
 fn owner() -> (Session, MeasurementInputsRust, RetainedResources) {
     let (session, model) = super::tests::fixture();
-    let mut context = Context::isolated();
-    context.application = ApplicationSessions::new(TEST_LIMIT).unwrap();
+    let context = Context::for_application(ApplicationSessions::new(TEST_LIMIT).unwrap()).unwrap();
     let mut owner = MeasurementInputsRust {
         context,
         ..Default::default()

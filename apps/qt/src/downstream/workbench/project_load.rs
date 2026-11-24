@@ -24,12 +24,14 @@ use std::{
 /// Owned editor/request transfer consumed synchronously during GUI adoption.
 #[derive(Default)]
 pub(crate) struct PreparedModels {
-    pub source:
-        Option<crate::shell::Retained<crate::downstream::inputs::source_input::model::SourceModel>>,
+    pub source: Option<
+        Box<crate::shell::Retained<crate::downstream::inputs::source_input::model::SourceModel>>,
+    >,
     pub profile:
-        Option<crate::shell::Retained<crate::downstream::inputs::profile_input::ProfileModel>>,
-    pub measurements:
-        Option<crate::shell::Retained<crate::downstream::inputs::measurement_input::model::Model>>,
+        Option<Box<crate::shell::Retained<crate::downstream::inputs::profile_input::ProfileModel>>>,
+    pub measurements: Option<
+        Box<crate::shell::Retained<crate::downstream::inputs::measurement_input::model::Model>>,
+    >,
     pub receiver: Option<Model>,
     pub transmitter: Option<Analyzer>,
 }
@@ -80,7 +82,7 @@ impl PreparedProject {
                 dark: true,
             },
             None,
-            context.application.budget(),
+            &context.application,
             context
                 .application
                 .snapshot(crate::shell::Direction::Downstream)
@@ -93,7 +95,7 @@ impl PreparedProject {
     /// # Arguments
     /// * `project` - Bounded, decoded file document.
     /// * `path` - Explicit Save destination, None for update recovery.
-    /// * `budget` - Actual accepting host, covering accepted and queued input owners.
+    /// * `application` - Canonical accepting host, covering old and queued owners.
     /// * `target` - Exact downstream identity/generation captured when Open started.
     /// * `expected` - Original accepted owner captured at the same request boundary.
     /// # Returns
@@ -103,29 +105,28 @@ impl PreparedProject {
     pub(crate) fn prepare(
         project: Project,
         path: Option<PathBuf>,
-        budget: &crate::shell::RetentionBudget,
+        application: &crate::shell::ApplicationSessions,
         target: crate::shell::SessionKey,
         expected: Snapshot,
     ) -> Result<Self, String> {
+        let budget = application.budget();
+        let candidate_context = Context::for_application(application.clone())
+            .map_err(|_| "The session retained-data limit would be exceeded.".to_owned())?;
         let (
             inputs,
             Editors {
                 source,
-                mut profile,
+                profile,
                 measurements,
             },
-        ) = project.prepare()?;
+        ) = project.prepare_for_context(candidate_context.clone())?;
         let settings =
             serde_json::to_string(&project.transmission).map_err(|error| error.to_string())?;
-        let candidate_context = Context::isolated();
-        let mut receiver = Model::default();
-        receiver.context = candidate_context.clone();
-        profile.context = candidate_context.clone();
+        let mut receiver = Model::for_context(candidate_context.clone());
         receiver.options = project.receiver.clone();
         receiver.verify = project.comparison_enabled;
         receiver.prepare_inputs_for_budget(&settings, &inputs, &project.sections, budget)?;
-        let mut transmitter = Analyzer::default();
-        transmitter.context = candidate_context;
+        let mut transmitter = Analyzer::for_context(candidate_context);
         transmitter.configure_for_budget(
             &settings,
             project.sections.get("source").unwrap_or(&Value::Null),
@@ -147,9 +148,9 @@ impl PreparedProject {
             target,
             expected,
             models: PreparedModels {
-                source: Some(source),
-                profile: Some(profile),
-                measurements: Some(measurements),
+                source: Some(Box::new(source)),
+                profile: Some(Box::new(profile)),
+                measurements: Some(Box::new(measurements)),
                 receiver: Some(receiver),
                 transmitter: Some(transmitter),
             },
@@ -287,9 +288,9 @@ impl Loader {
         source: Option<crate::platform::startup::WorkbenchSource>,
         remember_path: bool,
     ) -> Value {
-        // Only the budget and immutable identity cross this boundary. Retaining
+        // Only the host and immutable identity cross this boundary. Retaining
         // the target Context inside its own prepared-model store would form a cycle.
-        let budget = context.application.budget().clone();
+        let application = context.application.clone();
         let target = context
             .application
             .snapshot(crate::shell::Direction::Downstream)
@@ -354,7 +355,7 @@ impl Loader {
                 return Ok(None);
             }
             stage.store(3, Ordering::Relaxed);
-            PreparedProject::prepare(project, destination, &budget, target, expected).map(Some)
+            PreparedProject::prepare(project, destination, &application, target, expected).map(Some)
         })
     }
 
@@ -611,7 +612,7 @@ mod tests {
                 PreparedProject::prepare(
                     project,
                     None,
-                    context.application.budget(),
+                    &context.application,
                     context
                         .application
                         .snapshot(crate::shell::Direction::Downstream)
@@ -642,7 +643,7 @@ mod tests {
                 PreparedProject::prepare(
                     project,
                     None,
-                    context.application.budget(),
+                    &context.application,
                     context
                         .application
                         .snapshot(crate::shell::Direction::Downstream)

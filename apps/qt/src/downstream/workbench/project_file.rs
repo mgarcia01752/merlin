@@ -82,6 +82,20 @@ impl<Sections: Borrow<BTreeMap<String, Value>> + Serialize> Project<Sections> {
     pub(crate) fn prepare(
         &self,
     ) -> Result<(crate::downstream::workbench::session::Inputs, Editors), String> {
+        self.prepare_for_context(Default::default())
+    }
+
+    /// Decodes the same saved originals on explicit detached canonical-budget Stores.
+    /// # Arguments
+    /// * `context` - Independent candidate Context sharing the target application host.
+    /// # Returns
+    /// Existing scientific input/editor values without worker bootstrap allocation.
+    /// # Errors
+    /// Original schema, section, hash, capture and configuration validation errors.
+    pub(crate) fn prepare_for_context(
+        &self,
+        context: crate::downstream::workbench::session::Context,
+    ) -> Result<(crate::downstream::workbench::session::Inputs, Editors), String> {
         let sections = self.sections.borrow();
         if ![1, 2].contains(&self.schema_version)
             || self.application != "MERLIN"
@@ -104,9 +118,11 @@ impl<Sections: Borrow<BTreeMap<String, Value>> + Serialize> Project<Sections> {
             source: crate::downstream::inputs::source_input::model::SourceModel::from_saved(
                 sections.get("source").unwrap_or(&Value::Null),
             )?,
-            profile: crate::downstream::inputs::profile_input::ProfileModel::from_saved(
-                sections.get("profile").unwrap_or(&Value::Null),
-            )?,
+            profile:
+                crate::downstream::inputs::profile_input::ProfileModel::from_saved_for_context(
+                    sections.get("profile").unwrap_or(&Value::Null),
+                    context,
+                )?,
             measurements: crate::downstream::inputs::measurement_input::model::Model::from_saved(
                 sections.get("measurements").unwrap_or(&Value::Null),
             )?,
