@@ -4461,3 +4461,55 @@ QML policy are separate work; complete SESSION acceptance remains open.
 The [source preparation handoff](agent-handoffs/control-retention-api.md) records
 the frozen Rust/native commits and their source-only validation. Primary runtime
 evidence belongs to the [integrated validation record](validation.md#uiu-session-01-scientific-control-allocation-metadata).
+
+
+### UIU-SESSION-01 concrete scientific control admission
+
+The accepted three-operation metadata prerequisite enables the next finite
+REQ-UIU-03/06/07 owner unit. Admit the existing control graphs and concrete
+directional cancellation adapters through Retained, RetentionReservation and the
+canonical host budget. No new public API or generic accounting framework.
+
+| Path and disposition | Ownership and acceptance |
+| --- | --- |
+| EDIT `apps/qt/src/downstream/simulation/closed_loop/worker.rs`, `closed_loop.rs`; ADD adjacent control tests | Admit the full DownstreamControl shared pointee before global begin. Each profile uses one Arc<Retained<FullLoopControl>> shared by Dispatch.active and execution, admitted before publishing active state or running science. Preserve requested stop/pause between profiles, completed prefixes and known-terminal lease handling. |
+| EDIT `apps/qt/src/downstream/instruments/transmitter/preview.rs`; REUSE existing local retention owner; ADD adjacent tests | Share one admitted Arc<Retained<TransmitterPreviewControl>> between Job and worker. Reject before clearing accepted status or creating the channel/spawn; preserve old results and guarded execution aliases through GUI disposal. |
+| EDIT `apps/qt/src/upstream/session.rs`, `upstream/workbench/mod.rs`; ADD adjacent tests | Admit UpstreamControl before global begin. Its existing Arc is shared by gate/controller/execution; data precedes its reservation. Start validates the actual host counter and rejects uncharged/foreign controls. Preserve optional common-stop semantics and old reports. |
+| EDIT exact existing constructor/pressure fixtures where required | Keep scientific assertions and pressure boundaries; supply the intended real host budget and include newly admitted control storage in independent fixture expectations. Do not change generic fixed-counter baselines or previously accepted owner arithmetic. |
+
+Primary execution also identified two existing request-owner fixtures in
+`closed_loop/request_retention/tests.rs`: real-run pressure must leave exact
+adapter/profile control headroom, and the acknowledged-pause ownership sum must
+include those live controls. Preserve candidate rejection and final-drop assertions;
+the cancellation floor includes the still-tracked adapter and its upper bound
+allows the actual profile control until execution releases it. Reconcile current
+ownership comments in `upstream/mod.rs` and `upstream/session.rs` without changing
+scientific behavior. These are focused primary supplements to frozen preparation.
+
+For a retained DS/preview control, subtract the scientific inline handle already
+included in its public footprint from the final Retained wrapper layout, then
+add the backend footprint and one new outer shared root. The complete graph has
+three roots and zero ordered entries. DS adapter admission covers its final
+pointee layout including its guard and inline Dispatch mutex; active scientific
+controls have their own charge. US adapter admission similarly subtracts its
+inline backend handle, adds that backend footprint and one outer shared root.
+Do not charge Accounting, gate, Sessions or Context Stores again.
+
+Validate independent layout formulas, exact/below byte/root limits, candidate
+rejection before lease/science, old accepted result survival, per-profile failure
+with completed prefixes, stop/pause races, genuine terminal/spawn/stale disposal
+and final GUI/gate/execution alias release. Expand targeted tests to all affected
+direction/lifecycle consumers and relevant Qt/QML checks. Native APIs and their
+exact accepted wheel may be reused if their source remains unchanged. Record
+source-only preparation separately from primary execution; parent SESSION stays
+unchecked. Timing, outer worker/transport storage, errors/paths/help and QML remain
+separate owners; channel/QML policy answers are not prerequisites for this unit.
+
+The [frozen source handoff](agent-handoffs/control-owner-admission.md) records
+source-only preparation from `62f98d5`. Primary
+[integrated validation](validation.md#uiu-session-01-concrete-scientific-control-admission)
+passes all ten new control cases and the affected existing consumers. The
+[evidence receipt](session-control-owner-admission-evidence.json) preserves the
+initial two fixture failures and exact corrections, actual commands/source hashes,
+final executable identity and reused API evidence. No scientific/public API or
+QML implementation changes were needed. Parent SESSION remains unchecked.

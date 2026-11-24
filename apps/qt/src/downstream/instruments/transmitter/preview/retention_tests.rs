@@ -118,11 +118,23 @@ fn configured() -> Analyzer {
 }
 fn wait_completed(model: &Analyzer) {
     let deadline = Instant::now() + WATCHDOG;
-    while model.job.as_ref().unwrap().control.snapshot().state != TransmitterPreviewState::Completed
+    while model.job.as_ref().unwrap().control.value().snapshot().state
+        != TransmitterPreviewState::Completed
     {
         assert!(
             Instant::now() < deadline,
             "Real preview completion watchdog"
+        );
+        std::thread::sleep(POLL_CADENCE);
+    }
+}
+
+fn wait_control_disposed(control: &std::sync::Weak<Retained<TransmitterPreviewControl>>) {
+    let deadline = Instant::now() + WATCHDOG;
+    while control.upgrade().is_some() {
+        assert!(
+            Instant::now() < deadline,
+            "Actual preview control disposal watchdog"
         );
         std::thread::sleep(POLL_CADENCE);
     }
@@ -265,7 +277,9 @@ fn target_rejection_and_precancel_happen_without_replacing_current_science() {
 fn configuration_and_new_product_pressure_keep_the_same_accepted_source_result_and_revision() {
     let mut model = configured();
     model.generate();
+    let finished_control = Arc::downgrade(&model.job.as_ref().unwrap().control);
     tests::wait(&mut model);
+    wait_control_disposed(&finished_control);
     let accepted = Arc::clone(model.prepared.as_ref().unwrap());
     let old_result = model.result.as_ref().unwrap().value() as *const TransmitterPreview;
     let revision = model.revision;
@@ -305,15 +319,29 @@ fn configuration_and_new_product_pressure_keep_the_same_accepted_source_result_a
             .unwrap(),
     )
     .unwrap();
+    let control = retention::control_resources(
+        TransmitterPreviewControl::new()
+            .retained_footprint()
+            .unwrap(),
+    )
+    .unwrap();
     for dimension in positive(product) {
         let pressure = budget
             .reserve_resources(only(
                 dimension,
-                quantity(FIXTURE_LIMIT, dimension) - quantity(baseline, dimension),
+                quantity(FIXTURE_LIMIT, dimension)
+                    - quantity(baseline, dimension)
+                    - quantity(control, dimension),
             ))
             .unwrap();
         model.generate();
+        assert!(
+            model.job.is_some(),
+            "Original product rejection must dispatch a real Job"
+        );
+        let finished_control = Arc::downgrade(&model.job.as_ref().unwrap().control);
         tests::wait(&mut model);
+        wait_control_disposed(&finished_control);
         assert_eq!(model.result_token, token);
         assert_eq!(
             model.result.as_ref().unwrap().value() as *const _,
@@ -353,15 +381,39 @@ fn genuine_box_queue_and_stale_discard_release_only_the_final_product_owner() {
         .recv_timeout(WATCHDOG)
         .unwrap()
         .unwrap();
-    assert_eq!(budget.usage(), plus(before, product));
-    assert!(queued.value().info().sample_count > 0);
-    drop(model);
     assert_eq!(
         budget.usage(),
-        crate::shell::ApplicationSessions::fixture_counter_resources()
-            .checked_add(product)
+        plus(
+            plus(before, product),
+            retention::control_resources(
+                model
+                    .job
+                    .as_ref()
+                    .unwrap()
+                    .control
+                    .value()
+                    .retained_footprint()
+                    .unwrap()
+            )
             .unwrap()
+        )
     );
+    assert!(queued.value().info().sample_count > 0);
+    drop(model);
+    let remaining = crate::shell::ApplicationSessions::fixture_counter_resources()
+        .checked_add(product)
+        .unwrap();
+    let deadline = Instant::now() + WATCHDOG;
+
+    // Receiving the product precedes worker return; its control guard drops last.
+    while budget.usage() != remaining {
+        assert!(
+            Instant::now() < deadline,
+            "Preview worker control disposal watchdog"
+        );
+        std::thread::sleep(POLL_CADENCE);
+    }
+    assert_eq!(budget.usage(), remaining);
     drop(queued);
     assert_eq!(
         budget.usage(),

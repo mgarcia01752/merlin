@@ -71,6 +71,9 @@ pub enum AdmissionError {
 pub struct UpstreamControl {
     backend: RunControl,
     cancellation_requested: AtomicBool,
+
+    // All backend state drops before its adapter's one shared reservation.
+    guard: Retained<()>,
 }
 
 /// Application rejection; accepted configuration and previous report survive.
@@ -81,6 +84,7 @@ pub enum ControllerError {
     StaleToken,
     StalePreparation,
     WorkerDisconnected,
+    ForeignControl,
 }
 
 /// Failure before worker admission, retaining the original unstarted lease.
@@ -120,8 +124,9 @@ struct Active {
 /// after the shell rechecks the generation/Open guard. This owner never changes
 /// accepted science under an unchanged key. Its shared budget admits actual
 /// scientific root quantities and fixed retained-wrapper storage before adoption.
-/// This is a partial application proof: outer controller/control/preparation,
-/// transport, DTO and shared budget-accounting owners need separate host charges.
+/// This is a partial application proof: outer controller/preparation,
+/// transport and DTO owners need separate host charges. The canonical host already
+/// admits its fixed session, gate and accounting pointees.
 pub struct UpstreamController {
     key: SessionKey,
 
@@ -188,18 +193,31 @@ impl PreparedSession {
 }
 
 impl UpstreamControl {
-    /// Wraps the caller's real public lifecycle handle without starting a run.
+    /// Admits a real public lifecycle handle before allocating its shared adapter.
     ///
     /// # Arguments
     /// * `backend` - Fresh per-run public control, optionally pre-paused/cancelled.
+    /// * `budget` - Exact canonical counter used by both the controller and gate.
     ///
     /// # Returns
-    /// Adapter to share via Arc with the shell gate and upstream controller.
-    pub fn new(backend: RunControl) -> Self {
-        Self {
+    /// One guarded Arc shared by gate, controller and worker; no raw clone escapes.
+    ///
+    /// # Errors
+    /// Public metadata or any checked aggregate dimension before lease acquisition.
+    pub fn new(backend: RunControl, budget: &RetentionBudget) -> Result<Arc<Self>, AdmissionError> {
+        let scientific = backend
+            .retained_footprint()
+            .map_err(|error| AdmissionError::Backend(error.into()))?;
+        let resources =
+            wrapped_resources::<Self, RunControl>(scientific).map_err(AdmissionError::Retention)?;
+        let reservation = budget
+            .reserve_resources(resources)
+            .map_err(AdmissionError::Retention)?;
+        Ok(Arc::new(Self {
             backend,
             cancellation_requested: AtomicBool::new(false),
-        }
+            guard: reservation.retain(()),
+        }))
     }
 }
 
@@ -331,11 +349,11 @@ impl UpstreamController {
     /// Immediately after shared transport dispatch; polling never joins workers.
     /// Source/configuration and target charges survive every worker/queued/old
     /// alias. No oversized-result rejection occurs after scientific execution.
-    /// Shared channel/control/host owners require separate application accounting.
+    /// Shared channel and other host owners require separate application accounting.
     ///
     /// # Errors
-    /// Busy, stale identity/preparation or OS spawn failure returns the original
-    /// unstarted lease. The consumed target releases on rejection; old reports
+    /// Busy, stale identity/preparation, foreign control or OS spawn failure returns
+    /// the original unstarted lease. The consumed target releases on rejection; old reports
     /// survive. The host acknowledges unstarted failure before another Start.
     pub fn start(
         &mut self,
@@ -351,6 +369,8 @@ impl UpstreamController {
             Some(ControllerError::StaleToken)
         } else if prepared.key != self.key || !Arc::ptr_eq(&prepared.owner, &self.session) {
             Some(ControllerError::StalePreparation)
+        } else if !self.budget.owns(&control.guard) {
+            Some(ControllerError::ForeignControl)
         } else {
             None
         };
@@ -586,3 +606,7 @@ fn lock<T>(mutex: &Mutex<T>) -> MutexGuard<'_, T> {
 #[cfg(test)]
 #[path = "tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "session/control_retention_tests.rs"]
+mod control_retention_tests;

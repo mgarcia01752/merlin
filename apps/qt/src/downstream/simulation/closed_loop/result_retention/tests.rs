@@ -152,7 +152,13 @@ fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedRe
     let maximum = limited(
         sum(
             sum(sum(metadata, input_charge), initial),
-            sum(accepted_charge, sum(working_charge, report_charge)),
+            sum(
+                accepted_charge,
+                sum(sum(working_charge, report_charge), {
+                    let (adapter, profile) = worker::fixture_control_resources();
+                    sum(adapter, profile)
+                }),
+            ),
         ),
         dimension,
     );
@@ -319,7 +325,7 @@ fn genuine_worker_queue_and_final_result_alias_keep_the_target_after_terminal_di
     let expected = resources(accepted.value().result_retained_bound().unwrap()).unwrap();
     let baseline = budget.usage();
     let key = application.configure_downstream(true).unwrap();
-    let control = Arc::new(worker::DownstreamControl::new());
+    let control = worker::DownstreamControl::new(budget).unwrap();
     let lease = application.begin(key, control.clone()).unwrap();
     let worker = worker::Worker::spawn(
         Arc::clone(&accepted),
@@ -343,7 +349,13 @@ fn genuine_worker_queue_and_final_result_alias_keep_the_target_after_terminal_di
     };
     application.validate_callback(token).unwrap();
     let expected = sum(expected, queued.observations.fixture_resources());
-    assert_eq!(budget.usage(), sum(baseline, expected));
+    assert_eq!(
+        budget.usage(),
+        sum(
+            sum(baseline, expected),
+            worker::fixture_control_resources().0
+        )
+    );
     assert_eq!(queued.job.status, ChannelJobStatus::Complete);
     let current = Arc::new(*queued);
     let old = Arc::clone(&current);

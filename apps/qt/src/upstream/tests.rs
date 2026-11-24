@@ -79,7 +79,7 @@ fn start(
     capacity: usize,
 ) -> RunToken {
     let prepared = controller.prepare_run().unwrap();
-    let control = Arc::new(UpstreamControl::new(backend));
+    let control = UpstreamControl::new(backend, &controller.budget).unwrap();
     let lease = identities
         .begin(Direction::Upstream, control.clone())
         .unwrap();
@@ -190,7 +190,7 @@ fn acknowledged_pause_keeps_global_slot_and_resume_uses_actual_backend() {
         controller.prepare_run(),
         Err(AdmissionError::Controller(ControllerError::Busy))
     ));
-    let other = Arc::new(UpstreamControl::new(RunControl::new()));
+    let other = UpstreamControl::new(RunControl::new(), &controller.budget).unwrap();
     assert!(matches!(
         identities.begin(Direction::Downstream, other),
         Err(SessionError::Dispatch(DispatchError::Busy(_)))
@@ -342,7 +342,7 @@ fn changed_generation_and_replaced_session_reject_returning_unstarted_lease() {
         } else {
             identities.configure_upstream(candidate).unwrap();
         }
-        let control = Arc::new(UpstreamControl::new(RunControl::new()));
+        let control = UpstreamControl::new(RunControl::new(), &controller.budget).unwrap();
         let lease = identities
             .begin(Direction::Upstream, control.clone())
             .unwrap();
@@ -415,7 +415,14 @@ fn disconnected_queue_and_controller_drop_release_only_after_actual_termination(
     wait_for(|| observer.progress().status == RunStatus::Completed);
     assert_eq!(
         budget.usage(),
-        combine([configuration_charge, target_charge])
+        combine([
+            configuration_charge,
+            target_charge,
+            wrapped_resources::<UpstreamControl, RunControl>(
+                observer.retained_footprint().unwrap()
+            )
+            .unwrap()
+        ])
     );
     assert!(gate.active().is_some());
     drop(controller);
@@ -585,7 +592,8 @@ fn prepared_target_from_another_owner_or_key_returns_the_original_lease() {
         let other = UpstreamController::new(foreign_key_value, prepared(&foreign_budget)).unwrap();
         let foreign_configuration = foreign_budget.usage();
         let target = other.prepare_run().unwrap();
-        let control = Arc::new(UpstreamControl::new(RunControl::new()));
+        let control = UpstreamControl::new(RunControl::new(), &controller.budget).unwrap();
+        let with_control = budget.usage();
         let lease = identities
             .begin(Direction::Upstream, control.clone())
             .unwrap();
@@ -600,11 +608,13 @@ fn prepared_target_from_another_owner_or_key_returns_the_original_lease() {
         ));
         assert_eq!(lease.token(), token);
         assert_eq!(control.backend.progress().status, RunStatus::Idle);
-        assert_eq!(budget.usage(), before);
+        assert_eq!(budget.usage(), with_control);
         assert_eq!(foreign_budget.usage(), foreign_configuration);
         assert_eq!(gate.active().unwrap().token, token);
         lease.acknowledge_termination().unwrap();
         assert!(gate.active().is_none());
+        drop(control);
+        assert_eq!(budget.usage(), before);
     }
 }
 

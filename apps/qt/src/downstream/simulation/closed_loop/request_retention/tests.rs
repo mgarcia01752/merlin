@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Real accepted request/plan quantities and partial application-owner lifetimes.
-use super::super::{latest, prepare_sweep, Context, Model, Options, TransmissionSettings};
+use super::super::{latest, prepare_sweep, worker, Context, Model, Options, TransmissionSettings};
 use super::*;
 use crate::shell::{ApplicationSessions, Direction, DispatchPhase};
 use merlin::downstream::ChannelJobStatus;
@@ -168,13 +168,17 @@ fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Model, String)
         crate::downstream::workbench::session::fixture_candidate_resources(&inputs, &sections);
     let maximum = tight.map_or(TEST_MAXIMUM, |dimension| {
         // The test first completes real science. Keep its independently preflighted
-        // result and active working-request charges before pressuring a new candidate.
+        // result, execution request and actual controls before pressuring a candidate.
+        let (adapter, profile) = worker::fixture_control_resources();
         limited(
             sum(
                 sum(sum(base_resources(), input_charge), initial),
                 sum(
                     actual,
-                    sum(working_allowance(&request), report_allowance(&request)),
+                    sum(
+                        sum(working_allowance(&request), report_allowance(&request)),
+                        sum(adapter, profile),
+                    ),
                 ),
             ),
             dimension,
@@ -309,6 +313,7 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     let old_charge = owners(&model);
     let old_result_charge = report_allowance(model.request.as_ref().unwrap().value());
     let old_working_charge = working_allowance(model.request.as_ref().unwrap().value());
+    let (adapter_charge, profile_control_charge) = worker::fixture_control_resources();
     let old_request = Arc::downgrade(model.request.as_ref().unwrap());
     let old_plan = Arc::downgrade(model.plan.as_ref().unwrap());
     model.start();
@@ -330,7 +335,10 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
                     &model.context
                 )
             ),
-            sum(old_charge, sum(old_working_charge, old_result_charge))
+            sum(
+                sum(old_charge, sum(old_working_charge, old_result_charge)),
+                sum(adapter_charge, profile_control_charge)
+            )
         )
     );
     let mut changed = model.options.clone().unwrap();
@@ -342,17 +350,23 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     // Profile plus Finished delivery cannot both pass the unchanged one-slot
     // backpressure before GUI polling; the old closure still owns both aliases.
     assert!(old_request.upgrade().is_some() && old_plan.upgrade().is_some());
-    let stable = sum(base, sum(old_result_charge, sum(old_charge, new_charge)));
+    let stable = sum(
+        sum(base, adapter_charge),
+        sum(old_result_charge, sum(old_charge, new_charge)),
+    );
     let actual = application.budget().usage();
     // Cancellation can finish the numerical call before Profile delivery. Only
     // that call's execution-input charge may already have dropped; queued science
     // and accepted source aliases remain charged until the original terminal gate.
-    // Display query/target copies may now coexist after cancellation. The stable
-    // source/result floor remains; only the execution input adds scientific roots.
+    // Display query/target copies may coexist after cancellation. The tracked
+    // adapter remains in the floor; execution input/profile control may still live.
     assert!(actual.payload_bytes >= stable.payload_bytes);
     assert!(actual.ordered_entries >= stable.ordered_entries);
     assert!(actual.shared_roots >= stable.shared_roots);
-    assert!(actual.shared_roots <= sum(stable, old_working_charge).shared_roots);
+    assert!(
+        actual.shared_roots
+            <= sum(stable, sum(old_working_charge, profile_control_charge)).shared_roots
+    );
     assert_eq!(
         application.active().unwrap().phase,
         DispatchPhase::Cancelling

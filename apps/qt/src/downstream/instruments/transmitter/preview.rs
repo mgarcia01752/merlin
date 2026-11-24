@@ -34,7 +34,7 @@ struct PreparedPreview {
 
 struct Job {
     revision: u64,
-    control: TransmitterPreviewControl,
+    control: Arc<Retained<TransmitterPreviewControl>>,
     receiver: Receiver<Result<Box<Retained<TransmitterPreview>>, String>>,
 }
 
@@ -194,16 +194,22 @@ impl Analyzer {
         else {
             return;
         };
+        let budget = self.context.application.budget().clone();
+        let control = match retention::admit_control(&budget) {
+            Ok(control) => control,
+            Err(error) => {
+                self.error = error.into_message();
+                return;
+            }
+        };
         self.error.clear();
         self.notice.clear();
-        let control = TransmitterPreviewControl::new();
-        let worker_control = control.clone();
-        let budget = self.context.application.budget().clone();
+        let worker_control = Arc::clone(&control);
         let (sender, receiver) = mpsc::sync_channel(IDLE_PREVIEW_COMPLETION_CAPACITY);
         let spawn = std::thread::Builder::new()
             .name("merlin-tx-spectrum".into())
             .spawn(move || {
-                let result = retention::generate(prepared, &worker_control, &budget)
+                let result = retention::generate(prepared, worker_control.value(), &budget)
                     .map(Box::new)
                     .map_err(PreviewError::into_message);
                 let _ = sender.send(result);
@@ -225,7 +231,7 @@ impl Analyzer {
     /// A live worker remains tracked until completion; prior results stay intact.
     pub(crate) fn cancel(&mut self) {
         if let Some(job) = &self.job {
-            job.control.cancel();
+            job.control.value().cancel();
         }
     }
 
@@ -242,7 +248,7 @@ impl Analyzer {
                         .take()
                         .expect("Completion requires a tracked worker");
                     if job.revision == self.revision {
-                        if job.control.snapshot().cancellation_requested {
+                        if job.control.value().snapshot().cancellation_requested {
                             self.notice =
                                 "Preview cancelled; accepted inputs are unchanged.".into();
                         } else {
@@ -290,7 +296,7 @@ impl Analyzer {
             .job
             .as_ref()
             .map(|job| {
-                let progress = job.control.snapshot();
+                let progress = job.control.value().snapshot();
                 (progress.completed_symbols, progress.total_symbols)
             })
             .unwrap_or_default();
@@ -671,3 +677,6 @@ mod retention_tests;
 #[cfg(test)]
 #[path = "preview/target_preflight_tests.rs"]
 mod target_preflight_tests;
+
+#[cfg(test)]
+mod control_retention_tests;

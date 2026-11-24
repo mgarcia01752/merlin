@@ -5,7 +5,10 @@
 //! Real public upstream runs through the production Qt application model.
 use super::*;
 use crate::shell::DispatchPhase;
-use std::time::{Duration, Instant};
+use std::{
+    sync::Arc,
+    time::{Duration, Instant},
+};
 
 const DOCUMENT: &[u8] = include_bytes!("../../../../../examples/cli/upstream/us-50khz.json");
 // Async scheduling policies are independent of scientific sample/runtime limits.

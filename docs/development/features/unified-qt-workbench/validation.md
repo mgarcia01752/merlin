@@ -4220,3 +4220,44 @@ its two receiver focus warnings remain historical final-QA inputs. Actual Qt
 control/wrapper/worker/transport admission, other retained metadata and persistent
 presentation are separate work. Channel and QML policy answers remain pending.
 UIU-SESSION-01 stays unchecked until complete Level 2 and applicable Level 3 gates.
+
+## UIU-SESSION-01 concrete scientific control admission
+
+The [focused owner design](design.md#uiu-session-01-concrete-scientific-control-admission)
+now admits the existing downstream full-loop, transmitter-preview and upstream
+controls through the canonical host budget. Directional cancellation adapters
+are charged before global begin; each scientific execution shares its admitted
+control rather than retaining an uncharged raw clone. Upstream Start rejects
+foreign-budget controls before backend claim and returns the original unstarted
+lease. Fixed host/counter/gate/Stores ownership is not charged again.
+
+The [primary receipt](session-control-owner-admission-evidence.json) records 92
+distinct affected Qt Rust passes: 47 downstream lifecycle, 16 preview, 22 upstream
+and seven host-lifecycle cases, including all ten new control cases. Independent
+layout formulas, exact/below byte/root limits, optional common cancellation,
+candidate rejection, old-result preservation, final aliases and genuine paused,
+cancelled, stale and terminal workers pass. The static invalid-thread-label case
+returns an unstarted lease; it is not an actual OS spawn-failure experiment.
+
+The initial downstream run passed 45 cases and failed two existing request-owner
+fixtures that omitted the newly admitted control quantities. Both cases pass
+after adding exact measured control headroom and live-owner expectations;
+scientific assertions and original candidate-pressure coverage remain. The other
+45 unchanged passing cases were not repeated. Initial failure logs are retained.
+Source review also corrected preview cleanup synchronization and ensured original
+product-pressure tests reach genuine dispatch rather than earlier control rejection.
+
+All-target Qt Clippy, formatting, the final public-API dependency boundary and the
+optimized Qt build pass. The Workbench QML suite passes 51 checks with no skips;
+two existing receiver activeFocusOnTab warnings remain final-QA observations.
+Six fresh desktop checks pass with empty stderr against the recorded executable.
+All sixteen preceding scientific/native API source hashes remain unchanged;
+their accepted Rust/native metadata parity and export inventories are explicitly
+reused, not rerun or counted as current execution. No wheel, full workspace,
+unrelated CLI, complete QML or packaging suite is reported as newly executed.
+
+The [source handoff](agent-handoffs/control-owner-admission.md) remains a
+preparation-only record. Timing, outer runtime owners, transport, errors/paths/help
+and persistent QML storage remain separate work; neither pending channel nor QML
+policy answer is assumed. Complete SESSION Level 2 and applicable milestone/final
+Level 3 gates remain intact, and UIU-SESSION-01 stays unchecked.

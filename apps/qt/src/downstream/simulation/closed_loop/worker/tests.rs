@@ -35,10 +35,11 @@ type Identities = ShellSessions<(), (), (), ()>;
 
 fn admit(
     control: &Arc<DownstreamControl>,
+    budget: &RetentionBudget,
 ) -> (RetentionBudget, DispatchGate, Identities, RunLease) {
     // Unit configuration payloads occupy zero bytes and issue genuine identities.
     // They neither stand in for scientific ownership nor claim aggregate admission.
-    let budget = RetentionBudget::with_limits(TEST_OWNER_LIMITS);
+    let budget = budget.clone();
     let gate = DispatchGate::default();
     let mut identities = ShellSessions::new(
         budget.clone(),
@@ -119,9 +120,10 @@ fn wait_for(mut predicate: impl FnMut() -> bool) {
 #[test]
 fn paused_public_worker_cancels_and_retains_its_actual_partial_report() {
     let timing = Arc::new(RunTiming::new());
-    let adapter = Arc::new(DownstreamControl::new());
+    let budget = RetentionBudget::with_limits(TEST_OWNER_LIMITS);
+    let adapter = DownstreamControl::new(&budget).unwrap();
     assert_eq!(adapter.acknowledged_pause(), None);
-    let (budget, gate, mut identities, lease) = admit(&adapter);
+    let (budget, gate, mut identities, lease) = admit(&adapter, &budget);
     let worker = spawned(Worker::spawn(
         request(PAUSED_OBSERVATION_MS, &budget),
         None,
@@ -134,7 +136,7 @@ fn paused_public_worker_cancels_and_retains_its_actual_partial_report() {
     let deadline = Instant::now() + CONTROL_ACK_TIMEOUT;
     let control = loop {
         if let Some(control) = lock(&worker.control.state).active.clone() {
-            if control.snapshot().state == FullLoopState::Paused {
+            if control.value().snapshot().state == FullLoopState::Paused {
                 break control;
             }
         }
@@ -148,14 +150,14 @@ fn paused_public_worker_cancels_and_retains_its_actual_partial_report() {
     gate.acknowledge_pause(worker.token(), true).unwrap();
     assert_eq!(gate.active().unwrap().phase, DispatchPhase::Paused);
     busy(&mut identities, &worker);
-    let before = control.snapshot().progress;
-    let age = control.last_progress_age_ms();
+    let before = control.value().snapshot().progress;
+    let age = control.value().last_progress_age_ms();
     std::thread::sleep(PAUSED_OBSERVATION_INTERVAL);
     assert_eq!(
         serde_json::to_value(before).unwrap(),
-        serde_json::to_value(control.snapshot().progress).unwrap()
+        serde_json::to_value(control.value().snapshot().progress).unwrap()
     );
-    if let (Some(before), Some(after)) = (age, control.last_progress_age_ms()) {
+    if let (Some(before), Some(after)) = (age, control.value().last_progress_age_ms()) {
         assert!(after > before);
     }
     assert!(worker.progress(&timing).0);
@@ -172,7 +174,7 @@ fn paused_public_worker_cancels_and_retains_its_actual_partial_report() {
         result.backend().report().summary.comparison.bits_tested,
         result.job.summary.comparison.bits_tested
     );
-    assert_eq!(control.snapshot().state, FullLoopState::Cancelled);
+    assert_eq!(control.value().snapshot().state, FullLoopState::Cancelled);
     let WorkerMessage::Finished(reason) = data(&worker) else {
         panic!("Cancelled single-profile worker must finish without another run");
     };
@@ -192,8 +194,9 @@ fn paused_public_worker_cancels_and_retains_its_actual_partial_report() {
 
 #[test]
 fn finished_data_keeps_real_completion_busy_until_terminal_disposal() {
-    let adapter = Arc::new(DownstreamControl::new());
-    let (budget, gate, mut identities, lease) = admit(&adapter);
+    let budget = RetentionBudget::with_limits(TEST_OWNER_LIMITS);
+    let adapter = DownstreamControl::new(&budget).unwrap();
+    let (budget, gate, mut identities, lease) = admit(&adapter, &budget);
     let worker = spawned(Worker::spawn(
         request(COMPLETE_OBSERVATION_MS, &budget),
         None,
@@ -229,8 +232,9 @@ fn finished_data_keeps_real_completion_busy_until_terminal_disposal() {
 fn transport_worker(
     operation: impl FnOnce(WorkerSender<WorkerMessage, String>) -> Result<(), String> + Send + 'static,
 ) -> (DispatchGate, Identities, Worker) {
-    let control = Arc::new(DownstreamControl::new());
-    let (_budget, gate, identities, lease) = admit(&control);
+    let budget = RetentionBudget::with_limits(TEST_OWNER_LIMITS);
+    let control = DownstreamControl::new(&budget).unwrap();
+    let (_budget, gate, identities, lease) = admit(&control, &budget);
     let token = lease.token();
     let receiver = spawn_worker(
         "downstream-terminal-fixture",

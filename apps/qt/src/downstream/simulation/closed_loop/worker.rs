@@ -11,12 +11,15 @@ use super::{
 use crate::{
     downstream::common::constants::PROFILE_COMPLETION_CAPACITY,
     shell::{
-        spawn_worker, RetentionBudget, RunCancellation, RunLease, RunToken, WorkerEvent,
-        WorkerSpawnError,
+        spawn_worker, Retained, RetainedResources, RetentionBudget, RetentionError,
+        RunCancellation, RunLease, RunToken, WorkerEvent, WorkerSpawnError,
     },
 };
 use merlin::downstream::{ChannelJobStatus, FullLoopControl, FullLoopRequest, FullLoopState};
-use std::sync::{mpsc, Arc, Mutex, MutexGuard};
+use std::{
+    mem::size_of,
+    sync::{mpsc, Arc, Mutex, MutexGuard},
+};
 
 pub(super) enum WorkerMessage {
     Profile(Box<ResultData>),
@@ -28,16 +31,18 @@ pub(super) enum WorkerMessage {
 struct Dispatch {
     cancelled: bool,
     paused: bool,
-    active: Option<FullLoopControl>,
+    active: Option<Arc<Retained<FullLoopControl>>>,
     index: usize,
     id: u8,
     completed: u64,
 }
 
 /// Shared application cancellation adapter; scientific state stays backend-owned.
-#[derive(Default)]
 pub(super) struct DownstreamControl {
     state: Mutex<Dispatch>,
+
+    // Dispatch and its active scientific owner drop before the adapter charge.
+    _guard: Retained<()>,
 }
 
 pub(super) struct Worker {
@@ -113,12 +118,22 @@ pub(super) fn run_one(
 }
 
 impl DownstreamControl {
-    /// Creates idle dispatch flags without starting or claiming scientific work.
+    /// Admits idle dispatch storage before allocating its shared cancellation adapter.
+    ///
+    /// # Arguments
+    /// * `budget` - Canonical host counter also covering active scientific controls.
     ///
     /// # Returns
-    /// Share this adapter with the canonical gate and its exact worker.
-    pub(super) fn new() -> Self {
-        Self::default()
+    /// One guarded Arc shared by the canonical gate and its exact worker.
+    ///
+    /// # Errors
+    /// Any aggregate dimension before adapter publication or lease acquisition.
+    pub(super) fn new(budget: &RetentionBudget) -> Result<Arc<Self>, RetentionError> {
+        let guard = budget.reserve_resources(adapter_resources())?.retain(());
+        Ok(Arc::new(Self {
+            state: Mutex::new(Dispatch::default()),
+            _guard: guard,
+        }))
     }
 
     /// Reads actual backend pause acknowledgement without changing execution.
@@ -131,7 +146,7 @@ impl DownstreamControl {
         if dispatch.cancelled {
             return None;
         }
-        let snapshot = dispatch.active.as_ref()?.snapshot();
+        let snapshot = dispatch.active.as_ref()?.value().snapshot();
         if snapshot.cancellation_requested {
             return None;
         }
@@ -154,7 +169,7 @@ impl DownstreamControl {
         }
         dispatch.cancelled = true;
         if let Some(control) = &dispatch.active {
-            control.cancel();
+            control.value().cancel();
         }
     }
 
@@ -165,9 +180,9 @@ impl DownstreamControl {
         if let Some(control) = &dispatch.active {
             if dispatch.paused {
                 // A terminal control can race with this request; no later source is advanced.
-                let _ = control.pause();
+                let _ = control.value().pause();
             } else {
-                control.resume();
+                control.value().resume();
             }
         }
     }
@@ -180,7 +195,7 @@ impl DownstreamControl {
     fn progress(&self, timing: &RunTiming) -> (bool, usize, u8, u64) {
         let mut dispatch = lock(&self.state);
         if let Some(control) = &dispatch.active {
-            dispatch.completed = timing.observe(control);
+            dispatch.completed = timing.observe(control.value());
         }
         (
             dispatch.paused,
@@ -262,33 +277,48 @@ impl Worker {
                         || Ok(request.value().as_ref().clone()),
                         |plan| plan.value().request(index),
                     );
-                    let control = FullLoopControl::new();
-                    {
-                        let mut dispatch = lock(&shared.state);
-                        if dispatch.cancelled {
-                            break;
+                    let outcome = match admit_profile_control(&retention) {
+                        Ok(control) => {
+                            {
+                                let mut dispatch = lock(&shared.state);
+                                if dispatch.cancelled {
+                                    break;
+                                }
+                                dispatch.index = index;
+                                dispatch.id = id;
+                                dispatch.completed = 0;
+                                if dispatch.paused {
+                                    // Preserve the public idle pause before any source step.
+                                    let _ = control.value().pause();
+                                }
+                                dispatch.active = Some(Arc::clone(&control));
+                                timing.begin_profile();
+                            }
+                            let outcome = prepared
+                                .map_err(|cause| cause.message().to_owned())
+                                .and_then(|request| {
+                                    run_one_admitted(
+                                        request,
+                                        budget - elapsed,
+                                        control.value(),
+                                        &retention,
+                                    )
+                                });
+                            {
+                                let mut dispatch = lock(&shared.state);
+                                dispatch.completed = timing.observe(control.value());
+                                timing.end_profile(id);
+                                dispatch.active = None;
+                            }
+                            outcome
                         }
-                        dispatch.index = index;
-                        dispatch.id = id;
-                        dispatch.completed = 0;
-                        if dispatch.paused {
-                            // Public idle controls support pause before any source step.
-                            let _ = control.pause();
+                        Err(error) => {
+                            if lock(&shared.state).cancelled {
+                                break;
+                            }
+                            Err(error)
                         }
-                        dispatch.active = Some(control.clone());
-                        timing.begin_profile();
-                    }
-                    let outcome = prepared
-                        .map_err(|cause| cause.message().to_owned())
-                        .and_then(|request| {
-                            run_one_admitted(request, budget - elapsed, &control, &retention)
-                        });
-                    {
-                        let mut dispatch = lock(&shared.state);
-                        dispatch.completed = timing.observe(&control);
-                        timing.end_profile(id);
-                        dispatch.active = None;
-                    }
+                    };
                     match outcome {
                         Ok(result) => {
                             elapsed = elapsed.saturating_add(result.job.elapsed_ms);
@@ -399,6 +429,65 @@ impl Drop for Worker {
         self.cancel();
     }
 }
+
+fn adapter_resources() -> RetainedResources {
+    RetainedResources {
+        payload_bytes: size_of::<DownstreamControl>(),
+        ordered_entries: 0,
+        shared_roots: 1,
+    }
+}
+
+fn profile_control_resources(
+    scientific: merlin::common::RetainedFootprint,
+) -> Result<RetainedResources, RetentionError> {
+    let children = scientific
+        .payload_bytes
+        .checked_sub(size_of::<FullLoopControl>())
+        .ok_or(RetentionError::ArithmeticOverflow)?;
+    Ok(RetainedResources {
+        payload_bytes: children
+            .checked_add(size_of::<Retained<FullLoopControl>>())
+            .ok_or(RetentionError::ArithmeticOverflow)?,
+        ordered_entries: scientific.ordered_entries,
+        shared_roots: scientific
+            .shared_roots
+            .checked_add(1)
+            .ok_or(RetentionError::ArithmeticOverflow)?,
+    })
+}
+
+fn admit_profile_control(
+    budget: &RetentionBudget,
+) -> Result<Arc<Retained<FullLoopControl>>, String> {
+    let control = FullLoopControl::new();
+    let scientific = control
+        .retained_footprint()
+        .map_err(|error| error.message().to_owned())?;
+    let resources = profile_control_resources(scientific).map_err(|error| {
+        super::application_error(crate::shell::ApplicationError::Retention(error))
+    })?;
+    let reservation = budget.reserve_resources(resources).map_err(|error| {
+        super::application_error(crate::shell::ApplicationError::Retention(error))
+    })?;
+    Ok(Arc::new(reservation.retain(control)))
+}
+
+/// Measures the two actual control charges for precise fixture pressure only.
+///
+/// # Returns
+/// Adapter and one scientific profile owner quantities; no production defaults.
+#[cfg(test)]
+pub(super) fn fixture_control_resources() -> (RetainedResources, RetainedResources) {
+    let control = FullLoopControl::new();
+    (
+        adapter_resources(),
+        profile_control_resources(control.retained_footprint().unwrap()).unwrap(),
+    )
+}
+
+#[cfg(test)]
+mod control_retention_tests;
 
 #[cfg(test)]
 mod tests;

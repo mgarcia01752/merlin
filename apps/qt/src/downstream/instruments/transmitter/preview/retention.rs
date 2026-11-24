@@ -256,3 +256,55 @@ pub(super) fn product_resources(
         shared_roots: scientific.shared_roots,
     })
 }
+
+/// Admits one actual preview control before shared publication or worker dispatch.
+///
+/// # Arguments
+/// * `budget` - Canonical host counter covering prepared, queued and old products.
+///
+/// # Returns
+/// A single guarded owner shared by the Job and worker; no raw control clone escapes.
+///
+/// # Errors
+/// Public metadata, checked wrapper arithmetic or target pressure before generation.
+pub(super) fn admit_control(
+    budget: &RetentionBudget,
+) -> Result<Arc<Retained<TransmitterPreviewControl>>, PreviewError> {
+    let control = TransmitterPreviewControl::new();
+    let scientific = control
+        .retained_footprint()
+        .map_err(PreviewError::Metadata)?;
+    let reservation = budget
+        .reserve_resources(control_resources(scientific).map_err(PreviewError::Retention)?)
+        .map_err(PreviewError::Retention)?;
+    Ok(Arc::new(reservation.retain(control)))
+}
+
+/// Replaces the once-counted scientific handle with its actual retained wrapper.
+///
+/// # Arguments
+/// * `scientific` - Complete public control metadata for this actual target layout.
+///
+/// # Returns
+/// Shared retained-control quantities; allocator headers stay outside payload bytes.
+///
+/// # Errors
+/// Checked root replacement or shared-root addition overflow.
+pub(super) fn control_resources(
+    scientific: RetainedFootprint,
+) -> Result<RetainedResources, RetentionError> {
+    let children = scientific
+        .payload_bytes
+        .checked_sub(size_of::<TransmitterPreviewControl>())
+        .ok_or(RetentionError::ArithmeticOverflow)?;
+    Ok(RetainedResources {
+        payload_bytes: children
+            .checked_add(size_of::<Retained<TransmitterPreviewControl>>())
+            .ok_or(RetentionError::ArithmeticOverflow)?,
+        ordered_entries: scientific.ordered_entries,
+        shared_roots: scientific
+            .shared_roots
+            .checked_add(1)
+            .ok_or(RetentionError::ArithmeticOverflow)?,
+    })
+}

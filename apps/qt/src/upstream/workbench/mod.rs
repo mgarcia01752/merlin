@@ -14,7 +14,6 @@ use crate::upstream::{
 };
 use merlin::upstream::{RunControl, RunStatus};
 use preparation::{Pending, Prepared};
-use std::sync::Arc;
 
 // Application input and UI diagnostic policies; neither is a normative PHY limit.
 pub(crate) const MAX_CONFIGURATION_BYTES: usize = 16 * 1024 * 1024;
@@ -240,7 +239,8 @@ impl Model {
 
     fn dispatch(&mut self, target: PreparedRun) -> Result<(), String> {
         let key = self.key.ok_or("Upstream configuration changed.")?;
-        let control = Arc::new(UpstreamControl::new(RunControl::new()));
+        let control = UpstreamControl::new(RunControl::new(), self.application.budget())
+            .map_err(|error| format!("{error:?}"))?;
         let lease = self
             .application
             .begin(key, control.clone())

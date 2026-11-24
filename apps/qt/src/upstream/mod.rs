@@ -8,8 +8,9 @@
 //! and REQ-UIU-12; the registered bridge delegates to the workbench model.
 //! The host supplies genuine shell identities, one shared dispatch
 //! gate and explicit transport policy. Public metadata/report bounds now admit
-//! scientific roots and concrete retained wrappers; outer application, control,
-//! transport, DTO and budget owners still need separate host charges. This
+//! scientific roots, concrete retained wrappers and scientific control adapters.
+//! The canonical host admits its fixed stores/counter/gate; outer controller,
+//! preparation, worker/transport and presentation owners remain separate work. This
 //! component and its QObject registration do not establish aggregate acceptance.
 mod session;
 pub(crate) mod workbench;

@@ -1779,6 +1779,17 @@ reuse existing common quantities and error categories. The
 validates Rust/native parity and affected consumers. Subsequent Qt admission and
 complete SESSION acceptance remain separate pending work.
 
+The [concrete control admission unit](development/features/unified-qt-workbench/design.md#uiu-session-01-concrete-scientific-control-admission)
+shares admitted scientific controls across Qt GUI, dispatch and execution aliases,
+with separate concrete directional adapter charges before Start. The upstream
+controller rejects a foreign-budget control before claiming the backend or lease.
+Reservations survive final execution aliases, including cancelled or stale jobs;
+product receipt alone does not prove worker termination. The
+[focused integrated evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-concrete-scientific-control-admission)
+preserves existing host ownership and scientific outcomes. Timing, outer workers,
+transport and remaining presentation owners still require separate admission;
+this does not establish complete aggregate SESSION acceptance.
+
 The [pre-production archive pair](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds)
 computes exact detached target quantities and checks every limit before copying.
 It preserves the legacy archive operation/statistic and scientific queries.

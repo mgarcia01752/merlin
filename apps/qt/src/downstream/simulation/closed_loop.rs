@@ -208,7 +208,13 @@ impl Model {
                 .map(|playback| vec![playback.profile.clone()])
                 .unwrap_or_default()
         };
-        let control = Arc::new(DownstreamControl::new());
+        let control = match DownstreamControl::new(self.context.application.budget()) {
+            Ok(control) => control,
+            Err(error) => {
+                self.error = application_error(ApplicationError::Retention(error));
+                return;
+            }
+        };
         let lease = match self.context.application.begin(key, control.clone()) {
             Ok(lease) => lease,
             Err(error) => {

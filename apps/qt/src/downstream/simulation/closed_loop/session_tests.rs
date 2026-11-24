@@ -164,7 +164,7 @@ fn actual_engines_share_paused_and_cancelling_admission_without_overwriting_resu
     let target = upstream.prepare_run().unwrap();
     let backend = RunControl::new();
     backend.pause();
-    let control = Arc::new(UpstreamControl::new(backend.clone()));
+    let control = UpstreamControl::new(backend.clone(), application.budget()).unwrap();
 
     downstream.start();
     downstream.pause();

@@ -19,7 +19,13 @@ fn actual_worker_preserves_completed_science_and_static_warning_when_projection_
         .usage();
     let maximum = sum(
         metadata,
-        sum(accepted_charge, sum(working_charge, backend_charge)),
+        sum(
+            accepted_charge,
+            sum(sum(working_charge, backend_charge), {
+                let (adapter, profile) = worker::fixture_control_resources();
+                sum(adapter, profile)
+            }),
+        ),
     );
     let application = ApplicationSessions::new(maximum).unwrap();
     let budget = application.budget();
@@ -27,7 +33,7 @@ fn actual_worker_preserves_completed_science_and_static_warning_when_projection_
     drop(source);
     assert_eq!(source_policy.usage(), RetainedResources::default());
     let key = application.configure_downstream(true).unwrap();
-    let control = Arc::new(worker::DownstreamControl::new());
+    let control = worker::DownstreamControl::new(budget).unwrap();
     let lease = application.begin(key, control.clone()).unwrap();
     let worker = worker::Worker::spawn(
         accepted.clone(),
@@ -72,7 +78,10 @@ fn actual_worker_preserves_completed_science_and_static_warning_when_projection_
     );
     assert_eq!(
         budget.usage(),
-        sum(metadata, sum(accepted_charge, backend_charge))
+        sum(
+            sum(metadata, sum(accepted_charge, backend_charge)),
+            worker::fixture_control_resources().0
+        )
     );
     let report = serde_json::to_value(queued.backend().report()).unwrap();
     let current = Arc::new(*queued);
