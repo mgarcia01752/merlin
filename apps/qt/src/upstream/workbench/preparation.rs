@@ -5,8 +5,10 @@
 //! Finite off-GUI preparation; these threads never hold a simulation run lease.
 mod capture;
 mod edit;
+mod grid;
 use super::captures::CaptureDisplay;
 use super::drafts::SharedDraft;
+use super::grid::Display as GridDisplay;
 use super::{error_text, UpstreamController};
 use crate::upstream::{PreparedRun, PreparedSession};
 use crate::{
@@ -41,6 +43,11 @@ struct InputFormat {
 type ControllerSlot = Arc<Retained<Mutex<Option<UpstreamController>>>>;
 
 pub(super) enum Pending {
+    Grid {
+        expected: SessionKey,
+        receiver: DeliveryReceiver<Result<Retained<GridDisplay>, WorkerFailure>>,
+        owner: ControllerSlot,
+    },
     Capture {
         expected: SessionKey,
         receiver: DeliveryReceiver<Result<Retained<CaptureDisplay>, WorkerFailure>>,
@@ -61,6 +68,12 @@ pub(super) enum Pending {
 }
 
 pub(super) enum Prepared {
+    Grid {
+        expected: SessionKey,
+        controller: UpstreamController,
+        candidate: Result<Retained<GridDisplay>, WorkerFailure>,
+        delivery: Option<RetentionReservation>,
+    },
     Capture {
         expected: SessionKey,
         candidate: Result<Retained<CaptureDisplay>, WorkerFailure>,
@@ -218,6 +231,16 @@ impl Pending {
     /// None while pending; original owner and an explicit error after disconnection.
     pub(super) fn poll(&self) -> Option<Prepared> {
         match self {
+            Self::Grid {
+                expected,
+                receiver,
+                owner,
+            } => receive(receiver).map(|(delivery, candidate)| Prepared::Grid {
+                expected: *expected,
+                controller: take_controller(owner),
+                candidate,
+                delivery,
+            }),
             Self::Capture { expected, receiver } => {
                 receive(receiver).map(|(delivery, candidate)| Prepared::Capture {
                     expected: *expected,

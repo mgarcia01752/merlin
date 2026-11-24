@@ -4990,3 +4990,60 @@ and earlier scientific milestones; no unrelated workspace/FEC suite or wheel
 rebuild is claimed. Resource-grid/shared instruments, project persistence,
 restart recovery and full final acceptance retain their existing tasks. Continue
 UIU-US-04 with the existing public resource-grid operation.
+
+
+## UIU-US-04 integrated native resource-grid acceptance
+
+The [implementation design](design.md#uiu-us-04-native-configured-resource-grid-integration)
+uses the existing idle public resource-grid operation; no scientific API,
+resource-placement algorithm or simulation behavior is added to Qt. The existing
+finite controller-slot worker restores the exact scientific owner before grid
+adoption, including cancellation and rejection. Canonical application identity,
+backend configuration generation and original wide sample/frame identities remain
+separate; eight explicit wide fields use lossless decimal-string presentation.
+
+The native Linux Qt 6.8.3 XCB/software/Fusion application loads the unchanged
+synthetic 50/25 kHz configuration files through real owned native pickers. Twelve
+actual views cover initial allocation, zoom in/out, pan, full carriers and relative
+frame selection. A separately installed public native-Python reference queries
+each exact rectangle and matches every cell, original role, nullable metadata,
+count and timing field. Inspection preserves the original cell/identity. Both
+direction keys, source/run progress and downstream accepted options remain
+unchanged; no waveform or scientific execution is inferred from configured cells.
+
+One Canvas and 71 visual objects render every actual view, with populations from
+1024 to 4096 cells. Observed query acknowledgement is 130–434 ms; the largest
+observed query heartbeat gap is 1193 ms on this VM. These are recorded observations,
+not a new latency guarantee. The actual [dark screenshot](../../../images/workbench/upstream-resource-grid-dark.png)
+shows original physical-carrier Y, frame-symbol X, role counts and metadata in
+the current native application. The complete configured base grant is the API's
+scope; the single choice is explicit rather than fabricated later batch grants.
+
+The first native attempt exposed a real 16384-cell presentation-entry rejection
+and failed its unchanged finite watchdog after eleven views. Its failure log and
+actual rejected-state image remain in ignored local evidence. Only the Qt
+viewport policy becomes 4096 cells, preserving the public 16384-cell and aggregate
+C5 ceilings. Fresh native acceptance then passes all twelve views. Separate
+real-component regressions preserve inspection on identical polling notifications
+and restore the frame selector's accepted binding after local admission rejection.
+The independent fixture preserves all 600 original cells and six resource roles.
+
+The [candidate evidence receipt](upstream-resource-grid-evidence.json) records
+all 493 Qt Rust cases passing, final 84 affected-case reruns, eighteen relevant
+QML suites with 305 pass records, all-target warnings-denied Clippy, formatting,
+zero-exception API boundary and the optimized build. The full Rust run precedes
+only a test-assertion correction: final Clippy required comparing the actual
+returned viewport budget with the public ceiling instead of asserting a
+compile-time constant. All 84 upstream cases execute again afterward; production
+code and the native artifact remain unchanged. No assertion is suppressed.
+
+Fresh actual native seven-editor configuration, downstream idle/run/pause/menu
+and six startup/project probes pass against that same executable. All 25
+packaging resource tests and documentation/traceability/history checks pass.
+Only UIU-US-04 changes its official completion state; earlier IDs and accepted
+history remain intact. Continue UIU-SHARED-01.
+No unrelated root workspace suite, Python wheel rebuild or CLI regression is
+required for this Qt-only change: all backend/binding/root manifest sources remain
+unchanged from accepted UIU-US-03. Its scientific, native and CLI/project evidence
+is reused only within that unchanged scope. Remaining shared instruments, project
+Save/Open, recovery and final full acceptance retain their official tasks.

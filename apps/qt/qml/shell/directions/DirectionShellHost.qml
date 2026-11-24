@@ -17,6 +17,7 @@ QtObject {
     readonly property var presentation: coverage.value || ({})
     readonly property var upstreamState: presentation.upstreamState || ({})
     readonly property var draftState: upstreamState.draft || ({})
+    readonly property var resourceGridState: upstreamState.resource_grid_view || ({})
     // One scalar cursor over compiled section tags, never retained source text.
     readonly property int noRequestedSection: -1
     property int reopenConfigurationIndex: noRequestedSection
@@ -30,6 +31,16 @@ QtObject {
 
     /** Couple native scalar metadata with its derived display strings before retention. */
     function candidate(metadata, upstream, message, isError) {
+        // A native query sequence changes with actual view requests. Preserve the
+        // admitted envelope between polls so inspected/hovered cells stay visible.
+        const previousGrid = upstreamState.resource_grid_view
+        const nextGrid = upstream.resource_grid_view
+        if (previousGrid && nextGrid && previousGrid.query_sequence === nextGrid.query_sequence
+                && previousGrid.status === nextGrid.status && previousGrid.reason === nextGrid.reason
+                && previousGrid.session_token === nextGrid.session_token
+                && previousGrid.configuration_generation === nextGrid.configuration_generation) {
+            upstream.resource_grid_view = previousGrid
+        }
         const status = upstream.error || (upstream.execution_view ? upstream.execution_view.status
             : upstream.preparing ? "Preparing upstream work"
             : upstream.busy ? (upstream.progress ? "Upstream simulation " + upstream.progress.status : "Upstream simulation active")
@@ -118,6 +129,40 @@ QtObject {
         const error = upstreamBackend.cancel_draft(token) || ""
         poll()
         return !error
+    }
+
+    /** Open a passive configured-resource query without acquiring a run lease. */
+    function beginResourceGrid() {
+        if (!accepts("upstream", presentation.upstreamIdentity)) {
+            return false
+        }
+        const error = upstreamBackend.begin_resource_grid() || ""
+        poll()
+        feedback(error)
+        return !error
+    }
+
+    /** Forward bounded viewport fields and their exact captured native context. */
+    function requestResourceGrid(request, context) {
+        if (!accepts("upstream", presentation.upstreamIdentity)) {
+            return false
+        }
+        const error = upstreamBackend.resource_grid(JSON.stringify(request), JSON.stringify(context)) || ""
+        poll()
+        feedback(error)
+        return !error
+    }
+
+    /** Validate the actual configured choice through the same native query route. */
+    function selectResourceGrant(grantId, context) {
+        const grid = resourceGridState.snapshot ? resourceGridState.snapshot.grid : null
+        if (!grid) {
+            return false
+        }
+        const target = Object.assign({}, context, {target_grant_id: String(grantId)})
+        return requestResourceGrid({frame_index: grid.frame_index, first_symbol: grid.first_symbol,
+            symbol_count: grid.symbol_count, first_carrier: grid.first_carrier,
+            carrier_count: grid.carrier_count, max_cells: resourceGridState.max_cells}, target)
     }
 
     /** Inspect an original capture through the native picker without applying it. */

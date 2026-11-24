@@ -77,11 +77,39 @@ ApplicationWindow {
     readonly property bool upstreamConfigurationProbeRequested: Qt.application.arguments.indexOf("--upstream-configuration-probe") >= 0
     readonly property bool upstreamExecutionProbeRequested: Qt.application.arguments.indexOf("--upstream-execution-probe") >= 0
     readonly property bool upstreamInputsProbeRequested: Qt.application.arguments.indexOf("--upstream-inputs-probe") >= 0
+    readonly property bool upstreamGridProbeRequested: Qt.application.arguments.indexOf("--upstream-grid-probe") >= 0
     property QtObject presentationProbe: null
     property QtObject directionProbe: null
     property QtObject upstreamConfigurationProbe: null
     property QtObject upstreamExecutionProbe: null
     property QtObject upstreamInputsProbe: null
+    property QtObject upstreamGridProbe: null
+    property Component upstreamGridProbeComponent: Component {
+        UpstreamResourceGridProbe {
+            onFinished: function(success, message) {
+                console.log("MERLIN_UPSTREAM_GRID_PROBE " + message)
+                Qt.exit(success ? 0 : 1)
+            }
+        }
+    }
+    /** Run the fixed native grid consumer with a fresh evidence destination. */
+    function startUpstreamGridProbe() {
+        const args = Qt.application.arguments
+        const imageArgument = args.indexOf("--upstream-grid-image")
+        if (imageArgument < 0 || imageArgument + 1 >= args.length) {
+            console.error("Upstream grid probe requires a fresh screenshot path.")
+            Qt.exit(1)
+            return
+        }
+        upstreamGridProbe = upstreamGridProbeComponent.createObject(window, {
+            rootWindow: window, workbench: workbench, tabs: directionTabs,
+            host: directionHost, controls: sharedControls, captureItem: unifiedFrame,
+            screenshotPath: args[imageArgument + 1]
+        })
+        if (!upstreamGridProbe) {
+            Qt.exit(1)
+        }
+    }
     property Component upstreamInputsProbeComponent: Component {
         UpstreamInputsProbe {
             onFinished: function(success, message) {
@@ -230,6 +258,8 @@ ApplicationWindow {
             Qt.callLater(startUpstreamExecutionProbe)
         } else if (upstreamInputsProbeRequested) {
             Qt.callLater(startUpstreamInputsProbe)
+        } else if (upstreamGridProbeRequested) {
+            Qt.callLater(startUpstreamGridProbe)
         } else if (Qt.application.arguments.indexOf("--smoke-test") >= 0) {
             smokeTimer.start()
         } else if (Qt.application.arguments.indexOf("--check-updates") >= 0) {
@@ -318,6 +348,9 @@ ApplicationWindow {
                     onConfigurationLoadRequested: directionHost.loadConfiguration()
                     onCaptureLoadRequested: function(family) { directionHost.loadCapture(family) }
                     onCapturePageRequested: function(family, first) { directionHost.capturePage(family, first) }
+                    onResourceGridRequested: directionHost.beginResourceGrid()
+                    onResourceGridViewRequested: function(request, context) { directionHost.requestResourceGrid(request, context) }
+                    onResourceGrantRequested: function(grantId, context) { directionHost.selectResourceGrant(grantId, context) }
                 }
             }
             onDirectionRequested: function(direction) { directionHost.selectDirection(direction) }

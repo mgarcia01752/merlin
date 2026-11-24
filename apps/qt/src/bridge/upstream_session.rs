@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Thin QObject adapter; the direction model owns asynchronous public API calls.
+use crate::upstream::workbench::MAX_GRID_REQUEST_BYTES;
 use crate::upstream::workbench::{CaptureFamily, MAX_CAPTURE_FAMILY_CHARACTERS};
 use crate::upstream::workbench::{Model, MAX_CONFIGURATION_BYTES};
 use crate::upstream::workbench::{MAX_DRAFT_CHANGE_BYTES, MAX_DRAFT_ID_CHARACTERS};
@@ -43,6 +44,24 @@ pub mod bridge {
         /// Empty after dispatch; no accepted scientific configuration is changed.
         #[qinvokable]
         fn capture_page(self: Pin<&mut UpstreamSession>, family: &QString, first: i32) -> QString;
+
+        /// Requests the configured base grant's default public resource rectangle.
+        /// # Returns
+        /// Empty after background dispatch; Poll establishes actual acceptance.
+        #[qinvokable]
+        fn begin_resource_grid(self: Pin<&mut UpstreamSession>) -> QString;
+
+        /// Requests an owned configured viewport with exact original context.
+        /// # Arguments
+        /// * `request`, `context` - Bounded JSON fields; no resource roles or samples.
+        /// # Returns
+        /// Empty after dispatch; errors retain previous scientific and display data.
+        #[qinvokable]
+        fn resource_grid(
+            self: Pin<&mut UpstreamSession>,
+            request: &QString,
+            context: &QString,
+        ) -> QString;
 
         /// Opens one isolated native configuration draft with exact current values.
         /// # Arguments
@@ -168,6 +187,50 @@ impl UpstreamSessionRust {
 }
 
 impl bridge::UpstreamSession {
+    /// Starts a passive configured-resource query without advancing the source.
+    /// # Returns
+    /// Empty after finite background dispatch; an actionable native error otherwise.
+    pub fn begin_resource_grid(mut self: core::pin::Pin<&mut Self>) -> QString {
+        let mut owner = self.as_mut().rust_mut();
+        let Some(model) = owner.ensure_model() else {
+            return QString::from(
+                crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+            );
+        };
+        QString::from(model.begin_resource_grid().err().unwrap_or_default())
+    }
+
+    /// Forwards only bounded viewport/context transport to the native direction owner.
+    /// # Arguments
+    /// * `request`, `context` - Original QML request and captured view identity.
+    /// # Returns
+    /// Empty after dispatch. Native error status settles rejected pending actions.
+    pub fn resource_grid(
+        mut self: core::pin::Pin<&mut Self>,
+        request: &QString,
+        context: &QString,
+    ) -> QString {
+        let mut owner = self.as_mut().rust_mut();
+        let Some(model) = owner.ensure_model() else {
+            return QString::from(
+                crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+            );
+        };
+        if request.len() > MAX_GRID_REQUEST_BYTES as isize
+            || context.len() > MAX_GRID_REQUEST_BYTES as isize
+        {
+            const MESSAGE: &str = "Resource grid request exceeds its transport byte limit.";
+            model.reject_grid_request(MESSAGE);
+            return QString::from(MESSAGE);
+        }
+        QString::from(
+            model
+                .request_resource_grid(&request.to_string(), &context.to_string())
+                .err()
+                .unwrap_or_default(),
+        )
+    }
+
     /// Selects exact capture bytes without creating an associated experiment.
     /// # Arguments
     /// * `family` - Compiled destination tag, bounded before its UTF-8 copy.

@@ -10,6 +10,7 @@ import "../shared/components"
 UpstreamDetailDialog {
     id: dialog
     signal sourceConfigurationRequested
+    signal resourceGridRequested
     readonly property real footerPadding: 10
     readonly property real footerSpacing: 10
     title: "CM Transmitter"
@@ -21,6 +22,12 @@ UpstreamDetailDialog {
         background: Item {}
         contentItem: RowLayout {
             spacing: dialog.footerSpacing
+            WorkbenchActionButton {
+                objectName: "upstreamTransmitterResourceGrid"
+                theme: dialog.theme
+                text: "Resource Grid"
+                onClicked: dialog.resourceGridRequested()
+            }
             WorkbenchActionButton {
                 objectName: "upstreamTransmitterConfigureSource"
                 theme: dialog.theme

@@ -9,12 +9,15 @@ import "../fixtures"
 import "../../qml/shared/theme"
 import "../../qml/shell/directions"
 import "../../qml/upstream"
+import "fixtures/ResourceGridFixture.js" as ResourceFixture
 
 // Actual presentation owners/routing; only native engine responses are fixtures.
 Pane {
     id: window
 
     readonly property int fixtureEntries: 100000
+    // Fixture rendering cap from the public grid policy; not a PHY limit.
+    readonly property int fixtureGridCellBudget: 16384
     readonly property string fixtureFieldKey: "ucd/opaque/randomization_seed"
     readonly property string fixtureGeneration: "9007199254740993"
     readonly property string fixtureLoadedGeneration: "9007199254740995"
@@ -319,6 +322,41 @@ Pane {
             verify(host.poll());
             compare(engine.snapshot.error, window.importError);
             compare(host.upstreamState.error, window.importError);
+        }
+        function test_grid_inspection_survives_unchanged_native_polling() {
+            const snapshot = ResourceFixture.snapshots[0];
+            engine.snapshot = Object.assign({}, engine.snapshot, {resource_grid_view: {
+                status: "ready", reason: "Configured allocation", query_sequence: "9007199254740993",
+                session_token: metadata.upstreamIdentity, snapshot_session_token: metadata.upstreamIdentity,
+                configuration_generation: String(snapshot.configuration_generation), max_cells: window.fixtureGridCellBudget,
+                snapshot: snapshot
+            }});
+            verify(host.poll());
+            verify(workbench.openResourceGrid());
+            const gridDialog = findChild(workbench, "upstreamResourceGridDialog");
+            verify(gridDialog !== null);
+            tryCompare(gridDialog, "opened", true);
+            const view = gridDialog.gridView;
+            tryCompare(view, "displayable", true);
+            const rectangle = view.cellRectangle(view.grid.cells[0]);
+            // Independent visual midpoint; no source coordinate is reconstructed.
+            view.inspectAt(rectangle.x + rectangle.width / 2, rectangle.y + rectangle.height / 2);
+            verify(view.inspectedCell !== null);
+            const inspected = view.inspectedCell;
+            const held = host.resourceGridState;
+            engine.snapshot = JSON.parse(JSON.stringify(engine.snapshot));
+            verify(host.poll());
+            compare(host.resourceGridState, held);
+            compare(view.inspectedCell, inspected);
+            engine.snapshot.resource_grid_view.query_sequence = "9007199254740994";
+            engine.snapshot.resource_grid_view.status = "error";
+            engine.snapshot.resource_grid_view.reason = "Original native viewport rejection";
+            verify(host.poll());
+            verify(host.resourceGridState !== held);
+            tryCompare(view, "displayable", false);
+            compare(view.inspectedCell, null);
+            gridDialog.close();
+            tryCompare(gridDialog, "visible", false);
         }
         function test_foreign_terminal(data) {
             const token = openDraft();

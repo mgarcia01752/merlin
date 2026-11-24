@@ -1228,7 +1228,7 @@ configuration generation, with Rust/native Python parity and finite cell/JSON
 budgets. It introduces no pilot placement or Qt scientific algorithm. See the
 [resource-grid owner/signature design](development/features/unified-qt-workbench/design.md#uiu-api-03-idle-upstream-resource-grid-observation).
 The [backend acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-03-idle-upstream-resource-grid-accepted)
-passes upstream/facade and installed-wheel checks; its Qt viewer remains UIU-US-04.
+passes upstream/facade and installed-wheel checks; its [native Qt viewer](development/features/unified-qt-workbench/validation.md#uiu-us-04-integrated-native-resource-grid-acceptance) has separate integrated acceptance.
 
 UIU-API-04's [instrument audit and report-view design](development/features/unified-qt-workbench/design.md#uiu-api-04-upstream-instrument-gaps-and-report-views)
 reuses upstream actual QAM/PSD and existing decoded/verification reports. The
@@ -2092,9 +2092,18 @@ covers actual source pickers, independent inspection and both measured runs.
 The OFDMA resource-grid viewer has symbol index on X and physical subcarrier
 index on Y. The accepted bounded idle upstream API observation exposes authoritative
 allocation/pilot coordinates and actual roles, grant/IUC/pattern metadata and
-counts. The planned Qt viewer only renders/inspects these results with bounded batched drawing,
-zoom/pan and selection. No pilot placement/allocation or one-object-per-cell grid
-belongs in QML. Preserve accepted operating modes and normative evidence in the
+counts. `upstream/workbench/grid` queries this public owner on the existing finite
+controller-slot worker; `grid_view` validates canonical context and manages the
+bounded presentation sequence. Backend generation and wide timing/identity fields
+remain lossless strings, distinct from the application key. The Qt viewer renders
+and inspects these results with bounded batched drawing, zoom/pan, relative-frame
+and configured-base-grant selection. Ordinary polling retains the same admitted
+envelope so local inspection survives. Its independent 4096-cell Qt viewport
+policy fits simultaneous old/new presentation copies without changing the public
+16384-cell or aggregate admission limits. [Integrated native acceptance](development/features/unified-qt-workbench/validation.md#uiu-us-04-integrated-native-resource-grid-acceptance)
+covers both numerologies, exact API comparisons, controls, object population and
+downstream compatibility. No pilot placement/allocation or one-object-per-cell
+grid belongs in QML. Preserve accepted operating modes and normative evidence in the
 backend; no wider PHY capability is implied by a visible control.
 
 Requirements: [REQ-UIU-10](requirements.md#req-uiu-10), [REQ-UIU-11](requirements.md#req-uiu-11), [REQ-UIU-12](requirements.md#req-uiu-12), [REQ-UIU-13](requirements.md#req-uiu-13), [REQ-UIU-14](requirements.md#req-uiu-14).

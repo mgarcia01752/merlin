@@ -5251,3 +5251,47 @@ This consumer now has [primary native input acceptance](validation.md#uiu-us-03-
 Its [receipt](upstream-inputs-evidence.json) records actual source imports,
 read-only measured configuration, independent 25/50 kHz recovery and downstream
 compatibility. Resource-grid and shared instruments retain their existing tasks.
+
+### UIU-US-04 native configured resource-grid integration
+
+The actual 25 kHz native interaction exposed presentation rejection for a
+16384-cell rectangle while old/new host and instrument copies coexist. The
+direction adapter therefore owns `MAX_GRID_VIEW_CELLS = 4096`, an independent
+Qt viewport population policy. It does not change the public 16384-cell query
+ceiling or any PHY limit. Default and subsequent requests use that smaller
+budget; excessive requests reject before dispatch. Full-carrier navigation
+keeps the corresponding symbol count within it. Existing C5 aggregate limits
+and ownership remain unchanged. The frame control restores its accepted binding
+on local admission failure, and identical admitted polling envelopes preserve
+cell inspection. Both behaviors have focused real-component regressions.
+
+Reuse the preserved `ResourceGridDialog`/`ResourceGridView` and public
+`Simulation::resource_grid` without adding a scientific API. A finite preparation
+worker borrows the original idle controller through the existing admitted slot,
+then restores it before success, cancellation or rejection. Adoption checks the
+canonical application key; the backend configuration generation remains distinct.
+The retained DTO preserves original roles, coordinates, timing, counts and nulls,
+converting wide identifiers/sample clocks to lossless strings before QML parsing.
+
+The diagram's transmitter drill-in opens a separate batched Canvas instrument.
+Viewport requests contain the six public request fields and exact captured
+session/backend-generation context. The current API observes one configured base
+grant; expose only that actual choice rather than inventing generated-run grant
+selection. Failed or stale requests clear pending UI actions and preserve the
+previous admitted data. A bounded native query sequence identifies presentation
+updates; ordinary shell polling reuses an unchanged grid envelope so selection
+and inspection persist. This adds no scientific/session identity or new memory
+accounting mechanism. Existing admission and C5 ownership cover the DTO and view.
+
+Acceptance includes literal geometry/metadata/null/role transport, lossless wide
+timing/identity, passive source/run invariance and atomic rejection, followed by
+actual Qt zoom/pan/frame/cell inspection, bounded object/render observations and
+downstream compatibility. Prepared renderer/probe files are not runtime acceptance.
+
+The [integrated native acceptance](validation.md#uiu-us-04-integrated-native-resource-grid-acceptance)
+and [compact receipt](upstream-resource-grid-evidence.json) close UIU-US-04 with
+actual 50/25 kHz GUI controls, twelve exact independent native-API comparisons,
+complete relevant Qt coverage and preserved downstream/editor/startup behavior.
+The [user guide](../../../user/upstream-workbench.md#inspect-configured-resources)
+contains a fresh actual dark screenshot. Final shared instruments, projects,
+restart recovery and full QA remain their existing delivery tasks.

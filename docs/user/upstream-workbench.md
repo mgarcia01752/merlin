@@ -114,6 +114,35 @@ accepted report. Configuration changes invalidate results tied to the old settin
 
 ![Actual independent upstream recovery in the native dark workbench](../images/workbench/upstream-execution-dark.png)
 
+## Inspect configured resources
+
+Open **CM Transmitter**, then **Resource Grid**. This passive view reads the
+accepted transmit allocation through the public Rust API; it does not start a
+simulation or show received samples. The horizontal axis is the original frame
+symbol; the vertical axis is the original physical carrier index.
+
+Use **Zoom In**, **Zoom Out**, the arrow buttons, drag or the mouse wheel to
+request another rectangle of at most 4096 cells, the Qt presentation policy.
+The public backend supports a separate, larger query ceiling. **Full Carriers** restores the original FFT
+carrier span within the same cell budget. **Frame** selects a relative frame of
+the configured grant. The grant selector identifies that one configured base
+grant; it does not invent later grants from an execution batch.
+
+Select a cell to inspect its exact backend metadata, including its role, original
+minislot, loading, sample timing and nullable visit/bit offsets. The legend keeps
+data, complementary, known pilot, zero-loaded, excluded and unallocated positions
+distinct. Metadata and counts describe the selected rectangle; full-frame/grant
+capacity remains separately reported. Positions precede transmit correction C,
+physical H and received C×H. See the [resource-grid guide](upstream/resource-grid.md)
+for these reference planes and coordinate definitions.
+
+Queries run away from the GUI thread. Controls wait for an accepted response;
+busy, stale, rejected or unavailable data never appears as a new valid grid.
+Changing configuration invalidates the old view. Switching tabs preserves the
+current observation and cell inspection without advancing source or run state.
+
+![Native configured upstream resource grid](../images/workbench/upstream-resource-grid-dark.png)
+
 ## Direction isolation
 
 Switching tabs preserves each direction's accepted settings. One simulation may
@@ -122,6 +151,5 @@ to control it. File project actions currently remain available on Downstream onl
 loading upstream configuration cannot replace the downstream project or its Save
 destination. Settings and About are shared.
 
-Resource-grid and shared scientific instruments retain their separate acceptance
-tasks. See the
+Shared scientific instruments retain their separate acceptance tasks. See the
 [workbench overview](workbench.md) for shared controls and presentation limits.

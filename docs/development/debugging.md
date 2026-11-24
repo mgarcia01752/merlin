@@ -141,3 +141,22 @@ image is separately scoped to verification content. Require successful
 independent of lifecycle completion. On failure the probe requests Stop only for
 its own exact upstream request. Normal startup creates no probe; update lookup is
 suppressed. No arbitrary QML or alternate scientific interface is loaded.
+
+## Upstream resource-grid probe
+
+`--upstream-grid-probe --upstream-grid-image /absolute/fresh/grid.png` runs the
+bundled native Main grid probe. Load the single downstream workbench with
+`--workbench`. An external runner answers `MERLIN_UPSTREAM_GRID_PICKER grid-50`
+and `grid-25` through the owned native file picker using the existing synthetic
+50/25 kHz upstream configuration documents. The probe checks passive allocation,
+zoom, pan, full-carrier and relative-frame requests, original cell inspection,
+one batched Canvas and preserved direction state. Recorded heartbeat and query
+durations are observations, not newly defined performance guarantees.
+
+At `MERLIN_UPSTREAM_GRID_CAPTURE ready`, the runner may capture the actual Main
+window during the finite grace period; the requested image separately captures
+grid content. Require successful `MERLIN_UPSTREAM_GRID_PROBE` JSON, both picker
+responses and fresh images. The external reference comparison must inspect all
+original cells/metadata for the actual requested rectangles through the public
+API. Configuration queries do not establish waveform or recovery acceptance.
+Normal startup creates no probe; automatic update lookup is suppressed.

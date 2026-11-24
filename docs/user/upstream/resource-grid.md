@@ -88,5 +88,6 @@ a run owns the session. Actual QAM, spectrum and recovery remain separate
 
 The projection reuses the accepted upstream pilot/resource owner and its pinned
 PHY I20 section 7.4.16 evidence. It introduces no additional pilot pattern or
-operating mode. The Qt viewer is a separate delivery task; this page describes
-the implemented backend observation.
+operating mode. The native [upstream workbench](../upstream-workbench.md#inspect-configured-resources)
+uses this same operation for its bounded grid, frame selection, zoom and cell
+inspection. Its single configured-grant selector reflects this backend scope.

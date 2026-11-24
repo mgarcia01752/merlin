@@ -23,6 +23,9 @@ Item {
     signal configurationLoadRequested()
     signal captureLoadRequested(string family)
     signal capturePageRequested(string family, int first)
+    signal resourceGridRequested()
+    signal resourceGridViewRequested(var request, var context)
+    signal resourceGrantRequested(var grantId, var context)
     readonly property var incomingPresentation: host && host.presentation ? host.presentation : ({})
     readonly property var presentation: presentationOwner.value || ({})
     readonly property bool presentationRejected: presentationOwner.rejected
@@ -146,6 +149,15 @@ Item {
         }
         captureDialog.family = family;
         return captureDialog.openChecked();
+    }
+
+    /** Open the configured-allocation instrument and request its native viewport. */
+    function openResourceGrid() {
+        if (!resourceGridDialog.openChecked()) {
+            return false;
+        }
+        resourceGridRequested();
+        return true;
     }
 
     Rectangle {
@@ -728,6 +740,10 @@ Item {
         theme: workbench.theme
         presentation: workbench.detailPresentation("transmitter")
         onClosed: transmitterBlock.forceActiveFocus()
+        onResourceGridRequested: {
+            transmitterDialog.close();
+            workbench.openResourceGrid();
+        }
         onSourceConfigurationRequested: {
             transmitterDialog.close();
             workbench.openSection("source");
@@ -811,5 +827,13 @@ Item {
             captureDialog.close();
             workbench.configurationLoadRequested();
         }
+    }
+    ResourceGridDialog {
+        id: resourceGridDialog
+        objectName: "upstreamResourceGridDialog"
+        theme: workbench.theme
+        host: workbench.host
+        onViewRequested: function(request, context) { workbench.resourceGridViewRequested(request, context); }
+        onGrantRequested: function(grantId, context) { workbench.resourceGrantRequested(grantId, context); }
     }
 }

@@ -8,11 +8,15 @@ mod captures;
 mod configuration_view;
 mod drafts;
 mod execution_view;
+mod grid;
+mod grid_view;
 mod measured_view;
 mod preparation;
 mod presentation;
 pub(crate) use captures::{Family as CaptureFamily, MAX_CAPTURE_FAMILY_CHARACTERS};
 pub(crate) use drafts::{MAX_DRAFT_CHANGE_BYTES, MAX_DRAFT_ID_CHARACTERS};
+use grid_view::GridStatus;
+pub(crate) use grid_view::MAX_GRID_REQUEST_BYTES;
 
 use crate::shared::{
     presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE, worker_failure::WorkerFailure,
@@ -46,6 +50,9 @@ pub(crate) struct Model {
     draft: Option<drafts::SharedDraft>,
     draft_outcome: drafts::Outcome,
     capture: Option<Retained<captures::CaptureDisplay>>,
+    grid: Option<(SessionKey, Retained<grid::Display>)>,
+    grid_status: GridStatus,
+    grid_sequence: u64,
 
     // Drop controllers, pending slots and data aliases before this containing charge.
     _fixed_guard: Retained<()>,
@@ -79,6 +86,9 @@ impl Model {
             draft: None,
             draft_outcome: drafts::Outcome::default(),
             capture: None,
+            grid: None,
+            grid_status: GridStatus::default(),
+            grid_sequence: 0,
             _fixed_guard: fixed_guard,
         }))
     }
@@ -240,6 +250,35 @@ impl Model {
 
     fn adopt_prepared(&mut self, prepared: Prepared) -> Result<(), WorkerFailure> {
         match prepared {
+            Prepared::Grid {
+                delivery: _delivery_guard,
+                expected,
+                controller,
+                candidate,
+            } => {
+                self.controller = Some(controller);
+                if self.preparation_cancelled {
+                    self.grid_status = GridStatus::Cancelled;
+                    return Ok(());
+                }
+                if self.application.snapshot(Direction::Upstream).key != expected {
+                    self.grid_status = GridStatus::Rejected;
+                    return Err(WorkerFailure::Static(
+                        "Upstream configuration changed during resource observation.",
+                    ));
+                }
+                match candidate {
+                    Ok(display) => {
+                        self.grid = Some((expected, display));
+                        self.grid_status = GridStatus::Ready;
+                        self.error = Default::default();
+                    }
+                    Err(error) => {
+                        self.grid_status = GridStatus::Rejected;
+                        return Err(error);
+                    }
+                }
+            }
             Prepared::Capture {
                 delivery: _delivery_guard,
                 expected,
@@ -305,6 +344,8 @@ impl Model {
                 );
                 self.key = Some(key);
                 self.report = None;
+                self.grid = None;
+                self.grid_status = GridStatus::Unavailable;
                 self.error = WorkerFailure::default();
                 self.draft_outcome = drafts::Outcome::Accepted;
             }
@@ -331,6 +372,8 @@ impl Model {
                 self.controller = Some(controller);
                 self.key = Some(key);
                 self.report = None;
+                self.grid = None;
+                self.grid_status = GridStatus::Unavailable;
                 if self.draft.is_some() {
                     self.draft_outcome = drafts::Outcome::Stale;
                 }

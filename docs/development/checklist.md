@@ -656,12 +656,12 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Evidence: [integrated native input acceptance](features/unified-qt-workbench/validation.md#uiu-us-03-integrated-native-input-acceptance): complete 478-case Qt Rust suite, final 69 affected-case reruns, seventeen QML suites (280 pass records), Clippy/format/boundary and optimized build pass. Actual native pickers admit all three binary/source-JSON families, preserve original evidence on Cancel/rejection, page original RxMER records, and match the installed native Python observations. Both complete measured plans preserve all seven read-only editors and complete independent recovery (50 kHz: 1976 bits; 25 kHz: 4216 bits). Actual synthetic editors, downstream shell, six startup/project probes and twenty-five packaging checks pass. The independently committed [capture-source prerequisite](features/unified-qt-workbench/validation.md#uiu-us-03-lossless-capture-source-api-prerequisite) remains separately scoped; no session/framework expansion. Continue UIU-US-04.
 
 <a id="task-uiu-us-04"></a>
-- [ ] **UIU-US-04** Render authoritative upstream allocation/pilot grid.
+- [x] **UIU-US-04** Render authoritative upstream allocation/pilot grid.
   Requirements: [REQ-UIU-14](../requirements.md#req-uiu-14).
   Dependencies: [UIU-US-01](#task-uiu-us-01), [UIU-API-03](#task-uiu-api-03).
   Architecture/files: [upstream owner](../architecture.md#unified-qt-upstream-scientific-presentation), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Symbol-X/physical-carrier-Y, actual metadata and counts, bounded batched drawing with zoom/pan/inspection/grant selection; geometry/data tests and target-Qt responsiveness/object-budget evidence.
-  Evidence: [upstream acceptance plan](features/unified-qt-workbench/validation.md#upstream); pending implementation/acceptance.
+  Evidence: [integrated native resource-grid acceptance](features/unified-qt-workbench/validation.md#uiu-us-04-integrated-native-resource-grid-acceptance): all 493 Qt Rust cases, final 84 affected-case reruns, eighteen QML suites (305 pass records), Clippy/format/final boundary and optimized build pass. Actual native 50/25 kHz controls produce twelve viewports matching every public installed-native cell/metadata field; one Canvas and 71 visual objects cover 1024–4096 cells. Inspection, zoom/pan/frame changes, passive owner preservation, independent tabs, seven-editor and downstream-shell regressions, six startup/project probes and 25 packaging checks pass. The independent Qt viewport policy preserves the larger public/aggregate limits; earlier rejected-state evidence and observed timings remain explicit. Continue UIU-SHARED-01.
 
 <a id="task-uiu-shared-01"></a>
 - [ ] **UIU-SHARED-01** Extract proven shared QAM/spectrum/response/measurement presentation.
