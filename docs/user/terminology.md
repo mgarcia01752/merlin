@@ -11,7 +11,7 @@ supported implementation and its limits.
 | --- | --- |
 | Channel | Applies the configured response and noise between transmitter and receiver. |
 | CM | Cable modem. PNM input files represent measurements collected by a modem; MERLIN does not control or capture from a modem. |
-| CMTS | Cable Modem Termination System. MERLIN simulates supported downstream PHY functions for one OFDM channel. |
+| CMTS | Cable Modem Termination System. In MERLIN, it transmits the supported downstream OFDM signal and receives the supported upstream OFDMA signal; CMTS configuration remains separate from the upstream payload source. |
 | CPA | Common Path Attenuator: adjustable scalar loss in the shared channel path before the receiver. Configured in dB (0–60); applies to the complete waveform, not individual profiles. |
 | DOCSIS | Data Over Cable Service Interface Specifications, the cable-access specification family. |
 | MCE | MERLIN Channel Estimation: optional receiver-owned pilot channel estimation and received-only decoder reliability. Select Pilot-based channel and noise estimation (MCE) under Receiver mode; Supplied CM channel estimate is the default. An MCE chip on the main Receiver block indicates enablement. See the [MCE guide](receiver-estimation/mce.md). |
@@ -108,6 +108,7 @@ and [receiver channel estimation](receiver-estimation/README.md).
 
 | Term | Meaning |
 | --- | --- |
+| Active elapsed (upstream) | Time used by an upstream execution, excluding acknowledged pauses. It is separate from simulated waveform duration. See [upstream execution](upstream-workbench.md#run-and-inspect-results). |
 | BCH / LDPC | Bose–Chaudhuri–Hocquenghem / Low-Density Parity-Check coding. MERLIN uses both in the supported payload coding chain. |
 | BER | Bit Error Rate: compared bit errors divided by compared bits. With no compared bits, BER is unavailable, not zero. |
 | Capture frequency mapping | Labels baseband bins using the capture's frequency origin. It does not upconvert the simulated signal. |

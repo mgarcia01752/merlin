@@ -75,9 +75,37 @@ ApplicationWindow {
     readonly property bool presentationProbeRequested: Qt.application.arguments.indexOf("--session-presentation-probe") >= 0
     readonly property bool directionProbeRequested: Qt.application.arguments.indexOf("--direction-shell-probe") >= 0
     readonly property bool upstreamConfigurationProbeRequested: Qt.application.arguments.indexOf("--upstream-configuration-probe") >= 0
+    readonly property bool upstreamExecutionProbeRequested: Qt.application.arguments.indexOf("--upstream-execution-probe") >= 0
     property QtObject presentationProbe: null
     property QtObject directionProbe: null
     property QtObject upstreamConfigurationProbe: null
+    property QtObject upstreamExecutionProbe: null
+    property Component upstreamExecutionProbeComponent: Component {
+        UpstreamExecutionProbe {
+            onFinished: function(success, message) {
+                console.log("MERLIN_UPSTREAM_EXECUTION_PROBE " + message)
+                Qt.exit(success ? 0 : 1)
+            }
+        }
+    }
+    /** Run the fixed native execution check with a fresh evidence path. */
+    function startUpstreamExecutionProbe() {
+        const args = Qt.application.arguments
+        const imageArgument = args.indexOf("--upstream-execution-image")
+        if (imageArgument < 0 || imageArgument + 1 >= args.length) {
+            console.error("Upstream execution probe requires a fresh screenshot path.")
+            Qt.exit(1)
+            return
+        }
+        upstreamExecutionProbe = upstreamExecutionProbeComponent.createObject(window, {
+            rootWindow: window, workbench: workbench, tabs: directionTabs,
+            host: directionHost, controls: sharedControls, captureItem: unifiedFrame,
+            screenshotPath: args[imageArgument + 1]
+        })
+        if (!upstreamExecutionProbe) {
+            Qt.exit(1)
+        }
+    }
     property Component upstreamConfigurationProbeComponent: Component {
         UpstreamConfigurationProbe {
             onFinished: function(success, message) {
@@ -170,6 +198,8 @@ ApplicationWindow {
             Qt.callLater(startDirectionProbe)
         } else if (upstreamConfigurationProbeRequested) {
             Qt.callLater(startUpstreamConfigurationProbe)
+        } else if (upstreamExecutionProbeRequested) {
+            Qt.callLater(startUpstreamExecutionProbe)
         } else if (Qt.application.arguments.indexOf("--smoke-test") >= 0) {
             smokeTimer.start()
         } else if (Qt.application.arguments.indexOf("--check-updates") >= 0) {
@@ -212,7 +242,7 @@ ApplicationWindow {
                     && !directionHost.upstreamState.busy && !directionHost.upstreamState.configured
                     && !window.workbench.loadingProject
                 prepareUpdate: function() { return workbench.saveUpdateRecovery() }
-                startupCheck: !window.presentationProbeRequested && !window.directionProbeRequested && !window.upstreamConfigurationProbeRequested && Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
+                startupCheck: !window.presentationProbeRequested && !window.directionProbeRequested && !window.upstreamConfigurationProbeRequested && !window.upstreamExecutionProbeRequested && Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
             }
         }
     }
@@ -289,9 +319,11 @@ ApplicationWindow {
             paused: downstream ? !!currentState.paused : !!currentState.progress && currentState.progress.status === "Paused"
             status: downstream ? (window.workbench ? window.workbench.progressText : "")
                 : (directionHost.presentation.display ? directionHost.presentation.display.upstreamStatus : "")
-            elapsed: downstream && window.workbench ? window.workbench.elapsedText : ""
+            elapsed: downstream && window.workbench ? window.workbench.elapsedText
+                : currentState.execution_view ? currentState.execution_view.elapsed : ""
             diagnostic: downstream && window.workbench ? window.workbench.runState.diagnostic : null
-            activityTooltip: downstream && window.workbench ? window.workbench.activityText : ""
+            activityTooltip: downstream && window.workbench ? window.workbench.activityText
+                : currentState.execution_view ? currentState.execution_view.activity : ""
             onHelpRequested: function(code, direction, identity) {
                 if (direction === "downstream" && directionHost.accepts(direction, identity)) {
                     window.workbench.openHelp(code)

@@ -640,12 +640,12 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Evidence: [integrated configuration acceptance](features/unified-qt-workbench/validation.md#uiu-us-01-integrated-configuration-acceptance): all 446 Qt Rust cases, fifteen relevant QML suites (247 pass records), affected-suite reruns and the new actual-host pressure suite (13 pass records), Clippy/format/final boundary, optimized build, six native startup/project probes and actual seven-editor/native chooser acceptance pass. Existing downstream native idle/run/pause/menu/control regression and 25 packaging resource cases pass. Exact imported provenance and all previous checklist states remain preserved; unchanged backend/Python milestone evidence is explicitly reused. Continue UIU-US-02; measured input, instruments and upstream project persistence retain their existing tasks.
 
 <a id="task-uiu-us-02"></a>
-- [ ] **UIU-US-02** Connect upstream execution and direction lifecycle.
+- [x] **UIU-US-02** Connect upstream execution and direction lifecycle.
   Requirements: [REQ-UIU-03](../requirements.md#req-uiu-03), [REQ-UIU-07](../requirements.md#req-uiu-07), [REQ-UIU-12](../requirements.md#req-uiu-12), [REQ-UIU-27](../requirements.md#req-uiu-27).
   Dependencies: [UIU-US-01](#task-uiu-us-01), [UIU-API-04](#task-uiu-api-04).
   Architecture/files: [upstream owner](../architecture.md#unified-qt-upstream-scientific-presentation), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Only public API worker; actual bounded runs/progress/cancel/partial results, direction-owned controls and results, responsive Qt and downstream isolation. No internal engine access.
-  Evidence: [upstream acceptance plan](features/unified-qt-workbench/validation.md#upstream); pending implementation/acceptance.
+  Evidence: [integrated execution acceptance](features/unified-qt-workbench/validation.md#uiu-us-02-integrated-execution-acceptance): all 453 Qt Rust cases, 49 final affected-case reruns, sixteen QML suites (260 pass records), Clippy/format/final boundary, optimized build, actual native upstream pause/resume/switch/foreign-control/cancellation/completion/PRBS-RX, all seven configuration editors, downstream shell and six startup/project probes pass. Cancellation retains 76 completed grants and 150176 compared bits; the later 256-grant run verifies all 505856 source bits with zero errors. Twenty-five packaging resource cases pass. Unchanged scientific/backend/Python milestone evidence is explicitly reused; synthetic and constructed-only evidence remain distinguished. Continue UIU-US-03.
 
 <a id="task-uiu-us-03"></a>
 - [ ] **UIU-US-03** Integrate upstream native PNM inputs and viewers.

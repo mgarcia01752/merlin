@@ -5154,3 +5154,49 @@ now closes UIU-US-01. Source-only preparation remains distinct from execution.
 The user guide is [Upstream workbench](../../../user/upstream-workbench.md).
 Continue UIU-US-02 using the existing actual public worker/report owner; no
 backend contract, accounting framework or unrelated task is reopened.
+
+### UIU-US-02 upstream execution presentation
+
+US01 is accepted at `c458baba04163647e4c492f2b343a4496bbfd1b2`.
+[REQ-UIU-03/07/12/27](../../../requirements.md#req-uiu-12) and
+[UIU-US-02](../../checklist.md#task-uiu-us-02) own the next consumer integration.
+Reuse the accepted native controller, current model, global lease and public
+`Simulation` worker. Do not reopen SESSION, introduce a new run interface or
+extend the public API: actual progress, BatchReport, verification and FEC-summary
+operations already provide the required observations.
+
+| Existing owner | Consumer gap | Decision / exact file |
+| --- | --- | --- |
+| `upstream/workbench/presentation.rs` and `Model.report` | Lifecycle scalars reach the host, but elapsed/activity and PRBS-RX rows are absent. | Edit the existing projection; add private `upstream/workbench/execution_view.rs` and tests. Use public `BatchReport::verification` / `fec_summary` and original report status/failure; exact display counters are strings. No source regeneration or receiver truth injection. |
+| Existing `configuration_view.rs` and actual `UpstreamVerificationDialog.qml` | Static unavailable rows can outlive an actual report; busy configuration inspection returns no details. | Merge a finite actual execution/verification view independently of idle configuration inspection. Label previous retained results by original run while a new run is active; missing/partial comparison never means zero BER or recovery success. Reuse the existing guarded row renderer. |
+| Main shared DirectionRunControls and DirectionShellHost | Upstream elapsed/activity are blank, and preparation wording assumes a configuration edit. | Edit `Main.qml`, `DirectionShellHost.qml` and the controls' direction-specific elapsed tooltip. Preserve all downstream bindings and captured-origin dispatch. Active upstream elapsed excludes acknowledged pause; do not label it wall elapsed. |
+| Existing native worker/controller lifecycle tests and fixed Main probes | Source tests alone do not accept actual upstream Start/Pause/Resume/Stop/result interactions. | Add a fixed opt-in `validation/UpstreamExecutionProbe.qml`, root-owned registration and debug inventory. Run genuine native controls, pause/switch/foreign rejection, cancellation/partial-report retention, then completed recovery and PRBS-RX inspection. |
+
+All new presentation is transient until existing QML PresentationOwner admission.
+It contains only bounded scalar labels/rows; complete reports remain with their
+existing charged owner. BER uses the shared named display precision, exact zero
+and explicit unavailable. Recovery success follows the backend's independent flag,
+not terminal status or parity alone. Public failure context remains bounded and
+visible; acceptance must distinguish actual execution evidence from constructed
+representation fixtures. No measurements, resource-grid viewer or project writer
+is added in this unit. Level 1 selects affected native/QML/control tests and
+boundary checks; Level 2 retains complete relevant Qt/native compatibility and
+traceability before marking the task. Reuse byte-identical backend/Python evidence.
+
+Original application run tokens distinguish a current delivered report from an
+older retained result. Report delivery precedes the separate terminal transport
+acknowledgement; that interval must not mislabel the current report as previous.
+The actual Report-before-Terminal test exercises this ordering while the global
+lease is still held. The diagnostic prefix helper now borrows existing text as
+well as accepting owned strings, avoiding a full failure-text clone before its
+unchanged character bound. The existing Model layout/retention contract and
+transport ownership remain unchanged.
+
+[Primary execution acceptance](validation.md#uiu-us-02-integrated-execution-acceptance)
+now closes UIU-US-02. The native probe observes completed science before
+cancellation and a distinct full recovered run. Current report delivery before
+Terminal is covered independently. Shared BER precision belongs to
+`shared/presentation/constants.rs`; control tests reuse the existing named
+16-grant workload instead of introducing a second definition. Continue US03
+measured inputs through existing native public owners, preserving provenance
+and avoiding synthetic reconstruction of captured context.

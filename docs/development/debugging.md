@@ -120,3 +120,24 @@ separately. Require a successful `MERLIN_UPSTREAM_CONFIGURATION_PROBE` JSON
 record, both native chooser responses and a fresh image; process exit alone is
 insufficient. Phase and overall watchdogs are finite. Normal startup creates no
 probe owner; automatic update lookup is suppressed for this offline check.
+
+## Upstream execution probe
+
+`--upstream-execution-probe --upstream-execution-image
+/absolute/fresh/verification.png` runs the fixed bundled Main execution probe.
+Load the existing single downstream project with `--workbench`; an external
+runner answers `MERLIN_UPSTREAM_PICKER load` through the real native chooser.
+Use the existing synthetic 50 kHz upstream document with enough finite grants
+to observe cooperative controls; the current runner uses 256 within its unchanged
+sample/runtime limits. No measured-input acceptance follows from this fixture.
+
+The probe drives actual Start/Pause/Resume/Stop, switches tabs during acknowledged
+pause, rejects foreign controls and a second Start, waits for genuine cancellation
+and its retained partial report, then runs to normal completion and inspects the
+native PRBS-RX rows. At `MERLIN_UPSTREAM_EXECUTION_CAPTURE ready`, the runner may
+capture the actual Main window during the finite grace period; the requested
+image is separately scoped to verification content. Require successful
+`MERLIN_UPSTREAM_EXECUTION_PROBE` JSON and fresh images. Backend recovery remains
+independent of lifecycle completion. On failure the probe requests Stop only for
+its own exact upstream request. Normal startup creates no probe; update lookup is
+suppressed. No arbitrary QML or alternate scientific interface is loaded.

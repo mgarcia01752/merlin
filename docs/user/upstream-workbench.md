@@ -56,6 +56,35 @@ combined response is **C×H**. A CM Pre-Eq capture is not a CMTS channel estimat
 
 ![Accepted receiver configuration in the native dark workbench](../images/workbench/upstream-configuration-dark.png)
 
+## Run and inspect results
+
+After accepting a configuration, click **Start**. Preparation and simulation run
+in the background. The status shows the actual completed grants and independently
+compared bits. **Active elapsed** is the backend execution time in milliseconds;
+it excludes acknowledged pauses and is separate from waveform duration.
+
+**Pause** requests a safe pause; the button changes to **Resume** after the worker
+acknowledges it. **Stop** requests cooperative cancellation. The application slot
+stays occupied until the worker actually finishes, including while paused or
+cancelling. Completed scientific work remains in the resulting partial report.
+Switching tabs cannot redirect those controls to another direction.
+
+Open **PRBS-RX** to inspect the actual report's run identity, lifecycle, planned,
+generated and compared bits, unverified generated bits, BER, grant coverage and
+completed/pending codewords. Decoder convergence, parity, shortening and fill
+outcomes remain separate from independent source comparison. **Completed** means
+the scheduled work ended normally; **Verified** requires the backend's complete
+source/FEC/fill/coverage acceptance. With no comparison, BER is **Unavailable**.
+Nonzero BER uses scientific notation; exact zero is shown as `0`.
+
+A cancelled or timed-out report can contain useful completed work without full
+recovery. Failure context remains visible when supplied by the backend. While a
+new run is being prepared or executed, an older report is labelled **Retained
+previous report** with its original run identity. It is replaced only by a new
+accepted report. Configuration changes invalidate results tied to the old settings.
+
+![Actual independent upstream recovery in the native dark workbench](../images/workbench/upstream-execution-dark.png)
+
 ## Direction isolation
 
 Switching tabs preserves each direction's accepted settings. One simulation may
@@ -64,6 +93,6 @@ to control it. File project actions currently remain available on Downstream onl
 loading upstream configuration cannot replace the downstream project or its Save
 destination. Settings and About are shared.
 
-The upstream execution, measured-input and scientific instrument acceptance gates
-remain separate from configuration editing. See the
+Measured-input import and scientific instrument acceptance remain separate from
+configuration and execution. See the
 [workbench overview](workbench.md) for shared controls and presentation limits.

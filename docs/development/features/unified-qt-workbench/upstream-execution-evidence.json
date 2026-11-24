@@ -1,0 +1,1080 @@
+{
+  "task": "UIU-US-02",
+  "accepted_base": "c458baba04163647e4c492f2b343a4496bbfd1b2",
+  "status": "accepted",
+  "requirements": [
+    "REQ-UIU-03",
+    "REQ-UIU-07",
+    "REQ-UIU-12",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-upstream-scientific-presentation",
+  "design": "design.md#uiu-us-02-upstream-execution-presentation",
+  "validation_level": 2,
+  "raw_evidence": "docs/development/local/unified-qt-workbench/us-02/; configuration regression under us-01/us02-regression/; native downstream shell under shell-01/us-02-execution/",
+  "source_sha256": {
+    "apps/qt/build.rs": "5522777869ed1116c40a8541489be89197f1fa9169b1fa12b774135a069532f1",
+    "apps/qt/qml/Main.qml": "62104e86d539435c5c484b2b49e8586d2c919fc1cfab0c182a503937a45ae3f8",
+    "apps/qt/qml/shell/directions/DirectionRunControls.qml": "235e48b2fc1abcee0327efab13e5136a6e999a2fb600cafe02f615b229d97b6b",
+    "apps/qt/qml/shell/directions/DirectionShellHost.qml": "52451f83f72011c5cffd32c3b3306eab39d9335016cc416e452294f3408cc122",
+    "apps/qt/qml/upstream/UpstreamVerificationDialog.qml": "579a0a1772b779c26307b1c504b554dbb769ac697c0ff6d56c6a233126912fb1",
+    "apps/qt/qml/validation/UpstreamExecutionProbe.qml": "32e82eee89f5415cf85209c815664a68bd1c21288cef670dfeb5205cadd06e2c",
+    "apps/qt/src/shared/presentation/constants.rs": "b0d03e799590b73f3c2e8bd20a5d34b55ff7dc4c7d00f02b9db9ebb10601850b",
+    "apps/qt/src/upstream/workbench/execution_view.rs": "0acf9d7a133db87f2ae174116a2ce88f18977f91c987d0da06a23d4bbc501c0c",
+    "apps/qt/src/upstream/workbench/execution_view/tests.rs": "0ee364c832caedb10f12b68e0f09ca8191d411e64a870db4bfdada533d9211fe",
+    "apps/qt/src/upstream/workbench/mod.rs": "bc9b2056fd9c0122cb7996779120a5a33a57e89c4744ff4506d1d2b584519c61",
+    "apps/qt/src/upstream/workbench/presentation.rs": "ade9d4c9c2fbd69d1caab087969c7689ddeceb4a7126ede36eaa353639ca2eef",
+    "apps/qt/src/upstream/workbench/tests.rs": "88389272143428cc78229a6c034e4ee20922e80e9c51ebdff7c1f72018510a54"
+  },
+  "source_adoption": {
+    "isolated_probe": "f783f24ea2f57eb2424d6aec3453b4b916638765879c6f298f8ad029fabcb055 from the existing upstream UI worktree; GPL project-owned code.",
+    "primary_adaptation": "Add a named minimum completed-grant witness before cancellation; assertions strengthened. Source-only parsing separate from primary native execution.",
+    "origin_receipt": "us-02/prepared-probe-adoption.json"
+  },
+  "acceptance": {
+    "public_owner": "Existing merlin::upstream worker, BatchReport::verification/fec_summary and original ProgressSnapshot/RunToken; no public API/scientific implementation changed.",
+    "configuration_and_lifecycle": "Independent sessions, captured direction/token controls, real acknowledged pause/resume, global lease retained through cancellation and terminal, original partial result and distinct completed result.",
+    "cancelled_result": {
+      "ber": 0,
+      "bit_errors": 0,
+      "bits_tested": 150176,
+      "completed_grants": 76,
+      "reference_recovered": false,
+      "run": "1",
+      "status": "Cancelled",
+      "unverified_source_bits": 1976
+    },
+    "completed_result": {
+      "ber": 0,
+      "bit_errors": 0,
+      "bits_tested": 505856,
+      "completed_grants": 256,
+      "reference_recovered": true,
+      "run": "2",
+      "status": "Completed",
+      "unverified_source_bits": 0
+    },
+    "verification": "Missing BER is unavailable; exact zero and shared three-decimal scientific notation are display-only. Original recovery flag remains independent of completion/parity.",
+    "report_origin": "Current report before its separate Terminal is matched by exact original run token; previous report is labelled during newer preparation/execution.",
+    "presentation": "Bounded transient scalar strings/rows, existing C5 persistent admission; active elapsed excludes acknowledged pause. No new owner/accounting category."
+  },
+  "validation": {
+    "qt_rust": {
+      "records": [
+        {
+          "label": "qt-rust-consumers",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "--",
+            "--test-threads=2"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 390.9142597309983
+        }
+      ],
+      "passed": 453,
+      "failed": 0,
+      "ignored": 0,
+      "elapsed_test_seconds": 379.1,
+      "reuse_after_test_only_cleanup": "Final cleanup shares the unchanged existing 16-grant fixture constant between tests. No assertions/values/production behavior changed; all 49 affected cases rerun afterward."
+    },
+    "focused_final": [
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.7912935569911497
+      },
+      {
+        "label": "upstream-rust",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "--",
+          "upstream::workbench",
+          "bridge::upstream_session",
+          "shell::application::tests",
+          "--test-threads=2"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 113.57033108099131
+      }
+    ],
+    "qml": [
+      {
+        "label": "tst_presentation_footprint.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_presentation_footprint.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.22469505100161768,
+        "pass_records": 45
+      },
+      {
+        "label": "tst_presentation_owner.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_presentation_owner.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.11869693599874154,
+        "pass_records": 11
+      },
+      {
+        "label": "tst_measurement_presentation.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_measurement_presentation.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.2228820950113004,
+        "pass_records": 6
+      },
+      {
+        "label": "tst_rxmer_designer.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_rxmer_designer.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 5.983567729999777,
+        "pass_records": 20
+      },
+      {
+        "label": "tst_workbench.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 13.836787217995152,
+        "pass_records": 55
+      },
+      {
+        "label": "tst_buttons.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_buttons.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.1183751009957632,
+        "pass_records": 5
+      },
+      {
+        "label": "tst_control_palette.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_control_palette.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.0281215229915688,
+        "pass_records": 4
+      },
+      {
+        "label": "tst_tooltips.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_tooltips.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 4.9243555779976305,
+        "pass_records": 4
+      },
+      {
+        "label": "tst_response_view.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_response_view.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.4720053660130361,
+        "pass_records": 3
+      },
+      {
+        "label": "tst_soft_diagnostics.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_soft_diagnostics.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.727836040998227,
+        "pass_records": 3
+      },
+      {
+        "label": "tst_updates.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_updates.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.5219241290033096,
+        "pass_records": 7
+      },
+      {
+        "label": "shell/tst_direction_tabs.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/shell/tst_direction_tabs.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.02821116099949,
+        "pass_records": 12
+      },
+      {
+        "label": "shell/tst_shell_host.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/shell/tst_shell_host.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.17046234400186222,
+        "pass_records": 10
+      },
+      {
+        "label": "upstream/tst_upstream_workbench.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_workbench.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 22.849786045000656,
+        "pass_records": 13
+      },
+      {
+        "label": "upstream/tst_upstream_drafts.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_drafts.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 74.74950143099704,
+        "pass_records": 49
+      },
+      {
+        "label": "upstream/tst_upstream_host_drafts.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_host_drafts.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.5913346050074324,
+        "pass_records": 13
+      }
+    ],
+    "checks": [
+      {
+        "label": "clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.647783149994211
+      },
+      {
+        "label": "format-check",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.6573142369888956
+      },
+      {
+        "label": "boundary",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.3671355650003534
+      }
+    ],
+    "optimized_build": [
+      {
+        "label": "build",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/qt-desktop.sh",
+          "build"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 119.97682454698952
+      }
+    ],
+    "native_upstream": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--upstream-execution-probe",
+        "--upstream-execution-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-02/native-first/verification-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.21275567500561,
+      "executable_sha256": "67ecfd5a8543dcfcf29e7c08d6d229ef160b3ba849327e0dff5332695da4ba65",
+      "source_sha256": "ee76681e36a63cbfdde2b6117ade3008362ea63141a848528a33c297014e0b6a",
+      "source_fixture": "Existing us-50khz.json with 256 grants to observe real cooperative controls; synthetic, not captured field input.",
+      "picker_actions": [
+        {
+          "action": "load",
+          "owned_window": 14680071,
+          "picker_pid": 536621,
+          "seconds": 3.870677427999908
+        }
+      ],
+      "full_window_capture": {
+        "window": 12582919,
+        "pid": 536584,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-02/native-first/upstream-execution-main-dark.png",
+        "sha256": "74b49acea97db07b26a7143b51697d4181f9e7a7bb173c431333e046feaf4521",
+        "size": [
+          1210,
+          736
+        ],
+        "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+      },
+      "probe_output": [
+        "{\"probe\":\"upstream-execution\",\"success\":true,\"phase\":\"capture-grace\",\"error\":\"\",\"chooserLoaded\":true,\"firstPauseAcknowledged\":true,\"foreignControlsRejected\":true,\"secondStartRejected\":true,\"tabIsolation\":true,\"downstreamIdentity\":\"downstream/1/3\",\"downstreamAcceptedOptionsPreserved\":true,\"upstreamIdentity\":\"upstream/2/1\",\"upstreamGeneration\":\"1\",\"resumedActualProgress\":true,\"secondPauseAcknowledged\":true,\"cancellingObserved\":true,\"globalSlotRetainedUntilTerminal\":true,\"cancelledReportRetained\":true,\"cancelledResult\":{\"ber\":0,\"bit_errors\":0,\"bits_tested\":150176,\"completed_grants\":76,\"reference_recovered\":false,\"run\":\"1\",\"status\":\"Cancelled\",\"unverified_source_bits\":1976},\"completedReportRetained\":true,\"completedResult\":{\"ber\":0,\"bit_errors\":0,\"bits_tested\":505856,\"completed_grants\":256,\"reference_recovered\":true,\"run\":\"2\",\"status\":\"Completed\",\"unverified_source_bits\":0},\"verificationRowsMatchedNative\":true,\"sharedExecutionDisplayMatchedNative\":true,\"screenshot\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-02/native-first/verification-dark.png\",\"captureTarget\":\"verification-contentItem\",\"fullWindowCaptureMarker\":true,\"dark\":true}"
+      ],
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-02/native-first/verification-dark.png",
+      "image_sha256": "95a25bbb82d60ea311a04903557c5f1e2ee9d16696c52c81f57603acd238e18e"
+    },
+    "native_configuration_regression": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--upstream-configuration-probe",
+        "--upstream-configuration-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us02-regression/receiver-configuration-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 7.552422724009375,
+      "executable_sha256": "67ecfd5a8543dcfcf29e7c08d6d229ef160b3ba849327e0dff5332695da4ba65",
+      "source_sha256": "ba39970338d18e741c0c17362298dc9a71ad39a3a5f2022d8390e128e053e41d",
+      "source_fixture": "Existing us-50khz.json plus explicit synthetic unity Pre-Eq plan; not captured field input.",
+      "picker_actions": [
+        {
+          "action": "cancel",
+          "owned_window": 14680071,
+          "picker_pid": 536927,
+          "seconds": 1.8933551340014674
+        },
+        {
+          "action": "load",
+          "owned_window": 14680071,
+          "picker_pid": 536951,
+          "seconds": 2.612604014997487
+        }
+      ],
+      "full_window_capture": {
+        "window": 12582919,
+        "pid": 536915,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us02-regression/upstream-configuration-main-dark.png",
+        "sha256": "f45b60b81bd1cd73782a99cfb7161dcad3dd7c7e82d985c1019d0fda6e838fb4",
+        "size": [
+          1210,
+          736
+        ],
+        "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+      },
+      "probe_output": [
+        "{\"probe\":\"upstream-configuration\",\"success\":true,\"phase\":\"capture-grace\",\"error\":\"\",\"sections\":[{\"section\":\"ucd\",\"field\":\"randomization_seed\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"1\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"1\",\"generationAfter\":\"2\"},{\"section\":\"profiles\",\"field\":\"modulation_index\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"2\",\"generationAfter\":\"3\"},{\"section\":\"grants\",\"field\":\"grant_id\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"9007199254740993\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"3\",\"generationAfter\":\"4\"},{\"section\":\"source\",\"field\":\"source_seed\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"4\",\"generationAfter\":\"5\"},{\"section\":\"channel\",\"field\":\"phase_radians\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"0.1\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"5\",\"generationAfter\":\"6\"},{\"section\":\"preEqualization\",\"field\":\"initial_id\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"6\",\"generationAfter\":\"7\"},{\"section\":\"receiver\",\"field\":\"ldpc_iterations\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"7\",\"generationAfter\":\"8\"}],\"chooserCancelAndLoad\":true,\"invalidPreservation\":true,\"tabIsolation\":true,\"downstreamIdentity\":\"downstream/1/3\",\"downstreamAcceptedOptionsPreserved\":true,\"upstreamGeneration\":\"8\",\"upstreamIdentity\":\"upstream/2/8\",\"screenshot\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us02-regression/receiver-configuration-dark.png\",\"captureTarget\":\"receiver-contentItem\",\"fullWindowCaptureMarker\":true,\"dark\":true}"
+      ],
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us02-regression/receiver-configuration-dark.png",
+      "image_sha256": "94d38362eb6d0a26ce1f55b09471d3730425dfc9d6ccb683614c3d3b002ba8e6"
+    },
+    "native_downstream_shell": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--direction-shell-probe",
+        "--direction-shell-downstream-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-02-execution/downstream-dark.png",
+        "--direction-shell-upstream-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-02-execution/upstream-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.6490205979935126,
+      "executable_sha256": "67ecfd5a8543dcfcf29e7c08d6d229ef160b3ba849327e0dff5332695da4ba65",
+      "display": ":0",
+      "probe_output": [
+        "{\"probe\":\"direction-shell\",\"success\":true,\"phase\":\"terminal\",\"error\":\"\",\"loadingProject\":false,\"hasProject\":true,\"controlsContextCurrent\":true,\"controlDirection\":\"downstream\",\"controlIdentity\":\"downstream/1/5\",\"shellMetadata\":{\"applicationBusy\":false,\"downstreamDirty\":true,\"downstreamIdentity\":\"downstream/1/5\",\"executionDirection\":null,\"executionStatus\":\"\",\"selectedDirection\":\"downstream\",\"upstreamDirty\":false,\"upstreamIdentity\":\"upstream/2/0\"},\"shellPresentationRejected\":false,\"controlsPresentationRejected\":false,\"fileMessage\":\"Opened /home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json\",\"persistentChildren\":true,\"nativeCursor\":true,\"sharedSettingsOnUpstream\":true,\"sharedAboutOnUpstream\":true,\"fileRejectedOnUpstream\":true,\"configureRouted\":true,\"pausedLeaseAcrossSwitch\":true,\"foreignControlsRejected\":true,\"genuineTerminalObserved\":true,\"idleSwitchObserved\":true,\"runningSwitchObserved\":true,\"dark\":true,\"downstreamImage\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-02-execution/downstream-dark.png\",\"upstreamImage\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-02-execution/upstream-dark.png\"}"
+      ],
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-02-execution/downstream-dark.png",
+      "upstream_image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-02-execution/upstream-dark.png",
+      "upstream_image_sha256": "486345a60178f2af414739e4b00471b874fa84532bb96ef9af9f0c6e6af15494",
+      "image_sha256": "3f4dd220f6173ed9b281d50c555910a399b67b974b4c23e49016eba155a4d5ff"
+    },
+    "native_startup_project": {
+      "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+      "sha256": "67ecfd5a8543dcfcf29e7c08d6d229ef160b3ba849327e0dff5332695da4ba65",
+      "display": ":0",
+      "display_dimensions": [
+        "dimensions:    1280x800 pixels (338x211 millimeters)"
+      ],
+      "qt_sdk_version": "6.8.3",
+      "commands": [
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.05064796400256455,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.06412898999406025,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.5096333659894299,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.04272285600018222,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.111560820005252,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test",
+            "--workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.894700021002791,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        }
+      ]
+    },
+    "packaging": {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/packaging",
+        "-v"
+      ],
+      "exit_code": 0,
+      "passed": 25,
+      "raw_log": "us-02/packaging.stderr"
+    },
+    "documentation": [
+      {
+        "label": "final-boundary",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.37109992100158706
+      },
+      {
+        "label": "strict-matrix",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/api_operation_matrix.py",
+          "--exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-control-metadata/rust-exports.json",
+          "--native-exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-control-metadata-native/native-exports.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/namespace-test-results.json",
+          "--executed-record",
+          "docs/development/features/pnm-measurement-inputs/decoder-test-results.json",
+          "--executed-record",
+          "docs/development/features/pnm-measurement-inputs/association-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/python-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/python-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-estimate-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-soft-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-resource-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-downstream-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-input-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-archive-bound-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-output-bound-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-query-envelope-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-control-metadata-operation-test-results.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.028986047007493
+      },
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 13.282218066000496
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 12.202813201991376
+      },
+      {
+        "label": "uiu-history",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/audit_upstream_execution_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.19735171599313617
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.05455042399989907
+      },
+      {
+        "label": "guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.11398538399953395
+      },
+      {
+        "label": "final-navigation",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "raw_log": "us-02/docs-final-navigation.stdout"
+      }
+    ],
+    "final_optimized_build": [
+      {
+        "label": "build",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/qt-desktop.sh",
+          "build"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 129.90383153100265
+      }
+    ],
+    "final_artifact_native": {
+      "reason": "Final source build after sharing a test fixture and a QML comment/validation witness change; rerun all native affected consumers for exact artifact identity.",
+      "runs": [
+        {
+          "label": "execution",
+          "command": [
+            "python3",
+            "-B",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/run_upstream_execution_probe.py",
+            "native-final"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 7.423618882006849
+        },
+        {
+          "label": "configuration",
+          "command": [
+            "python3",
+            "-B",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/run_upstream_configuration_probe.py",
+            "us02-final-source"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 7.263011659000767
+        },
+        {
+          "label": "startup",
+          "command": [
+            "python3",
+            "-B",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/run_native_ui_smokes.py",
+            "us-02-final-source"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 5.1291952449973905
+        },
+        {
+          "label": "downstream",
+          "command": [
+            "python3",
+            "-B",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/run_direction_shell_probe.py",
+            "us-02-final-source"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.158744679996744
+        }
+      ],
+      "upstream": {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--upstream-execution-probe",
+          "--upstream-execution-image",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-02/native-final/verification-dark.png",
+          "--workbench",
+          "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 7.299580887003685,
+        "executable_sha256": "16511cbc5fbd83ac3bd269df7e416ee8782cd9dea8020e74bd13286962bed74c",
+        "source_sha256": "ee76681e36a63cbfdde2b6117ade3008362ea63141a848528a33c297014e0b6a",
+        "source_fixture": "Existing us-50khz.json with 256 grants to observe real cooperative controls; synthetic, not captured field input.",
+        "picker_actions": [
+          {
+            "action": "load",
+            "owned_window": 14680071,
+            "picker_pid": 542873,
+            "seconds": 3.0197190970066004
+          }
+        ],
+        "full_window_capture": {
+          "window": 12582919,
+          "pid": 542860,
+          "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-02/native-final/upstream-execution-main-dark.png",
+          "sha256": "7f8618f0d0018773123dd2736d705351f4e4eebc236f0546d488aa71eacd2dd8",
+          "size": [
+            1210,
+            736
+          ],
+          "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+        },
+        "probe_output": [
+          "{\"probe\":\"upstream-execution\",\"success\":true,\"phase\":\"capture-grace\",\"error\":\"\",\"chooserLoaded\":true,\"firstPauseAcknowledged\":true,\"foreignControlsRejected\":true,\"secondStartRejected\":true,\"tabIsolation\":true,\"downstreamIdentity\":\"downstream/1/3\",\"downstreamAcceptedOptionsPreserved\":true,\"upstreamIdentity\":\"upstream/2/1\",\"upstreamGeneration\":\"1\",\"resumedActualProgress\":true,\"secondPauseAcknowledged\":true,\"cancellingObserved\":true,\"globalSlotRetainedUntilTerminal\":true,\"cancelledReportRetained\":true,\"cancelledResult\":{\"ber\":0,\"bit_errors\":0,\"bits_tested\":16648,\"completed_grants\":8,\"reference_recovered\":false,\"run\":\"1\",\"status\":\"Cancelled\",\"unverified_source_bits\":1136},\"completedReportRetained\":true,\"completedResult\":{\"ber\":0,\"bit_errors\":0,\"bits_tested\":505856,\"completed_grants\":256,\"reference_recovered\":true,\"run\":\"2\",\"status\":\"Completed\",\"unverified_source_bits\":0},\"verificationRowsMatchedNative\":true,\"sharedExecutionDisplayMatchedNative\":true,\"screenshot\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-02/native-final/verification-dark.png\",\"captureTarget\":\"verification-contentItem\",\"fullWindowCaptureMarker\":true,\"dark\":true}"
+        ],
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-02/native-final/verification-dark.png",
+        "image_sha256": "95a25bbb82d60ea311a04903557c5f1e2ee9d16696c52c81f57603acd238e18e"
+      },
+      "configuration": {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--upstream-configuration-probe",
+          "--upstream-configuration-image",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us02-final-source/receiver-configuration-dark.png",
+          "--workbench",
+          "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 7.1275428509979974,
+        "executable_sha256": "16511cbc5fbd83ac3bd269df7e416ee8782cd9dea8020e74bd13286962bed74c",
+        "source_sha256": "ba39970338d18e741c0c17362298dc9a71ad39a3a5f2022d8390e128e053e41d",
+        "source_fixture": "Existing us-50khz.json plus explicit synthetic unity Pre-Eq plan; not captured field input.",
+        "picker_actions": [
+          {
+            "action": "cancel",
+            "owned_window": 14680071,
+            "picker_pid": 542923,
+            "seconds": 1.9903134560008766
+          },
+          {
+            "action": "load",
+            "owned_window": 14680071,
+            "picker_pid": 542941,
+            "seconds": 2.5493090600066353
+          }
+        ],
+        "full_window_capture": {
+          "window": 12582919,
+          "pid": 542912,
+          "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us02-final-source/upstream-configuration-main-dark.png",
+          "sha256": "f45b60b81bd1cd73782a99cfb7161dcad3dd7c7e82d985c1019d0fda6e838fb4",
+          "size": [
+            1210,
+            736
+          ],
+          "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+        },
+        "probe_output": [
+          "{\"probe\":\"upstream-configuration\",\"success\":true,\"phase\":\"capture-grace\",\"error\":\"\",\"sections\":[{\"section\":\"ucd\",\"field\":\"randomization_seed\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"1\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"1\",\"generationAfter\":\"2\"},{\"section\":\"profiles\",\"field\":\"modulation_index\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"2\",\"generationAfter\":\"3\"},{\"section\":\"grants\",\"field\":\"grant_id\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"9007199254740993\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"3\",\"generationAfter\":\"4\"},{\"section\":\"source\",\"field\":\"source_seed\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"4\",\"generationAfter\":\"5\"},{\"section\":\"channel\",\"field\":\"phase_radians\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"0.1\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"5\",\"generationAfter\":\"6\"},{\"section\":\"preEqualization\",\"field\":\"initial_id\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"6\",\"generationAfter\":\"7\"},{\"section\":\"receiver\",\"field\":\"ldpc_iterations\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"7\",\"generationAfter\":\"8\"}],\"chooserCancelAndLoad\":true,\"invalidPreservation\":true,\"tabIsolation\":true,\"downstreamIdentity\":\"downstream/1/3\",\"downstreamAcceptedOptionsPreserved\":true,\"upstreamGeneration\":\"8\",\"upstreamIdentity\":\"upstream/2/8\",\"screenshot\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us02-final-source/receiver-configuration-dark.png\",\"captureTarget\":\"receiver-contentItem\",\"fullWindowCaptureMarker\":true,\"dark\":true}"
+        ],
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us02-final-source/receiver-configuration-dark.png",
+        "image_sha256": "94d38362eb6d0a26ce1f55b09471d3730425dfc9d6ccb683614c3d3b002ba8e6"
+      },
+      "downstream_shell": {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--direction-shell-probe",
+          "--direction-shell-downstream-image",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-02-final-source/downstream-dark.png",
+          "--direction-shell-upstream-image",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-02-final-source/upstream-dark.png",
+          "--workbench",
+          "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.047599668003386,
+        "executable_sha256": "16511cbc5fbd83ac3bd269df7e416ee8782cd9dea8020e74bd13286962bed74c",
+        "display": ":0",
+        "probe_output": [
+          "{\"probe\":\"direction-shell\",\"success\":true,\"phase\":\"terminal\",\"error\":\"\",\"loadingProject\":false,\"hasProject\":true,\"controlsContextCurrent\":true,\"controlDirection\":\"downstream\",\"controlIdentity\":\"downstream/1/5\",\"shellMetadata\":{\"applicationBusy\":false,\"downstreamDirty\":true,\"downstreamIdentity\":\"downstream/1/5\",\"executionDirection\":null,\"executionStatus\":\"\",\"selectedDirection\":\"downstream\",\"upstreamDirty\":false,\"upstreamIdentity\":\"upstream/2/0\"},\"shellPresentationRejected\":false,\"controlsPresentationRejected\":false,\"fileMessage\":\"Opened /home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json\",\"persistentChildren\":true,\"nativeCursor\":true,\"sharedSettingsOnUpstream\":true,\"sharedAboutOnUpstream\":true,\"fileRejectedOnUpstream\":true,\"configureRouted\":true,\"pausedLeaseAcrossSwitch\":true,\"foreignControlsRejected\":true,\"genuineTerminalObserved\":true,\"idleSwitchObserved\":true,\"runningSwitchObserved\":true,\"dark\":true,\"downstreamImage\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-02-final-source/downstream-dark.png\",\"upstreamImage\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-02-final-source/upstream-dark.png\"}"
+        ],
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-02-final-source/downstream-dark.png",
+        "upstream_image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-02-final-source/upstream-dark.png",
+        "upstream_image_sha256": "486345a60178f2af414739e4b00471b874fa84532bb96ef9af9f0c6e6af15494",
+        "image_sha256": "3f4dd220f6173ed9b281d50c555910a399b67b974b4c23e49016eba155a4d5ff"
+      },
+      "startup_project": {
+        "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "sha256": "16511cbc5fbd83ac3bd269df7e416ee8782cd9dea8020e74bd13286962bed74c",
+        "display": ":0",
+        "display_dimensions": [
+          "dimensions:    1280x800 pixels (338x211 millimeters)"
+        ],
+        "qt_sdk_version": "6.8.3",
+        "commands": [
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--check-workbench",
+              "examples/workbench/single/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 0.04811789900122676,
+            "stdout": "Workbench inputs accepted.\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--check-workbench",
+              "examples/workbench/multi-rxmer/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 0.05396657199889887,
+            "stdout": "Workbench inputs accepted.\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--check-workbench",
+              "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 0.510617074003676,
+            "stdout": "Workbench inputs accepted.\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--check-workbench",
+              "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 0.032111792999785393,
+            "stdout": "Workbench inputs accepted.\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--smoke-test"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 2.1270665469928645,
+            "stdout": "MERLIN_QT_STYLE=Fusion\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--smoke-test",
+              "--workbench",
+              "examples/workbench/single/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 2.1188160980091197,
+            "stdout": "MERLIN_QT_STYLE=Fusion\n",
+            "stderr": ""
+          }
+        ]
+      }
+    },
+    "final_artifact_sha256": "16511cbc5fbd83ac3bd269df7e416ee8782cd9dea8020e74bd13286962bed74c",
+    "guide_image_sha256": "7f8618f0d0018773123dd2736d705351f4e4eebc236f0546d488aa71eacd2dd8"
+  },
+  "scientific_evidence_boundaries": {
+    "actual": "Native Cancelled prefix76 grants/150176 compared bits plus 1976 unverified bits; later256 completed grants/505856 compared bits, BER0 and full verified recovery. Rust actual Completed/Paused/Cancelled/TimeLimit and current Report-before-Terminal tests.",
+    "constructed_only": "Failed-status and inconsistent-report presentation use explicitly constructed clones of a real report; not claimed as actual worker numerical-failure execution. Original worker/transport failure coverage remains accepted SESSION/API evidence.",
+    "fixture": "Synthetic existing50kHz configuration with256 grants inside unchanged sample/runtime policy; not captured input/external interoperability.",
+    "final_artifact": "Final native Cancelled report:8 completed grants,16648 compared bits,1136 unverified bits; subsequent256-grant/505856-bit full verified recovery. Cancellation prefix varies with actual scheduling, never a prescribed constant."
+  },
+  "demonstrated_corrections": [
+    "Read-only audit found current delivered report mislabelled previous until Terminal; exact token comparison and actual ordering test fix it."
+  ],
+  "earlier_failed_attempts": [
+    "Initial test helper returned &Value and failed comparisons with String; corrected to borrow exact text without weakening assertions.",
+    "Manual API-boundary invocation lacked the pinned Cargo PATH and failed before audit: Rust is missing. Current pinned acceptance command passes with zero exceptions."
+  ],
+  "reuse_and_not_required": {
+    "backend": {
+      "accepted_base": "50339f01e2c0829350ac39d4be0fe893eee74da6",
+      "scope": [
+        "crates",
+        "bindings",
+        "Cargo.toml",
+        "Cargo.lock"
+      ],
+      "verified_files": 20,
+      "byte_identical": true,
+      "new_files": []
+    },
+    "evidence": "Accepted SESSION C6 full905 workspace/140 analysis, doctest/example,203 installed native Python, CLI/project compatibility; C4 actual UI-saved parity.",
+    "reason": "No backend/binding/public API/schema/writer/dependency change. Reuse identical scientific/namespace/native artifacts; no wheel rebuild or unrelated root-suite repetition. Current affected Qt/native consumers are executed at this milestone.",
+    "final": "Full applicable final/hosted/installed acceptance remains UIU-QA-01; no remote action."
+  },
+  "limitations": [
+    "No measured-input admission or scientific-instrument completion claim; US03/US04/INT01 remain open.",
+    "File/recovery and final numerical/code-style/platform acceptance remain separate."
+  ]
+}

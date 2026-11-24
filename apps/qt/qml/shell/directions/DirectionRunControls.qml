@@ -90,7 +90,9 @@ RowLayout {
             MouseArea { id: elapsedHover; anchors.fill: parent; hoverEnabled: true }
             ToolTip.delay: controls.theme.tooltipDelayMs
             ToolTip.visible: elapsedHover.containsMouse
-            ToolTip.text: "Wall time includes pauses and CPU scheduling waits. The run budget uses active time."
+            ToolTip.text: controls.direction === "upstream"
+                ? "Upstream active elapsed time excludes acknowledged pauses. It is not simulated waveform duration."
+                : "Wall time includes pauses and CPU scheduling waits. The run budget uses active time."
         }
         Label {
             objectName: "shellPresentationAdmissionNotice"

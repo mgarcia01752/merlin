@@ -30,7 +30,8 @@ QtObject {
 
     /** Couple native scalar metadata with its derived display strings before retention. */
     function candidate(metadata, upstream, message, isError) {
-        const status = upstream.error || (upstream.preparing ? "Preparing upstream configuration"
+        const status = upstream.error || (upstream.execution_view ? upstream.execution_view.status
+            : upstream.preparing ? "Preparing upstream work"
             : upstream.busy ? (upstream.progress ? "Upstream simulation " + upstream.progress.status : "Upstream simulation active")
             : upstream.has_result ? "Upstream simulation " + upstream.result.status
             : upstream.configured ? "Upstream configuration ready" : "No accepted upstream configuration")

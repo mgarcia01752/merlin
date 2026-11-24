@@ -77,6 +77,7 @@ fn main() {
                     "qml/validation/SessionPresentationProbe.qml",
                     "qml/validation/DirectionShellProbe.qml",
                     "qml/validation/UpstreamConfigurationProbe.qml",
+                    "qml/validation/UpstreamExecutionProbe.qml",
                     "qml/shared/presentation/PresentationOwner.qml",
                     "qml/shared/presentation/LogicalFootprint.js",
                     "qml/downstream/DownstreamWorkbench.qml",

@@ -1977,7 +1977,17 @@ adopted under the canonical configuration lock. Cancel targets only its original
 draft, preserving source provenance, accepted configuration and the other
 direction. Seven native configuration editors and the approved startup layout
 have [UIU-US-01 acceptance](development/features/unified-qt-workbench/validation.md#uiu-us-01-integrated-configuration-acceptance).
-Execution, measured-input import and scientific instruments retain separate gates.
+Upstream execution reuses that same accepted public controller. Its private
+`workbench/execution_view.rs` reads original progress and public report
+verification/FEC summaries into bounded scalar labels. PRBS-RX remains independent
+source comparison; lifecycle completion and full recovery are distinct. Original
+run tokens identify retained previous results, including the interval between
+current report delivery and terminal acknowledgement. The upstream elapsed label
+uses the backend active clock, which excludes acknowledged pauses.
+[UIU-US-02 native acceptance](development/features/unified-qt-workbench/validation.md#uiu-us-02-integrated-execution-acceptance)
+now covers actual pause/resume, cancellation with completed work, full recovered
+source comparison and downstream isolation. Measured-input import and scientific
+instruments keep separate gates.
 
 The shared shell uses `qml/shell/directions/PersistentDirectionTabs.qml` with
 two persistent Loaders. Main polls both real adapters regardless of selected tab.

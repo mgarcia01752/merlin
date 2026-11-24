@@ -85,3 +85,6 @@ pub(crate) const WORKER_TRANSPORT_ADMISSION_MESSAGE: &str =
 /// Maximum nested data depth for persistent QML candidate traversal.
 /// Root depth is zero; this is an application work policy, not a scientific limit.
 pub(crate) const MAX_PRESENTATION_VALUE_DEPTH: usize = 64;
+
+/// Decimal places in a displayed BER mantissa; underlying values remain unchanged.
+pub(crate) const BER_MANTISSA_DECIMAL_PLACES: usize = 3;

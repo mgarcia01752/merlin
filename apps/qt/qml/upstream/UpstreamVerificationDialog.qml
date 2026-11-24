@@ -7,6 +7,6 @@ import QtQuick
 UpstreamDetailDialog {
     title: "PRBS-RX / Verification"
     purpose: "Inspect independent source verification after recovered CMTS receiver output."
-    referencePlane: "BER, codeword outcomes, verification status and incomplete recovery remain unavailable until supplied by the direction owner."
+    referencePlane: "Independent recovered-source comparison. Completion, decoder consistency and full recovery are separate outcomes; missing comparison is unavailable."
     stages: []
 }

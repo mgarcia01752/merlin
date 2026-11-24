@@ -4841,3 +4841,72 @@ change a saved-workbench writer. Architecture/requirements/checklist links,
 feature navigation and previous task IDs/states are checked separately in the
 receipt. US02 execution, US03 measured inputs, US04 instruments, File/recovery,
 final numerical review and final/installed/hosted acceptance remain open.
+
+## UIU-US-02 integrated execution acceptance
+
+The [execution receipt](upstream-execution-evidence.json) closes
+[UIU-US-02](../../checklist.md#task-uiu-us-02). The existing direction controller
+runs only through `merlin::upstream`. A private finite presentation reads original
+progress and public `BatchReport::verification` / `fec_summary`; the shared controls
+and PRBS-RX consume those results through existing presentation admission. No new
+scientific algorithm, public operation, source schema or retention owner is added.
+
+Primary executed evidence:
+
+- All **453 Qt Rust tests** pass, zero failed/ignored, in 379.10 seconds. The seven
+  new execution cases cover actual Completed, acknowledged pause/cancel, active
+  TimeLimit, exact original rows, no fabricated observations and current report
+  delivery before separate terminal acknowledgement. Failed/inconsistent report
+  display uses explicitly constructed clones, not claimed numerical-failure runs.
+  After sharing the unchanged existing 16-grant test fixture constant, all **49**
+  affected cases pass again; no production value or assertion changed.
+- All **sixteen relevant QML suites** pass with **260 pass records**, zero failures
+  or skips, including setup/cleanup. Existing downstream focus warnings remain
+  recorded. Final all-target Qt Clippy, formatting and API-boundary enforcement
+  pass with zero scientific exceptions. The latest optimized executable is built.
+- The actual native Main probe loads a real document through the OS chooser and
+  drives Start, acknowledged Pause, tab switching, foreign-control/second-Start
+  rejection, Resume with real progress, Pause and Stop. Cancellation retains
+  **76 completed grants, 150176 compared bits and 1976 unverified generated bits**;
+  the global lease remains until genuine terminal acknowledgement. Its BER is zero
+  over the compared prefix while full recovery correctly remains false.
+- A distinct subsequent native run completes **256 grants**, independently compares
+  all **505856 generated source bits**, reports **zero bit errors**, no unverified
+  generated bits and backend full reference recovery. The actual PRBS-RX rows,
+  block status, shared elapsed/activity/status and supplied native DTO match.
+  The complete native probe passes in **8.21 seconds**. This is a synthetic
+  MERLIN closed loop using the existing 50 kHz example with 256 grants, not an
+  external interoperability or measured-capture result.
+- The same executable passes real chooser Cancel/Load and all seven configuration
+  editors again, the downstream native idle/run/pause/menu/control probe, six
+  native startup/project probes and 25 desktop packaging resource cases. Fresh
+  dark screenshots were inspected; the [user guide](../../../user/upstream-workbench.md#run-and-inspect-results)
+  includes actual Main verification pixels. Narrow content grabs remain separately
+  labelled. Active upstream elapsed excludes acknowledged pauses, as implemented
+  by the existing backend control clock; it is not waveform duration.
+
+Read-only review found a genuine ordering defect: an actual current report was
+briefly labelled previous while awaiting its distinct Terminal event. Comparing
+its original application RunToken with the current progress token fixes that
+without another owner or lifecycle layer; the actual ordering case now passes.
+
+The initial test-helper type mismatch and a manual boundary command missing the
+pinned Cargo PATH are preserved as failed attempts. The latter failed before the
+audit; final pinned enforcement passes and no exception/guard was relaxed.
+
+All 852 backend/binding/root-manifest/lock files remain byte-identical to accepted
+SESSION C6. Its workspace/analysis/doctest/example, installed native Python,
+CLI/project and saved-workbench parity evidence is reused with that explicit
+scope. No unrelated root suite or wheel was rerun. Current affected Qt/native
+consumers are executed at this upstream milestone; full applicable final,
+installed and hosted gates remain with QA. Canonical traceability and previous
+checklist history are validated in the receipt. Continue UIU-US-03; measured
+inputs, instruments, project persistence/recovery and the final numerical/style
+review remain their existing tasks.
+
+The final source build is also checked and every native affected consumer is
+rerun against its exact executable hash in the receipt. That run retains eight
+completed grants, 16648 compared bits and 1136 unverified bits on cancellation,
+then again verifies all 505856 source bits in a distinct 256-grant run. Prefix
+length varies with actual scheduling; neither observed cancellation count is a
+required constant. The guide image comes from this final executable.

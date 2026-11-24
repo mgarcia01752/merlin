@@ -15,9 +15,9 @@ const DOCUMENT: &[u8] = include_bytes!("../../../../../examples/cli/upstream/us-
 const COMPLETION_DEADLINE: Duration = Duration::from_secs(30);
 const POLL_INTERVAL: Duration = Duration::from_millis(2);
 // Enough actual grants to observe cooperative pause before normal completion.
-const PAUSE_FIXTURE_GRANTS: usize = 16;
+pub(super) const PAUSE_FIXTURE_GRANTS: usize = 16;
 
-fn wait_for(mut predicate: impl FnMut() -> bool) {
+pub(super) fn wait_for(mut predicate: impl FnMut() -> bool) {
     let deadline = Instant::now() + COMPLETION_DEADLINE;
     while !predicate() {
         assert!(
@@ -28,7 +28,7 @@ fn wait_for(mut predicate: impl FnMut() -> bool) {
     }
 }
 
-fn configured(application: ApplicationSessions) -> Box<Model> {
+pub(super) fn configured(application: ApplicationSessions) -> Box<Model> {
     let host = application.budget().usage();
     let mut model = Model::new(application.clone()).unwrap();
     model.apply(DOCUMENT).unwrap();

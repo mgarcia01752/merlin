@@ -6,6 +6,7 @@
 mod acquisition;
 mod configuration_view;
 mod drafts;
+mod execution_view;
 mod preparation;
 mod presentation;
 pub(crate) use drafts::{MAX_DRAFT_CHANGE_BYTES, MAX_DRAFT_ID_CHARACTERS};
@@ -379,8 +380,8 @@ impl Model {
 /// # Returns
 /// The unchanged bounded prefix. Retained worker text is separately admitted before
 /// enqueue; independent GUI copies use the same admitted error owner.
-pub(super) fn error_text(error: String) -> String {
-    error.chars().take(MAX_ERROR_CHARACTERS).collect()
+pub(super) fn error_text(error: impl AsRef<str>) -> String {
+    error.as_ref().chars().take(MAX_ERROR_CHARACTERS).collect()
 }
 
 #[cfg(test)]

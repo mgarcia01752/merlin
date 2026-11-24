@@ -27,6 +27,10 @@ impl Model {
                 "completed_grants":report.grants.iter().filter(|grant| grant.completed).count(),
                 "unverified_source_bits":report.unverified_source_bits})
         });
+        let execution = self.execution_presentation(progress.as_ref());
+        let mut configuration = self.configuration_presentation();
+        configuration["details"]["verification"] = execution["verification"].clone();
+        configuration["blocks"]["verification"] = execution["verification_block"].clone();
         json!({"configured":self.current(),"preparing":self.pending.is_some(),
             "busy":self.is_running()||self.pending.is_some(),"application_busy":active.is_some(),
             "active_direction":active.map(|run|match run.token.key.direction{Direction::Downstream=>"downstream",Direction::Upstream=>"upstream"}),
@@ -37,6 +41,6 @@ impl Model {
                 "completed_grants":snapshot.completed_grants,"emitted_samples":snapshot.emitted_samples,
                 "compared_bits":snapshot.compared_bits,"elapsed_ms":snapshot.elapsed_ms})),
             "has_result":self.report.is_some(),"result":result,"error":self.error.message(),
-            "draft":self.draft_state(),"configuration_view":self.configuration_presentation()})
+            "draft":self.draft_state(),"configuration_view":configuration,"execution_view":execution})
     }
 }
