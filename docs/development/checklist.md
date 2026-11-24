@@ -601,6 +601,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   [Concrete control admission](features/unified-qt-workbench/validation.md#uiu-session-01-concrete-scientific-control-admission) passes 92 distinct affected Qt Rust cases, 51 Workbench QML checks and six fresh rebuilt-desktop probes. Two old request-owner fixtures initially omitted the newly admitted controls; both pass after exact accounting corrections, with scientific assertions preserved. Final execution aliases retain their charge; foreign upstream controls reject before claim. Timing, outer worker/transport, other metadata and QML remain separate; no policy answer is assumed. Keep SESSION unchecked pending complete acceptance.
 
+  [Concrete run-timing admission](features/unified-qt-workbench/validation.md#uiu-session-01-concrete-run-timing-admission) passes 85 distinct affected Qt Rust cases and six fresh rebuilt-desktop probes. Exact capacity, clock epoch, overlapping old/candidate reservations, transactional Start rejection and final aliases are covered. Existing QML/native evidence is explicitly reused without a rerun claim. Outer runtime/transport, errors/paths/help and persistent presentation remain separate; SESSION stays unchecked.
+
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
   Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).

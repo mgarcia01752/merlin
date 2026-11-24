@@ -119,8 +119,8 @@ fn wait_for(mut predicate: impl FnMut() -> bool) {
 
 #[test]
 fn paused_public_worker_cancels_and_retains_its_actual_partial_report() {
-    let timing = Arc::new(RunTiming::new());
     let budget = RetentionBudget::with_limits(TEST_OWNER_LIMITS);
+    let timing = RunTiming::new(RunTiming::prepare(&budget).unwrap());
     let adapter = DownstreamControl::new(&budget).unwrap();
     assert_eq!(adapter.acknowledged_pause(), None);
     let (budget, gate, mut identities, lease) = admit(&adapter, &budget);
@@ -196,11 +196,12 @@ fn paused_public_worker_cancels_and_retains_its_actual_partial_report() {
 fn finished_data_keeps_real_completion_busy_until_terminal_disposal() {
     let budget = RetentionBudget::with_limits(TEST_OWNER_LIMITS);
     let adapter = DownstreamControl::new(&budget).unwrap();
+    let timing = RunTiming::new(RunTiming::prepare(&budget).unwrap());
     let (budget, gate, mut identities, lease) = admit(&adapter, &budget);
     let worker = spawned(Worker::spawn(
         request(COMPLETE_OBSERVATION_MS, &budget),
         None,
-        Arc::new(RunTiming::new()),
+        timing,
         adapter,
         lease,
         budget.clone(),

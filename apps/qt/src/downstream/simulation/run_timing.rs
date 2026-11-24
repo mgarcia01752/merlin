@@ -6,10 +6,14 @@
 use crate::shared::presentation::constants::{
     MINUTES_PER_HOUR, SECONDS_PER_HOUR, SECONDS_PER_MINUTE,
 };
+use crate::shell::{
+    Retained, RetainedResources, RetentionBudget, RetentionError, RetentionReservation,
+};
 use merlin::downstream::{ChannelPhase, FullLoopControl};
 use serde_json::{json, Value};
 use std::{
-    sync::Mutex,
+    mem::size_of,
+    sync::{Arc, Mutex},
     time::{Duration, Instant},
 };
 
@@ -27,8 +31,16 @@ struct State {
     profiles: Vec<(u8, u64)>,
 }
 
+/// Single-use timing admission without starting its monotonic clock.
+pub(crate) struct PreparedTiming {
+    reservation: RetentionReservation,
+}
+
 pub(crate) struct RunTiming {
     state: Mutex<State>,
+
+    // State and its profile buffer drop before releasing this shared owner charge.
+    _guard: Retained<()>,
 }
 
 fn phase_label(phase: ChannelPhase) -> &'static str {
@@ -60,15 +72,41 @@ fn formatted(milliseconds: u64) -> String {
 }
 
 impl RunTiming {
-    /// Starts an independent monotonic wall clock for one sweep.
+    /// Starts the existing monotonic clock by consuming its exact prior admission.
+    ///
+    /// # Arguments
+    /// * `prepared` - Single-use token reserved before host dispatch/status adoption.
+    ///
     /// # Returns
-    /// Thread-safe timing state; no simulation state or global clock is modified.
-    pub(crate) fn new() -> Self {
-        Self::at(Instant::now())
+    /// One guarded Arc shared by GUI and worker, with exact preallocated profile
+    /// capacity. The clock starts here, never while the preparation token is held.
+    pub(crate) fn new(prepared: PreparedTiming) -> Arc<Self> {
+        Self::at(Instant::now(), prepared)
     }
 
-    fn at(now: Instant) -> Self {
-        Self {
+    /// Reserves complete timing storage without starting clocks or changing a model.
+    ///
+    /// # Arguments
+    /// * `budget` - Canonical host counter covering old, candidate and executing owners.
+    ///
+    /// # Returns
+    /// Single-use admission for the actual final pointee and existing maximum profile
+    /// capacity, with one shared root and no ordered entries. No Arc is allocated yet.
+    ///
+    /// # Errors
+    /// Checked layout/capacity arithmetic or any aggregate dimension before dispatch.
+    pub(crate) fn prepare(budget: &RetentionBudget) -> Result<PreparedTiming, RetentionError> {
+        Ok(PreparedTiming {
+            reservation: budget.reserve_resources(resources(MAX_PROFILE_TIMINGS)?)?,
+        })
+    }
+
+    fn at(now: Instant, prepared: PreparedTiming) -> Arc<Self> {
+        let mut profiles: Vec<(u8, u64)> = Vec::from(
+            vec![(u8::default(), u64::default()); MAX_PROFILE_TIMINGS].into_boxed_slice(),
+        );
+        profiles.clear();
+        Arc::new(Self {
             state: Mutex::new(State {
                 started: now,
                 profile_started: now,
@@ -77,9 +115,10 @@ impl RunTiming {
                 phase: "Preparing",
                 recovered: 0,
                 mce: None,
-                profiles: Vec::new(),
+                profiles,
             }),
-        }
+            _guard: prepared.reservation.retain(()),
+        })
     }
 
     /// Resets current-profile timing without resetting total sweep time.
@@ -187,13 +226,43 @@ impl RunTiming {
     }
 }
 
+fn resources(profile_capacity: usize) -> Result<RetainedResources, RetentionError> {
+    let profile_bytes = profile_capacity
+        .checked_mul(size_of::<(u8, u64)>())
+        .ok_or(RetentionError::ArithmeticOverflow)?;
+    Ok(RetainedResources {
+        payload_bytes: size_of::<RunTiming>()
+            .checked_add(profile_bytes)
+            .ok_or(RetentionError::ArithmeticOverflow)?,
+        ordered_entries: 0,
+        shared_roots: 1,
+    })
+}
+
+/// Measures the complete timing target for exact existing-fixture accounting only.
+///
+/// # Returns
+/// Actual final pointee and capacity charge; no default production policy or clock.
+#[cfg(test)]
+pub(crate) fn fixture_resources() -> RetainedResources {
+    resources(MAX_PROFILE_TIMINGS).unwrap()
+}
+
+#[cfg(test)]
+mod retention_tests;
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
+    fn prepared() -> PreparedTiming {
+        let budget = RetentionBudget::with_limits(fixture_resources());
+        RunTiming::prepare(&budget).unwrap()
+    }
+
     #[test]
     fn all_public_processing_phases_preserve_existing_status_labels() {
-        let clock = RunTiming::new();
+        let clock = RunTiming::new(prepared());
         for (phase, label) in [
             (ChannelPhase::Acquisition, "Acquiring"),
             (ChannelPhase::Completion, "Completing"),
@@ -210,7 +279,7 @@ mod tests {
     #[test]
     fn elapsed_advances_without_progress_and_freezes_before_late_ui_poll() {
         let start = Instant::now();
-        let clock = RunTiming::at(start);
+        let clock = RunTiming::at(start, prepared());
         assert_eq!(
             clock.snapshot_at(start + Duration::from_secs(65))["elapsed_text"],
             "00:01:05"
@@ -221,7 +290,10 @@ mod tests {
         assert_eq!(final_state["elapsed_ms"], 66000);
         assert_eq!(final_state["elapsed_text"], "00:01:06");
         assert_eq!(final_state["progress_age_text"], "00:01:06");
-        assert_eq!(RunTiming::at(start).snapshot_at(start)["elapsed_ms"], 0);
+        assert_eq!(
+            RunTiming::at(start, prepared()).snapshot_at(start)["elapsed_ms"],
+            0
+        );
     }
 
     #[test]
@@ -229,7 +301,7 @@ mod tests {
         assert_eq!(formatted(999), "00:00:00");
         assert_eq!(formatted(3_661_000), "01:01:01");
         assert_eq!(formatted(360_000_000), "100:00:00");
-        let clock = RunTiming::new();
+        let clock = RunTiming::new(prepared());
         clock.begin_profile();
         clock.progress(ChannelPhase::InterleaverDrain, 12);
         clock.end_profile(3);

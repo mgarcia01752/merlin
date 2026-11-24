@@ -1776,8 +1776,8 @@ Their scientific owners audit private shared allocations and optional common
 cancellation children; the facade remains re-export-only. Paired native methods
 reuse existing common quantities and error categories. The
 [integrated evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-scientific-control-allocation-metadata)
-validates Rust/native parity and affected consumers. Subsequent Qt admission and
-complete SESSION acceptance remain separate pending work.
+validates Rust/native parity and affected consumers. Concrete Qt admission is
+described below; complete SESSION acceptance remains pending.
 
 The [concrete control admission unit](development/features/unified-qt-workbench/design.md#uiu-session-01-concrete-scientific-control-admission)
 shares admitted scientific controls across Qt GUI, dispatch and execution aliases,
@@ -1786,9 +1786,18 @@ controller rejects a foreign-budget control before claiming the backend or lease
 Reservations survive final execution aliases, including cancelled or stale jobs;
 product receipt alone does not prove worker termination. The
 [focused integrated evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-concrete-scientific-control-admission)
-preserves existing host ownership and scientific outcomes. Timing, outer workers,
+preserves existing host ownership and scientific outcomes. Outer workers,
 transport and remaining presentation owners still require separate admission;
 this does not establish complete aggregate SESSION acceptance.
+
+The [run-timing owner](development/features/unified-qt-workbench/design.md#uiu-session-01-concrete-run-timing-admission)
+reserves its final guarded pointee and exact bounded profile-timing capacity before
+Start. A single-use prepared token starts no clock; construction keeps the original
+clock epoch after successful host admission. GUI/execution aliases share one
+reservation until final drop. The
+[focused evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-concrete-run-timing-admission)
+preserves timing/progress and scientific behavior. Remaining application owners
+and complete SESSION acceptance stay pending.
 
 The [pre-production archive pair](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds)
 computes exact detached target quantities and checks every limit before copying.

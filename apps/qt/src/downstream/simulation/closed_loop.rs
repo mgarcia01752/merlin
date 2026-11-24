@@ -215,6 +215,13 @@ impl Model {
                 return;
             }
         };
+        let prepared_timing = match RunTiming::prepare(self.context.application.budget()) {
+            Ok(prepared) => prepared,
+            Err(error) => {
+                self.error = application_error(ApplicationError::Retention(error));
+                return;
+            }
+        };
         let lease = match self.context.application.begin(key, control.clone()) {
             Ok(lease) => lease,
             Err(error) => {
@@ -235,7 +242,7 @@ impl Model {
 
         // Retain accepted science until a new identified Profile replaces it.
         self.token = self.token.wrapping_add(1);
-        let timing = Arc::new(RunTiming::new());
+        let timing = RunTiming::new(prepared_timing);
         match Worker::spawn(
             settings,
             plan,
@@ -451,3 +458,6 @@ mod tests;
 #[cfg(test)]
 #[path = "closed_loop/session_tests.rs"]
 mod session_tests;
+
+#[cfg(test)]
+mod timing_retention_tests;

@@ -4513,3 +4513,47 @@ passes all ten new control cases and the affected existing consumers. The
 initial two fixture failures and exact corrections, actual commands/source hashes,
 final executable identity and reused API evidence. No scientific/public API or
 QML implementation changes were needed. Parent SESSION remains unchecked.
+
+### UIU-SESSION-01 concrete run-timing admission
+
+The next finite REQ-UIU-03/06/07 unit admits the existing downstream wall-clock
+owner. `RunTiming` contains inline `Mutex<State>` and one owned
+`Vec<(u8,u64)>`; its phase label is borrowed static text. REUSE the canonical
+budget, Retained guard, existing clock/worker APIs and existing
+`MAX_PROFILE_TIMINGS` alias to the receiver profile limit. Do not introduce
+another accounting abstraction, scientific API or timing algorithm.
+
+| Path and symbol | Current contract and evidence | Requirement gap | Decision / destination |
+| --- | --- | --- | --- |
+| EDIT `apps/qt/src/downstream/simulation/run_timing.rs`: RunTiming, State, construction/end_profile | One Arc shares clock state between GUI and execution; the existing capped vector can grow capacity. | Root and actual vector capacity need admission before retention. | ADAPT constructor to reserve full final guarded pointee plus exact existing maximum tuple capacity and one root. A concrete prepared timing token consumes that reservation at the original clock-start location. Allocate exact capacity by boxed-slice conversion, clear length, then retain unchanged bounded push behavior. Keep state before the final nonoptional guard. |
+| EDIT `apps/qt/src/downstream/simulation/closed_loop.rs`: Model::start | Current timing is constructed after global begin and old presentation clearing. | Timing rejection must preserve accepted timing, science, revision and dispatch availability. | ADAPT: reserve timing before global begin or clearing accepted state; construct the clock from that reservation at its original Start location to preserve epoch. Share the same Arc with existing worker; release candidates on Busy/spawn rejection. |
+| EDIT existing `closed_loop/request_retention/tests.rs`, `result_retention/tests.rs`, `result_retention/projection_tests.rs`, `worker/tests.rs`, `worker/control_retention_tests.rs` | Actual runtime/pressure/queue fixtures use real controls and original scientific assertions. | New timing quantities must be included in the intended live-owner budget. | ADAPT only constructors and exact arithmetic/lifetime expectations. Prepare timing before intentional control pressure. No unrelated assertion removal. |
+| ADD adjacent `run_timing/retention_tests.rs` and `closed_loop/timing_retention_tests.rs` | Existing deterministic clock tests remain. | Prove admission, capacity and transactional real Start behavior. | SEPARATE focused tests for this concrete owner; no generic framework. |
+
+Use checked multiplication/addition for `sizeof(RunTiming)` plus
+`MAX_PROFILE_TIMINGS * sizeof((u8,u64))`; zero ordered entries and one shared root.
+The fixed mutex/state/vector handle/guard are already inside the pointee and
+must not be counted twice. Aliases share one charge through final GUI/execution
+drop, including after a terminal message or GUI disposal. A Weak observer does
+not retain payload bytes. Do not change the static-label, pause-inclusive wall
+time, progress age, idempotent finish or capped profile-history semantics.
+
+Acceptance covers independent compiled layout, exact/below byte/root limits,
+actual vector capacity before/after all admitted pushes, overflow checks, final
+aliases, unchanged deterministic clock labels/freeze, and real Start pressure
+preserving old result/timing/configuration/token without a new lease. Exercise
+actual paused/cancelled/stale/terminal consumers and only affected Qt/QML checks;
+reuse unchanged scientific/native API evidence explicitly. Lead owns primary
+adoption, execution, canonical records and commit. Outer Worker/Job/controller,
+transport and other metadata/QML remain separate. No pending channel/QML policy
+answer is required to admit this concrete timing payload.
+
+
+The [frozen timing handoff](agent-handoffs/run-timing-admission.md) records
+preparation-only commit `4988f19` from exact `ddec888`. Primary
+[integrated validation](validation.md#uiu-session-01-concrete-run-timing-admission)
+executes all six new owner/Model cases and affected existing consumers. The
+[receipt](session-run-timing-admission-evidence.json) preserves exact commands,
+source/executable identities and unchanged-consumer reuse. Read-only QA corrected
+a stale-cancellation test race before primary execution without extending actual
+production lifetime. Complete SESSION acceptance remains open.

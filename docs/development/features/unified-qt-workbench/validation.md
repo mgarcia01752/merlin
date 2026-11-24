@@ -4261,3 +4261,43 @@ preparation-only record. Timing, outer runtime owners, transport, errors/paths/h
 and persistent QML storage remain separate work; neither pending channel nor QML
 policy answer is assumed. Complete SESSION Level 2 and applicable milestone/final
 Level 3 gates remain intact, and UIU-SESSION-01 stays unchecked.
+
+
+## UIU-SESSION-01 concrete run-timing admission
+
+The [focused design](design.md#uiu-session-01-concrete-run-timing-admission) admits
+the final downstream timing pointee and exact existing profile tuple capacity.
+A concrete single-use preparation reserves before global begin/performance/status
+adoption and starts no clock. Clock construction stays at its original location;
+existing monotonic elapsed/progress/finish behavior remains. The mutex/state/Vec
+handle are included once in the guarded pointee, with one shared root and no
+ordered entries. Existing bounded pushes cannot grow beyond admitted capacity.
+
+The [primary receipt](session-run-timing-admission-evidence.json) records 85
+distinct Qt Rust passes: 49 downstream lifecycle, seven timing, 22 upstream and
+seven host-lifecycle cases. All six new cases pass, covering independent exact/
+below layout, both arithmetic overflow boundaries, actual buffer capacity and
+pointer through/beyond the cap, deterministic epoch/freeze, candidate overlap,
+old state/history preservation before lease, and genuine paused stale disposal.
+Original numerical/scientific assertions remain. Second-Start result-pressure
+fixtures budget both timing owners and assert actual worker dispatch so early
+timing rejection cannot replace their original result-target coverage.
+
+Read-only QA found and corrected one new fixture race before runtime: cancellation
+can finish execution before terminal delivery. The test asserts charge only while
+a successfully observed real timing alias is held, releases that observer before
+polling, then waits for final disposal. Deterministic owner tests separately prove
+alias retention. No production lifetime extension or test hook was introduced.
+
+All-target Qt Clippy, formatting, final API-boundary validation and optimized Qt
+build pass. Six fresh rebuilt-desktop probes pass with empty stderr. The preceding
+scientific/native API sources are hash-identical, so the accepted metadata parity
+and wheel are reused without another build or rerun claim. All standalone QML
+sources/test inputs match `ddec888`; the preceding 51 Workbench passes and two
+receiver-focus warnings are explicitly reused rather than reported as new runtime.
+No complete workspace, unrelated native/CLI or packaging suite is claimed.
+
+The [source handoff](agent-handoffs/run-timing-admission.md) remains preparation
+evidence. Outer runtime/closure/transport, error/path/help and persistent QML owners
+remain separate. Channel/QML policy answers are still pending. Complete SESSION
+Level 2 and applicable milestone/final Level 3 gates remain; the parent stays open.

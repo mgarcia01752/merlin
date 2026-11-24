@@ -156,7 +156,16 @@ fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedRe
                 accepted_charge,
                 sum(sum(working_charge, report_charge), {
                     let (adapter, profile) = worker::fixture_control_resources();
-                    sum(adapter, profile)
+
+                    // Old completed timing coexists with the next admitted candidate.
+                    let previous_timing =
+                        crate::downstream::simulation::run_timing::fixture_resources();
+                    let candidate_timing =
+                        crate::downstream::simulation::run_timing::fixture_resources();
+                    sum(
+                        sum(adapter, profile),
+                        sum(previous_timing, candidate_timing),
+                    )
                 }),
             ),
         ),
@@ -326,11 +335,12 @@ fn genuine_worker_queue_and_final_result_alias_keep_the_target_after_terminal_di
     let baseline = budget.usage();
     let key = application.configure_downstream(true).unwrap();
     let control = worker::DownstreamControl::new(budget).unwrap();
+    let timing = super::super::RunTiming::new(super::super::RunTiming::prepare(budget).unwrap());
     let lease = application.begin(key, control.clone()).unwrap();
     let worker = worker::Worker::spawn(
         Arc::clone(&accepted),
         None,
-        Arc::new(super::super::RunTiming::new()),
+        Arc::clone(&timing),
         control,
         lease,
         budget.clone(),
@@ -353,7 +363,10 @@ fn genuine_worker_queue_and_final_result_alias_keep_the_target_after_terminal_di
         budget.usage(),
         sum(
             sum(baseline, expected),
-            worker::fixture_control_resources().0
+            sum(
+                worker::fixture_control_resources().0,
+                crate::downstream::simulation::run_timing::fixture_resources()
+            )
         )
     );
     assert_eq!(queued.job.status, ChannelJobStatus::Complete);
@@ -361,6 +374,7 @@ fn genuine_worker_queue_and_final_result_alias_keep_the_target_after_terminal_di
     let old = Arc::clone(&current);
     drop(worker);
     wait_for(|| application.active().is_none());
+    drop(timing);
     drop(accepted);
 
     // Worker and accepted-request aliases have now dropped; the old/current
@@ -386,18 +400,26 @@ fn rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension(
         wait_for(|| model.poll()["busy"] == false);
         let old = latest(&context).unwrap();
         let charge = sum(charge, old.observations.fixture_resources());
+        let live_charge = sum(
+            charge,
+            crate::downstream::simulation::run_timing::fixture_resources(),
+        );
         let before = serde_json::to_value(old.backend().report()).unwrap();
         let key = model.generation;
         assert_eq!(
             context.application.budget().usage(),
             sum(
-                sum(baseline, charge),
+                sum(baseline, live_charge),
                 crate::downstream::instruments::receiver::performance::fixture_reserved_resources(
                     &context
                 )
             )
         );
         model.start();
+        assert!(
+            model.worker.is_some(),
+            "Original result-target rejection must dispatch"
+        );
         let new_token = context.application.active().unwrap().token;
         assert_ne!(old_token, new_token);
         assert!(Arc::ptr_eq(&latest(&context).unwrap(), &old));
@@ -412,7 +434,7 @@ fn rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension(
         assert_eq!(
             context.application.budget().usage(),
             sum(
-                sum(baseline, charge),
+                sum(baseline, live_charge),
                 crate::downstream::instruments::receiver::performance::fixture_reserved_resources(
                     &context
                 )

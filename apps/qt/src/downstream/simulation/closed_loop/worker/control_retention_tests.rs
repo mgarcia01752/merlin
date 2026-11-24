@@ -122,6 +122,7 @@ fn actual_worker_control_rejection_keeps_source_idle_and_terminal_owns_lease() {
     let request = request_retention::admit_request(candidate, budget).unwrap();
     let control = DownstreamControl::new(budget).unwrap();
     let key = application.configure_downstream(true).unwrap();
+    let timing = RunTiming::new(RunTiming::prepare(budget).unwrap());
     let lease = application.begin(key, control.clone()).unwrap();
     let token = lease.token();
 
@@ -135,7 +136,7 @@ fn actual_worker_control_rejection_keeps_source_idle_and_terminal_owns_lease() {
     let worker = Worker::spawn(
         Arc::clone(&request),
         None,
-        Arc::new(RunTiming::new()),
+        timing,
         Arc::clone(&control),
         lease,
         budget.clone(),

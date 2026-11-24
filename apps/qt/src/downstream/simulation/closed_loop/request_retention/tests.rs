@@ -177,7 +177,10 @@ fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Model, String)
                     actual,
                     sum(
                         sum(working_allowance(&request), report_allowance(&request)),
-                        sum(adapter, profile),
+                        sum(
+                            sum(adapter, profile),
+                            crate::downstream::simulation::run_timing::fixture_resources(),
+                        ),
                     ),
                 ),
             ),
@@ -337,7 +340,10 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
             ),
             sum(
                 sum(old_charge, sum(old_working_charge, old_result_charge)),
-                sum(adapter_charge, profile_control_charge)
+                sum(
+                    sum(adapter_charge, profile_control_charge),
+                    crate::downstream::simulation::run_timing::fixture_resources()
+                )
             )
         )
     );
@@ -351,7 +357,10 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     // backpressure before GUI polling; the old closure still owns both aliases.
     assert!(old_request.upgrade().is_some() && old_plan.upgrade().is_some());
     let stable = sum(
-        sum(base, adapter_charge),
+        sum(
+            sum(base, adapter_charge),
+            crate::downstream::simulation::run_timing::fixture_resources(),
+        ),
         sum(old_result_charge, sum(old_charge, new_charge)),
     );
     let actual = application.budget().usage();

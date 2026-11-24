@@ -23,7 +23,10 @@ fn actual_worker_preserves_completed_science_and_static_warning_when_projection_
             accepted_charge,
             sum(sum(working_charge, backend_charge), {
                 let (adapter, profile) = worker::fixture_control_resources();
-                sum(adapter, profile)
+                sum(
+                    sum(adapter, profile),
+                    crate::downstream::simulation::run_timing::fixture_resources(),
+                )
             }),
         ),
     );
@@ -34,11 +37,14 @@ fn actual_worker_preserves_completed_science_and_static_warning_when_projection_
     assert_eq!(source_policy.usage(), RetainedResources::default());
     let key = application.configure_downstream(true).unwrap();
     let control = worker::DownstreamControl::new(budget).unwrap();
+    let timing = super::super::super::RunTiming::new(
+        super::super::super::RunTiming::prepare(budget).unwrap(),
+    );
     let lease = application.begin(key, control.clone()).unwrap();
     let worker = worker::Worker::spawn(
         accepted.clone(),
         None,
-        Arc::new(super::super::super::RunTiming::new()),
+        Arc::clone(&timing),
         control,
         lease,
         budget.clone(),
@@ -80,7 +86,10 @@ fn actual_worker_preserves_completed_science_and_static_warning_when_projection_
         budget.usage(),
         sum(
             sum(metadata, sum(accepted_charge, backend_charge)),
-            worker::fixture_control_resources().0
+            sum(
+                worker::fixture_control_resources().0,
+                crate::downstream::simulation::run_timing::fixture_resources()
+            )
         )
     );
     let report = serde_json::to_value(queued.backend().report()).unwrap();
@@ -102,6 +111,7 @@ fn actual_worker_preserves_completed_science_and_static_warning_when_projection_
     let old = Arc::clone(&current);
     drop(worker);
     wait_for(|| application.active().is_none());
+    drop(timing);
     drop(accepted);
     assert_eq!(budget.usage(), sum(metadata, backend_charge));
     drop(current);

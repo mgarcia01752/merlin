@@ -28,7 +28,9 @@ active run keeps its slot until its worker has actually finished.
 Simulation and transmitter-preview controls also consume retained-data capacity.
 If a control cannot fit, the current accepted configuration and results remain
 available. Closing a view or receiving a result does not release storage still
-used by its finishing worker.
+used by its finishing worker. Starting another run also needs room for its timing
+history while the previous timing is still retained. If this preparation cannot
+fit, the previous results, timing and configuration stay available.
 
 Actions throughout the workbench and its windows share rounded buttons with
 consistent spacing and visible keyboard focus. Apply accepts an editor's draft;
