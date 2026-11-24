@@ -3,8 +3,10 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Independent application identities around detached authoritative public receiver histories.
+mod retention;
 use crate::downstream::simulation::closed_loop::ResultData;
 use crate::downstream::workbench::session::Context;
+use crate::shell::Retained;
 use merlin::downstream::{
     FullLoopReceiverArchive, FullLoopReceiverArchivePolicy, SourceProfileFrame,
 };
@@ -15,6 +17,9 @@ use std::sync::Arc;
 pub(crate) struct Snapshot {
     pub id: u8,
     pub backend: FullLoopReceiverArchive,
+
+    // All charged archive data drops before its reservation.
+    _retained: Retained<()>,
 }
 pub(crate) struct Entry {
     id: u8,
@@ -62,27 +67,31 @@ pub(crate) fn begin(context: &Context, profiles: &[SourceProfileFrame]) {
 /// Unit on retention; actual job/performance/FEC ownership remains unchanged on failure.
 /// # Errors
 /// Preserves public archive-policy, checked-byte and observation failures as instrument errors.
+/// Host retention rejection preserves the prior accepted entry and every existing alias.
 pub(crate) fn retain(context: &Context, id: u8, result: &ResultData) -> Result<(), String> {
     let policy = FullLoopReceiverArchivePolicy::new(Default::default())
         .map_err(|cause| cause.to_string())?;
-    let archived = result
-        .backend()
-        .receiver_archive_retained_bound(&policy)
-        .and_then(|target| result.backend().receiver_archive_bounded(policy, target))
-        .map_err(|cause| cause.to_string());
+    let archived = retention::snapshot(id, result.backend(), policy, context.application.budget());
+    let (snapshot, error) = match archived {
+        Ok(snapshot) => (Some(snapshot), None),
+
+        // Host rejection is transactional: do not relabel or discard old accepted history.
+        Err(error @ retention::ArchiveError::Retention(_)) => return Err(error.into_message()),
+
+        // Original backend failures retain their existing unavailable-history behavior.
+        Err(error) => (None, Some(error)),
+    };
     let status = serde_json::to_value(result.job.status).map_err(|cause| cause.to_string())?;
     context.qam.with(|entries| {
         if let Some(entry) = entries.borrow_mut().iter_mut().find(|entry| entry.id == id) {
             entry.status = status.as_str().unwrap_or("unavailable").to_owned();
-            entry.snapshot = archived.as_ref().ok().map(|backend| {
-                Arc::new(Snapshot {
-                    id,
-                    backend: backend.clone(),
-                })
-            });
+            entry.snapshot = snapshot;
         }
     });
-    archived.map(|_| ())
+    match error {
+        Some(error) => Err(error.into_message()),
+        None => Ok(()),
+    }
 }
 /// Resolves exactly the requested archived run with no fallback to current observations.
 /// # Arguments
@@ -146,10 +155,7 @@ mod tests {
             entries.borrow_mut().push(Entry {
                 id: 3,
                 status: "complete".into(),
-                snapshot: Some(Arc::new(Snapshot {
-                    id: 3,
-                    backend: archive,
-                })),
+                snapshot: Some(retention::retain_fixture(3, archive)),
             })
         });
         assert_eq!(get(context, 3).unwrap().id, 3);
@@ -158,3 +164,7 @@ mod tests {
         assert!(get(context, 3).is_err());
     }
 }
+
+#[cfg(test)]
+#[path = "qam_history/retention_tests.rs"]
+mod retention_tests;

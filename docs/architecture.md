@@ -1600,6 +1600,13 @@ coverage before cancelling or replacing the live analyzer; old source aliases
 keep their own charge. Control, diagnostic and independently requested display
 owners remain separate from these prepared/product charges.
 
+[Detached receiver histories](development/features/unified-qt-workbench/validation.md#uiu-session-01-detached-receiver-history-admission)
+reserve the public archive target plus the actual Snapshot wrapper and outer Arc
+before copying. The archive moves into that wrapper; its last reservation follows
+registry and selected old aliases through replacement, clearing and final drop.
+Host rejection preserves the prior entry and scientific result. Entry diagnostics,
+registry capacity and independently returned instrument views remain separate owners.
+
 Explicit [accepted-edit cancellation transitions](development/features/unified-qt-workbench/design.md#uiu-session-01-accepted-edits-during-cancellation)
 preflight immutable candidates and checked revisions before cancelling the old
 generation. They preserve the legacy downstream edit/invalidation contract while

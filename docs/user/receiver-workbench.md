@@ -22,6 +22,12 @@ explained in the [FEC Monitor guide](fec-monitor.md).
 
 ## QAM analyzer and retained selectors
 
+Detached QAM histories share the application's retained-data budget. If a new
+history copy exceeds that budget, an existing history for that profile remains
+available and the completed scientific report is preserved. Selected history
+views keep their data alive until those views release it, including after the
+history registry is cleared.
+
 The application selects palette-aware controls directly at startup, including
 on Windows. Dark/light appearance applies to selector backgrounds, text,
 dropdown lists and number editors. Disabled controls retain readable muted text.

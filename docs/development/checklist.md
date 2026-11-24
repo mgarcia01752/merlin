@@ -568,6 +568,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [idle transmitter-preview unit](features/unified-qt-workbench/validation.md#uiu-session-01-idle-transmitter-preview-owner-admission) passes 23 selected Rust cases, four QML behaviors, all-target Clippy, optimized build and six desktop probes. Prepared requests/layouts share charged immutable owners; the actual queued/current product is pre-admitted. Cross-host rebind precedes live cancellation/replacement. The failed initial fixture assertion and corrected source-host lifetime check are retained. Input/history, independently escaping presentation/transport and infrastructure owners remain open; SESSION stays unchecked.
 
+  The [detached receiver-history unit](features/unified-qt-workbench/validation.md#uiu-session-01-detached-receiver-history-admission) passes 29 selected Rust cases, four QML behaviors, Clippy, optimized build and six desktop probes. Public target admission includes the actual Snapshot wrapper/root before copy; the archive moves without an extra clone and selected old aliases retain their charge. Host rejection preserves existing history/science. Performance, input/editor/project, independent instrument/transport and outer infrastructure owners remain open; SESSION stays unchecked.
+
 
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.

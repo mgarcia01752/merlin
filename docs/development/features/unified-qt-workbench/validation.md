@@ -3725,3 +3725,38 @@ Reuse the exact accepted 42d177e backend/native artifact and unchanged operation
 inventories. Independent input/editor/project, history/performance, instrument/
 transport and outer infrastructure owners, complete SESSION Level2 and applicable
 milestone/final Level3 remain open. This focused unit does not accept the parent.
+
+
+## UIU-SESSION-01 detached receiver history admission
+
+The [concrete archive design](design.md#uiu-session-01-detached-receiver-history-admission)
+uses the existing public target bound/bounded copy and shared Context budget.
+Checked root replacement includes the actual Snapshot layout and one outer Arc;
+the backend's own detached root and original quantities remain included. Copying
+starts only after admission. The archive moves without the former second clone;
+its last guard survives registry replacement/clear, Context destruction and every
+selected old alias until final drop. Host rejection preserves prior status/history;
+ordinary backend errors retain historical unavailable behavior.
+
+[Exact primary execution record](session-history-admission-evidence.json) records
+29 selected Rust passes with no failures/ignores, including six new owner cases,
+the original history oracle, receiver instruments, project/context transfer and
+real shared-direction lifecycle consumers. Tests prove byte/root boundaries and
+overflow, exact simultaneous source/target ownership, original QAM/decoder/info
+parity, source passivity, selected-alias lifetime, rejected replacement and real
+precancelled absence. Actual zero ordered entries remain zero.
+
+Four QML behaviors/two hooks, all-target Clippy, formatting, boundary/traceability,
+optimized build and six native probes pass. Two existing unsuppressed QML focus
+warnings remain recorded. Independent QA reviews source only; source-agent checks
+alone do not establish runtime acceptance. Root wording distinguishes excluded
+allocator bookkeeping from separately owned accounting metadata; comment spacing
+also follows coding-style. Original scientific values/assertions and historical
+receipts/checklist states survive.
+
+No public/backend/binding signature, science, schema, registration or dependency
+change requires another wheel or unrelated complete scientific/CLI/packaging
+suites. Reuse the exact 42d177e backend/native record and unchanged inventories.
+Performance, Entry diagnostics/registry capacity, input/editor/project, independent
+instrument/transport and infrastructure owners remain open, along with complete
+SESSION Level2 and applicable milestone/finalLevel3. This unit accepts no parent.

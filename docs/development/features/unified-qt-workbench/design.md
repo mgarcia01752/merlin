@@ -3975,3 +3975,26 @@ project/context/shared-direction lifecycle, QML, Clippy/format/boundary/traceabi
 and optimized/native checks. No backend API or wheel rebuild is needed. Remaining
 outer control/channel/diagnostic/transport and independent input/history owners
 and full SESSION Level2/milestone acceptance stay open.
+
+
+### UIU-SESSION-01 detached receiver history admission
+
+REQ-UIU-03/06/07 and UIU-SESSION-01 own selective adoption of the
+[isolated archive preparation](agent-handoffs/receiver-archive-admission.md).
+REUSE existing receiver_archive_retained_bound/receiver_archive_bounded, canonical
+Context budget and Retained guard. EDIT qam_history.rs; ADD its focused retention
+and test children. Replace the public archive handle once with the actual Snapshot
+layout (including its last guard), preserve backend entry/root quantities and add
+the actual outer Snapshot Arc. Reserve before copying and move the archive into
+that wrapper without a second scientific clone. Registry/get/current/old aliases
+share the charge through final disposal. Host rejection preserves the accepted
+entry/status; ordinary backend failures keep their historical unavailable behavior.
+
+Execute six new owner cases plus the original archive/query oracle, affected
+receiver/instrument/shared lifecycle/project cases, QML, Clippy/format/boundary and
+traceability, optimized build and native probes. Values, reference planes, public
+signatures and dependencies remain unchanged, so reuse backend/native evidence.
+This is snapshot-only admission: Entry diagnostics, registry Vec capacity,
+performance records, other independent display/transport/input/project and outer
+infrastructure owners remain separate. Complete SESSION Level2 and applicable
+milestone/finalLevel3 acceptance are still required; keep the parent unchecked.
