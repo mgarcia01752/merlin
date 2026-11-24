@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Finite cumulative accounting and per-step completed decisions, never full run history.
@@ -8,6 +9,7 @@ use crate::{
     transmission::DurationTiming,
 };
 pub use fec_codec::statistics::{FecCounters, FecOutcome};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 /// Distinct processing intervals; observation duration does not include the others.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
@@ -133,6 +135,145 @@ impl PayloadRecovery {
             rejected,
             mismatched,
             unrecovered,
+        }
+    }
+}
+
+impl RetainedPayload for ChannelWordResult {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            placement,
+            first_source_sample,
+            end_source_sample,
+            recovered_during_drain,
+            receive_sequence,
+            first_source_symbol,
+            last_source_symbol,
+            comparison,
+            ldpc_success,
+            ldpc_iterations,
+            bch_success,
+            bch_corrected_bits,
+            ldpc_hard_decision_changes,
+        } = self;
+        merlin_api::retention_support::sum([
+            placement.retained_children(),
+            first_source_sample.retained_children(),
+            end_source_sample.retained_children(),
+            recovered_during_drain.retained_children(),
+            receive_sequence.retained_children(),
+            first_source_symbol.retained_children(),
+            last_source_symbol.retained_children(),
+            comparison.retained_children(),
+            ldpc_success.retained_children(),
+            ldpc_iterations.retained_children(),
+            bch_success.retained_children(),
+            bch_corrected_bits.retained_children(),
+            ldpc_hard_decision_changes.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ChannelSummary {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            fec,
+            file_source,
+            measured_mer_db,
+            compared_data_carriers,
+            window,
+            phase,
+            timing,
+            prbs_seed,
+            payload_origin_symbol,
+            acquisition_symbols,
+            observation_symbols,
+            completion_symbols,
+            interleaver_drain_symbols,
+            waveform_tail_samples,
+            channel_filter_tail_samples,
+            total_transmitted_samples,
+            rx_warmup_symbols,
+            generated_payloads,
+            recovered_payloads,
+            pending_payload_bits,
+            comparison,
+            payload_ber,
+            payload_codeword_errors,
+            payload_ldpc_failures,
+            payload_bch_failures,
+            payload_mean_ldpc_iterations,
+            payload_ldpc_iteration_sum,
+            payload_ldpc_iterations,
+            bch_corrected_bits,
+            accepted_ncp_fields,
+            ncp_ldpc_iterations,
+            plc_frames,
+            plc_bit_errors,
+            plc_ldpc_iterations,
+            maximum_bin_error,
+        } = self;
+        merlin_api::retention_support::sum([
+            merlin_api::retention_support::fixed_children(fec),
+            file_source.retained_children(),
+            measured_mer_db.retained_children(),
+            compared_data_carriers.retained_children(),
+            window.retained_children(),
+            phase.retained_children(),
+            timing.retained_children(),
+            prbs_seed.retained_children(),
+            payload_origin_symbol.retained_children(),
+            acquisition_symbols.retained_children(),
+            observation_symbols.retained_children(),
+            completion_symbols.retained_children(),
+            interleaver_drain_symbols.retained_children(),
+            waveform_tail_samples.retained_children(),
+            channel_filter_tail_samples.retained_children(),
+            total_transmitted_samples.retained_children(),
+            rx_warmup_symbols.retained_children(),
+            generated_payloads.retained_children(),
+            recovered_payloads.retained_children(),
+            pending_payload_bits.retained_children(),
+            comparison.retained_children(),
+            payload_ber.retained_children(),
+            payload_codeword_errors.retained_children(),
+            payload_ldpc_failures.retained_children(),
+            payload_bch_failures.retained_children(),
+            payload_mean_ldpc_iterations.retained_children(),
+            payload_ldpc_iteration_sum.retained_children(),
+            payload_ldpc_iterations.retained_children(),
+            bch_corrected_bits.retained_children(),
+            accepted_ncp_fields.retained_children(),
+            ncp_ldpc_iterations.retained_children(),
+            plc_frames.retained_children(),
+            plc_bit_errors.retained_children(),
+            plc_ldpc_iterations.retained_children(),
+            maximum_bin_error.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ChannelPhase {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Acquisition => Some(RetainedFootprint::default()),
+            Self::Observation => Some(RetainedFootprint::default()),
+            Self::Completion => Some(RetainedFootprint::default()),
+            Self::InterleaverDrain => Some(RetainedFootprint::default()),
+            Self::Finished => Some(RetainedFootprint::default()),
+            Self::Failed => Some(RetainedFootprint::default()),
         }
     }
 }

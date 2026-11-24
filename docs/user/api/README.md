@@ -31,7 +31,7 @@ constellations, finite decision regions and actual bounded likelihood summaries.
 coordinates, actual bin power and proven optional packing roles.
 [Channel spectrum and electrical power](channel-spectrum.md) distinguish actual
 calibrated observations, scalar amplifier views and full-band integration.
-[Retained resource metadata](retained-resources.md) describes passive upstream
+[Retained resource metadata](retained-resources.md) describes passive directional
 owner payload quantities and their explicit accounting limits.
 
 For searchable class/method documentation generated from the actual APIs, see

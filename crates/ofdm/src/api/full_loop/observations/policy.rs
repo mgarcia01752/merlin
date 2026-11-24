@@ -4,6 +4,7 @@
  */
 //! Explicit finite retention policy; existing probe dispatch remains the scientific observation owner.
 use super::*;
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 
 /// Maximum copied actual elements in one public stage query.
@@ -191,5 +192,58 @@ impl FullLoopObservationPolicy {
             )?;
         }
         Ok(probe)
+    }
+}
+
+impl RetainedPayload for FullLoopStageRetention {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            stage,
+            max_events,
+            observation_only,
+        } = self;
+        merlin_api::retention_support::sum([
+            stage.retained_children(),
+            max_events.retained_children(),
+            observation_only.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for FullLoopObservationInput {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            stages,
+            max_events,
+            max_elements_per_event,
+            max_total_elements,
+            max_retained_bytes,
+        } = self;
+        merlin_api::retention_support::sum([
+            stages.retained_children(),
+            max_events.retained_children(),
+            max_elements_per_event.retained_children(),
+            max_total_elements.retained_children(),
+            max_retained_bytes.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for FullLoopObservationPolicy {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { input } = self;
+        merlin_api::retention_support::sum([input.retained_children()])
     }
 }

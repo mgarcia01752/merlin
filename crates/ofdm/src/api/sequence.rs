@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Immutable measured-sequence admission over existing residual-power planning.
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 mod queries;
 use super::{
     ApiError, ApiResult, AssociationTolerance, CaptureProvenance, ChannelEstimate, Dpd, ErrorCode,
@@ -297,5 +298,45 @@ impl TransmissionConfiguration {
             profile,
             response.map(|v| &v.frame),
         )?)
+    }
+}
+
+impl RetainedPayload for MeasurementSequenceOptions {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            mode,
+            interval_symbols,
+            tolerance,
+        } = self;
+        merlin_api::retention_support::sum([
+            mode.retained_children(),
+            interval_symbols.retained_children(),
+            tolerance.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for MeasurementSequence {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            captures,
+            plan,
+            transmission,
+            options,
+        } = self;
+        merlin_api::retention_support::sum([
+            captures.retained_children(),
+            plan.retained_children(),
+            transmission.retained_children(),
+            options.retained_children(),
+        ])
     }
 }

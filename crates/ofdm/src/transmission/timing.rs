@@ -1,11 +1,13 @@
 /*
  * Copyright 2026 DOCSIS OFDM FEC Toolkit contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Integer sample-clock schedule; roll-off overlaps instead of extending cadence.
 use super::{settings::SAMPLE_RATE_HZ, TransmissionSettings};
 use crate::common::constants::{MILLISECONDS_PER_SECOND, NANOSECONDS_PER_SECOND};
 use crate::{error::invalid, SimulationError};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 use std::time::Duration;
 
@@ -133,5 +135,32 @@ impl TransmissionSettings {
             complete_symbols: timing.complete_symbols as u32,
             unused_samples: timing.unused_samples as u32,
         })
+    }
+}
+
+impl RetainedPayload for DurationTiming {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            sample_rate_hz,
+            fft_samples,
+            symbol_period_samples,
+            windowed_symbol_samples,
+            observation_samples,
+            complete_symbols,
+            unused_samples,
+        } = self;
+        merlin_api::retention_support::sum([
+            sample_rate_hz.retained_children(),
+            fft_samples.retained_children(),
+            symbol_period_samples.retained_children(),
+            windowed_symbol_samples.retained_children(),
+            observation_samples.retained_children(),
+            complete_symbols.retained_children(),
+            unused_samples.retained_children(),
+        ])
     }
 }

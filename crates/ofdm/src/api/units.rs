@@ -1,9 +1,11 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Checked conversion boundaries and read-only scientific result quantities.
 use super::{error::invalid, ApiResult};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 macro_rules! quantity {
     ($name:ident, $primitive:ty, $check:expr, $description:literal) => {
@@ -214,5 +216,60 @@ impl ObservationDuration {
     /// Rejects zero or excessive duration.
     pub fn from_milliseconds(value: u64) -> ApiResult<Self> {
         Self::new(value)
+    }
+}
+
+impl RetainedPayload for ProfileId {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self(value) = self;
+        value.retained_children()
+    }
+}
+
+impl RetainedPayload for CaptureTime {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self(value) = self;
+        value.retained_children()
+    }
+}
+
+impl RetainedPayload for AssociationTolerance {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self(value) = self;
+        value.retained_children()
+    }
+}
+
+impl RetainedPayload for BandwidthHz {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self(value) = self;
+        value.retained_children()
+    }
+}
+
+impl RetainedPayload for PrbsSeed {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self(value) = self;
+        value.retained_children()
     }
 }

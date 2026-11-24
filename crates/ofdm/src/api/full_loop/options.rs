@@ -8,6 +8,7 @@ pub use crate::signal_processing::receiver::channel_estimation::MceSettings;
 pub use crate::simulation::channel::{
     constellation::ConstellationSelection, protected_constellation::ProtectedCaptureSelection,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 
 /// Transport bound for full-loop options, separate from original input/resource limits.
@@ -98,5 +99,36 @@ impl FullLoopOptions {
             .map_err(|cause| ApiError::new(ErrorCode::InvalidInput, cause.to_string()))?;
         result.validate()?;
         Ok(result)
+    }
+}
+
+impl RetainedPayload for FullLoopOptions {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            duration_ms,
+            max_iterations,
+            max_runtime_ms,
+            max_retained_words,
+            noise_seed,
+            receiver_mode,
+            mce,
+            constellation,
+            protected_constellation,
+        } = self;
+        merlin_api::retention_support::sum([
+            duration_ms.retained_children(),
+            max_iterations.retained_children(),
+            max_runtime_ms.retained_children(),
+            max_retained_words.retained_children(),
+            noise_seed.retained_children(),
+            receiver_mode.retained_children(),
+            mce.retained_children(),
+            constellation.retained_children(),
+            protected_constellation.retained_children(),
+        ])
     }
 }

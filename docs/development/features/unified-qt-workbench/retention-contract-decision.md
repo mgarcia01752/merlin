@@ -72,3 +72,45 @@ and Level 2 acceptance before checking UIU-SESSION-01.
 Public scientific root metadata, pre-production bounds and actual direction-host
 admission remain implementation gates. Neither the decision nor reservation
 primitive tests establish aggregate resource acceptance.
+
+## Output construction boundary requiring clarification
+
+The approved three quantities above remain unchanged. A separate source audit
+finds that existing final-product length ceilings do not establish requested
+capacity ceilings for Vec/String construction. Do not assume a standard-library
+growth multiplier or reject only after producing an oversized result.
+
+The concrete proposed archive path preserves the existing `receiver_archive`
+operation and its historical statistic. An additive public preflight operation
+would compute all three target quantities; a paired bounded copy operation would
+check them before copying. Normalize copied storage through boxed slices/strings
+to give final retained buffers exact logical capacities. Retain original source,
+old history and target reservations concurrently until their actual final drops.
+Independent Rust/native tests must verify unchanged observations and statistics.
+No bound/copy operation is implemented or accepted by this proposal.
+
+| Owner | Remaining source-level gap |
+| --- | --- |
+| `crates/ofdm/src/api/full_loop/receiver_archive/copy.rs` | Selected pair/LLR/context copies have finite lengths; collect/clone capacities are not part of the legacy byte statistic. Final archive normalization can establish a target bound, but boxed collection itself uses a temporary builder. |
+| `crates/ofdm/src/simulation/channel/job.rs`, `api/full_loop/observations/store.rs` | Future results retain word/constellation/event buffers, cloned settings/inputs and failure text; complete typed accounting and capacity enforcement are still needed. |
+| `crates/ofdma/src/simulation/run.rs`, `instruments/{observer.rs,receiver.rs,soft/store.rs}`, `configuration/document.rs` | Future reports retain grant/decision/observation buffers, cloned snapshots, canonical JSON and diagnostics; all capacities and private caches need owner enforcement. |
+
+The earlier ownership design includes preparation-peak ownership. Current-root
+metadata explicitly excludes temporary execution storage. The boundary between
+temporary output builders and retained owners therefore needs an explicit
+decision before complete session admission can be claimed:
+
+1. **Retained-root accounting with separate execution policies:** the aggregate
+   byte/entry/root budget covers all accepted, candidate, worker, queued and old
+   retained roots and simultaneous copy source/target owners. Temporary backend
+   construction and numerical scratch remain subject to separate finite input,
+   element/count, worker and runtime policies; no aggregate scratch-byte/RSS
+   guarantee is claimed. Final retained capacities still require enforcement.
+2. **One aggregate budget includes construction peaks:** additionally prove and
+   reserve every temporary builder's requested-capacity peak before allocation.
+   Existing length checks and boxed final-storage normalization do not establish
+   this stronger claim; further backend storage/admission work is required.
+
+This is a pending clarification, not acceptance or permission to weaken existing
+claims. Public root metadata and independent implementation work may continue;
+dependent aggregate acceptance must wait for the decision and its tests.

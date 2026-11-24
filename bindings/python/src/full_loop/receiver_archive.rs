@@ -104,6 +104,23 @@ impl PyFullLoopResult {
 }
 #[pymethods]
 impl PyReceiverArchive {
+    /// Measures detached observations without changing historical archive statistics.
+    ///
+    /// # Returns
+    /// Immutable target-layout metadata including private pilot/stage ownership.
+    /// The existing info.retained_bytes keeps its original length-based scope.
+    ///
+    /// # Errors
+    /// Preserves Rust ResourceLimit on checked overflow; releases the interpreter.
+    fn retained_footprint(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        py.detach(|| self.0.retained_footprint())
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
     /// Copies actual archive counts/budgets and the optional original decoder identity.
     /// # Returns
     /// Owned independent dictionary; unavailable data stays explicitly absent/zero.

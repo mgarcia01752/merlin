@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Detached actual receiver observations; no job, waveform, capture or stage-store ownership.
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 mod copy;
 mod policy;
 use super::*;
@@ -86,6 +87,25 @@ impl FullLoopResult {
     }
 }
 impl FullLoopReceiverArchive {
+    /// Measures this complete immutable root and all reachable retained payloads.
+    ///
+    /// Counts requested buffer capacity, including spare capacity and private
+    /// caches. Shared payloads are counted on every owned Arc edge; ordered
+    /// entries and shared roots are reported separately from payload bytes.
+    /// Allocator metadata and container/control-block implementation overhead
+    /// are excluded. This passive read does not copy payloads or run science.
+    ///
+    /// # Returns
+    /// Current-root metadata including the fixed root exactly once. This is
+    /// neither a future-output reservation nor a process-memory bound.
+    ///
+    /// # Errors
+    /// Returns ResourceLimit if retained_footprint arithmetic overflows.
+    pub fn retained_footprint(&self) -> ApiResult<merlin_api::RetainedFootprint> {
+        merlin_api::retention_support::retained_footprint(self)
+            .ok_or_else(|| ApiError::new(ErrorCode::ResourceLimit, "retained_footprint overflow"))
+    }
+
     /// Copies bounded archive accounting and original decoder context without advancing science.
     /// # Returns
     /// Actual retained counts, correction mode, byte scope and optional original event metadata.
@@ -185,3 +205,39 @@ impl FullLoopReceiverArchive {
 
 #[cfg(test)]
 mod tests;
+
+impl RetainedPayload for Retained {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            policy,
+            receiver_mode,
+            data,
+            protected,
+            decoder,
+            retained_bytes,
+        } = self;
+        merlin_api::retention_support::sum([
+            policy.retained_children(),
+            receiver_mode.retained_children(),
+            data.retained_children(),
+            protected.retained_children(),
+            decoder.retained_children(),
+            retained_bytes.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for FullLoopReceiverArchive {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self(value) = self;
+        value.retained_children()
+    }
+}

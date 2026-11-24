@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 use super::FilePayload;
@@ -9,6 +10,7 @@ use crate::{
     SimulationError,
 };
 use fec_codec::parameters::BCH_INPUT_BITS;
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 /// Separate meaningful segments and completion; no coding padding enters BER.
 #[derive(Debug, Clone, Serialize)]
@@ -180,5 +182,61 @@ impl FileVerifier {
             recovered_bits: self.file.bits_tested,
             complete: self.file.bits_tested == self.input.original_bytes as u64 * 8,
         }
+    }
+}
+
+impl RetainedPayload for RecoveredFile {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            bytes,
+            original_bytes,
+            recovered_bits,
+            complete,
+        } = self;
+        merlin_api::retention_support::sum([
+            bytes.retained_children(),
+            original_bytes.retained_children(),
+            recovered_bits.retained_children(),
+            complete.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for FileSourceSummary {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            original_bytes,
+            target_bits,
+            generated_bits,
+            coding_padding_bits,
+            file,
+            fill,
+            file_ber,
+            fill_ber,
+            fully_generated,
+            file_fully_compared,
+            fully_compared,
+        } = self;
+        merlin_api::retention_support::sum([
+            original_bytes.retained_children(),
+            target_bits.retained_children(),
+            generated_bits.retained_children(),
+            coding_padding_bits.retained_children(),
+            file.retained_children(),
+            fill.retained_children(),
+            file_ber.retained_children(),
+            fill_ber.retained_children(),
+            fully_generated.retained_children(),
+            file_fully_compared.retained_children(),
+            fully_compared.retained_children(),
+        ])
     }
 }

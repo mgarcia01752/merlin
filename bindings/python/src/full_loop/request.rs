@@ -95,6 +95,23 @@ impl PyMerlin {
 }
 #[pymethods]
 impl PyFullLoopRequest {
+    /// Measures the accepted request's complete current Rust ownership.
+    ///
+    /// # Returns
+    /// Immutable target-layout payload/entry/root metadata, including private
+    /// playback caches; no source advancement, serialization or payload copy.
+    ///
+    /// # Errors
+    /// Preserves Rust ResourceLimit on checked overflow; releases the interpreter.
+    fn retained_footprint(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        py.detach(|| self.0.retained_footprint())
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
     /// Copies frozen exact scientific settings; later caller edits cannot affect the request.
     /// # Returns
     /// Owned settings dictionary, separate from mutable legacy Simulation evaluation state.

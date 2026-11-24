@@ -1,11 +1,13 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Explicit PRBS15 experiment source; unrelated to the PHY cell randomizer.
 use crate::{error::invalid, SimulationError};
 #[cfg(feature = "simulation")]
 use fec_codec::parameters::BCH_INPUT_BITS;
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use merlin_dsp::common::constants::{PRBS15_MAX_SEED, PRBS15_PERIOD_BITS, PRBS15_REGISTER_BITS};
 use serde::Serialize;
 
@@ -177,6 +179,27 @@ impl PrbsVerifier {
     /// Totals from source bit zero through the last accepted comparison.
     pub fn totals(&self) -> &PrbsComparison {
         &self.totals
+    }
+}
+
+impl RetainedPayload for PrbsComparison {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            first_bit,
+            bits_tested,
+            bit_errors,
+            first_error_bit,
+        } = self;
+        merlin_api::retention_support::sum([
+            first_bit.retained_children(),
+            bits_tested.retained_children(),
+            bit_errors.retained_children(),
+            first_error_bit.retained_children(),
+        ])
     }
 }
 

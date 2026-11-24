@@ -1,6 +1,7 @@
 # Retained resource metadata
 
-Upstream sessions and reports expose passive Rust-owned retention metadata through
+Downstream requests, sweep plans, results and detached receiver archives, and
+upstream sessions and reports expose passive Rust-owned retention metadata through
 `retained_footprint()`. Rust returns the shared `merlin::common::RetainedFootprint`;
 native Python returns an immutable `merlin.common.RetainedFootprint`. The operation
 does not run simulation, serialize a report or allocate copies of its payload.
@@ -12,7 +13,7 @@ Unified Qt aggregate admission remains under implementation.
 
 ```mermaid
 flowchart LR
-    Root[Existing session or report] --> Owner[Read-only Rust ownership walk]
+    Root[Existing directional owner] --> Owner[Read-only Rust ownership walk]
     Owner --> Bytes[Payload bytes]
     Owner --> Entries[Ordered-container entries]
     Owner --> Roots[Shared allocation roots]
@@ -36,6 +37,20 @@ same operations. The report includes retained provenance, configuration, grant
 decisions and private observation caches, including data omitted from serialization.
 Session metadata includes accepted configuration/document and cached playback data.
 
+Downstream users query `FullLoopRequest`, `FullLoopSweepPlan`, `FullLoopResult`
+or `FullLoopReceiverArchive` through `merlin::downstream` or the preserved
+`docsis_ofdm_fec::api` exports. The same native classes are available through
+`merlin.downstream` and their existing root aliases. Metadata includes original
+input/provenance ownership, cached measurement powers, retained stage contexts
+and the private protected pilot cache. Complete and cancelled results retain
+their actual quantities; an absent observation is not fabricated.
+
+Receiver archive metadata is separate from the existing
+`archive.info().retained_bytes` statistic (Python `archive.info['retained_bytes']`).
+That historical statistic and its copy policy retain their length-based scope.
+Cloning an owner may shrink Vec/String spare capacity, so equal scientific
+contents do not guarantee equal resource quantities after an arbitrary clone.
+
 Python users call `simulation.retained_footprint()` or
 `report.retained_footprint()` and read the three properties. These are copies of
 Rust-computed quantities; Python performs no sizing. Native measurement releases
@@ -47,7 +62,7 @@ after its source session/report is released.
 
 Existing downstream exports, root Python `merlin.Simulation`, saved project bytes,
 scientific limits and historical archive statistics retain their meaning.
-Downstream root metadata and pre-production result/copy bounds are separate
-remaining integration work. See the [API guide](README.md),
+Pre-production result/copy bounds and actual aggregate admission remain
+integration work. See the [API guide](README.md),
 [upstream sessions](../upstream/session.md) and
 [approved retention contract](../../development/features/unified-qt-workbench/retention-contract-decision.md).

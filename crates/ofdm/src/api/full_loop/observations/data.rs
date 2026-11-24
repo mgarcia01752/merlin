@@ -5,6 +5,7 @@
 //! Owned copies of the inspected producer representations; no numerical transformations.
 use super::{FullLoopPilotValue, FullLoopTransportCell};
 use crate::simulation::test_points::ProbeData;
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 
 /// Actual selected values on the original stage domain, including explicit unavailable cells.
@@ -77,6 +78,25 @@ impl FullLoopStageData {
             Self::TransportCells(v) => Self::TransportCells(v[start..end].to_vec()),
             Self::Pilots(v) => Self::Pilots(v[start..end].to_vec()),
             Self::Llrs(v) => Self::Llrs(v[start..end].to_vec()),
+        }
+    }
+}
+
+impl RetainedPayload for FullLoopStageData {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Bits(value) => value.retained_children(),
+            Self::Bytes(value) => value.retained_children(),
+            Self::Iq(value) => value.retained_children(),
+            Self::OptionalIq(value) => value.retained_children(),
+            Self::QamLabels(value) => value.retained_children(),
+            Self::TransportCells(value) => value.retained_children(),
+            Self::Pilots(value) => value.retained_children(),
+            Self::Llrs(value) => value.retained_children(),
         }
     }
 }

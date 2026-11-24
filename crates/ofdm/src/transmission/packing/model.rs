@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Owned symbol plans and fixed uniform-modulation packing configuration.
@@ -10,6 +11,7 @@ use crate::{
     types::{ofdm_modulation::ConstellationOrder, ProfileId},
     SimulationError,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 
 /// Job-local identity, for diagnostics/truth tracking; not a transmitted NCP field.
@@ -170,5 +172,19 @@ impl PackedSymbol {
             }
         }
         result
+    }
+}
+
+impl RetainedPayload for NcpModulation {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Qpsk => Some(RetainedFootprint::default()),
+            Self::Qam16 => Some(RetainedFootprint::default()),
+            Self::Qam64 => Some(RetainedFootprint::default()),
+        }
     }
 }

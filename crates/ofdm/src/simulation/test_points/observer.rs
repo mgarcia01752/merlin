@@ -1,10 +1,12 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Opt-in bounded observation; no filesystem output or scientific state ownership.
 use super::{ProbeContext, ProbeData, ProbeEvent, SignalDomain, TestPointId};
 use crate::{error::invalid, SimulationError};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -507,4 +509,23 @@ fn validate_data(
         ));
     }
     Ok(())
+}
+
+impl RetainedPayload for ProbeStats {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            dispatched_events,
+            dispatched_elements,
+            callback_errors,
+        } = self;
+        merlin_api::retention_support::sum([
+            dispatched_events.retained_children(),
+            dispatched_elements.retained_children(),
+            callback_errors.retained_children(),
+        ])
+    }
 }

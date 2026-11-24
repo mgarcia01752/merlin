@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM FEC Toolkit contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! PHY I20 sections7.5.13 and7.5.15: PLC and physical pilot locations.
@@ -9,6 +10,7 @@ use crate::{
     types::{FrequencyHz, SubcarrierIdx},
     SimulationError,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 
 /// Physical scattered-pilot pattern period in OFDM symbols.
@@ -283,4 +285,29 @@ pub fn predefined_pilots(
         bins.extend([low, high]);
     }
     Ok(bins)
+}
+
+impl RetainedPayload for CarrierLayoutSettings {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            zero_frequency_hz,
+            first_active_bin,
+            active_end_exclusive,
+            plc_first_bin,
+            excluded_bins,
+            additional_continuous_pilots,
+        } = self;
+        merlin_api::retention_support::sum([
+            zero_frequency_hz.retained_children(),
+            first_active_bin.retained_children(),
+            active_end_exclusive.retained_children(),
+            plc_first_bin.retained_children(),
+            excluded_bins.retained_children(),
+            additional_continuous_pilots.retained_children(),
+        ])
+    }
 }

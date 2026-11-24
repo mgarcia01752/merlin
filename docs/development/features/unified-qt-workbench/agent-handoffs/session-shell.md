@@ -416,3 +416,78 @@ execution workspace before allocation. The future-output bound and producer/copy
 preflight remain the next mandatory prerequisite; no estimate, substitute bound,
 Qt admission or aggregate-memory acceptance is claimed here. No push/release/
 installation occurs. Focused save SHA and clean-tree result are reported separately.
+
+## UIU-SESSION-01 downstream retained-root preparation
+
+Prepared from `bbac5fbacf3db97d451cf7ea5b49c228a764a464` on
+`feature/qt-retention-downstream`. The preserved `feature/qt-session-shell`
+branch remains at `665d758d1e89ca4542999a499fc934ad82057efa`. The lead owns
+[the canonical design](../design.md#downstream-retained-root-preparation),
+[UIU-SESSION-01](../../../checklist.md#task-uiu-session-01),
+[REQ-UIU-03](../../../../requirements.md#req-uiu-03) and
+[REQ-UIU-07](../../../../requirements.md#req-uiu-07). This source-only preparation
+establishes no official task, Qt or aggregate-memory acceptance.
+
+Four immutable roots now provide
+`retained_footprint(&self) -> ApiResult<merlin_api::RetainedFootprint>`:
+`FullLoopRequest`, `FullLoopSweepPlan`, `FullLoopResult` and
+`FullLoopReceiverArchive`. The common helper counts the fixed root once;
+owner-local visitors cover requested Vec/String capacity and every initialized
+child, conservatively repeating Arc pointees and reporting each shared root.
+Ordered entries are separate from payload bytes. Allocator, tree-node and Arc
+control-block overhead are excluded. Checked overflow maps to ResourceLimit
+with `retained_footprint` context. Success neither allocates nor advances science.
+
+The complete owner graph has 83 exhaustive struct patterns, 28 exhaustive enum
+matches and seven tuple-wrapper implementations across 55 downstream source
+files. API inputs/provenance/catalogs and source selections reach original and
+decoded bytes, source strings, assignments/schemes/summaries, all private
+MeasurementPlayback frames/powers/average caches, settings/playback/noise/layout/H,
+actual job/FEC/received-H/cell-LLR/recovered-file results, the serialization-skipped
+protected pilot sequence, ordered stage stores/contexts/roles/data and detached
+archive observations. Borrowed static text is non-owning. Duration and the audited
+five-u64 Copy FecCounters use the agreed `retention_support::fixed_children`
+helper; no foreign trait implementation or new dependency is introduced.
+
+Production changes are additions only. Original algorithms, fields, containers,
+defaults, limits and serialization are unchanged. Archive `info().retained_bytes`
+and `receiver_archive/copy.rs` retain their existing length-based statistic and
+copy policy. Each clone is measured as its actual owner: cloning Vec/String may
+shrink spare capacity, while shared Arc graphs retain the same payload.
+
+Ten new tests are prepared, **UNEXECUTED**, including compilation and Clippy:
+
+1. Private playback frame/power/average spare buffers and three Arc roots.
+2. Skipped protected pilot cache and empty stream spare buffer, passive JSON.
+3. Original/decoded repeated byte Arc and provenance/decoder string spares.
+4. Ordered stage entry, spare event slots, context IDs/roles and LLR buffers.
+5. Payload/NCP pair buffers and both nested LLR capacities, passive JSON.
+6. Repeated original-file Arc ownership without payload cloning.
+7. Idle request and selected sweep spare capacity without execution.
+8. Real complete result, actual decoder stage and per-owner passive stability.
+9. Real pre-cancelled partial result with original inputs and no fabricated work.
+10. Real finite-file recovery and detached QAM/decoder archive after original
+    request/result destruction, preserving the legacy retained-bytes statistic.
+
+The six private cases are storage accounting anchors, not scientific acceptance.
+The four integration cases in `crates/ofdm/tests/api_retained_footprint.rs` reuse
+the established supported small full-loop fixture. Decoder retention preserves
+actual phase tags; it does not assume decode completes during observation.
+
+Executed here: pinned rustfmt parse/format checks, whitespace/allowlist review,
+exhaustive owner-field and source-closure review, read-only independent review,
+and Python-guide currency. All owner tests, Cargo/Clippy, complete affected
+consumer/native parity, inventories and Qt checks remain for primary adoption.
+No Cargo/shared-target/wheel/full-suite build was run. The existing architecture
+and checklist remain unchanged; the lead owns their reconciliation. Disk remains
+80% used with 25 GiB available and 13% inodes; no targets/caches were cleaned.
+
+Receipt and exact source hashes are in the ignored local directory
+`docs/development/local/session-shell/downstream-retention/` (`receipt.json`,
+`source-sha256.txt`, `owner-fields.json`, `review.txt`). Lead integration must
+combine this owner patch with primary `merlin_api::RetainedFootprint` and
+`retention_support`, including `fixed_children`, then compile/run the ten cases
+and complete the affected API/native and feature gates. No input-root public
+operation is added. Future-output reservation and archive pre-copy capacity
+bounds remain mandatory prerequisites; passive current-root metadata cannot
+supply either bound or establish aggregate admission. No push/release/install.

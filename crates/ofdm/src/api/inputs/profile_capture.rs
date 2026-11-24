@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Immutable complete source-profile inspection, separate from simulation identity admission.
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 mod models;
 mod views;
 use super::*;
@@ -238,5 +239,28 @@ impl Dpd {
             self.sources.clone(),
             request,
         )
+    }
+}
+
+impl RetainedPayload for ProfileCapture {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            profiles,
+            source,
+            ids,
+            summaries,
+            provenance,
+        } = self;
+        merlin_api::retention_support::sum([
+            profiles.retained_children(),
+            source.retained_children(),
+            ids.retained_children(),
+            summaries.retained_children(),
+            provenance.retained_children(),
+        ])
     }
 }

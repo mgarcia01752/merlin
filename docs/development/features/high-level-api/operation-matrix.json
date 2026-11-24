@@ -5,10 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "bbac5fb plus exact additive upstream retained-root metadata candidate",
-    "inventory_command": "Exact current installed wheel; session-01-resource-metadata-native/results.json",
-    "native_sha256": "99dcb05d38f3638fb27f5618fd9e5d56c495ae7dd127cce912b6cd0bd72481a8",
-    "scope": "Scoped metadata/namespace/upstream/recovery/downstream archive consumer tests, actual independent Rust references; all prior exports/signatures preserved. No full-suite claim."
+    "revision": "82faa2f plus additive downstream current-root metadata candidate",
+    "inventory_command": "Exact installed wheel; session-01-downstream-metadata-native/results.json",
+    "native_sha256": "1dcf74e44d404725606aa1f44c9b58d46d7b0614550c34f30dce6b4539b956c1",
+    "scope": "Scoped DS full-loop/observation/saved-project/archive, namespace and US metadata consumers with independent Rust references. No full-suite claim."
   },
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
@@ -156,7 +156,12 @@
     "units.session.resources": "Target-layout payload bytes and independent ordered-entry/shared-root counts. Bytes exclude allocator/private tree-node/refcount bookkeeping, not total heap or RSS; no bound for future results or temporary/Python/consumer copies.",
     "errors.session.resources": "Existing Rust ResourceLimit at retained_footprint on checked arithmetic overflow; native session Busy while executing and original structured categories. No estimate is returned after overflow.",
     "evidence.session.resources": "../unified-qt-workbench/session-resource-metadata-evidence.json, session-resource-metadata-operation-test-results.json and validation.md#uiu-session-01-public-retained-root-metadata: actual primary Rust owner/capacity tests, exact wheel and separate Rust/native complete/partial references.",
-    "status.session.resources": "Additive upstream current-root metadata locally accepted in Rust/native Python. Downstream metadata, pre-production bounds, Qt aggregate admission and complete session Level2 remain pending."
+    "status.session.resources": "Additive upstream current-root metadata locally accepted in Rust/native Python. Downstream metadata, pre-production bounds, Qt aggregate admission and complete session Level2 remain pending.",
+    "ownership.session.downstream.resources": "Passive actual immutable downstream request/sweep/result/archive root; fixed values, spare capacities, nested/private caches and conservatively repeated shared payloads/edges. Native metadata is an immutable owned copy; releases the interpreter without cloning scientific payloads.",
+    "units.session.downstream.resources": "Target-layout payload bytes plus ordered entries and shared roots; excludes allocator/private tree/refcount bookkeeping, temporary execution and consumer projections. Not total heap/RSS or a future result/copy bound.",
+    "errors.session.downstream.resources": "Preserve shared ResourceLimit on checked metadata arithmetic overflow; no underestimated successful result. Existing native structured error mapping remains authoritative.",
+    "evidence.session.downstream.resources": "../unified-qt-workbench/session-downstream-metadata-evidence.json, session-downstream-metadata-operation-test-results.json and validation.md#uiu-session-01-downstream-retained-root-metadata: primary owner/private-cache tests and exact installed-wheel independent Rust/native complete/partial references.",
+    "status.session.downstream.resources": "Locally accepted downstream current-root metadata in Rust/native Python. Future output/copy bounds, construction-boundary clarification and real host aggregate/Level2 acceptance remain pending."
   },
   "type_exports": {
     "downstream": [
@@ -34272,6 +34277,234 @@
       },
       "evidence": "evidence.session.resources",
       "status": "status.session.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopRequest::retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/full_loop/request.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopRequest.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "FullLoopRequest.retained_footprint(self, /)",
+        "native_operation": "merlin.downstream.FullLoopRequest.retained_footprint"
+      },
+      "input_ownership": "ownership.session.downstream.resources",
+      "units": "units.session.downstream.resources",
+      "error_behavior": "errors.session.downstream.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Complete passive current-root metadata; historical archive info.retained_bytes unchanged. Not future-product admission."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/simulation/channel/measurement_playback.rs::private_playback_caches_count_spare_capacity_and_each_arc_root",
+          "crates/ofdm/src/api/full_loop/observations/store.rs::ordered_stage_store_counts_snapshot_spares_context_roles_and_llrs",
+          "crates/ofdm/src/simulation/source/file/config.rs::repeated_file_roots_count_actual_shared_bytes_without_cloning_payload",
+          "crates/ofdm/src/simulation/channel/protected_constellation/mod.rs::skipped_pilot_sequence_and_empty_stream_capacity_are_counted_passively",
+          "crates/ofdm/src/api/inputs.rs::provenance_counts_spare_strings_and_repeated_original_canonical_arc",
+          "crates/ofdm/src/simulation/channel/constellation/model.rs::constellation_counts_both_pair_buffers_and_each_actual_llr_capacity",
+          "crates/ofdm/tests/api_retained_footprint.rs::precancelled_actual_result_counts_retained_inputs_without_fabricating_work",
+          "crates/ofdm/tests/api_retained_footprint.rs::prepared_request_and_sweep_count_selected_spares_without_starting_science",
+          "crates/ofdm/tests/api_retained_footprint.rs::finite_file_and_detached_archive_metadata_preserve_owned_observations_and_legacy_bytes",
+          "crates/ofdm/tests/api_retained_footprint.rs::complete_actual_result_metadata_preserves_report_inputs_stages_and_aliases",
+          "crates/merlin/tests/namespaces.rs::downstream_retained_operations_keep_legacy_types_and_common_result_contract"
+        ],
+        "python": {
+          "status": "exact installed native wheel and independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_complete_partial_private_cache_and_archive_rust_parity",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_legacy_aliases_metadata_and_detached_archive_lifetime",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_rejected_candidate_preserves_plan_and_original_request"
+          ]
+        }
+      },
+      "evidence": "evidence.session.downstream.resources",
+      "status": "status.session.downstream.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopSweepPlan::retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/full_loop/sweep.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopSweepPlan.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "FullLoopSweepPlan.retained_footprint(self, /)",
+        "native_operation": "merlin.downstream.FullLoopSweepPlan.retained_footprint"
+      },
+      "input_ownership": "ownership.session.downstream.resources",
+      "units": "units.session.downstream.resources",
+      "error_behavior": "errors.session.downstream.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Complete passive current-root metadata; historical archive info.retained_bytes unchanged. Not future-product admission."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/simulation/channel/measurement_playback.rs::private_playback_caches_count_spare_capacity_and_each_arc_root",
+          "crates/ofdm/src/api/full_loop/observations/store.rs::ordered_stage_store_counts_snapshot_spares_context_roles_and_llrs",
+          "crates/ofdm/src/simulation/source/file/config.rs::repeated_file_roots_count_actual_shared_bytes_without_cloning_payload",
+          "crates/ofdm/src/simulation/channel/protected_constellation/mod.rs::skipped_pilot_sequence_and_empty_stream_capacity_are_counted_passively",
+          "crates/ofdm/src/api/inputs.rs::provenance_counts_spare_strings_and_repeated_original_canonical_arc",
+          "crates/ofdm/src/simulation/channel/constellation/model.rs::constellation_counts_both_pair_buffers_and_each_actual_llr_capacity",
+          "crates/ofdm/tests/api_retained_footprint.rs::precancelled_actual_result_counts_retained_inputs_without_fabricating_work",
+          "crates/ofdm/tests/api_retained_footprint.rs::prepared_request_and_sweep_count_selected_spares_without_starting_science",
+          "crates/ofdm/tests/api_retained_footprint.rs::finite_file_and_detached_archive_metadata_preserve_owned_observations_and_legacy_bytes",
+          "crates/ofdm/tests/api_retained_footprint.rs::complete_actual_result_metadata_preserves_report_inputs_stages_and_aliases",
+          "crates/merlin/tests/namespaces.rs::downstream_retained_operations_keep_legacy_types_and_common_result_contract"
+        ],
+        "python": {
+          "status": "exact installed native wheel and independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_complete_partial_private_cache_and_archive_rust_parity",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_legacy_aliases_metadata_and_detached_archive_lifetime",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_rejected_candidate_preserves_plan_and_original_request"
+          ]
+        }
+      },
+      "evidence": "evidence.session.downstream.resources",
+      "status": "status.session.downstream.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/full_loop/result.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "FullLoopResult.retained_footprint(self, /)",
+        "native_operation": "merlin.downstream.FullLoopResult.retained_footprint"
+      },
+      "input_ownership": "ownership.session.downstream.resources",
+      "units": "units.session.downstream.resources",
+      "error_behavior": "errors.session.downstream.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Complete passive current-root metadata; historical archive info.retained_bytes unchanged. Not future-product admission."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/simulation/channel/measurement_playback.rs::private_playback_caches_count_spare_capacity_and_each_arc_root",
+          "crates/ofdm/src/api/full_loop/observations/store.rs::ordered_stage_store_counts_snapshot_spares_context_roles_and_llrs",
+          "crates/ofdm/src/simulation/source/file/config.rs::repeated_file_roots_count_actual_shared_bytes_without_cloning_payload",
+          "crates/ofdm/src/simulation/channel/protected_constellation/mod.rs::skipped_pilot_sequence_and_empty_stream_capacity_are_counted_passively",
+          "crates/ofdm/src/api/inputs.rs::provenance_counts_spare_strings_and_repeated_original_canonical_arc",
+          "crates/ofdm/src/simulation/channel/constellation/model.rs::constellation_counts_both_pair_buffers_and_each_actual_llr_capacity",
+          "crates/ofdm/tests/api_retained_footprint.rs::precancelled_actual_result_counts_retained_inputs_without_fabricating_work",
+          "crates/ofdm/tests/api_retained_footprint.rs::prepared_request_and_sweep_count_selected_spares_without_starting_science",
+          "crates/ofdm/tests/api_retained_footprint.rs::finite_file_and_detached_archive_metadata_preserve_owned_observations_and_legacy_bytes",
+          "crates/ofdm/tests/api_retained_footprint.rs::complete_actual_result_metadata_preserves_report_inputs_stages_and_aliases",
+          "crates/merlin/tests/namespaces.rs::downstream_retained_operations_keep_legacy_types_and_common_result_contract"
+        ],
+        "python": {
+          "status": "exact installed native wheel and independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_complete_partial_private_cache_and_archive_rust_parity",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_legacy_aliases_metadata_and_detached_archive_lifetime",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_rejected_candidate_preserves_plan_and_original_request"
+          ]
+        }
+      },
+      "evidence": "evidence.session.downstream.resources",
+      "status": "status.session.downstream.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopReceiverArchive::retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/full_loop/receiver_archive/mod.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopReceiverArchive.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "FullLoopReceiverArchive.retained_footprint(self, /)",
+        "native_operation": "merlin.downstream.FullLoopReceiverArchive.retained_footprint"
+      },
+      "input_ownership": "ownership.session.downstream.resources",
+      "units": "units.session.downstream.resources",
+      "error_behavior": "errors.session.downstream.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Complete passive current-root metadata; historical archive info.retained_bytes unchanged. Not future-product admission."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/simulation/channel/measurement_playback.rs::private_playback_caches_count_spare_capacity_and_each_arc_root",
+          "crates/ofdm/src/api/full_loop/observations/store.rs::ordered_stage_store_counts_snapshot_spares_context_roles_and_llrs",
+          "crates/ofdm/src/simulation/source/file/config.rs::repeated_file_roots_count_actual_shared_bytes_without_cloning_payload",
+          "crates/ofdm/src/simulation/channel/protected_constellation/mod.rs::skipped_pilot_sequence_and_empty_stream_capacity_are_counted_passively",
+          "crates/ofdm/src/api/inputs.rs::provenance_counts_spare_strings_and_repeated_original_canonical_arc",
+          "crates/ofdm/src/simulation/channel/constellation/model.rs::constellation_counts_both_pair_buffers_and_each_actual_llr_capacity",
+          "crates/ofdm/tests/api_retained_footprint.rs::precancelled_actual_result_counts_retained_inputs_without_fabricating_work",
+          "crates/ofdm/tests/api_retained_footprint.rs::prepared_request_and_sweep_count_selected_spares_without_starting_science",
+          "crates/ofdm/tests/api_retained_footprint.rs::finite_file_and_detached_archive_metadata_preserve_owned_observations_and_legacy_bytes",
+          "crates/ofdm/tests/api_retained_footprint.rs::complete_actual_result_metadata_preserves_report_inputs_stages_and_aliases",
+          "crates/merlin/tests/namespaces.rs::downstream_retained_operations_keep_legacy_types_and_common_result_contract"
+        ],
+        "python": {
+          "status": "exact installed native wheel and independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_complete_partial_private_cache_and_archive_rust_parity",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_legacy_aliases_metadata_and_detached_archive_lifetime",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_rejected_candidate_preserves_plan_and_original_request"
+          ]
+        }
+      },
+      "evidence": "evidence.session.downstream.resources",
+      "status": "status.session.downstream.resources"
     }
   ],
   "executed_records": [
@@ -34317,7 +34550,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/session-resource-metadata-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/session-resource-metadata-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/session-downstream-metadata-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -71560,6 +71794,258 @@
       },
       "evidence": "evidence.session.resources",
       "status": "status.session.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopRequest.retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopRequest",
+        "source_file": "bindings/python/src/full_loop/request.rs",
+        "symbol": "PyFullLoopRequest",
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Native immutable Rust metadata projection with GIL release; preserves legacy class aliases and Rust errors. No Python sizing.",
+        "delegated_operations": [],
+        "delegated_operation": "merlin::downstream::FullLoopRequest::retained_footprint"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopRequest.retained_footprint"
+      },
+      "input_ownership": "ownership.session.downstream.resources",
+      "units": "units.session.downstream.resources",
+      "error_behavior": "errors.session.downstream.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Actual downstream root; excludes future output/temporary/interpreter memory."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/simulation/channel/measurement_playback.rs::private_playback_caches_count_spare_capacity_and_each_arc_root",
+          "crates/ofdm/src/api/full_loop/observations/store.rs::ordered_stage_store_counts_snapshot_spares_context_roles_and_llrs",
+          "crates/ofdm/src/simulation/source/file/config.rs::repeated_file_roots_count_actual_shared_bytes_without_cloning_payload",
+          "crates/ofdm/src/simulation/channel/protected_constellation/mod.rs::skipped_pilot_sequence_and_empty_stream_capacity_are_counted_passively",
+          "crates/ofdm/src/api/inputs.rs::provenance_counts_spare_strings_and_repeated_original_canonical_arc",
+          "crates/ofdm/src/simulation/channel/constellation/model.rs::constellation_counts_both_pair_buffers_and_each_actual_llr_capacity",
+          "crates/ofdm/tests/api_retained_footprint.rs::precancelled_actual_result_counts_retained_inputs_without_fabricating_work",
+          "crates/ofdm/tests/api_retained_footprint.rs::prepared_request_and_sweep_count_selected_spares_without_starting_science",
+          "crates/ofdm/tests/api_retained_footprint.rs::finite_file_and_detached_archive_metadata_preserve_owned_observations_and_legacy_bytes",
+          "crates/ofdm/tests/api_retained_footprint.rs::complete_actual_result_metadata_preserves_report_inputs_stages_and_aliases",
+          "crates/merlin/tests/namespaces.rs::downstream_retained_operations_keep_legacy_types_and_common_result_contract"
+        ],
+        "python": {
+          "status": "exact installed native wheel and independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_complete_partial_private_cache_and_archive_rust_parity",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_legacy_aliases_metadata_and_detached_archive_lifetime",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_rejected_candidate_preserves_plan_and_original_request"
+          ]
+        }
+      },
+      "evidence": "evidence.session.downstream.resources",
+      "status": "status.session.downstream.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopSweepPlan.retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopSweepPlan",
+        "source_file": "bindings/python/src/full_loop/sweep.rs",
+        "symbol": "PyFullLoopSweepPlan",
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Native immutable Rust metadata projection with GIL release; preserves legacy class aliases and Rust errors. No Python sizing.",
+        "delegated_operations": [],
+        "delegated_operation": "merlin::downstream::FullLoopSweepPlan::retained_footprint"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopSweepPlan.retained_footprint"
+      },
+      "input_ownership": "ownership.session.downstream.resources",
+      "units": "units.session.downstream.resources",
+      "error_behavior": "errors.session.downstream.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Actual downstream root; excludes future output/temporary/interpreter memory."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/simulation/channel/measurement_playback.rs::private_playback_caches_count_spare_capacity_and_each_arc_root",
+          "crates/ofdm/src/api/full_loop/observations/store.rs::ordered_stage_store_counts_snapshot_spares_context_roles_and_llrs",
+          "crates/ofdm/src/simulation/source/file/config.rs::repeated_file_roots_count_actual_shared_bytes_without_cloning_payload",
+          "crates/ofdm/src/simulation/channel/protected_constellation/mod.rs::skipped_pilot_sequence_and_empty_stream_capacity_are_counted_passively",
+          "crates/ofdm/src/api/inputs.rs::provenance_counts_spare_strings_and_repeated_original_canonical_arc",
+          "crates/ofdm/src/simulation/channel/constellation/model.rs::constellation_counts_both_pair_buffers_and_each_actual_llr_capacity",
+          "crates/ofdm/tests/api_retained_footprint.rs::precancelled_actual_result_counts_retained_inputs_without_fabricating_work",
+          "crates/ofdm/tests/api_retained_footprint.rs::prepared_request_and_sweep_count_selected_spares_without_starting_science",
+          "crates/ofdm/tests/api_retained_footprint.rs::finite_file_and_detached_archive_metadata_preserve_owned_observations_and_legacy_bytes",
+          "crates/ofdm/tests/api_retained_footprint.rs::complete_actual_result_metadata_preserves_report_inputs_stages_and_aliases",
+          "crates/merlin/tests/namespaces.rs::downstream_retained_operations_keep_legacy_types_and_common_result_contract"
+        ],
+        "python": {
+          "status": "exact installed native wheel and independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_complete_partial_private_cache_and_archive_rust_parity",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_legacy_aliases_metadata_and_detached_archive_lifetime",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_rejected_candidate_preserves_plan_and_original_request"
+          ]
+        }
+      },
+      "evidence": "evidence.session.downstream.resources",
+      "status": "status.session.downstream.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/result.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Native immutable Rust metadata projection with GIL release; preserves legacy class aliases and Rust errors. No Python sizing.",
+        "delegated_operations": [],
+        "delegated_operation": "merlin::downstream::FullLoopResult::retained_footprint"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopResult.retained_footprint"
+      },
+      "input_ownership": "ownership.session.downstream.resources",
+      "units": "units.session.downstream.resources",
+      "error_behavior": "errors.session.downstream.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Actual downstream root; excludes future output/temporary/interpreter memory."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/simulation/channel/measurement_playback.rs::private_playback_caches_count_spare_capacity_and_each_arc_root",
+          "crates/ofdm/src/api/full_loop/observations/store.rs::ordered_stage_store_counts_snapshot_spares_context_roles_and_llrs",
+          "crates/ofdm/src/simulation/source/file/config.rs::repeated_file_roots_count_actual_shared_bytes_without_cloning_payload",
+          "crates/ofdm/src/simulation/channel/protected_constellation/mod.rs::skipped_pilot_sequence_and_empty_stream_capacity_are_counted_passively",
+          "crates/ofdm/src/api/inputs.rs::provenance_counts_spare_strings_and_repeated_original_canonical_arc",
+          "crates/ofdm/src/simulation/channel/constellation/model.rs::constellation_counts_both_pair_buffers_and_each_actual_llr_capacity",
+          "crates/ofdm/tests/api_retained_footprint.rs::precancelled_actual_result_counts_retained_inputs_without_fabricating_work",
+          "crates/ofdm/tests/api_retained_footprint.rs::prepared_request_and_sweep_count_selected_spares_without_starting_science",
+          "crates/ofdm/tests/api_retained_footprint.rs::finite_file_and_detached_archive_metadata_preserve_owned_observations_and_legacy_bytes",
+          "crates/ofdm/tests/api_retained_footprint.rs::complete_actual_result_metadata_preserves_report_inputs_stages_and_aliases",
+          "crates/merlin/tests/namespaces.rs::downstream_retained_operations_keep_legacy_types_and_common_result_contract"
+        ],
+        "python": {
+          "status": "exact installed native wheel and independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_complete_partial_private_cache_and_archive_rust_parity",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_legacy_aliases_metadata_and_detached_archive_lifetime",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_rejected_candidate_preserves_plan_and_original_request"
+          ]
+        }
+      },
+      "evidence": "evidence.session.downstream.resources",
+      "status": "status.session.downstream.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopReceiverArchive.retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopReceiverArchive",
+        "source_file": "bindings/python/src/full_loop/receiver_archive.rs",
+        "symbol": "PyReceiverArchive",
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Native immutable Rust metadata projection with GIL release; preserves legacy class aliases and Rust errors. No Python sizing.",
+        "delegated_operations": [],
+        "delegated_operation": "merlin::downstream::FullLoopReceiverArchive::retained_footprint"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "FullLoopReceiverArchive.retained_footprint"
+      },
+      "input_ownership": "ownership.session.downstream.resources",
+      "units": "units.session.downstream.resources",
+      "error_behavior": "errors.session.downstream.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Actual downstream root; excludes future output/temporary/interpreter memory."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/simulation/channel/measurement_playback.rs::private_playback_caches_count_spare_capacity_and_each_arc_root",
+          "crates/ofdm/src/api/full_loop/observations/store.rs::ordered_stage_store_counts_snapshot_spares_context_roles_and_llrs",
+          "crates/ofdm/src/simulation/source/file/config.rs::repeated_file_roots_count_actual_shared_bytes_without_cloning_payload",
+          "crates/ofdm/src/simulation/channel/protected_constellation/mod.rs::skipped_pilot_sequence_and_empty_stream_capacity_are_counted_passively",
+          "crates/ofdm/src/api/inputs.rs::provenance_counts_spare_strings_and_repeated_original_canonical_arc",
+          "crates/ofdm/src/simulation/channel/constellation/model.rs::constellation_counts_both_pair_buffers_and_each_actual_llr_capacity",
+          "crates/ofdm/tests/api_retained_footprint.rs::precancelled_actual_result_counts_retained_inputs_without_fabricating_work",
+          "crates/ofdm/tests/api_retained_footprint.rs::prepared_request_and_sweep_count_selected_spares_without_starting_science",
+          "crates/ofdm/tests/api_retained_footprint.rs::finite_file_and_detached_archive_metadata_preserve_owned_observations_and_legacy_bytes",
+          "crates/ofdm/tests/api_retained_footprint.rs::complete_actual_result_metadata_preserves_report_inputs_stages_and_aliases",
+          "crates/merlin/tests/namespaces.rs::downstream_retained_operations_keep_legacy_types_and_common_result_contract"
+        ],
+        "python": {
+          "status": "exact installed native wheel and independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_complete_partial_private_cache_and_archive_rust_parity",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_legacy_aliases_metadata_and_detached_archive_lifetime",
+            "bindings/python/tests/test_downstream_retained_footprint.py::DownstreamRetainedFootprintTests.test_rejected_candidate_preserves_plan_and_original_request"
+          ]
+        }
+      },
+      "evidence": "evidence.session.downstream.resources",
+      "status": "status.session.downstream.resources"
     }
   ],
   "native_type_exports": {
@@ -72802,6 +73288,13 @@
       "inventory_command": "Exact current wheel matched native_api_inventory.py; ds-01-receiver-archive-native-final/results.json",
       "native_sha256": "8ce69dfb7e8a3232d7c77b3a013361ec953855326090efcc37ec0f46767137b0",
       "scope": "16 selected cases executed against the exact current wheel; all prior classes/signatures/members preserved after removing only2 new classes and receiver_archive."
+    },
+    {
+      "version": "0.4.0",
+      "revision": "bbac5fb plus exact additive upstream retained-root metadata candidate",
+      "inventory_command": "Exact current installed wheel; session-01-resource-metadata-native/results.json",
+      "native_sha256": "99dcb05d38f3638fb27f5618fd9e5d56c495ae7dd127cce912b6cd0bd72481a8",
+      "scope": "Scoped metadata/namespace/upstream/recovery/downstream archive consumer tests, actual independent Rust references; all prior exports/signatures preserved. No full-suite claim."
     }
   ],
   "historical_rust_export_corrections": [

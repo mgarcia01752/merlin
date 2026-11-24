@@ -5,6 +5,7 @@
 //! Received-only temporal pilot differences for conservative scalar LLR reliability.
 use super::ChannelEstimate;
 use crate::{types::IqPair, SimulationError};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 
 /// Numerical receiver policies, independent of the applied channel and noise powers.
@@ -169,5 +170,43 @@ impl ReliabilityEstimator {
     /// None before the first accepted pilot observation.
     pub fn status(&self) -> Option<&ReceiverReliability> {
         self.status.as_ref()
+    }
+}
+
+impl RetainedPayload for MceSettings {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            minimum_variance,
+            averaging_symbols,
+        } = self;
+        merlin_api::retention_support::sum([
+            minimum_variance.retained_children(),
+            averaging_symbols.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ReceiverReliability {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            channel_symbol_index,
+            tracking,
+            compared_pilots,
+            raw_noise_power,
+        } = self;
+        merlin_api::retention_support::sum([
+            channel_symbol_index.retained_children(),
+            tracking.retained_children(),
+            compared_pilots.retained_children(),
+            raw_noise_power.retained_children(),
+        ])
     }
 }

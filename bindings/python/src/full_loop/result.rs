@@ -10,6 +10,23 @@ use pyo3::types::PyBytes;
 pub(super) struct PyFullLoopResult(pub(super) api::FullLoopResult);
 #[pymethods]
 impl PyFullLoopResult {
+    /// Measures the actual complete or partial result and all retained Rust inputs.
+    ///
+    /// # Returns
+    /// Immutable target-layout metadata, including private observations/caches;
+    /// this query does not run simulation or count Python-owned projections.
+    ///
+    /// # Errors
+    /// Preserves Rust ResourceLimit on checked overflow; releases the interpreter.
+    fn retained_footprint(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        py.detach(|| self.0.retained_footprint())
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
     /// Copies full source-grid receiver performance through the public Rust observation.
     /// # Returns
     /// Owned per-carrier typed MER/power/count/ideal-capacity data, observation-window

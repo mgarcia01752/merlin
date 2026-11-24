@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Passive validated editor inputs; execution and scientific stages keep existing owners.
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 mod source_info;
 use super::{ApiError, ApiResult, Dpd, ErrorCode, NamedCapture, ObservationDuration, PrbsSeed};
 use crate::{
@@ -356,5 +357,37 @@ impl SourceInput {
             name: Some(name),
             sha256: Some(format!("{:x}", Sha256::digest(bytes))),
         })
+    }
+}
+
+impl RetainedPayload for TransmissionConfiguration {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { settings } = self;
+        merlin_api::retention_support::sum([settings.retained_children()])
+    }
+}
+
+impl RetainedPayload for SourceInput {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            configuration,
+            seed,
+            name,
+            sha256,
+        } = self;
+        merlin_api::retention_support::sum([
+            configuration.retained_children(),
+            seed.retained_children(),
+            name.retained_children(),
+            sha256.retained_children(),
+        ])
     }
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Cooperative bounded job lifecycle around the independent channel stepper.
@@ -10,6 +11,7 @@ use crate::{
     SimulationError,
 };
 use merlin_api::Cancellation;
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 use std::{
     sync::atomic::{AtomicBool, Ordering},
@@ -354,6 +356,87 @@ fn run_with_clock(
         error,
     })
 }
+impl RetainedPayload for ChannelJobLimits {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            max_runtime_ms,
+            max_retained_words,
+        } = self;
+        merlin_api::retention_support::sum([
+            max_runtime_ms.retained_children(),
+            max_retained_words.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ChannelJobResult {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            channel_filter,
+            receiver_reliability,
+            carrier_mer,
+            recovered_file,
+            channel_estimate,
+            protected_constellation,
+            constellation,
+            schema_version,
+            status,
+            elapsed_ms,
+            settings,
+            limits,
+            summary,
+            retained_words,
+            omitted_word_details,
+            unrecovered_generated_payloads,
+            probe_stats,
+            error,
+        } = self;
+        merlin_api::retention_support::sum([
+            channel_filter.retained_children(),
+            receiver_reliability.retained_children(),
+            carrier_mer.retained_children(),
+            recovered_file.retained_children(),
+            channel_estimate.retained_children(),
+            protected_constellation.retained_children(),
+            constellation.retained_children(),
+            schema_version.retained_children(),
+            status.retained_children(),
+            elapsed_ms.retained_children(),
+            settings.retained_children(),
+            limits.retained_children(),
+            summary.retained_children(),
+            retained_words.retained_children(),
+            omitted_word_details.retained_children(),
+            unrecovered_generated_payloads.retained_children(),
+            probe_stats.retained_children(),
+            error.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ChannelJobStatus {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Complete => Some(RetainedFootprint::default()),
+            Self::Cancelled => Some(RetainedFootprint::default()),
+            Self::RuntimeExceeded => Some(RetainedFootprint::default()),
+            Self::Failed => Some(RetainedFootprint::default()),
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

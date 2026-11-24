@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Frozen per-run scientific geometry and bounded duration policy.
@@ -15,6 +16,7 @@ use crate::{
     },
     SimulationError,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use std::time::Duration;
 /// Application work bound, not a DOCSIS transmission-duration limit.
 pub const MAX_CHANNEL_DURATION_SECONDS: u64 = 3600;
@@ -265,5 +267,54 @@ impl ChannelRunSettings {
             .and_then(|samples| samples.checked_add(u64::from(self.transmission.roll_off_samples)))
             .ok_or_else(|| invalid("Channel sample plan exceeds64-bit accounting."))?;
         Ok(timing)
+    }
+}
+
+impl RetainedPayload for ChannelRunSettings {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            source,
+            data_bit_loading,
+            impairment_timeline,
+            playback,
+            protected_constellation,
+            receiver_mode,
+            channel_filter,
+            mce,
+            constellation,
+            impairments,
+            transmission,
+            layout,
+            duration,
+            ncp_modulation,
+            prbs_seed,
+            llr_variance,
+            max_iterations,
+            receive_block_samples,
+        } = self;
+        merlin_api::retention_support::sum([
+            source.retained_children(),
+            data_bit_loading.retained_children(),
+            impairment_timeline.retained_children(),
+            playback.retained_children(),
+            protected_constellation.retained_children(),
+            receiver_mode.retained_children(),
+            channel_filter.retained_children(),
+            mce.retained_children(),
+            constellation.retained_children(),
+            impairments.retained_children(),
+            transmission.retained_children(),
+            layout.retained_children(),
+            merlin_api::retention_support::fixed_children(duration),
+            ncp_modulation.retained_children(),
+            prbs_seed.retained_children(),
+            llr_variance.retained_children(),
+            max_iterations.retained_children(),
+            receive_block_samples.retained_children(),
+        ])
     }
 }

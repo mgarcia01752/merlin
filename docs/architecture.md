@@ -1578,11 +1578,12 @@ Qt must not inspect private storage or infer bounds from serialized JSON.
 The [retained-root metadata prerequisite](development/features/unified-qt-workbench/design.md#uiu-session-01-public-retained-root-metadata-prerequisite)
 uses a typed `RetainedFootprint` in the independent `merlin-api` leaf, re-exported
 through `merlin::common`. Each scientific owner audits its own private/cached
-children. Upstream Simulation and BatchReport expose passive metadata through
-their existing public API and native Python wrappers; walker implementation
+children. Downstream FullLoopRequest, FullLoopSweepPlan, FullLoopResult and
+FullLoopReceiverArchive, and upstream Simulation and BatchReport expose passive
+metadata through their existing public API and native Python wrappers; walker implementation
 support is excluded from the facade. This does not change scientific algorithms,
 project schemas, historical archive statistics or existing downstream exports.
-Downstream metadata, future-result/copy bounds and actual Qt admission remain
+Future-result/copy bounds and actual Qt admission remain
 required before session acceptance.
 
 The [upstream application controller](development/features/unified-qt-workbench/design.md#uiu-session-01-actual-upstream-controller-preparation)

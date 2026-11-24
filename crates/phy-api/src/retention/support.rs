@@ -85,6 +85,28 @@ pub fn capacity_bytes<Value>(capacity: usize) -> Option<RetainedFootprint> {
     Some(payload_bytes(capacity.checked_mul(size_of::<Value>())?))
 }
 
+/// Describes an explicitly audited Copy leaf without owned dynamic children.
+///
+/// # Arguments
+/// * `Value` - Owner-audited fixed leaf, such as Duration or fixed codec counters;
+///   a later heap-owning representation must still satisfy the Copy bound.
+/// * `_value` - Borrowed inline leaf. Any borrowed/static payload belongs to its
+///   actual owner; Copy alone does not audit arbitrary pointed-to storage.
+///
+/// # Returns
+/// Zero dynamic children; the enclosing root/container counts fixed bytes once.
+///
+/// A heap-owning leaf cannot silently pass this fixed-storage audit:
+///
+/// ```compile_fail
+/// use merlin_api::retention_support::fixed_children;
+/// let owned_payload = vec![0_u8];
+/// let _ = fixed_children(&owned_payload);
+/// ```
+pub fn fixed_children<Value: Copy>(_value: &Value) -> Option<RetainedFootprint> {
+    Some(RetainedFootprint::default())
+}
+
 impl<Value: RetainedPayload> RetainedPayload for Vec<Value> {
     /// Counts requested capacity and each initialized element's dynamic children.
     ///

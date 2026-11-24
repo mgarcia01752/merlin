@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Validated immutable configured-channel admission; scientific composition keeps existing owners.
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 mod models;
 mod preview;
 use super::{
@@ -131,5 +132,16 @@ impl ChannelConfiguration {
             response,
             tolerance,
         )
+    }
+}
+
+impl RetainedPayload for ChannelConfiguration {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { settings } = self;
+        merlin_api::retention_support::sum([settings.retained_children()])
     }
 }

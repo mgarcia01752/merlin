@@ -5,6 +5,7 @@
 //! Independent history copy caps; no source, live capture or scientific-domain defaults change.
 use super::*;
 use crate::common::constants::*;
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 
 /// Reducible application-history caps; zero omits that role/event without fabricating data.
@@ -81,5 +82,39 @@ impl FullLoopReceiverArchivePolicy {
     /// Policy input valid for this policy's lifetime; clones do not change any run.
     pub fn settings(&self) -> &FullLoopReceiverArchiveInput {
         &self.0
+    }
+}
+
+impl RetainedPayload for FullLoopReceiverArchiveInput {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            payload_cells,
+            ncp_cells,
+            protected_cells_per_stream,
+            decoder_llrs,
+            max_retained_bytes,
+        } = self;
+        merlin_api::retention_support::sum([
+            payload_cells.retained_children(),
+            ncp_cells.retained_children(),
+            protected_cells_per_stream.retained_children(),
+            decoder_llrs.retained_children(),
+            max_retained_bytes.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for FullLoopReceiverArchivePolicy {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self(value) = self;
+        value.retained_children()
     }
 }

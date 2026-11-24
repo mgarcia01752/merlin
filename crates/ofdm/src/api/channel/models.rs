@@ -5,6 +5,7 @@
 //! Explicit configured-channel inputs and bounded before-receiver observations.
 use super::*;
 pub use crate::signal_processing::channel::spectrum::{ChannelSpectrum, ChannelSpectrumBucket};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 
 pub use crate::signal_processing::channel::{
@@ -64,4 +65,23 @@ pub struct ChannelPreview {
     /// Actual selected continuous-filter plan, separate from original input H.
     pub filter_coefficients: Vec<[f64; 2]>,
     pub filter_diagnostics: Option<FilterDiagnostics>,
+}
+
+impl RetainedPayload for ChannelConfigurationInput {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            additional_loss,
+            power,
+            filter,
+        } = self;
+        merlin_api::retention_support::sum([
+            additional_loss.retained_children(),
+            power.retained_children(),
+            filter.retained_children(),
+        ])
+    }
 }

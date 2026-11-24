@@ -5,6 +5,7 @@
 //! Passive bounded copies; existing dispatcher owns scientific stage selection and validation.
 use super::*;
 use crate::simulation::test_points::{ProbeEvent, ProbeObserver};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 use std::collections::BTreeMap;
 
@@ -254,5 +255,142 @@ mod tests {
             )
             .unwrap();
         assert_eq!(view.element_start, 13);
+    }
+}
+
+impl RetainedPayload for FullLoopStageSnapshot {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            stage,
+            retained_index,
+            direction,
+            context,
+            domain,
+            units,
+            element_start,
+            total_elements,
+            data,
+        } = self;
+        merlin_api::retention_support::sum([
+            stage.retained_children(),
+            retained_index.retained_children(),
+            direction.retained_children(),
+            context.retained_children(),
+            domain.retained_children(),
+            units.retained_children(),
+            element_start.retained_children(),
+            total_elements.retained_children(),
+            data.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for FullLoopObservationStats {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            retained_events,
+            retained_elements,
+            retained_bytes,
+            dropped_events,
+            byte_budget_exhausted,
+        } = self;
+        merlin_api::retention_support::sum([
+            retained_events.retained_children(),
+            retained_elements.retained_children(),
+            retained_bytes.retained_children(),
+            dropped_events.retained_children(),
+            byte_budget_exhausted.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for RetainedStages {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            events,
+            stats,
+            budget,
+        } = self;
+        merlin_api::retention_support::sum([
+            events.retained_children(),
+            stats.retained_children(),
+            budget.retained_children(),
+        ])
+    }
+}
+
+#[cfg(test)]
+mod retained_footprint_tests {
+    use super::{
+        FullLoopStage, FullLoopStageContext, FullLoopStageData, FullLoopStageSnapshot, ProbeUnits,
+        RetainedStages, SignalDirection, SignalDomain,
+    };
+    use crate::simulation::test_points::RunPhase;
+    use merlin_api::retention_support::retained_footprint;
+    use std::mem::size_of;
+
+    #[test]
+    fn ordered_stage_store_counts_snapshot_spares_context_roles_and_llrs() {
+        // Independent capacities distinguish event slots, context and data planes.
+        const EVENT_SLOTS: usize = 3;
+        const ID_SPARE_BYTES: usize = 11;
+        const ROLE_SLOTS: usize = 7;
+        const LLR_SLOTS: usize = 13;
+        let mut context =
+            FullLoopStageContext::new("run", "config", RunPhase::Observation).unwrap();
+        context.run_id.reserve(ID_SPARE_BYTES);
+        context.configuration_id.reserve(ID_SPARE_BYTES);
+        context.transmit_cell_roles = Some(Vec::with_capacity(ROLE_SLOTS));
+        let llrs = Vec::<f64>::with_capacity(LLR_SLOTS);
+        let context_bytes = context.run_id.capacity()
+            + context.configuration_id.capacity()
+            + context.transmit_cell_roles.as_ref().unwrap().capacity()
+                * size_of::<crate::simulation::test_points::TransmitCellRole>();
+        let data_bytes = llrs.capacity() * size_of::<f64>();
+        let snapshot = FullLoopStageSnapshot {
+            stage: FullLoopStage::PayloadLdpcInput,
+            retained_index: 0, // First actual event slot in this storage fixture.
+            direction: SignalDirection::Receive,
+            context,
+            domain: SignalDomain::CodewordBit,
+            units: ProbeUnits::LogLikelihood,
+            element_start: 0,
+            total_elements: 0,
+            data: FullLoopStageData::Llrs(llrs),
+        };
+        let mut snapshots = Vec::with_capacity(EVENT_SLOTS);
+        snapshots.push(snapshot);
+        let expected = size_of::<RetainedStages>()
+            + size_of::<FullLoopStage>()
+            + size_of::<Vec<FullLoopStageSnapshot>>()
+            + snapshots.capacity() * size_of::<FullLoopStageSnapshot>()
+            + context_bytes
+            + data_bytes;
+        let mut store = RetainedStages::new(0); // No observation/copy admission occurs.
+        store
+            .events
+            .insert(FullLoopStage::PayloadLdpcInput, snapshots);
+        let original =
+            serde_json::to_value(&store.events[&FullLoopStage::PayloadLdpcInput]).unwrap();
+        let footprint = retained_footprint(&store).unwrap();
+        assert_eq!(footprint.payload_bytes, expected);
+        assert_eq!(footprint.ordered_entries, 1);
+        assert_eq!(footprint.shared_roots, 0);
+        assert_eq!(
+            serde_json::to_value(&store.events[&FullLoopStage::PayloadLdpcInput]).unwrap(),
+            original
+        );
     }
 }

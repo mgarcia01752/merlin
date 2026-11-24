@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 PNM Viewer contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Captured assignments and editable profile hypotheses with protected roles.
@@ -8,6 +9,7 @@ use crate::{
     scenario::{ScenarioKey, SourceProvenance},
     types::{modulation::CarrierType, BitsPerSymbol, CaptureTime, ProfileId, ProtocolScope},
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 /// Version of the internal candidate file; never a vendor deployment format.
 pub const CANDIDATE_SCHEMA_VERSION: u32 = 1;
@@ -119,5 +121,60 @@ impl CandidateProfile {
             }
         }
         Ok(edited)
+    }
+}
+
+impl RetainedPayload for CapturedProfile {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            key,
+            source,
+            capture_time,
+            profile_id,
+            assignments,
+        } = self;
+        merlin_api::retention_support::sum([
+            key.retained_children(),
+            source.retained_children(),
+            capture_time.retained_children(),
+            profile_id.retained_children(),
+            assignments.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for CarrierAssignment {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            carrier_type,
+            bit_loading,
+            origin,
+        } = self;
+        merlin_api::retention_support::sum([
+            carrier_type.retained_children(),
+            bit_loading.retained_children(),
+            origin.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for AssignmentOrigin {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Captured => Some(RetainedFootprint::default()),
+            Self::Proposed => Some(RetainedFootprint::default()),
+        }
     }
 }

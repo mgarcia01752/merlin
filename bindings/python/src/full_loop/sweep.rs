@@ -73,6 +73,23 @@ impl PyFullLoopSweepPlan {
             .map_err(error)
     }
 
+    /// Measures this plan's current Rust ownership without preparing another run.
+    ///
+    /// # Returns
+    /// Immutable target-layout metadata, including base request and original
+    /// catalog ownership; this does not bound future requests or results.
+    ///
+    /// # Errors
+    /// Preserves Rust ResourceLimit on checked overflow; releases the interpreter.
+    fn retained_footprint(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        py.detach(|| self.0.retained_footprint())
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
     /// Reads full original IDs, sorted selected IDs and finite sequential budget metadata.
     /// # Returns
     /// Owned independent dictionary; editing it changes neither the plan nor accepted inputs.

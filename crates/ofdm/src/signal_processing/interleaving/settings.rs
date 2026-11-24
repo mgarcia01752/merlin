@@ -1,9 +1,11 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Validated reduced-domain geometry from PHY I20 section7.5.6, PDF129–130.
 use crate::{error::invalid, transmission::SubcarrierSpacing, SimulationError};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 /// Choice of transmitter delays or complementary receiver delays.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum InterleaverDirection {
@@ -68,5 +70,24 @@ impl InterleaverSettings {
     /// M-1 complete symbol periods; no waveform or decoder latency is included.
     pub fn pair_delay_symbols(self) -> usize {
         self.depth - 1
+    }
+}
+
+impl RetainedPayload for InterleaverSettings {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            spacing,
+            cells,
+            depth,
+        } = self;
+        merlin_api::retention_support::sum([
+            spacing.retained_children(),
+            cells.retained_children(),
+            depth.retained_children(),
+        ])
     }
 }

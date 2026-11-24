@@ -1,8 +1,10 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Immutable capture ownership and explicit JSON/typed conversion boundaries.
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 mod profile_capture;
 use super::*;
 /// Original channel observation DTO, distinct from an inverse/equalizer response.
@@ -672,5 +674,161 @@ impl Dpd {
     /// Existing domain-role models, including zero loading and unknown roles.
     pub fn carriers(&self) -> &[crate::profile::candidate::CarrierAssignment] {
         &self.profile.assignments
+    }
+}
+
+impl RetainedPayload for Dpd {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            profile,
+            profile_ids,
+            origin,
+            sources,
+            bandwidth,
+        } = self;
+        merlin_api::retention_support::sum([
+            profile.retained_children(),
+            profile_ids.retained_children(),
+            origin.retained_children(),
+            sources.retained_children(),
+            bandwidth.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for RxMer {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { frame, provenance } = self;
+        merlin_api::retention_support::sum([
+            frame.retained_children(),
+            provenance.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ChannelEstimate {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { frame, provenance } = self;
+        merlin_api::retention_support::sum([
+            frame.retained_children(),
+            provenance.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for CaptureProvenance {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            original_name,
+            original_sha256,
+            original_kind,
+            original_epoch,
+            decoded_sha256,
+            decoder_contract,
+            original,
+            decoded,
+        } = self;
+        merlin_api::retention_support::sum([
+            original_name.retained_children(),
+            original_sha256.retained_children(),
+            original_kind.retained_children(),
+            original_epoch.retained_children(),
+            decoded_sha256.retained_children(),
+            decoder_contract.retained_children(),
+            original.retained_children(),
+            decoded.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for CaptureKind {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::BinaryPnm => Some(RetainedFootprint::default()),
+            Self::DecodedJson => Some(RetainedFootprint::default()),
+        }
+    }
+}
+
+impl RetainedPayload for ProfileOrigin {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Captured => Some(RetainedFootprint::default()),
+            Self::Created => Some(RetainedFootprint::default()),
+            Self::Edited => Some(RetainedFootprint::default()),
+        }
+    }
+}
+
+#[cfg(test)]
+mod retained_footprint_tests {
+    use super::{CaptureKind, CaptureProvenance, CaptureTime, DecoderContract};
+    use merlin_api::retention_support::retained_footprint;
+    use std::{mem::size_of, sync::Arc};
+
+    #[test]
+    fn provenance_counts_spare_strings_and_repeated_original_canonical_arc() {
+        // Extra UTF-8 storage tests capacity rather than serialized text length.
+        const SPARE_NAME_BYTES: usize = 13;
+        let spare = |text: &str| {
+            let mut value = String::with_capacity(text.len() + SPARE_NAME_BYTES);
+            value.push_str(text);
+            value
+        };
+        let bytes: Arc<[u8]> = Arc::from(&b"original capture fixture"[..]);
+        let provenance = CaptureProvenance {
+            original_name: spare("capture"),
+            original_sha256: spare("original hash fixture"),
+            original_kind: CaptureKind::DecodedJson,
+            original_epoch: CaptureTime::new(0).unwrap(), // Epoch anchor only.
+            decoded_sha256: spare("canonical hash fixture"),
+            decoder_contract: Some(DecoderContract {
+                revision: 1, // Storage fixture lineage revision, no import occurs.
+                producer: spare("fixture"),
+                producer_version: spare("fixture version"),
+            }),
+            original: Arc::clone(&bytes),
+            decoded: Arc::clone(&bytes),
+        };
+        let contract = provenance.decoder_contract.as_ref().unwrap();
+        let expected = size_of::<CaptureProvenance>()
+            + provenance.original_name.capacity()
+            + provenance.original_sha256.capacity()
+            + provenance.decoded_sha256.capacity()
+            + contract.producer.capacity()
+            + contract.producer_version.capacity()
+            + bytes.len() * 2; // Both retained edges count the same byte payload.
+        let serialized = serde_json::to_value(&provenance).unwrap();
+        let owners = Arc::strong_count(&bytes);
+        let footprint = retained_footprint(&provenance).unwrap();
+        assert_eq!(footprint.payload_bytes, expected);
+        assert_eq!(footprint.shared_roots, 2);
+        assert_eq!(footprint.ordered_entries, 0);
+        assert_eq!(Arc::strong_count(&bytes), owners);
+        assert_eq!(serde_json::to_value(&provenance).unwrap(), serialized);
     }
 }

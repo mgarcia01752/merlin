@@ -31,6 +31,26 @@ fn retained_metadata_keeps_shared_contract_and_independent_upstream_ownership() 
     assert_eq!(report.status, upstream::RunStatus::Cancelled);
 }
 
+#[test]
+fn downstream_retained_operations_keep_legacy_types_and_common_result_contract() {
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopRequest,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::FullLoopRequest::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopSweepPlan,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::FullLoopSweepPlan::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopResult,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::FullLoopResult::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopReceiverArchive,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::FullLoopReceiverArchive::retained_footprint;
+}
+
 #[cfg(feature = "native-input")]
 #[test]
 fn facade_common_projects_return_the_exact_directional_public_types() {

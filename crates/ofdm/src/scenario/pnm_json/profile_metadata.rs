@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Compact validated profile metadata; original encoded IDs/schemes remain explicit.
@@ -8,6 +9,7 @@ use crate::{
     types::modulation::{CarrierType, ModulationAssignment, ModulationParameters},
     SimulationError,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 use std::collections::BTreeMap;
 
@@ -82,4 +84,86 @@ pub struct ProfileCaptureMetadata {
     pub header: ProfileCaptureHeader,
     pub key: ScenarioKey,
     pub schemes: BTreeMap<u8, Vec<ProfileSchemeInfo>>,
+}
+
+impl RetainedPayload for ProfileCaptureHeader {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            file_type,
+            file_type_version,
+            major_version,
+            minor_version,
+            capture_time,
+        } = self;
+        merlin_api::retention_support::sum([
+            file_type.retained_children(),
+            file_type_version.retained_children(),
+            major_version.retained_children(),
+            minor_version.retained_children(),
+            capture_time.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ProfileCaptureMetadata {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            header,
+            key,
+            schemes,
+        } = self;
+        merlin_api::retention_support::sum([
+            header.retained_children(),
+            key.retained_children(),
+            schemes.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ProfileSchemeInfo {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            source_index,
+            first_offset,
+            count,
+            first_physical_carrier,
+            last_physical_carrier,
+            first_frequency_hz,
+            last_frequency_hz,
+            modulation_order_code,
+            modulation_order: _,
+            carrier_type,
+            bit_loading,
+            display_label: _,
+            constellation: _,
+            ideal_shannon_snr_db,
+            preamble,
+        } = self;
+        merlin_api::retention_support::sum([
+            source_index.retained_children(),
+            first_offset.retained_children(),
+            count.retained_children(),
+            first_physical_carrier.retained_children(),
+            last_physical_carrier.retained_children(),
+            first_frequency_hz.retained_children(),
+            last_frequency_hz.retained_children(),
+            modulation_order_code.retained_children(),
+            carrier_type.retained_children(),
+            bit_loading.retained_children(),
+            ideal_shannon_snr_db.retained_children(),
+            preamble.retained_children(),
+        ])
+    }
 }

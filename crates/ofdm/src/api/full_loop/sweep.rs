@@ -4,6 +4,7 @@
  */
 //! Complete original catalog and atomic bounded preflight; each execution reuses the public job.
 use super::*;
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 use std::collections::BTreeSet;
 
@@ -130,6 +131,25 @@ impl FullLoopSweepPlan {
         Ok(plan)
     }
 
+    /// Measures this complete immutable root and all reachable retained payloads.
+    ///
+    /// Counts requested buffer capacity, including spare capacity and private
+    /// caches. Shared payloads are counted on every owned Arc edge; ordered
+    /// entries and shared roots are reported separately from payload bytes.
+    /// Allocator metadata and container/control-block implementation overhead
+    /// are excluded. This passive read does not copy payloads or run science.
+    ///
+    /// # Returns
+    /// Current-root metadata including the fixed root exactly once. This is
+    /// neither a future-output reservation nor a process-memory bound.
+    ///
+    /// # Errors
+    /// Returns ResourceLimit if retained_footprint arithmetic overflows.
+    pub fn retained_footprint(&self) -> ApiResult<merlin_api::RetainedFootprint> {
+        merlin_api::retention_support::retained_footprint(self)
+            .ok_or_else(|| ApiError::new(ErrorCode::ResourceLimit, "retained_footprint overflow"))
+    }
+
     /// Reads complete source IDs, selected run IDs and finite sequential resource ceilings.
     /// # Returns
     /// Owned metadata, without preparing a request or starting source/scientific work.
@@ -189,5 +209,42 @@ impl FullLoopSweepPlan {
             cause.message = format!("Captured profile {}: {}", id.value(), cause.message);
             cause
         })
+    }
+}
+
+impl RetainedPayload for FullLoopSweepPlan {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            base,
+            catalog,
+            selection,
+            selected,
+            total_assignments,
+        } = self;
+        merlin_api::retention_support::sum([
+            base.retained_children(),
+            catalog.retained_children(),
+            selection.retained_children(),
+            selected.retained_children(),
+            total_assignments.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for FullLoopProfileSelection {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Current => Some(RetainedFootprint::default()),
+            Self::AllCaptured => Some(RetainedFootprint::default()),
+            Self::Selected(value) => value.retained_children(),
+        }
     }
 }

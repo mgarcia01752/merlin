@@ -3179,3 +3179,44 @@ actual canonical host/worker wiring remain mandatory before aggregate acceptance
 The isolated downstream preparation uses a new branch while preserving 665d758;
 its source-only work is not accepted here. UIU-SESSION-01 remains unchecked and
 all later Level2/Level3 acceptance gates remain intact.
+
+## UIU-SESSION-01 downstream retained-root metadata
+
+[Design](design.md#downstream-retained-root-preparation),
+[architecture](../../../architecture.md#unified-qt-session-and-file-lifecycle),
+[exact evidence](session-downstream-metadata-evidence.json),
+[executed cases](session-downstream-metadata-operation-test-results.json)
+and [UIU-SESSION-01](../../checklist.md#task-uiu-session-01) trace REQ-UIU-03/07.
+The primary adopts preparation 20f4342: 55 owner files and one new test file
+initially match exactly; only the appended handoff is combined with primary
+history. Three new visitor blocks move before existing test modules after Clippy
+rejects their placement; no body or scientific statement changes. Independent
+review finds no production omission/undercount. Initial failed attempts and their
+corrections are retained explicitly in the evidence, not counted as passing gates.
+
+FullLoopRequest, FullLoopSweepPlan, FullLoopResult and FullLoopReceiverArchive
+expose passive metadata through existing Rust/facade/native classes. Original
+inputs, cached playback powers, retained stages/context/LLRs, protected pilot
+cache, spare capacities and repeated shared payloads are included. Historical
+archive retained_bytes and copying remain unchanged. The Copy helper audits
+fixed Duration/FecCounters leaves without a new codec dependency.
+
+Executed: **103 Rust cases/doctests** (10 common, six new private owner,
+61 complete relevant downstream API/channel/protected and 26 facade), and
+**34 installed native cases**, with no failures or skips in the final gates.
+Eleven metadata/facade Rust cases, a compile-fail doctest and three native cases
+are new. Native full-loop/observation/saved-project/archive/namespace/upstream
+metadata consumers pass. Eight separate Rust/native single/multiple-RxMER,
+observed/unobserved, complete/pre-cancelled reference cases agree on all three
+quantities, original provenance, actual outcomes and historical archive metadata.
+Warnings-denied owner/native Clippy, independent no-default downstream build,
+formatting and fresh compiler/installed inventories pass. All previous 602/575
+rows are preserved; the resulting operation baseline is 606 Rust/579 native.
+
+This is Level 1 current-root metadata acceptance. Unchanged Qt presentation,
+registration and consumers require no Qt/QML/executable rebuild here; unrelated
+workspace/analysis/CLI/packaging regressions remain at their applicable gates.
+The accepted executable is still current. Pre-production bounds, the
+[construction boundary](retention-contract-decision.md#output-construction-boundary-requiring-clarification),
+independent input/presentation charges and real host wiring remain open.
+UIU-SESSION-01 stays unchecked; historical acceptance states remain unchanged.

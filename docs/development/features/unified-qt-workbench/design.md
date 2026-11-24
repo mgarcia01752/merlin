@@ -3458,9 +3458,48 @@ not include private cached arrays, all capacities or nested ownership.
 | EDIT `crates/ofdm/src/api/full_loop/{request.rs,sweep.rs,result.rs,receiver_archive/mod.rs}` | Four public passive root operations. Preserve original archive retained_bytes statistic and copy policy exactly. |
 | EDIT existing API input/source/sequence/profile owners and scientific child owners as required | Owner-local complete dynamic-child visitors, exhaustive field/variant audits and shared leaf arithmetic; include MeasurementPlayback caches, original input/provenance, settings, protected pilot sequence and retained stage stores. No algorithms, default, cache shape or serialization changes. |
 | ADD `crates/ofdm/tests/api_retained_footprint.rs`; ADD owner-private tests as needed | Independent capacity/cached/Arc anchors, actual complete/partial results, history detachment and passive original-query compatibility. Preparation tests require execution in the primary checkout. |
-| SUBSEQUENT lead native/API/host unit | Paired native methods on existing request/plan/result/archive classes, installed-wheel direct Rust parity and operation tracing. Independently accepted input roots and presentation copies still need separate host charges; the four root operations alone cannot establish aggregate acceptance. |
+| EDIT lead-owned `bindings/python/src/full_loop/{request.rs,sweep.rs,result.rs,receiver_archive.rs}` and root type stub | Expose the same four existing native classes' passive methods returning `merlin.common.RetainedFootprint`, releasing the interpreter and preserving Rust errors. Genuine downstream imports retain their existing root class aliases. |
+| ADD `bindings/python/tests/test_downstream_retained_footprint.py`, `crates/pnm-input/examples/downstream_retained_footprint.rs`; EDIT `crates/merlin/tests/namespaces.rs` | Exact original single/multiple-RxMER saved projects through the same public loader in independent Rust/native processes; observations enabled/disabled and complete/pre-cancelled roots, detached history lifetime, original reports/provenance and legacy type identity. Compile-check the Copy helper's rejection of heap-owning leaves. |
+| SUBSEQUENT lead host unit | Independently accepted input roots and presentation copies still need separate host charges; the four root operations alone cannot establish aggregate acceptance. Future output and archive-copy bounds remain separate public-owner prerequisites. |
 
 The isolated agent may prepare only the downstream Rust owner/test patch. The lead
 retains all shared contract, facade, native, architecture/checklist and acceptance
 ownership. No future-result or archive-copy pre-production bound is accepted by
 passive metadata; those remain explicit integration gates.
+
+
+The downstream audit identifies two fixed foreign leaves: std::time::Duration
+and `fec_codec::statistics::FecCounters` (five private u64 fields, Copy). Add the
+hidden shared support helper `fixed_children<Value: Copy>(&Value)` returning zero
+dynamic children; fixed storage is already owned by the enclosing root/container.
+The explicit Copy bound and owner source audit prevent silently accepting a later
+heap-owning counter. Borrowed/static data remains charged at its actual owner;
+this is not a blanket implementation for arbitrary foreign types. Keep codec
+statistics and scientific behavior unchanged and add no dependency to the common
+leaf. Reuse this helper only at the audited fixed-leaf fields.
+
+All four Rust methods return `ApiResult<merlin::common::RetainedFootprint>`;
+their Python signatures are `retained_footprint(self) ->
+merlin.common.RetainedFootprint`. Checked arithmetic failure retains ResourceLimit.
+Quantities describe the actual owner: cloning a Vec/String may shrink spare
+capacity, so equal scientific inputs do not promise equal footprints after an
+arbitrary clone. The independent reference deliberately matches the native
+worker's existing request-clone dispatch. No clone implementation is changed.
+
+The extra public-owner batch is passive metadata only. Relevant complete API,
+measurement/playback, protected-constellation/archive and facade tests, owner
+Clippy/formatting and installed native consumers cover its changed graph; full
+unrelated scientific suites remain at the session/milestone gate. Rebuild the
+native wheel once after both owner and wrapper sources are ready. Preserve prior
+receipts and record precise new cases and inventory additions before acceptance.
+
+
+#### Downstream root acceptance
+
+The [primary validation receipt](validation.md#uiu-session-01-downstream-retained-root-metadata)
+and [exact executed cases](session-downstream-metadata-operation-test-results.json)
+accept all four current-root operations with 103 Rust cases/doctests and 34 installed
+native cases. Original source statements, complete older operation rows and
+historical archive statistics are preserved. This accepts passive metadata only;
+[output construction accounting](retention-contract-decision.md#output-construction-boundary-requiring-clarification),
+pre-production bounds and actual session admission remain open.

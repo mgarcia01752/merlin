@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 PNM Viewer contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Original carrier grid and exact spatial scenario identity.
@@ -7,6 +8,7 @@ use crate::{
     error::{invalid, SimulationError},
     types::{ChannelId, FrequencyHz, MacAddress, SubcarrierIdx},
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 /// Application safety limit, not an invented PHY or encoded-format limit.
 pub const MAX_LAB_CARRIERS: usize = 65_536;
@@ -61,4 +63,44 @@ pub struct ScenarioKey {
     pub mac_address: MacAddress,
     pub channel_id: ChannelId,
     pub grid: FrequencyGrid,
+}
+
+impl RetainedPayload for FrequencyGrid {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            zero_frequency_hz,
+            first_subcarrier_index,
+            spacing_hz,
+            sample_count,
+        } = self;
+        merlin_api::retention_support::sum([
+            zero_frequency_hz.retained_children(),
+            first_subcarrier_index.retained_children(),
+            spacing_hz.retained_children(),
+            sample_count.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ScenarioKey {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            mac_address,
+            channel_id,
+            grid,
+        } = self;
+        merlin_api::retention_support::sum([
+            mac_address.retained_children(),
+            channel_id.retained_children(),
+            grid.retained_children(),
+        ])
+    }
 }

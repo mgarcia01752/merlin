@@ -189,6 +189,19 @@ impl PySimulation {
 
 #[pymethods]
 impl PySimulation {
+    /// Constructs an idle session from optional validated native run options.
+    ///
+    /// Returns an unconfigured controller; construction never executes a trial.
+    #[new]
+    #[pyo3(signature=(options=None))]
+    fn new(options: Option<PyRef<'_, PyOptions>>) -> PyResult<Self> {
+        let options = options.map(|value| value.0.clone()).unwrap_or_default();
+        api::Simulation::new(options)
+            .map(|session| Self {
+                state: Arc::new(Mutex::new(Some(session))),
+            })
+            .map_err(error)
+    }
     /// Measures the idle Rust session's actual retained payload without execution.
     ///
     /// # Returns
@@ -205,19 +218,6 @@ impl PySimulation {
             .map(crate::retention::PyRetainedFootprint)
     }
 
-    /// Constructs an idle session from optional validated native run options.
-    ///
-    /// Returns an unconfigured controller; construction never executes a trial.
-    #[new]
-    #[pyo3(signature=(options=None))]
-    fn new(options: Option<PyRef<'_, PyOptions>>) -> PyResult<Self> {
-        let options = options.map(|value| value.0.clone()).unwrap_or_default();
-        api::Simulation::new(options)
-            .map(|session| Self {
-                state: Arc::new(Mutex::new(Some(session))),
-            })
-            .map_err(error)
-    }
     /// Atomically accepts `config` through the public Rust API while idle.
     ///
     /// Returns None; rejection preserves settings and competing runs report Busy.

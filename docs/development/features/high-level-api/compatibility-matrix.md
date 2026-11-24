@@ -4,16 +4,19 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-591 explicit public Rust operations and 560 installed native Python entries with
+606 explicit public Rust operations and 579 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/measured-input-api-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/session-downstream-metadata-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
-112 directional/common class exports and preserved legacy root exports. The
+115 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
 150-case historical acceptance. Named
 owner regressions establish behavioral scope; metadata alone is not scientific
 execution or exhaustive getter-branch coverage.
+Individual unit summaries below retain their historical checkpoint counts and
+states; the [official checklist](../../checklist.md#unified-qt-workbench-delivery)
+owns current task acceptance.
 
 The [DS-01 source-catalog compatibility prerequisite](../unified-qt-workbench/validation.md#uiu-ds-01-source-profile-compatibility-api-accepted)
 adds one passive Rust/native operation with exact compiler/installed signatures
@@ -261,7 +264,7 @@ Named contract references resolve in the data's `contracts` object.
 
 | Row group | Rust scope | Python scope |
 | --- | --- | --- |
-| Downstream: 431 Rust / 425 native operations | Accepted API, quantities, original inputs, full-loop requests, retained observations and saved full-loop preparation. | Installed native classes preserve legacy root aliases; current scoped and preceding full-gate receipts define behavioral coverage. |
+| Downstream: 435 Rust / 429 native operations | Accepted API, quantities, original inputs, full-loop requests, retained observations and saved full-loop preparation. | Installed native classes preserve legacy root aliases; current scoped and preceding full-gate receipts define behavioral coverage. |
 | Upstream: 149 Rust / 121 native operations | Independent sessions, measured admission, resource plans and actual bounded instrument observations. | Installed native upstream namespace and API-04 backend acceptance; Qt adoption remains separate. |
 | Common: 22 Rust / 29 native operations | One-way cancellation plus optional original-preserving Project admission; returned scientific owners remain separate. | Installed common namespace, enum accessors and Project; the Rust Cancellation trait and typed ProjectError remain explicit language differences. |
 
@@ -390,3 +393,13 @@ reports target-layout payload bytes and independent entry/root counts; native
 values come from Rust. Exact source/wheel, independent both-mode complete/cancelled
 references and executed capacity/private-cache tests are retained in its evidence.
 It does not accept future-output bounds or Qt aggregate session admission.
+
+The [downstream current-root metadata unit](../unified-qt-workbench/validation.md#uiu-session-01-downstream-retained-root-metadata)
+adds four paired request/sweep/result/archive operations, preserving every prior
+602/575 operation row, class identity and signature. Eleven new Rust owner/facade
+cases and three new installed native cases cover capacities, private caches,
+unchanged original reports/provenance, eight separate Rust/native fixture modes
+and detached lifetimes. The shared fixed-Copy leaf helper has a passing
+compile-fail doctest. The complete scoped gate passes 103 Rust and 34 installed
+native cases; existing historical archive statistics keep their meaning. Future
+bounds, output-construction accounting and actual aggregate acceptance remain open.

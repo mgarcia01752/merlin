@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Independent full-loop public contracts over the existing downstream controlled job.
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 mod cells;
 mod control;
 mod instruments;
@@ -76,5 +77,30 @@ impl Simulation {
         tolerance: AssociationTolerance,
     ) -> ApiResult<FullLoopRequest> {
         FullLoopRequest::prepare_with_response_tolerance(inputs, options, Some(tolerance))
+    }
+}
+
+impl RetainedPayload for FullLoopInputs {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            transmission,
+            profile,
+            source,
+            measurements,
+            channel,
+            response,
+        } = self;
+        merlin_api::retention_support::sum([
+            transmission.retained_children(),
+            profile.retained_children(),
+            source.retained_children(),
+            measurements.retained_children(),
+            channel.retained_children(),
+            response.retained_children(),
+        ])
     }
 }

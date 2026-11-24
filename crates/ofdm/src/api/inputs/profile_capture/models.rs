@@ -4,6 +4,7 @@
  */
 //! Typed bounded profile inspection requests and source-coordinate results.
 use super::*;
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 
 pub use crate::{
     scenario::pnm_json::profile_metadata::{ProfileCaptureHeader, ProfileSchemeInfo},
@@ -171,4 +172,44 @@ pub struct ProfileInspection {
     /// Whole-original-grid counts over selected profiles, independent of viewport/role filtering.
     pub selected_role_counts: Vec<ProfileRoleCount>,
     pub series: Vec<ProfileSeriesView>,
+}
+
+impl RetainedPayload for ProfileSummary {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            profile_id,
+            origin,
+            capture_time,
+            carrier_count,
+            role_counts,
+            data_bits_per_useful_symbol,
+            uncoded_data_capacity_bps,
+            capacity_complete,
+        } = self;
+        merlin_api::retention_support::sum([
+            profile_id.retained_children(),
+            origin.retained_children(),
+            capture_time.retained_children(),
+            carrier_count.retained_children(),
+            role_counts.retained_children(),
+            data_bits_per_useful_symbol.retained_children(),
+            uncoded_data_capacity_bps.retained_children(),
+            capacity_complete.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ProfileRoleCount {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { kind, count } = self;
+        merlin_api::retention_support::sum([kind.retained_children(), count.retained_children()])
+    }
 }

@@ -6,6 +6,7 @@
 use super::*;
 pub use crate::simulation::channel::results::PayloadRecovery as FullLoopFecRecovery;
 pub use crate::simulation::channel::ChannelJobResult as FullLoopReport;
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 
 /// Immutable shareable actual complete/partial report with accepted original inputs retained.
@@ -17,6 +18,25 @@ pub struct FullLoopResult {
     pub(super) observation_policy: Option<FullLoopObservationPolicy>,
 }
 impl FullLoopResult {
+    /// Measures this complete immutable root and all reachable retained payloads.
+    ///
+    /// Counts requested buffer capacity, including spare capacity and private
+    /// caches. Shared payloads are counted on every owned Arc edge; ordered
+    /// entries and shared roots are reported separately from payload bytes.
+    /// Allocator metadata and container/control-block implementation overhead
+    /// are excluded. This passive read does not copy payloads or run science.
+    ///
+    /// # Returns
+    /// Current-root metadata including the fixed root exactly once. This is
+    /// neither a future-output reservation nor a process-memory bound.
+    ///
+    /// # Errors
+    /// Returns ResourceLimit if retained_footprint arithmetic overflows.
+    pub fn retained_footprint(&self) -> ApiResult<merlin_api::RetainedFootprint> {
+        merlin_api::retention_support::retained_footprint(self)
+            .ok_or_else(|| ApiError::new(ErrorCode::ResourceLimit, "retained_footprint overflow"))
+    }
+
     /// Borrows the actual bounded scientific report, including all retained completed trials.
     /// # Returns
     /// Read-only report valid for this owned result's lifetime, independent of later runs.
@@ -89,5 +109,26 @@ impl FullLoopResult {
     /// None for PRBS; actual whole decoded file bytes for finite input, including partial/errors.
     pub fn recovered_bytes(&self) -> Option<&[u8]> {
         self.job.recovered_file.as_ref().map(|file| file.bytes())
+    }
+}
+
+impl RetainedPayload for FullLoopResult {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            job,
+            inputs,
+            stages,
+            observation_policy,
+        } = self;
+        merlin_api::retention_support::sum([
+            job.retained_children(),
+            inputs.retained_children(),
+            stages.retained_children(),
+            observation_policy.retained_children(),
+        ])
     }
 }

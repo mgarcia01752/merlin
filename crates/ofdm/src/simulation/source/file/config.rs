@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 use crate::{
@@ -7,6 +8,7 @@ use crate::{
     simulation::source::{Prbs15, PrbsSeed},
     SimulationError,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 /// Application input-memory ceiling, not a PHY minimum/alignment requirement.
@@ -99,5 +101,70 @@ impl FilePayload {
     /// Meaningful bits, independent of observation duration or FEC word boundaries.
     pub fn target_bits(&self) -> u64 {
         self.target_bits
+    }
+}
+
+impl RetainedPayload for PrbsFill {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { target_bits, seed } = self;
+        merlin_api::retention_support::sum([
+            target_bits.retained_children(),
+            seed.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for FilePayload {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            bytes,
+            original_bytes,
+            target_bits,
+            fill,
+        } = self;
+        merlin_api::retention_support::sum([
+            bytes.retained_children(),
+            original_bytes.retained_children(),
+            target_bits.retained_children(),
+            fill.retained_children(),
+        ])
+    }
+}
+
+#[cfg(test)]
+mod retained_footprint_tests {
+    use super::FilePayload;
+    use merlin_api::retention_support::retained_footprint;
+    use std::{
+        mem::{size_of, size_of_val},
+        sync::Arc,
+    };
+
+    #[test]
+    fn repeated_file_roots_count_actual_shared_bytes_without_cloning_payload() {
+        let file = FilePayload::new(b"finite source fixture", None).unwrap();
+        let aliases = [file.clone(), file.clone()];
+        let owners = Arc::strong_count(&file.bytes);
+        let footprint = retained_footprint(&aliases).unwrap();
+        assert_eq!(
+            footprint.payload_bytes,
+            size_of_val(&aliases) + file.bytes.len() * aliases.len()
+        );
+        assert_eq!(
+            size_of_val(&aliases),
+            size_of::<FilePayload>() * aliases.len()
+        );
+        assert_eq!(footprint.shared_roots, aliases.len());
+        assert_eq!(footprint.ordered_entries, 0);
+        assert_eq!(Arc::strong_count(&file.bytes), owners);
+        assert!(Arc::ptr_eq(&aliases[0].bytes, &aliases[1].bytes));
     }
 }
