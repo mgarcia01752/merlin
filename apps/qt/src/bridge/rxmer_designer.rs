@@ -5,14 +5,16 @@
 //! Designer batch lifecycle; the GUI adopts only a complete, current draft.
 use super::measurement_input::bridge;
 use crate::downstream::common::constants::{
-    MAX_DESIGNER_PLAYBACK_DOCUMENT_BYTES, MAX_DESIGNER_RECIPE_DOCUMENT_BYTES,
+    DESIGNER_CAPTURE_QUEUE_CAPACITY, MAX_DESIGNER_PLAYBACK_DOCUMENT_BYTES,
+    MAX_DESIGNER_RECIPE_DOCUMENT_BYTES,
 };
 use crate::downstream::help::AdmissionError;
+use crate::downstream::inputs::measurement_input::document::Capture;
 use crate::downstream::inputs::measurement_input::{
     designer::{Request, Session},
-    document::Capture,
     model::{Model, Options},
 };
+use crate::shell::{Retained, RetentionReservation};
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 use serde_json::{json, Value};
@@ -24,13 +26,19 @@ use std::{
     },
 };
 pub(super) struct Work {
-    receiver: mpsc::Receiver<Result<Vec<Capture>, AdmissionError>>,
+    receiver: mpsc::Receiver<Result<Retained<Vec<Capture>>, AdmissionError>>,
     cancel: Arc<AtomicBool>,
     completed: Arc<AtomicUsize>,
     hashes: Vec<String>,
     profile_hash: String,
     options: Options,
     imported: bool,
+}
+
+// Preserve the source charge until the independently admitted editor owns the data.
+struct StagedBatch {
+    metadata: Value,
+    _source: Option<RetentionReservation>,
 }
 fn request(document: &QString) -> Result<Request, String> {
     let text = document.to_string();
@@ -135,7 +143,8 @@ impl bridge::MeasurementInputs {
                 serde_json::from_str(&text).map_err(|error| error.to_string())?;
             let cancel = Arc::new(AtomicBool::new(false));
             let completed = Arc::new(AtomicUsize::new(0));
-            let (sender, receiver) = mpsc::channel();
+            let budget = self.rust().context.application.budget().clone();
+            let (sender, receiver) = mpsc::sync_channel(DESIGNER_CAPTURE_QUEUE_CAPACITY);
             let work = Work {
                 receiver,
                 cancel: cancel.clone(),
@@ -152,7 +161,13 @@ impl bridge::MeasurementInputs {
             std::thread::Builder::new()
                 .name("rxmer-designer".into())
                 .spawn(move || {
-                    let result = session.value().build(&request, &cancel, &completed);
+                    let result = session
+                        .value()
+                        .build(&request, &cancel, &completed)
+                        .and_then(|captures| {
+                            Model::admit_capture_batch(captures, &budget)
+                                .map_err(AdmissionError::from)
+                        });
                     let _ = sender.send(result);
                 })
                 .map_err(|error| error.to_string())?;
@@ -179,13 +194,7 @@ impl bridge::MeasurementInputs {
         let work = self.as_mut().rust_mut().designer_work.take().unwrap();
         let inputs = crate::downstream::workbench::session::snapshot(&self.rust().context);
         let profile = inputs.profile.as_ref();
-        let mut candidate = self.rust().model.clone();
-        let result = adopt(work, result, &mut candidate, profile).and_then(|metadata| {
-            if metadata["staged"] == true {
-                self.as_mut().rust_mut().replace_model(candidate)?;
-            }
-            Ok(metadata)
-        });
+        let result = adopt_to_owner(self.as_mut().rust_mut().get_mut(), work, result, profile);
         response(result)
     }
     /// Cancels pending generation; already accepted captures are never modified.
@@ -202,18 +211,39 @@ impl bridge::MeasurementInputs {
 #[path = "rxmer_designer/retention_tests.rs"]
 mod retention_tests;
 
-fn adopt(
+#[cfg(test)]
+#[path = "rxmer_designer/capture_batch_tests.rs"]
+mod capture_batch_tests;
+
+fn adopt_to_owner(
+    owner: &mut super::measurement_input::MeasurementInputsRust,
     work: Work,
-    result: Result<Vec<Capture>, AdmissionError>,
-    model: &mut Model,
+    result: Result<Retained<Vec<Capture>>, AdmissionError>,
     profile: Option<&merlin::downstream::SourceProfileFrame>,
 ) -> Result<Value, AdmissionError> {
+    let mut candidate = owner.model.clone();
+    let staged = adopt(work, result, &mut candidate, profile)?;
+    if staged.metadata["staged"] == true {
+        owner.replace_model(candidate)?;
+    }
+    Ok(staged.metadata)
+}
+
+fn adopt(
+    work: Work,
+    result: Result<Retained<Vec<Capture>>, AdmissionError>,
+    model: &mut Model,
+    profile: Option<&merlin::downstream::SourceProfileFrame>,
+) -> Result<StagedBatch, AdmissionError> {
     if work.cancel.load(Ordering::Relaxed) {
         log::debug!(
             "rxmer-designer stage_cancelled completed={}",
             work.completed.load(Ordering::Relaxed)
         );
-        return Ok(json!({"cancelled":true,"running":false}));
+        return Ok(StagedBatch {
+            metadata: json!({"cancelled":true,"running":false}),
+            _source: None,
+        });
     }
     let captures = result?;
     let current = model
@@ -236,17 +266,18 @@ fn adopt(
                 .collect::<std::collections::HashSet<_>>();
             work.hashes
                 .iter()
-                .zip(&captures)
+                .zip(captures.value())
                 .filter(|(hash, _)| selected.contains(*hash))
                 .map(|(_, capture)| capture.hash.clone())
                 .collect()
         });
     } else {
         options.selected_captures = None;
-        if captures.len() > 1 {
+        if captures.value().len() > 1 {
             options.mode = merlin::downstream::MeasurementMode::Hold;
         }
     }
+    let (captures, source) = captures.into_parts();
     let mut checked = Model::default();
     checked.stage(captures, true)?;
     model.draft_rx = checked.draft_rx;
@@ -256,7 +287,10 @@ fn adopt(
     );
     let mut metadata = json!({"files":model.files(true,profile),"flat":false});
     metadata["options"] = json!(options);
-    Ok(json!({"running":false,"staged":true,"metadata":metadata}))
+    Ok(StagedBatch {
+        metadata: json!({"running":false,"staged":true,"metadata":metadata}),
+        _source: Some(source),
+    })
 }
 
 #[cfg(test)]
@@ -284,7 +318,13 @@ mod tests {
         .unwrap();
         (session, model)
     }
-    fn work(session: &Session, options: Options) -> Work {
+    /// Creates the original completed-worker fixture without launching a thread.
+    /// # Arguments
+    /// * `session` - Original baseline identities used by stale-completion checks.
+    /// * `options` - Existing playback and selection settings.
+    /// # Returns
+    /// A disconnected worker fixture with unchanged progress and baseline fields.
+    pub(super) fn work(session: &Session, options: Options) -> Work {
         let (_, receiver) = mpsc::channel();
         Work {
             receiver,
@@ -295,6 +335,14 @@ mod tests {
             options,
             imported: true,
         }
+    }
+    fn batch(captures: Vec<Capture>) -> Retained<Vec<Capture>> {
+        let budget = crate::shell::RetentionBudget::with_limits(crate::shell::RetainedResources {
+            payload_bytes: usize::MAX,
+            ordered_entries: usize::MAX,
+            shared_roots: usize::MAX,
+        });
+        Model::admit_capture_batch(captures, &budget).unwrap()
     }
     #[test]
     fn adoption_is_atomic_remaps_selection_and_rejects_stale_completion() {
@@ -313,13 +361,13 @@ mod tests {
         let selected = captures[1].hash.clone();
         let result = adopt(
             work(&session, options),
-            Ok(captures),
+            Ok(batch(captures)),
             &mut model,
             Some(&session.profile),
         )
         .unwrap();
         assert_eq!(
-            result["metadata"]["options"]["selected_captures"],
+            result.metadata["metadata"]["options"]["selected_captures"],
             json!([selected])
         );
         assert_eq!(model.accepted_rx.len(), 132);
@@ -333,7 +381,7 @@ mod tests {
             .unwrap();
         assert!(adopt(
             work(&session, Options::default()),
-            Ok(captures),
+            Ok(batch(captures)),
             &mut model,
             Some(&session.profile)
         )
@@ -354,18 +402,18 @@ mod tests {
         work.cancel.store(true, Ordering::Relaxed);
         let result = adopt(
             work,
-            Ok(captures.clone()),
+            Ok(batch(captures.clone())),
             &mut model,
             Some(&session.profile),
         )
         .unwrap();
-        assert_eq!(result["cancelled"], true);
+        assert_eq!(result.metadata["cancelled"], true);
         assert_eq!(model.draft_rx[0].hash, session.hashes[0]);
         let mut profile = (*session.profile).clone();
         profile.source.sha256 = "f".repeat(64);
         assert!(adopt(
             super::tests::work(&session, Options::default()),
-            Ok(captures),
+            Ok(batch(captures)),
             &mut model,
             Some(&profile)
         )

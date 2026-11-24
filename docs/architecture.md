@@ -1618,6 +1618,14 @@ to `bridge/rxmer_export/lifecycle.rs`. Saved Value/error envelopes and outer wor
 infrastructure remain pending. See the
 [export-product design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-export-products-and-ready-state-rollback).
 
+Generated Designer capture batches admit their actual original/frame/Origin
+storage before entering a single-slot completion queue. A concrete staging handoff
+keeps the source reservation until independent editor admission succeeds; rejected,
+cancelled or stale completions preserve the old model and dispose the guarded
+batch. Existing mapping, selection and scientific staging behavior is preserved.
+Request/control/error envelopes and outer infrastructure remain pending. See the
+[capture-batch design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-designer-capture-batches).
+
 The shared [terminal transport](development/features/unified-qt-workbench/design.md#uiu-session-01-terminal-worker-transport)
 under `shell/worker.rs` keeps genuine run leases outside worker unwinding and
 tags queued callbacks explicitly. Known completion can release admission after

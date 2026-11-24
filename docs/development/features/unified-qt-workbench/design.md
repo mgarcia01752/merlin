@@ -4251,3 +4251,27 @@ or SESSION closure. Existing file publication remains in the public Rust PNM API
 with no destination overwrite or source mutation. Relevant Rust/Qt/QML, all-target
 Clippy/format/boundary/traceability and fresh executable checks precede a focused
 commit; unchanged scientific/native APIs need no wheel rebuild.
+
+### UIU-SESSION-01 retained Designer capture batches
+
+Generated Designer captures retain original bytes, full decoded frames and private
+Origin/design records independently of the GUI Session and measurement model.
+REQ-UIU-03/06/07 and the open UIU-SESSION-01 require their completion queue to retain
+an admitted batch guard until disposal or successful target-model admission.
+The [source-only handoff](agent-handoffs/designer-capture-batch-admission.md)
+records the selectively reviewed preparation; primary runtime acceptance is in
+the [capture-batch evidence](validation.md#uiu-session-01-retained-designer-capture-batches).
+
+| Path/symbol and disposition | Contract and focused acceptance |
+| --- | --- |
+| EDIT `apps/qt/src/downstream/inputs/measurement_input/model.rs`, `model/retention.rs`; ADD `model/capture_admission_tests.rs` | Reuse the existing complete capture child visitor for actual Vec batches, counting the containing Vec once and requested slots. Admit through existing primitives after finite backend construction and before queueing. Original Model metadata/scientific bodies stay unchanged. Selectively adopt source preparation only after exact-parent/content review. |
+| EDIT `apps/qt/src/bridge/rxmer_designer.rs`; ADD `rxmer_designer/capture_batch_tests.rs` | Worker terminals carry Retained<Vec<Capture>>. Cancel/stale/error paths dispose the batch safely. Successful staging transfers its existing reservation alongside metadata until the independently admitted GUI Model replaces the old one; no gap or premature release while target admission may still fail. Preserve existing selection remapping, complete-batch adoption and scientific assertions. |
+| EDIT `apps/qt/src/downstream/common/constants.rs` | Name the single completed-capture queue slot independently of the equal-valued export terminal policy. Progress remains its existing atomic count. |
+
+Test actual generated original/frame/Origin capacities, every positive batch
+dimension, queued cancellation/stale/disposal, simultaneous source/target admission
+and rejected target preserving accepted editor/input state. No science/API/schema
+or generic framework changes. Work request/hash/options/control/error envelopes,
+fixed infrastructure and retained QML remain separate pending owners. Relevant
+Rust/Qt/QML, Clippy/format/boundary/traceability and fresh executable validation
+precede the focused commit; unchanged native science needs no wheel rebuild.

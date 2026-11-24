@@ -4007,3 +4007,31 @@ workspace, CLI or packaging run. Saved completion/error envelopes, other worker/
 generated-queue data, retained QML and fixed infrastructure remain pending.
 UIU-SESSION-01 stays unchecked until full relevant Level 2 and applicable milestone/
 final Level 3 acceptance, preserving all completed downstream history.
+
+
+## UIU-SESSION-01 retained Designer capture batches
+
+The [focused design](design.md#uiu-session-01-retained-designer-capture-batches)
+now admits actual generated original/frame/Origin capacity before publication to
+one completed-batch queue slot. A concrete staging result keeps its source guard
+until the target editor is independently admitted. Cancellation/stale completion
+and all three positive target-limit rejections preserve the original editor.
+The pressure cases leave room for the target alone, proving premature source
+release would incorrectly admit the replacement. Successful adoption preserves
+selection remapping and existing scientific/model behavior.
+
+[Primary execution record](session-designer-capture-batch-evidence.json) records
+51 unique Rust passes: 50 initial passes and the corrected two-case consumer
+rerun after a final expectation omitted existing host readiness data. The fixture
+now measures that actual baseline; production limits and code are unchanged by
+this correction. All failed logs remain. Seventeen QML behaviors/four hooks,
+all-target Clippy, formatting/final boundary, optimized build and six fresh native
+desktop probes pass. Source-only preparation and read-only review are distinguished
+from primary runtime execution; documentation/traceability checks join the receipt.
+
+No scientific/public API, binding, saved schema, dependency or registration changed.
+Exact unchanged scientific/native evidence is reused; no wheel/Python, full root
+workspace, unrelated CLI or packaging run was required. Worker input/control/error
+and Saved completion envelopes, retained QML and fixed infrastructure remain pending.
+UIU-SESSION-01 stays unchecked until its complete Level 2 and applicable milestone/
+final Level 3 gates pass. Completed downstream history is preserved.

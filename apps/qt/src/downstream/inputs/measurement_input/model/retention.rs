@@ -85,6 +85,33 @@ fn capture_children(value: &Capture) -> Result<RetainedResources, String> {
     Ok(total)
 }
 
+/// Measures one actual finite generated collection using the existing Capture traversal.
+///
+/// # Arguments
+/// * `captures` - Complete builder output with requested spare slots preserved.
+///
+/// # Returns
+/// The Vec fixed handle once, its actual slot capacity and every original, typed
+/// frame and optional Designer Origin child. Shared payloads are conservatively
+/// repeated per capture occurrence, exactly as in the existing Model visitor.
+///
+/// # Errors
+/// Existing public metadata or checked payload/population overflow; no source,
+/// scientific value, capacity or alias is mutated.
+pub(super) fn capture_batch_resources(
+    captures: &Vec<Capture>,
+) -> Result<RetainedResources, String> {
+    let mut total = RetainedResources {
+        payload_bytes: size_of::<Vec<Capture>>(),
+        ..Default::default()
+    };
+    count::append(&mut total, count::vector_storage(captures)?)?;
+    for capture in captures {
+        count::append(&mut total, capture_children(capture)?)?;
+    }
+    Ok(total)
+}
+
 /// Measures the actual independent draft/accepted measurement payloads and options.
 /// # Arguments
 /// * `model` - Existing owner; no public input reconstruction/materialization occurs.

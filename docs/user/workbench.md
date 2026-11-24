@@ -314,6 +314,13 @@ unchanged. Read-only instruments use Close.
 See the [FEC Monitor](fec-monitor.md) for decoder outcomes, recovery and retained
 codeword records.
 
+Designer-generated capture batches now retain their admitted storage while waiting
+for completion polling and editor staging. Cancelling, changing a baseline or
+rejecting a replacement because of the shared resource limit preserves the existing
+editor captures. Successful generation still stages a draft; use the existing
+parent Apply action to accept it. This change does not alter the recipe, measured
+source data or export formats. Full unified-session acceptance remains pending.
+
 ## Help and chart details
 
 Hover or focus a known workbench

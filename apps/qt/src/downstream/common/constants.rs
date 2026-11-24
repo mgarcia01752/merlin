@@ -35,6 +35,10 @@ pub(crate) const TIMING_OVERVIEW_QUANTUM_MICROSECONDS: f64 = 10.0;
 /// One completion envelope for the single idle transmitter-preview worker.
 pub(crate) const IDLE_PREVIEW_COMPLETION_CAPACITY: usize = 1;
 
+/// One generated Designer batch may await GUI collection for its single worker.
+/// Independent of export-product and idle-preview completion queue policies.
+pub(crate) const DESIGNER_CAPTURE_QUEUE_CAPACITY: usize = 1;
+
 /// Backpressure permits one completed profile envelope before GUI collection.
 /// Independent of the idle-preview channel, although both capacities are one.
 pub(crate) const PROFILE_COMPLETION_CAPACITY: usize = 1;

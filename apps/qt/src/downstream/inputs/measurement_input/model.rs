@@ -177,6 +177,28 @@ impl Model {
         crate::downstream::inputs::retention::admit_model(self, resources, budget)
     }
 
+    /// Admits one actual finite generated-capture batch before queueing or staging it.
+    ///
+    /// # Arguments
+    /// * `captures` - Existing complete builder output with its actual original/frame/Origin owners.
+    /// * `budget` - Canonical counter also covering source Sessions, old batches and editors.
+    ///
+    /// # Returns
+    /// The same Vec and live reservation, without cloning or rebuilding captures.
+    /// Keep its guard through queueing and editor target admission; split parts must
+    /// retain data-before-guard disposal order until every covered alias is dropped.
+    ///
+    /// # Errors
+    /// Metadata, checked layout arithmetic or aggregate rejection drops this candidate
+    /// and leaves independently admitted sources, old batches and editors unchanged.
+    pub(crate) fn admit_capture_batch(
+        captures: Vec<Capture>,
+        budget: &crate::shell::RetentionBudget,
+    ) -> Result<crate::shell::Retained<Vec<Capture>>, String> {
+        let resources = retention::capture_batch_resources(&captures)?;
+        crate::downstream::inputs::retention::admit_model(captures, resources, budget)
+    }
+
     /// Derives scalar readiness from independent accepted inputs.
     /// # Arguments
     /// * `settings` - Parsed OCD or its validation error.
@@ -699,6 +721,9 @@ fn status(result: Result<(), String>, empty: bool) -> Value {
         Err(error) => json!({"status":if empty {"attention"} else {"error"},"reason":error}),
     }
 }
+
+#[cfg(test)]
+mod capture_admission_tests;
 
 #[cfg(test)]
 mod tests {
