@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -12,6 +13,10 @@ use crate::{
     error::{invalid, limit},
     resources::ResourcePlan,
     PhyResult,
+};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
 };
 use serde::Serialize;
 use std::collections::BTreeSet;
@@ -213,5 +218,87 @@ impl RxmerPlayback {
                 .map(|(i, w)| (self.sources[*i].id, *w))
                 .collect(),
         })
+    }
+}
+
+impl RetainedPayload for SyntheticRxmer {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            id,
+            grid,
+            mer_db,
+            powers,
+        } = self;
+        sum([
+            id.retained_children(),
+            grid.retained_children(),
+            mer_db.retained_children(),
+            powers.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for RxmerPlayback {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            grid,
+            sources,
+            policy,
+            symbols,
+        } = self;
+        sum([
+            grid.retained_children(),
+            sources.retained_children(),
+            policy.retained_children(),
+            symbols.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for RxmerPolicy {
+    /// Visits retained temporal offsets without evaluating playback powers.
+    ///
+    /// # Returns
+    /// Checked offset capacity, or zero for policies with no owned children.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Single | Self::Average => Some(RetainedFootprint::default()),
+            Self::Hold { offsets } | Self::Interpolate { offsets } => offsets.retained_children(),
+        }
+    }
+}
+
+#[cfg(test)]
+mod retained_footprint_tests {
+    use merlin_api::retention_support::retained_footprint;
+    use std::mem::size_of;
+
+    #[test]
+    fn cached_power_capacity_is_counted_separately_from_original_readings() {
+        const SPARE_CACHED_VALUES: usize = 7;
+        let document = crate::configuration::ConfigurationDocument::from_json(include_bytes!(
+            "../../../../examples/cli/upstream/us-synthetic-playback.json"
+        ))
+        .unwrap();
+        let (configuration, _) = document.prepare().unwrap();
+        let mut playback = configuration.rxmer.unwrap();
+        let before = retained_footprint(&playback).unwrap();
+        let capacity = playback.sources[0].powers.capacity();
+        playback.sources[0]
+            .powers
+            .reserve_exact(capacity + SPARE_CACHED_VALUES);
+        let delta = (playback.sources[0].powers.capacity() - capacity) * size_of::<Option<f64>>();
+        assert_eq!(
+            retained_footprint(&playback).unwrap().payload_bytes - before.payload_bytes,
+            delta
+        );
     }
 }

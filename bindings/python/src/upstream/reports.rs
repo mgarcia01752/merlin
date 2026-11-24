@@ -102,6 +102,23 @@ impl PySpectrum {
 pub(crate) struct PyBatchReport(pub(crate) api::BatchReport);
 #[pymethods]
 impl PyBatchReport {
+    /// Measures the retained Rust report, including cached and skipped observations.
+    ///
+    /// # Returns
+    /// Immutable metadata independent of this wrapper's lifetime; querying does
+    /// not rerun science or size serialized JSON or Python-owned projections.
+    ///
+    /// # Errors
+    /// Preserves the Rust ResourceLimit category on checked arithmetic overflow.
+    fn retained_footprint(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        py.detach(|| self.0.retained_footprint())
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
     /// Returns the actual terminal lifecycle state separately from source recovery.
     ///
     /// Failed/cancelled runs remain inspectable owned reports.

@@ -189,6 +189,22 @@ impl PySimulation {
 
 #[pymethods]
 impl PySimulation {
+    /// Measures the idle Rust session's actual retained payload without execution.
+    ///
+    /// # Returns
+    /// Immutable target-layout metadata; excludes Python and allocator bookkeeping.
+    ///
+    /// # Errors
+    /// Preserves Busy while another operation owns the session, and the Rust
+    /// ResourceLimit category if checked footprint arithmetic overflows.
+    fn retained_footprint(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        self.access_long(py, |session| session.retained_footprint())
+            .map(crate::retention::PyRetainedFootprint)
+    }
+
     /// Constructs an idle session from optional validated native run options.
     ///
     /// Returns an unconfigured controller; construction never executes a trial.

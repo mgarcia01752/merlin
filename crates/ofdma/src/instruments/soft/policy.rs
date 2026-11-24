@@ -4,6 +4,10 @@
  */
 //! Independent retention policies for computed cells and completed word-input metrics.
 use crate::{error::invalid, PhyResult};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::Serialize;
 
 /// Aggregate computed-cell application ceiling; each admitted cell has two bounded bit vectors.
@@ -72,5 +76,24 @@ impl SoftObservationPolicy {
             maximum_words: self.maximum_words,
             maximum_word_llrs: self.maximum_word_llrs,
         }
+    }
+}
+
+impl RetainedPayload for SoftObservationPolicy {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            maximum_cells,
+            maximum_words,
+            maximum_word_llrs,
+        } = self;
+        sum([
+            maximum_cells.retained_children(),
+            maximum_words.retained_children(),
+            maximum_word_llrs.retained_children(),
+        ])
     }
 }

@@ -3,6 +3,6 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 """Shared native error categories and one-way cooperative cancellation."""
-from ._native import ErrorCode, Project, RunControl, __version__
+from ._native import ErrorCode, Project, RetainedFootprint, RunControl, __version__
 
-__all__ = ["ErrorCode", "RunControl", "Project"]
+__all__ = ["ErrorCode", "RunControl", "Project", "RetainedFootprint"]

@@ -3388,3 +3388,79 @@ presentation code changes in this unit; reuse cached scientific artifacts and
 the current Qt executable. Complete Qt/feature/compatibility Level 2 acceptance
 still precedes checking UIU-SESSION-01. Historical validation receipts remain
 unchanged; previous archive byte statistics keep their original meaning.
+
+
+## UIU-SESSION-01 public retained-root metadata prerequisite
+
+The demonstrated session consumer gap and [approved contract](retention-contract-decision.md)
+require metadata over actual retained scientific roots. This additive prerequisite
+belongs to [UIU-SESSION-01](../../checklist.md#task-uiu-session-01),
+[REQ-UIU-03](../../../requirements.md#req-uiu-03) and
+[REQ-UIU-07](../../../requirements.md#req-uiu-07), under the
+[session architecture](../../../architecture.md#unified-qt-session-and-file-lifecycle).
+The existing API tasks and scientific acceptance remain complete; they are not
+reopened. Root metadata is passive and changes no algorithms, limits or outcomes.
+
+| Disposition / exact owner | Contract and missing behavior |
+| --- | --- |
+| ADD `crates/phy-api/src/retention.rs` and owner tests; EDIT `src/lib.rs` | Common `RetainedFootprint` has payload_bytes, ordered_entries, shared_roots (usize). All metadata includes the fixed root once, requested container capacity, nested/cached payloads and conservatively repeated Arc payloads/edges. Cross-crate helpers are implementation support, hidden from the facade. Checked addition/multiplication rejects overflow. No allocator/tree/refcount header estimate. |
+| EDIT `crates/merlin/src/lib.rs`, common exports | Re-export only the genuinely common typed footprint. Keep independent PHY dependencies on merlin-api; no PHY/facade cycle. |
+| ADAPT `crates/ofdma/src/api/session.rs`, `simulation/report.rs` and their existing scientific storage owners | `Simulation::retained_footprint(&self) -> ApiResult<RetainedFootprint>` includes idle options/configuration/document/provenance. `BatchReport::retained_footprint(&self) -> PhyResult<RetainedFootprint>` includes original/canonical provenance, configuration/options/plan, grant/decoded decisions and private observations, including skipped role gains and receiver/soft stores. Preserve caller spare capacities and repeated shared payloads. Exhaustive owner destructuring detects added fields requiring review. |
+| ADAPT subsequent downstream roots | FullLoopRequest/SweepPlan/Result/ReceiverArchive and independently accepted inputs require their own audited implementations; archive historical length-based statistics remain unchanged. |
+| EDIT existing native adapters/declarations and operation matrix after Rust checks | Mirror each implemented root operation in installed Python using one common immutable metadata type and the original structured error categories. No Python sizing calculation. No new wheel until related Rust/native metadata changes are ready together. |
+| SUBSEQUENT pre-production bounds and Qt adoption | Passive current-root metadata cannot bound a future result. Prepared request/session output bounds and archive copy preflight remain separate mandatory admission gates before Qt production/copy. |
+
+The implementation helper trait reports only dynamic children; the root walker
+adds fixed size exactly once. Vec/String capacity is counted without allocating
+or cloning. Container entries include owned key/value payloads separately from
+excluded private nodes. Every Arc edge counts its reachable pointee and children,
+conservatively repeating aliases rather than an unbounded deduplication table.
+No serialized JSON sizing or fixed multipliers can replace this owner audit.
+
+Rust tests use independent capacity/delta anchors, private cached/serialization-
+skipped ownership, actual complete/partial runs and passive query compatibility.
+Paired installed native tests compare metadata against separately executed Rust
+references on the same target; these target-layout quantities are not portable
+serialized project settings. Run affected Rust/native consumers, API export/
+compatibility checks, Clippy, formatting, boundary and traceability before accepting
+this focused API unit. Host admission and full session Level 2 stay open.
+
+
+The first paired implementation unit covers upstream roots only:
+
+| Rust operation | Native Python operation | Failure / lifecycle / acceptance |
+| --- | --- | --- |
+| `merlin::upstream::Simulation::retained_footprint(&self) -> ApiResult<merlin_api::RetainedFootprint>` | `merlin.upstream.Simulation.retained_footprint(self) -> merlin.common.RetainedFootprint` | Pure idle inspection; native existing Busy guard and interpreter release; original ResourceLimit on checked overflow. Tests include spare capacity, caches, rejected configure and paused concurrent access. |
+| `merlin::upstream::BatchReport::retained_footprint(&self) -> PhyResult<merlin_api::RetainedFootprint>` | `merlin.upstream.BatchReport.retained_footprint(self) -> merlin.common.RetainedFootprint` | Pure immutable complete/partial report inspection with native interpreter release; original ResourceLimit on overflow. Independent Rust/native references include both numerologies and estimate/soft enabled/disabled stores. |
+| `merlin::common::RetainedFootprint` fields | Immutable native properties `payload_bytes`, `ordered_entries`, `shared_roots` | Target-layout quantities, no Python calculation, no constructor/mutation, owned metadata survives original owner release. |
+
+Lead-owned paired files: ADD `bindings/python/src/retention.rs`,
+`bindings/python/tests/test_retained_footprint.py` and
+`crates/ofdma/examples/upstream_retained_footprint.rs`; EDIT native lib/upstream
+session/report registration, common Python module/stub, upstream stub, facade
+namespace test, API operation matrix and the focused
+[user guide](../../../user/api/retained-resources.md). Reuse the existing native
+Busy/error paths and one distribution; do not add bindings to either scientific
+crate or expose walker implementation support through the facade.
+
+
+### Downstream retained-root preparation
+
+The subsequent downstream owner batch uses the same approved quantities and
+helper contract. It adds passive `retained_footprint(&self) -> ApiResult<merlin_api::RetainedFootprint>`
+to FullLoopRequest, FullLoopSweepPlan, FullLoopResult and FullLoopReceiverArchive.
+The concrete Qt consumers are prepared serial runs, accepted actual reports and
+detached old QAM/soft histories; their current public logical/length counts do
+not include private cached arrays, all capacities or nested ownership.
+
+| Disposition / existing owner | Responsibility |
+| --- | --- |
+| EDIT `crates/ofdm/src/api/full_loop/{request.rs,sweep.rs,result.rs,receiver_archive/mod.rs}` | Four public passive root operations. Preserve original archive retained_bytes statistic and copy policy exactly. |
+| EDIT existing API input/source/sequence/profile owners and scientific child owners as required | Owner-local complete dynamic-child visitors, exhaustive field/variant audits and shared leaf arithmetic; include MeasurementPlayback caches, original input/provenance, settings, protected pilot sequence and retained stage stores. No algorithms, default, cache shape or serialization changes. |
+| ADD `crates/ofdm/tests/api_retained_footprint.rs`; ADD owner-private tests as needed | Independent capacity/cached/Arc anchors, actual complete/partial results, history detachment and passive original-query compatibility. Preparation tests require execution in the primary checkout. |
+| SUBSEQUENT lead native/API/host unit | Paired native methods on existing request/plan/result/archive classes, installed-wheel direct Rust parity and operation tracing. Independently accepted input roots and presentation copies still need separate host charges; the four root operations alone cannot establish aggregate acceptance. |
+
+The isolated agent may prepare only the downstream Rust owner/test patch. The lead
+retains all shared contract, facade, native, architecture/checklist and acceptance
+ownership. No future-result or archive-copy pre-production bound is accepted by
+passive metadata; those remain explicit integration gates.

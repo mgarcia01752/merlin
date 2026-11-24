@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -11,6 +12,10 @@ use crate::{
     error::invalid,
     types::Iq,
     PhyError, PhyResult,
+};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
 };
 use serde::Serialize;
 
@@ -164,5 +169,60 @@ impl PreEqBank {
             return Err(invalid("pre_eq.output"));
         }
         Ok(values)
+    }
+}
+
+impl RetainedPayload for PreEqBank {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            waveform,
+            excluded,
+            raw,
+            coefficients,
+            generation,
+            unity,
+        } = self;
+        sum([
+            waveform.retained_children(),
+            excluded.retained_children(),
+            raw.retained_children(),
+            coefficients.retained_children(),
+            generation.retained_children(),
+            unity.retained_children(),
+        ])
+    }
+}
+
+#[cfg(test)]
+mod retained_footprint_tests {
+    use super::*;
+    use merlin_api::retention_support::retained_footprint;
+    use std::mem::size_of;
+
+    #[test]
+    fn raw_and_cached_normalized_spare_capacity_are_both_counted() {
+        const SPARE_COEFFICIENTS: usize = 7;
+        let document = crate::configuration::ConfigurationDocument::from_json(include_bytes!(
+            "../../../../examples/cli/upstream/us-50khz.json"
+        ))
+        .unwrap();
+        let (configuration, _) = document.prepare().unwrap();
+        let mut bank = configuration.pre_eq;
+        let before = retained_footprint(&bank).unwrap();
+        let raw = bank.raw.capacity();
+        let normalized = bank.coefficients.capacity();
+        bank.raw.reserve_exact(raw + SPARE_COEFFICIENTS);
+        bank.coefficients
+            .reserve_exact(normalized + SPARE_COEFFICIENTS);
+        let delta = (bank.raw.capacity() - raw + bank.coefficients.capacity() - normalized)
+            * size_of::<Iq>();
+        assert_eq!(
+            retained_footprint(&bank).unwrap().payload_bytes - before.payload_bytes,
+            delta
+        );
     }
 }

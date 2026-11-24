@@ -18,6 +18,7 @@ mod quantities;
 mod receiver;
 mod references;
 mod reports;
+mod retention;
 mod rxmer_export;
 mod sequence;
 mod transmitter;
@@ -94,6 +95,7 @@ fn _native(module: &Bound<'_, PyModule>) -> PyResult<()> {
     controller::register(module)?;
     workbench::register(module)?;
     project::register(module)?;
+    module.add_class::<retention::PyRetainedFootprint>()?;
     upstream::register(module)?;
     Ok(())
 }

@@ -1575,6 +1575,16 @@ queued, replaced and aliased ownership until final drop. Scientific roots must
 provide typed footprint metadata and pre-production bounds through public APIs;
 Qt must not inspect private storage or infer bounds from serialized JSON.
 
+The [retained-root metadata prerequisite](development/features/unified-qt-workbench/design.md#uiu-session-01-public-retained-root-metadata-prerequisite)
+uses a typed `RetainedFootprint` in the independent `merlin-api` leaf, re-exported
+through `merlin::common`. Each scientific owner audits its own private/cached
+children. Upstream Simulation and BatchReport expose passive metadata through
+their existing public API and native Python wrappers; walker implementation
+support is excluded from the facade. This does not change scientific algorithms,
+project schemas, historical archive statistics or existing downstream exports.
+Downstream metadata, future-result/copy bounds and actual Qt admission remain
+required before session acceptance.
+
 The [upstream application controller](development/features/unified-qt-workbench/design.md#uiu-session-01-actual-upstream-controller-preparation)
 under `apps/qt/src/upstream/` owns a real public `Simulation` and actual retained
 reports. It uses the shared terminal transport, exact-token controls and charged

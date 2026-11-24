@@ -15,6 +15,10 @@ use crate::{
     simulation::{preview, run_observed},
     PhyError,
 };
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use std::sync::atomic::{AtomicU64, Ordering};
 
 static NEXT_ID: AtomicU64 = AtomicU64::new(1);
@@ -271,5 +275,48 @@ impl Simulation {
     /// Returns None before configure; caller cannot mutate session state here.
     pub fn configuration(&self) -> Option<&ExperimentConfig> {
         self.configuration.as_ref()
+    }
+}
+
+impl RetainedPayload for Simulation {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            options,
+            configuration,
+            generation,
+            document,
+            measured_provenance,
+            receiver_observations,
+        } = self;
+        sum([
+            options.retained_children(),
+            configuration.retained_children(),
+            generation.retained_children(),
+            document.retained_children(),
+            measured_provenance.retained_children(),
+            receiver_observations.retained_children(),
+        ])
+    }
+}
+
+impl Simulation {
+    /// Measures the complete currently retained session without advancing science.
+    ///
+    /// # Returns
+    /// Target-layout fixed root plus requested payload capacities, ordered-entry
+    /// counts and conservatively repeated shared roots. Includes original source,
+    /// options, configuration, provenance and private caches. Excludes allocator,
+    /// tree-node and reference-count headers; this is not heap/RSS or a future
+    /// output/workspace bound. No serialization, allocation or mutation occurs.
+    ///
+    /// # Errors
+    /// ResourceLimit with field `retained_footprint` on checked arithmetic overflow.
+    pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint> {
+        merlin_api::retention_support::retained_footprint(self)
+            .ok_or_else(|| crate::error::limit("retained_footprint").into())
     }
 }

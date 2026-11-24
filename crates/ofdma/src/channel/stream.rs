@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -11,6 +12,10 @@ use crate::{
     error::{invalid, limit},
     types::{Identity, Iq, SampleBlock},
     PhyError, PhyResult,
+};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
 };
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
@@ -258,5 +263,30 @@ impl Channel {
             return Err(invalid("channel.phase"));
         }
         Ok(result)
+    }
+}
+
+impl RetainedPayload for ChannelConfig {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            taps,
+            noise_variance,
+            noise_seed,
+            delay_samples,
+            phase_radians,
+            frequency_offset_hz,
+        } = self;
+        sum([
+            taps.retained_children(),
+            noise_variance.retained_children(),
+            noise_seed.retained_children(),
+            delay_samples.retained_children(),
+            phase_radians.retained_children(),
+            frequency_offset_hz.retained_children(),
+        ])
     }
 }

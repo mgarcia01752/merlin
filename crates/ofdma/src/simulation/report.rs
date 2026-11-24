@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -10,6 +11,10 @@ use super::{ExperimentConfig, ExperimentOptions, ExperimentPreview, RunStatus};
 use crate::{
     receiver::DecodedWord,
     types::{BitRange, Identity},
+};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
 };
 use serde::Serialize;
 
@@ -131,5 +136,136 @@ impl BatchReport {
         mode: crate::configuration::Numerology,
     ) -> crate::PhyResult<crate::instruments::SpectrumSnapshot> {
         self.observations.spectrum(tap, mode)
+    }
+}
+
+impl RetainedPayload for RunFailure {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            diagnostic,
+            category: _,
+            field: _,
+        } = self;
+        sum([diagnostic.retained_children()])
+    }
+}
+
+impl RetainedPayload for GrantReport {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            identity,
+            generated_source,
+            emitted_samples,
+            received_samples,
+            compared_bits,
+            unverified_source_bits,
+            planned_transmit_samples,
+            pending_transmit_samples,
+            unprocessed_codewords,
+            bit_errors,
+            words,
+            completed,
+            missing_symbols,
+            matched_data_mer,
+            matched_data_mer_value,
+        } = self;
+        sum([
+            identity.retained_children(),
+            generated_source.retained_children(),
+            emitted_samples.retained_children(),
+            received_samples.retained_children(),
+            compared_bits.retained_children(),
+            unverified_source_bits.retained_children(),
+            planned_transmit_samples.retained_children(),
+            pending_transmit_samples.retained_children(),
+            unprocessed_codewords.retained_children(),
+            bit_errors.retained_children(),
+            words.retained_children(),
+            completed.retained_children(),
+            missing_symbols.retained_children(),
+            matched_data_mer.retained_children(),
+            matched_data_mer_value.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for BatchReport {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            format: _,
+            schema_version,
+            source_configuration_json,
+            source_configuration_original,
+            source_configuration_sha256,
+            measurement_provenance_json,
+            noise_generator: _,
+            configuration,
+            options,
+            planned,
+            status,
+            grants,
+            not_started_grants,
+            generated_source_bits,
+            compared_source_bits,
+            unverified_source_bits,
+            bit_errors,
+            ber,
+            reference_recovered,
+            failure,
+            elapsed_ms,
+            observations,
+        } = self;
+        sum([
+            schema_version.retained_children(),
+            source_configuration_json.retained_children(),
+            source_configuration_original.retained_children(),
+            source_configuration_sha256.retained_children(),
+            measurement_provenance_json.retained_children(),
+            configuration.retained_children(),
+            options.retained_children(),
+            planned.retained_children(),
+            status.retained_children(),
+            grants.retained_children(),
+            not_started_grants.retained_children(),
+            generated_source_bits.retained_children(),
+            compared_source_bits.retained_children(),
+            unverified_source_bits.retained_children(),
+            bit_errors.retained_children(),
+            ber.retained_children(),
+            reference_recovered.retained_children(),
+            failure.retained_children(),
+            elapsed_ms.retained_children(),
+            observations.retained_children(),
+        ])
+    }
+}
+
+impl BatchReport {
+    /// Measures all currently retained actual report payloads without rerunning work.
+    ///
+    /// # Returns
+    /// Target-layout fixed root plus requested capacities, ordered entries and
+    /// conservatively repeated shared roots, including private/skipped observation
+    /// caches and decoder decisions. Excludes allocator, tree-node and refcount
+    /// headers; this is not heap/RSS or a bound for future results/temporary work.
+    /// No serialization, cloning, allocation or scientific state change occurs.
+    ///
+    /// # Errors
+    /// ResourceLimit with field `retained_footprint` on checked arithmetic overflow.
+    pub fn retained_footprint(&self) -> crate::PhyResult<RetainedFootprint> {
+        merlin_api::retention_support::retained_footprint(self)
+            .ok_or_else(|| crate::error::limit("retained_footprint"))
     }
 }

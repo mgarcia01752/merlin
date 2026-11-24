@@ -9,6 +9,15 @@ from .downstream import FullLoopSweepPlan
 from .upstream import Simulation as UpstreamSimulation
 __version__: str
 
+class RetainedFootprint:
+    """Rust payload quantities; excludes bookkeeping and Python copies, not RSS."""
+    @property
+    def payload_bytes(self) -> int: ...
+    @property
+    def ordered_entries(self) -> int: ...
+    @property
+    def shared_roots(self) -> int: ...
+
 class Project:
     @staticmethod
     def from_bytes(data: bytes) -> Project: ...

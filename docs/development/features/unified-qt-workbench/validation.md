@@ -3134,3 +3134,48 @@ Qt/QML/executable rebuild, wheel, workspace/CLI/package regression is not requir
 for this unit. Existing compiled artifacts are reused and the latest accepted
 Qt executable stays current. UIU-SESSION-01 remains unchecked pending complete
 Level 2 runtime/compatibility acceptance; no historical checkbox changes.
+
+
+## UIU-SESSION-01 public retained-root metadata
+
+[Design](design.md#uiu-session-01-public-retained-root-metadata-prerequisite),
+[architecture](../../../architecture.md#unified-qt-session-and-file-lifecycle),
+[exact evidence](session-resource-metadata-evidence.json),
+[executed operation cases](session-resource-metadata-operation-test-results.json)
+and [UIU-SESSION-01](../../checklist.md#task-uiu-session-01) trace REQ-UIU-03/07.
+The lead selectively adopts 665d758 and only its appended handoff; all 32 source/
+test files initially match exactly. One new unused private-test import is removed
+following the first Clippy rejection; final Clippy has no suppressions. Original
+scientific statements, defaults, serializers and historical archive statistics
+are unchanged. Read-only independent audits find no current-root undercount.
+
+Upstream Simulation and BatchReport now expose typed passive retained_footprint
+operations in Rust and installed native Python, using one common immutable model.
+Private cached playback, original/canonical/provenance storage, spare capacities,
+actual decoder decisions, skipped trace role gains and shared receiver/soft stores
+are included. Struct/variant audits detect future fields needing review. Common
+walkers use checked arithmetic and conservatively repeat shared pointees. These
+quantities exclude private allocator/tree/refcount bookkeeping, not total heap/RSS.
+
+Executed: **9 common, 137 upstream and 25 facade Rust cases**, plus **20 installed
+native cases** without failures/skips. Twenty Rust metadata cases and five native
+metadata cases are new. The existing opt-in transform benchmark remains ignored,
+not passed. Native checks include original downstream/root aliases and detached
+archives, upstream field/recovery compatibility, immutable/lifetime/failed-config
+behavior, paused Busy/cancellation and eight independently executed Rust/native
+50/25-kHz complete/pre-cancelled cases with estimate/soft retention on/off.
+Warnings-denied owner/native Clippy, independent no-default upstream compilation,
+formatting, fresh compiler/installed inventories and exact source/artifact hashes
+pass. Two Rust and five native rows are additive to all previous 600/570 operation
+rows. Boundary, requirement/link/history and strict operation checks are recorded
+in the evidence.
+
+This is Level 1 current-root metadata acceptance. No registered Qt consumer,
+presentation, schema or scientific algorithm changes, so full unrelated workspace,
+Qt/QML, CLI and packaging regressions/rebuilds are not required for this unit.
+The existing accepted Qt executable remains current. Downstream root metadata,
+pre-production result/copy bounds, independent input/presentation charges and
+actual canonical host/worker wiring remain mandatory before aggregate acceptance.
+The isolated downstream preparation uses a new branch while preserving 665d758;
+its source-only work is not accepted here. UIU-SESSION-01 remains unchecked and
+all later Level2/Level3 acceptance gates remain intact.

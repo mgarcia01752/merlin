@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -15,6 +16,10 @@ use crate::{
     source::Prbs15,
     types::Iq,
     PhyResult,
+};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
 };
 use serde::Serialize;
 
@@ -257,4 +262,83 @@ pub fn preview(
         profile_ids: us.profiles().iter().map(|profile| profile.id()).collect(),
         grant_plan: plan,
     })
+}
+
+impl RetainedPayload for ExperimentConfig {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            us_configuration,
+            source_seed,
+            pre_eq,
+            pre_eq_updates,
+            rxmer,
+            receiver,
+            channel,
+            guards,
+        } = self;
+        sum([
+            us_configuration.retained_children(),
+            source_seed.retained_children(),
+            pre_eq.retained_children(),
+            pre_eq_updates.retained_children(),
+            rxmer.retained_children(),
+            receiver.retained_children(),
+            channel.retained_children(),
+            guards.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ExperimentOptions {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            grants,
+            maximum_samples,
+            chunk_samples,
+            timeout_ms,
+            retained_points,
+            retained_taps,
+        } = self;
+        sum([
+            grants.retained_children(),
+            maximum_samples.retained_children(),
+            chunk_samples.retained_children(),
+            timeout_ms.retained_children(),
+            retained_points.retained_children(),
+            retained_taps.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ExperimentPreview {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            grant_plan,
+            scheduled_samples,
+            received_samples,
+            source_bits,
+            codewords,
+            profile_ids,
+        } = self;
+        sum([
+            grant_plan.retained_children(),
+            scheduled_samples.retained_children(),
+            received_samples.retained_children(),
+            source_bits.retained_children(),
+            codewords.retained_children(),
+            profile_ids.retained_children(),
+        ])
+    }
 }

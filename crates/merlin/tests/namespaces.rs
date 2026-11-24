@@ -11,6 +11,26 @@ use std::{
 };
 const UPSTREAM: &[u8] = include_bytes!("../../../examples/cli/upstream/us-50khz.json");
 
+#[test]
+fn retained_metadata_keeps_shared_contract_and_independent_upstream_ownership() {
+    assert_eq!(
+        TypeId::of::<common::RetainedFootprint>(),
+        TypeId::of::<merlin_api::RetainedFootprint>()
+    );
+    let mut simulation = upstream::Simulation::new(Default::default()).unwrap();
+    let idle: common::RetainedFootprint = simulation.retained_footprint().unwrap();
+    simulation.configure_json(UPSTREAM).unwrap();
+    let accepted = simulation.retained_footprint().unwrap();
+    assert!(accepted.payload_bytes > idle.payload_bytes);
+    let control = upstream::RunControl::new();
+    control.cancel();
+    let report = simulation.run_with_control(&control).unwrap();
+    let partial: common::RetainedFootprint = report.retained_footprint().unwrap();
+    assert!(partial.payload_bytes > 0);
+    assert_eq!(simulation.retained_footprint().unwrap(), accepted);
+    assert_eq!(report.status, upstream::RunStatus::Cancelled);
+}
+
 #[cfg(feature = "native-input")]
 #[test]
 fn facade_common_projects_return_the_exact_directional_public_types() {

@@ -261,9 +261,9 @@ Named contract references resolve in the data's `contracts` object.
 
 | Row group | Rust scope | Python scope |
 | --- | --- | --- |
-| Downstream: 407 Rust / 405 native operations | Accepted API, quantities, original inputs, full-loop requests, retained observations and saved full-loop preparation. | Installed native classes preserve legacy root aliases; current scoped and preceding full-gate receipts define behavioral coverage. |
-| Upstream: 147 Rust / 119 native operations | Independent sessions, measured admission, resource plans and actual bounded instrument observations. | Installed native upstream namespace and API-04 backend acceptance; Qt adoption remains separate. |
-| Common: 22 Rust / 26 native operations | One-way cancellation plus optional original-preserving Project admission; returned scientific owners remain separate. | Installed common namespace, enum accessors and Project; the Rust Cancellation trait and typed ProjectError remain explicit language differences. |
+| Downstream: 431 Rust / 425 native operations | Accepted API, quantities, original inputs, full-loop requests, retained observations and saved full-loop preparation. | Installed native classes preserve legacy root aliases; current scoped and preceding full-gate receipts define behavioral coverage. |
+| Upstream: 149 Rust / 121 native operations | Independent sessions, measured admission, resource plans and actual bounded instrument observations. | Installed native upstream namespace and API-04 backend acceptance; Qt adoption remains separate. |
+| Common: 22 Rust / 29 native operations | One-way cancellation plus optional original-preserving Project admission; returned scientific owners remain separate. | Installed common namespace, enum accessors and Project; the Rust Cancellation trait and typed ProjectError remain explicit language differences. |
 
 Rust borrowed views, generic deserializers, validated-owner helpers and native
 file conveniences are recorded with explicit language-only or adapter mappings.
@@ -381,3 +381,12 @@ tests verify strict case accounting and complete wiring of optional Rust referen
 processes into the final gate; the full gate has not been rerun for this addition.
 No existing domain, schema, scientific algorithm or Qt source changes. Qt adoption,
 parent Level 2 and milestone/final Level 3 acceptance remain separate.
+
+
+The [current-root metadata unit](../unified-qt-workbench/validation.md#uiu-session-01-public-retained-root-metadata)
+adds two upstream Rust operations and five native method/property rows, preserving
+all previous 600/570 rows, signatures and nominal types. The shared footprint model
+reports target-layout payload bytes and independent entry/root counts; native
+values come from Rust. Exact source/wheel, independent both-mode complete/cancelled
+references and executed capacity/private-cache tests are retained in its evidence.
+It does not accept future-output bounds or Qt aggregate session admission.

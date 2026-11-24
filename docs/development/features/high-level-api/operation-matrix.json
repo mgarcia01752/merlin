@@ -5,10 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "4b26ec43f9a4af96f8b539010a01d8ba901fdfb5 plus exact bounded receiver-archive candidate",
-    "inventory_command": "Exact current wheel matched native_api_inventory.py; ds-01-receiver-archive-native-final/results.json",
-    "native_sha256": "8ce69dfb7e8a3232d7c77b3a013361ec953855326090efcc37ec0f46767137b0",
-    "scope": "16 selected cases executed against the exact current wheel; all prior classes/signatures/members preserved after removing only2 new classes and receiver_archive."
+    "revision": "bbac5fb plus exact additive upstream retained-root metadata candidate",
+    "inventory_command": "Exact current installed wheel; session-01-resource-metadata-native/results.json",
+    "native_sha256": "99dcb05d38f3638fb27f5618fd9e5d56c495ae7dd127cce912b6cd0bd72481a8",
+    "scope": "Scoped metadata/namespace/upstream/recovery/downstream archive consumer tests, actual independent Rust references; all prior exports/signatures preserved. No full-suite claim."
   },
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
@@ -151,7 +151,12 @@
     "status.uiu-ds-01-receiver-archive": "Level1 paired archive prerequisite accepted; Qt adoption, parent Level2 and downstream/final Level3 remain pending.",
     "ownership.uiu-ds-01-receiver-archive": "Immutable detached finite copies retain no job/input/stage-store ownership; clones share archive data. Native dictionaries are independent and work releases the GIL.",
     "units.uiu-ds-01-receiver-archive": "Original physical bin/Hz/channel/source coordinates, raw/equalized I/Q and actual LLRs; byte/count limits are independent history policies. Decoder context/offset/total and reference planes stay distinct.",
-    "errors.uiu-ds-01-receiver-archive": "Strict malformed/unknown policy input raises InvalidInput; counts/byte/overflow raise ResourceLimit. Missing decoder raises MissingCoverage. Query errors match original live owners."
+    "errors.uiu-ds-01-receiver-archive": "Strict malformed/unknown policy input raises InvalidInput; counts/byte/overflow raise ResourceLimit. Missing decoder raises MissingCoverage. Query errors match original live owners.",
+    "ownership.session.resources": "Borrowed actual Rust root; complete fixed value plus requested capacities and private cached children. Shared Arc payloads/edges may repeat conservatively. Native result is an immutable owned metadata copy, no payload clone.",
+    "units.session.resources": "Target-layout payload bytes and independent ordered-entry/shared-root counts. Bytes exclude allocator/private tree-node/refcount bookkeeping, not total heap or RSS; no bound for future results or temporary/Python/consumer copies.",
+    "errors.session.resources": "Existing Rust ResourceLimit at retained_footprint on checked arithmetic overflow; native session Busy while executing and original structured categories. No estimate is returned after overflow.",
+    "evidence.session.resources": "../unified-qt-workbench/session-resource-metadata-evidence.json, session-resource-metadata-operation-test-results.json and validation.md#uiu-session-01-public-retained-root-metadata: actual primary Rust owner/capacity tests, exact wheel and separate Rust/native complete/partial references.",
+    "status.session.resources": "Additive upstream current-root metadata locally accepted in Rust/native Python. Downstream metadata, pre-production bounds, Qt aggregate admission and complete session Level2 remain pending."
   },
   "type_exports": {
     "downstream": [
@@ -1549,6 +1554,10 @@
       },
       {
         "export": "merlin::common::RunControl",
+        "kind": "struct"
+      },
+      {
+        "export": "merlin::common::RetainedFootprint",
         "kind": "struct"
       }
     ],
@@ -34127,6 +34136,142 @@
       },
       "evidence": "evidence.uiu-ds-01-receiver-archive",
       "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::BatchReport::retained_footprint",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> PhyResult<RetainedFootprint>",
+        "source_file": "crates/ofdma/src/simulation/report.rs",
+        "rustdoc": "docsis_ofdma/simulation/struct.BatchReport.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "BatchReport.retained_footprint(self, /)",
+        "native_operation": "merlin.upstream.BatchReport.retained_footprint"
+      },
+      "input_ownership": "ownership.session.resources",
+      "units": "units.session.resources",
+      "error_behavior": "errors.session.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "PhyResult<RetainedFootprint>",
+        "scope": "Passive complete current-root metadata, including private/cached/skipped storage; not a future-output bound."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/phy-api/src/retention/tests.rs::tree_entries_include_key_and_value_payloads_and_exclude_private_nodes",
+          "crates/phy-api/src/retention/tests.rs::ring_capacity_boxed_slices_and_inline_options_are_owned_once",
+          "crates/phy-api/src/retention/tests.rs::tuple_children_include_both_owned_fields_without_repeating_inline_padding",
+          "crates/phy-api/src/retention/tests.rs::repeated_shared_edges_repeat_pointees_and_count_roots_without_headers",
+          "crates/phy-api/src/retention/tests.rs::nested_vectors_and_strings_include_spare_capacity_without_mutation",
+          "crates/phy-api/src/retention/tests.rs::owner_overflow_propagates_without_returning_an_underestimated_root",
+          "crates/phy-api/src/retention/tests.rs::every_addition_and_capacity_multiplication_checks_overflow",
+          "crates/ofdma/src/instruments/observer.rs::ordered_trace_payload_and_serialization_skipped_role_gains_are_complete",
+          "crates/ofdma/src/instruments/receiver.rs::repeated_estimate_arc_edges_include_pointee_and_spare_capacity_each_time",
+          "crates/ofdma/src/instruments/soft/store.rs::soft_shared_cells_and_completed_word_include_all_private_metric_buffers",
+          "crates/ofdma/src/signal_processing/pre_eq.rs::raw_and_cached_normalized_spare_capacity_are_both_counted",
+          "crates/ofdma/src/measurements/rxmer.rs::cached_power_capacity_is_counted_separately_from_original_readings",
+          "crates/ofdma/src/measurements/pre_eq.rs::effective_bank_cache_capacity_is_counted_beyond_original_events",
+          "crates/ofdma/tests/retained_footprint.rs::idle_root_fixed_storage_and_caller_option_spare_capacity_are_exact",
+          "crates/ofdma/tests/retained_footprint.rs::source_document_spare_strings_vectors_and_original_shared_bytes_are_retained",
+          "crates/ofdma/tests/retained_footprint.rs::measured_provenance_capacity_survives_actual_session_admission",
+          "crates/ofdma/tests/retained_footprint.rs::actual_report_public_spare_buffers_and_decoder_decisions_are_counted",
+          "crates/ofdma/tests/retained_footprint.rs::complete_and_pre_cancelled_actual_results_have_passive_repeatable_metadata",
+          "crates/ofdma/tests/retained_footprint.rs::actual_receiver_and_soft_shared_stores_are_included_without_query_copies",
+          "crates/merlin/tests/namespaces.rs::retained_metadata_keeps_shared_contract_and_independent_upstream_ownership"
+        ],
+        "python": {
+          "status": "exact installed wheel and separate Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_common_model_is_native_immutable_and_preserves_downstream_alias",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_installed_native_complete_partial_and_private_store_parity",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_paused_running_session_returns_busy_and_cancel_restores_metadata",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_queries_preserve_science_provenance_and_detached_metadata_lifetime",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_rejected_configuration_preserves_accepted_footprint"
+          ]
+        }
+      },
+      "evidence": "evidence.session.resources",
+      "status": "status.session.resources"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::Simulation::retained_footprint",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdma/src/api/session.rs",
+        "rustdoc": "docsis_ofdma/api/struct.Simulation.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "Simulation.retained_footprint(self, /)",
+        "native_operation": "merlin.upstream.Simulation.retained_footprint"
+      },
+      "input_ownership": "ownership.session.resources",
+      "units": "units.session.resources",
+      "error_behavior": "errors.session.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Passive complete current-root metadata, including private/cached/skipped storage; not a future-output bound."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/phy-api/src/retention/tests.rs::tree_entries_include_key_and_value_payloads_and_exclude_private_nodes",
+          "crates/phy-api/src/retention/tests.rs::ring_capacity_boxed_slices_and_inline_options_are_owned_once",
+          "crates/phy-api/src/retention/tests.rs::tuple_children_include_both_owned_fields_without_repeating_inline_padding",
+          "crates/phy-api/src/retention/tests.rs::repeated_shared_edges_repeat_pointees_and_count_roots_without_headers",
+          "crates/phy-api/src/retention/tests.rs::nested_vectors_and_strings_include_spare_capacity_without_mutation",
+          "crates/phy-api/src/retention/tests.rs::owner_overflow_propagates_without_returning_an_underestimated_root",
+          "crates/phy-api/src/retention/tests.rs::every_addition_and_capacity_multiplication_checks_overflow",
+          "crates/ofdma/src/instruments/observer.rs::ordered_trace_payload_and_serialization_skipped_role_gains_are_complete",
+          "crates/ofdma/src/instruments/receiver.rs::repeated_estimate_arc_edges_include_pointee_and_spare_capacity_each_time",
+          "crates/ofdma/src/instruments/soft/store.rs::soft_shared_cells_and_completed_word_include_all_private_metric_buffers",
+          "crates/ofdma/src/signal_processing/pre_eq.rs::raw_and_cached_normalized_spare_capacity_are_both_counted",
+          "crates/ofdma/src/measurements/rxmer.rs::cached_power_capacity_is_counted_separately_from_original_readings",
+          "crates/ofdma/src/measurements/pre_eq.rs::effective_bank_cache_capacity_is_counted_beyond_original_events",
+          "crates/ofdma/tests/retained_footprint.rs::idle_root_fixed_storage_and_caller_option_spare_capacity_are_exact",
+          "crates/ofdma/tests/retained_footprint.rs::source_document_spare_strings_vectors_and_original_shared_bytes_are_retained",
+          "crates/ofdma/tests/retained_footprint.rs::measured_provenance_capacity_survives_actual_session_admission",
+          "crates/ofdma/tests/retained_footprint.rs::actual_report_public_spare_buffers_and_decoder_decisions_are_counted",
+          "crates/ofdma/tests/retained_footprint.rs::complete_and_pre_cancelled_actual_results_have_passive_repeatable_metadata",
+          "crates/ofdma/tests/retained_footprint.rs::actual_receiver_and_soft_shared_stores_are_included_without_query_copies",
+          "crates/merlin/tests/namespaces.rs::retained_metadata_keeps_shared_contract_and_independent_upstream_ownership"
+        ],
+        "python": {
+          "status": "exact installed wheel and separate Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_common_model_is_native_immutable_and_preserves_downstream_alias",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_installed_native_complete_partial_and_private_store_parity",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_paused_running_session_returns_busy_and_cancel_restores_metadata",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_queries_preserve_science_provenance_and_detached_metadata_lifetime",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_rejected_configuration_preserves_accepted_footprint"
+          ]
+        }
+      },
+      "evidence": "evidence.session.resources",
+      "status": "status.session.resources"
     }
   ],
   "executed_records": [
@@ -34171,7 +34316,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/session-resource-metadata-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -71047,6 +71193,373 @@
       },
       "evidence": "evidence.uiu-ds-01-receiver-archive",
       "status": "status.uiu-ds-01-receiver-archive"
+    },
+    {
+      "direction": "common",
+      "operation": "merlin.common.RetainedFootprint.ordered_entries",
+      "rust_namespace": "merlin::common",
+      "rust_type_method": {
+        "export": "merlin::common::RetainedFootprint",
+        "source_file": "bindings/python/src/retention.rs",
+        "symbol": "PyRetainedFootprint",
+        "signature": "pub ordered_entries: usize",
+        "mapping": "Native immutable projection of Rust-owned root quantities; GIL release and existing session Busy/error ownership. No Python sizing calculation.",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.common",
+      "python_type_method": {
+        "availability": "installed native property",
+        "name": "ordered_entries",
+        "kind": "property",
+        "signature": null,
+        "declaration": "RetainedFootprint.ordered_entries"
+      },
+      "input_ownership": "ownership.session.resources",
+      "units": "units.session.resources",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Current Rust-root metadata, not total heap/RSS/future-output or Python object memory."
+      },
+      "compatibility": "compatibility.common",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/phy-api/src/retention/tests.rs::tree_entries_include_key_and_value_payloads_and_exclude_private_nodes",
+          "crates/phy-api/src/retention/tests.rs::ring_capacity_boxed_slices_and_inline_options_are_owned_once",
+          "crates/phy-api/src/retention/tests.rs::tuple_children_include_both_owned_fields_without_repeating_inline_padding",
+          "crates/phy-api/src/retention/tests.rs::repeated_shared_edges_repeat_pointees_and_count_roots_without_headers",
+          "crates/phy-api/src/retention/tests.rs::nested_vectors_and_strings_include_spare_capacity_without_mutation",
+          "crates/phy-api/src/retention/tests.rs::owner_overflow_propagates_without_returning_an_underestimated_root",
+          "crates/phy-api/src/retention/tests.rs::every_addition_and_capacity_multiplication_checks_overflow",
+          "crates/ofdma/src/instruments/observer.rs::ordered_trace_payload_and_serialization_skipped_role_gains_are_complete",
+          "crates/ofdma/src/instruments/receiver.rs::repeated_estimate_arc_edges_include_pointee_and_spare_capacity_each_time",
+          "crates/ofdma/src/instruments/soft/store.rs::soft_shared_cells_and_completed_word_include_all_private_metric_buffers",
+          "crates/ofdma/src/signal_processing/pre_eq.rs::raw_and_cached_normalized_spare_capacity_are_both_counted",
+          "crates/ofdma/src/measurements/rxmer.rs::cached_power_capacity_is_counted_separately_from_original_readings",
+          "crates/ofdma/src/measurements/pre_eq.rs::effective_bank_cache_capacity_is_counted_beyond_original_events",
+          "crates/ofdma/tests/retained_footprint.rs::idle_root_fixed_storage_and_caller_option_spare_capacity_are_exact",
+          "crates/ofdma/tests/retained_footprint.rs::source_document_spare_strings_vectors_and_original_shared_bytes_are_retained",
+          "crates/ofdma/tests/retained_footprint.rs::measured_provenance_capacity_survives_actual_session_admission",
+          "crates/ofdma/tests/retained_footprint.rs::actual_report_public_spare_buffers_and_decoder_decisions_are_counted",
+          "crates/ofdma/tests/retained_footprint.rs::complete_and_pre_cancelled_actual_results_have_passive_repeatable_metadata",
+          "crates/ofdma/tests/retained_footprint.rs::actual_receiver_and_soft_shared_stores_are_included_without_query_copies",
+          "crates/merlin/tests/namespaces.rs::retained_metadata_keeps_shared_contract_and_independent_upstream_ownership"
+        ],
+        "python": {
+          "status": "exact installed native property/method and independent Rust metadata parity",
+          "cases": [
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_common_model_is_native_immutable_and_preserves_downstream_alias",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_installed_native_complete_partial_and_private_store_parity",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_paused_running_session_returns_busy_and_cancel_restores_metadata",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_queries_preserve_science_provenance_and_detached_metadata_lifetime",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_rejected_configuration_preserves_accepted_footprint"
+          ]
+        }
+      },
+      "evidence": "evidence.session.resources",
+      "status": "status.session.resources"
+    },
+    {
+      "direction": "common",
+      "operation": "merlin.common.RetainedFootprint.payload_bytes",
+      "rust_namespace": "merlin::common",
+      "rust_type_method": {
+        "export": "merlin::common::RetainedFootprint",
+        "source_file": "bindings/python/src/retention.rs",
+        "symbol": "PyRetainedFootprint",
+        "signature": "pub payload_bytes: usize",
+        "mapping": "Native immutable projection of Rust-owned root quantities; GIL release and existing session Busy/error ownership. No Python sizing calculation.",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.common",
+      "python_type_method": {
+        "availability": "installed native property",
+        "name": "payload_bytes",
+        "kind": "property",
+        "signature": null,
+        "declaration": "RetainedFootprint.payload_bytes"
+      },
+      "input_ownership": "ownership.session.resources",
+      "units": "units.session.resources",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Current Rust-root metadata, not total heap/RSS/future-output or Python object memory."
+      },
+      "compatibility": "compatibility.common",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/phy-api/src/retention/tests.rs::tree_entries_include_key_and_value_payloads_and_exclude_private_nodes",
+          "crates/phy-api/src/retention/tests.rs::ring_capacity_boxed_slices_and_inline_options_are_owned_once",
+          "crates/phy-api/src/retention/tests.rs::tuple_children_include_both_owned_fields_without_repeating_inline_padding",
+          "crates/phy-api/src/retention/tests.rs::repeated_shared_edges_repeat_pointees_and_count_roots_without_headers",
+          "crates/phy-api/src/retention/tests.rs::nested_vectors_and_strings_include_spare_capacity_without_mutation",
+          "crates/phy-api/src/retention/tests.rs::owner_overflow_propagates_without_returning_an_underestimated_root",
+          "crates/phy-api/src/retention/tests.rs::every_addition_and_capacity_multiplication_checks_overflow",
+          "crates/ofdma/src/instruments/observer.rs::ordered_trace_payload_and_serialization_skipped_role_gains_are_complete",
+          "crates/ofdma/src/instruments/receiver.rs::repeated_estimate_arc_edges_include_pointee_and_spare_capacity_each_time",
+          "crates/ofdma/src/instruments/soft/store.rs::soft_shared_cells_and_completed_word_include_all_private_metric_buffers",
+          "crates/ofdma/src/signal_processing/pre_eq.rs::raw_and_cached_normalized_spare_capacity_are_both_counted",
+          "crates/ofdma/src/measurements/rxmer.rs::cached_power_capacity_is_counted_separately_from_original_readings",
+          "crates/ofdma/src/measurements/pre_eq.rs::effective_bank_cache_capacity_is_counted_beyond_original_events",
+          "crates/ofdma/tests/retained_footprint.rs::idle_root_fixed_storage_and_caller_option_spare_capacity_are_exact",
+          "crates/ofdma/tests/retained_footprint.rs::source_document_spare_strings_vectors_and_original_shared_bytes_are_retained",
+          "crates/ofdma/tests/retained_footprint.rs::measured_provenance_capacity_survives_actual_session_admission",
+          "crates/ofdma/tests/retained_footprint.rs::actual_report_public_spare_buffers_and_decoder_decisions_are_counted",
+          "crates/ofdma/tests/retained_footprint.rs::complete_and_pre_cancelled_actual_results_have_passive_repeatable_metadata",
+          "crates/ofdma/tests/retained_footprint.rs::actual_receiver_and_soft_shared_stores_are_included_without_query_copies",
+          "crates/merlin/tests/namespaces.rs::retained_metadata_keeps_shared_contract_and_independent_upstream_ownership"
+        ],
+        "python": {
+          "status": "exact installed native property/method and independent Rust metadata parity",
+          "cases": [
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_common_model_is_native_immutable_and_preserves_downstream_alias",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_installed_native_complete_partial_and_private_store_parity",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_paused_running_session_returns_busy_and_cancel_restores_metadata",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_queries_preserve_science_provenance_and_detached_metadata_lifetime",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_rejected_configuration_preserves_accepted_footprint"
+          ]
+        }
+      },
+      "evidence": "evidence.session.resources",
+      "status": "status.session.resources"
+    },
+    {
+      "direction": "common",
+      "operation": "merlin.common.RetainedFootprint.shared_roots",
+      "rust_namespace": "merlin::common",
+      "rust_type_method": {
+        "export": "merlin::common::RetainedFootprint",
+        "source_file": "bindings/python/src/retention.rs",
+        "symbol": "PyRetainedFootprint",
+        "signature": "pub shared_roots: usize",
+        "mapping": "Native immutable projection of Rust-owned root quantities; GIL release and existing session Busy/error ownership. No Python sizing calculation.",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.common",
+      "python_type_method": {
+        "availability": "installed native property",
+        "name": "shared_roots",
+        "kind": "property",
+        "signature": null,
+        "declaration": "RetainedFootprint.shared_roots"
+      },
+      "input_ownership": "ownership.session.resources",
+      "units": "units.session.resources",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Current Rust-root metadata, not total heap/RSS/future-output or Python object memory."
+      },
+      "compatibility": "compatibility.common",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/phy-api/src/retention/tests.rs::tree_entries_include_key_and_value_payloads_and_exclude_private_nodes",
+          "crates/phy-api/src/retention/tests.rs::ring_capacity_boxed_slices_and_inline_options_are_owned_once",
+          "crates/phy-api/src/retention/tests.rs::tuple_children_include_both_owned_fields_without_repeating_inline_padding",
+          "crates/phy-api/src/retention/tests.rs::repeated_shared_edges_repeat_pointees_and_count_roots_without_headers",
+          "crates/phy-api/src/retention/tests.rs::nested_vectors_and_strings_include_spare_capacity_without_mutation",
+          "crates/phy-api/src/retention/tests.rs::owner_overflow_propagates_without_returning_an_underestimated_root",
+          "crates/phy-api/src/retention/tests.rs::every_addition_and_capacity_multiplication_checks_overflow",
+          "crates/ofdma/src/instruments/observer.rs::ordered_trace_payload_and_serialization_skipped_role_gains_are_complete",
+          "crates/ofdma/src/instruments/receiver.rs::repeated_estimate_arc_edges_include_pointee_and_spare_capacity_each_time",
+          "crates/ofdma/src/instruments/soft/store.rs::soft_shared_cells_and_completed_word_include_all_private_metric_buffers",
+          "crates/ofdma/src/signal_processing/pre_eq.rs::raw_and_cached_normalized_spare_capacity_are_both_counted",
+          "crates/ofdma/src/measurements/rxmer.rs::cached_power_capacity_is_counted_separately_from_original_readings",
+          "crates/ofdma/src/measurements/pre_eq.rs::effective_bank_cache_capacity_is_counted_beyond_original_events",
+          "crates/ofdma/tests/retained_footprint.rs::idle_root_fixed_storage_and_caller_option_spare_capacity_are_exact",
+          "crates/ofdma/tests/retained_footprint.rs::source_document_spare_strings_vectors_and_original_shared_bytes_are_retained",
+          "crates/ofdma/tests/retained_footprint.rs::measured_provenance_capacity_survives_actual_session_admission",
+          "crates/ofdma/tests/retained_footprint.rs::actual_report_public_spare_buffers_and_decoder_decisions_are_counted",
+          "crates/ofdma/tests/retained_footprint.rs::complete_and_pre_cancelled_actual_results_have_passive_repeatable_metadata",
+          "crates/ofdma/tests/retained_footprint.rs::actual_receiver_and_soft_shared_stores_are_included_without_query_copies",
+          "crates/merlin/tests/namespaces.rs::retained_metadata_keeps_shared_contract_and_independent_upstream_ownership"
+        ],
+        "python": {
+          "status": "exact installed native property/method and independent Rust metadata parity",
+          "cases": [
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_common_model_is_native_immutable_and_preserves_downstream_alias",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_installed_native_complete_partial_and_private_store_parity",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_paused_running_session_returns_busy_and_cancel_restores_metadata",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_queries_preserve_science_provenance_and_detached_metadata_lifetime",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_rejected_configuration_preserves_accepted_footprint"
+          ]
+        }
+      },
+      "evidence": "evidence.session.resources",
+      "status": "status.session.resources"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.BatchReport.retained_footprint",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::BatchReport",
+        "source_file": "bindings/python/src/upstream/reports.rs",
+        "symbol": "PyBatchReport",
+        "signature": "pub fn retained_footprint(&self) -> PhyResult<RetainedFootprint>",
+        "mapping": "Native immutable projection of Rust-owned root quantities; GIL release and existing session Busy/error ownership. No Python sizing calculation.",
+        "delegated_operations": [],
+        "delegated_operation": "merlin::upstream::BatchReport::retained_footprint"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "BatchReport.retained_footprint"
+      },
+      "input_ownership": "ownership.session.resources",
+      "units": "units.session.resources",
+      "error_behavior": "errors.session.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::BatchReport",
+        "scope": "Current Rust-root metadata, not total heap/RSS/future-output or Python object memory."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/phy-api/src/retention/tests.rs::tree_entries_include_key_and_value_payloads_and_exclude_private_nodes",
+          "crates/phy-api/src/retention/tests.rs::ring_capacity_boxed_slices_and_inline_options_are_owned_once",
+          "crates/phy-api/src/retention/tests.rs::tuple_children_include_both_owned_fields_without_repeating_inline_padding",
+          "crates/phy-api/src/retention/tests.rs::repeated_shared_edges_repeat_pointees_and_count_roots_without_headers",
+          "crates/phy-api/src/retention/tests.rs::nested_vectors_and_strings_include_spare_capacity_without_mutation",
+          "crates/phy-api/src/retention/tests.rs::owner_overflow_propagates_without_returning_an_underestimated_root",
+          "crates/phy-api/src/retention/tests.rs::every_addition_and_capacity_multiplication_checks_overflow",
+          "crates/ofdma/src/instruments/observer.rs::ordered_trace_payload_and_serialization_skipped_role_gains_are_complete",
+          "crates/ofdma/src/instruments/receiver.rs::repeated_estimate_arc_edges_include_pointee_and_spare_capacity_each_time",
+          "crates/ofdma/src/instruments/soft/store.rs::soft_shared_cells_and_completed_word_include_all_private_metric_buffers",
+          "crates/ofdma/src/signal_processing/pre_eq.rs::raw_and_cached_normalized_spare_capacity_are_both_counted",
+          "crates/ofdma/src/measurements/rxmer.rs::cached_power_capacity_is_counted_separately_from_original_readings",
+          "crates/ofdma/src/measurements/pre_eq.rs::effective_bank_cache_capacity_is_counted_beyond_original_events",
+          "crates/ofdma/tests/retained_footprint.rs::idle_root_fixed_storage_and_caller_option_spare_capacity_are_exact",
+          "crates/ofdma/tests/retained_footprint.rs::source_document_spare_strings_vectors_and_original_shared_bytes_are_retained",
+          "crates/ofdma/tests/retained_footprint.rs::measured_provenance_capacity_survives_actual_session_admission",
+          "crates/ofdma/tests/retained_footprint.rs::actual_report_public_spare_buffers_and_decoder_decisions_are_counted",
+          "crates/ofdma/tests/retained_footprint.rs::complete_and_pre_cancelled_actual_results_have_passive_repeatable_metadata",
+          "crates/ofdma/tests/retained_footprint.rs::actual_receiver_and_soft_shared_stores_are_included_without_query_copies",
+          "crates/merlin/tests/namespaces.rs::retained_metadata_keeps_shared_contract_and_independent_upstream_ownership"
+        ],
+        "python": {
+          "status": "exact installed native property/method and independent Rust metadata parity",
+          "cases": [
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_common_model_is_native_immutable_and_preserves_downstream_alias",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_installed_native_complete_partial_and_private_store_parity",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_paused_running_session_returns_busy_and_cancel_restores_metadata",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_queries_preserve_science_provenance_and_detached_metadata_lifetime",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_rejected_configuration_preserves_accepted_footprint"
+          ]
+        }
+      },
+      "evidence": "evidence.session.resources",
+      "status": "status.session.resources"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.Simulation.retained_footprint",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::Simulation",
+        "source_file": "bindings/python/src/upstream/simulation.rs",
+        "symbol": "PySimulation",
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Native immutable projection of Rust-owned root quantities; GIL release and existing session Busy/error ownership. No Python sizing calculation.",
+        "delegated_operations": [],
+        "delegated_operation": "merlin::upstream::Simulation::retained_footprint"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "Simulation.retained_footprint"
+      },
+      "input_ownership": "ownership.session.resources",
+      "units": "units.session.resources",
+      "error_behavior": "errors.session.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::Simulation",
+        "scope": "Current Rust-root metadata, not total heap/RSS/future-output or Python object memory."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/phy-api/src/retention/tests.rs::tree_entries_include_key_and_value_payloads_and_exclude_private_nodes",
+          "crates/phy-api/src/retention/tests.rs::ring_capacity_boxed_slices_and_inline_options_are_owned_once",
+          "crates/phy-api/src/retention/tests.rs::tuple_children_include_both_owned_fields_without_repeating_inline_padding",
+          "crates/phy-api/src/retention/tests.rs::repeated_shared_edges_repeat_pointees_and_count_roots_without_headers",
+          "crates/phy-api/src/retention/tests.rs::nested_vectors_and_strings_include_spare_capacity_without_mutation",
+          "crates/phy-api/src/retention/tests.rs::owner_overflow_propagates_without_returning_an_underestimated_root",
+          "crates/phy-api/src/retention/tests.rs::every_addition_and_capacity_multiplication_checks_overflow",
+          "crates/ofdma/src/instruments/observer.rs::ordered_trace_payload_and_serialization_skipped_role_gains_are_complete",
+          "crates/ofdma/src/instruments/receiver.rs::repeated_estimate_arc_edges_include_pointee_and_spare_capacity_each_time",
+          "crates/ofdma/src/instruments/soft/store.rs::soft_shared_cells_and_completed_word_include_all_private_metric_buffers",
+          "crates/ofdma/src/signal_processing/pre_eq.rs::raw_and_cached_normalized_spare_capacity_are_both_counted",
+          "crates/ofdma/src/measurements/rxmer.rs::cached_power_capacity_is_counted_separately_from_original_readings",
+          "crates/ofdma/src/measurements/pre_eq.rs::effective_bank_cache_capacity_is_counted_beyond_original_events",
+          "crates/ofdma/tests/retained_footprint.rs::idle_root_fixed_storage_and_caller_option_spare_capacity_are_exact",
+          "crates/ofdma/tests/retained_footprint.rs::source_document_spare_strings_vectors_and_original_shared_bytes_are_retained",
+          "crates/ofdma/tests/retained_footprint.rs::measured_provenance_capacity_survives_actual_session_admission",
+          "crates/ofdma/tests/retained_footprint.rs::actual_report_public_spare_buffers_and_decoder_decisions_are_counted",
+          "crates/ofdma/tests/retained_footprint.rs::complete_and_pre_cancelled_actual_results_have_passive_repeatable_metadata",
+          "crates/ofdma/tests/retained_footprint.rs::actual_receiver_and_soft_shared_stores_are_included_without_query_copies",
+          "crates/merlin/tests/namespaces.rs::retained_metadata_keeps_shared_contract_and_independent_upstream_ownership"
+        ],
+        "python": {
+          "status": "exact installed native property/method and independent Rust metadata parity",
+          "cases": [
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_common_model_is_native_immutable_and_preserves_downstream_alias",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_installed_native_complete_partial_and_private_store_parity",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_paused_running_session_returns_busy_and_cancel_restores_metadata",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_queries_preserve_science_provenance_and_detached_metadata_lifetime",
+            "bindings/python/tests/test_retained_footprint.py::RetainedFootprintTests.test_rejected_configuration_preserves_accepted_footprint"
+          ]
+        }
+      },
+      "evidence": "evidence.session.resources",
+      "status": "status.session.resources"
     }
   ],
   "native_type_exports": {
@@ -71847,6 +72360,13 @@
         "constructible": false
       },
       {
+        "name": "RetainedFootprint",
+        "canonical_name": "RetainedFootprint",
+        "module": "merlin.common",
+        "signature": "()",
+        "constructible": false
+      },
+      {
         "name": "RunControl",
         "canonical_name": "RunControl",
         "module": "merlin",
@@ -72275,6 +72795,13 @@
       "inventory_command": "Exact archive-matched native_api_inventory.py; ds-01-measured-input-api-native/results.json",
       "native_sha256": "1f665a56753fc650c37d113f4c489c6e8ef7ee315d1520b6075480e072b8692a",
       "scope": "23 selected installed cases; all old classes/signatures/members exact after removing only unity_response_preview and limits."
+    },
+    {
+      "version": "0.4.0",
+      "revision": "4b26ec43f9a4af96f8b539010a01d8ba901fdfb5 plus exact bounded receiver-archive candidate",
+      "inventory_command": "Exact current wheel matched native_api_inventory.py; ds-01-receiver-archive-native-final/results.json",
+      "native_sha256": "8ce69dfb7e8a3232d7c77b3a013361ec953855326090efcc37ec0f46767137b0",
+      "scope": "16 selected cases executed against the exact current wheel; all prior classes/signatures/members preserved after removing only2 new classes and receiver_archive."
     }
   ],
   "historical_rust_export_corrections": [

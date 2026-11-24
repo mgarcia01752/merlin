@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -7,6 +8,10 @@
  */
 //! Explicit synthetic input JSON candidates; never passed off as decoded captures.
 use crate::api::*;
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::{Deserialize, Serialize};
 
 /// Complete synthetic raw bank candidate, normalized once by the shared Rust owner.
@@ -253,4 +258,128 @@ pub(crate) fn validate_finite(
         .into());
     }
     Ok(())
+}
+
+impl RetainedPayload for BankDocument {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            generation,
+            coefficients,
+        } = self;
+        sum([
+            generation.retained_children(),
+            coefficients.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for EventDocument {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            id,
+            symbol,
+            operation,
+        } = self;
+        sum([
+            id.retained_children(),
+            symbol.retained_children(),
+            operation.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for PreEqDocument {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            initial_id,
+            initial,
+            events,
+            probes,
+        } = self;
+        sum([
+            initial_id.retained_children(),
+            initial.retained_children(),
+            events.retained_children(),
+            probes.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ProbeDocument {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { id, bank_id } = self;
+        sum([id.retained_children(), bank_id.retained_children()])
+    }
+}
+
+impl RetainedPayload for RxmerDocument {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { id, mer_db } = self;
+        sum([id.retained_children(), mer_db.retained_children()])
+    }
+}
+
+impl RetainedPayload for RxmerSelectionDocument {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            sources,
+            policy,
+            offsets,
+        } = self;
+        sum([
+            sources.retained_children(),
+            policy.retained_children(),
+            offsets.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for UpdateDocument {
+    /// Visits the original operation's complete owned input and spare capacity.
+    ///
+    /// # Returns
+    /// Checked dynamic child quantities; no bank is materialized or normalized.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Snapshot { bank } => bank.retained_children(),
+            Self::Initialize {
+                base_bank,
+                probe,
+                values,
+            }
+            | Self::Adjust {
+                base_bank,
+                probe,
+                values,
+            } => sum([
+                base_bank.retained_children(),
+                probe.retained_children(),
+                values.retained_children(),
+            ]),
+        }
+    }
 }

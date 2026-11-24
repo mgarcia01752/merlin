@@ -115,3 +115,32 @@ context and computation. Parallel work may reduce elapsed time but can increase
 total token usage; no Pro-usage saving or completion date is guaranteed. Report
 remaining owner batches and validation/integration effort, not an unsupported
 percentage estimate.
+
+
+## Retained-root metadata reassignment
+
+After bbac5fb and the approved accounting clarification, the lead reassigns the
+idle session/shell agent to scientific upstream footprint preparation in its same
+isolated worktree. Its write scope is `crates/ofdma/src/` owner metadata helpers,
+`crates/ofdma/tests/retained_footprint.rs` and its existing handoff only. It must
+not modify accepted Qt shell/controller source, manifests/locks, common leaf,
+facade, Python or canonical documentation. The lead owns the exact shared helper
+contract and consumes the prepared patch selectively after complete review.
+The public operations and acceptance are defined by the
+[metadata prerequisite](design.md#uiu-session-01-public-retained-root-metadata-prerequisite).
+Only the lead runs Cargo/native builds against existing shared targets; the agent
+may format its owned files and perform source review. The prior QML branches stay
+unintegrated and unchanged. No agent acceptance substitutes for primary Rust/
+native tests or completes the session task.
+
+
+After the verified upstream preparation commit `665d758d1e89ca4542999a499fc934ad82057efa`,
+the lead may reuse that clean physical worktree on a new
+`feature/qt-retention-downstream` branch starting at bbac5fb. Keep the existing
+`feature/qt-session-shell` branch and all its commits intact. New exclusive write
+scope: `crates/ofdm/src/` metadata visitors, `crates/ofdm/tests/api_retained_footprint.rs`
+and its existing handoff only. No upstream/common/facade/Python/Qt/canonical edits
+or Cargo/shared-target builds. The lead implements the paired native surface and
+executes primary acceptance after selective review. The
+[downstream metadata design](design.md#downstream-retained-root-preparation)
+fixes the four public operations and keeps remaining admission gates explicit.

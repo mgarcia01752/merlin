@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -11,6 +12,10 @@ use crate::{
     configuration::{Minislot, Numerology, Profile, SyntheticGrant, UsConfiguration, Waveform},
     error::invalid,
     PhyResult,
+};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
 };
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
@@ -281,4 +286,93 @@ fn mask(bands: &[Band], n: usize) -> PhyResult<Vec<bool>> {
         mask[first..=last].fill(true);
     }
     Ok(mask)
+}
+
+impl RetainedPayload for Band {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { first, last } = self;
+        sum([first.retained_children(), last.retained_children()])
+    }
+}
+
+impl RetainedPayload for TimestampSnapshot {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            reserved,
+            docsis_timestamp,
+            divide_by_20_msb,
+            minislot_count,
+        } = self;
+        sum([
+            reserved.retained_children(),
+            docsis_timestamp.retained_children(),
+            divide_by_20_msb.retained_children(),
+            minislot_count.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for OfdmaChannel {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            message_type,
+            management_version,
+            upstream_channel_id,
+            configuration_change_count,
+            minislot_size_ticks,
+            downstream_channel_id,
+            preamble_pattern,
+            ranging_required,
+            ranging_holdoff_priority,
+            channel_class_id,
+            change_indicator_bitmask,
+            timestamp_snapshot,
+            cyclic_prefix_samples,
+            rolloff_samples,
+            subcarrier_spacing_khz,
+            subcarrier_zero_hz,
+            excluded_bands,
+            unused_bands,
+            frame_symbols,
+            randomization_seed,
+            encompassed_bandwidth_hz,
+            bursts,
+        } = self;
+        sum([
+            message_type.retained_children(),
+            management_version.retained_children(),
+            upstream_channel_id.retained_children(),
+            configuration_change_count.retained_children(),
+            minislot_size_ticks.retained_children(),
+            downstream_channel_id.retained_children(),
+            preamble_pattern.retained_children(),
+            ranging_required.retained_children(),
+            ranging_holdoff_priority.retained_children(),
+            channel_class_id.retained_children(),
+            change_indicator_bitmask.retained_children(),
+            timestamp_snapshot.retained_children(),
+            cyclic_prefix_samples.retained_children(),
+            rolloff_samples.retained_children(),
+            subcarrier_spacing_khz.retained_children(),
+            subcarrier_zero_hz.retained_children(),
+            excluded_bands.retained_children(),
+            unused_bands.retained_children(),
+            frame_symbols.retained_children(),
+            randomization_seed.retained_children(),
+            encompassed_bandwidth_hz.retained_children(),
+            bursts.retained_children(),
+        ])
+    }
 }

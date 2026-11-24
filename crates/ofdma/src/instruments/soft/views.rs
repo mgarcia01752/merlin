@@ -12,6 +12,10 @@ use crate::{
     types::{Identity, Iq},
     PhyError, PhyResult,
 };
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::{Deserialize, Serialize};
 
 /// Copied-cell page application ceiling, independent of aggregate soft-cell retention.
@@ -311,4 +315,107 @@ fn soft_store(report: &BatchReport) -> PhyResult<&SoftStore> {
         .ok_or(PhyError::Unsupported {
             field: "soft_observations.unavailable",
         })
+}
+
+impl RetainedPayload for SoftWordIdentity {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            retained_index,
+            identity,
+            completion_frame,
+            word_ordinal,
+            coded_offset,
+        } = self;
+        sum([
+            retained_index.retained_children(),
+            identity.retained_children(),
+            completion_frame.retained_children(),
+            word_ordinal.retained_children(),
+            coded_offset.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for SoftCellSnapshot {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            retained_index,
+            identity,
+            frame,
+            symbol,
+            physical_carrier,
+            role,
+            loading,
+            coded_offset,
+            corrected,
+            reference_variance,
+            demapper_llrs,
+            descrambled_llrs,
+        } = self;
+        sum([
+            retained_index.retained_children(),
+            identity.retained_children(),
+            frame.retained_children(),
+            symbol.retained_children(),
+            physical_carrier.retained_children(),
+            role.retained_children(),
+            loading.retained_children(),
+            coded_offset.retained_children(),
+            corrected.retained_children(),
+            reference_variance.retained_children(),
+            demapper_llrs.retained_children(),
+            descrambled_llrs.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for SoftWordSnapshot {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            word,
+            code_family: _,
+            mother_information_bits,
+            mother_codeword_bits,
+            retained_information_bits,
+            transmitted_bits,
+            shortened_bits,
+            reference_variance,
+            llr_convention: _,
+            input_llrs,
+            iterations,
+            converged,
+            parity_valid,
+            shortened_zeros_valid,
+            information_fill_valid,
+            hard_decision_changes,
+        } = self;
+        sum([
+            word.retained_children(),
+            mother_information_bits.retained_children(),
+            mother_codeword_bits.retained_children(),
+            retained_information_bits.retained_children(),
+            transmitted_bits.retained_children(),
+            shortened_bits.retained_children(),
+            reference_variance.retained_children(),
+            input_llrs.retained_children(),
+            iterations.retained_children(),
+            converged.retained_children(),
+            parity_valid.retained_children(),
+            shortened_zeros_valid.retained_children(),
+            information_fill_valid.retained_children(),
+            hard_decision_changes.retained_children(),
+        ])
+    }
 }

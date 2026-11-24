@@ -13,6 +13,10 @@ use crate::{
     types::{Identity, Iq, SampleBlock},
     PhyError, PhyResult,
 };
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
@@ -217,5 +221,122 @@ impl ObservationStore {
             value,
         });
         trace.role_gains.push(cell.gain);
+    }
+}
+
+impl RetainedPayload for QamPoint {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            identity,
+            frame,
+            symbol,
+            carrier,
+            role,
+            loading,
+            value,
+        } = self;
+        sum([
+            identity.retained_children(),
+            frame.retained_children(),
+            symbol.retained_children(),
+            carrier.retained_children(),
+            role.retained_children(),
+            loading.retained_children(),
+            value.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for Trace {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            origin,
+            identity,
+            samples,
+            points,
+            role_gains,
+        } = self;
+        sum([
+            origin.retained_children(),
+            identity.retained_children(),
+            samples.retained_children(),
+            points.retained_children(),
+            role_gains.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ObservationStore {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            limit,
+            traces,
+            receiver_estimates,
+        } = self;
+        sum([
+            limit.retained_children(),
+            traces.retained_children(),
+            receiver_estimates.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for Tap {
+    /// Audits every inline variant without counting borrowed or fixed data twice.
+    ///
+    /// # Returns
+    /// Zero dynamic children; the enclosing root/container owns the fixed bytes.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::TxGrid
+            | Self::TxPreEq
+            | Self::TxUseful
+            | Self::TxOutput
+            | Self::ChannelInput
+            | Self::ChannelOutput
+            | Self::RxInput
+            | Self::RxFft
+            | Self::RxEqualized => Some(RetainedFootprint::default()),
+        }
+    }
+}
+
+#[cfg(test)]
+mod retained_footprint_tests {
+    use super::*;
+    use merlin_api::retention_support::retained_footprint;
+    use std::mem::size_of;
+
+    #[test]
+    fn ordered_trace_payload_and_serialization_skipped_role_gains_are_complete() {
+        const SPARE_ROLE_GAINS: usize = 7;
+        let mut store = ObservationStore::new(0, &[Tap::RxEqualized]).unwrap();
+        let before = retained_footprint(&store).unwrap();
+        assert_eq!(before.ordered_entries, 1);
+        assert_eq!(
+            before.payload_bytes,
+            size_of::<ObservationStore>() + size_of::<Tap>() + size_of::<Trace>()
+        );
+        let json = serde_json::to_vec(&store).unwrap();
+        let trace = store.traces.get_mut(&Tap::RxEqualized).unwrap();
+        trace.role_gains.reserve_exact(SPARE_ROLE_GAINS);
+        let requested = trace.role_gains.capacity() * size_of::<f64>();
+        assert_eq!(
+            retained_footprint(&store).unwrap().payload_bytes - before.payload_bytes,
+            requested
+        );
+        assert_eq!(serde_json::to_vec(&store).unwrap(), json);
     }
 }

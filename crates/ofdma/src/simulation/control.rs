@@ -1,4 +1,5 @@
 /*
+ * Copyright 2026 MERLIN contributors
  * Copyright 2026 MORGANA contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
@@ -7,6 +8,7 @@
  */
 //! Cooperative cancellation and small owned progress snapshots, no callbacks.
 use crate::{PhyError, PhyResult};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 use std::sync::{
     atomic::{AtomicBool, Ordering},
@@ -252,5 +254,23 @@ pub(crate) struct Lease(RunControl);
 impl Drop for Lease {
     fn drop(&mut self) {
         self.0.inner.claimed.store(false, Ordering::Release);
+    }
+}
+
+impl RetainedPayload for RunStatus {
+    /// Audits every inline variant without counting borrowed or fixed data twice.
+    ///
+    /// # Returns
+    /// Zero dynamic children; the enclosing root/container owns the fixed bytes.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Idle
+            | Self::Running
+            | Self::Paused
+            | Self::Completed
+            | Self::Cancelled
+            | Self::TimeLimit
+            | Self::Failed => Some(RetainedFootprint::default()),
+        }
     }
 }

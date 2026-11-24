@@ -1,11 +1,16 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
  * Changes: local crate ownership and shared DSP/FEC imports.
  */
 //! Immutable synthetic configuration admission shared by both PHY endpoints.
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 mod burst;
 mod grant;
 mod guards;
@@ -226,3 +231,24 @@ pub use synthetic::{
     BankDocument, EventDocument, PreEqDocument, ProbeDocument, RxmerDocument,
     RxmerSelectionDocument, UpdateDocument,
 };
+
+impl RetainedPayload for UsConfiguration {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            waveform,
+            profiles,
+            grant,
+            excluded,
+        } = self;
+        sum([
+            waveform.retained_children(),
+            profiles.retained_children(),
+            grant.retained_children(),
+            excluded.retained_children(),
+        ])
+    }
+}

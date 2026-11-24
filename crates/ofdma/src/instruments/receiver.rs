@@ -11,6 +11,10 @@ use crate::{
     types::{Identity, Iq},
     PhyError, PhyResult,
 };
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::{ser::SerializeSeq, Deserialize, Serialize, Serializer};
 use std::sync::Arc;
 
@@ -421,4 +425,119 @@ pub(super) fn serialize_records<Value: Serialize, SerializerType: Serializer>(
         sequence.serialize_element(frame.as_ref())?;
     }
     sequence.end()
+}
+
+impl RetainedPayload for ReceiverObservationPolicy {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            maximum_frames,
+            maximum_scalar_slots,
+            soft_metrics,
+        } = self;
+        sum([
+            maximum_frames.retained_children(),
+            maximum_scalar_slots.retained_children(),
+            soft_metrics.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for EstimateFrame {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            identity,
+            frame,
+            estimator,
+            mode,
+            estimates,
+        } = self;
+        sum([
+            identity.retained_children(),
+            frame.retained_children(),
+            estimator.retained_children(),
+            mode.retained_children(),
+            estimates.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ReceiverEstimateStore {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            policy,
+            completed_frames,
+            used_scalar_slots,
+            frames,
+            soft,
+        } = self;
+        sum([
+            policy.retained_children(),
+            completed_frames.retained_children(),
+            used_scalar_slots.retained_children(),
+            frames.retained_children(),
+            soft.retained_children(),
+        ])
+    }
+}
+
+#[cfg(test)]
+mod retained_footprint_tests {
+    use super::*;
+    use merlin_api::retention_support::retained_footprint;
+    use std::mem::size_of;
+
+    #[test]
+    fn repeated_estimate_arc_edges_include_pointee_and_spare_capacity_each_time() {
+        const ESTIMATE_CAPACITY: usize = 7;
+        const FRAME_VECTOR_CAPACITY: usize = 5;
+        let mut estimates = Vec::with_capacity(ESTIMATE_CAPACITY);
+        estimates.push(Some(Iq { re: 1.0, im: 0.0 }));
+        let estimate_capacity = estimates.capacity();
+        let frame = Arc::new(EstimateFrame {
+            identity: Identity {
+                run: 1,
+                generation: 2,
+                grant: 3,
+            },
+            frame: 0,
+            estimator: Estimator::FrameFlatLs,
+            mode: Numerology::Khz50,
+            estimates,
+        });
+        let mut frames = Vec::with_capacity(FRAME_VECTOR_CAPACITY);
+        frames.push(Arc::clone(&frame));
+        frames.push(frame);
+        let frame_capacity = frames.capacity();
+        let store = ReceiverEstimateStore {
+            policy: ReceiverObservationPolicy::default(),
+            completed_frames: frames.len(),
+            used_scalar_slots: 0,
+            frames,
+            soft: None,
+        };
+        let footprint = retained_footprint(&store).unwrap();
+        let repeated_frame =
+            size_of::<EstimateFrame>() + estimate_capacity * size_of::<Option<Iq>>();
+        assert_eq!(
+            footprint.payload_bytes,
+            size_of::<ReceiverEstimateStore>()
+                + frame_capacity * size_of::<Arc<EstimateFrame>>()
+                + repeated_frame
+                + repeated_frame
+        );
+        assert_eq!(footprint.shared_roots, 2);
+        assert_eq!(footprint.ordered_entries, 0);
+    }
 }

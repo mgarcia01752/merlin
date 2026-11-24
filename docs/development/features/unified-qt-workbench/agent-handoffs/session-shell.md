@@ -332,3 +332,87 @@ No shared target/cache, input evidence or other checkout was edited or cleaned.
 Focused save SHA/clean-tree verification are reported separately. No push,
 merge, release or installation occurs. The helper's deterministic Python-guide
 refresh must retain its existing hash.
+
+## UIU-SESSION-01 upstream retained-root metadata preparation
+
+Prepared from `d1a1aa788c3ce93e6c4e8618c3d349f562f91252` under the user's approved
+payload-byte / separate ordered-entry / shared-root contract. The lead owns the
+canonical design in primary
+`design.md#uiu-session-01-public-retained-root-metadata-prerequisite`, linked to
+[UIU-SESSION-01](../../../checklist.md#task-uiu-session-01),
+[REQ-UIU-03](../../../../requirements.md#req-uiu-03) and
+[REQ-UIU-07](../../../../requirements.md#req-uiu-07). No official acceptance or
+Qt admission follows from this source-only preparation.
+
+### Operations and owner map
+
+- `api::Simulation::retained_footprint(&self) -> ApiResult<RetainedFootprint>`
+  measures current options/configuration/document/provenance and private caches.
+- `simulation::BatchReport::retained_footprint(&self) -> PhyResult<RetainedFootprint>`
+  includes original/canonical/provenance strings/bytes, configuration/options/
+  plan, grants/decoder decisions and all private observation stores.
+- The approved common walker adds the fixed root once. Owner-local trait methods
+  visit dynamic children, actual Vec/String spare capacities and each shared
+  pointee/edge, conservatively repeating aliases. Checked overflow maps to the
+  existing ResourceLimit field `retained_footprint`. Static borrowed text owns no
+  pointed storage; allocator/tree-node/refcount headers remain excluded.
+
+All 69 reachable local types are covered. Sixty struct patterns are exhaustive;
+inline enums are matched exhaustively. Foreign `DecodeResult` is destructured
+locally to count both decision vectors without an orphan trait implementation.
+The foreign `DocsisLdpcCode` is a fixed inline unit enum. Neither root owns a
+`serde_json::Value`: JSON provenance is retained as String, never parsed for size.
+
+Only owner metadata is added under `crates/ofdma/src/`:
+
+| Concrete owners (relative to that directory) | Audited ownership |
+| --- | --- |
+| `api/session.rs`; `simulation/request.rs`, `report.rs`, `control.rs` | Two public roots and complete accepted request/result fields. |
+| `configuration/mod.rs`, `profile.rs`, `grant.rs`, `waveform.rs`, `receiver.rs`, `guards.rs`, `document.rs`, `synthetic.rs`; `configuration/ucd/channel.rs`, `controls.rs`, `profiles.rs` | Typed/source documents, inventory/control vectors, original shared bytes and caller capacities. |
+| `channel/stream.rs`; `signal_processing/pre_eq.rs`; `measurements/mod.rs`, `pre_eq.rs`, `rxmer.rs` | Channel taps, raw/normalized banks, effective-bank cache, original/cached RxMER powers and playback inputs. |
+| `types/iq.rs`, `bits.rs`; `grant/plan.rs`; `receiver/framing.rs`; `resources/grid.rs` | Inline types, plans and owned decoded payload/information/mother decisions. |
+| `instruments/observer.rs`, `receiver.rs`, `metrics.rs`; `instruments/soft/policy.rs`, `store.rs`, `views.rs` | Ordered trace payloads, serialization-skipped role gains, estimate/soft shared records and every metric buffer. |
+
+The production diff is additions only: no original algorithm, container behavior,
+limits, serialization or data field is removed/changed. Existing copyrights are
+preserved; added reusable Rust metadata/tests remain Apache-2.0. No Qt, manifest,
+lock, common/facade/Python or global documentation file changes here.
+
+### Prepared tests and executed source checks
+
+All twelve new owner tests are **unexecuted**, including compilation/Clippy.
+Lead execution must combine this patch with the new common support in primary;
+that support is deliberately absent from this standalone branch. No Cargo,
+shared-target, wheel, full suite or native tests were run in this worktree.
+
+Six integration cases in `crates/ofdma/tests/retained_footprint.rs` prepare checks
+for fixed idle root/options spare capacity; source strings/vectors/original bytes;
+measured provenance capacity; public report/decoder spare buffers; real
+complete/pre-cancelled report and passive invariance; and actual estimate/soft
+shared-store inclusion. Six private-owner cases cover normalized Pre-Eq buffers,
+effective-bank cache, RxMER cached powers, skipped role gains/ordered entries,
+repeated estimate Arc payloads, and repeated soft-cell/word metric buffers.
+Private capacity/alias anchors do not establish scientific acceptance.
+
+Executed here: pinned rustfmt parse/format check, whitespace review, exact-scope
+review, ownership-closure review (69 implementations) and exhaustive struct-field
+review (60 patterns), plus Python-guide currency. The guide refresh is unchanged.
+Disk before/after remains 79% used, 25 GiB available; inodes 13%. No build outputs,
+shared targets, caches or external inputs were changed/cleaned.
+
+### Lead hooks and remaining prerequisite
+
+Adopt only this owner patch, its integration test and this new handoff section;
+preserve prior Qt preparations and primary handoff adaptations. Required common
+support is read-only primary `crates/phy-api/src/retention.rs` (SHA-256
+`52f53a15b46f483750e7661cb641a89409db82fdbbd2eef62c58deb19c00aed7`)
+and `retention/support.rs` (SHA-256
+`0ffc6f1f19cbbb38387bf82ea7d0507ae8cd243c11b20e2dba6bddd6fd0e7cd7`), including
+the generic pair implementation. Lead owns actual compile/test/Clippy, public
+exports/native parity, requirement/inventory checks and acceptance evidence.
+
+Current-root metadata is passive and cannot reserve a future result or temporary
+execution workspace before allocation. The future-output bound and producer/copy
+preflight remain the next mandatory prerequisite; no estimate, substitute bound,
+Qt admission or aggregate-memory acceptance is claimed here. No push/release/
+installation occurs. Focused save SHA and clean-tree result are reported separately.

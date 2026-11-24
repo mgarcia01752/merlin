@@ -39,7 +39,7 @@ pub mod upstream {
 
 /// Genuinely shared contracts, without universal configurations or reports.
 pub mod common {
-    pub use merlin_api::{Cancellation, ErrorCode, RunControl};
+    pub use merlin_api::{Cancellation, ErrorCode, RetainedFootprint, RunControl};
     #[cfg(feature = "native-input")]
     pub use pnm_input::common::constants::MAX_PROJECT_COLLECTION_COUNT;
     #[cfg(feature = "native-input")]

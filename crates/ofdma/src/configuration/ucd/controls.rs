@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -8,6 +9,10 @@
 //! Applicable MAP/P-MAP and per-CM assignment representation, without MAC execution.
 use super::OfdmaChannel;
 use crate::{error::invalid, PhyResult};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeSet;
 
@@ -281,5 +286,150 @@ impl ProbeControl {
             previous = Some(position);
         }
         Ok(())
+    }
+}
+
+impl RetainedPayload for CmAssignment {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            cm_mac,
+            registered,
+            assigned_iucs,
+            ranging_sid,
+            testing_sid,
+            sid_cluster,
+        } = self;
+        sum([
+            cm_mac.retained_children(),
+            registered.retained_children(),
+            assigned_iucs.retained_children(),
+            ranging_sid.retained_children(),
+            testing_sid.retained_children(),
+            sid_cluster.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for MapElement {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            sid,
+            iuc,
+            minislot_offset,
+            expansion_words,
+        } = self;
+        sum([
+            sid.retained_children(),
+            iuc.retained_children(),
+            minislot_offset.retained_children(),
+            expansion_words.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for MapControl {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            version,
+            upstream_channel_id,
+            ucd_count,
+            number_of_elements,
+            reserved,
+            channel_allocation_type,
+            allocation_start,
+            acknowledgement_time,
+            ranging_backoff_start,
+            ranging_backoff_end,
+            data_backoff_start,
+            data_backoff_end,
+            elements,
+        } = self;
+        sum([
+            version.retained_children(),
+            upstream_channel_id.retained_children(),
+            ucd_count.retained_children(),
+            number_of_elements.retained_children(),
+            reserved.retained_children(),
+            channel_allocation_type.retained_children(),
+            allocation_start.retained_children(),
+            acknowledgement_time.retained_children(),
+            ranging_backoff_start.retained_children(),
+            ranging_backoff_end.retained_children(),
+            data_backoff_start.retained_children(),
+            data_backoff_end.retained_children(),
+            elements.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ProbeElement {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            sid,
+            measure_rxmer,
+            alternate_power,
+            equalization_disabled,
+            stagger,
+            frame,
+            symbol,
+            start_subcarrier,
+            subcarrier_skip,
+        } = self;
+        sum([
+            sid.retained_children(),
+            measure_rxmer.retained_children(),
+            alternate_power.retained_children(),
+            equalization_disabled.retained_children(),
+            stagger.retained_children(),
+            frame.retained_children(),
+            symbol.retained_children(),
+            start_subcarrier.retained_children(),
+            subcarrier_skip.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ProbeControl {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            version,
+            upstream_channel_id,
+            ucd_count,
+            number_of_elements,
+            reserved,
+            channel_allocation_type,
+            allocation_start,
+            elements,
+        } = self;
+        sum([
+            version.retained_children(),
+            upstream_channel_id.retained_children(),
+            ucd_count.retained_children(),
+            number_of_elements.retained_children(),
+            reserved.retained_children(),
+            channel_allocation_type.retained_children(),
+            allocation_start.retained_children(),
+            elements.retained_children(),
+        ])
     }
 }

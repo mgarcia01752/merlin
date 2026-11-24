@@ -19,6 +19,10 @@ use crate::{
     PhyError, PhyResult,
 };
 use fec_codec::upstream_ldpc::{DecodeResult, LdpcCodec, LdpcSettings};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::Serialize;
 use std::sync::Arc;
 
@@ -453,5 +457,44 @@ impl Receiver {
             return Err(invalid("receiver.capacity"));
         }
         Ok(false)
+    }
+}
+
+impl RetainedPayload for DecodedWord {
+    /// Visits payload and external codec decisions without decoding or cloning.
+    ///
+    /// # Returns
+    /// Checked complete vector capacities; the foreign codec result's fixed bytes
+    /// are already inline in this word and its enclosing root/container.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            ordinal,
+            payload_offset,
+            payload,
+            information_fill_valid,
+            decoded,
+        } = self;
+        let DecodeResult {
+            information_bits,
+            mother_codeword,
+            iterations,
+            converged,
+            parity_valid,
+            shortened_zeros_valid,
+            hard_decision_changes,
+        } = decoded;
+        sum([
+            ordinal.retained_children(),
+            payload_offset.retained_children(),
+            payload.retained_children(),
+            information_fill_valid.retained_children(),
+            information_bits.retained_children(),
+            mother_codeword.retained_children(),
+            iterations.retained_children(),
+            converged.retained_children(),
+            parity_valid.retained_children(),
+            shortened_zeros_valid.retained_children(),
+            hard_decision_changes.retained_children(),
+        ])
     }
 }

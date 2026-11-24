@@ -1,4 +1,5 @@
 /*
+ * Copyright 2026 MERLIN contributors
  * Copyright 2026 MORGANA contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
@@ -12,6 +13,7 @@ use crate::{
     error::limit,
     PhyResult,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 
 /// Scientific role, distinct from whether an observed value happens to be zero.
@@ -117,5 +119,19 @@ impl ResourcePlan {
             frame_bits: offset,
             grant_bits,
         })
+    }
+}
+
+impl RetainedPayload for CellRole {
+    /// Audits every inline variant without counting borrowed or fixed data twice.
+    ///
+    /// # Returns
+    /// Zero dynamic children; the enclosing root/container owns the fixed bytes.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Data | Self::Complementary | Self::KnownPilot => {
+                Some(RetainedFootprint::default())
+            }
+        }
     }
 }

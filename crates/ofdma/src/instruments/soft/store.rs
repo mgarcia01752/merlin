@@ -16,6 +16,10 @@ use crate::{
     resources::Cell,
     types::{Identity, Iq},
 };
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::Serialize;
 use std::sync::Arc;
 
@@ -167,5 +171,118 @@ impl SoftStore {
             retained_word_llrs: self.retained_word_llrs,
             words: self.words.iter().map(|word| word.word.clone()).collect(),
         }
+    }
+}
+
+impl RetainedPayload for SoftStore {
+    /// Visits complete shared metric records, including unused owner capacity.
+    ///
+    /// # Returns
+    /// Checked dynamic children; each Arc edge repeats its entire reachable payload.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            policy,
+            computed_cells,
+            completed_words,
+            retained_word_llrs,
+            cells,
+            words,
+        } = self;
+        sum([
+            policy.retained_children(),
+            computed_cells.retained_children(),
+            completed_words.retained_children(),
+            retained_word_llrs.retained_children(),
+            cells.retained_children(),
+            words.retained_children(),
+        ])
+    }
+}
+
+#[cfg(test)]
+mod retained_footprint_tests {
+    use super::*;
+    use merlin_api::retention_support::retained_footprint;
+    use std::mem::size_of;
+
+    #[test]
+    fn soft_shared_cells_and_completed_word_include_all_private_metric_buffers() {
+        const CELL_OWNER_CAPACITY: usize = 5;
+        const WORD_OWNER_CAPACITY: usize = 3;
+        const RAW_LLR_CAPACITY: usize = 7;
+        const DESCRAMBLED_LLR_CAPACITY: usize = 11;
+        const WORD_LLR_CAPACITY: usize = 13;
+
+        // Complex-domain reference power (unit-reference I/Q squared), metadata only.
+        const FIXTURE_REFERENCE_VARIANCE: f64 = 0.02;
+        let identity = Identity {
+            run: 1,
+            generation: 2,
+            grant: 3,
+        };
+        let cell = Arc::new(SoftCellSnapshot {
+            retained_index: 0,
+            identity,
+            frame: 0,
+            symbol: 0,
+            physical_carrier: 0,
+            role: crate::resources::CellRole::Data,
+            loading: 2,
+            coded_offset: 0,
+            corrected: None,
+            reference_variance: FIXTURE_REFERENCE_VARIANCE,
+            demapper_llrs: Vec::with_capacity(RAW_LLR_CAPACITY),
+            descrambled_llrs: Vec::with_capacity(DESCRAMBLED_LLR_CAPACITY),
+        });
+        let cell_payload = size_of::<SoftCellSnapshot>()
+            + (cell.demapper_llrs.capacity() + cell.descrambled_llrs.capacity()) * size_of::<f64>();
+        let word = Arc::new(SoftWordSnapshot {
+            word: SoftWordIdentity {
+                retained_index: 0,
+                identity,
+                completion_frame: 0,
+                word_ordinal: 0,
+                coded_offset: 0,
+            },
+            code_family: "static-family",
+            mother_information_bits: 0,
+            mother_codeword_bits: 0,
+            retained_information_bits: 0,
+            transmitted_bits: 0,
+            shortened_bits: 0,
+            reference_variance: FIXTURE_REFERENCE_VARIANCE,
+            llr_convention: "static-convention",
+            input_llrs: Vec::with_capacity(WORD_LLR_CAPACITY),
+            iterations: 0,
+            converged: false,
+            parity_valid: false,
+            shortened_zeros_valid: false,
+            information_fill_valid: false,
+            hard_decision_changes: 0,
+        });
+        let word_payload =
+            size_of::<SoftWordSnapshot>() + word.input_llrs.capacity() * size_of::<f64>();
+        let mut cells = Vec::with_capacity(CELL_OWNER_CAPACITY);
+        cells.push(Arc::clone(&cell));
+        cells.push(cell);
+        let mut words = Vec::with_capacity(WORD_OWNER_CAPACITY);
+        words.push(word);
+        let owners = cells.capacity() * size_of::<Arc<SoftCellSnapshot>>()
+            + words.capacity() * size_of::<Arc<SoftWordSnapshot>>();
+        let store = SoftStore {
+            policy: SoftObservationPolicy::default(),
+            computed_cells: cells.len(),
+            completed_words: words.len(),
+            retained_word_llrs: 0,
+            cells,
+            words,
+        };
+        let footprint = retained_footprint(&store).unwrap();
+        assert_eq!(
+            footprint.payload_bytes,
+            size_of::<SoftStore>() + owners + cell_payload + cell_payload + word_payload
+        );
+        assert_eq!(footprint.shared_roots, 3);
+        assert_eq!(footprint.ordered_entries, 0);
     }
 }

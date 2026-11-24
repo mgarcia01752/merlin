@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -11,6 +12,10 @@ use crate::api::{
     SyntheticGrant,
 };
 use crate::configuration::ucd::{CmAssignment, MapControl, OfdmaChannel, ProbeControl};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeSet, sync::Arc};
@@ -346,5 +351,116 @@ impl RunSettings {
         };
         options.validate()?;
         Ok(options)
+    }
+}
+
+impl RetainedPayload for ConfigurationPreset {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            id,
+            description,
+            vendor_template_id,
+            channel,
+            assignment,
+            map,
+            probe_map,
+        } = self;
+        sum([
+            id.retained_children(),
+            description.retained_children(),
+            vendor_template_id.retained_children(),
+            channel.retained_children(),
+            assignment.retained_children(),
+            map.retained_children(),
+            probe_map.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for RunSettings {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            mode,
+            selected_iuc,
+            source_seed,
+            grant_id,
+            epoch_sample,
+            first_frame,
+            frames,
+            minislots,
+            grants,
+            maximum_samples,
+            chunk_samples,
+            timeout_ms,
+            retained_points,
+            retained_taps,
+            estimator,
+            maximum_pilot_gap,
+            reference_variance,
+            equalizer_power_floor,
+            ldpc_iterations,
+            channel,
+            guards,
+            synthetic_rxmer,
+            synthetic_pre_eq,
+        } = self;
+        sum([
+            mode.retained_children(),
+            selected_iuc.retained_children(),
+            source_seed.retained_children(),
+            grant_id.retained_children(),
+            epoch_sample.retained_children(),
+            first_frame.retained_children(),
+            frames.retained_children(),
+            minislots.retained_children(),
+            grants.retained_children(),
+            maximum_samples.retained_children(),
+            chunk_samples.retained_children(),
+            timeout_ms.retained_children(),
+            retained_points.retained_children(),
+            retained_taps.retained_children(),
+            estimator.retained_children(),
+            maximum_pilot_gap.retained_children(),
+            reference_variance.retained_children(),
+            equalizer_power_floor.retained_children(),
+            ldpc_iterations.retained_children(),
+            channel.retained_children(),
+            guards.retained_children(),
+            synthetic_rxmer.retained_children(),
+            synthetic_pre_eq.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ConfigurationDocument {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            format,
+            schema_version,
+            presets,
+            selected_preset,
+            simulation,
+            original,
+        } = self;
+        sum([
+            format.retained_children(),
+            schema_version.retained_children(),
+            presets.retained_children(),
+            selected_preset.retained_children(),
+            simulation.retained_children(),
+            original.retained_children(),
+        ])
     }
 }

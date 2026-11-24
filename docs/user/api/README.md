@@ -31,6 +31,8 @@ constellations, finite decision regions and actual bounded likelihood summaries.
 coordinates, actual bin power and proven optional packing roles.
 [Channel spectrum and electrical power](channel-spectrum.md) distinguish actual
 calibrated observations, scalar amplifier views and full-band integration.
+[Retained resource metadata](retained-resources.md) describes passive upstream
+owner payload quantities and their explicit accounting limits.
 
 For searchable class/method documentation generated from the actual APIs, see
 the [generated Rust/Python reference](../../reference/api-reference.md).
@@ -43,7 +45,8 @@ features are enabled by default; either can be selected independently. Existing
 `docsis_ofdm_fec::api::{Simulation, Merlin}` imports remain valid and refer to the
 same downstream types. No new published Cargo artifact is implied.
 
-`merlin::common` contains shared error categories and cooperative cancellation.
+`merlin::common` contains shared error categories, cooperative cancellation and
+retained payload metadata.
 The downstream RunControl is the common type. The upstream RunControl retains
 its own pause/progress state and can share a common token through
 `RunControl::with_cancellation`. Configuration, limits and reports remain

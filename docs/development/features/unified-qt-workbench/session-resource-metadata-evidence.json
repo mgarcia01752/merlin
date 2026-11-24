@@ -1,0 +1,807 @@
+{
+  "task": "UIU-SESSION-01",
+  "requirements": [
+    "REQ-UIU-03",
+    "REQ-UIU-07"
+  ],
+  "status": "Level1 upstream current-root Rust/native metadata accepted; aggregate host and full session acceptance pending",
+  "integration_base": "bbac5fbacf3db97d451cf7ea5b49c228a764a464",
+  "prepared_adoption": {
+    "base": "d1a1aa788c3ce93e6c4e8618c3d349f562f91252",
+    "candidate": "665d758d1e89ca4542999a499fc934ad82057efa",
+    "sources": [
+      "crates/ofdma/src/api/session.rs",
+      "crates/ofdma/src/channel/stream.rs",
+      "crates/ofdma/src/configuration/document.rs",
+      "crates/ofdma/src/configuration/grant.rs",
+      "crates/ofdma/src/configuration/guards.rs",
+      "crates/ofdma/src/configuration/mod.rs",
+      "crates/ofdma/src/configuration/profile.rs",
+      "crates/ofdma/src/configuration/receiver.rs",
+      "crates/ofdma/src/configuration/synthetic.rs",
+      "crates/ofdma/src/configuration/ucd/channel.rs",
+      "crates/ofdma/src/configuration/ucd/controls.rs",
+      "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "crates/ofdma/src/configuration/waveform.rs",
+      "crates/ofdma/src/grant/plan.rs",
+      "crates/ofdma/src/instruments/metrics.rs",
+      "crates/ofdma/src/instruments/observer.rs",
+      "crates/ofdma/src/instruments/receiver.rs",
+      "crates/ofdma/src/instruments/soft/policy.rs",
+      "crates/ofdma/src/instruments/soft/store.rs",
+      "crates/ofdma/src/instruments/soft/views.rs",
+      "crates/ofdma/src/measurements/mod.rs",
+      "crates/ofdma/src/measurements/pre_eq.rs",
+      "crates/ofdma/src/measurements/rxmer.rs",
+      "crates/ofdma/src/receiver/framing.rs",
+      "crates/ofdma/src/resources/grid.rs",
+      "crates/ofdma/src/signal_processing/pre_eq.rs",
+      "crates/ofdma/src/simulation/control.rs",
+      "crates/ofdma/src/simulation/report.rs",
+      "crates/ofdma/src/simulation/request.rs",
+      "crates/ofdma/src/types/bits.rs",
+      "crates/ofdma/src/types/iq.rs",
+      "crates/ofdma/tests/retained_footprint.rs"
+    ],
+    "all_sources_byte_exact": true,
+    "all_original_sources_match_reviewed_base": true,
+    "source_patch_additions_only": true,
+    "handoff_append_only": true,
+    "patch_sha256": "5237df1787450b143ceee0f17f076cc49b4002bcaa527d460af036ae42040c20"
+  },
+  "primary_adaptations": [
+    {
+      "path": "crates/ofdma/src/measurements/rxmer.rs",
+      "change": "Remove only newly added unused super::* private-test import after initial Clippy failure; no assertion or production behavior change. Existing passing case bodies unchanged."
+    }
+  ],
+  "source_review": {
+    "independent_read_only_audit": "No current-root undercount or completeness defect found; all31 production owner diffs additions only, including static/borrowed omissions and local foreign DecodeResult audit. No tests run by reviewer.",
+    "closure": "69 local ownership types and60 exhaustive struct patterns in prepared US sources",
+    "common_support": "No counting/native-boundary defects in read-only audit; only footprint model re-exported by facade; common helper support hidden."
+  },
+  "implementation": [
+    {
+      "path": "crates/ofdma/src/api/session.rs",
+      "sha256": "8e474354417bcdfdd86031c5e8419a70a01392f7f5e907837df816e83545316f"
+    },
+    {
+      "path": "crates/ofdma/src/channel/stream.rs",
+      "sha256": "7caff562fc045dc270ebd7aa9a9a433d93d7ea4bd54d033e3497e4e0cc5102db"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/document.rs",
+      "sha256": "10b380d91f34f5d04216cdcf8211d20d9d3c86ad51448e819996f962deb41fb8"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/grant.rs",
+      "sha256": "3e6984672e77296c8573583682b7d7cc15a6cd5d888e1e5d147f4ceb14e47e15"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/guards.rs",
+      "sha256": "463bca217042af41b52d37edf53e278a075564cca3aba613cdf2a2f75f97c135"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/mod.rs",
+      "sha256": "64b81d03e7b5061a59153ac2501da55cc6f120846ca93631d9ed0d5f22a43948"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/profile.rs",
+      "sha256": "4c3b6b345ebc15f2169af684cc8e5169be99884d642c9e505fbd655a2f37ade2"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/receiver.rs",
+      "sha256": "dd7e18409063e37d54e39df4774b55f5e4ff68791f64778e513d8eabb4f73b3b"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/synthetic.rs",
+      "sha256": "df2af3d0a3fffe958730573f0e121bf75dd467cd135abe34927f138f94d61e75"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/channel.rs",
+      "sha256": "9fbfd5b67c54ef05240535e93c7babaa120ad23b71cd93d38a5d92ef47c5f38e"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/controls.rs",
+      "sha256": "46f9014d7b8b23c8023e5063a128a7c6c44be5b61bc4e7f1d03f3fa1fd321f01"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/ucd/profiles.rs",
+      "sha256": "107676e4b76455005c88388453fd252f8086f07bb7b50fc78b6e02822c63d574"
+    },
+    {
+      "path": "crates/ofdma/src/configuration/waveform.rs",
+      "sha256": "9c7d02092721cd658e950396571a6549aabe8cd333ba044b3801adccab046b6a"
+    },
+    {
+      "path": "crates/ofdma/src/grant/plan.rs",
+      "sha256": "7962180e31d36c4b38e13cef367110cba7ad86ef972a1c4d13854a655004ed28"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/metrics.rs",
+      "sha256": "10b5dec74ce50fd6204fb4fb572db462cca8dcebf7f785af441db326b5657759"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/observer.rs",
+      "sha256": "111b2466efdc451ac2558680eb5173875fb577de4faca22b7bb53478a094b883"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/receiver.rs",
+      "sha256": "0fee6e78d9c4395ac7f172289fd01c6c406b0b063e24a4d1086d515418229d2a"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/soft/policy.rs",
+      "sha256": "95fd761cdfed6789912734be89885ba7569665cf148a7a9084379bf8f7dd47e3"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/soft/store.rs",
+      "sha256": "975bdd5cc444c7aecfa8547992057950e28566e8d2e917ec0ca2e1e45a956678"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/soft/views.rs",
+      "sha256": "7c4f0f95cc5357a3e263ead0836dd8eb78848b3194af704e3ef3d49af2fb857a"
+    },
+    {
+      "path": "crates/ofdma/src/measurements/mod.rs",
+      "sha256": "6c83839fdca27b76aacbaf43b048068de1c6dd5428dbd46739c47dbd063e874a"
+    },
+    {
+      "path": "crates/ofdma/src/measurements/pre_eq.rs",
+      "sha256": "dbc1c9969b51e594750c8b343c9523355f159bc0c2b71dd7d8b74efb2edb6b9a"
+    },
+    {
+      "path": "crates/ofdma/src/measurements/rxmer.rs",
+      "sha256": "ea1717544806927d1bbd311d7694f2c3fdb27ecde0556c842375c7cc05fec043"
+    },
+    {
+      "path": "crates/ofdma/src/receiver/framing.rs",
+      "sha256": "ce0e6539955da392fcb5ceccf7ecdfb09cccd64d0d9195319a890dc8c0ac86d0"
+    },
+    {
+      "path": "crates/ofdma/src/resources/grid.rs",
+      "sha256": "80cdc1c9ef44aa6018a2326ae69329a5bda0fae219060413ca19f6a3ed3687c9"
+    },
+    {
+      "path": "crates/ofdma/src/signal_processing/pre_eq.rs",
+      "sha256": "8967b7c985afdc9622dd598fb50275ba8714fb34309c4e8980eeb585de182c37"
+    },
+    {
+      "path": "crates/ofdma/src/simulation/control.rs",
+      "sha256": "0538941e807017392691b01be5f6eded593db977c58a583daeb834d6e725f9b4"
+    },
+    {
+      "path": "crates/ofdma/src/simulation/report.rs",
+      "sha256": "026dc2310a45fff0e09b8fca685dc275cbe1aaabed2cbbbbfe78f112145f890e"
+    },
+    {
+      "path": "crates/ofdma/src/simulation/request.rs",
+      "sha256": "ef9ddfa04282b45ea7d77a1433057f172c6b6dca9a132466f938ea9bdc0f2a8c"
+    },
+    {
+      "path": "crates/ofdma/src/types/bits.rs",
+      "sha256": "28b9d5e18e7975725f7752638be04ba51344bfe6e786dbe020e64950db89c6fb"
+    },
+    {
+      "path": "crates/ofdma/src/types/iq.rs",
+      "sha256": "8c240dd82813435e8a19caf27677da40c59008dfeebd2e3c8c9f2689ae00fa87"
+    },
+    {
+      "path": "crates/ofdma/tests/retained_footprint.rs",
+      "sha256": "bc745cb092f7ab19e348c47ad2e16ba4d9afdbf381f5c0f6e4d65351b0f66cec"
+    },
+    {
+      "path": "crates/phy-api/src/lib.rs",
+      "sha256": "104d46ec7efd272b7bafe833de1ff74798e4287fd3450ec06e8181f7099bf480"
+    },
+    {
+      "path": "crates/phy-api/src/retention.rs",
+      "sha256": "52f53a15b46f483750e7661cb641a89409db82fdbbd2eef62c58deb19c00aed7"
+    },
+    {
+      "path": "crates/phy-api/src/retention/support.rs",
+      "sha256": "0ffc6f1f19cbbb38387bf82ea7d0507ae8cd243c11b20e2dba6bddd6fd0e7cd7"
+    },
+    {
+      "path": "crates/phy-api/src/retention/tests.rs",
+      "sha256": "76a6fc4359c222c7685e735b2f400fe020ae762186b668d01f8ad43f4ad69402"
+    },
+    {
+      "path": "crates/merlin/src/lib.rs",
+      "sha256": "134c45bde15d5d2dbc8d7a09fda2c32fcb5c827b158658a0d702e5ec91536a62"
+    },
+    {
+      "path": "crates/merlin/tests/namespaces.rs",
+      "sha256": "7c25baabdafd26731dfcab69b139442a842a88ede2174a55e82c7f68f31bc094"
+    },
+    {
+      "path": "crates/ofdma/examples/upstream_retained_footprint.rs",
+      "sha256": "6d7c4e19b288d60d6befc325fc24fa31841f47478dabc38d99cc235f9b9289aa"
+    },
+    {
+      "path": "bindings/python/src/retention.rs",
+      "sha256": "6976d8be54fc7ed94149fbeb7fa128d5ee8810bb4e8e24e47844c17945e63ab4"
+    },
+    {
+      "path": "bindings/python/src/lib.rs",
+      "sha256": "7a6bc3d2340f19cb015e290cb32c45a660b54cac823578781b934538b9a0de23"
+    },
+    {
+      "path": "bindings/python/src/upstream/simulation.rs",
+      "sha256": "546904451ed6d7ec375f2f0097cd44c0e2307788d8cdbe52a6a8afc1cc9cce09"
+    },
+    {
+      "path": "bindings/python/src/upstream/reports.rs",
+      "sha256": "b8139df9c16b798a325f0f27c0d9f19425fe4b08eb585e0459164cd82a6cf94c"
+    },
+    {
+      "path": "bindings/python/tests/test_retained_footprint.py",
+      "sha256": "f6cacabab4c9e738634041e1b2386d9c2af014ea37dc19b426a636c5d054893d"
+    },
+    {
+      "path": "bindings/python/python/merlin/common.py",
+      "sha256": "d43d75ca4649d5a1b74bbee46d71373fa643e9185466f134ac4acc9455772fae"
+    },
+    {
+      "path": "bindings/python/python/merlin/common.pyi",
+      "sha256": "1e2e63e88d73c2b83f32a3c3f4c562e1b1dbef82804073745c8392ec343ed849"
+    },
+    {
+      "path": "bindings/python/python/merlin/upstream.pyi",
+      "sha256": "af2c4d8bd8bc839c99894eb563a28b8fd69aeb9879f5df2170d883b0b76972d1"
+    }
+  ],
+  "testing": {
+    "level": 1,
+    "executed": [
+      {
+        "label": "common-tests",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "-p",
+          "merlin-api",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.6369481680012541
+      },
+      {
+        "label": "common-clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "clippy",
+          "-p",
+          "merlin-api",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.7768074389969115
+      },
+      {
+        "label": "upstream-tests",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "-p",
+          "docsis-ofdma",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 22.513380614000198
+      },
+      {
+        "label": "facade-tests",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "-p",
+          "merlin",
+          "--features",
+          "native-input",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 12.899192622004193
+      },
+      {
+        "label": "independent-upstream",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "check",
+          "-p",
+          "docsis-ofdma",
+          "--no-default-features",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.251420334003342
+      },
+      {
+        "label": "owner-clippy-final",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "clippy",
+          "-p",
+          "merlin-api",
+          "-p",
+          "docsis-ofdma",
+          "-p",
+          "merlin",
+          "--features",
+          "merlin/native-input",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 5.486608777995571
+      },
+      {
+        "label": "native-clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "clippy",
+          "--manifest-path",
+          "bindings/python/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.617755634004425
+      },
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.158861332005472
+      },
+      {
+        "label": "native-format",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "fmt",
+          "--manifest-path",
+          "bindings/python/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.11648737300129142
+      },
+      {
+        "label": "rust-reference",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "run",
+          "-p",
+          "docsis-ofdma",
+          "--example",
+          "upstream_retained_footprint",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 5.168783388995507
+      },
+      {
+        "label": "recovery-reference",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "run",
+          "-p",
+          "docsis-ofdma",
+          "--example",
+          "upstream_recovery_views",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.1863234699994791
+      },
+      {
+        "label": "rustdoc",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "doc",
+          "--workspace",
+          "--no-deps",
+          "--locked",
+          "--features",
+          "merlin/native-input"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 9.17896455200389
+      },
+      {
+        "label": "rust-inventory",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/rust_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-resource-metadata/rust-exports.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.9184456820003106
+      },
+      {
+        "label": "wheel",
+        "command": [
+          "/home/dev01/Projects/merlin/local/api-python-build/bin/python",
+          "-m",
+          "maturin",
+          "build",
+          "--manifest-path",
+          "bindings/python/Cargo.toml",
+          "--release",
+          "--locked",
+          "--compatibility",
+          "linux",
+          "--interpreter",
+          "/usr/bin/python3",
+          "--out",
+          "/home/dev01/Projects/merlin/local/python-wheels-session-resource-metadata"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 46.16004670899565
+      }
+    ],
+    "initial_failed_checks": [
+      {
+        "label": "owner-clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "clippy",
+          "-p",
+          "merlin-api",
+          "-p",
+          "docsis-ofdma",
+          "-p",
+          "merlin",
+          "--features",
+          "merlin/native-input",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 101,
+        "elapsed_seconds": 10.401799250001204
+      }
+    ],
+    "initial_warning": "Unused newly added test import; removed and final production/test Clippy passed without suppressions. No need repeat137 unchanged test case bodies for an import-only correction.",
+    "rust_summary": {
+      "common-tests": {
+        "passed": 9,
+        "failed": 0,
+        "ignored": 0
+      },
+      "upstream-tests": {
+        "passed": 137,
+        "failed": 0,
+        "ignored": 1
+      },
+      "facade-tests": {
+        "passed": 25,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    "new_rust_metadata_cases": 20,
+    "native_summary": {
+      "passed": 20,
+      "new_metadata_cases": 5,
+      "failed": 0,
+      "skipped": 0,
+      "reference_configurations": 8
+    },
+    "ignored_case": "benchmark_typed_transform_adapter: existing opt-in host performance observation, not run or counted passed",
+    "native_artifact": {
+      "status": "passed",
+      "wheel": "/home/dev01/Projects/merlin/local/python-wheels-session-resource-metadata/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+      "wheel_sha256": "7e1f31d1ec7157ae5d47bd8869c63c0be283f4bfb88d8b13a0b957bc86af5935",
+      "native_sha256": "99dcb05d38f3638fb27f5618fd9e5d56c495ae7dd127cce912b6cd0bd72481a8",
+      "reference_sha256": "d9f603d91df5fe1e26f6d81aedeff14f6c3b595507865090be359720dd4ec6dc",
+      "commands": [
+        {
+          "label": "install",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "--no-deps",
+            "--force-reinstall",
+            "/home/dev01/Projects/merlin/local/python-wheels-session-resource-metadata/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-resource-metadata-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.7036340719932923
+        },
+        {
+          "label": "artifact-preflight",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-c",
+            "import hashlib,sys\nfrom pathlib import Path\nimport merlin,merlin.common as c,merlin.downstream as d,merlin.upstream as u,merlin._native as n\npath=Path(n.__file__).resolve();assert path.is_relative_to(Path(sys.prefix).resolve());assert hashlib.sha256(path.read_bytes()).hexdigest()==sys.argv[1]\nassert merlin.Simulation is d.Simulation\nassert type(u.Simulation().retained_footprint()) is c.RetainedFootprint\nprint(path)\n",
+            "99dcb05d38f3638fb27f5618fd9e5d56c495ae7dd127cce912b6cd0bd72481a8"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-resource-metadata-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.06603750299836975
+        },
+        {
+          "label": "retained_footprint",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_retained_footprint.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-resource-metadata-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.1254511930019362
+        },
+        {
+          "label": "namespaces",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_namespaces.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-resource-metadata-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.12115631499909796
+        },
+        {
+          "label": "upstream_recovery_views",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_upstream_recovery_views.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-resource-metadata-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.23604269699717406
+        },
+        {
+          "label": "upstream_operations",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_upstream_operations.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-resource-metadata-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.08045393200154649
+        },
+        {
+          "label": "receiver_archive",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_receiver_archive.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-resource-metadata-native",
+          "exit_code": 0,
+          "elapsed_seconds": 3.2600587609995273
+        },
+        {
+          "label": "inventory",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+            "-I",
+            "-B",
+            "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+            "--output",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-resource-metadata-native/native-exports.json"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-resource-metadata-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.1704749959972105
+        }
+      ]
+    },
+    "native_inventory_sha256": "92c100dd35251cc74dfd6aa8f5e4aa2102c292292b6e393892f12ce915cbcef4",
+    "rust_inventory_sha256": "514ca75e147734b23b64e8f389d031f5c70c5339bd2b7c8db86711e2e1f37683",
+    "new_operations": {
+      "rust": 2,
+      "native": 5
+    },
+    "preserved_operation_rows": {
+      "rust": 600,
+      "native": 570
+    },
+    "not_required": [
+      {
+        "checks": "Full unrelated workspace/analysis/CLI/packaging and Qt/QML executable rebuilds/regressions",
+        "reason": "Pure passive metadata additions; source review proves original science/configuration/serializer statements remain unchanged. Existing downstream public export inventory and facade/native consumers pass. Qt has no new metadata consumer or registration/presentation change yet. Final Level3 retains all gates."
+      }
+    ],
+    "deferred": [
+      "Downstream retained-root metadata preparation and paired acceptance",
+      "Independent accepted inputs and presentation copies need actual separate charges",
+      "Pre-production output bounds and archive-copy preflight",
+      "Actual two-direction host, shared dispatch/terminal/current-callback and Qt adoption",
+      "Complete session Level2 and later shell/upstream/file/recovery/final gates"
+    ],
+    "executed_metadata": [
+      {
+        "label": "final-boundary",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.26453247699828353
+      },
+      {
+        "label": "strict-matrix",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/api_operation_matrix.py",
+          "--exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-resource-metadata/rust-exports.json",
+          "--native-exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-resource-metadata-native/native-exports.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.704435193998506
+      },
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.421011783000722
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 9.215997547995357
+      },
+      {
+        "label": "uiu-history",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/audit_foundation_uiu_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.12052066899923375
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.057196608002413996
+      },
+      {
+        "label": "guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03950114799954463
+      },
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.35522328900697175
+      },
+      {
+        "label": "diff",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.07394163299613865
+      },
+      {
+        "label": "staged-diff",
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.005202637999900617
+      }
+    ]
+  },
+  "preservation": {
+    "no_checkbox_changes": true,
+    "original_scientific_statements_unchanged": true,
+    "project_schema_and_archive_historical_statistics_unchanged": true,
+    "current_optimized_qt_executable_sha256": "0bf1a671378b61a1414d7cbdab3ac3f050764539da1abd29eeef1a733791457c"
+  },
+  "no_push_merge_release_or_system_install": true,
+  "native_install_scope": "Exact local wheel in existing isolated developer virtual environment only; no system/application installation."
+}
