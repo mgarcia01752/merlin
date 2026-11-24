@@ -253,6 +253,8 @@ pub(crate) const MAX_DESIGNER_RECIPE_DOCUMENT_BYTES: usize = 24 * 1024;
 pub(crate) const MAX_DESIGNER_PLAYBACK_DOCUMENT_BYTES: usize = 24 * 1024;
 /// Existing export capture-range/clamping/collection input ceiling in UTF-8 bytes.
 pub(crate) const MAX_DESIGNER_EXPORT_SELECTION_BYTES: usize = 1024;
+/// One terminal product per export worker; progress uses its separate atomic count.
+pub(crate) const EXPORT_RESULT_QUEUE_CAPACITY: usize = 1;
 
 /// Existing receiver selector message ceiling; independent of response/editor documents.
 pub(crate) const MAX_RECEIVER_SELECTION_DOCUMENT_BYTES: usize = 4096;

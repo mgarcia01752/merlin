@@ -4225,3 +4225,29 @@ Keep existing error/metadata/invokable signatures and numerical/export behavior.
 Run relevant Designer/editor/export consumers, Clippy/format/boundary, affected
 QML and fresh executable probes. Reuse unchanged science/native compatibility;
 full task/milestone acceptance remains pending.
+
+### UIU-SESSION-01 retained export products and ready-state rollback
+
+The next concrete owner is the existing immutable export Prepared product: frames,
+recipe/provenance JSON, both format summaries, range error and diagnostic. It
+persists in a worker completion queue, Ready state and save worker, independently
+of the already admitted Designer Session. REQ-UIU-03/06/07 and the still-open
+UIU-SESSION-01 own this focused continuation.
+The [source-only product handoff](agent-handoffs/export-product-retention.md)
+at `a0b33c70325e1070321f9dd75831fe12e306b977` is selectively adopted; its tests
+remain unexecuted until primary validation below.
+
+| Path/symbol and disposition | Contract and acceptance |
+| --- | --- |
+| EDIT `apps/qt/src/bridge/rxmer_export.rs`; ADD `rxmer_export/retention.rs`, its tests | ADAPT the frozen source-only actual-capacity visitor when ready. Admit full Prepared storage through existing primitives before queueing. One explicit Arc<Retained<Prepared>> permits immutable save-worker/previous-Ready aliases and spawn-failure recovery; its additional shared root is charged. No scientific API or generic memory framework. |
+| ADD `apps/qt/src/bridge/rxmer_export/lifecycle.rs`; EDIT existing invokables | Move existing preparation/poll/save lifecycle bodies behind thin QObject calls without changing scientific/export algorithms or return keys. Keep previous Ready charged while new work runs; restore it on input/target admission rejection, cancellation, disconnected worker or spawn failure. Save borrows a shared Prepared rather than consuming the only accepted owner before spawn. |
+| ADD `apps/qt/src/bridge/rxmer_export/admission_tests.rs` | Exercise actual Ready identity/frames/metadata through all positive input/product limits, deterministic spawn failure, cancellation/queue disposal and final aliases. Close the direct prior-Ready rejection/spawn coverage gap recorded by the Session-input unit. Use the existing worker spawn-seam pattern for deterministic failures; no OS resource exhaustion. |
+| EDIT `apps/qt/src/downstream/common/constants.rs` | Name the single terminal export queue slot as a transport policy, not a scientific count. Retain separate bounded execution for finite backend builders. |
+
+Only Prepared products and their aliases are accepted here. Saved completion
+Value/error envelopes, worker request/control/closure/channel bookkeeping and
+retained QML copies remain distinct pending owners; do not claim complete worker
+or SESSION closure. Existing file publication remains in the public Rust PNM API,
+with no destination overwrite or source mutation. Relevant Rust/Qt/QML, all-target
+Clippy/format/boundary/traceability and fresh executable checks precede a focused
+commit; unchanged scientific/native APIs need no wheel rebuild.

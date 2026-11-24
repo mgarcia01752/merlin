@@ -1609,6 +1609,15 @@ these owners. Request/control envelopes, generated capture queues and export
 Prepared products remain distinct pending owners. See the
 [Designer input design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-designer-session-copies).
 
+Immutable export Prepared products admit complete frame/JSON/error capacities
+before terminal queue publication. A charged shared root keeps the product alive
+across Ready/save-worker aliases. Working retains previous Ready until known
+completion, restoring it on rejection/cancellation/disconnection; failed spawn
+does not consume it. Thin QObject calls delegate the existing public-API lifecycle
+to `bridge/rxmer_export/lifecycle.rs`. Saved Value/error envelopes and outer worker
+infrastructure remain pending. See the
+[export-product design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-export-products-and-ready-state-rollback).
+
 The shared [terminal transport](development/features/unified-qt-workbench/design.md#uiu-session-01-terminal-worker-transport)
 under `shell/worker.rs` keeps genuine run leases outside worker unwinding and
 tags queued callbacks explicitly. Known completion can release admission after

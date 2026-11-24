@@ -3976,3 +3976,34 @@ Request/control/worker envelopes, capture queues, export products, retained QML
 and fixed infrastructure owners remain pending. This unit accepts Session input
 copies only. Full SESSION Level 2 and applicable milestone/final Level 3 still
 precede the parent checkbox; all completed downstream history remains preserved.
+
+
+## UIU-SESSION-01 retained export products and ready-state rollback
+
+The [focused design](design.md#uiu-session-01-retained-export-products-and-ready-state-rollback)
+now admits complete Prepared frame/JSON/error capacity before terminal queueing.
+One charged shared root permits immutable Ready/save-worker aliases without an
+extra payload copy. Working preserves its old Ready snapshot until genuine
+terminal reception; input/product rejection, parse/spawn failure, cancellation
+and disconnection preserve or restore the exact original. Existing scientific
+preflight/save bodies move behind thin QObject calls into a focused lifecycle
+module, retaining format/limit/reply behavior and public Rust ownership.
+
+[Primary execution record](session-export-product-evidence.json) records the
+initial pin-conversion compile failure before runtime, followed by all 46 passing
+Rust cases. Seventeen QML behaviors/four hooks, final all-target Clippy,
+formatting/boundary, optimized build and six fresh desktop probes pass without
+QML warnings. Direct actual-state tests close the previous Session-input unit's
+prior-Ready input-rejection and prepare/save spawn-failure gap; no filesystem
+save or native picker was executed by those deterministic failure tests. Queued
+success/cancel/disconnect, all three late target dimensions, old/new frame equality
+and final shared disposal are exercised. Source-only metadata preparation and
+read-only review remain separate from primary execution. Documentation/traceability
+checks are recorded in the same receipt.
+
+No scientific/public API, binding, persisted schema, dependency or registration
+changed; exact scientific/native evidence is reused without a new wheel or Python,
+workspace, CLI or packaging run. Saved completion/error envelopes, other worker/
+generated-queue data, retained QML and fixed infrastructure remain pending.
+UIU-SESSION-01 stays unchecked until full relevant Level 2 and applicable milestone/
+final Level 3 acceptance, preserving all completed downstream history.

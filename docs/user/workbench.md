@@ -281,6 +281,9 @@ The same protection applies to New: a failed blank-workbench admission preserves
 the current project, editor state and Save destination. Opening or modifying an
 input editor can also report a retained-data limit; its previous accepted input
 remains available. New keeps the current light/dark appearance choice.
+RxMER export preparation also keeps its previous ready snapshot when replacement
+admission or worker startup fails; cancelled replacement work restores it after
+the worker stops.
 Save continues to use the accepted original input bytes and hashes.
 
 The bar indicates activity, not a completion percentage. Timing is hidden during
