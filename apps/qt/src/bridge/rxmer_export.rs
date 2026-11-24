@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Export worker snapshots; encoding and filesystem publication belong to pnm-input.
+mod input;
 mod lifecycle;
 mod retention;
 use super::measurement_input::bridge;

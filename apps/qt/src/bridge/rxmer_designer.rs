@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Designer batch lifecycle; the GUI adopts only a complete, current draft.
+mod worker_inputs;
 use super::measurement_input::bridge;
 use crate::downstream::common::constants::{
     DESIGNER_CAPTURE_QUEUE_CAPACITY, MAX_DESIGNER_PLAYBACK_DOCUMENT_BYTES,
@@ -29,10 +30,7 @@ pub(super) struct Work {
     receiver: mpsc::Receiver<Result<Retained<Vec<Capture>>, AdmissionError>>,
     cancel: Arc<AtomicBool>,
     completed: Arc<AtomicUsize>,
-    hashes: Vec<String>,
-    profile_hash: String,
-    options: Options,
-    imported: bool,
+    selection: Retained<worker_inputs::SelectionSnapshot>,
 }
 
 // Preserve the source charge until the independently admitted editor owns the data.
@@ -132,7 +130,9 @@ impl bridge::MeasurementInputs {
                 return Err("Open Designer first.".into());
             }
             let session = self.rust().designer_copy()?;
-            let total = session.value().preview(&request, 1)?["capture_count"]
+            let budget = self.rust().context.application.budget().clone();
+            let request = worker_inputs::admit_request(request, &budget)?;
+            let total = session.value().preview(request.value(), 1)?["capture_count"]
                 .as_u64()
                 .unwrap_or(0);
             let text = options.to_string();
@@ -143,31 +143,28 @@ impl bridge::MeasurementInputs {
                 serde_json::from_str(&text).map_err(|error| error.to_string())?;
             let cancel = Arc::new(AtomicBool::new(false));
             let completed = Arc::new(AtomicUsize::new(0));
-            let budget = self.rust().context.application.budget().clone();
             let (sender, receiver) = mpsc::sync_channel(DESIGNER_CAPTURE_QUEUE_CAPACITY);
             let work = Work {
                 receiver,
                 cancel: cancel.clone(),
                 completed: completed.clone(),
-                hashes: session.value().hashes.clone(),
-                profile_hash: session.value().profile.source.sha256.clone(),
-                options,
-                imported: request.source == "imported",
+                selection: worker_inputs::SelectionSnapshot {
+                    hashes: session.value().hashes.clone(),
+                    profile_hash: session.value().profile.source.sha256.clone(),
+                    options,
+                    imported: request.value().source == "imported",
+                }
+                .admit(&budget)?,
             };
             log::debug!(
                 "rxmer-designer stage_started captures={total} imported={}",
-                work.imported
+                work.selection.value().imported
             );
             std::thread::Builder::new()
                 .name("rxmer-designer".into())
                 .spawn(move || {
-                    let result = session
-                        .value()
-                        .build(&request, &cancel, &completed)
-                        .and_then(|captures| {
-                            Model::admit_capture_batch(captures, &budget)
-                                .map_err(AdmissionError::from)
-                        });
+                    let result =
+                        worker_inputs::generate(session, request, &cancel, &completed, &budget);
                     let _ = sender.send(result);
                 })
                 .map_err(|error| error.to_string())?;
@@ -215,6 +212,10 @@ mod retention_tests;
 #[path = "rxmer_designer/capture_batch_tests.rs"]
 mod capture_batch_tests;
 
+#[cfg(test)]
+#[path = "rxmer_designer/worker_input_tests.rs"]
+mod worker_input_tests;
+
 fn adopt_to_owner(
     owner: &mut super::measurement_input::MeasurementInputsRust,
     work: Work,
@@ -251,20 +252,23 @@ fn adopt(
         .iter()
         .map(|capture| capture.hash.clone())
         .collect::<Vec<_>>();
-    if current != work.hashes
+    let selection = work.selection.value();
+    if current != selection.hashes
         || profile
             .as_ref()
-            .is_none_or(|profile| profile.source.sha256 != work.profile_hash)
+            .is_none_or(|profile| profile.source.sha256 != selection.profile_hash)
     {
         return Err("Inputs changed during design; reopen Designer and retry.".into());
     }
-    let mut options = work.options;
-    if work.imported {
+    // The finite metadata candidate is separate from the retained worker snapshot.
+    let mut options = selection.options.clone();
+    if selection.imported {
         options.selected_captures = options.selected_captures.map(|selected| {
             let selected = selected
                 .into_iter()
                 .collect::<std::collections::HashSet<_>>();
-            work.hashes
+            selection
+                .hashes
                 .iter()
                 .zip(captures.value())
                 .filter(|(hash, _)| selected.contains(*hash))
@@ -330,11 +334,22 @@ mod tests {
             receiver,
             cancel: Arc::new(AtomicBool::new(false)),
             completed: Arc::new(AtomicUsize::new(2)),
-            hashes: session.hashes.clone(),
-            profile_hash: session.profile.source.sha256.clone(),
-            options,
-            imported: true,
+            selection: worker_inputs::SelectionSnapshot {
+                hashes: session.hashes.clone(),
+                profile_hash: session.profile.source.sha256.clone(),
+                options,
+                imported: true,
+            }
+            .admit(&test_budget())
+            .unwrap(),
         }
+    }
+    fn test_budget() -> crate::shell::RetentionBudget {
+        crate::shell::RetentionBudget::with_limits(crate::shell::RetainedResources {
+            payload_bytes: usize::MAX,
+            ordered_entries: usize::MAX,
+            shared_roots: usize::MAX,
+        })
     }
     fn batch(captures: Vec<Capture>) -> Retained<Vec<Capture>> {
         let budget = crate::shell::RetentionBudget::with_limits(crate::shell::RetainedResources {

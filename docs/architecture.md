@@ -1626,6 +1626,16 @@ batch. Existing mapping, selection and scientific staging behavior is preserved.
 Request/control/error envelopes and outer infrastructure remain pending. See the
 [capture-batch design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-designer-capture-batches).
 
+Generation workers independently admit parsed recipe requests and GUI work
+selection snapshots, including actual hash, profile-text and playback capacities.
+Export preparation admits its parsed Request and fixed Selection together. These
+input guards survive detached execution and overlap final output admission;
+input rejection and spawn failure preserve prior accepted/Ready data. Child
+traversals are reused from the existing Session/Model owners, without a new
+accounting framework. Terminal error/Saved payloads and outer control/closure/
+channel infrastructure remain pending. See the
+[worker-input design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-designer-worker-inputs).
+
 The shared [terminal transport](development/features/unified-qt-workbench/design.md#uiu-session-01-terminal-worker-transport)
 under `shell/worker.rs` keeps genuine run leases outside worker unwinding and
 tags queued callbacks explicitly. Known completion can release admission after

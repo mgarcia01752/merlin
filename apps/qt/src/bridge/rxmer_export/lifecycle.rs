@@ -82,11 +82,13 @@ pub(super) fn prepare(
     let selection: Selection = serde_json::from_str(selected).map_err(|error| error.to_string())?;
     let session = owner.designer_copy()?;
     let budget = owner.context.application.budget().clone();
+    let input = input::Input { request, selection }.admit(&budget)?;
     let task = spawn(
         previous(&owner.designer_export),
         move |cancel, completed| {
+            let input::Input { request, selection } = input.value();
             let frames = session.value().export_frames(
-                &request,
+                request,
                 selection.first,
                 selection.last,
                 &cancel,

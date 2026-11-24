@@ -71,6 +71,21 @@ pub(crate) struct Session {
     pub request: Request,
 }
 
+/// Measures dynamic children of an existing Designer worker request.
+///
+/// # Arguments
+/// * `request` - Actual parsed request with its current source/edit capacities.
+///
+/// # Returns
+/// Child storage only; the containing Session or worker owner counts Request's
+/// fixed layout. No scientific operation, clone or application admission occurs.
+///
+/// # Errors
+/// Checked payload overflow from the existing owner-local request traversal.
+pub(crate) fn request_children(request: &Request) -> Result<RetainedResources, String> {
+    retention::request_children(request)
+}
+
 /// Measures one immutable Designer record/design already retained by a capture.
 ///
 /// # Arguments
@@ -542,6 +557,9 @@ impl Session {
 
 #[cfg(test)]
 mod admission_tests;
+
+#[cfg(test)]
+mod worker_input_tests;
 
 #[cfg(test)]
 mod tests {

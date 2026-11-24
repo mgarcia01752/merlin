@@ -61,6 +61,96 @@ fn ready(owner: &MeasurementInputsRust) -> &SharedPrepared {
     prepared
 }
 
+#[test]
+fn parsed_export_input_rejection_after_session_copy_preserves_exact_ready_owner() {
+    let (mut owner, document) = prepared_owner();
+    let budget = owner.context.application.budget().clone();
+    let original = Arc::clone(ready(&owner));
+    let before = budget.usage();
+    let copied_session = owner.designer_copy().unwrap();
+    let copy_charge = copied_session.fixture_reserved_resources();
+    drop(copied_session);
+    // Admit the exact Session copy, leaving no byte allowance for its separately
+    // parsed Request/Selection input. This exercises the later input gate.
+    let pressure = budget
+        .reserve_resources(RetainedResources {
+            payload_bytes: usize::MAX - before.payload_bytes - copy_charge.payload_bytes,
+            ..Default::default()
+        })
+        .unwrap();
+    let full = budget.usage();
+    let admitted_copy = owner
+        .designer_copy()
+        .expect("Session copy fits this later gate");
+    assert_eq!(budget.usage().payload_bytes, usize::MAX);
+    drop(admitted_copy);
+    assert!(
+        lifecycle::prepare(&mut owner, &document, SELECTION, |_task| panic!(
+            "Rejected parsed input cannot spawn"
+        ))
+        .is_err()
+    );
+    assert!(Arc::ptr_eq(ready(&owner), &original));
+    assert_eq!(budget.usage(), full);
+    drop(pressure);
+    assert_eq!(budget.usage(), before);
+    drop(owner);
+    assert_eq!(budget.usage(), original.fixture_reserved_resources());
+    drop(original);
+    assert_eq!(budget.usage(), RetainedResources::default());
+}
+
+#[test]
+fn detached_export_preparation_retains_parsed_input_after_gui_cancel_and_disposal() {
+    let (mut owner, document) = prepared_owner();
+    let budget = owner.context.application.budget().clone();
+    let before = budget.usage();
+    let input = input::Input {
+        request: serde_json::from_str(&document).unwrap(),
+        selection: serde_json::from_str(SELECTION).unwrap(),
+    }
+    .admit(&budget)
+    .unwrap();
+    let input_charge = input.fixture_reserved_resources();
+    drop(input);
+    let session = owner.designer_copy().unwrap();
+    let session_charge = session.fixture_reserved_resources();
+    drop(session);
+    let expected = RetainedResources {
+        payload_bytes: input_charge.payload_bytes + session_charge.payload_bytes,
+        ordered_entries: input_charge.ordered_entries + session_charge.ordered_entries,
+        shared_roots: input_charge.shared_roots + session_charge.shared_roots,
+    };
+    let held = RefCell::new(None);
+    lifecycle::prepare(&mut owner, &document, SELECTION, |task| {
+        held.replace(Some(task));
+        Ok(())
+    })
+    .unwrap();
+    let total = budget.usage();
+    assert_eq!(
+        total,
+        RetainedResources {
+            payload_bytes: before.payload_bytes + expected.payload_bytes,
+            ordered_entries: before.ordered_entries + expected.ordered_entries,
+            shared_roots: before.shared_roots + expected.shared_roots,
+        }
+    );
+    let Some(State::Working { cancel, .. }) = &owner.designer_export else {
+        panic!("Actual pending export worker");
+    };
+    cancel.store(true, Ordering::Relaxed);
+    assert_eq!(budget.usage(), total);
+    drop(owner);
+    assert_eq!(budget.usage(), expected);
+    // Execute the genuine cancelled operation on a native thread after its GUI
+    // and terminal receiver are gone; failed delivery must drop both inputs.
+    std::thread::spawn(held.into_inner().unwrap())
+        .join()
+        .unwrap();
+    assert_eq!(budget.usage(), RetainedResources::default());
+}
+
 #[derive(Clone, Copy)]
 enum Dimension {
     Payload,

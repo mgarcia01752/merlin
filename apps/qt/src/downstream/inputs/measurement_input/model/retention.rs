@@ -143,6 +143,23 @@ pub(super) fn resources(model: &Model) -> Result<RetainedResources, String> {
     for capture in [draft_response, accepted_response].into_iter().flatten() {
         count::append(&mut total, capture_children(capture)?)?;
     }
+    count::append(&mut total, options_children(options)?)?;
+    Ok(total)
+}
+
+/// Measures every dynamic Options child without counting its containing fixed value.
+///
+/// # Arguments
+/// * `options` - Existing playback choices with their actual owned capacities.
+///
+/// # Returns
+/// Owned interval capacity and selected Vec/String storage only. Borrowed Cow
+/// text is non-owning; current options add no ordered entries or shared roots.
+///
+/// # Errors
+/// Checked capacity/byte arithmetic; no selection, value or capacity is changed.
+pub(super) fn options_children(options: &Options) -> Result<RetainedResources, String> {
+    let mut total = RetainedResources::default();
     let Options {
         mode,
         interval_symbols,

@@ -128,6 +128,23 @@ pub(super) fn session_resources(session: &Session) -> Result<RetainedResources, 
     for origin in origins {
         count::append(&mut total, origin_children(origin)?)?;
     }
+    count::append(&mut total, request_children(request)?)?;
+    Ok(total)
+}
+
+/// Measures every dynamic Request child without counting its containing fixed value.
+///
+/// # Arguments
+/// * `request` - Actual parsed source/recipe owner; spare capacities are preserved.
+///
+/// # Returns
+/// Source String and recipe child capacities only; no entries or shared roots
+/// belong to the current Request fields. Values and capacities are unchanged.
+///
+/// # Errors
+/// Checked byte arithmetic from the existing source and recipe visitors.
+pub(super) fn request_children(request: &Request) -> Result<RetainedResources, String> {
+    let mut total = RetainedResources::default();
     let Request {
         source,
         capture_count,

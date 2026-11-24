@@ -4275,3 +4275,25 @@ or generic framework changes. Work request/hash/options/control/error envelopes,
 fixed infrastructure and retained QML remain separate pending owners. Relevant
 Rust/Qt/QML, Clippy/format/boundary/traceability and fresh executable validation
 precede the focused commit; unchanged native science needs no wheel rebuild.
+
+
+### UIU-SESSION-01 retained Designer worker inputs
+
+REQ-UIU-03/06/07 and the open UIU-SESSION-01 also cover independent parsed
+requests and persistent selection snapshots retained by generation/export workers.
+The [source-only child handoff](agent-handoffs/designer-worker-input-children.md)
+records the independently prepared extraction, separate from primary runtime.
+Reuse Request and Options child traversals from their existing Session/Model
+owners; preserve scientific validation, error wording, metadata and accepted state.
+
+| Path/symbol and disposition | Contract and focused acceptance |
+| --- | --- |
+| EDIT `downstream/inputs/measurement_input/designer.rs`, `designer/retention.rs`, `model.rs`, `model/retention.rs`; ADD focused child tests | Extract and forward app-private Request/Options child visitors; existing Session/Model accounting reuses them without double-counting fixed storage. Query actual capacities without cloning, serializing or constructing captures. Original numerical assertions remain. |
+| EDIT `bridge/rxmer_designer.rs`; ADD focused worker-input ownership module/tests | Admit concrete parsed request and GUI work selection snapshot before thread publication. Count actual hashes/profile text/options and preserve guard lifetime through stale/cancel/disconnect/target adoption. Independently retained worker input survives GUI disposal until actual thread completion. |
+| EDIT `bridge/rxmer_export/lifecycle.rs`; ADD concrete input ownership/tests | Admit parsed Request and fixed Selection together before spawning. Input rejection and spawn failure preserve prior Ready. Workers retain input guards until actual operation completion, including output construction/admission overlap. |
+
+No new memory framework or scientific/public API. Terminal error/Saved Value
+payloads, remaining control/closure/channel/fixed infrastructure and persistent QML
+remain distinct pending owners. Execute affected Designer/export/editor Rust/QML,
+Clippy/format/boundary and fresh executable checks; unchanged scientific/native
+APIs need no wheel rebuild. Complete SESSION Level 2/milestone gates stay open.

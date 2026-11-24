@@ -318,7 +318,9 @@ Designer-generated capture batches now retain their admitted storage while waiti
 for completion polling and editor staging. Cancelling, changing a baseline or
 rejecting a replacement because of the shared resource limit preserves the existing
 editor captures. Successful generation still stages a draft; use the existing
-parent Apply action to accept it. This change does not alter the recipe, measured
+parent Apply action to accept it. Parsed generation/export recipes and selection
+snapshots also remain admitted until their worker completes; cancellation keeps
+those charges while the worker is still finishing. This change does not alter the recipe, measured
 source data or export formats. Full unified-session acceptance remains pending.
 
 ## Help and chart details

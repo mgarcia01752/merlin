@@ -587,6 +587,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [generated capture-batch unit](features/unified-qt-workbench/validation.md#uiu-session-01-retained-designer-capture-batches) admits actual original/frame/Origin capacities before queueing. Its staging reservation survives until independent editor admission; cancellation, stale completion and all three target-limit rejections preserve the old editor. Focused runtime and initial fixture-baseline correction are recorded there. Worker envelopes, retained presentation/fixed infrastructure and full SESSION acceptance remain pending; keep this parent unchecked.
 
+  The [worker-input unit](features/unified-qt-workbench/validation.md#uiu-session-01-retained-designer-worker-inputs) independently admits parsed recipe/selection data and persistent generation snapshots before thread publication. Input guards survive detached completion and output admission; later input rejection preserves the prior Ready owner. Source/actual-consumer evidence and remaining terminal/presentation/infrastructure gates are linked there. Keep this parent unchecked.
+
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
   Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).

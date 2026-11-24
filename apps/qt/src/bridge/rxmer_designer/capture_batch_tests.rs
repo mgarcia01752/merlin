@@ -56,14 +56,21 @@ fn actual_queued_batch_is_charged_until_cancel_or_stale_completion_disposes_it()
     for cancelled in [true, false] {
         let captures = batch(&session, &budget);
         let original = Arc::downgrade(&captures.value()[0].original);
-        let expected = budget.usage();
         let (sender, receiver) = mpsc::sync_channel(DESIGNER_CAPTURE_QUEUE_CAPACITY);
         let mut work = super::tests::work(&session, Options::default());
         work.receiver = receiver;
         work.cancel.store(cancelled, Ordering::Relaxed);
         if !cancelled {
-            work.profile_hash.clear();
+            work.selection = worker_inputs::SelectionSnapshot {
+                hashes: session.hashes.clone(),
+                profile_hash: String::new(),
+                options: Options::default(),
+                imported: true,
+            }
+            .admit(&budget)
+            .unwrap();
         }
+        let expected = budget.usage();
         sender.send(Ok(captures)).unwrap();
         drop(sender);
         assert_eq!(budget.usage(), expected);

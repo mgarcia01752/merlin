@@ -4035,3 +4035,31 @@ workspace, unrelated CLI or packaging run was required. Worker input/control/err
 and Saved completion envelopes, retained QML and fixed infrastructure remain pending.
 UIU-SESSION-01 stays unchecked until its complete Level 2 and applicable milestone/
 final Level 3 gates pass. Completed downstream history is preserved.
+
+
+## UIU-SESSION-01 retained Designer worker inputs
+
+The [focused design](design.md#uiu-session-01-retained-designer-worker-inputs)
+reuses the existing Request/Options child traversals while independently admitting
+parsed generation recipes and persistent selection snapshots. Export preparation
+admits parsed Request/fixed Selection together before thread publication. Inputs
+remain charged through detached execution and final output admission; cancellation
+requests alone release nothing. Existing metadata, errors, selection remapping,
+scientific behavior and previous Ready rollback remain compatible.
+
+[Primary execution record](session-designer-worker-input-evidence.json) records
+57 passing Rust cases, 17 QML behaviors/four hooks, all-target Clippy, formatting/
+final boundary, optimized build and six fresh desktop probes. Actual consumer
+cases exercise exact-headroom input rejection after the Session copy fits and
+cancelled generation/export finishing after GUI disposal. The detached export
+case compares independently measured Session and input charges, including actual
+thread completion. Child tests independently anchor actual spare capacities and
+borrowed text. Source-only preparation/review remain distinct from primary runtime;
+no official parent checkbox changes. Documentation/traceability joins the receipt.
+
+Science/API/bindings, saved schema, dependencies and registration are unchanged;
+exact native scientific evidence is reused without a new wheel or Python/full
+root workspace/unrelated CLI/packaging execution. Terminal error/Saved payloads,
+remaining control/closure/channel/fixed infrastructure and persistent QML still
+require closure. Complete SESSION Level 2 and applicable milestone/final Level 3
+acceptance remain pending, preserving completed downstream history.

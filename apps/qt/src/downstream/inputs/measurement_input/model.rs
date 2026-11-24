@@ -34,6 +34,24 @@ pub(crate) struct Options {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub selected_captures: Option<Vec<String>>,
 }
+
+/// Measures dynamic children of existing Designer playback options.
+///
+/// # Arguments
+/// * `options` - Actual parsed interval and selected original-capture identities.
+///
+/// # Returns
+/// Child storage only; the containing Model or worker snapshot counts Options'
+/// fixed layout. Borrowed interval text owns no payload storage.
+///
+/// # Errors
+/// Checked payload overflow without changing options, selections or capacities.
+pub(crate) fn options_children(
+    options: &Options,
+) -> Result<crate::shell::RetainedResources, String> {
+    retention::options_children(options)
+}
+
 impl Default for Options {
     fn default() -> Self {
         Self {
