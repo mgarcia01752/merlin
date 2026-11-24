@@ -4945,3 +4945,15 @@ category. C6 still requires the complete existing session/milestone gates.
 The [isolated native probe handoff](agent-handoffs/presentation-native-probe.md)
 records source preparation only; primary registration and actual VM execution
 provide acceptance. The launcher requires a fresh ignored screenshot path.
+
+
+### UIU-SESSION-01 final closure
+
+The [C6 integrated receipt](session-acceptance-evidence.json) and
+[validation](validation.md#uiu-session-01-integrated-acceptance) close the frozen
+C1–C6 list with unchanged scientific/compatibility contracts. Independent native
+direction owners, serialized lifecycle and approved resource contracts now pass
+the complete applicable acceptance gates. Source-only preparation and historical
+frontier descriptions do not override this current result. Persistent visible
+tabs and action routing remain UIU-SHELL-01; no additional SESSION infrastructure
+is authorized by this closure.

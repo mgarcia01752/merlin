@@ -1520,6 +1520,14 @@ Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](de
 
 ### Unified Qt session and file lifecycle
 
+**Current status:** [SESSION integrated acceptance](development/features/unified-qt-workbench/validation.md#uiu-session-01-integrated-acceptance)
+closes the frozen C1–C6 conditions with actual native direction/lifecycle,
+retention and compatibility evidence. Earlier focused-unit frontier descriptions
+below are checkpoint history. The native owners are implemented; persistent
+visible tabs and direction-scoped shell actions remain UIU-SHELL-01. Unified
+Qt project/recovery adoption and final platform/numeric gates retain their
+separate official tasks.
+
 Accepted user choices: **one active run across both tabs initially** and
 **Save the active direction's project**. Each direction owns configuration,
 inputs, accepted generation, session, run identity, worker control, results,
@@ -1788,7 +1796,7 @@ candidate preserves its observation and context. Native lifecycle controls remai
 live, successful Apply/Save remains successful, and indexed native actions wait
 for a fresh synchronized catalog after rejected staging. See the [C5 owner map](development/features/unified-qt-workbench/design.md#uiu-session-01-c5-existing-persistent-presentation-owners)
 and [consumer validation](development/features/unified-qt-workbench/validation.md#uiu-session-01-persistent-presentation-admission).
-Complete SESSION acceptance remains the existing C6 gate.
+The [C6 integrated receipt](development/features/unified-qt-workbench/validation.md#uiu-session-01-integrated-acceptance) closes SESSION acceptance; visible shell adoption remains separate.
 
 The [retained-root metadata prerequisite](development/features/unified-qt-workbench/design.md#uiu-session-01-public-retained-root-metadata-prerequisite)
 uses a typed `RetainedFootprint` in the independent `merlin-api` leaf, re-exported

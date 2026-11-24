@@ -4663,3 +4663,43 @@ are unchanged, so C5 does not rebuild a wheel or repeat unrelated core suites.
 C6 separately executes the complete applicable session/milestone gates. SESSION
 remains unchecked until C6; tabs/actions and the final numeric audit remain with
 their existing tasks. No new requirement or closure row was introduced.
+
+
+## UIU-SESSION-01 integrated acceptance
+
+The [frozen C1–C6 list](session-closure.md) is complete. The
+[exact primary receipt](session-acceptance-evidence.json) closes C6 using the
+unchanged accepted C5 implementation, with no new requirement, accounting
+category, scientific API or defensive refactor. Complete Qt coverage demonstrates
+independent native direction ownership and actual engines sharing the one-run
+gate through pause/cancel, exact callback identities, stale rejection,
+accepted/partial-result preservation, errors/panics/destruction and final owner
+release. C1–C5 receipts preserve each focused implementation's evidence/history.
+
+The current `scripts/test-local.sh all` gate passes full workspace, doctests,
+preparation/API examples and analysis-only tests; exact phase pass/skip counts
+are in the receipt. Existing opt-in ignored cases remain identified, with no
+new skip or tolerance change. The analysis-only build retains its existing
+unused timing-helper warning; no suppression or scientific change was added.
+Full workspace all-target Clippy with warnings
+denied and formatting pass. All 203 installed native Python tests execute and
+pass without skips. The accepted wheel/native hash and entire backend/binding
+source tree are verified unchanged; existing independent Rust reference outputs
+are explicitly reused, without a wheel rebuild or fresh-reference claim.
+
+C5's complete 416 Qt Rust cases, eleven QML suites (163 pass records including
+initialization/cleanup), optimized executable, six native VM probes and actual
+Apply/Help pressure/recovery remain valid: all recorded Qt source and executable
+hashes are unchanged. Those suites were executed once on this implementation;
+C6 reuses that exact evidence rather than repeating complete regressions.
+Current root/installed native suites also exercise CLI/project compatibility;
+the C4 actual UI-saved Rust/native file record remains valid with unchanged
+writer/schema. All 25 existing packaging resource/unit contracts pass. This
+establishes no installed Windows/MSI/DEB, UAC or remote publication claim.
+
+The official checklist now accepts SESSION. Earlier unit statements naming
+remaining frontiers are checkpoint history, superseded by this integrated
+receipt. Persistent visible tabs and active-direction actions are still
+UIU-SHELL-01, followed in dependency order; no UI implementation is claimed
+from native session tests. Final numeric audit, unified project/recovery UI,
+complete final integration and platform gates remain with their existing tasks.
