@@ -4376,3 +4376,40 @@ The original-path registry is the next independently prepared owner. Remaining
 outer runtime/transport, loader/path and GUI metadata, pending channel/QML policy,
 complete SESSION Level 2 and final Level 3 gates remain open. This evidence does
 not check the parent SESSION task.
+
+
+## UIU-SESSION-01 original source-path ownership
+
+The [focused design](design.md#uiu-session-01-original-source-path-ownership)
+replaces the thread-global source-path set with one charged canonical-host
+registry. Save/recovery checks the union of direction flags. Successful guarded
+downstream Open/New clears only downstream ownership; rejected/stale/cancelled
+adoption preserves protection. All current importers remain downstream and still
+register successful bounded reads before scientific/editor staging. Original
+bytes, saved JSON and atomic-write validation/behavior remain unchanged.
+
+The [primary receipt](session-source-path-admission-evidence.json) separates
+source-only `ff66f8e` preparation from actual integration on `cfbc83f`. All 359
+Qt Rust tests pass, including nine new cases. Actual registry/record layouts,
+spare PathBuf capacity, byte/root/entry rejection, cap/duplicate union, foreign
+budget, final aliases and constructor prefixes are covered. Three original core
+roots remain independently checked; the new registry adds a measured fourth.
+Canonical symlink reads pass on this Unix host, independent hosts stay isolated,
+actual Save refuses protected originals, successful Open/New preserves shared
+upstream flags, and old stale/foreign/late-readiness rejections preserve paths.
+The old loader-pressure fixture now registers its original before exhausting
+bytes so its original loader boundary remains meaningful. Every original
+scientific/status/previous-result assertion remains; no Windows runtime claim.
+
+The full Qt binary ran once because its canonical constructor baseline changed.
+Qt all-target Clippy, formatting, final API boundary and optimized build pass;
+six fresh desktop probes pass with empty stderr. Read-only QA found no concrete
+source defect and ran no duplicate suites. Sixteen accepted scientific/native
+API sources and standalone QML/test inputs are hash/byte-identical: prior parity,
+installed-wheel and QML results are explicitly reused without rerun claims.
+No complete scientific workspace, Python wheel, unrelated CLI/package or repeated
+standalone QML suite was required. Final/milestone gates remain intact.
+
+Persistent direction-model metadata is the next finite owner. Other fixed
+runtime/transport, loader paths, persistent QML, pending channel/QML decisions,
+complete SESSION Level 2 and final Level 3 remain open; SESSION stays unchecked.

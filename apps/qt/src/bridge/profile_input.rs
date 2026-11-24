@@ -222,13 +222,18 @@ impl bridge::ProfileInput {
     /// # Returns
     /// Preview JSON or a diagnostic preserving the previous draft and accepted input.
     pub fn stage(mut self: core::pin::Pin<&mut Self>, url: &QString) -> QString {
-        let result = crate::platform::input_file::read_local(&url.to_string(), MAX_INPUT_BYTES)
-            .and_then(|(name, bytes)| {
-                let mut candidate = self.rust().model.clone();
-                let preview = candidate.stage_bytes(name, bytes)?;
-                self.as_mut().rust_mut().replace_model(candidate)?;
-                Ok(preview)
-            });
+        let result = crate::platform::input_file::read_local(
+            &self.rust().context.application,
+            crate::shell::Direction::Downstream,
+            &url.to_string(),
+            MAX_INPUT_BYTES,
+        )
+        .and_then(|(name, bytes)| {
+            let mut candidate = self.rust().model.clone();
+            let preview = candidate.stage_bytes(name, bytes)?;
+            self.as_mut().rust_mut().replace_model(candidate)?;
+            Ok(preview)
+        });
         response(result)
     }
     /// Opens the OS picker without a Qt fallback; cancellation keeps the draft.

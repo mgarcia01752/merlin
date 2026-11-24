@@ -607,7 +607,9 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   [Offline help catalog lifetime](features/unified-qt-workbench/validation.md#uiu-session-01-offline-help-catalog-lifetime) passes 14 distinct Qt Rust cases (one strengthened exact-source boundary rerun) and six fresh desktop probes. The permanent parsed heap cache is removed; original help output, numeric context and retained Diagnostic accounting remain. The separately recorded queued-failure integration is now validated; other owners and complete SESSION acceptance remain pending.
 
-  Next independent owner: [original source-path registry](features/unified-qt-workbench/design.md#uiu-session-01-original-source-path-ownership), with explicit host/direction, actual capacities and unchanged source-overwrite protection. Constructor rollback, fixed-host/Stores baselines and project/import consumers require integrated validation; do not mark SESSION complete.
+  [Original source-path ownership](features/unified-qt-workbench/validation.md#uiu-session-01-original-source-path-ownership) passes all 359 Qt Rust cases and six fresh desktop probes. Exact registry/record capacities, fourth-root constructor rollback, unchanged three-root core, actual symlink imports, protected Save and direction-local successful Open/New pass. Previous results, original bytes and project schema remain; other paths/metadata and full SESSION acceptance stay open.
+
+  Subsequent finite owner: [persistent direction-model metadata](features/unified-qt-workbench/design.md#uiu-session-01-persistent-direction-model-metadata). Reuse the admitted failure owner for GUI error/Diagnostic pointees, borrow static notices and charge actual receiver-options children before configuration/project adoption. Source preparation and primary acceptance remain pending; outer fixed layouts, transport, loader paths and persistent QML remain separate.
 
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.

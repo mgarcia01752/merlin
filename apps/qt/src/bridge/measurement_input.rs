@@ -353,7 +353,12 @@ impl MeasurementInputsRust {
         let mut captures = Vec::new();
         let mut total = 0usize;
         for url in urls {
-            let (name, bytes) = crate::platform::input_file::read_local(&url, MAX_INPUT_BYTES)?;
+            let (name, bytes) = crate::platform::input_file::read_local(
+                &self.context.application,
+                crate::shell::Direction::Downstream,
+                &url,
+                MAX_INPUT_BYTES,
+            )?;
             total = total
                 .checked_add(bytes.len())
                 .ok_or("Input byte count overflow.")?;

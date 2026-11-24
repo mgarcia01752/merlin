@@ -227,7 +227,9 @@ impl PreparedProject {
             .commit_prepared_generation(key);
         *context.result.borrow_mut() = None;
         crate::downstream::instruments::receiver::performance::clear(context);
-        crate::platform::input_file::clear_original_paths();
+        context
+            .application
+            .clear_input_paths(crate::shell::Direction::Downstream);
         context
             .prepared
             .with(|prepared| *prepared.borrow_mut() = self.models);

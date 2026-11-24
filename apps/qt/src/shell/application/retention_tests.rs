@@ -20,8 +20,11 @@ const PROBE_LIMITS: RetainedResources = RetainedResources {
     shared_roots: usize::MAX,
 };
 
-// Accounting, GateStorage and Sessions each own one actual shared allocation.
-const FIXED_HOST_ROOTS: usize = 3;
+// Preserve the three original accounting/gate/Sessions roots independently.
+const CORE_HOST_ROOTS: usize = 3;
+
+// The source registry adds one distinct fixed root without changing the core.
+const FIXED_HOST_ROOTS: usize = CORE_HOST_ROOTS + 1;
 
 // One terminal fits the existing bounded worker channel without a data callback.
 const CALLBACK_CAPACITY: usize = 1;
@@ -63,10 +66,24 @@ fn fixed_parts() -> (RetainedResources, RetainedResources, RetainedResources) {
     );
     assert_eq!(accounting.ordered_entries, 0);
     assert_eq!(accounting_and_gate.ordered_entries, 0);
-    let full = add(
+    let core = add(
         accounting_and_gate,
         resources(size_of::<Retained<Mutex<Sessions>>>(), 1),
     );
+    assert_eq!(core.shared_roots, CORE_HOST_ROOTS);
+    let registry = InputPaths::new(&budget).unwrap();
+    let with_registry = budget.usage();
+    let registry_resources = RetainedResources {
+        payload_bytes: with_registry.payload_bytes - accounting_and_gate.payload_bytes,
+        ordered_entries: with_registry.ordered_entries - accounting_and_gate.ordered_entries,
+        shared_roots: with_registry.shared_roots - accounting_and_gate.shared_roots,
+    };
+    assert!(registry_resources.payload_bytes > 0);
+    assert_eq!(registry_resources.ordered_entries, 0);
+    assert_eq!(registry_resources.shared_roots, 1);
+    let full = add(core, registry_resources);
+    drop(registry);
+    assert_eq!(budget.usage(), accounting_and_gate);
     drop(gate);
     assert_eq!(budget.usage(), accounting);
     (accounting, accounting_and_gate, full)
@@ -80,7 +97,7 @@ fn configure(host: &ApplicationSessions, direction: Direction) -> SessionKey {
 }
 
 #[test]
-fn host_counts_full_sessions_once_with_exact_three_root_zero_entry_admission() {
+fn host_counts_three_core_roots_and_one_registry_without_inline_double_count() {
     let (_, _, full) = fixed_parts();
     assert_eq!(full.shared_roots, FIXED_HOST_ROOTS);
     assert_eq!(full.ordered_entries, 0);
@@ -119,10 +136,15 @@ fn production_constructor_rolls_back_every_partial_prefix_on_byte_or_root_reject
         .checked_add(downstream)
         .unwrap();
     let after_upstream = after_downstream.checked_add(upstream).unwrap();
+    let after_sessions = accounting_and_gate
+        .payload_bytes
+        .checked_add(size_of::<Retained<Mutex<Sessions>>>())
+        .unwrap();
     for payload_bytes in [
         accounting_and_gate.payload_bytes - 1,
         after_downstream - 1,
         after_upstream - 1,
+        after_sessions - 1,
         full.payload_bytes - 1,
     ] {
         let budget = RetentionBudget::for_application(RetainedResources {

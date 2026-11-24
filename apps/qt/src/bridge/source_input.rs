@@ -132,6 +132,8 @@ impl bridge::SourceInput {
                 .and_then(|url| {
                     if let Some(url) = url {
                         let (name, bytes) = crate::platform::input_file::read_local(
+                            &self.rust().context.application,
+                            crate::shell::Direction::Downstream,
                             &url,
                             merlin::downstream::SourceInput::file_limits().max_original_bytes,
                         )?;

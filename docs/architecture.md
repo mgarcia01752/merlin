@@ -1813,11 +1813,19 @@ cache. Embedded source data and existing message/Diagnostic contracts remain
 unchanged, with [focused evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-offline-help-catalog-lifetime).
 Returned diagnostics and persistent GUI copies remain separate owners.
 
-The next [original-path registry unit](development/features/unified-qt-workbench/design.md#uiu-session-01-original-source-path-ownership)
-will scope imported source protection to the canonical host, charge actual path
-records and retain independent direction ownership. Save checks the host union;
-successful Open releases only its direction's records. Existing downstream
-inputs/project schema remain unchanged; integrated acceptance is pending.
+The [original-path registry](development/features/unified-qt-workbench/design.md#uiu-session-01-original-source-path-ownership)
+scopes source protection to the canonical host and charges actual path records.
+Its guarded shared registry is a fourth host root, separate from the unchanged
+counter/gate/Sessions core. Save checks both direction flags; successful guarded
+downstream Open/New clears only downstream ownership. Existing inputs, project
+encoding and atomic writes remain compatible, with [primary evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-original-source-path-ownership).
+Other loader/project path copies and complete SESSION acceptance remain pending.
+
+The next [persistent model metadata unit](development/features/unified-qt-workbench/design.md#uiu-session-01-persistent-direction-model-metadata)
+will reuse admitted application failures for GUI error/Diagnostic pointees and
+bound the receiver options' actual dynamic children. Prepared project transfers
+must cover those owners on the target budget before changing host state.
+Implementation and primary validation remain pending.
 
 The [pre-production archive pair](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds)
 computes exact detached target quantities and checks every limit before copying.

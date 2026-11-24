@@ -13,3 +13,7 @@ pub(super) const MAX_SESSION_ORDERED_ENTRIES: usize = 1_000_000;
 
 /// Independent population limit for retained shared allocation owner edges.
 pub(super) const MAX_SESSION_SHARED_ROOTS: usize = 65_536;
+
+/// Existing distinct original-source protection cap, shared by both directions.
+/// This is a host path-inventory policy, separate from configuration/error text limits.
+pub(super) const MAX_ORIGINAL_SOURCE_PATHS: usize = 4096;

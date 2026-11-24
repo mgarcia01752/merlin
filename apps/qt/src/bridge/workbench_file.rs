@@ -199,7 +199,7 @@ impl bridge::WorkbenchFile {
                 comparison_enabled: verified,
                 dark,
             };
-            project.write(&recovery_path()?)
+            project.write(&recovery_path()?, &self.rust().context.application)
         };
         QString::from(
             match save() {
@@ -332,7 +332,7 @@ impl bridge::WorkbenchFile {
                 comparison_enabled: verified,
                 dark,
             };
-            project.write(&destination)?;
+            project.write(&destination, &self.rust().context.application)?;
             Ok(Some(destination))
         };
         let result = match save() {

@@ -295,6 +295,9 @@ The same protection applies to New: a failed blank-workbench admission preserves
 the current project, editor state and Save destination. Opening or modifying an
 input editor can also report a retained-data limit; its previous accepted input
 remains available. New keeps the current light/dark appearance choice.
+Original-input protection belongs to this application host. Save protects originals
+still owned by either direction; successful Open/New releases only the replaced
+direction's protection after self-contained project adoption succeeds.
 RxMER export preparation also keeps its previous ready snapshot when replacement
 admission or worker startup fails; cancelled replacement work restores it after
 the worker stops.

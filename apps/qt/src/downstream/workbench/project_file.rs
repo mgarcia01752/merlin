@@ -170,14 +170,19 @@ impl<Sections: Borrow<BTreeMap<String, Value>> + Serialize> Project<Sections> {
     /// Atomically writes one reviewed workbench destination using a private sibling file.
     /// # Arguments
     /// * `path` - Explicit user-selected project destination.
+    /// * `application` - Actual saving host; both directions protect originals.
     /// # Returns
     /// Unit after sync and atomic rename; old contents survive serialization/write failure.
     /// # Errors
     /// Rejects invalid configuration before writing; also reports serialization,
     /// file-size, filesystem or nonregular destination errors.
-    pub(crate) fn write(&self, path: &Path) -> Result<(), String> {
+    pub(crate) fn write(
+        &self,
+        path: &Path,
+        application: &crate::shell::ApplicationSessions,
+    ) -> Result<(), String> {
         self.validate()?;
-        if crate::platform::input_file::is_original(path) {
+        if crate::platform::input_file::is_original(application, path) {
             return Err("Project Save cannot overwrite an imported original input.".into());
         }
         if path.exists()
@@ -284,7 +289,8 @@ mod tests {
             "selection-roundtrip-{}.merlin.json",
             std::process::id()
         ));
-        project.write(&destination).unwrap();
+        let application = crate::shell::ApplicationSessions::desktop().unwrap();
+        project.write(&destination, &application).unwrap();
         let saved = std::fs::read(&destination).unwrap();
         let loaded: Project = serde_json::from_slice(&saved).unwrap();
         assert_eq!(
@@ -292,7 +298,7 @@ mod tests {
             Some(vec![1, 3])
         );
         project.receiver.as_mut().unwrap().selected_profile_ids = Some(vec![15]);
-        assert!(project.write(&destination).is_err());
+        assert!(project.write(&destination, &application).is_err());
         assert_eq!(std::fs::read(&destination).unwrap(), saved);
         std::fs::remove_file(&destination).unwrap();
         project.receiver.as_mut().unwrap().selected_profile_ids = Some(vec![1, 3]);
@@ -517,12 +523,13 @@ mod tests {
             .join("../../docs/development/local/qt-closed-loop");
         std::fs::create_dir_all(&root).unwrap();
         let path = root.join(format!("roundtrip-{}.merlin.json", std::process::id()));
-        project.write(&path).unwrap();
-        project.write(&path).unwrap();
+        let application = crate::shell::ApplicationSessions::desktop().unwrap();
+        project.write(&path, &application).unwrap();
+        project.write(&path, &application).unwrap();
         let loaded: Project = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
         loaded.validate().unwrap();
         std::fs::remove_file(path).unwrap();
-        assert!(project.write(&root).is_err());
+        assert!(project.write(&root, &application).is_err());
     }
 }
 

@@ -4677,3 +4677,49 @@ contracts remain unchanged. Expand tests across fixed host/Stores, actual
 imports/project Save/Open/recovery, both direction isolation and original-input
 survival; keep source-only checks separate. This does not accept pending loader
 path/GUI copies, channel/QML policy, remaining runtime owners or complete SESSION.
+
+The [source-only handoff](agent-handoffs/source-path-admission.md) records frozen
+`ff66f8e`. The [primary receipt](session-source-path-admission-evidence.json) and
+[validation](validation.md#uiu-session-01-original-source-path-ownership) record
+all 359 current Qt Rust cases and six fresh desktop probes passing. The complete
+Qt run is justified by the changed canonical host baseline, with no duplicate
+scientific workspace, wheel or standalone QML run. Complete SESSION stays open.
+
+### UIU-SESSION-01 persistent direction-model metadata
+
+This finite REQ-UIU-03/06/07 unit covers the already inventoried direction-model
+error/Diagnostic/options owners. Read-only QA confirms that reusing the existing
+boxed `WorkerFailure` is safe and simpler than a new GUI accounting abstraction.
+The outer Model owns its inline enum/Box handle; the independently allocated
+retained error pointee and reachable actual capacities are charged exactly once.
+No public scientific/native API, QML registration, saved schema or algorithm changes.
+
+| Path and symbol | Current contract and evidence | Requirement gap | Decision / destination |
+| --- | --- | --- | --- |
+| EDIT `apps/qt/src/shared/worker_failure.rs` and focused adjacent tests | Existing admitted boxed error/Diagnostic payload, borrowed fallback and actual graph walker. | GUI persistence and host transfer need the same concrete owner. | REUSE with only concrete private default, ownership-check and checked actual-copy/rebind operations as needed. No new generic accounting framework. |
+| EDIT `downstream/simulation/closed_loop.rs`, `closed_loop/lifecycle.rs` and adjacent tests | Persistent error String and optional Diagnostic survive callbacks/configuration. Several message replacements intentionally retain old help. | Independent GUI copies currently lose queued/backend coverage after disposal. | ADAPT to the existing failure owner. Move queued data when semantics permit; otherwise admit actual message/help copies while their sources remain covered. Preserve old Diagnostic for message-only changes when admission fits. Reset with borrowed empty text. |
+| EDIT `downstream/simulation/closed_loop/request.rs`, focused options metadata/tests | Current Options contains selected-profile Vec and optional Echoes path Vec; remaining current leaves are fixed. | Accepted options are independent copies of request/plan data. | REUSE actual-capacity vector helpers and checked addition for children only. Keep original Option/Options fixed fields in the outer Model; add a final child reservation. Audit all current variants/fields explicitly, measure actual clones and preserve JSON. |
+| EDIT `downstream/workbench/project_load.rs`, target/admission fixtures and prepared-target lifecycle hooks | Prepared receiver assigns cloned options before target scientific preflight. | Options/error guards must belong to the exact target, including incomplete projects. | ADAPT target-budget preparation before queue/adoption. Check budget identity; cross-host copies admit on the destination before Context/generation swaps. Rejection preserves original options, request/report, host key and Save state. |
+| EDIT `downstream/instruments/transmitter/preview.rs` and adjacent tests | GUI error persists independently of queued failure; completion/cancellation notices are static literals copied into String. | The copied error needs its own coverage; notice allocation is unnecessary. | REUSE WorkerFailure for errors, borrow static notices and empty resets. Preserve status/message precedence, original source/result/revision and target/rebind rejection behavior. |
+| EDIT `upstream/workbench/mod.rs`, `presentation.rs`, preparation/tests as required | Persistent GUI error copies use the existing bounded character policy. | Queued/terminal source guards do not cover a later independent GUI String. | REUSE admitted failure owner, moving eligible preparation failures and admitting borrowed-terminal copies before disposal. Preserve bounded text, category at the original terminal, controller/report and lifecycle semantics. |
+| EDIT `bridge/closed_loop.rs` and focused bridge tests | Apply retains a separate admission Diagnostic outside Model. | Model's error guard cannot cover this independent owner. | REUSE the same concrete failure owner for the actual Apply error/help; admission_help returns unchanged Diagnostic/null JSON. Clear with borrowed empty text. No qinvokable/signature changes. |
+
+For normal status updates, rejected detail admission drops the unadmitted copy
+and uses the existing static fallback without inventing help; completed science
+still publishes and previous accepted results remain. Message-only updates retain
+prior help when admitted; fallback has no Diagnostic. A project/host transfer is
+stricter: failed target coverage returns an error before replacing source owners
+or Context, rather than silently accepting a fallback. Clear must release owned
+capacity, not call String::clear while releasing its guard. Options guards follow
+their covered inline data; fixed Model layouts remain a separate existing owner.
+
+Source preparation may continue only after freezing the original-path unit, on
+a separate preserved branch in the existing session worktree. Lead keeps primary
+adoption, canonical records, executed validation and acceptance commits. Verify
+each base file before importing; expand focused validation across all affected
+direction, bridge and actual project consumers. Test exact/spare/below capacity,
+source/target overlap, rejection and final drop, static resets, identical normal
+status/help JSON and rejected Apply/Open/host transfers. Do not alter scientific
+assertions to accommodate the accounting changes. Other runtime/transport,
+loader paths, persistent QML and pending policy answers remain outside this unit;
+complete SESSION and its Level 2/3 gates stay open.

@@ -34,7 +34,13 @@ fn populated() -> WorkbenchFileRust {
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../../examples/workbench/single/workbench.merlin.json");
     let url = QUrl::from_local_file(&QString::from(path.to_string_lossy().as_ref()));
-    crate::platform::input_file::read_local(&url.to_string(), PROJECT.len()).unwrap();
+    crate::platform::input_file::read_local(
+        &context.application,
+        Direction::Downstream,
+        &url.to_string(),
+        PROJECT.len(),
+    )
+    .unwrap();
     WorkbenchFileRust {
         context,
         path: Some(path),
@@ -69,7 +75,10 @@ fn rejected_new_with_only_empty_input_capacity_preserves_old_alias_editors_and_s
         key
     );
     assert_eq!(owner.path.as_ref(), Some(&path));
-    assert!(crate::platform::input_file::is_original(&path));
+    assert!(crate::platform::input_file::is_original(
+        &owner.context.application,
+        &path
+    ));
     assert_eq!(std::fs::read(&path).unwrap(), original);
     assert_eq!(&*session::saved_sections(&owner.context), &*saved);
     assert_eq!(
@@ -100,7 +109,10 @@ fn successful_new_transfers_all_blank_editors_under_full_pressure_and_preserves_
     assert_eq!(result["prepared"], true);
     assert!(result["dark"].is_null());
     assert!(owner.path.is_none());
-    assert!(!crate::platform::input_file::is_original(&path));
+    assert!(!crate::platform::input_file::is_original(
+        &owner.context.application,
+        &path
+    ));
     assert!(session::snapshot(&owner.context).source.is_none());
     assert!(session::saved_sections(&owner.context).is_empty());
     let usage = budget.usage();
@@ -142,4 +154,29 @@ fn successful_new_transfers_all_blank_editors_under_full_pressure_and_preserves_
         budget.usage(),
         crate::shell::ApplicationSessions::fixture_counter_resources()
     );
+}
+
+#[test]
+fn successful_new_releases_downstream_flags_but_preserves_shared_upstream_protection() {
+    let mut owner = populated();
+    let path = owner.path.clone().unwrap();
+    let application = owner.context.application.clone();
+    let upstream = application.snapshot(Direction::Upstream);
+    application
+        .register_input_path(Direction::Upstream, path.canonicalize().unwrap())
+        .unwrap();
+    let original = std::fs::read(&path).unwrap();
+    assert_eq!(owner.create_blank().unwrap()["created"], true);
+    assert!(owner.path.is_none());
+    assert!(crate::platform::input_file::is_original(
+        &application,
+        &path
+    ));
+    assert_eq!(application.snapshot(Direction::Upstream), upstream);
+    assert_eq!(std::fs::read(&path).unwrap(), original);
+    application.clear_input_paths(Direction::Upstream);
+    assert!(!crate::platform::input_file::is_original(
+        &application,
+        &path
+    ));
 }

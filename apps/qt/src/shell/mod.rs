@@ -8,6 +8,7 @@ mod application;
 mod constants;
 mod dispatch;
 mod identity;
+mod input_paths;
 mod retention;
 mod worker;
 

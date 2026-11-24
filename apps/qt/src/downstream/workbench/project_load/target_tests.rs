@@ -162,6 +162,11 @@ fn late_readiness_metadata_rejection_keeps_the_real_old_report_inputs_key_and_pe
         report.job.status,
         merlin::downstream::ChannelJobStatus::Complete
     );
+    let original = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml");
+    context
+        .application
+        .register_input_path(Direction::Downstream, original.canonicalize().unwrap())
+        .unwrap();
     let key = context.application.snapshot(Direction::Downstream);
     let sections = session::saved_sections(&context);
     let baseline = context.application.budget().usage();
@@ -177,6 +182,10 @@ fn late_readiness_metadata_rejection_keeps_the_real_old_report_inputs_key_and_pe
         .unwrap_err()
         .contains("retained-data limit"));
     assert_eq!(context.application.snapshot(Direction::Downstream), key);
+    assert!(crate::platform::input_file::is_original(
+        &context.application,
+        &original
+    ));
     assert_eq!(&*session::saved_sections(&context), &*sections);
     assert!(Arc::ptr_eq(
         &crate::downstream::simulation::closed_loop::latest(&context).unwrap(),

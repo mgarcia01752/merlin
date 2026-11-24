@@ -80,11 +80,20 @@ fn stale_identity_foreign_identity_and_foreign_budget_preserve_target_inputs_and
         let original = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml");
         let original_bytes = std::fs::read(&original).unwrap();
         crate::platform::input_file::read_local(
+            &target.application,
+            Direction::Downstream,
             &format!("file://{}", original.display()),
             original_bytes.len(),
         )
         .unwrap();
-        assert!(crate::platform::input_file::is_original(&original));
+        assert!(crate::platform::input_file::is_original(
+            &target.application,
+            &original
+        ));
+        target
+            .application
+            .register_input_path(Direction::Upstream, original.canonicalize().unwrap())
+            .unwrap();
         let key = target.application.snapshot(Direction::Downstream).key;
         let (application, identity) = match rejection {
             0 => (&target.application, key),
@@ -108,11 +117,24 @@ fn stale_identity_foreign_identity_and_foreign_budget_preserve_target_inputs_and
         }
         let before = session::saved_sections(&target);
         assert!(prepared.adopt(&target).is_err());
-        assert!(crate::platform::input_file::is_original(&original));
+        assert!(crate::platform::input_file::is_original(
+            &target.application,
+            &original
+        ));
         assert_eq!(std::fs::read(&original).unwrap(), original_bytes);
         assert_eq!(&*session::saved_sections(&target), &*before);
         assert!(target.prepared.borrow().source.is_some());
         assert_eq!(target.application.budget().usage(), baseline);
+        target.application.clear_input_paths(Direction::Downstream);
+        assert!(crate::platform::input_file::is_original(
+            &target.application,
+            &original
+        ));
+        target.application.clear_input_paths(Direction::Upstream);
+        assert!(!crate::platform::input_file::is_original(
+            &target.application,
+            &original
+        ));
     }
 }
 
@@ -135,16 +157,10 @@ fn real_background_loader_rejection_preserves_current_inputs_original_paths_and_
         Ok(())
     })
     .unwrap();
-    let budget = context.application.budget();
-    let before = budget.usage();
-    let guard = budget
-        .reserve_resources(RetainedResources {
-            payload_bytes: usize::MAX - before.payload_bytes,
-            ..Default::default()
-        })
-        .unwrap();
     let original = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml");
     crate::platform::input_file::read_local(
+        &context.application,
+        Direction::Downstream,
         &format!("file://{}", original.display()),
         std::fs::metadata(&original)
             .unwrap()
@@ -153,6 +169,14 @@ fn real_background_loader_rejection_preserves_current_inputs_original_paths_and_
             .unwrap(),
     )
     .unwrap();
+    let budget = context.application.budget();
+    let before = budget.usage();
+    let guard = budget
+        .reserve_resources(RetainedResources {
+            payload_bytes: usize::MAX - before.payload_bytes,
+            ..Default::default()
+        })
+        .unwrap();
     let mut loader = Loader::default();
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../../examples/workbench/single/workbench.merlin.json");
@@ -167,7 +191,10 @@ fn real_background_loader_rejection_preserves_current_inputs_original_paths_and_
         .contains("retained-data limit"));
     assert!(prepared.is_none());
     assert_eq!(session::saved(&context, "source")["accepted"], "preserve");
-    assert!(crate::platform::input_file::is_original(&original));
+    assert!(crate::platform::input_file::is_original(
+        &context.application,
+        &original
+    ));
     drop(guard);
     assert_eq!(budget.usage(), before);
 }
@@ -194,4 +221,46 @@ fn intervening_accepted_edit_rejects_open_even_before_the_canonical_generation_a
         .contains("input state is stale"));
     assert_eq!(session::saved(&target, "source")["accepted"], "intervening");
     assert!(take(&target, |models| models.source.take()).is_none());
+}
+
+#[test]
+fn successful_open_releases_only_downstream_path_records_and_preserves_original_files() {
+    let context = Context::isolated();
+    let application = &context.application;
+    let downstream_path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml");
+    let shared_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("../../examples/workbench/single/workbench.merlin.json");
+    let downstream_bytes = std::fs::read(&downstream_path).unwrap();
+    let shared_bytes = std::fs::read(&shared_path).unwrap();
+    application
+        .register_input_path(
+            Direction::Downstream,
+            downstream_path.canonicalize().unwrap(),
+        )
+        .unwrap();
+    application
+        .register_input_path(Direction::Downstream, shared_path.canonicalize().unwrap())
+        .unwrap();
+    application
+        .register_input_path(Direction::Upstream, shared_path.canonicalize().unwrap())
+        .unwrap();
+    let upstream = application.snapshot(Direction::Upstream);
+    candidate(&context).adopt(&context).unwrap();
+    assert!(!crate::platform::input_file::is_original(
+        application,
+        &downstream_path
+    ));
+    assert!(crate::platform::input_file::is_original(
+        application,
+        &shared_path
+    ));
+    assert_eq!(application.snapshot(Direction::Upstream), upstream);
+    assert_eq!(std::fs::read(&downstream_path).unwrap(), downstream_bytes);
+    assert_eq!(std::fs::read(&shared_path).unwrap(), shared_bytes);
+    assert!(session::snapshot(&context).source.is_some());
+    application.clear_input_paths(Direction::Upstream);
+    assert!(!crate::platform::input_file::is_original(
+        application,
+        &shared_path
+    ));
 }

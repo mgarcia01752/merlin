@@ -5,12 +5,14 @@
 //! Canonical application identities and dispatch over existing direction owners.
 use super::{
     constants::{MAX_SESSION_ORDERED_ENTRIES, MAX_SESSION_PAYLOAD_BYTES, MAX_SESSION_SHARED_ROOTS},
+    input_paths::InputPaths,
     ActiveRun, Direction, DispatchError, DispatchGate, ProjectSnapshot, Retained,
     RetainedResources, RetentionBudget, RetentionError, RunCancellation, RunLease, RunToken,
     SessionError, SessionKey, ShellSessions,
 };
 use std::{
     mem::size_of,
+    path::{Path, PathBuf},
     sync::{Arc, Mutex, MutexGuard},
 };
 
@@ -42,6 +44,7 @@ pub struct ApplicationSessions {
     sessions: Arc<Retained<Mutex<Sessions>>>,
     budget: RetentionBudget,
     gate: DispatchGate,
+    input_paths: InputPaths,
 }
 
 impl ApplicationSessions {
@@ -54,7 +57,7 @@ impl ApplicationSessions {
     /// An idle host initially selecting downstream; no backend or worker starts.
     ///
     /// # Errors
-    /// Rejects insufficient counter/gate/session storage or exhausted identity space.
+    /// Rejects insufficient counter/gate/session/path-registry storage or exhausted identity space.
     pub fn new(maximum: RetainedResources) -> Result<Self, ApplicationError> {
         let budget =
             RetentionBudget::for_application(maximum).map_err(ApplicationError::Retention)?;
@@ -84,10 +87,13 @@ impl ApplicationSessions {
             .map_err(ApplicationError::Retention)?;
         let sessions = ShellSessions::new(budget.clone(), gate.clone(), downstream, upstream)
             .map_err(ApplicationError::Session)?;
+        let sessions = Arc::new(reservation.retain(Mutex::new(sessions)));
+        let input_paths = InputPaths::new(&budget).map_err(ApplicationError::Retention)?;
         Ok(Self {
-            sessions: Arc::new(reservation.retain(Mutex::new(sessions))),
+            sessions,
             budget,
             gate,
+            input_paths,
         })
     }
 
@@ -112,6 +118,47 @@ impl ApplicationSessions {
     /// Shared counters; callers must account their own complete retained payloads.
     pub fn budget(&self) -> &RetentionBudget {
         &self.budget
+    }
+
+    /// Registers one canonical imported original before editor/scientific staging.
+    ///
+    /// # Arguments
+    /// * `direction` - Explicit original owner; current import adapters use downstream.
+    /// * `path` - Actual filesystem-canonical PathBuf with its original owned capacity.
+    ///
+    /// # Returns
+    /// Unit after admission, or adding an existing flag without another charge.
+    ///
+    /// # Errors
+    /// Registry cap, checked overflow or aggregate admission before any old record changes.
+    pub(crate) fn register_input_path(
+        &self,
+        direction: Direction,
+        path: PathBuf,
+    ) -> Result<(), String> {
+        self.input_paths.register(&self.budget, direction, path)
+    }
+
+    /// Queries both direction owners without inferring the current selected tab.
+    ///
+    /// # Arguments
+    /// * `path` - Borrowed canonical project destination from the filesystem adapter.
+    ///
+    /// # Returns
+    /// True while this exact host still protects the imported original.
+    pub(crate) fn protects_input_path(&self, path: &Path) -> bool {
+        self.input_paths.contains(path)
+    }
+
+    /// Releases a direction's originals only after guarded self-contained adoption.
+    ///
+    /// # Arguments
+    /// * `direction` - Successfully replaced owner; other direction flags remain.
+    ///
+    /// # Returns
+    /// Unit after releasing records with no remaining owner; no I/O or readiness change.
+    pub(crate) fn clear_input_paths(&self, direction: Direction) {
+        self.input_paths.clear(direction);
     }
 
     /// Measures only the permanent application counter baseline for owner fixtures.
