@@ -4944,3 +4944,49 @@ so unrelated full workspace/FEC and all native Python suites are not repeated.
 Their existing milestone evidence and final acceptance gates remain intact.
 US03 stays unchecked for native acquisition/viewer interactions, source delivery
 retention, measured context through configuration and actual GUI acceptance.
+
+### UIU-US-03 integrated native input acceptance
+
+UIU-US-03 now passes its Level 2 gate after the separately accepted source-JSON
+API prerequisite at `4516ee96bf73`. The
+[machine-readable receipt](upstream-inputs-evidence.json) records source hashes,
+commands, exact artifact identity, executed checks, evidence reuse and limitations.
+The existing bounded preparation worker admits complete measured plans through
+the public native API. All seven generic editors expose captured settings as
+read-only; native validation also rejects forged edits. Original association,
+source bytes, replay context and projected geometry remain with the backend.
+
+The capture inspector uses the public UCD/RxMER/Pre-Eq owners, separately retains
+original delivery and decoded binary evidence, and displays at most 64 records
+with original offsets/physical coordinates and unavailable readings. Inspection
+is explicitly unassociated and does not configure or start a simulation. Actual
+prior reports, session/dirty state and source aliases survive Cancel, invalid
+input, wrong family/range, stopped preparation, stale generation and candidate
+retention rejection. No session accounting/framework or scientific API changes
+are introduced by this Qt integration.
+
+- Complete Qt Rust suite: 478 pass. After extracting equivalent octet formatting
+  into the existing shared byte-presentation owner, all 69 affected upstream cases
+  pass again, including independent raw-octet/hash/null/coordinate anchors.
+- Seventeen affected QML suites: 280 pass records, zero failures/skips. Clippy,
+  formatting, final public-API boundary and optimized executable build pass.
+- Actual native Main pickers load six binary/source-JSON sources, preserve the
+  previous view on Cancel/rejection, and page a 400-reading RxMER capture. Their
+  displayed evidence and observations match the reused installed Python API.
+- Both actual measured plans retain all seven correlated read-only editors across
+  Cancel and tab changes, then complete with independent source recovery: 50 kHz
+  compares 1976 bits; 25 kHz compares 4216 bits; both report zero errors and no
+  unverified generated bits. These are authored/sanitized captures, not field
+  measurements or external interoperability.
+- The final executable also passes actual seven-editor synthetic regression,
+  downstream run/pause/tab/menu isolation, six native startup/project probes and
+  twenty-five packaging-resource checks. Its SHA-256 is
+  `1bb133be1adcac51db72da2d145bf68fdf513f6ec2867d3b9a931d6fe9219fac`.
+
+The actual native screenshot in the [user guide](../../../user/upstream-workbench.md#inspect-original-captures)
+shows the retained original Pre-Eq rows after a rejected replacement. Unchanged
+backend/native-wheel evidence is reused from the accepted source-JSON prerequisite
+and earlier scientific milestones; no unrelated workspace/FEC suite or wheel
+rebuild is claimed. Resource-grid/shared instruments, project persistence,
+restart recovery and full final acceptance retain their existing tasks. Continue
+UIU-US-04 with the existing public resource-grid operation.

@@ -76,10 +76,38 @@ ApplicationWindow {
     readonly property bool directionProbeRequested: Qt.application.arguments.indexOf("--direction-shell-probe") >= 0
     readonly property bool upstreamConfigurationProbeRequested: Qt.application.arguments.indexOf("--upstream-configuration-probe") >= 0
     readonly property bool upstreamExecutionProbeRequested: Qt.application.arguments.indexOf("--upstream-execution-probe") >= 0
+    readonly property bool upstreamInputsProbeRequested: Qt.application.arguments.indexOf("--upstream-inputs-probe") >= 0
     property QtObject presentationProbe: null
     property QtObject directionProbe: null
     property QtObject upstreamConfigurationProbe: null
     property QtObject upstreamExecutionProbe: null
+    property QtObject upstreamInputsProbe: null
+    property Component upstreamInputsProbeComponent: Component {
+        UpstreamInputsProbe {
+            onFinished: function(success, message) {
+                console.log("MERLIN_UPSTREAM_INPUTS_PROBE " + message)
+                Qt.exit(success ? 0 : 1)
+            }
+        }
+    }
+    /** Run fixed native source/measured cases with a fresh evidence destination. */
+    function startUpstreamInputsProbe() {
+        const args = Qt.application.arguments
+        const imageArgument = args.indexOf("--upstream-inputs-image")
+        if (imageArgument < 0 || imageArgument + 1 >= args.length) {
+            console.error("Upstream inputs probe requires a fresh screenshot path.")
+            Qt.exit(1)
+            return
+        }
+        upstreamInputsProbe = upstreamInputsProbeComponent.createObject(window, {
+            rootWindow: window, workbench: workbench, tabs: directionTabs,
+            host: directionHost, controls: sharedControls, captureItem: unifiedFrame,
+            screenshotPath: args[imageArgument + 1]
+        })
+        if (!upstreamInputsProbe) {
+            Qt.exit(1)
+        }
+    }
     property Component upstreamExecutionProbeComponent: Component {
         UpstreamExecutionProbe {
             onFinished: function(success, message) {
@@ -200,6 +228,8 @@ ApplicationWindow {
             Qt.callLater(startUpstreamConfigurationProbe)
         } else if (upstreamExecutionProbeRequested) {
             Qt.callLater(startUpstreamExecutionProbe)
+        } else if (upstreamInputsProbeRequested) {
+            Qt.callLater(startUpstreamInputsProbe)
         } else if (Qt.application.arguments.indexOf("--smoke-test") >= 0) {
             smokeTimer.start()
         } else if (Qt.application.arguments.indexOf("--check-updates") >= 0) {
@@ -286,6 +316,8 @@ ApplicationWindow {
                     onDraftApplyRequested: function(section, token, values) { directionHost.applyDraft(section, token, values) }
                     onDraftCancelled: function(token) { directionHost.cancelDraft(token) }
                     onConfigurationLoadRequested: directionHost.loadConfiguration()
+                    onCaptureLoadRequested: function(family) { directionHost.loadCapture(family) }
+                    onCapturePageRequested: function(family, first) { directionHost.capturePage(family, first) }
                 }
             }
             onDirectionRequested: function(direction) { directionHost.selectDirection(direction) }

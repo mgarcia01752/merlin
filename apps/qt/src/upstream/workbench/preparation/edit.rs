@@ -23,6 +23,12 @@ impl Pending {
         draft: SharedDraft,
         changes: Box<Retained<Value>>,
     ) -> Result<Self, (UpstreamController, String)> {
+        if controller.has_measured_input() {
+            return Err((
+                controller,
+                super::super::drafts::MEASURED_READ_ONLY_MESSAGE.into(),
+            ));
+        }
         let reservation = match budget.reserve_resources(RetainedResources {
             payload_bytes: std::mem::size_of::<Retained<Mutex<Option<UpstreamController>>>>(),
             shared_roots: CONTROLLER_SLOT_SHARED_ROOTS,

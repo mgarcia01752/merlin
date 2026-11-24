@@ -1,0 +1,1285 @@
+{
+  "task": "UIU-US-03",
+  "status": "accepted",
+  "accepted_base": "4516ee96bf735b29d2eeaa53ffc10400577608a4",
+  "validation_level": 2,
+  "requirements": [
+    "REQ-UIU-13",
+    "REQ-UIU-21"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-upstream-scientific-presentation",
+  "design": "design.md#us03-measured-loading-and-capture-inspection-ownership",
+  "raw_evidence": "docs/development/local/unified-qt-workbench/us-03/",
+  "source_sha256": {
+    "apps/qt/build.rs": "51075594915147249567f8e057d3a2fe6619fc99b5cf0b439da7903b0355e7bd",
+    "apps/qt/qml/Main.qml": "1889b4aa548110ea597c056038b99666f717f4130e4a1375735debbd74bb3308",
+    "apps/qt/qml/shell/directions/DirectionShellHost.qml": "935dc68431cdf2fd905704b9282536d3e1ead82e03785887bedbdca13d329de0",
+    "apps/qt/qml/upstream/PreEqualizationDialog.qml": "95294a360780c618634b0c73cbbc1fa0d6fd3d2badaa2f7c4507716b11d5d339",
+    "apps/qt/qml/upstream/RxmerDialog.qml": "63079c8a277c424f64a7ec6973f88a00c9f79fed375829745a61df7d7508939b",
+    "apps/qt/qml/upstream/UcdConfigurationDialog.qml": "d59683985d30752ab064b1230c67f134faa7d7bde62f250e90da1ba6c8bf07e0",
+    "apps/qt/qml/upstream/UpstreamCaptureDialog.qml": "10d83a7d6ff11f8eca9fc50017275095f2bc16662c3e4b1b56a8b08592fa353c",
+    "apps/qt/qml/upstream/UpstreamConfigurationDraftDialog.qml": "32f9b7d51da493eac98d39f8cfec0aeb9871efce0aa1ed68f5901d0132339d84",
+    "apps/qt/qml/upstream/UpstreamDetailDialog.qml": "a78878a4e7fb78a1b3ffaba3cea81c4535bbf1f4d43e80cf1587029e8595831a",
+    "apps/qt/qml/upstream/UpstreamWorkbench.qml": "de813632b6f25edc58f163be20cb228abca06e680f928b353d085b71e40ffe10",
+    "apps/qt/qml/validation/UpstreamInputsProbe.qml": "c62cbc64a4532e6f27c9520d4361a6252e5e901049c34d9a340b5b00bc4f5464",
+    "apps/qt/src/bridge/upstream_session.rs": "f61fa4bf9c0df7f5ddc94f744a4c36e56112b6c8aa7d05e656debee805fd2892",
+    "apps/qt/src/shared/presentation/bytes.rs": "421b20b994daadabb16dd4af19920d5adbc8a0eef237f9c471d74b2e9d53a913",
+    "apps/qt/src/upstream/session.rs": "924ef9585aebfc7f36fdf07b4fb3b53e8701ff39c8abacf51d578c1eeaf50048",
+    "apps/qt/src/upstream/workbench/captures.rs": "f94735fe92e5f7cda3bdc9528a8cfc9ffdb841d7b130be01fa3aaf3c5195d614",
+    "apps/qt/src/upstream/workbench/captures/constants.rs": "31b133e2224726c192b7674a79cc2e398f78b01ebf58a6519a932b188616f995",
+    "apps/qt/src/upstream/workbench/captures/inspection.rs": "a8a588cd098b45659fed01f180d18b8ca0e516b478c3d3912d6ea787d24f0f8f",
+    "apps/qt/src/upstream/workbench/captures/tests.rs": "f5a9ef369d84cc4c07bd80afbac0a61da25e55fc9f05c72913c35c73bf1ca013",
+    "apps/qt/src/upstream/workbench/configuration_view.rs": "5b2fd42e95147c64fd8f99ccfb038c29cafd19256fb53deabe93d3ac031b5cd6",
+    "apps/qt/src/upstream/workbench/drafts.rs": "da1c23345ae7297487553c443c97a71c88a99093b526775225148990940bbb33",
+    "apps/qt/src/upstream/workbench/drafts/constants.rs": "273e1f2d6078f63e19ed9da310b52ac8761a6cb798c3a4a32d0a549dd69fc053",
+    "apps/qt/src/upstream/workbench/measured_tests.rs": "0b8f7fb58bc8837285cf8281757461a33ef7bf33730539f676df9b79dd4a56af",
+    "apps/qt/src/upstream/workbench/measured_view.rs": "cb301b8f20d8ec3ebe89f20c72cd926ec91eede2f25403b8578d1a5334bf4a36",
+    "apps/qt/src/upstream/workbench/mod.rs": "efc595692f229171ac168bb21922efddd9b46a240aff1c81783b25d79956a64e",
+    "apps/qt/src/upstream/workbench/preparation.rs": "8409c23c745aca68c2ec9a12b2ff57793c34e960f8f77f24d951a08d859682f6",
+    "apps/qt/src/upstream/workbench/preparation/capture.rs": "0520853caaa67d1a4d218857cfcea7b46abcb32e78dd1b18e87060d4941363c6",
+    "apps/qt/src/upstream/workbench/preparation/edit.rs": "506ef0f09917015ecae0edec5a56cf85d0e6740d2d25ad07142bedc8b5928f5d",
+    "apps/qt/src/upstream/workbench/presentation.rs": "9a32a356ef22a80fac808069aafa79eedd876966e1b03a246d8b02836a97f0a4",
+    "apps/qt/tests/upstream/tst_upstream_captures.qml": "4a74de586d494cb105c5d648b319d0492bff4e31a8cc3dcd509d0db1548a86d5"
+  },
+  "source_adoption": {
+    "capture_dialog": "Prepared project-owned GPL dialog 10d83a7d6ff11f8eca9fc50017275095f2bc16662c3e4b1b56a8b08592fa353c and tests 4a74de586d494cb105c5d648b319d0492bff4e31a8cc3dcd509d0db1548a86d5 from isolated upstream UI worktree.",
+    "inspection": "Prepared QA inspection 04a754f9597392942000ef409455f8771aa46069fb2b0163007bd5425ae8b239 and integration tests f5a9ef369d84cc4c07bd80afbac0a61da25e55fc9f05c72913c35c73bf1ca013; primary formatting, shared octet-formatter extraction and tests recorded separately.",
+    "native_probe": "Prepared 8ef2ece06f7474fde93cca65dabb804430e5fabc41a8d29df52256292291488f; primary adapts presentation-only scrolling to capture actual source rows. Source preparation never establishes runtime acceptance."
+  },
+  "acceptance": {
+    "public_owners": "Existing public typed captures and complete MeasuredExperiment admission; no Qt decoder, scientific algorithm or new simulation API.",
+    "source_json_prerequisite": "Accepted separately at 4516ee96bf73, upstream-capture-source-json-evidence.json.",
+    "inspection": "Original binary and delivery bytes/hashes remain distinct; exact native metadata, original UCD record offsets, null-preserving RxMER physical coordinates, Applied C versus last-update operands; 64-row Rust-supplied pages.",
+    "association": "Individual inspection is explicitly unassociated and cannot alter readiness. Complete measured plans preserve source bytes, associations, residual restrictions, explicit update/base/probe context and actual projected configuration.",
+    "read_only": "All seven generic editors reject captured changes before synthetic configuration replacement. Complete-plan reload is explicit; synthetic editors remain editable.",
+    "atomicity": "Actual prior reports/keys/dirty state survive inspector import, Cancel, wrong family, invalid source/page, stale generation, stopped preparation and candidate retention rejection.",
+    "measured_results": [
+      {
+        "tag": "measured-50",
+        "identity": "upstream/2/1",
+        "session": "2",
+        "generation": "1",
+        "read_only_drafts": [
+          {
+            "section": "ucd",
+            "draft": {
+              "baseGeneration": "1",
+              "baseSession": "2",
+              "can_apply": false,
+              "error": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "options": {
+                "fields": [],
+                "read_only": true
+              },
+              "outcome": "editing",
+              "pending": false,
+              "section": "ucd",
+              "summary": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "token": "upstream-draft/2",
+              "values": {}
+            }
+          },
+          {
+            "section": "profiles",
+            "draft": {
+              "baseGeneration": "1",
+              "baseSession": "2",
+              "can_apply": false,
+              "error": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "options": {
+                "fields": [],
+                "read_only": true
+              },
+              "outcome": "editing",
+              "pending": false,
+              "section": "profiles",
+              "summary": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "token": "upstream-draft/3",
+              "values": {}
+            }
+          },
+          {
+            "section": "grants",
+            "draft": {
+              "baseGeneration": "1",
+              "baseSession": "2",
+              "can_apply": false,
+              "error": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "options": {
+                "fields": [],
+                "read_only": true
+              },
+              "outcome": "editing",
+              "pending": false,
+              "section": "grants",
+              "summary": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "token": "upstream-draft/4",
+              "values": {}
+            }
+          },
+          {
+            "section": "source",
+            "draft": {
+              "baseGeneration": "1",
+              "baseSession": "2",
+              "can_apply": false,
+              "error": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "options": {
+                "fields": [],
+                "read_only": true
+              },
+              "outcome": "editing",
+              "pending": false,
+              "section": "source",
+              "summary": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "token": "upstream-draft/5",
+              "values": {}
+            }
+          },
+          {
+            "section": "receiver",
+            "draft": {
+              "baseGeneration": "1",
+              "baseSession": "2",
+              "can_apply": false,
+              "error": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "options": {
+                "fields": [],
+                "read_only": true
+              },
+              "outcome": "editing",
+              "pending": false,
+              "section": "receiver",
+              "summary": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "token": "upstream-draft/6",
+              "values": {}
+            }
+          },
+          {
+            "section": "channel",
+            "draft": {
+              "baseGeneration": "1",
+              "baseSession": "2",
+              "can_apply": false,
+              "error": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "options": {
+                "fields": [],
+                "read_only": true
+              },
+              "outcome": "editing",
+              "pending": false,
+              "section": "channel",
+              "summary": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "token": "upstream-draft/7",
+              "values": {}
+            }
+          },
+          {
+            "section": "preEqualization",
+            "draft": {
+              "baseGeneration": "1",
+              "baseSession": "2",
+              "can_apply": false,
+              "error": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "options": {
+                "fields": [],
+                "read_only": true
+              },
+              "outcome": "editing",
+              "pending": false,
+              "section": "preEqualization",
+              "summary": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "token": "upstream-draft/8",
+              "values": {}
+            }
+          }
+        ],
+        "cancelAndTabsPreserved": true,
+        "result": {
+          "ber": 0,
+          "bit_errors": 0,
+          "bits_tested": 1976,
+          "completed_grants": 1,
+          "reference_recovered": true,
+          "run": "1",
+          "status": "Completed",
+          "unverified_source_bits": 0
+        },
+        "verification": {
+          "rows": [
+            {
+              "label": "Run",
+              "value": "1"
+            },
+            {
+              "label": "Lifecycle",
+              "value": "Completed"
+            },
+            {
+              "label": "Full reference recovery",
+              "value": "Verified"
+            },
+            {
+              "label": "Planned source bits",
+              "value": "1976"
+            },
+            {
+              "label": "Generated source bits",
+              "value": "1976"
+            },
+            {
+              "label": "Compared source bits",
+              "value": "1976"
+            },
+            {
+              "label": "Unverified generated bits",
+              "value": "0"
+            },
+            {
+              "label": "Bit errors",
+              "value": "0"
+            },
+            {
+              "label": "BER",
+              "value": "0"
+            },
+            {
+              "label": "Completed / planned grants",
+              "value": "1 / 1"
+            },
+            {
+              "label": "Not-started grants",
+              "value": "0"
+            },
+            {
+              "label": "Completed / pending codewords",
+              "value": "3 / 0"
+            },
+            {
+              "label": "Converged / nonconverged codewords",
+              "value": "3 / 0"
+            },
+            {
+              "label": "Parity / shortening / fill failures",
+              "value": "0 / 0 / 0"
+            },
+            {
+              "label": "Missing symbols",
+              "value": "0"
+            },
+            {
+              "label": "Active elapsed (ms)",
+              "value": "4"
+            }
+          ],
+          "summary": "Actual independent source, FEC, fill and full-coverage verification succeeded."
+        }
+      },
+      {
+        "tag": "measured-25",
+        "identity": "upstream/2/2",
+        "session": "2",
+        "generation": "2",
+        "read_only_drafts": [
+          {
+            "section": "ucd",
+            "draft": {
+              "baseGeneration": "2",
+              "baseSession": "2",
+              "can_apply": false,
+              "error": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "options": {
+                "fields": [],
+                "read_only": true
+              },
+              "outcome": "editing",
+              "pending": false,
+              "section": "ucd",
+              "summary": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "token": "upstream-draft/10",
+              "values": {}
+            }
+          },
+          {
+            "section": "profiles",
+            "draft": {
+              "baseGeneration": "2",
+              "baseSession": "2",
+              "can_apply": false,
+              "error": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "options": {
+                "fields": [],
+                "read_only": true
+              },
+              "outcome": "editing",
+              "pending": false,
+              "section": "profiles",
+              "summary": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "token": "upstream-draft/11",
+              "values": {}
+            }
+          },
+          {
+            "section": "grants",
+            "draft": {
+              "baseGeneration": "2",
+              "baseSession": "2",
+              "can_apply": false,
+              "error": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "options": {
+                "fields": [],
+                "read_only": true
+              },
+              "outcome": "editing",
+              "pending": false,
+              "section": "grants",
+              "summary": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "token": "upstream-draft/12",
+              "values": {}
+            }
+          },
+          {
+            "section": "source",
+            "draft": {
+              "baseGeneration": "2",
+              "baseSession": "2",
+              "can_apply": false,
+              "error": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "options": {
+                "fields": [],
+                "read_only": true
+              },
+              "outcome": "editing",
+              "pending": false,
+              "section": "source",
+              "summary": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "token": "upstream-draft/13",
+              "values": {}
+            }
+          },
+          {
+            "section": "receiver",
+            "draft": {
+              "baseGeneration": "2",
+              "baseSession": "2",
+              "can_apply": false,
+              "error": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "options": {
+                "fields": [],
+                "read_only": true
+              },
+              "outcome": "editing",
+              "pending": false,
+              "section": "receiver",
+              "summary": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "token": "upstream-draft/14",
+              "values": {}
+            }
+          },
+          {
+            "section": "channel",
+            "draft": {
+              "baseGeneration": "2",
+              "baseSession": "2",
+              "can_apply": false,
+              "error": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "options": {
+                "fields": [],
+                "read_only": true
+              },
+              "outcome": "editing",
+              "pending": false,
+              "section": "channel",
+              "summary": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "token": "upstream-draft/15",
+              "values": {}
+            }
+          },
+          {
+            "section": "preEqualization",
+            "draft": {
+              "baseGeneration": "2",
+              "baseSession": "2",
+              "can_apply": false,
+              "error": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "options": {
+                "fields": [],
+                "read_only": true
+              },
+              "outcome": "editing",
+              "pending": false,
+              "section": "preEqualization",
+              "summary": "Captured configuration is read-only here. Edit the complete measured plan and reload it.",
+              "token": "upstream-draft/16",
+              "values": {}
+            }
+          }
+        ],
+        "cancelAndTabsPreserved": true,
+        "result": {
+          "ber": 0,
+          "bit_errors": 0,
+          "bits_tested": 4216,
+          "completed_grants": 1,
+          "reference_recovered": true,
+          "run": "2",
+          "status": "Completed",
+          "unverified_source_bits": 0
+        },
+        "verification": {
+          "rows": [
+            {
+              "label": "Run",
+              "value": "2"
+            },
+            {
+              "label": "Lifecycle",
+              "value": "Completed"
+            },
+            {
+              "label": "Full reference recovery",
+              "value": "Verified"
+            },
+            {
+              "label": "Planned source bits",
+              "value": "4216"
+            },
+            {
+              "label": "Generated source bits",
+              "value": "4216"
+            },
+            {
+              "label": "Compared source bits",
+              "value": "4216"
+            },
+            {
+              "label": "Unverified generated bits",
+              "value": "0"
+            },
+            {
+              "label": "Bit errors",
+              "value": "0"
+            },
+            {
+              "label": "BER",
+              "value": "0"
+            },
+            {
+              "label": "Completed / planned grants",
+              "value": "1 / 1"
+            },
+            {
+              "label": "Not-started grants",
+              "value": "0"
+            },
+            {
+              "label": "Completed / pending codewords",
+              "value": "1 / 0"
+            },
+            {
+              "label": "Converged / nonconverged codewords",
+              "value": "1 / 0"
+            },
+            {
+              "label": "Parity / shortening / fill failures",
+              "value": "0 / 0 / 0"
+            },
+            {
+              "label": "Missing symbols",
+              "value": "0"
+            },
+            {
+              "label": "Active elapsed (ms)",
+              "value": "8"
+            }
+          ],
+          "summary": "Actual independent source, FEC, fill and full-coverage verification succeeded."
+        }
+      }
+    ]
+  },
+  "validation": {
+    "qt_rust": {
+      "records": [
+        {
+          "label": "qt-rust-consumers",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "--",
+            "--test-threads=2"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 470.0805255000014
+        }
+      ],
+      "passed": 478,
+      "failed": 0,
+      "ignored": 0,
+      "reuse_after_formatting_fix": "Full478 completed before extracting identical contiguous lowercase octet formatting into the shared presentation owner. All69 affected upstream tests run afterward, including literal row/hash/raw-octet cases; existing packet/address formatters are unchanged."
+    },
+    "focused": [
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.7115770109958248
+      },
+      {
+        "label": "upstream-rust",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "--",
+          "upstream::workbench::",
+          "--test-threads=2"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 86.29560728800425
+      }
+    ],
+    "qml": [
+      {
+        "label": "upstream/tst_upstream_drafts.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_drafts.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 76.62525961500069,
+        "pass_records": 49
+      },
+      {
+        "label": "upstream/tst_upstream_workbench.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_workbench.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 21.873467390993028,
+        "pass_records": 13
+      },
+      {
+        "label": "upstream/tst_upstream_host_drafts.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_host_drafts.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.39137467999535147,
+        "pass_records": 13
+      },
+      {
+        "label": "upstream/tst_upstream_captures.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_captures.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.3228198419965338,
+        "pass_records": 20
+      },
+      {
+        "label": "tst_presentation_owner.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_presentation_owner.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.09440046700183302,
+        "pass_records": 11
+      },
+      {
+        "label": "tst_presentation_footprint.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_presentation_footprint.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.26476649499090854,
+        "pass_records": 45
+      },
+      {
+        "label": "shell/tst_direction_tabs.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/shell/tst_direction_tabs.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.9458634250040632,
+        "pass_records": 12
+      },
+      {
+        "label": "tst_measurement_presentation.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_measurement_presentation.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.20053058899065945,
+        "pass_records": 6
+      },
+      {
+        "label": "tst_rxmer_designer.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_rxmer_designer.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 4.270809066001675,
+        "pass_records": 20
+      },
+      {
+        "label": "tst_workbench.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 17.540694212002563,
+        "pass_records": 55
+      },
+      {
+        "label": "tst_buttons.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_buttons.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.6194415149948327,
+        "pass_records": 5
+      },
+      {
+        "label": "tst_control_palette.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_control_palette.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.3515616619988577,
+        "pass_records": 4
+      },
+      {
+        "label": "tst_tooltips.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_tooltips.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 6.87285486899782,
+        "pass_records": 4
+      },
+      {
+        "label": "tst_response_view.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_response_view.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.4005178769875783,
+        "pass_records": 3
+      },
+      {
+        "label": "tst_soft_diagnostics.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_soft_diagnostics.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.9540795069915475,
+        "pass_records": 3
+      },
+      {
+        "label": "tst_updates.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_updates.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.043950412000413,
+        "pass_records": 7
+      },
+      {
+        "label": "shell/tst_shell_host.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/shell/tst_shell_host.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.8489517660054844,
+        "pass_records": 10
+      }
+    ],
+    "checks": [
+      {
+        "label": "clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.346317851988715
+      },
+      {
+        "label": "format-check",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.7077273040049477
+      },
+      {
+        "label": "boundary",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.32075636299850885
+      }
+    ],
+    "optimized_build": [
+      {
+        "label": "build",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/qt-desktop.sh",
+          "build"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 110.09716962800303
+      }
+    ],
+    "native_inputs": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--upstream-inputs-probe",
+        "--upstream-inputs-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03/native-first/inputs-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 19.61802863801131,
+      "executable_sha256": "1bb133be1adcac51db72da2d145bf68fdf513f6ec2867d3b9a931d6fe9219fac",
+      "expected_sources": {
+        "ucd-binary": {
+          "family": "ucd",
+          "original_sha256": "7e47467fae5d8aaabbaa52f7d2dda028a3865fa5b9bf603548a38c00393c3e74",
+          "original_bytes": 92,
+          "delivery_sha256": "7e47467fae5d8aaabbaa52f7d2dda028a3865fa5b9bf603548a38c00393c3e74",
+          "delivery_bytes": 92
+        },
+        "ucd-json": {
+          "family": "ucd",
+          "original_sha256": "7e47467fae5d8aaabbaa52f7d2dda028a3865fa5b9bf603548a38c00393c3e74",
+          "original_bytes": 92,
+          "delivery_sha256": "32b0c2d503096fc5885474107d907e27244c76ea198c0f3bb97739cfc2299d04",
+          "delivery_bytes": 936
+        },
+        "rxmer-binary": {
+          "family": "rxmer",
+          "original_sha256": "d1da22fb4a1413f18477b48f4f698e6243ad14d03a28a6ba66daaebed78d41ba",
+          "original_bytes": 697,
+          "delivery_sha256": "d1da22fb4a1413f18477b48f4f698e6243ad14d03a28a6ba66daaebed78d41ba",
+          "delivery_bytes": 697
+        },
+        "rxmer-json": {
+          "family": "rxmer",
+          "original_sha256": "1ee74407762af69674b866bfb5fde97eef2f45af3fa990252b64813cdd1deb84",
+          "original_bytes": 301,
+          "delivery_sha256": "24c3f9ebb2b1027015ef85526e1e0f7c26a7b6b4f0bede15cac7902d407fa4e3",
+          "delivery_bytes": 2391
+        },
+        "pre-eq-binary": {
+          "family": "pre_eq",
+          "original_sha256": "09de1df6055de967c8ef36ad1cd6c2f9b142ebf53408aff5ce5b88b709b6f05b",
+          "original_bytes": 50,
+          "delivery_sha256": "09de1df6055de967c8ef36ad1cd6c2f9b142ebf53408aff5ce5b88b709b6f05b",
+          "delivery_bytes": 50
+        },
+        "pre-eq-json": {
+          "family": "pre_eq",
+          "original_sha256": "497f49bedb09587daaeac3c95630c32b70b0b6dd7d948a7e3fa716ac4ad9320f",
+          "original_bytes": 50,
+          "delivery_sha256": "3ea8f39ef5bb81ad49a525b14d84ca4150cdbdcac21076b414aff9af773718fe",
+          "delivery_bytes": 622
+        }
+      },
+      "fixture_scope": "Existing authored/sanitized fixtures; not field or interoperability evidence.",
+      "picker_actions": [
+        {
+          "action": "ucd-binary",
+          "owned_window": 14680071,
+          "picker_pid": 560878,
+          "seconds": 2.303543914007605
+        },
+        {
+          "action": "cancel",
+          "owned_window": 14680071,
+          "picker_pid": 560905,
+          "seconds": 3.31960393099871
+        },
+        {
+          "action": "ucd-json",
+          "owned_window": 14680071,
+          "picker_pid": 560922,
+          "seconds": 4.168183243004023
+        },
+        {
+          "action": "rxmer-binary",
+          "owned_window": 14680071,
+          "picker_pid": 560945,
+          "seconds": 5.412213632997009
+        },
+        {
+          "action": "rxmer-json",
+          "owned_window": 14680071,
+          "picker_pid": 560976,
+          "seconds": 6.9257746410003165
+        },
+        {
+          "action": "pre-eq-binary",
+          "owned_window": 14680071,
+          "picker_pid": 560998,
+          "seconds": 8.29354300101113
+        },
+        {
+          "action": "pre-eq-json",
+          "owned_window": 14680071,
+          "picker_pid": 561021,
+          "seconds": 9.794000226000207
+        },
+        {
+          "action": "invalid",
+          "owned_window": 14680071,
+          "picker_pid": 561043,
+          "seconds": 11.258517227004631
+        },
+        {
+          "action": "measured-50",
+          "owned_window": 14680071,
+          "picker_pid": 561069,
+          "seconds": 15.43568595800025
+        },
+        {
+          "action": "measured-25",
+          "owned_window": 14680071,
+          "picker_pid": 561094,
+          "seconds": 17.972498143004486
+        }
+      ],
+      "full_window_capture": {
+        "window": 12582919,
+        "pid": 560865,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03/native-first/upstream-inputs-main-dark.png",
+        "sha256": "279048a3b7bf97a8c58c26cb0ec57b8332923cf0807238efb39f7615dedc9719",
+        "size": [
+          1210,
+          736
+        ],
+        "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+      },
+      "probe_output": [
+        "{\"probe\":\"upstream-inputs\",\"success\":true,\"phase\":\"plan-verification\",\"error\":\"\",\"pickerTag\":\"measured-25\",\"captures\":[{\"tag\":\"ucd-binary\",\"capture_view\":{\"family\":\"ucd\",\"view\":{\"columns\":[\"Original byte offset\",\"Record\",\"Value octets (hex)\"],\"data_rows\":[{\"coordinate\":\"24\",\"first\":\"Channel TLV 24\",\"second\":\"0000\"},{\"coordinate\":\"28\",\"first\":\"Channel TLV 25\",\"second\":\"01234567890abcdef0\"},{\"coordinate\":\"39\",\"first\":\"Channel TLV 26\",\"second\":\"04\"},{\"coordinate\":\"42\",\"first\":\"Channel TLV 27\",\"second\":\"03\"},{\"coordinate\":\"45\",\"first\":\"Channel TLV 28\",\"second\":\"02\"},{\"coordinate\":\"48\",\"first\":\"Channel TLV 29\",\"second\":\"00c35000\"},{\"coordinate\":\"54\",\"first\":\"Channel TLV 30\",\"second\":\"0000007f021007ff\"},{\"coordinate\":\"64\",\"first\":\"Channel TLV 31\",\"second\":\"00c0020f\"},{\"coordinate\":\"70\",\"first\":\"Channel TLV 32\",\"second\":\"06\"},{\"coordinate\":\"73\",\"first\":\"Channel TLV 33\",\"second\":\"7fffff\"},{\"coordinate\":\"78\",\"first\":\"Burst IUC (attributes follow)\",\"second\":\"05\"},{\"coordinate\":\"81\",\"first\":\"IUC 5 attribute 21\",\"second\":\"4107\"},{\"coordinate\":\"85\",\"first\":\"Burst IUC (attributes follow)\",\"second\":\"0d\"},{\"coordinate\":\"88\",\"first\":\"IUC 13 attribute 21\",\"second\":\"2107\"}],\"error\":\"\",\"metadata_rows\":[{\"label\":\"Original binary bytes\",\"value\":\"92\"},{\"label\":\"Original binary SHA-256\",\"value\":\"7e47467fae5d8aaabbaa52f7d2dda028a3865fa5b9bf603548a38c00393c3e74\"},{\"label\":\"Delivery bytes\",\"value\":\"92\"},{\"label\":\"Delivery SHA-256\",\"value\":\"7e47467fae5d8aaabbaa52f7d2dda028a3865fa5b9bf603548a38c00393c3e74\"},{\"label\":\"Destination MAC (hex)\",\"value\":\"020000000001\"},{\"label\":\"Source MAC (hex)\",\"value\":\"020000000002\"},{\"label\":\"Message length\",\"value\":\"78\"},{\"label\":\"Management version\",\"value\":\"5\"},{\"label\":\"Message type\",\"value\":\"51\"},{\"label\":\"Multipart raw\",\"value\":\"0\"},{\"label\":\"Upstream channel ID\",\"value\":\"7\"},{\"label\":\"Configuration change count\",\"value\":\"254\"},{\"label\":\"Minislot size ticks (raw)\",\"value\":\"0\"},{\"label\":\"Downstream channel ID\",\"value\":\"9\"},{\"label\":\"Channel TLVs\",\"value\":\"10\"},{\"label\":\"Burst descriptors\",\"value\":\"2\"}],\"page\":{\"has_next\":false,\"has_previous\":false,\"next_first\":0,\"previous_first\":0,\"summary\":\"Records 1\u201314 of 14\"},\"reference_plane\":\"Original MAC-management envelope, DA through payload; no capture time or CM association is inferred.\",\"summary\":\"Structural inspection only; unassociated original UCD records do not establish executable configuration or readiness.\",\"title\":\"Upstream UCD Capture\"}}},{\"tag\":\"ucd-json\",\"capture_view\":{\"family\":\"ucd\",\"view\":{\"columns\":[\"Original byte offset\",\"Record\",\"Value octets (hex)\"],\"data_rows\":[{\"coordinate\":\"24\",\"first\":\"Channel TLV 24\",\"second\":\"0000\"},{\"coordinate\":\"28\",\"first\":\"Channel TLV 25\",\"second\":\"01234567890abcdef0\"},{\"coordinate\":\"39\",\"first\":\"Channel TLV 26\",\"second\":\"04\"},{\"coordinate\":\"42\",\"first\":\"Channel TLV 27\",\"second\":\"03\"},{\"coordinate\":\"45\",\"first\":\"Channel TLV 28\",\"second\":\"02\"},{\"coordinate\":\"48\",\"first\":\"Channel TLV 29\",\"second\":\"00c35000\"},{\"coordinate\":\"54\",\"first\":\"Channel TLV 30\",\"second\":\"0000007f021007ff\"},{\"coordinate\":\"64\",\"first\":\"Channel TLV 31\",\"second\":\"00c0020f\"},{\"coordinate\":\"70\",\"first\":\"Channel TLV 32\",\"second\":\"06\"},{\"coordinate\":\"73\",\"first\":\"Channel TLV 33\",\"second\":\"7fffff\"},{\"coordinate\":\"78\",\"first\":\"Burst IUC (attributes follow)\",\"second\":\"05\"},{\"coordinate\":\"81\",\"first\":\"IUC 5 attribute 21\",\"second\":\"4107\"},{\"coordinate\":\"85\",\"first\":\"Burst IUC (attributes follow)\",\"second\":\"0d\"},{\"coordinate\":\"88\",\"first\":\"IUC 13 attribute 21\",\"second\":\"2107\"}],\"error\":\"\",\"metadata_rows\":[{\"label\":\"Original binary bytes\",\"value\":\"92\"},{\"label\":\"Original binary SHA-256\",\"value\":\"7e47467fae5d8aaabbaa52f7d2dda028a3865fa5b9bf603548a38c00393c3e74\"},{\"label\":\"Delivery bytes\",\"value\":\"936\"},{\"label\":\"Delivery SHA-256\",\"value\":\"32b0c2d503096fc5885474107d907e27244c76ea198c0f3bb97739cfc2299d04\"},{\"label\":\"Destination MAC (hex)\",\"value\":\"020000000001\"},{\"label\":\"Source MAC (hex)\",\"value\":\"020000000002\"},{\"label\":\"Message length\",\"value\":\"78\"},{\"label\":\"Management version\",\"value\":\"5\"},{\"label\":\"Message type\",\"value\":\"51\"},{\"label\":\"Multipart raw\",\"value\":\"0\"},{\"label\":\"Upstream channel ID\",\"value\":\"7\"},{\"label\":\"Configuration change count\",\"value\":\"254\"},{\"label\":\"Minislot size ticks (raw)\",\"value\":\"0\"},{\"label\":\"Downstream channel ID\",\"value\":\"9\"},{\"label\":\"Channel TLVs\",\"value\":\"10\"},{\"label\":\"Burst descriptors\",\"value\":\"2\"}],\"page\":{\"has_next\":false,\"has_previous\":false,\"next_first\":0,\"previous_first\":0,\"summary\":\"Records 1\u201314 of 14\"},\"reference_plane\":\"Original MAC-management envelope, DA through payload; no capture time or CM association is inferred.\",\"summary\":\"Structural inspection only; unassociated original UCD records do not establish executable configuration or readiness.\",\"title\":\"Upstream UCD Capture\"}}},{\"tag\":\"rxmer-binary\",\"capture_view\":{\"family\":\"rxmer\",\"view\":{\"columns\":[\"Physical subcarrier\",\"RxMER (dB)\",\"Raw octet (hex)\"],\"data_rows\":[{\"coordinate\":\"128\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"129\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"130\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"131\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"132\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"133\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"134\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"135\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"136\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"137\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"138\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"139\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"140\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"141\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"142\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"143\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"144\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"145\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"146\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"147\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"148\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"149\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"150\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"151\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"152\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"153\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"154\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"155\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"156\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"157\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"158\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"159\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"160\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"161\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"162\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"163\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"164\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"165\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"166\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"167\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"168\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"169\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"170\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"171\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"172\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"173\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"174\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"175\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"176\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"177\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"178\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"179\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"180\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"181\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"182\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"183\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"184\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"185\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"186\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"187\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"188\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"189\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"190\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"191\",\"first\":\"40\",\"second\":\"a0\"}],\"error\":\"\",\"metadata_rows\":[{\"label\":\"Original binary bytes\",\"value\":\"697\"},{\"label\":\"Original binary SHA-256\",\"value\":\"d1da22fb4a1413f18477b48f4f698e6243ad14d03a28a6ba66daaebed78d41ba\"},{\"label\":\"Delivery bytes\",\"value\":\"697\"},{\"label\":\"Delivery SHA-256\",\"value\":\"d1da22fb4a1413f18477b48f4f698e6243ad14d03a28a6ba66daaebed78d41ba\"},{\"label\":\"Major version\",\"value\":\"2\"},{\"label\":\"Minor version (raw)\",\"value\":\"0\"},{\"label\":\"Capture epoch seconds\",\"value\":\"19088743\"},{\"label\":\"Interface index\",\"value\":\"270544960\"},{\"label\":\"CCAP ID raw octets (hex)\",\"value\":\"636361702e6578616d706c6500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},{\"label\":\"CCAP ID text\",\"value\":\"ccap.example\"},{\"label\":\"RPD ID (hex)\",\"value\":\"02000000000a\"},{\"label\":\"RPD port (raw)\",\"value\":\"3\"},{\"label\":\"CM MAC (hex)\",\"value\":\"020000000001\"},{\"label\":\"Number of averages (raw)\",\"value\":\"1\"},{\"label\":\"Pre-Eq flag (raw)\",\"value\":\"1\"},{\"label\":\"Pre-Eq enabled\",\"value\":\"true\"},{\"label\":\"Subcarrier zero (Hz)\",\"value\":\"12800000\"},{\"label\":\"First physical subcarrier\",\"value\":\"128\"},{\"label\":\"Spacing (kHz)\",\"value\":\"50\"},{\"label\":\"Declared data bytes\",\"value\":\"400\"}],\"page\":{\"has_next\":true,\"has_previous\":false,\"next_first\":64,\"previous_first\":0,\"summary\":\"Records 1\u201364 of 400\"},\"reference_plane\":\"CMTS equalized upstream probe relative to ideal BPSK. Missing readings remain unavailable at their original physical subcarriers.\",\"summary\":\"Inspection only; these unassociated measured observations do not supply a complete measured plan or simulation readiness.\",\"title\":\"Upstream RxMER Capture\"}}},{\"tag\":\"rxmer-json\",\"capture_view\":{\"family\":\"rxmer\",\"view\":{\"columns\":[\"Physical subcarrier\",\"RxMER (dB)\",\"Raw octet (hex)\"],\"data_rows\":[{\"coordinate\":\"3800\",\"first\":\"Unavailable\",\"second\":\"ff\"},{\"coordinate\":\"3801\",\"first\":\"0\",\"second\":\"00\"},{\"coordinate\":\"3802\",\"first\":\"10\",\"second\":\"28\"},{\"coordinate\":\"3803\",\"first\":\"63.5\",\"second\":\"fe\"}],\"error\":\"\",\"metadata_rows\":[{\"label\":\"Original binary bytes\",\"value\":\"301\"},{\"label\":\"Original binary SHA-256\",\"value\":\"1ee74407762af69674b866bfb5fde97eef2f45af3fa990252b64813cdd1deb84\"},{\"label\":\"Delivery bytes\",\"value\":\"2391\"},{\"label\":\"Delivery SHA-256\",\"value\":\"24c3f9ebb2b1027015ef85526e1e0f7c26a7b6b4f0bede15cac7902d407fa4e3\"},{\"label\":\"Major version\",\"value\":\"2\"},{\"label\":\"Minor version (raw)\",\"value\":\"165\"},{\"label\":\"Capture epoch seconds\",\"value\":\"4275878552\"},{\"label\":\"Interface index\",\"value\":\"7\"},{\"label\":\"CCAP ID raw octets (hex)\",\"value\":\"323030313a6462383a3a310000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},{\"label\":\"CCAP ID text\",\"value\":\"2001:db8::1\"},{\"label\":\"RPD ID (hex)\",\"value\":\"000000000000\"},{\"label\":\"RPD port (raw)\",\"value\":\"0\"},{\"label\":\"CM MAC (hex)\",\"value\":\"020000000002\"},{\"label\":\"Number of averages (raw)\",\"value\":\"1\"},{\"label\":\"Pre-Eq flag (raw)\",\"value\":\"0\"},{\"label\":\"Pre-Eq enabled\",\"value\":\"false\"},{\"label\":\"Subcarrier zero (Hz)\",\"value\":\"100000000\"},{\"label\":\"First physical subcarrier\",\"value\":\"3800\"},{\"label\":\"Spacing (kHz)\",\"value\":\"25\"},{\"label\":\"Declared data bytes\",\"value\":\"4\"}],\"page\":{\"has_next\":false,\"has_previous\":false,\"next_first\":0,\"previous_first\":0,\"summary\":\"Records 1\u20134 of 4\"},\"reference_plane\":\"CMTS equalized upstream probe relative to ideal BPSK. Missing readings remain unavailable at their original physical subcarriers.\",\"summary\":\"Inspection only; these unassociated measured observations do not supply a complete measured plan or simulation readiness.\",\"title\":\"Upstream RxMER Capture\"}}},{\"tag\":\"pre-eq-binary\",\"capture_view\":{\"family\":\"pre_eq\",\"view\":{\"columns\":[\"Physical subcarrier\",\"Real coefficient\",\"Imaginary coefficient\"],\"data_rows\":[{\"coordinate\":\"128\",\"first\":\"1\",\"second\":\"0\"},{\"coordinate\":\"129\",\"first\":\"1.125\",\"second\":\"-0.25\"},{\"coordinate\":\"130\",\"first\":\"-4\",\"second\":\"3.9998779296875\"},{\"coordinate\":\"131\",\"first\":\"0.0001220703125\",\"second\":\"-0.0001220703125\"}],\"error\":\"\",\"metadata_rows\":[{\"label\":\"Original binary bytes\",\"value\":\"50\"},{\"label\":\"Original binary SHA-256\",\"value\":\"09de1df6055de967c8ef36ad1cd6c2f9b142ebf53408aff5ce5b88b709b6f05b\"},{\"label\":\"Delivery bytes\",\"value\":\"50\"},{\"label\":\"Delivery SHA-256\",\"value\":\"09de1df6055de967c8ef36ad1cd6c2f9b142ebf53408aff5ce5b88b709b6f05b\"},{\"label\":\"Capture kind\",\"value\":\"Applied C\"},{\"label\":\"Major version\",\"value\":\"1\"},{\"label\":\"Minor version (raw)\",\"value\":\"0\"},{\"label\":\"Capture epoch seconds\",\"value\":\"19088743\"},{\"label\":\"Upstream channel ID\",\"value\":\"7\"},{\"label\":\"CM MAC (hex)\",\"value\":\"020000000001\"},{\"label\":\"CMTS MAC (hex)\",\"value\":\"020000000002\"},{\"label\":\"Subcarrier zero (Hz)\",\"value\":\"12800000\"},{\"label\":\"First physical subcarrier\",\"value\":\"128\"},{\"label\":\"Spacing (kHz)\",\"value\":\"50\"},{\"label\":\"Declared data bytes\",\"value\":\"16\"}],\"page\":{\"has_next\":false,\"has_previous\":false,\"next_first\":0,\"previous_first\":0,\"summary\":\"Records 1\u20134 of 4\"},\"reference_plane\":\"Original applied CM transmit-correction bank C; coefficients alone do not establish a measured association.\",\"summary\":\"Inspection only; unassociated applied TX correction C, not a channel estimate or simulation readiness.\",\"title\":\"Upstream Pre-Eq Capture\"}}},{\"tag\":\"pre-eq-json\",\"capture_view\":{\"family\":\"pre_eq\",\"view\":{\"columns\":[\"Physical subcarrier\",\"Real coefficient\",\"Imaginary coefficient\"],\"data_rows\":[{\"coordinate\":\"128\",\"first\":\"1\",\"second\":\"0\"},{\"coordinate\":\"129\",\"first\":\"1.125\",\"second\":\"-0.25\"},{\"coordinate\":\"130\",\"first\":\"-2\",\"second\":\"1.99993896484375\"},{\"coordinate\":\"131\",\"first\":\"0.00006103515625\",\"second\":\"-0.00006103515625\"}],\"error\":\"\",\"metadata_rows\":[{\"label\":\"Original binary bytes\",\"value\":\"50\"},{\"label\":\"Original binary SHA-256\",\"value\":\"497f49bedb09587daaeac3c95630c32b70b0b6dd7d948a7e3fa716ac4ad9320f\"},{\"label\":\"Delivery bytes\",\"value\":\"622\"},{\"label\":\"Delivery SHA-256\",\"value\":\"3ea8f39ef5bb81ad49a525b14d84ca4150cdbdcac21076b414aff9af773718fe\"},{\"label\":\"Capture kind\",\"value\":\"Last-update operand\"},{\"label\":\"Major version\",\"value\":\"1\"},{\"label\":\"Minor version (raw)\",\"value\":\"0\"},{\"label\":\"Capture epoch seconds\",\"value\":\"19088743\"},{\"label\":\"Upstream channel ID\",\"value\":\"7\"},{\"label\":\"CM MAC (hex)\",\"value\":\"020000000001\"},{\"label\":\"CMTS MAC (hex)\",\"value\":\"020000000002\"},{\"label\":\"Subcarrier zero (Hz)\",\"value\":\"12800000\"},{\"label\":\"First physical subcarrier\",\"value\":\"128\"},{\"label\":\"Spacing (kHz)\",\"value\":\"50\"},{\"label\":\"Declared data bytes\",\"value\":\"16\"}],\"page\":{\"has_next\":false,\"has_previous\":false,\"next_first\":0,\"previous_first\":0,\"summary\":\"Records 1\u20134 of 4\"},\"reference_plane\":\"Original last-update operand; Set/Adjust semantics, probe context and base-bank lineage must come from a complete measured plan.\",\"summary\":\"Inspection only; an unassociated last-update operand requires its explicit operation, probe and base bank before use.\",\"title\":\"Upstream Pre-Eq Capture\"}}}],\"pages\":[{\"tag\":\"rxmer-binary\",\"requested_first\":64,\"capture_view\":{\"family\":\"rxmer\",\"view\":{\"columns\":[\"Physical subcarrier\",\"RxMER (dB)\",\"Raw octet (hex)\"],\"data_rows\":[{\"coordinate\":\"192\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"193\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"194\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"195\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"196\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"197\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"198\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"199\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"200\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"201\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"202\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"203\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"204\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"205\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"206\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"207\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"208\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"209\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"210\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"211\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"212\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"213\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"214\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"215\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"216\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"217\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"218\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"219\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"220\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"221\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"222\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"223\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"224\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"225\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"226\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"227\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"228\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"229\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"230\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"231\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"232\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"233\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"234\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"235\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"236\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"237\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"238\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"239\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"240\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"241\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"242\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"243\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"244\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"245\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"246\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"247\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"248\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"249\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"250\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"251\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"252\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"253\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"254\",\"first\":\"40\",\"second\":\"a0\"},{\"coordinate\":\"255\",\"first\":\"40\",\"second\":\"a0\"}],\"error\":\"\",\"metadata_rows\":[{\"label\":\"Original binary bytes\",\"value\":\"697\"},{\"label\":\"Original binary SHA-256\",\"value\":\"d1da22fb4a1413f18477b48f4f698e6243ad14d03a28a6ba66daaebed78d41ba\"},{\"label\":\"Delivery bytes\",\"value\":\"697\"},{\"label\":\"Delivery SHA-256\",\"value\":\"d1da22fb4a1413f18477b48f4f698e6243ad14d03a28a6ba66daaebed78d41ba\"},{\"label\":\"Major version\",\"value\":\"2\"},{\"label\":\"Minor version (raw)\",\"value\":\"0\"},{\"label\":\"Capture epoch seconds\",\"value\":\"19088743\"},{\"label\":\"Interface index\",\"value\":\"270544960\"},{\"label\":\"CCAP ID raw octets (hex)\",\"value\":\"636361702e6578616d706c6500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000\"},{\"label\":\"CCAP ID text\",\"value\":\"ccap.example\"},{\"label\":\"RPD ID (hex)\",\"value\":\"02000000000a\"},{\"label\":\"RPD port (raw)\",\"value\":\"3\"},{\"label\":\"CM MAC (hex)\",\"value\":\"020000000001\"},{\"label\":\"Number of averages (raw)\",\"value\":\"1\"},{\"label\":\"Pre-Eq flag (raw)\",\"value\":\"1\"},{\"label\":\"Pre-Eq enabled\",\"value\":\"true\"},{\"label\":\"Subcarrier zero (Hz)\",\"value\":\"12800000\"},{\"label\":\"First physical subcarrier\",\"value\":\"128\"},{\"label\":\"Spacing (kHz)\",\"value\":\"50\"},{\"label\":\"Declared data bytes\",\"value\":\"400\"}],\"page\":{\"has_next\":true,\"has_previous\":true,\"next_first\":128,\"previous_first\":0,\"summary\":\"Records 65\u2013128 of 400\"},\"reference_plane\":\"CMTS equalized upstream probe relative to ideal BPSK. Missing readings remain unavailable at their original physical subcarriers.\",\"summary\":\"Inspection only; these unassociated measured observations do not supply a complete measured plan or simulation readiness.\",\"title\":\"Upstream RxMER Capture\"}}}],\"pickerCancelPreserved\":true,\"invalidPreserved\":true,\"invalidDiagnostic\":\"Binary capture: InvalidInput: Capture { category: InvalidInput, field: \\\"pre_eq.header\\\", offset: 2 }; capture-source JSON: InvalidInput: Capture { category: InvalidInput, field: \\\"capture_source_json.document\\\", offset: 0 }\",\"invalidCaptureView\":{\"family\":\"pre_eq\",\"view\":{\"columns\":[\"Physical subcarrier\",\"Real coefficient\",\"Imaginary coefficient\"],\"data_rows\":[{\"coordinate\":\"128\",\"first\":\"1\",\"second\":\"0\"},{\"coordinate\":\"129\",\"first\":\"1.125\",\"second\":\"-0.25\"},{\"coordinate\":\"130\",\"first\":\"-2\",\"second\":\"1.99993896484375\"},{\"coordinate\":\"131\",\"first\":\"0.00006103515625\",\"second\":\"-0.00006103515625\"}],\"error\":\"Binary capture: InvalidInput: Capture { category: InvalidInput, field: \\\"pre_eq.header\\\", offset: 2 }; capture-source JSON: InvalidInput: Capture { category: InvalidInput, field: \\\"capture_source_json.document\\\", offset: 0 }\",\"metadata_rows\":[{\"label\":\"Original binary bytes\",\"value\":\"50\"},{\"label\":\"Original binary SHA-256\",\"value\":\"497f49bedb09587daaeac3c95630c32b70b0b6dd7d948a7e3fa716ac4ad9320f\"},{\"label\":\"Delivery bytes\",\"value\":\"622\"},{\"label\":\"Delivery SHA-256\",\"value\":\"3ea8f39ef5bb81ad49a525b14d84ca4150cdbdcac21076b414aff9af773718fe\"},{\"label\":\"Capture kind\",\"value\":\"Last-update operand\"},{\"label\":\"Major version\",\"value\":\"1\"},{\"label\":\"Minor version (raw)\",\"value\":\"0\"},{\"label\":\"Capture epoch seconds\",\"value\":\"19088743\"},{\"label\":\"Upstream channel ID\",\"value\":\"7\"},{\"label\":\"CM MAC (hex)\",\"value\":\"020000000001\"},{\"label\":\"CMTS MAC (hex)\",\"value\":\"020000000002\"},{\"label\":\"Subcarrier zero (Hz)\",\"value\":\"12800000\"},{\"label\":\"First physical subcarrier\",\"value\":\"128\"},{\"label\":\"Spacing (kHz)\",\"value\":\"50\"},{\"label\":\"Declared data bytes\",\"value\":\"16\"}],\"page\":{\"has_next\":false,\"has_previous\":false,\"next_first\":0,\"previous_first\":0,\"summary\":\"Records 1\u20134 of 4\"},\"reference_plane\":\"Original last-update operand; Set/Adjust semantics, probe context and base-bank lineage must come from a complete measured plan.\",\"summary\":\"Inspection only; an unassociated last-update operand requires its explicit operation, probe and base bank before use.\",\"title\":\"Upstream Pre-Eq Capture\"}},\"pagingObserved\":true,\"inspectionTabIsolation\":true,\"inspectionIdentity\":\"upstream/2/0\",\"inspectionKey\":\"{\\\"session\\\":null,\\\"generation\\\":null}\",\"downstreamIdentity\":\"downstream/1/3\",\"downstreamAcceptedOptionsPreserved\":true,\"measuredPlans\":[{\"tag\":\"measured-50\",\"identity\":\"upstream/2/1\",\"session\":\"2\",\"generation\":\"1\",\"read_only_drafts\":[{\"section\":\"ucd\",\"draft\":{\"baseGeneration\":\"1\",\"baseSession\":\"2\",\"can_apply\":false,\"error\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"options\":{\"fields\":[],\"read_only\":true},\"outcome\":\"editing\",\"pending\":false,\"section\":\"ucd\",\"summary\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"token\":\"upstream-draft/2\",\"values\":{}}},{\"section\":\"profiles\",\"draft\":{\"baseGeneration\":\"1\",\"baseSession\":\"2\",\"can_apply\":false,\"error\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"options\":{\"fields\":[],\"read_only\":true},\"outcome\":\"editing\",\"pending\":false,\"section\":\"profiles\",\"summary\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"token\":\"upstream-draft/3\",\"values\":{}}},{\"section\":\"grants\",\"draft\":{\"baseGeneration\":\"1\",\"baseSession\":\"2\",\"can_apply\":false,\"error\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"options\":{\"fields\":[],\"read_only\":true},\"outcome\":\"editing\",\"pending\":false,\"section\":\"grants\",\"summary\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"token\":\"upstream-draft/4\",\"values\":{}}},{\"section\":\"source\",\"draft\":{\"baseGeneration\":\"1\",\"baseSession\":\"2\",\"can_apply\":false,\"error\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"options\":{\"fields\":[],\"read_only\":true},\"outcome\":\"editing\",\"pending\":false,\"section\":\"source\",\"summary\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"token\":\"upstream-draft/5\",\"values\":{}}},{\"section\":\"receiver\",\"draft\":{\"baseGeneration\":\"1\",\"baseSession\":\"2\",\"can_apply\":false,\"error\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"options\":{\"fields\":[],\"read_only\":true},\"outcome\":\"editing\",\"pending\":false,\"section\":\"receiver\",\"summary\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"token\":\"upstream-draft/6\",\"values\":{}}},{\"section\":\"channel\",\"draft\":{\"baseGeneration\":\"1\",\"baseSession\":\"2\",\"can_apply\":false,\"error\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"options\":{\"fields\":[],\"read_only\":true},\"outcome\":\"editing\",\"pending\":false,\"section\":\"channel\",\"summary\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"token\":\"upstream-draft/7\",\"values\":{}}},{\"section\":\"preEqualization\",\"draft\":{\"baseGeneration\":\"1\",\"baseSession\":\"2\",\"can_apply\":false,\"error\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"options\":{\"fields\":[],\"read_only\":true},\"outcome\":\"editing\",\"pending\":false,\"section\":\"preEqualization\",\"summary\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"token\":\"upstream-draft/8\",\"values\":{}}}],\"cancelAndTabsPreserved\":true,\"result\":{\"ber\":0,\"bit_errors\":0,\"bits_tested\":1976,\"completed_grants\":1,\"reference_recovered\":true,\"run\":\"1\",\"status\":\"Completed\",\"unverified_source_bits\":0},\"verification\":{\"rows\":[{\"label\":\"Run\",\"value\":\"1\"},{\"label\":\"Lifecycle\",\"value\":\"Completed\"},{\"label\":\"Full reference recovery\",\"value\":\"Verified\"},{\"label\":\"Planned source bits\",\"value\":\"1976\"},{\"label\":\"Generated source bits\",\"value\":\"1976\"},{\"label\":\"Compared source bits\",\"value\":\"1976\"},{\"label\":\"Unverified generated bits\",\"value\":\"0\"},{\"label\":\"Bit errors\",\"value\":\"0\"},{\"label\":\"BER\",\"value\":\"0\"},{\"label\":\"Completed / planned grants\",\"value\":\"1 / 1\"},{\"label\":\"Not-started grants\",\"value\":\"0\"},{\"label\":\"Completed / pending codewords\",\"value\":\"3 / 0\"},{\"label\":\"Converged / nonconverged codewords\",\"value\":\"3 / 0\"},{\"label\":\"Parity / shortening / fill failures\",\"value\":\"0 / 0 / 0\"},{\"label\":\"Missing symbols\",\"value\":\"0\"},{\"label\":\"Active elapsed (ms)\",\"value\":\"4\"}],\"summary\":\"Actual independent source, FEC, fill and full-coverage verification succeeded.\"}},{\"tag\":\"measured-25\",\"identity\":\"upstream/2/2\",\"session\":\"2\",\"generation\":\"2\",\"read_only_drafts\":[{\"section\":\"ucd\",\"draft\":{\"baseGeneration\":\"2\",\"baseSession\":\"2\",\"can_apply\":false,\"error\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"options\":{\"fields\":[],\"read_only\":true},\"outcome\":\"editing\",\"pending\":false,\"section\":\"ucd\",\"summary\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"token\":\"upstream-draft/10\",\"values\":{}}},{\"section\":\"profiles\",\"draft\":{\"baseGeneration\":\"2\",\"baseSession\":\"2\",\"can_apply\":false,\"error\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"options\":{\"fields\":[],\"read_only\":true},\"outcome\":\"editing\",\"pending\":false,\"section\":\"profiles\",\"summary\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"token\":\"upstream-draft/11\",\"values\":{}}},{\"section\":\"grants\",\"draft\":{\"baseGeneration\":\"2\",\"baseSession\":\"2\",\"can_apply\":false,\"error\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"options\":{\"fields\":[],\"read_only\":true},\"outcome\":\"editing\",\"pending\":false,\"section\":\"grants\",\"summary\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"token\":\"upstream-draft/12\",\"values\":{}}},{\"section\":\"source\",\"draft\":{\"baseGeneration\":\"2\",\"baseSession\":\"2\",\"can_apply\":false,\"error\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"options\":{\"fields\":[],\"read_only\":true},\"outcome\":\"editing\",\"pending\":false,\"section\":\"source\",\"summary\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"token\":\"upstream-draft/13\",\"values\":{}}},{\"section\":\"receiver\",\"draft\":{\"baseGeneration\":\"2\",\"baseSession\":\"2\",\"can_apply\":false,\"error\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"options\":{\"fields\":[],\"read_only\":true},\"outcome\":\"editing\",\"pending\":false,\"section\":\"receiver\",\"summary\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"token\":\"upstream-draft/14\",\"values\":{}}},{\"section\":\"channel\",\"draft\":{\"baseGeneration\":\"2\",\"baseSession\":\"2\",\"can_apply\":false,\"error\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"options\":{\"fields\":[],\"read_only\":true},\"outcome\":\"editing\",\"pending\":false,\"section\":\"channel\",\"summary\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"token\":\"upstream-draft/15\",\"values\":{}}},{\"section\":\"preEqualization\",\"draft\":{\"baseGeneration\":\"2\",\"baseSession\":\"2\",\"can_apply\":false,\"error\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"options\":{\"fields\":[],\"read_only\":true},\"outcome\":\"editing\",\"pending\":false,\"section\":\"preEqualization\",\"summary\":\"Captured configuration is read-only here. Edit the complete measured plan and reload it.\",\"token\":\"upstream-draft/16\",\"values\":{}}}],\"cancelAndTabsPreserved\":true,\"result\":{\"ber\":0,\"bit_errors\":0,\"bits_tested\":4216,\"completed_grants\":1,\"reference_recovered\":true,\"run\":\"2\",\"status\":\"Completed\",\"unverified_source_bits\":0},\"verification\":{\"rows\":[{\"label\":\"Run\",\"value\":\"2\"},{\"label\":\"Lifecycle\",\"value\":\"Completed\"},{\"label\":\"Full reference recovery\",\"value\":\"Verified\"},{\"label\":\"Planned source bits\",\"value\":\"4216\"},{\"label\":\"Generated source bits\",\"value\":\"4216\"},{\"label\":\"Compared source bits\",\"value\":\"4216\"},{\"label\":\"Unverified generated bits\",\"value\":\"0\"},{\"label\":\"Bit errors\",\"value\":\"0\"},{\"label\":\"BER\",\"value\":\"0\"},{\"label\":\"Completed / planned grants\",\"value\":\"1 / 1\"},{\"label\":\"Not-started grants\",\"value\":\"0\"},{\"label\":\"Completed / pending codewords\",\"value\":\"1 / 0\"},{\"label\":\"Converged / nonconverged codewords\",\"value\":\"1 / 0\"},{\"label\":\"Parity / shortening / fill failures\",\"value\":\"0 / 0 / 0\"},{\"label\":\"Missing symbols\",\"value\":\"0\"},{\"label\":\"Active elapsed (ms)\",\"value\":\"8\"}],\"summary\":\"Actual independent source, FEC, fill and full-coverage verification succeeded.\"}}],\"screenshot\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03/native-first/inputs-dark.png\",\"captureTarget\":\"capture-inspector-contentItem\",\"fullWindowCaptureMarker\":true,\"dark\":true}"
+      ],
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03/native-first/inputs-dark.png",
+      "image_sha256": "8c3e68775f394c62203efcc5a3a11d1951c1f97dc22a698c06baa3b9d6f3134c"
+    },
+    "installed_native_comparison": {
+      "executable_sha256": "1bb133be1adcac51db72da2d145bf68fdf513f6ec2867d3b9a931d6fe9219fac",
+      "installed_reference_interpreter": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/native/installed/bin/python",
+      "inspections_compared": 6,
+      "original_delivery_hashes_lengths": true,
+      "public_observation_rows_and_nulls": true,
+      "measured_plans_verified": 2
+    },
+    "native_configuration_regression": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--upstream-configuration-probe",
+        "--upstream-configuration-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us03-regression/receiver-configuration-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.501598740011104,
+      "executable_sha256": "1bb133be1adcac51db72da2d145bf68fdf513f6ec2867d3b9a931d6fe9219fac",
+      "source_sha256": "ba39970338d18e741c0c17362298dc9a71ad39a3a5f2022d8390e128e053e41d",
+      "source_fixture": "Existing us-50khz.json plus explicit synthetic unity Pre-Eq plan; not captured field input.",
+      "picker_actions": [
+        {
+          "action": "cancel",
+          "owned_window": 14680071,
+          "picker_pid": 561160,
+          "seconds": 2.8279248590115458
+        },
+        {
+          "action": "load",
+          "owned_window": 14680071,
+          "picker_pid": 561195,
+          "seconds": 3.8503442799992627
+        }
+      ],
+      "full_window_capture": {
+        "window": 12582919,
+        "pid": 561148,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us03-regression/upstream-configuration-main-dark.png",
+        "sha256": "f45b60b81bd1cd73782a99cfb7161dcad3dd7c7e82d985c1019d0fda6e838fb4",
+        "size": [
+          1210,
+          736
+        ],
+        "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+      },
+      "probe_output": [
+        "{\"probe\":\"upstream-configuration\",\"success\":true,\"phase\":\"capture-grace\",\"error\":\"\",\"sections\":[{\"section\":\"ucd\",\"field\":\"randomization_seed\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"1\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"1\",\"generationAfter\":\"2\"},{\"section\":\"profiles\",\"field\":\"modulation_index\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"2\",\"generationAfter\":\"3\"},{\"section\":\"grants\",\"field\":\"grant_id\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"9007199254740993\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"3\",\"generationAfter\":\"4\"},{\"section\":\"source\",\"field\":\"source_seed\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"4\",\"generationAfter\":\"5\"},{\"section\":\"channel\",\"field\":\"phase_radians\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"0.1\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"5\",\"generationAfter\":\"6\"},{\"section\":\"preEqualization\",\"field\":\"initial_id\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"6\",\"generationAfter\":\"7\"},{\"section\":\"receiver\",\"field\":\"ldpc_iterations\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"7\",\"generationAfter\":\"8\"}],\"chooserCancelAndLoad\":true,\"invalidPreservation\":true,\"tabIsolation\":true,\"downstreamIdentity\":\"downstream/1/3\",\"downstreamAcceptedOptionsPreserved\":true,\"upstreamGeneration\":\"8\",\"upstreamIdentity\":\"upstream/2/8\",\"screenshot\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us03-regression/receiver-configuration-dark.png\",\"captureTarget\":\"receiver-contentItem\",\"fullWindowCaptureMarker\":true,\"dark\":true}"
+      ],
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us03-regression/receiver-configuration-dark.png",
+      "image_sha256": "94d38362eb6d0a26ce1f55b09471d3730425dfc9d6ccb683614c3d3b002ba8e6"
+    },
+    "native_downstream_shell": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--direction-shell-probe",
+        "--direction-shell-downstream-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-03-inputs/downstream-dark.png",
+        "--direction-shell-upstream-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-03-inputs/upstream-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.812446997006191,
+      "executable_sha256": "1bb133be1adcac51db72da2d145bf68fdf513f6ec2867d3b9a931d6fe9219fac",
+      "display": ":0",
+      "probe_output": [
+        "{\"probe\":\"direction-shell\",\"success\":true,\"phase\":\"terminal\",\"error\":\"\",\"loadingProject\":false,\"hasProject\":true,\"controlsContextCurrent\":true,\"controlDirection\":\"downstream\",\"controlIdentity\":\"downstream/1/5\",\"shellMetadata\":{\"applicationBusy\":false,\"downstreamDirty\":true,\"downstreamIdentity\":\"downstream/1/5\",\"executionDirection\":null,\"executionStatus\":\"\",\"selectedDirection\":\"downstream\",\"upstreamDirty\":false,\"upstreamIdentity\":\"upstream/2/0\"},\"shellPresentationRejected\":false,\"controlsPresentationRejected\":false,\"fileMessage\":\"Opened /home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json\",\"persistentChildren\":true,\"nativeCursor\":true,\"sharedSettingsOnUpstream\":true,\"sharedAboutOnUpstream\":true,\"fileRejectedOnUpstream\":true,\"configureRouted\":true,\"pausedLeaseAcrossSwitch\":true,\"foreignControlsRejected\":true,\"genuineTerminalObserved\":true,\"idleSwitchObserved\":true,\"runningSwitchObserved\":true,\"dark\":true,\"downstreamImage\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-03-inputs/downstream-dark.png\",\"upstreamImage\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-03-inputs/upstream-dark.png\"}"
+      ],
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-03-inputs/downstream-dark.png",
+      "upstream_image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-03-inputs/upstream-dark.png",
+      "upstream_image_sha256": "486345a60178f2af414739e4b00471b874fa84532bb96ef9af9f0c6e6af15494",
+      "image_sha256": "3f4dd220f6173ed9b281d50c555910a399b67b974b4c23e49016eba155a4d5ff"
+    },
+    "native_startup_project": {
+      "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+      "sha256": "1bb133be1adcac51db72da2d145bf68fdf513f6ec2867d3b9a931d6fe9219fac",
+      "display": ":0",
+      "display_dimensions": [
+        "dimensions:    1280x800 pixels (338x211 millimeters)"
+      ],
+      "qt_sdk_version": "6.8.3",
+      "commands": [
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.04079368698876351,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.054437315004179254,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.4233750749990577,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.03071637400717009,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.943234197999118,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test",
+            "--workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.9424844629975269,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        }
+      ]
+    },
+    "packaging": {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/packaging",
+        "-v"
+      ],
+      "exit_code": 0,
+      "passed": 25
+    },
+    "documentation": [
+      {
+        "label": "strict-matrix",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/api_operation_matrix.py",
+          "--exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/rust-exports.json",
+          "--native-exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/native/native-exports.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.623487649994786
+      },
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 13.417490264997468
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.773061548999976
+      },
+      {
+        "label": "uiu-history",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/audit_upstream_inputs_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.11479349299042951
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03966235999541823
+      },
+      {
+        "label": "guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.07559846399817616
+      },
+      {
+        "label": "diff",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.039414941988070495
+      },
+      {
+        "label": "staged-diff",
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.003886599006364122
+      }
+    ]
+  },
+  "reuse_and_not_required": {
+    "unchanged_backend": {
+      "base": "4516ee96bf735b29d2eeaa53ffc10400577608a4",
+      "scope": [
+        "crates",
+        "bindings",
+        "Cargo.toml",
+        "Cargo.lock"
+      ],
+      "verified_files": 856,
+      "byte_identical": true,
+      "new_files": []
+    },
+    "native_reference": "Reuse source-JSON prerequisite installed wheel to independently compare actual six native Qt views with public Python capture observations; no new wheel required for this Qt-only change.",
+    "scientific_evidence": "Accepted SESSION scientific/CLI/project/full-native milestones plus separately accepted source-JSON API prerequisite remain valid within their original scopes.",
+    "reason": "No scientific algorithm, public Rust/Python API, schema/writer or dependency changed. Execute affected Qt consumers; avoid unrelated root regression/wheel repetition.",
+    "deferred": "Full final workspace/native Python/CLI/persistence/platform/package acceptance remains UIU-QA-01 and existing official tasks."
+  },
+  "evidence_boundaries": {
+    "fixtures": "Authored/sanitized source captures and measured plans; not field measurements or external interoperability.",
+    "actual": "Native pickers and actual Main widgets, both complete measured simulations and independent source recovery; not inferred from parser-only tests.",
+    "limitations": "Resource-grid/shared instruments, per-direction project Save/Open, restart recovery and final acceptance remain their existing tasks."
+  },
+  "earlier_attempts": [
+    "Initial Clippy rejected format/collect. Extracted the same lowercase octet convention into the existing common byte-presentation owner with direct String writes and existing byte-width constants; no suppression or science change.",
+    "Initial QML runner used an absent historical test filename after the capture suite passed. Correct existing names were discovered and all17 affected suites executed. No absent suite is reported passed."
+  ]
+}

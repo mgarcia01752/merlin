@@ -4,11 +4,14 @@
  */
 //! Direction-specific Qt ownership over the existing public upstream controller.
 mod acquisition;
+mod captures;
 mod configuration_view;
 mod drafts;
 mod execution_view;
+mod measured_view;
 mod preparation;
 mod presentation;
+pub(crate) use captures::{Family as CaptureFamily, MAX_CAPTURE_FAMILY_CHARACTERS};
 pub(crate) use drafts::{MAX_DRAFT_CHANGE_BYTES, MAX_DRAFT_ID_CHARACTERS};
 
 use crate::shared::{
@@ -42,6 +45,7 @@ pub(crate) struct Model {
     error: WorkerFailure,
     draft: Option<drafts::SharedDraft>,
     draft_outcome: drafts::Outcome,
+    capture: Option<Retained<captures::CaptureDisplay>>,
 
     // Drop controllers, pending slots and data aliases before this containing charge.
     _fixed_guard: Retained<()>,
@@ -74,13 +78,14 @@ impl Model {
             error: WorkerFailure::default(),
             draft: None,
             draft_outcome: drafts::Outcome::default(),
+            capture: None,
             _fixed_guard: fixed_guard,
         }))
     }
 
     /// Stages a bounded public configuration for background parsing/admission.
     /// # Arguments
-    /// * `document` - Exact existing merlin.upstream.configuration JSON bytes.
+    /// * `document` - Exact public configuration or complete measured-plan JSON.
     /// # Returns
     /// Success means preparation started, not that configuration is accepted.
     /// # Errors
@@ -235,6 +240,21 @@ impl Model {
 
     fn adopt_prepared(&mut self, prepared: Prepared) -> Result<(), WorkerFailure> {
         match prepared {
+            Prepared::Capture {
+                delivery: _delivery_guard,
+                expected,
+                candidate,
+            } => {
+                if self.preparation_cancelled {
+                    return Ok(());
+                }
+                if self.application.snapshot(Direction::Upstream).key != expected {
+                    return Err(WorkerFailure::Static(
+                        "Upstream configuration changed during capture inspection.",
+                    ));
+                }
+                self.capture = Some(candidate?);
+            }
             Prepared::Edit {
                 delivery: _delivery_guard,
                 controller,
@@ -389,3 +409,6 @@ mod tests;
 
 #[cfg(test)]
 mod fixed_retention_tests;
+
+#[cfg(test)]
+mod measured_tests;

@@ -120,6 +120,28 @@ QtObject {
         return !error
     }
 
+    /** Inspect an original capture through the native picker without applying it. */
+    function loadCapture(family) {
+        if (!accepts("upstream", presentation.upstreamIdentity)) {
+            return false
+        }
+        const error = upstreamBackend.choose_capture(family) || ""
+        poll()
+        feedback(error)
+        return !error
+    }
+
+    /** Forward the native original-record page coordinate without decoding it. */
+    function capturePage(family, first) {
+        if (!accepts("upstream", presentation.upstreamIdentity)) {
+            return false
+        }
+        const error = upstreamBackend.capture_page(family, first) || ""
+        poll()
+        feedback(error)
+        return !error
+    }
+
     /** Keep picker Cancel intact; close/reopen only after a real queued import. */
     function loadConfiguration() {
         if (!accepts("upstream", presentation.upstreamIdentity)) {

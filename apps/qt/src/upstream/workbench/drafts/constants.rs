@@ -18,3 +18,6 @@ pub(super) const MAX_DECIMAL_TEXT_CHARACTERS: usize = 128;
 pub(super) const FIRST_DRAFT_ID: u64 = 1;
 /// One actual immutable draft Arc pointee, shared through worker completion.
 pub(super) const DRAFT_SHARED_ROOTS: usize = 1;
+/// Synthetic field edits cannot replace an admitted capture association/replay plan.
+pub(in crate::upstream::workbench) const MEASURED_READ_ONLY_MESSAGE: &str =
+    "Captured configuration is read-only here. Edit the complete measured plan and reload it.";

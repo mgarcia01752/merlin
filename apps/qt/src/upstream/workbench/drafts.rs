@@ -5,12 +5,13 @@
 //! Correlated configuration edits over the existing immutable upstream owner.
 mod constants;
 mod fields;
+pub(super) use constants::MEASURED_READ_ONLY_MESSAGE;
 use constants::{DRAFT_SHARED_ROOTS, FIRST_DRAFT_ID};
 pub(crate) use constants::{MAX_DRAFT_CHANGE_BYTES, MAX_DRAFT_ID_CHARACTERS};
 
 use super::{Model, Pending};
 use crate::shell::{Direction, Retained, RetentionBudget, SessionKey};
-use crate::upstream::PreparedSession;
+use crate::upstream::{PreparedSession, UpstreamController};
 use merlin::upstream::{ReceiverObservationPolicy, Simulation};
 use serde_json::{json, Value};
 use std::{
@@ -59,6 +60,10 @@ impl Outcome {
 }
 
 impl Draft {
+    fn read_only(&self) -> bool {
+        self.fields.presentation["options"]["read_only"] == true
+    }
+
     /// Formats this exact native draft as lossless opaque text.
     /// # Returns
     /// A process-unique token; QML must retain it without parsing or alteration.
@@ -108,7 +113,18 @@ impl Model {
                 "Wait for upstream work before opening another configuration draft.".into(),
             );
         }
-        let fields = if self.current() {
+        let measured = self.current()
+            && self
+                .controller
+                .as_ref()
+                .is_some_and(UpstreamController::has_measured_input);
+        let fields = if measured {
+            fields::Fields {
+                bindings: Vec::new(),
+                presentation: json!({"section":section,"options":{"fields":[],"read_only":true},
+                    "values":{},"summary":MEASURED_READ_ONLY_MESSAGE}),
+            }
+        } else if self.current() {
             self.controller
                 .as_ref()
                 .ok_or("Upstream source is unavailable.")?
@@ -230,6 +246,9 @@ impl Model {
         if !draft.value().has_source || !self.current() {
             return Err("Load a supported upstream source configuration first.".into());
         }
+        if draft.value().read_only() {
+            return Err(MEASURED_READ_ONLY_MESSAGE.into());
+        }
         if draft.value().base != self.application.snapshot(Direction::Upstream).key {
             return Err("Upstream configuration changed. Close and reopen this draft.".into());
         }
@@ -331,10 +350,10 @@ impl Model {
             .expect("Native fields supply an object");
         object.extend(json!({"section":draft.section,"token":draft.token(),
             "baseSession":draft.base.session.to_string(),"baseGeneration":draft.base.generation.to_string(),
-            "can_apply":draft.has_source && matches!(outcome, Outcome::Editing | Outcome::Rejected)
+            "can_apply":draft.has_source && !draft.read_only() && matches!(outcome, Outcome::Editing | Outcome::Rejected)
                 && !pending && self.application.active().is_none(),
             "pending":pending,"outcome":outcome.name(),
-            "error":if draft.has_source { self.error.message() } else { "Load a supported upstream configuration document to supply these fields." }
+            "error":if draft.read_only() { MEASURED_READ_ONLY_MESSAGE } else if draft.has_source { self.error.message() } else { "Load a supported upstream configuration document to supply these fields." }
         }).as_object().unwrap().clone());
         state
     }

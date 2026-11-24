@@ -43,6 +43,9 @@ WorkbenchDialog {
     }
     property string purpose: ""
     property string referencePlane: ""
+    property string captureFamily: ""
+    property bool captureBusy: false
+    signal captureRequested(string family)
     property var stages: []
     readonly property real preferredDialogWidth: 620
     readonly property real preferredDialogHeight: 560
@@ -74,6 +77,17 @@ WorkbenchDialog {
         ColumnLayout {
             width: scroller.availableWidth
             spacing: dialog.sectionSpacing
+            WorkbenchActionButton {
+                objectName: "upstreamCaptureInspect"
+                theme: dialog.theme
+                text: "View Capture"
+                visible: dialog.captureFamily.length > 0
+                enabled: !dialog.captureBusy
+                onClicked: {
+                    dialog.close();
+                    dialog.captureRequested(dialog.captureFamily);
+                }
+            }
             Label {
                 Layout.fillWidth: true
                 text: dialog.purpose

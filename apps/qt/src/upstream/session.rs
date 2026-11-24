@@ -13,8 +13,8 @@ pub use failure::RunFailure;
 use merlin::{
     common::RetainedFootprint,
     upstream::{
-        ApiError, BatchReport, ConfigurationDocument, ProgressSnapshot, ReceiverObservationPolicy,
-        RunControl, Simulation,
+        inputs::MeasuredExperiment, ApiError, BatchReport, ConfigurationDocument, ProgressSnapshot,
+        ReceiverObservationPolicy, RunControl, Simulation,
     },
 };
 use std::{
@@ -44,10 +44,24 @@ struct SessionStorage {
     simulation: Option<Simulation>,
 }
 
+/// Immutable source inventory from the successfully admitted measured plan.
+#[derive(Clone, Copy)]
+pub(crate) struct MeasuredInputInfo {
+    /// Physical source fragments, kept distinct from their derived reassembly.
+    pub(crate) ucd_fragments: usize,
+    /// Explicitly associated measured RxMER files.
+    pub(crate) rxmer_captures: usize,
+    /// Whether the plan supplies an original initial applied-bank capture.
+    pub(crate) pre_eq_initial: bool,
+    /// Original update/snapshot sources with explicit replay context.
+    pub(crate) pre_eq_events: usize,
+}
+
 /// Off-GUI admitted scientific session, carrying a backend-derived ownership charge.
 pub struct PreparedSession {
     session: SharedSession,
     budget: RetentionBudget,
+    measured_input: Option<MeasuredInputInfo>,
 }
 
 /// Target reservation prepared off-GUI for one exact immutable controller session.
@@ -135,6 +149,8 @@ struct Active {
 /// admits its fixed session, gate and accounting pointees.
 pub struct UpstreamController {
     key: SessionKey,
+    // Immutable admission route; available even while the scientific owner runs.
+    measured_input: Option<MeasuredInputInfo>,
 
     // Drop the receiver before this owner's session/result aliases. A disconnected
     // worker finishes through the shared transport's terminal acknowledgement.
@@ -181,6 +197,53 @@ impl PreparedSession {
         simulation
             .set_receiver_observation_policy(observations)
             .map_err(AdmissionError::Backend)?;
+        Self::retain_simulation(simulation, budget, None)
+    }
+
+    /// Admits a complete measured plan through the existing public native owners.
+    ///
+    /// # Arguments
+    /// * `plan` - Original complete capture/association/replay context, never inferred.
+    /// * `observations` - Explicit existing receiver retention policy.
+    /// * `budget` - Same canonical application policy as synthetic sessions.
+    ///
+    /// # Returns
+    /// An idle admitted session retaining original plan/capture provenance and the
+    /// actual projected scientific configuration. No simulation or source advances.
+    ///
+    /// # Errors
+    /// Public measured admission, observation or existing retention failures.
+    /// Previously accepted controllers and reports are never modified.
+    pub fn from_measured(
+        plan: MeasuredExperiment,
+        observations: ReceiverObservationPolicy,
+        budget: &RetentionBudget,
+    ) -> Result<Self, AdmissionError> {
+        let measured = plan.admit().map_err(AdmissionError::Backend)?;
+        let inventory = MeasuredInputInfo {
+            ucd_fragments: plan.ucd_fragments.len(),
+            rxmer_captures: plan.rxmer.len(),
+            pre_eq_initial: plan.pre_eq_initial.is_some(),
+            pre_eq_events: plan.pre_eq_events.len(),
+        };
+        // Only an empty construction policy: configure_measured adopts the plan's
+        // validated options atomically before this candidate becomes observable.
+        let mut simulation =
+            Simulation::new(Default::default()).map_err(AdmissionError::Backend)?;
+        simulation
+            .configure_measured(measured)
+            .map_err(AdmissionError::Backend)?;
+        simulation
+            .set_receiver_observation_policy(observations)
+            .map_err(AdmissionError::Backend)?;
+        Self::retain_simulation(simulation, budget, Some(inventory))
+    }
+
+    fn retain_simulation(
+        simulation: Simulation,
+        budget: &RetentionBudget,
+        measured_input: Option<MeasuredInputInfo>,
+    ) -> Result<Self, AdmissionError> {
         let scientific = simulation
             .retained_footprint()
             .map_err(AdmissionError::Backend)?;
@@ -194,6 +257,7 @@ impl PreparedSession {
         Ok(Self {
             session,
             budget: budget.clone(),
+            measured_input,
         })
     }
 }
@@ -266,11 +330,30 @@ impl UpstreamController {
         }
         Ok(Self {
             key,
+            measured_input: prepared.measured_input,
             active: None,
             session: prepared.session,
             budget: prepared.budget,
             report: None,
         })
+    }
+
+    /// Reports which public admission operation created this immutable owner.
+    ///
+    /// # Returns
+    /// True only after successful measured-plan admission. This adapter tag stays
+    /// available during execution; it never infers capture science from results.
+    pub(crate) fn has_measured_input(&self) -> bool {
+        self.measured_input.is_some()
+    }
+
+    /// Reads the inventory supplied by successful native measured admission.
+    ///
+    /// # Returns
+    /// Fixed source counts, or None for a synthetic input. No scientific buffers
+    /// or inferred associations are exposed, and no session lock is required.
+    pub(crate) fn measured_input(&self) -> Option<MeasuredInputInfo> {
+        self.measured_input
     }
 
     /// Borrows the actual idle session without exposing mutable scientific state.

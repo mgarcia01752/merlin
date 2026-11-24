@@ -6,6 +6,7 @@ import QtQuick
 
 UpstreamConfigurationDraftDialog {
     sectionId: "preEqualization"
+    captureFamily: "pre_eq"
     approvedFields: ["initial_id"]
     title: "CM Pre-Eq"
     purpose: "Inspect measured cable-modem pre-equalization coefficients and their admitted use."

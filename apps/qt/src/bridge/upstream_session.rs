@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Thin QObject adapter; the direction model owns asynchronous public API calls.
+use crate::upstream::workbench::{CaptureFamily, MAX_CAPTURE_FAMILY_CHARACTERS};
 use crate::upstream::workbench::{Model, MAX_CONFIGURATION_BYTES};
 use crate::upstream::workbench::{MAX_DRAFT_CHANGE_BYTES, MAX_DRAFT_ID_CHARACTERS};
 use cxx_qt::CxxQtType;
@@ -25,6 +26,23 @@ pub mod bridge {
         /// Poll alone establishes eventual acceptance. No simulation is started.
         #[qinvokable]
         fn choose_configuration(self: Pin<&mut UpstreamSession>) -> QString;
+
+        /// Opens a native capture picker for independent source inspection.
+        /// # Arguments
+        /// * `family` - Exact UCD, RxMER or Pre-Eq presentation destination.
+        /// # Returns
+        /// Empty on Cancel or queued admission; an actionable error otherwise.
+        #[qinvokable]
+        fn choose_capture(self: Pin<&mut UpstreamSession>, family: &QString) -> QString;
+
+        /// Requests another bounded page of the same admitted original capture.
+        /// # Arguments
+        /// * `family` - Original capture family.
+        /// * `first` - Nonnegative original record index, validated by the worker.
+        /// # Returns
+        /// Empty after dispatch; no accepted scientific configuration is changed.
+        #[qinvokable]
+        fn capture_page(self: Pin<&mut UpstreamSession>, family: &QString, first: i32) -> QString;
 
         /// Opens one isolated native configuration draft with exact current values.
         /// # Arguments
@@ -150,6 +168,62 @@ impl UpstreamSessionRust {
 }
 
 impl bridge::UpstreamSession {
+    /// Selects exact capture bytes without creating an associated experiment.
+    /// # Arguments
+    /// * `family` - Compiled destination tag, bounded before its UTF-8 copy.
+    /// # Returns
+    /// Empty after Cancel or dispatch; Poll reports eventual admission.
+    pub fn choose_capture(mut self: core::pin::Pin<&mut Self>, family: &QString) -> QString {
+        let result = (|| {
+            if family.len() > MAX_CAPTURE_FAMILY_CHARACTERS {
+                return Err("Choose a supported upstream capture family.".into());
+            }
+            let family = CaptureFamily::parse(&family.to_string())?;
+            {
+                let mut owner = self.as_mut().rust_mut();
+                let model = owner.ensure_model().ok_or(
+                    crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+                )?;
+                model.ensure_configuration_idle()?;
+            }
+            let uri = crate::platform::native_file_picker::choose(family.picker_title())?;
+            let mut owner = self.as_mut().rust_mut();
+            let model = owner
+                .ensure_model()
+                .ok_or(crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE)?;
+            model.load_capture_uri(family, uri.as_deref())?;
+            Ok::<_, String>(())
+        })();
+        QString::from(result.err().unwrap_or_default())
+    }
+
+    /// Pages an existing admitted source through the ordinary bounded worker.
+    /// # Arguments
+    /// * `family` - Original compiled capture destination.
+    /// * `first` - Original nonnegative record index, never a reconstructed grid.
+    /// # Returns
+    /// Empty after dispatch; rejection preserves the prior source and page.
+    pub fn capture_page(
+        mut self: core::pin::Pin<&mut Self>,
+        family: &QString,
+        first: i32,
+    ) -> QString {
+        let result = (|| {
+            if family.len() > MAX_CAPTURE_FAMILY_CHARACTERS {
+                return Err("Choose a supported upstream capture family.".into());
+            }
+            let family = CaptureFamily::parse(&family.to_string())?;
+            let first =
+                usize::try_from(first).map_err(|_| "Capture page origin must be nonnegative.")?;
+            let mut owner = self.as_mut().rust_mut();
+            let model = owner
+                .ensure_model()
+                .ok_or(crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE)?;
+            model.capture_page(family, first)
+        })();
+        QString::from(result.err().unwrap_or_default())
+    }
+
     /// Loads actual accepted values into an independent configuration draft.
     /// # Arguments
     /// * `section` - A bounded native section identifier; unknown values reject.

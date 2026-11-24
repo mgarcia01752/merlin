@@ -2063,8 +2063,8 @@ field bindings and independent transport policies; `preparation/edit.rs` reuses
 the current controller slot and bounded completion path. QML only renders exact
 strings/choices and requests native Apply/Cancel. The existing public validator
 owns supported numerology, IUC, grant, receiver, channel and Pre-Eq semantics.
-Absent explicit correction remains native unity; measured capture/full-bank
-selection and resource-grid instruments remain their existing delivery tasks.
+Absent explicit correction remains native unity; resource-grid instruments retain
+their existing delivery task.
 
 The [US03 input design](development/features/unified-qt-workbench/design.md#uiu-us-03-native-input-integration)
 reuses native capture and measured-plan admission. Its independently validated
@@ -2073,6 +2073,21 @@ transports exact original binary octets through the existing typed capture owner
 with paired Rust/Python validation before Qt adoption. Existing inspection-only
 JSON remains distinct. Applications retain outer source-file bytes separately,
 and measured context must survive later configuration operations.
+
+The existing configuration loader also admits complete measured-experiment JSON
+through `MeasuredExperiment` and `Simulation::configure_measured` on the finite
+preparation worker. Atomic adoption retains the original plan and its explicit
+association, residual restrictions and replay context. Generic scalar drafts are
+read-only for these captured inputs; replacing the complete plan is explicit.
+`upstream/workbench/captures` independently inspects UCD, RxMER and Pre-Eq binary
+or source JSON through the public capture owners. The original delivery and decoded
+binary bytes remain separately retained. `UpstreamCaptureDialog` renders metadata
+and at most 64 original records per page; Rust supplies physical coordinates,
+unavailable values and page origins. Inspection neither associates captures nor
+changes simulation readiness. Existing native picker/path protection, bounded
+preparation, stale-generation rejection and presentation admission are reused.
+[Integrated native input acceptance](development/features/unified-qt-workbench/validation.md#uiu-us-03-integrated-native-input-acceptance)
+covers actual source pickers, independent inspection and both measured runs.
 
 The OFDMA resource-grid viewer has symbol index on X and physical subcarrier
 index on Y. The accepted bounded idle upstream API observation exposes authoritative

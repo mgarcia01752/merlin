@@ -17,9 +17,38 @@ input leaves the previous configuration available. A successful load reopens
 the same section with its newly accepted values.
 
 Before a document is loaded, the editors show an explicit missing-configuration
-message. They do not invent a complete channel. This action loads configuration
-JSON; measured RxMER and CM Pre-Eq capture import remains a separate integration
-task.
+message. They do not invent a complete channel.
+
+The same action loads a complete [measured experiment](upstream/measurements.md),
+including its explicit UCD, RxMER, Pre-Eq associations and replay context. The
+[50 kHz measured example](../../examples/measurements/upstream/measured/capture-driven.json)
+and [25 kHz example](../../examples/measurements/upstream/measured/capture-driven-25khz.json)
+use constructed captures, not field measurements. The backend validates the full
+plan before accepting it. Captured settings are read-only in the scalar editors;
+edit the complete plan and reload it to change those settings. Loading a synthetic
+configuration explicitly restores its applicable editors.
+
+## Inspect original captures
+
+Open **UCD / OFDMA Configuration**, **RxMER** or **CM Pre-Eq**, then **View Capture**.
+Choose **Load Capture** to inspect that family's binary capture or lossless
+capture-source JSON. Inspection-only JSON exports are not original captures.
+Cancel leaves the previous view intact; rejected input shows its diagnostic and
+preserves the previous source and page.
+
+The viewer distinguishes the original binary and delivered file hashes and byte
+counts. Metadata retains the original identifiers, timestamp, raw flags and grid.
+Pages contain up to 64 source records: UCD offsets and octets, RxMER physical
+subcarriers and unavailable readings, or Pre-Eq physical subcarriers and complex
+coefficients. Applied C and last-update operands remain separately labelled.
+
+Inspection does not apply or associate the capture, configure a channel, or make
+Start ready. Use **Load Measured Plan** to admit a complete experiment. The backend
+requires explicit association and supported model combinations; measured RxMER
+currently requires unity physical H and unity effective C. A last-update Pre-Eq
+operand needs its explicit operation, base and probe context.
+
+![Original Pre-Eq view retained after rejected input](../images/workbench/upstream-inputs-dark.png)
 
 ## Edit accepted settings
 
@@ -93,6 +122,6 @@ to control it. File project actions currently remain available on Downstream onl
 loading upstream configuration cannot replace the downstream project or its Save
 destination. Settings and About are shared.
 
-Measured-input import and scientific instrument acceptance remain separate from
-configuration and execution. See the
+Resource-grid and shared scientific instruments retain their separate acceptance
+tasks. See the
 [workbench overview](workbench.md) for shared controls and presentation limits.

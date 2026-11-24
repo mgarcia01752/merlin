@@ -22,6 +22,8 @@ WorkbenchDialog {
     property var stages: []
     property string purpose: ""
     property string referencePlane: ""
+    property string captureFamily: ""
+    signal captureRequested(string family)
     signal draftRequested(string sectionId)
     signal draftApplyRequested(string sectionId, string token, var values)
     signal draftCancelled(string token)
@@ -637,6 +639,17 @@ WorkbenchDialog {
         applyEnabled: dialog.canApply
         onApplied: dialog.applyDraft()
         onCancelled: dialog.cancelDraft()
+        WorkbenchActionButton {
+            objectName: "upstreamCaptureInspect"
+            theme: dialog.theme
+            text: "View Capture"
+            visible: dialog.captureFamily.length > 0
+            enabled: dialog.canLoadConfiguration
+            onClicked: {
+                dialog.cancelDraft();
+                dialog.captureRequested(dialog.captureFamily);
+            }
+        }
         WorkbenchActionButton {
             objectName: "upstreamConfigurationLoad"
             theme: dialog.theme

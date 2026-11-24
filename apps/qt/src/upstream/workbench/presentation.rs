@@ -41,6 +41,7 @@ impl Model {
                 "completed_grants":snapshot.completed_grants,"emitted_samples":snapshot.emitted_samples,
                 "compared_bits":snapshot.compared_bits,"elapsed_ms":snapshot.elapsed_ms})),
             "has_result":self.report.is_some(),"result":result,"error":self.error.message(),
-            "draft":self.draft_state(),"configuration_view":configuration,"execution_view":execution})
+            "draft":self.draft_state(),"configuration_view":configuration,"execution_view":execution,
+            "capture_view":self.capture_state()})
     }
 }

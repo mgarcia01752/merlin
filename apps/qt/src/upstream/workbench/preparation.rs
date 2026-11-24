@@ -3,7 +3,9 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Finite off-GUI preparation; these threads never hold a simulation run lease.
+mod capture;
 mod edit;
+use super::captures::CaptureDisplay;
 use super::drafts::SharedDraft;
 use super::{error_text, UpstreamController};
 use crate::upstream::{PreparedRun, PreparedSession};
@@ -16,7 +18,10 @@ use crate::{
         RetainedResources, RetentionBudget, RetentionReservation, SessionKey,
     },
 };
-use merlin::upstream::{ConfigurationDocument, ReceiverObservationPolicy};
+use merlin::upstream::{
+    inputs::MeasuredExperiment, ConfigurationDocument, ReceiverObservationPolicy,
+};
+use serde::Deserialize;
 use std::sync::{mpsc::TryRecvError, Arc, Mutex};
 
 // One preparation per model and one completion; unrelated to scientific callbacks.
@@ -25,9 +30,21 @@ const PREPARATION_COMPLETION_CAPACITY: usize = 1;
 // One additional Arc pointee while the controller lives outside its GUI model.
 const CONTROLLER_SLOT_SHARED_ROOTS: usize = 1;
 
+// Content routing selects a public parser; that parser remains authoritative.
+const MEASURED_INPUT_FORMAT: &str = "merlin.upstream.measured-experiment";
+
+#[derive(Deserialize)]
+struct InputFormat {
+    format: String,
+}
+
 type ControllerSlot = Arc<Retained<Mutex<Option<UpstreamController>>>>;
 
 pub(super) enum Pending {
+    Capture {
+        expected: SessionKey,
+        receiver: DeliveryReceiver<Result<Retained<CaptureDisplay>, WorkerFailure>>,
+    },
     Edit {
         draft: SharedDraft,
         receiver: DeliveryReceiver<Result<PreparedSession, WorkerFailure>>,
@@ -44,6 +61,11 @@ pub(super) enum Pending {
 }
 
 pub(super) enum Prepared {
+    Capture {
+        expected: SessionKey,
+        candidate: Result<Retained<CaptureDisplay>, WorkerFailure>,
+        delivery: Option<RetentionReservation>,
+    },
     Edit {
         draft: SharedDraft,
         controller: UpstreamController,
@@ -85,16 +107,7 @@ impl Pending {
         let bytes = Box::new(bytes);
         let task_budget = budget.clone();
         let task = admit_task(&task_budget, move || {
-            let prepared = ConfigurationDocument::from_json(bytes.value())
-                .map_err(|error| error.to_string())
-                .and_then(|document| {
-                    PreparedSession::from_document(
-                        document,
-                        ReceiverObservationPolicy::default(),
-                        &budget,
-                    )
-                    .map_err(|error| format!("{error:?}"))
-                })
+            let prepared = prepare_input(bytes.value(), &budget)
                 .map_err(error_text)
                 .map_err(|message| {
                     WorkerFailure::admit_with_fallback(
@@ -205,6 +218,13 @@ impl Pending {
     /// None while pending; original owner and an explicit error after disconnection.
     pub(super) fn poll(&self) -> Option<Prepared> {
         match self {
+            Self::Capture { expected, receiver } => {
+                receive(receiver).map(|(delivery, candidate)| Prepared::Capture {
+                    expected: *expected,
+                    delivery,
+                    candidate,
+                })
+            }
             Self::Edit {
                 draft,
                 receiver,
@@ -230,6 +250,21 @@ impl Pending {
                 })
             }
         }
+    }
+}
+
+fn prepare_input(bytes: &[u8], budget: &RetentionBudget) -> Result<PreparedSession, String> {
+    let measured = serde_json::from_slice::<InputFormat>(bytes)
+        .is_ok_and(|input| input.format == MEASURED_INPUT_FORMAT);
+    if measured {
+        let plan = MeasuredExperiment::from_json(bytes).map_err(|error| error.to_string())?;
+        PreparedSession::from_measured(plan, ReceiverObservationPolicy::default(), budget)
+            .map_err(|error| format!("{error:?}"))
+    } else {
+        let document =
+            ConfigurationDocument::from_json(bytes).map_err(|error| error.to_string())?;
+        PreparedSession::from_document(document, ReceiverObservationPolicy::default(), budget)
+            .map_err(|error| format!("{error:?}"))
     }
 }
 

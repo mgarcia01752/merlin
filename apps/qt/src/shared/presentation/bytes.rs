@@ -5,6 +5,21 @@
 //! Byte display only; scientific parsing and original payload ownership stay in the backend.
 use super::constants::{HEX_BYTES_PER_ROW, HEX_BYTE_DIGITS, HEX_OFFSET_MIN_DIGITS};
 use serde_json::{json, Value};
+use std::fmt::Write;
+
+/// Formats exact octets as contiguous lowercase hexadecimal, without separators.
+/// # Arguments
+/// * `bytes` - Already bounded original field bytes, never changed or interpreted.
+/// # Returns
+/// Owned source-octet display text, empty for empty input. This is distinct from
+/// the existing spaced uppercase packet view and colon-separated address labels.
+pub(crate) fn compact_lower_hex(bytes: &[u8]) -> String {
+    bytes.iter().fold(String::new(), |mut text, byte| {
+        write!(&mut text, "{byte:0width$x}", width = HEX_BYTE_DIGITS)
+            .expect("Formatting into a String is infallible");
+        text
+    })
+}
 
 /// Formats exact byte values as space-separated uppercase hexadecimal.
 /// # Arguments

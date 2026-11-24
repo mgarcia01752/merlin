@@ -5216,3 +5216,38 @@ projection/provenance after `configure_measured`. Captured UCD settings and expl
 association/update controls remain authoritative; do not fabricate defaults or
 permit unvalidated synthetic replacement. Input/viewer ownership and acceptance
 will follow the existing public plan/capture operations and C5 guarded renderers.
+
+
+#### US03 measured loading and capture inspection ownership
+
+The existing native Load action and bounded configuration worker also accept a
+complete measured-experiment document. `PreparedSession::from_measured` delegates
+only to public `MeasuredExperiment::admit` and `Simulation::configure_measured`,
+then uses the existing session retention/adoption path. Content format routing
+selects an existing public parser; Qt does not project UCD, associate files or
+reconstruct a measured configuration. Malformed/unsupported plans preserve the
+old controller, report and shell identity. Original plan JSON and captured files
+remain in backend-owned provenance; file delivery paths remain protected.
+
+Captured configuration is read-only in the seven synthetic field editors.
+Those editors show a clear complete-plan reload instruction; both disabled Apply
+and native request validation prevent `configure_document` from discarding
+measured context. Synthetic editor behavior remains unchanged. Accepted measured
+summaries read actual public configuration geometry, profile/grant and independent
+C/H/RxMER state. No capture truth enters the receiver.
+
+A direction-specific `UpstreamCaptureDialog` inspects one UCD, RxMER or Pre-Eq
+binary/source-JSON capture through the public owners. Inspection is independent
+of accepted scientific association. Rust supplies bounded metadata and original
+coordinate/value strings in pages, retaining exact delivery/binary evidence;
+QML only renders them through existing guarded presentation. The user loads an
+explicit complete measured plan to apply association and replay controls. This
+adds no implicit file matching or unsupported impairment combinations. Native
+pickers, atomic rejection, exact provenance, 25/50 kHz measured execution and
+read-only edit guards are US03 test points; final native viewer acceptance stays
+separate from prepared QML fixtures and API prerequisite acceptance.
+
+This consumer now has [primary native input acceptance](validation.md#uiu-us-03-integrated-native-input-acceptance).
+Its [receipt](upstream-inputs-evidence.json) records actual source imports,
+read-only measured configuration, independent 25/50 kHz recovery and downstream
+compatibility. Resource-grid and shared instruments retain their existing tasks.

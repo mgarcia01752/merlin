@@ -16,6 +16,9 @@ impl Model {
             return json!({"blocks":{},"details":{}});
         }
         self.controller.as_ref().and_then(|controller| controller.inspect(|simulation| {
+            if let Some(input) = controller.measured_input() {
+                return super::measured_view::presentation(simulation, input);
+            }
             let document = simulation.document()?;
             let config = simulation.configuration()?;
             let preset = document.presets.iter().find(|preset| preset.id == document.selected_preset)?;
@@ -61,7 +64,7 @@ impl Model {
             }
             blocks.insert("rxmer".into(),json!({"status":"attention","reason":"Measured input admission and association remain separate."}));
             blocks.insert("verification".into(),json!({"status":"attention","reason":"No accepted upstream run report is shown here."}));
-            Some(json!({"blocks":blocks,"details":details}))
+            Some(json!({"input_mode":"synthetic","blocks":blocks,"details":details}))
         }).ok().flatten()).unwrap_or_else(||json!({"blocks":{},"details":{}}))
     }
 }

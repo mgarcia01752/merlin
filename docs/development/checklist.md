@@ -648,14 +648,12 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Evidence: [integrated execution acceptance](features/unified-qt-workbench/validation.md#uiu-us-02-integrated-execution-acceptance): all 453 Qt Rust cases, 49 final affected-case reruns, sixteen QML suites (260 pass records), Clippy/format/final boundary, optimized build, actual native upstream pause/resume/switch/foreign-control/cancellation/completion/PRBS-RX, all seven configuration editors, downstream shell and six startup/project probes pass. Cancellation retains 76 completed grants and 150176 compared bits; the later 256-grant run verifies all 505856 source bits with zero errors. Twenty-five packaging resource cases pass. Unchanged scientific/backend/Python milestone evidence is explicitly reused; synthetic and constructed-only evidence remain distinguished. Continue UIU-US-03.
 
 <a id="task-uiu-us-03"></a>
-- [ ] **UIU-US-03** Integrate upstream native PNM inputs and viewers.
+- [x] **UIU-US-03** Integrate upstream native PNM inputs and viewers.
   Requirements: [REQ-UIU-13](../requirements.md#req-uiu-13), [REQ-UIU-21](../requirements.md#req-uiu-21).
   Dependencies: [UIU-US-01](#task-uiu-us-01), [UIU-API-01](#task-uiu-api-01).
   Architecture/files: [upstream owner](../architecture.md#unified-qt-upstream-scientific-presentation), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Actual UCD/RxMER/Pre-Eq binary/JSON, exact original evidence/association, supported residual restrictions, explicit errors and no changed accepted state on failure.
-  Evidence: [upstream acceptance plan](features/unified-qt-workbench/validation.md#upstream); pending implementation/acceptance.
-
-  Current work: [accepted capture-source JSON prerequisite](features/unified-qt-workbench/validation.md#uiu-us-03-lossless-capture-source-api-prerequisite) closes the demonstrated lossless JSON import gap through the public Rust/Python capture owners before Qt adoption. Preserve complete measured context and existing synthetic editor behavior; no session/framework expansion.
+  Evidence: [integrated native input acceptance](features/unified-qt-workbench/validation.md#uiu-us-03-integrated-native-input-acceptance): complete 478-case Qt Rust suite, final 69 affected-case reruns, seventeen QML suites (280 pass records), Clippy/format/boundary and optimized build pass. Actual native pickers admit all three binary/source-JSON families, preserve original evidence on Cancel/rejection, page original RxMER records, and match the installed native Python observations. Both complete measured plans preserve all seven read-only editors and complete independent recovery (50 kHz: 1976 bits; 25 kHz: 4216 bits). Actual synthetic editors, downstream shell, six startup/project probes and twenty-five packaging checks pass. The independently committed [capture-source prerequisite](features/unified-qt-workbench/validation.md#uiu-us-03-lossless-capture-source-api-prerequisite) remains separately scoped; no session/framework expansion. Continue UIU-US-04.
 
 <a id="task-uiu-us-04"></a>
 - [ ] **UIU-US-04** Render authoritative upstream allocation/pilot grid.

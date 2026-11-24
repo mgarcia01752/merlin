@@ -21,6 +21,8 @@ Item {
     signal draftApplyRequested(string sectionId, string token, var values)
     signal draftCancelled(string token)
     signal configurationLoadRequested()
+    signal captureLoadRequested(string family)
+    signal capturePageRequested(string family, int first)
     readonly property var incomingPresentation: host && host.presentation ? host.presentation : ({})
     readonly property var presentation: presentationOwner.value || ({})
     readonly property bool presentationRejected: presentationOwner.rejected
@@ -135,6 +137,15 @@ Item {
         }
         sectionRequested(sectionId);
         return popup.openChecked();
+    }
+
+    /** Open passive inspection; only the native adapter can admit capture data. */
+    function openCapture(family) {
+        if (!captureDialog.validFamily(family)) {
+            return false;
+        }
+        captureDialog.family = family;
+        return captureDialog.openChecked();
     }
 
     Rectangle {
@@ -685,6 +696,7 @@ Item {
         onDraftApplyRequested: function(sectionId, token, values) { workbench.draftApplyRequested(sectionId, token, values); }
         onDraftCancelled: function(token) { workbench.draftCancelled(token); }
         onConfigurationLoadRequested: workbench.configurationLoadRequested()
+        onCaptureRequested: function(family) { workbench.openCapture(family); }
     }
     BurstProfilesDialog {
         id: profilesDialog
@@ -768,12 +780,15 @@ Item {
         onDraftApplyRequested: function(sectionId, token, values) { workbench.draftApplyRequested(sectionId, token, values); }
         onDraftCancelled: function(token) { workbench.draftCancelled(token); }
         onConfigurationLoadRequested: workbench.configurationLoadRequested()
+        onCaptureRequested: function(family) { workbench.openCapture(family); }
     }
     RxmerDialog {
         id: rxmerDialog
         objectName: "upstreamRxmerDialog"
         theme: workbench.theme
         presentation: workbench.detailPresentation("rxmer")
+        captureBusy: workbench.host && workbench.host.upstreamState ? workbench.host.upstreamState.busy === true || workbench.host.upstreamState.application_busy === true : false
+        onCaptureRequested: function(family) { workbench.openCapture(family); }
         onClosed: rxmerBlock.forceActiveFocus()
     }
     UpstreamVerificationDialog {
@@ -782,5 +797,19 @@ Item {
         theme: workbench.theme
         presentation: workbench.detailPresentation("verification")
         onClosed: verificationBlock.forceActiveFocus()
+    }
+    UpstreamCaptureDialog {
+        id: captureDialog
+        objectName: "upstreamCaptureDialog"
+        theme: workbench.theme
+        readonly property var captureState: workbench.host && workbench.host.upstreamState ? workbench.host.upstreamState.capture_view : null
+        presentation: captureState && captureState.family === family ? captureState.view : ({})
+        busy: workbench.host && workbench.host.upstreamState ? workbench.host.upstreamState.busy === true || workbench.host.upstreamState.application_busy === true : false
+        onLoadRequested: function(family) { workbench.captureLoadRequested(family); }
+        onPageRequested: function(family, first) { workbench.capturePageRequested(family, first); }
+        onMeasuredPlanRequested: {
+            captureDialog.close();
+            workbench.configurationLoadRequested();
+        }
     }
 }
