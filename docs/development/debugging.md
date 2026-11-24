@@ -65,3 +65,17 @@ is embedded, has no user CLI, and does not change execution policy. Its ready/
 commit files live only in per-attempt staging and are removed after installation.
 A missing ready acknowledgement keeps the original process open. Native contracts
 run with `scripts/windows/test-update.ps1` without downloading or installing.
+
+
+## Session presentation admission probe
+
+For development validation, `--session-presentation-probe
+--session-presentation-image /absolute/fresh/path.png` runs the fixed bundled
+probe against the actual native receiver Apply and FAQ actions. Use an ignored,
+new output path; it captures the current dark desktop before releasing logical
+presentation pressure, prints `MERLIN_SESSION_PRESENTATION_PROBE` with its result
+and exits. Validation must require the successful JSON record and fresh image,
+not just the process exit code. No arbitrary QML is loaded. The probe is opt-in;
+normal startup creates no probe owner. Automatic update lookup is suppressed
+for this offline check. It does not run a simulation or change scientific limits.
+See the [SESSION evidence](features/unified-qt-workbench/validation.md#uiu-session-01-persistent-presentation-admission).

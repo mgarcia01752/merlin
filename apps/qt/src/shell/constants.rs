@@ -22,6 +22,22 @@ pub(super) const MAX_SESSION_CHANNELS: usize = 64;
 /// Empty slots remain populated policy resources; private std storage is excluded.
 pub(super) const MAX_SESSION_CHANNEL_SLOTS: usize = 256;
 
+/// Logical UTF-16 bytes retained by presentation owners, independent of Rust capacity.
+/// This application ceiling is not a Qt allocation, scientific or RSS claim.
+pub(crate) const MAX_SESSION_PRESENTATION_UTF16_BYTES: usize = 64 * 1024 * 1024;
+
+/// Logical array/object entries retained by presentation owners, not ordered nodes.
+/// Its equal numeric value to the Rust entry ceiling does not share that purpose.
+pub(crate) const MAX_SESSION_PRESENTATION_ENTRIES: usize = 1_000_000;
+
+/// Data-retaining presentation views, including hidden or closed owners.
+/// This ceiling is independent of the population currently open on screen.
+pub(crate) const MAX_SESSION_RETAINED_VIEWS: usize = 128;
+
+/// Presentation views simultaneously open, admitted before opening.
+/// Closing releases this population while retained data keeps its other charges.
+pub(crate) const MAX_SESSION_OPEN_VIEWS: usize = 32;
+
 /// Existing distinct original-source protection cap, shared by both directions.
 /// This is a host path-inventory policy, separate from configuration/error text limits.
 pub(super) const MAX_ORIGINAL_SOURCE_PATHS: usize = 4096;

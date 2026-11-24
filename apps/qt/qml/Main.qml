@@ -9,6 +9,7 @@ import Merlin.Workbench
 import "shell"
 import "shared/theme"
 import "downstream"
+import "validation"
 
 ApplicationWindow {
     id: window
@@ -31,8 +32,53 @@ ApplicationWindow {
     UpstreamSession { id: upstreamSession }
     WorkbenchFile { id: workbenchFile }
     TransmitterAnalyzer { id: transmitterAnalyzer }
-    Theme { id: theme; onDarkChanged: branding.update_icon(dark) }
-    Component.onCompleted: { branding.update_icon(theme.dark); if (Qt.application.arguments.indexOf("--restore-update")>=0) Qt.callLater(function(){workbench.restoreUpdate()}); else Qt.callLater(function(){workbench.beginOpen(JSON.parse(workbenchFile.startup()))}); if (Qt.application.arguments.indexOf("--smoke-test")>=0) smokeTimer.start(); else if (Qt.application.arguments.indexOf("--check-updates")>=0) Qt.callLater(function(){updates.showUpdates();updates.refresh()}) }
+    property Component presentationBackendComponent: Component { PresentationRetention {} }
+    function createPresentationBackend(parent) {
+        return presentationBackendComponent.createObject(parent)
+    }
+    Theme { id: theme; presentationBackendFactory: window.createPresentationBackend; onDarkChanged: branding.update_icon(dark) }
+    readonly property bool presentationProbeRequested: Qt.application.arguments.indexOf("--session-presentation-probe") >= 0
+    property QtObject presentationProbe: null
+    property Component presentationProbeComponent: Component {
+        SessionPresentationProbe {
+            onFinished: function(success, message) {
+                console.log("MERLIN_SESSION_PRESENTATION_PROBE " + message)
+                Qt.exit(success ? 0 : 1)
+            }
+        }
+    }
+    /** Run only the fixed repository probe; normal startup creates no probe owner. */
+    function startPresentationProbe() {
+        const applicationArguments = Qt.application.arguments
+        const imageArgument = applicationArguments.indexOf("--session-presentation-image")
+        if (imageArgument < 0 || imageArgument + 1 >= applicationArguments.length) {
+            console.error("Session presentation probe requires a fresh screenshot path.")
+            Qt.exit(1)
+            return
+        }
+        presentationProbe = presentationProbeComponent.createObject(window, {
+            theme: theme, workbench: workbench, window: window,
+            screenshotPath: applicationArguments[imageArgument + 1]
+        })
+        if (!presentationProbe) {
+            Qt.exit(1)
+        }
+    }
+    Component.onCompleted: {
+        branding.update_icon(theme.dark)
+        if (Qt.application.arguments.indexOf("--restore-update") >= 0) {
+            Qt.callLater(function() { workbench.restoreUpdate() })
+        } else {
+            Qt.callLater(function() { workbench.beginOpen(JSON.parse(workbenchFile.startup())) })
+        }
+        if (presentationProbeRequested) {
+            Qt.callLater(startPresentationProbe)
+        } else if (Qt.application.arguments.indexOf("--smoke-test") >= 0) {
+            smokeTimer.start()
+        } else if (Qt.application.arguments.indexOf("--check-updates") >= 0) {
+            Qt.callLater(function() { updates.showUpdates(); updates.refresh() })
+        }
+    }
     ThemePalette { targetControl: window; theme: theme }
     color: theme.background
     onClosing: function(close) {
@@ -54,8 +100,8 @@ ApplicationWindow {
                 onNewRequested: workbench.requestNewProject()
                 onOpenRequested: workbench.openProject()
                 onSaveRequested: function(saveAs) { workbench.saveProject(saveAs) }
-                onGlobalSettingsRequested: { if (!updates.state.installing) workbench.settingsPopup.open() }
-                onAboutRequested: workbench.aboutPopup.open()
+                onGlobalSettingsRequested: { if (!updates.state.installing) workbench.settingsPopup.openChecked() }
+                onAboutRequested: workbench.aboutPopup.openChecked()
                 onFaqRequested: workbench.openHelp("")
                 onTerminologyRequested: function(target) { Qt.openUrlExternally(target) }
             }
@@ -66,7 +112,7 @@ ApplicationWindow {
                 theme: theme; backend: updateInfo
                 canUpdate: !workbench.runState.busy && !workbench.loadingProject
                 prepareUpdate: function() { return workbench.saveUpdateRecovery() }
-                startupCheck: Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
+                startupCheck: !window.presentationProbeRequested && Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
             }
         }
     }

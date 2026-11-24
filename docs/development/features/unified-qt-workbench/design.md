@@ -4860,3 +4860,88 @@ moves admitted paths through the private guarded builder. One previous fixture
 ledger now explicitly observes prepared-inline disposal and returned-metadata
 retention before final metadata disposal. Source-only checks are separate from
 primary acceptance. C5/C6 remain required; no new requirement or task is created.
+
+### UIU-SESSION-01 C5 existing persistent presentation owners
+
+This implements only frozen C5 / REQ-UIU-07. Reuse the existing checked
+RetentionBudget/reservations and the [prepared logical counting helper](agent-handoffs/presentation-footprint.md).
+Scientific RetainedFootprint and its three quantities stay unchanged. Add the
+four approved presentation quantities to the existing application counter:
+logical UTF-16 bytes, array/object entries, retained views and open views.
+Keep them separate from actual Rust capacities and standard-channel populations.
+No new accounting framework or scientific/public API is required.
+
+Named desktop admission policies are 64 MiB logical UTF-16, 1,000,000 logical
+entries, 128 retained views and 32 open views. These are independent application
+limits, not PHY or Qt allocation/RSS claims. The existing counter checks every
+quantity atomically, and its actual layout remains covered by the original host
+witness. Tests use independent explicit ceilings rather than repeating policy.
+
+The lead owns a thin application-private presentation QObject and shared QML
+component. Each existing consumer measures a plain candidate before persistent
+assignment, reserves it while the old value remains held, then releases the old
+witness after replacement. Coupled fields form one coherent candidate. Plot
+bindings share the parent owner; independent selector/filter/row wrappers and
+editable text need their existing presentation complements. Hidden/closed data
+keeps its witness. Open slots are admitted before opening and released on close;
+retained views/data release only on actual clear/disposal. Rejected replacement
+keeps old data and uses bounded static feedback. Runtime completion/control
+transitions still execute if optional details cannot be retained.
+
+An isolated source unit owns only application counter/policy additions and adjacent
+focused tests; it must not change bridges, global registration, Cargo, QML,
+canonical documents or scientific crates. The lead owns primary adoption, old
+fixture compatibility, actual consumer wiring and runtime acceptance. This
+prerequisite alone cannot close C5. Current consumers remain the finite inventory
+in session-closure.md; no new category or requirement expands it.
+
+C5 source prerequisites are [counter](agent-handoffs/presentation-counter.md)
+and [measurement viewport/tree](agent-handoffs/measurement-presentation.md).
+Their isolated formatting/body checks do not establish runtime acceptance.
+The lead integrates the actual native factory and the complete frozen consumer
+inventory; primary runtime evidence, rather than source handoffs, closes C5.
+The additional isolated source records are [logical helper](agent-handoffs/presentation-footprint.md),
+[measurement dialogs](agent-handoffs/measurement-dialog-presentation.md),
+[TX dialogs](agent-handoffs/transmitter-presentation.md),
+[RX dialogs](agent-handoffs/receiver-presentation.md),
+[channel dialogs](agent-handoffs/channel-presentation.md) and
+[configuration dialogs](agent-handoffs/configuration-presentation.md).
+The [primary validation](validation.md#uiu-session-01-persistent-presentation-admission)
+owns executed results and failed-attempt history; C6 remains separate.
+
+Editable text uses a conservative logical UTF-16 complement from each actual Qt
+TextField.maximumLength before enabling/populating its dynamic text. A separate
+instance of the same native view adapter keeps that finite complement until owner
+disposal, independent of DTO clear/hide. This conservatively uses another retained
+view slot; it creates no new counter or resource category. Validators/limits and
+Rust diagnostics remain unchanged. Tests verify actual Qt programmatic/editing
+length behavior, failed admission and independent text/data lifetime.
+
+The combined C5 wiring keeps native draft synchronization separate from optional
+presentation admission. A rejected native staging result cannot be repaired by
+accepting cached options: indexed actions and previews wait for a real metadata
+reload. Spectrum parents publish tap/state together; proxies read the admitted
+bundle and automatic child queries wait for the related QML notifications.
+Rejected timing/measurement selections restore their admitted context. Four
+pre-existing workbench control booleans may update in place during detail
+rejection because they add no bytes or entries; native lifecycle stays live.
+Save reads current backend options transiently rather than persisting an older
+optional display snapshot. Dialog guards and lifecycle connections are explicit
+properties to avoid Qt's eager implicit contentItem construction.
+
+For the existing C5 native integration/visual gate, add one bounded, opt-in
+`--session-presentation-probe` mode to the current executable. It loads a fixed
+in-repository QML probe through the existing module and actual native factory;
+normal startup does not instantiate it or change resource policies. The probe
+prepares the existing receiver editor, fills the approved logical-byte budget
+while its old state stays held, invokes its actual Apply action, checks terminal
+completion plus visible Help rejection, then clears pressure and checks recovery.
+A bounded search derives filler capacity from the native limits and the existing
+UTF-16 helper. Capture the real dark VM view to a fresh ignored evidence path.
+This supplies the missing native consumer/registration evidence and user-guide
+visual, not a scientific API, general scripting interface or new accounting
+category. C6 still requires the complete existing session/milestone gates.
+
+The [isolated native probe handoff](agent-handoffs/presentation-native-probe.md)
+records source preparation only; primary registration and actual VM execution
+provide acceptance. The launcher requires a fresh ignored screenshot path.

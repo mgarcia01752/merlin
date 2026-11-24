@@ -7,6 +7,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import "../shared/about"
 import "../shared/components"
+import "../shared/presentation"
 import "../shell"
 import "measurements"
 import "configuration/ofdm_settings"
@@ -28,52 +29,149 @@ Item {
     required property var fileBackend
     signal updatesRequested()
     signal externalLinkRequested(url target)
+
+    // This owner covers persistent workbench DTOs and their native text copies.
+    // Prepared project input states are adopted together. Optional rejection must
+    // not freeze the existing fixed-size worker-control booleans.
+    PresentationOwner {
+        id: states
+        theme: workbench.theme
+        initialValue: workbench.stateCandidate({
+            load:{loading:false,phase:"",elapsed_ms:0,cancelling:false},fileMessage:"",
+            run:workbench.initialRunState(),measurement:workbench.initialMeasurementState(),
+            transmitter:{status:"attention",reason:"Accept compatible OCD, DPD and PRBS-TX inputs to configure the transmitter.",busy:false,can_generate:false,has_result:false,result_token:""},
+            source:{status:"attention",reason:"Apply a validated PRBS15 or file source before starting."},
+            profile:{selected:false,profile_status:"attention",ofdm_status:"attention",reason:"A validated modulation-profile input is required.",summary:{}},
+            selectedSection:"",sectionDescription:""
+        })
+    }
+    /** Provide the existing compiled startup run state, before first admission. */
+    function initialRunState() {
+        return {receiver_status:"attention",verify_status:"attention",reason:"Configure Receiver",busy:false,can_start:false,paused:false,options:{},verified:false}
+    }
+    /** Provide the existing compiled startup input statuses. */
+    function initialMeasurementState() {
+        return {rxmer:{status:"attention",reason:"Configure RxMER"},response:{status:"attention",reason:"Apply DPD"},channel:{status:"attention",reason:"Configure channel inputs"},flat:true}
+    }
+    /**
+     * Include independent status strings before any persistent native text copy.
+     * @param value Existing workbench DTOs; their scientific contents are aliases.
+     * @returns One complete display candidate using the unchanged format.
+     */
+    function stateCandidate(value) {
+        const run = value.run
+        const timing = run.timing
+        value.display = {
+            elapsed:timing ? "Elapsed "+timing.elapsed_text+(run.busy ? " · Profile "+timing.profile_elapsed_text : "") : "",
+            progress:run.diagnostic ? run.reason : run.busy ? "Profile "+(run.profile_id ?? "—")+" · "+(run.profile_index || 1)+" / "+(run.profile_count || 1)+(timing ? " · "+timing.phase+(timing.mce ? " · MCE "+timing.mce : "") : "")+" · Symbols: "+run.completed_symbols+(timing ? " · Recovered: "+timing.recovered_payloads : "") : run.result ? "Run "+run.result.status+" · "+run.result.bits_tested+" bits compared · "+run.result.bit_errors+" bit errors" : run.reason,
+            activity:run.busy && timing ? "Time since last completed processing step: "+timing.progress_age_text : ""
+        }
+        return value
+    }
+    /**
+     * Admit changed state together with the previous unchanged state aliases.
+     * @param changes Plain workbench fields; no assignment occurs on rejection.
+     * @returns False leaves all accepted observations and labels together.
+     */
+    function adoptState(changes) {
+        if (!states.value) {
+            theme.presentationAdmissionRejected = true
+            return false
+        }
+        const candidate = stateCandidate(Object.assign({},states.value,changes))
+        const accepted = states.replace(candidate)
+        if (!accepted) {
+            theme.presentationAdmissionRejected=true
+        }
+        return accepted
+    }
+    /**
+     * Adopt run details, or update only existing boolean control slots on pressure.
+     * @param value Authoritative backend poll/configuration response.
+     * @returns False preserves old detail; Stop/Pause/terminal controls remain live.
+     * These four pre-existing keys retain identical UTF-16 and entry footprints.
+     * No result, options, token, status text or scientific value is overwritten.
+     */
+    function adoptRunState(value) {
+        if (adoptState({run:value})) {
+            return true
+        }
+        for (const key of ["busy","paused","can_start","verified"]) {
+            if (Object.prototype.hasOwnProperty.call(runState,key) && typeof value[key] === "boolean") {
+                runState[key] = value[key]
+            }
+        }
+        workbench.runStateChanged()
+        return false
+    }
+    /**
+     * Preserve transmitter observations on pressure while keeping cancel live.
+     * @param value Authoritative transmitter state response.
+     * @returns Whether the complete replacement was admitted.
+     */
+    function adoptTransmitterState(value) {
+        if (adoptState({transmitter:value})) {
+            return true
+        }
+        if (Object.prototype.hasOwnProperty.call(transmitterState,"busy") && typeof value.busy === "boolean") {
+            transmitterState.busy = value.busy
+            workbench.transmitterStateChanged()
+        }
+        return false
+    }
+    /** Open file feedback only after admitting its actual text. */
+    function showFileMessage(message) {
+        if (adoptState({fileMessage:message})) {
+            fileFeedback.openChecked()
+        }
+    }
+
     property bool hasProject: false
     property bool loadingProject: false
     property bool configureAfterOpen: false
-    property var loadState: ({loading:false, phase:"", elapsed_ms:0, cancelling:false})
+    readonly property var loadState: states.value ? states.value.load : ({loading:false, phase:"", elapsed_ms:0, cancelling:false})
     property alias faqPopup: faqDialog
     function openHelp(code) { faqDialog.showEntry(code, runState.diagnostic && runState.diagnostic.code===code ? runState.diagnostic : null) }
     property alias configurationPopup: wbConfig
     property alias entryPopup: workbenchEntry
     function configureProject() {
         if (runState.busy || loadingProject) { return }
-        if (hasProject) { wbConfig.open() }
-        else { workbenchEntry.open() }
+        if (hasProject) { wbConfig.openChecked() }
+        else { workbenchEntry.openChecked() }
     }
     function requestNewProject() {
         if (runState.busy || loadingProject) { return }
-        if (hasProject) { newConfirmation.open() }
+        if (hasProject) { newConfirmation.openChecked() }
         else { newProject() }
     }
     function newProject() {
         if (runState.busy || loadingProject) { return }
         const result=JSON.parse(fileBackend.new_workbench())
-        if (result.error) { fileMessage=result.error;fileFeedback.open();return false }
-        if (result.created) { adoptProject(result);fileMessage="New workbench" }
+        if (result.error) { showFileMessage(result.error);return false }
+        if (result.created) { adoptProject(result);adoptState({fileMessage:"New workbench"}) }
         return !!result.created
     }
-    property string fileMessage: ""
+    readonly property string fileMessage: states.value ? states.value.fileMessage : ""
     function openProject() {
         if (runState.busy || loadingProject) { return }
         beginOpen(JSON.parse(fileBackend.open()))
     }
     function beginOpen(result) {
-        if (result.error) { fileMessage=result.error;fileFeedback.open();configureAfterOpen=false;return }
-        loadState=result
+        if (result.error) { showFileMessage(result.error);configureAfterOpen=false;return }
+        adoptState({load:result})
         loadingProject=!!result.loading
-        if (loadingProject) { loadingDialog.open() }
+        if (loadingProject) { loadingDialog.openChecked() }
     }
     function pollOpen() {
         if (!loadingProject) { return }
         const result=JSON.parse(fileBackend.poll_open())
-        loadState=result
+        adoptState({load:result})
         if (result.loading) { return }
-        if (result.opened) { adoptProject(result);fileMessage=result.path ? "Opened "+result.path : "Workbench restored" }
+        if (result.opened) { adoptProject(result);adoptState({fileMessage:result.path ? "Opened "+result.path : "Workbench restored"}) }
         loadingProject=false
         loadingDialog.close()
-        if (result.error) { fileMessage=result.error;fileFeedback.open() }
-        if (result.opened && configureAfterOpen) { wbConfig.open() }
+        if (result.error) { showFileMessage(result.error) }
+        if (result.opened && configureAfterOpen) { wbConfig.openChecked() }
         configureAfterOpen=false
     }
     function adoptProject(result) {
@@ -83,7 +181,7 @@ Item {
         runBackend.restore(JSON.stringify(result.receiver),result.verified,settingsBackend.current())
         if (result.dark !== null && result.dark !== undefined) { theme.dark=result.dark }
         if (result.prepared) {
-            profileState=result.profile_state;sourceState=result.source_state;measurementState=result.measurement_state
+            adoptState({profile:result.profile_state,source:result.source_state,measurement:result.measurement_state})
             refreshTransmitterState();pollRun()
         } else { refreshProfileState();refreshSourceState();pollRun() }
     }
@@ -91,18 +189,20 @@ Item {
         beginOpen(JSON.parse(fileBackend.restore_update()))
     }
     function saveUpdateRecovery() {
-        return JSON.parse(fileBackend.save_update_recovery(settingsBackend.current(),JSON.stringify(runState.accepted_options || null),runState.verified,theme.dark))
+        const current = JSON.parse(runBackend.poll())
+        return JSON.parse(fileBackend.save_update_recovery(settingsBackend.current(),JSON.stringify(current.accepted_options || null),current.verified,theme.dark))
     }
     function saveProject(saveAs) {
         if (runState.busy || loadingProject) { return }
-        const result=JSON.parse(fileBackend.save(saveAs,settingsBackend.current(),JSON.stringify(runState.accepted_options || null),runState.verified,theme.dark))
-        if (result.error) { fileMessage=result.error;fileFeedback.open() }
-        else if (result.saved) { hasProject=true;fileMessage="Saved "+result.path;fileFeedback.open() }
+        const current = JSON.parse(runBackend.poll())
+        const result=JSON.parse(fileBackend.save(saveAs,settingsBackend.current(),JSON.stringify(current.accepted_options || null),current.verified,theme.dark))
+        if (result.error) { showFileMessage(result.error) }
+        else if (result.saved) { hasProject=true;showFileMessage("Saved "+result.path) }
     }
     required property var runBackend
-    property var runState: ({receiver_status:"attention",verify_status:"attention",reason:"Configure Receiver",busy:false,can_start:false,paused:false,options:{},verified:false})
-    function pollRun() { runState=JSON.parse(runBackend.poll()) }
-    function refreshRun() { runState=JSON.parse(runBackend.configure(settingsBackend.current())) }
+    readonly property var runState: states.value ? states.value.run : initialRunState()
+    function pollRun() { adoptRunState(JSON.parse(runBackend.poll())) }
+    function refreshRun() { adoptRunState(JSON.parse(runBackend.configure(settingsBackend.current()))) }
     property alias receiverConfigPopup: receiverConfig
     property alias verificationPopup: verificationDialog
     required property var receiverBackend
@@ -110,21 +210,21 @@ Item {
     property alias rxmerPopup: rxmerDialog
     property alias responsePopup: responseDialog
     property alias channelPopup: channelDialog
-    property var measurementState: ({rxmer: {status: "attention", reason: "Configure RxMER"}, response: {status: "attention", reason: "Apply DPD"}, channel: {status: "attention", reason: "Configure channel inputs"}, flat: true})
-    function refreshMeasurements() { measurementState = JSON.parse(measurementBackend.state(settingsBackend.current())); refreshRun() }
+    readonly property var measurementState: states.value ? states.value.measurement : initialMeasurementState()
+    function refreshMeasurements() { adoptState({measurement:JSON.parse(measurementBackend.state(settingsBackend.current()))}); refreshRun() }
     required property var transmitterBackend
     property alias settingsPopup: settingsDialog
     property alias aboutPopup: aboutDialog
     property alias transmitterPopup: transmitterDialog
-    property var transmitterState: ({status: "attention", reason: "Accept compatible OCD, DPD and PRBS-TX inputs to configure the transmitter.", busy: false, can_generate: false, has_result: false, result_token: ""})
-    function refreshTransmitterState() { transmitterState = JSON.parse(transmitterBackend.configure(settingsBackend.current())) }
+    readonly property var transmitterState: states.value ? states.value.transmitter : ({})
+    function refreshTransmitterState() { adoptTransmitterState(JSON.parse(transmitterBackend.configure(settingsBackend.current()))) }
     property alias sourcePopup: sourceDialog
-    property var sourceState: ({status: "attention", reason: "Apply a validated PRBS15 or file source before starting."})
-    function refreshSourceState() { sourceState = JSON.parse(sourceBackend.state()); refreshTransmitterState(); refreshRun() }
+    readonly property var sourceState: states.value ? states.value.source : ({})
+    function refreshSourceState() { adoptState({source:JSON.parse(sourceBackend.state())}); refreshTransmitterState(); refreshRun() }
     property alias profilePopup: profileDialog
-    property var profileState: ({selected: false, profile_status: "attention", ofdm_status: "attention", reason: "A validated modulation-profile input is required.", summary: {}})
+    readonly property var profileState: states.value ? states.value.profile : ({summary:{}})
     function refreshProfileState() {
-        profileState = JSON.parse(profileBackend.state(settingsBackend.current()))
+        adoptState({profile:JSON.parse(profileBackend.state(settingsBackend.current()))})
         refreshTransmitterState()
         refreshMeasurements()
     }
@@ -136,13 +236,13 @@ Item {
     readonly property bool allBlocksComplete: diagramBlocks.every(block => block.blockStatus === "complete")
     // Start requires accepted block readiness and one idle Rust worker.
     readonly property bool runIntegrationAvailable: true
-    property string selectedSection: ""
-    property string sectionDescription: ""
+    readonly property string selectedSection: states.value ? states.value.selectedSection : ""
+    readonly property string sectionDescription: states.value ? states.value.sectionDescription : ""
     // Opens explanatory section content; editors will use Rust validation later.
     function openSection(title, description) {
-        selectedSection = title
-        sectionDescription = description
-        sectionDialog.open()
+        if (adoptState({selectedSection:title,sectionDescription:description})) {
+            sectionDialog.openChecked()
+        }
     }
     ColumnLayout {
         anchors.fill: parent; anchors.leftMargin: 24; anchors.rightMargin: 24
@@ -252,28 +352,28 @@ Item {
                     theme: workbench.theme; heading: "OFDM Channel\nDescriptor\n(OCD)"
                     blockStatus: workbench.profileState.ofdm_status
                     statusReason: workbench.profileState.reason
-                    onClicked: ofdmDialog.open()
+                    onClicked: ofdmDialog.openChecked()
                 }
                 WorkbenchBlock {
                     id: sourceBlock; objectName: "sourceBlock"; x: 325; y: 65; width: 195; height: 90
                     theme: workbench.theme; heading: "PRBS-TX"
                     blockStatus: workbench.sourceState.status
                     statusReason: workbench.sourceState.reason
-                    onClicked: sourceDialog.open()
+                    onClicked: sourceDialog.openChecked()
                 }
                 WorkbenchBlock {
                     id: transmitterBlock; objectName: "transmitterBlock"; x: 325; y: 245; width: 195; height: 90
                     theme: workbench.theme; heading: "Transmitter"
                     blockStatus: workbench.transmitterState.status
                     statusReason: workbench.transmitterState.reason
-                    onClicked: transmitterDialog.open()
+                    onClicked: transmitterDialog.openChecked()
                 }
                 WorkbenchBlock {
                     id: channelBlock; objectName: "channelBlock"; x: 630; y: 245; width: 195; height: 90
                     theme: workbench.theme; heading: "Channel\nSimulator"
                     blockStatus: workbench.measurementState.channel.status
                     statusReason: workbench.measurementState.channel.reason
-                    onClicked: channelDialog.open()
+                    onClicked: channelDialog.openChecked()
                 }
                 WorkbenchBlock {
                     id: receiverBlock; objectName: "receiverBlock"; x: 935; y: 245; width: 195; height: 90
@@ -282,14 +382,14 @@ Item {
                     indicatorDescription: "MERLIN Channel Estimation enabled. Estimates correction from received pilots."
                     blockStatus: workbench.runState.receiver_status
                     statusReason: workbench.runState.reason
-                    onClicked: receiverDialog.open()
+                    onClicked: receiverDialog.openChecked()
                 }
                 WorkbenchBlock {
                     id: verificationBlock; objectName: "verificationBlock"; x: 935; y: 65; width: 195; height: 90
                     theme: workbench.theme; heading: "PRBS-RX"
                     blockStatus: workbench.runState.verify_status
                     statusReason: workbench.runState.verified ? "Independent recovered-source comparison enabled." : "Enable independent source comparison in PRBS-RX."
-                    onClicked: verificationDialog.open()
+                    onClicked: verificationDialog.openChecked()
                 }
                 WorkbenchBlock {
                     id: profileBlock; objectName: "profileBlock"; x: 47.5; y: 305; width: 195; height: 90
@@ -297,7 +397,7 @@ Item {
                     pnmFileType: "CmDsOfdmModulationProfile"
                     blockStatus: workbench.profileState.profile_status
                     statusReason: workbench.profileState.reason; inputBlock: true
-                    onClicked: profileDialog.open()
+                    onClicked: profileDialog.openChecked()
                 }
                 WorkbenchBlock {
                     id: channelEstimateBlock; objectName: "channelEstimateBlock"; x: 770; y: 425; width: 220; height: 90
@@ -305,7 +405,7 @@ Item {
                     pnmFileType: "CmDsOfdmChanEstimateCoef"
                     blockStatus: workbench.measurementState.response.status
                     statusReason: workbench.measurementState.response.reason; inputBlock: true
-                    onClicked: responseDialog.open()
+                    onClicked: responseDialog.openChecked()
                 }
                 WorkbenchBlock {
                     id: rxmerBlock; objectName: "rxmerBlock"; x: 630; y: 65; width: 195; height: 90
@@ -313,7 +413,7 @@ Item {
                     pnmFileType: "CmDsOfdmRxMer"
                     blockStatus: workbench.measurementState.rxmer.status
                     statusReason: workbench.measurementState.rxmer.reason; inputBlock: true
-                    onClicked: rxmerDialog.open()
+                    onClicked: rxmerDialog.openChecked()
                 }
             }
         }
@@ -327,7 +427,7 @@ Item {
                     Label {
                         objectName: "runElapsed"
                         visible: !!workbench.runState.timing
-                        text: workbench.runState.timing ? "Elapsed " + workbench.runState.timing.elapsed_text + (workbench.runState.busy ? " · Profile " + workbench.runState.timing.profile_elapsed_text : "") : ""
+                        text: states.value ? states.value.display.elapsed : ""
                         color: theme.text; font.pixelSize: 12
                         Layout.fillWidth: true; wrapMode: Text.WordWrap
                         MouseArea { id: elapsedHover; anchors.fill: parent; hoverEnabled: true }
@@ -335,14 +435,22 @@ Item {
                         ToolTip.text: "Wall time includes pauses and CPU scheduling waits. The run budget uses active time."
                     }
                 }
+                Label {
+                    objectName: "presentationAdmissionNotice"
+                    visible: workbench.theme.presentationAdmissionRejected
+                    text: "Presentation limits reached; previous view preserved."
+                    color: workbench.theme.statusAttention
+                    wrapMode: Text.WordWrap
+                    Layout.fillWidth: true
+                }
                 ContextualStatus {
                     theme: workbench.theme
                     diagnostic: workbench.runState.diagnostic || null
                     onHelpRequested: function(code) { workbench.openHelp(code) }
                     objectName: "runProgress"
-                    text: workbench.runState.diagnostic ? workbench.runState.reason : workbench.runState.busy ? "Profile " + (workbench.runState.profile_id ?? "—") + " · " + (workbench.runState.profile_index || 1) + " / " + (workbench.runState.profile_count || 1) + (workbench.runState.timing ? " · " + workbench.runState.timing.phase + (workbench.runState.timing.mce ? " · MCE " + workbench.runState.timing.mce : "") : "") + " · Symbols: " + workbench.runState.completed_symbols + (workbench.runState.timing ? " · Recovered: " + workbench.runState.timing.recovered_payloads : "") : workbench.runState.result ? "Run " + workbench.runState.result.status + " · " + workbench.runState.result.bits_tested + " bits compared · " + workbench.runState.result.bit_errors + " bit errors" : workbench.runState.reason
+                    text: states.value ? states.value.display.progress : ""
                     font.pixelSize: 12; Layout.fillWidth: true
-                    activityTooltip: workbench.runState.busy && workbench.runState.timing ? "Time since last completed processing step: " + workbench.runState.timing.progress_age_text : ""
+                    activityTooltip: states.value ? states.value.display.activity : ""
                 }
             }
             WorkbenchActionButton {
@@ -359,7 +467,7 @@ Item {
                 primary: true
                 Layout.preferredWidth: 104
                 objectName: "startButton"; text: "▶  Start"
-                enabled: workbench.hasProject && workbench.allBlocksComplete && workbench.runState.can_start && !workbench.loadingProject
+                enabled: workbench.hasProject && workbench.allBlocksComplete && workbench.runState.can_start && !workbench.loadingProject && !states.rejected
                 onClicked: { workbench.runBackend.start();workbench.pollRun() }
                 Accessible.name: "Start simulation"
                 Accessible.description: !workbench.allBlocksComplete ? "Every workbench block must be green before starting." : "Wait for the current simulation to finish before starting another."
@@ -371,7 +479,7 @@ Item {
     WorkbenchEntryDialog {
         id: workbenchEntry
         theme: workbench.theme
-        onCreateRequested: { if (workbench.newProject()) wbConfig.open() }
+        onCreateRequested: { if (workbench.newProject()) wbConfig.openChecked() }
         onOpenRequested: { workbench.configureAfterOpen=true;workbench.openProject() }
     }
     WorkbenchConfigurationDialog {
@@ -401,10 +509,10 @@ Item {
         runBackend:workbench.runBackend
         measurementBackend:workbench.measurementBackend;settingsBackend:workbench.settingsBackend;transmitterBackend:workbench.transmitterBackend;receiverBackend:workbench.receiverBackend;runState:workbench.runState
         onModelApplied:workbench.refreshMeasurements()
-        onRxmerRequested: rxmerDialog.open()
-        onResponseRequested: responseDialog.open()
+        onRxmerRequested: rxmerDialog.openChecked()
+        onResponseRequested: responseDialog.openChecked()
     }
-    ReceiverWorkbenchDialog { id: receiverDialog;onContextHelpRequested:function(code){workbench.openHelp(code)}; theme: workbench.theme; backend: workbench.receiverBackend; runState: workbench.runState; onConfigurationRequested: receiverConfig.open() }
+    ReceiverWorkbenchDialog { id: receiverDialog;onContextHelpRequested:function(code){workbench.openHelp(code)}; theme: workbench.theme; backend: workbench.receiverBackend; runState: workbench.runState; onConfigurationRequested: receiverConfig.openChecked() }
     ReceiverConfigurationDialog { id: receiverConfig; onContextHelpRequested:function(code){workbench.openHelp(code)}; theme: workbench.theme; backend: workbench.runBackend; settingsBackend: workbench.settingsBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
     VerificationDialog { id: verificationDialog; theme: workbench.theme; backend: workbench.runBackend; diagnosticsBackend: workbench.receiverBackend; runState: workbench.runState; onConfigurationApplied: workbench.pollRun() }
     FaqDialog { id: faqDialog; theme: workbench.theme; backend: workbench.aboutBackend }
@@ -438,7 +546,7 @@ Item {
     }
     Timer {
         interval: 100; running: true; repeat: true
-        onTriggered: { workbench.transmitterState = JSON.parse(workbench.transmitterBackend.poll());workbench.pollRun() }
+        onTriggered: { workbench.adoptTransmitterState(JSON.parse(workbench.transmitterBackend.poll()));workbench.pollRun() }
     }
     TransmitterWorkbenchDialog {
         id: transmitterDialog

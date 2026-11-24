@@ -6,18 +6,25 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../components"
+import "../presentation"
 
 WorkbenchDialog {
     id: dialog
     required property var backend
-    property string documentText: ""
-    property string contextText: ""
+    property PresentationOwner presentationCoverage: PresentationOwner { id: content; theme: dialog.theme }
+    title: content.value ? content.value.title : "Help"
+    readonly property string documentText: content.value ? content.value.text : ""
+    readonly property string contextText: content.value ? content.value.context : ""
     function showEntry(code, diagnostic) {
         const document = JSON.parse(backend.faq_document(code))
-        title = document.title
-        documentText = document.text
-        contextText = diagnostic ? diagnostic.tooltip : ""
-        open()
+        const context = diagnostic ? diagnostic.tooltip : ""
+        // Explicit display strings cover the existing native text consumers too.
+        if (!content.replace({title: document.title, text: document.text, context: context,
+                displayed: {title: document.title, text: document.text, context: context}})) {
+            theme.presentationAdmissionRejected=true
+            return false
+        }
+        return openChecked()
     }
     parent: Overlay.overlay
     anchors.centerIn: parent

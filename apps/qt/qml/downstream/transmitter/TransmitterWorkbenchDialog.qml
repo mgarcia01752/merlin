@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../../shared/components"
+import "../../shared/presentation"
 import "../instruments/messages"
 import "../instruments/qam"
 import "../instruments/spectrum"
@@ -21,31 +22,43 @@ WorkbenchDialog {
     property alias qamPopup: qam
     property alias messagePopup: messages
     property alias stageRepeater: stages
-    property int selectedTap: 0
+    readonly property int selectedTap:presentation.value ? presentation.value.selectedTap : 0
     readonly property bool usePreview: selectedTap === 0 && !runState.has_result && !runState.busy
     onUsePreviewChanged: if (!usePreview && backend) { backend.cancel() }
-    property var retainedState: ({has_result:false,can_generate:false,busy:false})
-    property string seenToken: ""
-    property string seenPreviewToken: ""
-    property var graphicalStages: []
-    property var outputPreview: ({points:[]})
-    property bool outputAvailable: false
+    readonly property var retainedState: presentation.value ? presentation.value.retainedState : ({has_result:false,can_generate:false,busy:false})
+    readonly property string seenToken: presentation.value ? presentation.value.seenToken : ""
+    readonly property string seenPreviewToken: presentation.value ? presentation.value.seenPreviewToken : ""
+    readonly property var graphicalStages: presentation.value ? presentation.value.graphicalStages : []
+    readonly property var outputPreview: presentation.value ? presentation.value.outputPreview : ({points:[]})
+    readonly property bool outputAvailable: presentation.value ? presentation.value.outputAvailable : false
+    property PresentationOwner presentationCoverage: PresentationOwner {
+        id:presentation;theme:dialog.theme
+        initialValue:({retainedState:{has_result:false,can_generate:false,busy:false},seenToken:"",seenPreviewToken:"",graphicalStages:[],outputPreview:{points:[]},outputAvailable:false,selectedTap:0})
+    }
+    /** Admit concrete parent previews/tap metadata before child aliases change. */
+    function adoptPresentation(changes) {
+        return presentation.value && presentation.replace(Object.assign({},presentation.value,changes))
+    }
     function refreshPreviews() {
-        graphicalStages=JSON.parse(backend.stage_previews())
+        const stages=JSON.parse(backend.stage_previews())
         const completed=runState.has_result
-        outputAvailable=completed || transmitterState.has_result
-        outputPreview=outputAvailable ? JSON.parse(completed ? backend.view_tap(3,0,0,false) : backend.view(0,0,false)) : ({points:[]})
+        const available=completed || transmitterState.has_result
+        const preview=available ? JSON.parse(completed ? backend.view_tap(3,0,0,false) : backend.view(0,0,false)) : ({points:[]})
+        return adoptPresentation({graphicalStages:stages,outputAvailable:!!available,outputPreview:preview,seenPreviewToken:transmitterState.result_token || ""})
     }
     onTransmitterStateChanged: {
         const token=transmitterState.result_token || ""
-        if (visible && token!==seenPreviewToken) {seenPreviewToken=token;refreshPreviews()}
+        if (visible && token!==seenPreviewToken) {refreshPreviews()}
     }
-    function refreshSpectrum() { if (backend) { retainedState=JSON.parse(backend.spectrum_tap(selectedTap === 0 ? 3 : selectedTap-1)) } }
-    function openSpectrum(index) { selectedTap=index;refreshSpectrum();spectrum.clearView();spectrum.open() }
-    function openStage(index) { stageInspector.stageIndex=index===2 && graphicalStages.length>2 ? graphicalStages[2].stage_index : index;stageInspector.open() }
+    function refreshSpectrum(index = selectedTap) {
+        if (!backend) {return false}
+        return adoptPresentation({retainedState:JSON.parse(backend.spectrum_tap(index === 0 ? 3 : index-1)),seenToken:runState.result_token || "",selectedTap:index})
+    }
+    function openSpectrum(index) {if (!refreshSpectrum(index)) {return false};spectrum.clearView();return spectrum.openChecked()}
+    function openStage(index) { stageInspector.stageIndex=index===2 && graphicalStages.length>2 ? graphicalStages[2].stage_index : index;stageInspector.openChecked() }
     onRunStateChanged: {
         if (seenToken !== (runState.result_token || "")) {
-            seenToken=runState.result_token || "";refreshSpectrum();if(visible){refreshPreviews()}
+            refreshSpectrum();if(visible){refreshPreviews()}
             if (stageInspector.visible) { stageInspector.refresh() }
             if (qam.visible) { qam.refresh() }
             if (messages.visible) { messages.refresh() }
@@ -62,6 +75,7 @@ WorkbenchDialog {
       ColumnLayout {
         width:txScroll.availableWidth
         spacing:12
+        Label {visible:presentation.rejected;text:presentation.message;color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
         RowLayout {
             Layout.fillWidth:true;spacing:12
             Label {text:"Transmitter Signal Path";font.pixelSize:19;font.bold:true;color:dialog.theme.text;Layout.fillWidth:true}
@@ -100,7 +114,7 @@ WorkbenchDialog {
         }
         RowLayout {
             Layout.fillWidth:true;spacing:12
-            ReceiverChip { objectName:"txMessages";theme:dialog.theme;text:"OCD / DPD Messages";Layout.minimumWidth:200;Layout.preferredWidth:230;Layout.maximumWidth:230;onClicked:messages.open() }
+            ReceiverChip { objectName:"txMessages";theme:dialog.theme;text:"OCD / DPD Messages";Layout.minimumWidth:200;Layout.preferredWidth:230;Layout.maximumWidth:230;onClicked:messages.openChecked() }
             Label { text:"→ PLC Encoding / Mapping → Frame Assembly";color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap }
         }
         RowLayout {
@@ -111,7 +125,7 @@ WorkbenchDialog {
         Label { text:"Diagnostic Instruments";color:dialog.theme.accent;font.bold:true }
         RowLayout {
             Layout.fillWidth:true
-            ReceiverChip { objectName:"txMessageInspector";theme:dialog.theme;text:"Message Inspector";onClicked:messages.open() }
+            ReceiverChip { objectName:"txMessageInspector";theme:dialog.theme;text:"Message Inspector";onClicked:messages.openChecked() }
             ReceiverChip { objectName:"txBitInspector";theme:dialog.theme;text:"Bit / Codeword Inspector";onClicked:dialog.openStage(0) }
         }
       }
@@ -123,7 +137,11 @@ WorkbenchDialog {
         id:spectrumProxy
         function generate() { if (dialog.usePreview) { dialog.backend.generate() } }
         function cancel() { if (dialog.usePreview) { dialog.backend.cancel() } }
-        function view(start,count,captureAxis) { return dialog.usePreview ? dialog.backend.view(start,count,captureAxis) : dialog.backend.view_tap(dialog.selectedTap===0 ? 3 : dialog.selectedTap-1,start,count,captureAxis) }
+        function view(start,count,captureAxis) {
+            const tap=dialog.presentationCoverage.value.selectedTap
+            const preview=tap===0 && !dialog.runState.has_result && !dialog.runState.busy
+            return preview ? dialog.backend.view(start,count,captureAxis) : dialog.backend.view_tap(tap===0 ? 3 : tap-1,start,count,captureAxis)
+        }
         function timing(velocity) { return dialog.backend.timing(velocity) }
     }
     SpectrumAnalyzerDialog {
@@ -132,7 +150,7 @@ WorkbenchDialog {
         autoGenerate:dialog.usePreview;showTiming:true
         tapOptions:["TX Output · Before Channel","TX IFFT","TX Cyclic Prefix","TX Window"]
         selectedTap:dialog.selectedTap
-        onTapRequested:function(index){dialog.selectedTap=index;dialog.refreshSpectrum();clearView();updateResult()}
+        onTapRequested:function(index){if(dialog.refreshSpectrum(index)){clearView();updateResult()}}
         generateDescription:dialog.usePreview ? "Run the transmitter preview." : "Use Start on the main workbench to capture TX stages."
     }
 }

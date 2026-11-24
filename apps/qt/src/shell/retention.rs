@@ -28,6 +28,14 @@ pub struct RetainedResources {
     pub channel_count: usize,
     /// Configured bounded channel slots, independent of buffered message data.
     pub slot_count: usize,
+    /// Logical UTF-16 text bytes retained by presentation owners, not Rust capacity.
+    pub presentation_utf16_bytes: usize,
+    /// Logical array/object entries retained by presentation owners, not tree nodes.
+    pub presentation_entries: usize,
+    /// Presentation views retaining data, including hidden or closed views.
+    pub retained_views: usize,
+    /// Presentation views currently open; closing does not release retained data.
+    pub open_views: usize,
 }
 
 /// Failure to reserve application memory without changing existing ownership.
@@ -51,6 +59,22 @@ pub enum RetentionError {
         requested: usize,
     },
     SlotsExceeded {
+        maximum: usize,
+        requested: usize,
+    },
+    PresentationUtf16BytesExceeded {
+        maximum: usize,
+        requested: usize,
+    },
+    PresentationEntriesExceeded {
+        maximum: usize,
+        requested: usize,
+    },
+    RetainedViewsExceeded {
+        maximum: usize,
+        requested: usize,
+    },
+    OpenViewsExceeded {
         maximum: usize,
         requested: usize,
     },
@@ -92,13 +116,13 @@ pub struct Retained<T> {
 }
 
 impl RetentionBudget {
-    /// Creates bytes-only accounting with zero container/shared-root admission.
+    /// Creates actual-payload-byte accounting; the other eight quantities admit zero.
     ///
     /// # Arguments
     /// * `maximum` - Inclusive policy ceiling; zero admits only zero-byte payloads.
     ///
     /// # Returns
-    /// An empty budget; use `with_limits` for multidimensional backend ownership.
+    /// An empty budget; use `with_limits` for multidimensional application ownership.
     pub fn new(maximum: RetainedBytes) -> Self {
         Self::with_limits(RetainedResources {
             payload_bytes: maximum.0,
@@ -106,7 +130,7 @@ impl RetentionBudget {
         })
     }
 
-    /// Creates shared accounting with five explicit independent ceilings.
+    /// Creates shared accounting with nine explicit independent ceilings.
     ///
     /// # Arguments
     /// * `maximum` - Inclusive application policies; zero admits only zero usage
@@ -162,7 +186,7 @@ impl RetentionBudget {
     /// Reserves bytes before creating or cloning retained payload allocations.
     ///
     /// # Arguments
-    /// * `bytes` - Additional payload bytes; claims zero entries/shared roots.
+    /// * `bytes` - Actual payload bytes; claims zero in the other eight dimensions.
     ///
     /// # Returns
     /// An owned reservation that releases its charge on drop.
@@ -222,6 +246,30 @@ impl RetentionBudget {
             return Err(RetentionError::SlotsExceeded {
                 maximum: accounting.maximum.slot_count,
                 requested: requested.slot_count,
+            });
+        }
+        if requested.presentation_utf16_bytes > accounting.maximum.presentation_utf16_bytes {
+            return Err(RetentionError::PresentationUtf16BytesExceeded {
+                maximum: accounting.maximum.presentation_utf16_bytes,
+                requested: requested.presentation_utf16_bytes,
+            });
+        }
+        if requested.presentation_entries > accounting.maximum.presentation_entries {
+            return Err(RetentionError::PresentationEntriesExceeded {
+                maximum: accounting.maximum.presentation_entries,
+                requested: requested.presentation_entries,
+            });
+        }
+        if requested.retained_views > accounting.maximum.retained_views {
+            return Err(RetentionError::RetainedViewsExceeded {
+                maximum: accounting.maximum.retained_views,
+                requested: requested.retained_views,
+            });
+        }
+        if requested.open_views > accounting.maximum.open_views {
+            return Err(RetentionError::OpenViewsExceeded {
+                maximum: accounting.maximum.open_views,
+                requested: requested.open_views,
             });
         }
         accounting.used = requested;
@@ -328,6 +376,10 @@ impl Drop for RetentionReservation {
         accounting.used.shared_roots -= self.resources.shared_roots;
         accounting.used.channel_count -= self.resources.channel_count;
         accounting.used.slot_count -= self.resources.slot_count;
+        accounting.used.presentation_utf16_bytes -= self.resources.presentation_utf16_bytes;
+        accounting.used.presentation_entries -= self.resources.presentation_entries;
+        accounting.used.retained_views -= self.resources.retained_views;
+        accounting.used.open_views -= self.resources.open_views;
     }
 }
 
@@ -335,7 +387,7 @@ impl RetainedResources {
     /// Adds audited quantities without changing any application counter.
     ///
     /// # Arguments
-    /// * `self` - Existing payload, ordered-entry and shared-root quantities.
+    /// * `self` - Existing actual Rust, channel and logical presentation quantities.
     /// * `additional` - Independent quantities to include in the same aggregate.
     ///
     /// # Returns
@@ -365,6 +417,22 @@ impl RetainedResources {
                 .slot_count
                 .checked_add(additional.slot_count)
                 .ok_or(RetentionError::ArithmeticOverflow)?,
+            presentation_utf16_bytes: self
+                .presentation_utf16_bytes
+                .checked_add(additional.presentation_utf16_bytes)
+                .ok_or(RetentionError::ArithmeticOverflow)?,
+            presentation_entries: self
+                .presentation_entries
+                .checked_add(additional.presentation_entries)
+                .ok_or(RetentionError::ArithmeticOverflow)?,
+            retained_views: self
+                .retained_views
+                .checked_add(additional.retained_views)
+                .ok_or(RetentionError::ArithmeticOverflow)?,
+            open_views: self
+                .open_views
+                .checked_add(additional.open_views)
+                .ok_or(RetentionError::ArithmeticOverflow)?,
         })
     }
 }
@@ -377,6 +445,9 @@ fn lock<T>(mutex: &Mutex<T>) -> MutexGuard<'_, T> {
 
 #[cfg(test)]
 mod application_tests;
+
+#[cfg(test)]
+mod presentation_tests;
 
 #[cfg(test)]
 #[path = "retention_tests.rs"]

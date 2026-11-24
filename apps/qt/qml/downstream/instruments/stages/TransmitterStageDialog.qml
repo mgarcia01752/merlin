@@ -6,14 +6,63 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../../../shared/components"
+import "../../../shared/presentation"
 
 WorkbenchDialog {
     id:dialog
     required property var backend
     property int stageIndex:0
     property int pageOffset:0
-    property var observation:({rows:[],available:false,reason:""})
-    function refresh(){ observation=JSON.parse(backend.stage(stageIndex,pageOffset)) }
+    readonly property var observation: presentation.value ? presentation.value.observation : ({})
+    readonly property var display: presentation.value ? presentation.value.display : ({})
+    property PresentationOwner presentationCoverage: PresentationOwner {
+        id: presentation
+        theme: dialog.theme
+        initialValue: dialog.stageCandidate({rows:[],available:false,reason:""},0,0,dialog.stageLabels())
+    }
+
+    /**
+     * Provide the existing compiled selector labels for initial admission/retry.
+     * @returns The unchanged stage choices; accepted refreshes reuse their alias.
+     */
+    function stageLabels() {
+        return ["Source Bits · PRBS-TX","LDPC Codeword","Interleaved Bits","Cell Labels","Mapped Cells · Data / NCP","Interleaved Cells · Data / NCP","Physical FFT Bins","PLC Data I/Q","PLC Preamble I/Q"]
+    }
+
+    /**
+     * Couple the response and its existing display strings with query context.
+     * @param value Original backend DTO, without scientific reconstruction.
+     * @param stage Requested stage index.
+     * @param offset Requested page offset.
+     * @param labels Independently retained selector strings under this same owner.
+     * @returns Plain candidate measured before persistent replacement.
+     */
+    function stageCandidate(value, stage, offset, labels) {
+        return {observation:value,stageIndex:stage,pageOffset:offset,labels:labels,display:{
+            summary:"Symbol: "+(value.symbol===null ? "—" : value.symbol)+" · "+(value.phase || "")+" · Captured: "+value.retained+" / "+value.total+" · Missing: "+(value.missing || 0),
+            omitted:"Role-band display limit reached · omitted "+(value.graph || {}).omitted_bands,
+            page:value.available ? offset+"–"+(value.end-1) : ""
+        }}
+    }
+
+    /**
+     * Query the original backend and admit the complete response/context pair.
+     * @returns False preserves old science/display context and restores controls.
+     */
+    function refresh() {
+        const stage = stageIndex
+        const offset = pageOffset
+        const value = JSON.parse(backend.stage(stage,offset))
+        const labels = presentation.value ? presentation.value.labels : stageLabels()
+        if (!presentation.replace(stageCandidate(value,stage,offset,labels))) {
+            if (presentation.value) {
+                stageIndex = presentation.value.stageIndex
+                pageOffset = presentation.value.pageOffset
+            }
+            return false
+        }
+        return true
+    }
     onOpened:{pageOffset=0;refresh()}
     title:"Transmitter · Stage Inspector"
     parent:Overlay.overlay;anchors.centerIn:parent
@@ -25,12 +74,13 @@ WorkbenchDialog {
         RowLayout {
             Layout.fillWidth:true
             Label { text:"Test Point";color:dialog.theme.text }
-            ComboBox { objectName:"txStageSelection";Layout.fillWidth:true;model:["Source Bits · PRBS-TX","LDPC Codeword","Interleaved Bits","Cell Labels","Mapped Cells · Data / NCP","Interleaved Cells · Data / NCP","Physical FFT Bins","PLC Data I/Q","PLC Preamble I/Q"];currentIndex:dialog.stageIndex;onActivated:function(index){dialog.stageIndex=index;dialog.pageOffset=0;dialog.refresh()} }
+            ComboBox { objectName:"txStageSelection";Layout.fillWidth:true;model:presentation.value ? presentation.value.labels : [];currentIndex:dialog.stageIndex;onActivated:function(index){dialog.stageIndex=index;dialog.pageOffset=0;dialog.refresh()} }
         }
-        Label { visible:dialog.observation.available;text:"Symbol: "+(dialog.observation.symbol===null ? "—" : dialog.observation.symbol)+" · "+(dialog.observation.phase || "")+" · Captured: "+dialog.observation.retained+" / "+dialog.observation.total+" · Missing: "+(dialog.observation.missing || 0);color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap }
+        Label {objectName:"txStageRetention";visible:presentation.rejected;text:presentation.message;color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
+        Label { visible:dialog.observation.available;text:dialog.display.summary || "";color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap }
         Label { visible:!dialog.observation.available;text:dialog.observation.reason || "";color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap }
         TransmitterStageLegend {theme:dialog.theme;graph:dialog.observation.graph || ({});observation:dialog.observation;Layout.fillWidth:true}
-        Label {visible:(dialog.observation.graph || {}).omitted_bands>0;text:"Role-band display limit reached · omitted "+(dialog.observation.graph || {}).omitted_bands;color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
+        Label {visible:(dialog.observation.graph || {}).omitted_bands>0;text:dialog.display.omitted || "";color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
         ColumnLayout {
             Layout.fillWidth:true;Layout.fillHeight:true;spacing:10
             Label { visible:!!(dialog.observation.graph || {}).before;text:((dialog.observation.graph || {}).before || {}).title || "";color:dialog.theme.muted }
@@ -56,7 +106,7 @@ WorkbenchDialog {
         RowLayout {
             WorkbenchActionButton { theme: dialog.theme; objectName:"txPreviousPage";text:"Previous";enabled:dialog.pageOffset>0;onClicked:{dialog.pageOffset=Math.max(0,dialog.pageOffset-(dialog.stageIndex===1 ? 2048 : dialog.stageIndex===0 || dialog.stageIndex===2 ? 128 : 64));dialog.refresh()} }
             WorkbenchActionButton { theme: dialog.theme; objectName:"txNextPage";text:"Next";enabled:dialog.observation.available && dialog.observation.end<dialog.observation.retained;onClicked:{dialog.pageOffset=dialog.observation.end;dialog.refresh()} }
-            Label { text:dialog.observation.available ? dialog.pageOffset+"–"+(dialog.observation.end-1) : "";color:dialog.theme.muted }
+            Label { text:dialog.display.page || "";color:dialog.theme.muted }
             Item { Layout.fillWidth:true }
         }
     }

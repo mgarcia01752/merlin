@@ -12,6 +12,10 @@ const LIMITS: RetainedResources = RetainedResources {
     shared_roots: usize::MAX,
     channel_count: usize::MAX,
     slot_count: usize::MAX,
+    presentation_utf16_bytes: 0,
+    presentation_entries: 0,
+    retained_views: 0,
+    open_views: 0,
 };
 
 // Deliberate spare requested path storage, independent of path-count policy.

@@ -81,3 +81,7 @@ pub(crate) const RUNTIME_MODEL_ADMISSION_MESSAGE: &str =
 /// No operation starts and no accepted configuration/result is replaced.
 pub(crate) const WORKER_TRANSPORT_ADMISSION_MESSAGE: &str =
     "Worker storage exceeds the session retained-data limit.";
+
+/// Maximum nested data depth for persistent QML candidate traversal.
+/// Root depth is zero; this is an application work policy, not a scientific limit.
+pub(crate) const MAX_PRESENTATION_VALUE_DEPTH: usize = 64;

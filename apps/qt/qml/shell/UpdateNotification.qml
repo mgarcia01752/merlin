@@ -34,15 +34,15 @@ Item {
         const recovery = prepareUpdate()
         if (recovery.error) {
             state = Object.assign({}, state, {status:recovery.error,error:true})
-            dialog.open()
+            dialog.openChecked()
             return
         }
         state = JSON.parse(backend.install())
-        dialog.open()
+        dialog.openChecked()
     }
     function refresh() { dialog.reportFeedback=""; state=JSON.parse(backend.check()) }
-    function showUpdates() { dialog.open() }
-    Component.onCompleted: {state=JSON.parse(backend.poll());if(state.show_result) dialog.open()}
+    function showUpdates() { dialog.openChecked() }
+    Component.onCompleted: {state=JSON.parse(backend.poll());if(state.show_result) dialog.openChecked()}
     Timer { interval:2000;running:control.startupCheck;repeat:false;onTriggered: {if(control.state.enabled && !control.state.show_result) control.refresh()} }
     Timer { interval:150;running:control.state.busy;repeat:true;onTriggered: {
         control.state=JSON.parse(control.backend.poll())

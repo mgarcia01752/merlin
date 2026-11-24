@@ -221,6 +221,10 @@ const FAILURE_TEST_LIMITS: RetainedResources = RetainedResources {
     shared_roots: usize::MAX,
     channel_count: usize::MAX,
     slot_count: usize::MAX,
+    presentation_utf16_bytes: 0,
+    presentation_entries: 0,
+    retained_views: 0,
+    open_views: 0,
 };
 
 #[test]
@@ -389,6 +393,10 @@ fn queued_preparation_error_moves_to_persistent_status_without_recharging_under_
             shared_roots: FAILURE_TEST_LIMITS.shared_roots - used.shared_roots,
             channel_count: FAILURE_TEST_LIMITS.channel_count - used.channel_count,
             slot_count: FAILURE_TEST_LIMITS.slot_count - used.slot_count,
+            presentation_utf16_bytes: 0,
+            presentation_entries: 0,
+            retained_views: 0,
+            open_views: 0,
         })
         .unwrap();
     let prepared = Prepared::Configuration {

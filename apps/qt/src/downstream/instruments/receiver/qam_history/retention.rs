@@ -37,7 +37,11 @@ impl ArchiveError {
                 | RetentionError::OrderedEntriesExceeded { .. }
                 | RetentionError::SharedRootsExceeded { .. }
                 | RetentionError::ChannelsExceeded { .. }
-                | RetentionError::SlotsExceeded { .. },
+                | RetentionError::SlotsExceeded { .. }
+                | RetentionError::PresentationUtf16BytesExceeded { .. }
+                | RetentionError::PresentationEntriesExceeded { .. }
+                | RetentionError::RetainedViewsExceeded { .. }
+                | RetentionError::OpenViewsExceeded { .. },
             ) => "The session retained-data limit would be exceeded.".into(),
         }
     }

@@ -8,13 +8,14 @@ import QtQuick.Controls
 Item {
     id: chart
     required property var theme
+    property var presentationText: ({})
     property var histogram: ({points:[],maximum:0})
     Canvas {
         id: plot
         anchors.fill: parent
         Accessible.role: Accessible.Graphic
         Accessible.name: "LDPC iterations · Whole run"
-        Accessible.description: (chart.histogram.points || []).map(point => point.iteration + " iterations: " + point.count + " codewords").join(", ") || "No completed codewords."
+        Accessible.description:chart.presentationText.description || "No completed codewords."
         onWidthChanged: requestPaint()
         onHeightChanged: requestPaint()
         Connections { target: chart; function onHistogramChanged() { plot.requestPaint() } }
@@ -62,5 +63,5 @@ Item {
         property var point: (chart.histogram.points || [])[pointIndex]
     }
     ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hover.containsMouse && !!hover.point
-    ToolTip.text: hover.point ? hover.point.iteration + " iterations · " + hover.point.count + " codewords" : ""
+    ToolTip.text:(chart.presentationText.tooltips || [])[hover.pointIndex] || ""
 }

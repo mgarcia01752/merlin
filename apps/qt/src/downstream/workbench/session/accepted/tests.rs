@@ -16,6 +16,10 @@ const TEST_MAXIMUM: RetainedResources = RetainedResources {
     shared_roots: usize::MAX,
     channel_count: usize::MAX,
     slot_count: usize::MAX,
+    presentation_utf16_bytes: 0,
+    presentation_entries: 0,
+    retained_views: 0,
+    open_views: 0,
 };
 // Fixture spare capacity and two distinct valid PRBS identities.
 const SPARE_BYTES: usize = 29;

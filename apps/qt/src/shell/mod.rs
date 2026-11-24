@@ -5,7 +5,7 @@
 //! Explicit Qt application ownership, independent of either scientific engine.
 //! Scientific data stays in its direction owner; this module owns native lifecycle.
 mod application;
-mod constants;
+pub(crate) mod constants;
 mod dispatch;
 mod identity;
 mod input_paths;

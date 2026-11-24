@@ -18,6 +18,10 @@ const TEST_MAXIMUM: RetainedResources = RetainedResources {
     shared_roots: usize::MAX,
     channel_count: usize::MAX,
     slot_count: usize::MAX,
+    presentation_utf16_bytes: 0,
+    presentation_entries: 0,
+    retained_views: 0,
+    open_views: 0,
 };
 
 /// Creates the real accepted downstream fixture with its original protected path.
@@ -131,6 +135,10 @@ fn successful_new_transfers_all_blank_editors_under_full_pressure_and_preserves_
             shared_roots: usize::MAX - usage.shared_roots,
             channel_count: usize::MAX - usage.channel_count,
             slot_count: usize::MAX - usage.slot_count,
+            presentation_utf16_bytes: 0,
+            presentation_entries: 0,
+            retained_views: 0,
+            open_views: 0,
         })
         .unwrap();
     let source = project_load::take(&owner.context, |models| {

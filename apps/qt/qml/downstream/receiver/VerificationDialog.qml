@@ -6,17 +6,20 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../../shared/components"
+import "../../shared/presentation"
 
 WorkbenchDialog {
     id: dialog
     required property var backend
     required property var diagnosticsBackend
     required property var runState
-    property var statistics: ({available: false})
-    property string seenToken: ""
+    readonly property var statistics: presentation.value ? presentation.value.statistics : ({available:false})
+    readonly property string seenToken: presentation.value ? presentation.value.token : ""
+    readonly property var display:presentation.value ? presentation.value.display : ({})
+    property PresentationOwner presentationCoverage: PresentationOwner {id:presentation;theme:dialog.theme}
     readonly property bool hasResult: !runState.busy && !!runState.result
-    readonly property var comparisonResult: hasResult ? runState.result : ({})
-    readonly property string statusText: runState.busy ? (runState.paused ? "Paused" : "Running") : hasResult ? ({complete: "Complete", cancelled: "Cancelled · Partial Result", runtime_exceeded: "Runtime Limit · Partial Result", failed: "Failed · Partial Result"})[comparisonResult.status] || comparisonResult.status : "No Run Results Yet"
+    readonly property var comparisonResult: presentation.value ? presentation.value.result : ({})
+    readonly property string statusText: runState.busy ? (runState.paused ? "Paused" : "Running") : hasResult ? ({complete: "Complete", cancelled: "Cancelled · Partial Result", runtime_exceeded: "Runtime Limit · Partial Result", failed: "Failed · Partial Result"})[comparisonResult.status] || comparisonResult.status || "No Run Results Yet" : "No Run Results Yet"
     signal configurationApplied()
     function number(value) {
         if (value === undefined || value === null) {
@@ -24,10 +27,22 @@ WorkbenchDialog {
         }
         return Number(value).toLocaleString(Qt.locale(), "f", 0)
     }
+    /** Admit FEC charts and independent comparison strings as one result context. */
     function refresh() {
-        statistics = hasResult ? JSON.parse(diagnosticsBackend.fec()) : ({available: false})
-        seenToken = runState.result_token || ""
+        const statistics=hasResult ? JSON.parse(diagnosticsBackend.fec()) : ({available:false})
+        const result=hasResult ? runState.result : ({})
+        const charts=statistics.verification_charts || {}
+        const chartText=function(chart){return ((chart || {}).points || []).map(function(point){return point.label+": "+point.count}).join(", ")}
+        return presentation.replace({statistics:statistics,result:result,token:runState.result_token || "",display:{
+            counters:[{label:"Compared Bits",value:number(result.bits_tested),alert:false},
+                {label:"Bit Errors",value:number(result.bit_errors),alert:result.bit_errors>0},
+                {label:"Bit Error Ratio",value:!hasResult ? "—" : result.ber===null || result.ber===undefined ? "Unavailable" : result.ber===0 ? "0" : Number(result.ber).toExponential(3),alert:result.bit_errors>0},
+                {label:"Recovered Payloads",value:number(result.recovered_payloads),alert:false}],
+            recoveryDescription:chartText(charts.recovery),errorDescription:chartText(charts.word_errors),
+            omitted:hasResult && statistics.available && (charts.omitted>0 || charts.uncompared_retained>0) ? "Chart: up to 64 payloads · omitted: "+charts.omitted+" · without compared bits: "+charts.uncompared_retained : ""
+        }})
     }
+    Component.onCompleted: refresh()
     onOpened: refresh()
     onHasResultChanged: {
         if (opened) {
@@ -78,15 +93,11 @@ WorkbenchDialog {
                 Layout.fillWidth: true; wrapMode: Text.WordWrap; color: dialog.theme.muted
                 text: "Recovered data is compared with the original PRBS15 sequence or file, including configured fill."
             }
+            Label {visible:presentation.rejected;text:presentation.message;color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
             GridLayout {
                 Layout.fillWidth: true; columns: width < 620 ? 2 : 4; columnSpacing: 10; rowSpacing: 10
                 Repeater {
-                    model: [
-                        {label: "Compared Bits", value: dialog.number(dialog.comparisonResult.bits_tested), alert: false},
-                        {label: "Bit Errors", value: dialog.number(dialog.comparisonResult.bit_errors), alert: dialog.comparisonResult.bit_errors > 0},
-                        {label: "Bit Error Ratio", value: !dialog.hasResult ? "—" : dialog.comparisonResult.ber === null || dialog.comparisonResult.ber === undefined ? "Unavailable" : dialog.comparisonResult.ber === 0 ? "0" : Number(dialog.comparisonResult.ber).toExponential(3), alert: dialog.comparisonResult.bit_errors > 0},
-                        {label: "Recovered Payloads", value: dialog.number(dialog.comparisonResult.recovered_payloads), alert: false}
-                    ]
+                    model:dialog.display.counters || []
                     delegate: Rectangle {
                         required property var modelData
                         Layout.fillWidth: true; Layout.preferredWidth: 1; implicitHeight: 92; radius: 9
@@ -103,14 +114,14 @@ WorkbenchDialog {
                 Layout.fillWidth: true; columns: width < 620 ? 1 : 2; columnSpacing: 12; rowSpacing: 12
                 VerificationBarChart {
                     Layout.fillWidth: true; Layout.preferredWidth: 1; Layout.preferredHeight: 210
-                    theme: dialog.theme; heading: "Payload Recovery"; horizontal: true
+                    theme: dialog.theme; heading: "Payload Recovery";descriptionText:dialog.display.recoveryDescription || ""; horizontal: true
                     chart: dialog.hasResult && dialog.statistics.available ? dialog.statistics.verification_charts.recovery : ({points: []})
                     emptyText: dialog.runState.busy ? "Results appear when the run finishes or stops." : "Run the simulation to compare recovered data."
                 }
                 VerificationBarChart {
                     objectName: "verificationWordErrors"
                     Layout.fillWidth: true; Layout.preferredWidth: 1; Layout.preferredHeight: 210
-                    theme: dialog.theme; heading: "Bit Errors by Payload"
+                    theme: dialog.theme; heading: "Bit Errors by Payload";descriptionText:dialog.display.errorDescription || ""
                     chart: dialog.hasResult && dialog.statistics.available ? dialog.statistics.verification_charts.word_errors : ({points: []})
                     emptyText: "No retained payload comparisons."
                 }
@@ -118,7 +129,7 @@ WorkbenchDialog {
             Label {
                 Layout.fillWidth: true; color: dialog.theme.muted; font.pixelSize: 11; wrapMode: Text.WordWrap
                 visible: text.length > 0
-                text: dialog.hasResult && dialog.statistics.available && (dialog.statistics.verification_charts.omitted > 0 || dialog.statistics.verification_charts.uncompared_retained > 0) ? "Chart: up to 64 payloads · omitted: " + dialog.statistics.verification_charts.omitted + " · without compared bits: " + dialog.statistics.verification_charts.uncompared_retained : ""
+                text: dialog.display.omitted || ""
             }
             Label {
                 Layout.fillWidth: true; color: dialog.theme.muted; wrapMode: Text.WordWrap; font.pixelSize: 11

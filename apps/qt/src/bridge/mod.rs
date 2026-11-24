@@ -8,6 +8,7 @@ pub(crate) mod branding;
 pub(crate) mod closed_loop;
 pub(crate) mod measurement_input;
 pub(crate) mod ofdm_settings;
+pub(crate) mod presentation_retention;
 pub(crate) mod profile_input;
 pub(crate) mod receiver_instruments;
 pub(crate) mod source_input;

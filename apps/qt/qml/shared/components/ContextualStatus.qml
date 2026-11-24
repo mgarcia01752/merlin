@@ -4,13 +4,24 @@
  */
 import QtQuick
 import QtQuick.Controls
+import "../presentation"
 
 Label {
     id: status
     required property var theme
     property var diagnostic: null
     property string activityTooltip: ""
-    readonly property bool hasHelp: !!diagnostic && !!diagnostic.code && !!diagnostic.tooltip
+    readonly property bool hasHelp: !presentation.rejected && !!presentation.value && !!presentation.value.diagnostic && !!presentation.value.diagnostic.code && !!presentation.value.diagnostic.tooltip
+    property PresentationOwner presentationCoverage: PresentationOwner {id:presentation;theme:status.theme}
+    /** Admit concrete help copies and their code together before native text use. */
+    function refreshPresentation() {
+        const help=!!diagnostic && !!diagnostic.code && !!diagnostic.tooltip
+        return presentation.replace({diagnostic:diagnostic,description:help ? diagnostic.tooltip+" Open FAQ for details." : activityTooltip,
+            tooltip:help ? diagnostic.tooltip+"\nClick or press Enter for FAQ details." : activityTooltip})
+    }
+    onDiagnosticChanged: refreshPresentation()
+    onActivityTooltipChanged: refreshPresentation()
+    Component.onCompleted: refreshPresentation()
     signal helpRequested(string code)
     textFormat: Text.PlainText
     wrapMode: Text.WordWrap
@@ -20,7 +31,7 @@ Label {
     font.underline: hasHelp && (hover.containsMouse || activeFocus)
     Accessible.role: hasHelp ? Accessible.Link : Accessible.StaticText
     Accessible.name: text
-    Accessible.description: hasHelp ? diagnostic.tooltip + " Open FAQ for details." : activityTooltip
+    Accessible.description:presentation.value ? presentation.value.description : ""
     background: Rectangle {
         color: "transparent"
         radius: 4
@@ -28,7 +39,7 @@ Label {
         border.color: status.theme.accent
     }
     function openHelp() {
-        if (hasHelp) { helpRequested(diagnostic.code) }
+        if (hasHelp) {helpRequested(presentation.value.diagnostic.code)}
     }
     Keys.onReturnPressed: openHelp()
     Keys.onEnterPressed: openHelp()
@@ -48,7 +59,7 @@ Label {
     ToolTip {
         id: tip
         objectName: "contextualStatusTooltip"
-        text: status.hasHelp ? status.diagnostic.tooltip + "\nClick or press Enter for FAQ details." : status.activityTooltip
+        text: !presentation.rejected && presentation.value ? presentation.value.tooltip : ""
         visible: (hover.containsMouse || status.activeFocus) && text.length > 0
         delay: status.theme.tooltipDelayMs
         timeout: 15000

@@ -25,6 +25,10 @@ const TEST_MAXIMUM_RESOURCES: RetainedResources = RetainedResources {
     shared_roots: usize::MAX,
     channel_count: usize::MAX,
     slot_count: usize::MAX,
+    presentation_utf16_bytes: 0,
+    presentation_entries: 0,
+    retained_views: 0,
+    open_views: 0,
 };
 // This fixture disables receiver-estimate history; tap observations stay genuine.
 const DISABLED_ESTIMATE_FRAMES: usize = 0;
@@ -498,6 +502,10 @@ fn difference(total: RetainedResources, base: RetainedResources) -> RetainedReso
         shared_roots: total.shared_roots.checked_sub(base.shared_roots).unwrap(),
         channel_count: total.channel_count.checked_sub(base.channel_count).unwrap(),
         slot_count: total.slot_count.checked_sub(base.slot_count).unwrap(),
+        presentation_utf16_bytes: 0,
+        presentation_entries: 0,
+        retained_views: 0,
+        open_views: 0,
     }
 }
 

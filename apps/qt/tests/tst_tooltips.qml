@@ -5,13 +5,22 @@
 import QtQuick
 import QtQuick.Controls
 import QtTest
+import "fixtures"
 import "../qml/shared/theme"
 import "../qml/shared/components"
 
 Pane {
     id: window
     width: 640; height: 360; visible: true
-    Theme { id: theme }
+    PresentationBudget {
+        id: presentationBudget
+        // Independent capacities for existing presentation-only fixture graphs.
+        maximumBytes: 10000000
+        maximumEntries: 100000
+        maximumViews: 96
+        maximumOpen: 12
+    }
+    Theme { presentationBackendFactory: presentationBudget.createAdapter; id: theme }
     WorkbenchActionButton {
         id: action
         theme: theme

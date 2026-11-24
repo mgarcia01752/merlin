@@ -57,6 +57,10 @@ fn rejected_host_metadata_preserves_the_accepted_real_report_and_request() {
             shared_roots: usize::MAX,
             channel_count: usize::MAX,
             slot_count: usize::MAX,
+            presentation_utf16_bytes: 0,
+            presentation_entries: 0,
+            retained_views: 0,
+            open_views: 0,
         })
         .unwrap(),
     )
@@ -339,6 +343,10 @@ fn rejected_initial_performance_admission_returns_the_lease_without_dispatch_or_
         shared_roots: usize::MAX,
         channel_count: usize::MAX,
         slot_count: usize::MAX,
+        presentation_utf16_bytes: 0,
+        presentation_entries: 0,
+        retained_views: 0,
+        open_views: 0,
     };
     const OBSERVATION_MS: u64 = 1;
     let context =

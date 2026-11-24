@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../../shared/components"
+import "../../shared/presentation"
 import "../instruments/spectrum"
 WorkbenchDialog {
     id:dialog
@@ -13,18 +14,47 @@ WorkbenchDialog {
     required property var backend
     required property var settingsBackend
     required property var runState
-    property var preview:({points:[],x_ticks:[],y_ticks:[]})
-    readonly property string filterSettings:JSON.stringify(runState.options?.channel_filter || {})
+    readonly property var preview: presentation.value ? presentation.value.preview : ({points:[],x_ticks:[],y_ticks:[]})
+    readonly property string filterSettings: presentation.value ? presentation.value.filterSettings : ""
+    property PresentationOwner presentationCoverage: PresentationOwner {
+        id: presentation
+        theme: dialog.theme
+        initialValue: dialog.stateFor({points: [], x_ticks: [], y_ticks: []})
+    }
+    Component.onDestruction: {
+        if (presentation) {
+            presentation.clear()
+        }
+    }
+    function lossCaption() {
+        const loss=configuration.additional_loss || {mode:"off"}
+        if(loss.mode==="manual"){return "Manual tilt · "+loss.tilt_db+" dB"}
+        if(loss.mode==="cable"){return "Belden 1694A · "+loss.length+" "+(loss.unit==="metres" ? "m" : "ft")}
+        return "Additional loss Off"
+    }
+    function stateFor(nextPreview) {
+        const filter=runState.options?.channel_filter
+        return {preview: nextPreview, filterSettings: JSON.stringify(filter || {}), lossCaption: lossCaption(),
+            filterCaption: filter?.mode==="echoes" ? "Synthetic reflected paths" : filter?.mode==="captured_fir" ? "CM capture · continuous FIR" : "Per-subcarrier reference"}
+    }
     signal lossRequested()
     signal filterRequested()
     signal contextHelpRequested(string code)
     property alias responsePopup:expanded
-    function refresh(){
-        if(opened && backend){preview=JSON.parse(backend.channel_preview(settingsBackend.current()))}
+    function refresh() {
+        if (!opened || !backend || !presentation) {
+            return false
+        }
+        const nextPreview=JSON.parse(backend.channel_preview(settingsBackend.current()))
+        return presentation.replace(stateFor(nextPreview))
     }
     onOpened:refresh()
     onConfigurationChanged:refresh()
-    onFilterSettingsChanged:refresh()
+    onRunStateChanged: {
+        if (JSON.stringify(runState.options?.channel_filter || {})!==filterSettings) {
+            refresh()
+        }
+    }
     title:"Channel Model"
     parent:Overlay.overlay;anchors.centerIn:parent
     width:Math.min(680,parent ? parent.width-40 : 680)
@@ -36,17 +66,12 @@ WorkbenchDialog {
             Layout.fillWidth:true;spacing:20
             ChannelModelCard {
                 objectName:"channelConfigureLoss";theme:dialog.theme;text:"Tilt / Cable Loss";Layout.fillWidth:true;Layout.preferredWidth:1
-                caption:{
-                    const loss=dialog.configuration.additional_loss || {mode:"off"}
-                    if(loss.mode==="manual"){return "Manual tilt · "+loss.tilt_db+" dB"}
-                    if(loss.mode==="cable"){return "Belden 1694A · "+loss.length+" "+(loss.unit==="metres" ? "m" : "ft")}
-                    return "Additional loss Off"
-                }
+                caption:presentation.value ? presentation.value.lossCaption : ""
                 onClicked:dialog.lossRequested()
             }
             ChannelModelCard {
                 objectName:"channelConfigureFilter";theme:dialog.theme;text:"Echo / Delay";echoes:true;Layout.fillWidth:true;Layout.preferredWidth:1
-                caption:dialog.runState.options?.channel_filter?.mode==="echoes" ? "Synthetic reflected paths" : dialog.runState.options?.channel_filter?.mode==="captured_fir" ? "CM capture · continuous FIR" : "Per-subcarrier reference"
+                caption:presentation.value ? presentation.value.filterCaption : ""
                 onClicked:dialog.filterRequested()
             }
         }
@@ -63,14 +88,14 @@ WorkbenchDialog {
             Accessible.name:text;Accessible.description:"Accepted channel gain versus frequency. Open the enlarged view."
             ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus
             ToolTip.text:"Open the enlarged accepted channel response. This is a model preview, not received measurements."
-            onClicked:expanded.open()
+            onClicked:expanded.openChecked()
             contentItem:ColumnLayout {
                 Label {text:"Combined Channel Response";color:dialog.theme.text;font.bold:true;Layout.fillWidth:true}
                 SpectrumPlot {theme:dialog.theme;viewport:dialog.preview;enabled:false;Layout.fillWidth:true;Layout.fillHeight:true}
             }
         }
         Label {text:"Accepted configuration · before receiver correction";color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap;font.pixelSize:11}
-        ContextualStatus {theme:dialog.theme;text:dialog.preview.error || "";diagnostic:dialog.preview.diagnostic || null;Layout.fillWidth:true;onHelpRequested:function(code){dialog.contextHelpRequested(code)}}
+        ContextualStatus {theme:dialog.theme;text:presentation.rejected ? presentation.message : dialog.preview.error || "";diagnostic:presentation.rejected ? null : dialog.preview.diagnostic || null;Layout.fillWidth:true;onHelpRequested:function(code){dialog.contextHelpRequested(code)}}
     }
-    ChannelResponsePreviewDialog {id:expanded;theme:dialog.theme;viewport:dialog.preview;onContextHelpRequested:function(code){dialog.contextHelpRequested(code)}}
+    ChannelResponsePreviewDialog {id:expanded;theme:dialog.theme;viewport:dialog.preview;presentationRejected:presentation.rejected;presentationMessage:presentation.message;onContextHelpRequested:function(code){dialog.contextHelpRequested(code)}}
 }

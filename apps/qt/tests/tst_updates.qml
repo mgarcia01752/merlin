@@ -6,11 +6,20 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtTest
+import "fixtures"
 import "../qml/shell"
 import "../qml/shared/theme"
 Pane {
     id:window;width:960;height:640;visible:true
-    Theme {id:theme}
+    PresentationBudget {
+        id: presentationBudget
+        // Independent capacities for existing presentation-only fixture graphs.
+        maximumBytes: 10000000
+        maximumEntries: 100000
+        maximumViews: 96
+        maximumOpen: 12
+    }
+    Theme { presentationBackendFactory: presentationBudget.createAdapter;id:theme}
     ThemePalette { targetControl: window; theme: theme }
     ThemePalette { targetControl: window.Window.window; theme: theme }
     ThemePalette { targetControl: updates.popup; theme: theme }

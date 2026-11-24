@@ -4,6 +4,7 @@
  */
 import QtQuick
 import QtQuick.Controls
+import "../presentation"
 
 Button {
     id: block
@@ -18,9 +19,24 @@ Button {
     property string indicatorText: ""
     property string indicatorDescription: ""
     Accessible.name: heading
-    Accessible.description: statusLabel + ": " + statusReason + (pnmFileType ? ". CM PNM File: " + pnmFileType : "") + (indicatorText ? ". " + indicatorDescription : "")
+    property PresentationOwner presentationCoverage: PresentationOwner {id:presentation;theme:block.theme}
+    /** Admit independently concatenated block descriptions before native copying. */
+    function refreshPresentation() {
+        return presentation.replace({
+            description:statusLabel+": "+statusReason+(pnmFileType ? ". CM PNM File: "+pnmFileType : "")+(indicatorText ? ". "+indicatorDescription : ""),
+            tooltip:statusLabel+": "+statusReason+(indicatorText ? "\n"+indicatorDescription : ""),
+            footnote:pnmFileType ? "CM PNM File:\n"+pnmFileType : ""
+        })
+    }
+    onStatusLabelChanged: refreshPresentation()
+    onStatusReasonChanged: refreshPresentation()
+    onPnmFileTypeChanged: refreshPresentation()
+    onIndicatorTextChanged: refreshPresentation()
+    onIndicatorDescriptionChanged: refreshPresentation()
+    Component.onCompleted: refreshPresentation()
+    Accessible.description: presentation.value ? presentation.value.description : "Presentation unavailable"
     ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered || visualFocus
-    ToolTip.text: statusLabel + ": " + statusReason + (indicatorText ? "\n" + indicatorDescription : "")
+    ToolTip.text: !presentation.rejected && presentation.value ? presentation.value.tooltip : "Presentation limits reached; previous view preserved."
     hoverEnabled: true
     Rectangle {
         objectName: "blockModeIndicator"
@@ -71,7 +87,7 @@ Button {
             anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom
             height: block.pnmFileType ? implicitHeight : 0
             visible: block.pnmFileType !== ""
-            text: block.pnmFileType ? "CM PNM File:\n" + block.pnmFileType : ""
+            text: presentation.value ? presentation.value.footnote : ""
             color: block.theme.muted; font.pixelSize: 9
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WrapAnywhere

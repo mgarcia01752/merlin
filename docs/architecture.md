@@ -1771,9 +1771,24 @@ adds explicit logical UTF-16 bytes, array/object entries and open/retained-view
 limits for persistent QML, while Rust keeps actual-capacity accounting. Standard
 channels charge message data plus channel/slot populations and exclude private
 synchronization bookkeeping. Existing bounded transport remains appropriate;
-hidden data and queued/worker aliases remain covered until disposal. Concrete
-consumer implementation/acceptance is pending; no JavaScript capacity or total
-heap/RSS guarantee is claimed.
+hidden data and queued/worker aliases remain covered until disposal. The existing
+application counter now also admits persistent presentation through the thin
+`bridge/presentation_retention.rs` QObject, `shared/presentation/retention.rs`
+state and QML `shared/presentation/PresentationOwner.qml`. The named desktop
+policies independently allow 64 MiB logical UTF-16, 1,000,000 array/object entries,
+128 retained owners and 32 open views. They are application policies, separate
+from Rust storage and scientific execution limits; no JavaScript capacity or
+heap/RSS guarantee is claimed. `LogicalFootprint.js` counts ordinary JSON-shaped
+values and derived copies before publication. Old/candidate reservations overlap;
+parent-bound child plots share their witness, while independent derived models
+and actual editable-text capacities retain a complement. Explicit QML properties
+avoid eagerly creating an orphan Qt Dialog contentItem. Hidden/closed DTOs retain
+coverage; clear/disposal releases it only after their aliases end. A rejected
+candidate preserves its observation and context. Native lifecycle controls remain
+live, successful Apply/Save remains successful, and indexed native actions wait
+for a fresh synchronized catalog after rejected staging. See the [C5 owner map](development/features/unified-qt-workbench/design.md#uiu-session-01-c5-existing-persistent-presentation-owners)
+and [consumer validation](development/features/unified-qt-workbench/validation.md#uiu-session-01-persistent-presentation-admission).
+Complete SESSION acceptance remains the existing C6 gate.
 
 The [retained-root metadata prerequisite](development/features/unified-qt-workbench/design.md#uiu-session-01-public-retained-root-metadata-prerequisite)
 uses a typed `RetainedFootprint` in the independent `merlin-api` leaf, re-exported

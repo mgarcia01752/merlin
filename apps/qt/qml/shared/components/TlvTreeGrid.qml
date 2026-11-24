@@ -5,79 +5,108 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../presentation"
 
 ColumnLayout {
     id: grid
     required property var theme
     property var nodes: []
-    property var folded: ({})
-    property var visibleRows: []
-    property var selectedNode: null
+    readonly property var folded: presentation.value ? presentation.value.folded : ({})
+    readonly property var visibleRows: presentation.value ? presentation.value.rows : []
+    readonly property var selectedRow: visibleRows[rows.currentIndex] || null
+    readonly property var selectedNode: selectedRow ? selectedRow.node : null
+    readonly property var selectedDisplay: presentation.value && selectedRow ? presentation.value.display[rows.currentIndex] : null
+    readonly property bool contextCurrent: presentation.value && presentation.value.nodes === nodes
+    PresentationOwner { id:presentation; theme:grid.theme }
     readonly property int rowCount: visibleRows.length
     readonly property real fieldWidth: Math.max(200, (width - 220) * 0.40)
     property alias list: rows
     spacing: 0
 
-    // Paths identify presentation rows within one immutable packet, not TLV types.
-    function rebuild() {
+    /**
+     * Build existing tree rows and admit their independent display complements.
+     * @param nextFolded Expansion map for this immutable packet context.
+     * @returns False leaves the old complete tree and selection in place.
+     */
+    function rebuild(nextFolded = folded) {
         const output = []
+        const display = []
         function append(nodes, depth, prefix) {
             for (let i = 0; i < nodes.length; i++) {
                 const path = prefix + i
                 const node = nodes[i]
                 const children = node.children || []
-                output.push({node: node, depth: depth, path: path, branch: children.length > 0})
-                if (children.length && grid.folded[path]) {
-                    append(children, depth + 1, path + ".")
+                output.push({node:node,depth:depth,path:path,branch:children.length>0})
+                display.push({summary:node.name+": "+(node.value || ""),
+                    selected:node.name+": "+node.value,
+                    expand:"Expand "+node.name,collapse:"Collapse "+node.name,
+                    objectName:"tlvFold"+(output.length-1),
+                    kind:node.kind===undefined ? "" : String(node.kind),
+                    length:node.length===undefined ? "" : String(node.length),
+                    offset:node.offset===undefined ? "" : String(node.offset)})
+                if (children.length && nextFolded[path]) {
+                    append(children,depth+1,path+".")
                 }
             }
         }
-        append(nodes || [], 0, "")
-        visibleRows = output
+        append(nodes || [],0,"")
+        return presentation.replace({nodes:nodes,folded:nextFolded,rows:output,display:display})
     }
+    /** Reset packet expansion only after complete new-tree admission. */
     function reset() {
-        folded = ({})
-        rebuild()
+        if (!rebuild({})) {
+            return false
+        }
         rows.currentIndex = -1
-        selectedNode = null
         rows.positionViewAtBeginning()
+        return true
     }
+    /** Expand/collapse one admitted row without changing a rejected context. */
     function toggle(index) {
         const item = visibleRows[index]
-        if (!item || !item.branch) {
-            return
+        if (!contextCurrent || !item || !item.branch) {
+            return false
         }
-        const next = Object.assign({}, folded)
+        const next = Object.assign({},folded)
         next[item.path] = !next[item.path]
-        folded = next
-        rebuild()
-        rows.currentIndex = Math.min(index, visibleRows.length - 1)
-        selectedNode = item.node
+        if (!rebuild(next)) {
+            return false
+        }
+        rows.currentIndex = Math.min(index,visibleRows.length-1)
+        return true
     }
+    /** Expand or collapse this packet's complete tree under the same owner. */
     function expandAll(expand) {
+        if (!contextCurrent) {
+            return false
+        }
         const next = {}
-        function visit(nodes, prefix) {
-            for (let i = 0; i < nodes.length; i++) {
-                const path = prefix + i
-                next[path] = expand
-                visit(nodes[i].children || [], path + ".")
+        function visit(nodes,prefix) {
+            for (let i=0;i<nodes.length;i++) {
+                const path=prefix+i
+                next[path]=expand
+                visit(nodes[i].children || [],path+".")
             }
         }
-        visit(nodes || [], "")
-        folded = next
-        rebuild()
-        rows.currentIndex = -1
-        selectedNode = null
+        visit(nodes || [],"")
+        if (!rebuild(next)) {
+            return false
+        }
+        rows.currentIndex=-1
+        return true
     }
+    /** Return an alias under the same tree witness, without a derived copy. */
+    function presentationDisplay(index) {return presentation.value ? presentation.value.display[index] || ({}) : ({})}
     onNodesChanged: reset()
     Component.onCompleted: reset()
+    Label {visible:presentation.rejected;text:presentation.message;color:grid.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
 
     RowLayout {
         Layout.fillWidth: true
         Layout.bottomMargin: 7
         Label { text: "TLV Fields"; color: grid.theme.accent; font.bold: true; Layout.fillWidth: true }
-        WorkbenchActionButton { theme: grid.theme; objectName: "tlvExpandAll"; text: "Expand All"; enabled: grid.nodes.length > 0; onClicked: grid.expandAll(true) }
-        WorkbenchActionButton { theme: grid.theme; objectName: "tlvCollapseAll"; text: "Collapse All"; enabled: grid.nodes.length > 0; onClicked: grid.expandAll(false) }
+        WorkbenchActionButton { theme: grid.theme; objectName: "tlvExpandAll"; text: "Expand All"; enabled: grid.contextCurrent && grid.nodes.length > 0; onClicked: grid.expandAll(true) }
+        WorkbenchActionButton { theme: grid.theme; objectName: "tlvCollapseAll"; text: "Collapse All"; enabled: grid.contextCurrent && grid.nodes.length > 0; onClicked: grid.expandAll(false) }
     }
     Rectangle {
         Layout.fillWidth: true
@@ -98,12 +127,6 @@ ColumnLayout {
         Layout.fillWidth: true; Layout.fillHeight: true; Layout.minimumHeight: 100
         clip: true; model: grid.visibleRows; reuseItems: true
         ScrollBar.vertical: ScrollBar {}
-        onCurrentIndexChanged: {
-            const row = grid.visibleRows[currentIndex]
-            if (row) {
-                grid.selectedNode = row.node
-            }
-        }
         Keys.onRightPressed: {
             const row = grid.visibleRows[currentIndex]
             if (row && row.branch && !grid.folded[row.path]) {
@@ -129,10 +152,11 @@ ColumnLayout {
             id: fieldRow
             required property var modelData
             required property int index
+            readonly property var projection:grid.presentationDisplay(index)
             width: rows.width; height: 32
             padding: 0
             highlighted: rows.currentIndex === index
-            Accessible.name: modelData.node.name + ": " + (modelData.node.value || "")
+            Accessible.name: projection.summary || ""
             Accessible.description: modelData.branch ? (grid.folded[modelData.path] ? "Expanded" : "Collapsed") : "Field value"
             onClicked: { rows.currentIndex = index; rows.forceActiveFocus() }
             onDoubleClicked: grid.toggle(index)
@@ -147,12 +171,12 @@ ColumnLayout {
                 Item {
                     Layout.preferredWidth: grid.fieldWidth; Layout.fillHeight: true
                     ToolButton {
-                        objectName: "tlvFold" + fieldRow.index
+                        objectName: fieldRow.projection.objectName || ""
                         visible: fieldRow.modelData.branch
                         x: fieldRow.modelData.depth * 18; width: 26; height: 30
                         anchors.verticalCenter: parent.verticalCenter
                         text: grid.folded[fieldRow.modelData.path] ? "▾" : "▸"
-                        Accessible.name: (grid.folded[fieldRow.modelData.path] ? "Collapse " : "Expand ") + fieldRow.modelData.node.name
+                        Accessible.name: grid.folded[fieldRow.modelData.path] ? fieldRow.projection.collapse || "" : fieldRow.projection.expand || ""
                         onClicked: { grid.list.forceActiveFocus(); grid.toggle(fieldRow.index) }
                     }
                     Label {
@@ -163,12 +187,12 @@ ColumnLayout {
                     }
                 }
                 Label { text: fieldRow.modelData.node.value || ""; color: fieldRow.modelData.node.supported === false ? grid.theme.statusAttention : grid.theme.text; Layout.fillWidth: true; elide: Text.ElideRight }
-                Label { text: fieldRow.modelData.node.kind === undefined ? "" : fieldRow.modelData.node.kind; color: grid.theme.muted; Layout.preferredWidth: 42 }
-                Label { text: fieldRow.modelData.node.length === undefined ? "" : fieldRow.modelData.node.length; color: grid.theme.muted; Layout.preferredWidth: 52 }
-                Label { text: fieldRow.modelData.node.offset === undefined ? "" : fieldRow.modelData.node.offset; color: grid.theme.muted; Layout.preferredWidth: 58 }
+                Label { text: fieldRow.projection.kind || ""; color: grid.theme.muted; Layout.preferredWidth: 42 }
+                Label { text: fieldRow.projection.length || ""; color: grid.theme.muted; Layout.preferredWidth: 52 }
+                Label { text: fieldRow.projection.offset || ""; color: grid.theme.muted; Layout.preferredWidth: 58 }
             }
             ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered
-            ToolTip.text: modelData.node.name + ": " + (modelData.node.value || "")
+            ToolTip.text: fieldRow.projection.summary || ""
         }
         Label { visible: grid.nodes.length === 0; anchors.centerIn: parent; text: "No TLV fields available"; color: grid.theme.muted }
     }
@@ -179,7 +203,7 @@ ColumnLayout {
             anchors.fill: parent; anchors.margins: 7; spacing: 2
             Label {
                 Layout.fillWidth: true; color: grid.theme.text; elide: Text.ElideRight
-                text: grid.selectedNode ? grid.selectedNode.name + ": " + grid.selectedNode.value : "Select a field for its value and bytes. Offsets are absolute packet bytes."
+                text: grid.selectedDisplay ? grid.selectedDisplay.selected : "Select a field for its value and bytes. Offsets are absolute packet bytes."
             }
             Label { Layout.fillWidth: true; visible: text.length > 0; text: grid.selectedNode ? grid.selectedNode.description || "" : ""; color: grid.theme.muted; font.pixelSize: 11; elide: Text.ElideRight }
             TextInput {

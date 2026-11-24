@@ -5,11 +5,20 @@
 import QtQuick
 import QtQuick.Controls
 import QtTest
+import "fixtures"
 import "../qml/shared/theme"
 import "../qml/downstream/instruments/slicer"
 Pane {
     id:window;width:1160;height:820;visible:true
-    Theme {id:theme}
+    PresentationBudget {
+        id: presentationBudget
+        // Independent capacities for existing presentation-only fixture graphs.
+        maximumBytes: 10000000
+        maximumEntries: 100000
+        maximumViews: 96
+        maximumOpen: 12
+    }
+    Theme { presentationBackendFactory: presentationBudget.createAdapter;id:theme}
     ThemePalette {targetControl:window;theme:theme}
     ThemePalette {targetControl:window.Window.window;theme:theme}
     ThemePalette {targetControl:dialog;theme:theme}
@@ -30,7 +39,7 @@ Pane {
     TestCase {
         name:"SoftDiagnostics";when:windowShown
         function test_tabs_bounds_scope_and_empty_state(){
-            dialog.open();tryCompare(dialog,"opened",true)
+            dialog.openChecked();tryCompare(dialog,"opened",true)
             const tabs=findChild(dialog,"receiverSoftTabs")
             compare(tabs.currentIndex,1);compare(backend.decoder,false)
             const plot=findChild(dialog,"softDiagnosticPlot")

@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtTest
+import "fixtures"
 import "../qml/shared/components"
 import "../qml/shared/theme"
 
@@ -14,7 +15,15 @@ Pane {
     width: 640
     height: 400
     visible: true
-    Theme { id: testTheme }
+    PresentationBudget {
+        id: presentationBudget
+        // Independent capacities for existing presentation-only fixture graphs.
+        maximumBytes: 10000000
+        maximumEntries: 100000
+        maximumViews: 96
+        maximumOpen: 12
+    }
+    Theme { presentationBackendFactory: presentationBudget.createAdapter; id: testTheme }
     Component {
         id: popupComponent
         WorkbenchDialog {
@@ -59,10 +68,28 @@ Pane {
             }
             testTheme.dark = true
         }
+        function test_open_admission_precedes_visibility_and_preserves_existing_dialog() {
+            const popup = createTemporaryObject(popupComponent, window.contentItem)
+            verify(popup !== null)
+            const previousLimit = presentationBudget.maximumOpen
+            presentationBudget.maximumOpen = 0
+            verify(!popup.openChecked())
+            compare(popup.visible, false)
+            compare(presentationBudget.open, 0)
+            verify(popup.openAdmissionRejected)
+            verify(testTheme.presentationAdmissionRejected)
+            presentationBudget.maximumOpen = previousLimit
+            verify(popup.openChecked())
+            tryCompare(popup, "opened", true)
+            compare(presentationBudget.open, 1)
+            popup.close()
+            tryCompare(popup, "visible", false)
+            compare(presentationBudget.open, 0)
+        }
         function test_standard_dialog_roles() {
             const popup = createTemporaryObject(popupComponent, window.contentItem)
             verify(popup !== null)
-            popup.open()
+            popup.openChecked()
             tryCompare(popup, "opened", true)
             const cancel = popup.footer.standardButton(Dialog.Cancel)
             const yes = popup.footer.standardButton(Dialog.Yes)
@@ -71,7 +98,7 @@ Pane {
             tryCompare(popup, "visible", false)
             compare(popup.acceptedCount, 0)
             compare(popup.rejectedCount, 1)
-            popup.open()
+            popup.openChecked()
             tryCompare(popup, "opened", true)
             yes.forceActiveFocus()
             keyClick(Qt.Key_Space)
@@ -79,7 +106,7 @@ Pane {
             compare(popup.acceptedCount, 1)
             compare(popup.rejectedCount, 1)
             popup.standardButtons = Dialog.Close
-            popup.open()
+            popup.openChecked()
             tryCompare(popup, "opened", true)
             const close = popup.footer.standardButton(Dialog.Close)
             verify(close !== null)

@@ -6,6 +6,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../../shared/components"
+import "../../shared/presentation"
 import "../instruments/fec"
 import "../instruments/profile_performance"
 import "../instruments/qam"
@@ -17,23 +18,33 @@ WorkbenchDialog {
     id: dialog
     required property var backend
     required property var runState
-    property string seenToken: ""
+    readonly property string seenToken: presentation.value ? presentation.value.seenToken : ""
+    readonly property var display: presentation.value ? presentation.value.display : ({})
+    property PresentationOwner presentationCoverage: PresentationOwner {id:presentation;theme:dialog.theme}
+    /** Admit tap metadata, result identity and derived receiver headings together. */
+    function adoptSpectrum(value,index) {
+        const suffix=runState.result && runState.result.profile_id!==undefined ? " · Latest Profile "+runState.result.profile_id : ""
+        return presentation.replace({spectrum:value,seenToken:runState.result_token || "",tap:index,display:{
+            title:"Receiver Workbench"+suffix,qam:"QAM Instruments · Latest Profile "+(runState.result ? runState.result.profile_id : "—")
+        }})
+    }
+    Component.onCompleted: adoptSpectrum({has_result:false,can_generate:false,busy:false},0)
     signal contextHelpRequested(string code)
     signal configurationRequested()
-    onRunStateChanged: { if (runState.result_token !== seenToken) { seenToken=runState.result_token || ""; qam.refresh(); selectTap(selectedTap) } }
+    onRunStateChanged: { if (runState.result_token !== seenToken) { qam.refresh(); selectTap(selectedTap) } }
     property alias qamPopup: qam
     property alias spectrumPopup: spectrum
     property alias responsePopup: response
     property alias slicerPopup: slicer
     property alias performancePopup: performance
     property alias fecPopup: fec
-    property int selectedTap: 0
-    property var spectrumState: ({has_result: false, can_generate: false, busy: false})
-    function openQam(signal, view) { qam.signalIndex = signal; qam.viewIndex = view; qam.open() }
-    function selectTap(index) { if (!backend) { return }; selectedTap = index; spectrum.clearView(); spectrumState = JSON.parse(backend.spectrum(index)); spectrum.updateResult() }
-    function openSpectrum(index) { selectTap(index); spectrum.open() }
-    function openSlicer() { slicer.useSelection(qam.selectionControls.query()); slicer.open() }
-    title: "Receiver Workbench" + (dialog.runState.result && dialog.runState.result.profile_id !== undefined ? " · Latest Profile " + dialog.runState.result.profile_id : "")
+    readonly property int selectedTap:presentation.value ? presentation.value.tap : 0
+    readonly property var spectrumState: presentation.value ? presentation.value.spectrum : ({has_result:false,can_generate:false,busy:false})
+    function openQam(signal, view) { qam.signalIndex = signal; qam.viewIndex = view; qam.openChecked() }
+    function selectTap(index) { if (!backend) { return }; const value=JSON.parse(backend.spectrum(index)); if (!adoptSpectrum(value,index)) {return false}; spectrum.clearView(); spectrum.updateResult();return true }
+    function openSpectrum(index) {if (!selectTap(index)) {return false};return spectrum.openChecked()}
+    function openSlicer() { slicer.useSelection(qam.selectionControls.query()); slicer.openChecked() }
+    title: dialog.display.title || "Receiver Workbench"
     parent: Overlay.overlay; anchors.centerIn: parent
     width: Math.min(1140, parent ? parent.width - 40 : 1140)
     height: Math.min(560, parent ? parent.height - 40 : 560)
@@ -41,6 +52,7 @@ WorkbenchDialog {
     closePolicy: Popup.CloseOnEscape
     contentItem: ColumnLayout {
         spacing: 14
+        Label {visible:presentation.rejected;text:presentation.message;color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
         RowLayout { Layout.fillWidth:true; Label { text: "Receiver Signal Path"; font.pixelSize:19; font.bold:true; color:dialog.theme.text; Layout.fillWidth:true } WorkbenchActionButton { theme: dialog.theme; objectName:"receiverConfigure"; text:"Configure Receiver…"; onClicked:dialog.configurationRequested() } }
         Rectangle {
             Layout.fillWidth: true; Layout.preferredHeight: 142
@@ -61,7 +73,7 @@ WorkbenchDialog {
                 Label { text: "→"; color: dialog.theme.muted; font.pixelSize: 18; Layout.alignment: Qt.AlignTop; Layout.topMargin: 26 }
                 ColumnLayout {
                     Layout.fillWidth: true; Layout.preferredWidth: 1; Layout.minimumWidth: 0; spacing: 10
-                    StageChip { theme: dialog.theme; text: "Equalizer"; Layout.fillWidth: true;  Layout.preferredHeight: 64; onClicked: response.open() }
+                    StageChip { theme: dialog.theme; text: "Equalizer"; Layout.fillWidth: true;  Layout.preferredHeight: 64; onClicked: response.openChecked() }
                     ReceiverChip { theme: dialog.theme; text: "● Equalized I/Q"; compact: true; Layout.preferredHeight: 30; Layout.fillWidth: true; onClicked: dialog.openQam(qam.signalIndex, qam.viewIndex) }
                 }
                 Label { text: "→"; color: dialog.theme.muted; font.pixelSize: 18; Layout.alignment: Qt.AlignTop; Layout.topMargin: 26 }
@@ -78,7 +90,7 @@ WorkbenchDialog {
                 }
             }
         }
-        Label { text: "QAM Instruments · Latest Profile " + (dialog.runState.result ? dialog.runState.result.profile_id : "—"); color: dialog.theme.accent; font.bold: true }
+        Label { text: dialog.display.qam || ""; color: dialog.theme.accent; font.bold: true }
         RowLayout {
             Layout.fillWidth: true
             ReceiverChip { theme: dialog.theme; objectName: "receiverDataQam"; text: "Data Profile QAM"; Layout.fillWidth: true; onClicked: dialog.openQam(0, qam.viewIndex) }
@@ -93,10 +105,10 @@ WorkbenchDialog {
                 Label { text: "Diagnostic Instruments"; color: dialog.theme.text; font.bold: true }
                 RowLayout {
                     ReceiverChip { theme: dialog.theme; objectName: "receiverSa"; text: "Spectrum Analyzer"; Layout.fillWidth: true; onClicked: dialog.openSpectrum(dialog.selectedTap) }
-                    ReceiverChip { theme: dialog.theme; text: "Channel Response / Echo"; Layout.fillWidth: true; onClicked: response.open() }
+                    ReceiverChip { theme: dialog.theme; text: "Channel Response / Echo"; Layout.fillWidth: true; onClicked: response.openChecked() }
                     ReceiverChip { theme: dialog.theme; text: "Slicer / LLR"; Layout.fillWidth: true; onClicked: dialog.openSlicer() }
-                    ReceiverChip { theme: dialog.theme; objectName:"receiverProfilePerformance"; text: "Profile Performance"; Layout.fillWidth: true; onClicked: performance.open() }
-                    ReceiverChip { theme: dialog.theme; objectName: "receiverFecMonitor"; text: "FEC Monitor"; Layout.fillWidth: true; onClicked: fec.open() }
+                    ReceiverChip { theme: dialog.theme; objectName:"receiverProfilePerformance"; text: "Profile Performance"; Layout.fillWidth: true; onClicked: performance.openChecked() }
+                    ReceiverChip { theme: dialog.theme; objectName: "receiverFecMonitor"; text: "FEC Monitor"; Layout.fillWidth: true; onClicked: fec.openChecked() }
                 }
             }
         }
@@ -111,7 +123,7 @@ WorkbenchDialog {
     QtObject {
         id: spectrumProxy
         function cancel() {}
-        function view(start,count,captureAxis) { return dialog.backend.view_tap(dialog.selectedTap,start,count,captureAxis) }
+        function view(start,count,captureAxis) { return dialog.backend.view_tap(dialog.presentationCoverage.value.tap,start,count,captureAxis) }
     }
     SpectrumAnalyzerDialog {
         id: spectrum; theme: dialog.theme; backend: spectrumProxy; state: dialog.spectrumState

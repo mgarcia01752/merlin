@@ -8,6 +8,9 @@ import QtQuick
 QtObject {
     // Shared hover/focus tooltip timing, in milliseconds, for every MERLIN view.
     readonly property int tooltipDelayMs: 1000
+    // Injected by the native application; tests supply an explicit fixture.
+    property var presentationBackendFactory: null
+    property bool presentationAdmissionRejected: false
     property bool dark: true
     readonly property color background: dark ? "#0c1422" : "#f3f6f9"
     readonly property color panel: dark ? "#111e30" : "#ffffff"

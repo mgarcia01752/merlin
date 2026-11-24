@@ -18,6 +18,10 @@ const LIMITS: RetainedResources = RetainedResources {
     shared_roots: usize::MAX,
     channel_count: usize::MAX,
     slot_count: usize::MAX,
+    presentation_utf16_bytes: 0,
+    presentation_entries: 0,
+    retained_views: 0,
+    open_views: 0,
 };
 const WATCHDOG: Duration = Duration::from_secs(60);
 const POLL_INTERVAL: Duration = Duration::from_millis(1);
@@ -103,6 +107,10 @@ fn difference(value: RetainedResources, before: RetainedResources) -> RetainedRe
             .checked_sub(before.channel_count)
             .unwrap(),
         slot_count: value.slot_count.checked_sub(before.slot_count).unwrap(),
+        presentation_utf16_bytes: 0,
+        presentation_entries: 0,
+        retained_views: 0,
+        open_views: 0,
     }
 }
 fn wait_for(mut ready: impl FnMut() -> bool) {

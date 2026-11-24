@@ -10,6 +10,7 @@ Rectangle {
     required property var theme
     required property string heading
     property var chart: ({points: []})
+    property string descriptionText: ""
     property bool horizontal: false
     property string emptyText: "No retained comparison data."
     radius: 10; color: theme.panel; border.color: theme.line
@@ -19,7 +20,7 @@ Rectangle {
         anchors.fill: parent; anchors.topMargin: 40; anchors.margins: 14
         Accessible.role: Accessible.Graphic
         Accessible.name: chartPanel.heading
-        Accessible.description: (chartPanel.chart.points || []).map(point => point.label + ": " + point.count).join(", ") || chartPanel.emptyText
+        Accessible.description: chartPanel.descriptionText || chartPanel.emptyText
         onWidthChanged: requestPaint()
         onHeightChanged: requestPaint()
         Connections { target: chartPanel; function onChartChanged() { plot.requestPaint() } }

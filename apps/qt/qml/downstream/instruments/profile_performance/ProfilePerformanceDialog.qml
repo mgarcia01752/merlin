@@ -6,19 +6,86 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../../../shared/components"
+import "../../../shared/presentation"
 import "../../configuration/profile_input"
 WorkbenchDialog {
     id: dialog
     objectName: "profilePerformanceDialog"
     required property var backend
     property var runState: ({})
-    property var viewport: ({available:false,profiles:[],points:[]})
+    readonly property var viewport:presentation.value ? presentation.value.viewport : ({})
+    readonly property var display:presentation.value ? presentation.value.display : ({})
     property int profileId: -1
-    property string seenToken: ""
-    function statusLabel(status) { return ({not_started:"Not Started",runtime_exceeded:"Budget Exceeded · Partial",cancelled:"Cancelled · Partial",failed:"Failed",complete:"Complete"})[status] || status || "" }
-    function refresh(start, count) { if (backend) viewport=JSON.parse(backend.performance(profileId,start || 0,count || 0)) }
+    readonly property string seenToken:presentation.value ? presentation.value.token : ""
+    property PresentationOwner presentationCoverage: PresentationOwner {
+        id:presentation
+        theme:dialog.theme
+        initialValue:dialog.performanceCandidate({available:false,profiles:[],points:[]},-1,0,0)
+    }
+
+    /**
+     * Preserve the existing finite status wording without changing backend status.
+     * @param status Original public result status.
+     * @returns Existing display label, or the original unknown status unchanged.
+     */
+    function statusLabel(status) {
+        return ({not_started:"Not Started",runtime_exceeded:"Budget Exceeded · Partial",cancelled:"Cancelled · Partial",failed:"Failed",complete:"Complete"})[status] || status || ""
+    }
+
+    /**
+     * Couple the original viewport, query and independently retained labels.
+     * @param value Original numerical viewport, aliased by the existing chart.
+     * @param profile Requested profile ID; -1 retains existing default semantics.
+     * @param start Original viewport start index.
+     * @param count Original requested count; zero preserves full-span semantics.
+     * @returns Plain candidate admitted before publication/model conversion.
+     */
+    function performanceCandidate(value, profile, start, count) {
+        const counters = value.fec || {}
+        const counterText = function(key){return value.fec ? (counters[key]===undefined || counters[key]===null ? "" : String(counters[key])) : "—"}
+        return {viewport:value,profileId:profile,start:start,count:count,token:String(runState.result_token || ""),
+            counters:[{key:"total_cw",label:"TotalCW"},{key:"ccw",label:"CCW"},{key:"ufec",label:"UFEC"},{key:"clean_cw",label:"CleanCW"}],
+            profiles:(value.profiles || []).map(function(p){return "Profile "+p.id+" · "+statusLabel(p.status)}),
+            display:{channel:"Channel "+(value.channel ?? "—"),
+                counters:{total_cw:counterText("total_cw"),ccw:counterText("ccw"),ufec:counterText("ufec"),clean_cw:counterText("clean_cw")},
+                status:runState.busy ? "Running Profile "+(runState.profile_id ?? "—") : statusLabel(value.status),
+                undetected:"Undetected Errors: "+(value.fec ? value.fec.undetected_errors : "—")}}
+    }
+
+    /**
+     * Admit the actual viewport before changing its retained profile/context.
+     * @param start Existing optional viewport start index, default zero.
+     * @param count Existing optional viewport count, default zero.
+     * @returns False keeps the old viewport and restores its requested profile.
+     */
+    function refresh(start, count) {
+        if (!backend) {
+            return false
+        }
+        const first = start || 0
+        const length = count || 0
+        const profile = profileId
+        const value = JSON.parse(backend.performance(profile,first,length))
+        if (!presentation.replace(performanceCandidate(value,profile,first,length))) {
+            if (presentation.value) {
+                profileId = presentation.value.profileId
+            }
+            return false
+        }
+        return true
+    }
     onOpened: refresh(0,0)
-    onRunStateChanged: { if (opened && runState.result_token !== seenToken) { seenToken=runState.result_token || ""; refresh(0,0) } }
+    onRunStateChanged: {
+        if (opened && String(runState.result_token || "")!==seenToken) {
+            refresh(0,0)
+        } else if (presentation && presentation.value) {
+            // Runtime status still changes independently of scientific queries.
+            const accepted = presentation.value
+            const candidate = performanceCandidate(accepted.viewport,accepted.profileId,accepted.start,accepted.count)
+            candidate.token = accepted.token
+            presentation.replace(candidate)
+        }
+    }
     title: "Receiver Profile Performance"
     parent: Overlay.overlay; anchors.centerIn: parent
     width: Math.min(1100,parent ? parent.width-32 : 1100)
@@ -28,23 +95,24 @@ WorkbenchDialog {
         spacing: 12
         RowLayout {
             Layout.fillWidth: true
-            Label { text: "Channel " + (dialog.viewport.channel ?? "—"); color: dialog.theme.text }
+            Label { text:dialog.display.channel || ""; color: dialog.theme.text }
             Label { text: "Profile"; color: dialog.theme.muted }
             ComboBox {
                 objectName: "performanceProfileChoice"
                 property var profiles: dialog.viewport.profiles || []
-                model: profiles.map(p => "Profile " + p.id + " · " + dialog.statusLabel(p.status))
+                model:presentation.value ? presentation.value.profiles : []
                 currentIndex: profiles.findIndex(p => p.id === dialog.viewport.profile_id)
                 Layout.preferredWidth: 260
                 onActivated: function(index) { dialog.profileId=profiles[index].id; dialog.refresh(0,0) }
             }
-            Label { text: dialog.runState.busy ? "Running Profile " + (dialog.runState.profile_id ?? "—") : dialog.statusLabel(dialog.viewport.status); color: dialog.theme.accent; Layout.fillWidth: true }
+            Label { text:dialog.display.status || ""; color: dialog.theme.accent; Layout.fillWidth: true }
             WorkbenchActionButton { theme: dialog.theme; objectName: "performanceFullSpan"; text: "Full Span"; onClicked: dialog.refresh(0,0) }
         }
+        Label {objectName:"profilePerformanceRetention";visible:presentation.rejected;text:presentation.message;color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}
         RowLayout {
             Layout.fillWidth: true; spacing: 12
             Repeater {
-                model: [{key:"total_cw",label:"TotalCW",color:dialog.theme.text},{key:"ccw",label:"CCW",color:dialog.theme.statusAttention},{key:"ufec",label:"UFEC",color:dialog.theme.statusError},{key:"clean_cw",label:"CleanCW",color:dialog.theme.statusComplete}]
+                model:presentation.value ? presentation.value.counters : []
                 Rectangle {
                     required property var modelData
                     Layout.fillWidth: true; implicitHeight: 72; radius: 8
@@ -52,7 +120,7 @@ WorkbenchDialog {
                     Column {
                         anchors.centerIn: parent; spacing: 4
                         Label { text: modelData.label; color: dialog.theme.muted; anchors.horizontalCenter: parent.horizontalCenter }
-                        Label { text: dialog.viewport.fec ? dialog.viewport.fec[modelData.key] : "—"; color: modelData.color; font.pixelSize: 23; font.bold: true; anchors.horizontalCenter: parent.horizontalCenter }
+                        Label { text:(dialog.display.counters || {})[modelData.key] || ""; color:modelData.key==="ccw" ? dialog.theme.statusAttention : modelData.key==="ufec" ? dialog.theme.statusError : modelData.key==="clean_cw" ? dialog.theme.statusComplete : dialog.theme.text; font.pixelSize: 23; font.bold: true; anchors.horizontalCenter: parent.horizontalCenter }
                     }
                 }
             }
@@ -63,7 +131,7 @@ WorkbenchDialog {
             Label { text: "━  Ideal Profile Minimum"; color: dialog.theme.dark ? "#45cf83" : "#187344" }
             Label { text: "▰  PLC"; color: dialog.theme.dark ? "#f2bd40" : "#946a08"; visible: (dialog.viewport.bands || []).length>0 }
             Item { Layout.fillWidth: true }
-            Label { text: "Undetected Errors: " + (dialog.viewport.fec ? dialog.viewport.fec.undetected_errors : "—"); color: dialog.theme.muted }
+            Label { text:dialog.display.undetected || ""; color: dialog.theme.muted }
         }
         ProfileChart {
             visible: dialog.viewport.available || false

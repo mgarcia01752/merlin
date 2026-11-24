@@ -5,10 +5,35 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../presentation"
 
 Dialog {
     id: dialog
     required property var theme
+    property PresentationOwner visibilityCoverage: PresentationOwner { id: opening; theme: dialog.theme }
+    readonly property bool openAdmissionRejected: opening.rejected
+    /**
+     * Admit visibility before opening, preserving all hidden data on rejection.
+     * @returns True after Qt receives open, false with the dialog unchanged.
+     */
+    function openChecked() {
+        if (!opening.beginOpen()) {
+            if (typeof theme.presentationAdmissionRejected === "boolean") {
+                theme.presentationAdmissionRejected = true
+            }
+            return false
+        }
+        if (typeof theme.presentationAdmissionRejected === "boolean") {
+            theme.presentationAdmissionRejected = false
+        }
+        dialog.open()
+        return true
+    }
+    property Connections visibilityLifecycle: Connections {
+        target: dialog
+        function onClosed() { opening.endOpen() }
+    }
+
     footer: DialogButtonBox {
         standardButtons: dialog.standardButtons
         visible: count > 0

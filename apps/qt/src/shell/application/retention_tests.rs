@@ -20,6 +20,10 @@ const PROBE_LIMITS: RetainedResources = RetainedResources {
     shared_roots: usize::MAX,
     channel_count: usize::MAX,
     slot_count: usize::MAX,
+    presentation_utf16_bytes: 0,
+    presentation_entries: 0,
+    retained_views: 0,
+    open_views: 0,
 };
 
 // Preserve the three original accounting/gate/Sessions roots independently.
@@ -60,6 +64,10 @@ fn difference(total: RetainedResources, base: RetainedResources) -> RetainedReso
         shared_roots: total.shared_roots.checked_sub(base.shared_roots).unwrap(),
         channel_count: total.channel_count.checked_sub(base.channel_count).unwrap(),
         slot_count: total.slot_count.checked_sub(base.slot_count).unwrap(),
+        presentation_utf16_bytes: 0,
+        presentation_entries: 0,
+        retained_views: 0,
+        open_views: 0,
     }
 }
 

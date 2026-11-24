@@ -6,13 +6,21 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../components"
+import "../presentation"
 WorkbenchDialog {
     id: dialog
     required property var backend
-    property string documentText: ""
+    property PresentationOwner presentationCoverage: PresentationOwner { id: content; theme: dialog.theme }
+    title: content.value ? content.value.title : "License"
+    readonly property string documentText: content.value ? content.value.text : ""
     function showDocument(key) {
         const document = JSON.parse(backend.license_document(key))
-        title = document.title; documentText = document.text; open()
+        if (!content.replace({title: document.title, text: document.text,
+                displayed: {title: document.title, text: document.text}})) {
+            theme.presentationAdmissionRejected=true
+            return false
+        }
+        return openChecked()
     }
     parent: Overlay.overlay; anchors.centerIn: parent
     width: Math.min(820, parent ? parent.width - 48 : 820)

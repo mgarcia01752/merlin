@@ -21,6 +21,10 @@ const TEST_LIMIT: RetainedResources = RetainedResources {
     shared_roots: usize::MAX,
     channel_count: usize::MAX,
     slot_count: usize::MAX,
+    presentation_utf16_bytes: 0,
+    presentation_entries: 0,
+    retained_views: 0,
+    open_views: 0,
 };
 // Existing one-based single-capture JSON export selection.
 const SELECTION: &str = r#"{"first":1,"last":1,"clamp":true,"collection":false}"#;
@@ -198,6 +202,10 @@ fn detached_export_preparation_retains_parsed_input_after_gui_cancel_and_disposa
         shared_roots: total.shared_roots - before.shared_roots,
         channel_count: total.channel_count - before.channel_count,
         slot_count: total.slot_count - before.slot_count,
+        presentation_utf16_bytes: 0,
+        presentation_entries: 0,
+        retained_views: 0,
+        open_views: 0,
     };
 
     // The independently measured Session/Input are unchanged. Concrete outer

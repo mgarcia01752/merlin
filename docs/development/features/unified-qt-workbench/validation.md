@@ -4614,3 +4614,52 @@ full-budget readiness admission. Original readiness pressure tests also pass.
 C5 persistent logical presentation and C6 current SESSION acceptance remain open.
 Normal desktop probes do not establish native Apply/help under pressure. No new
 scientific API, owner category, requirement or official task expands this unit.
+
+
+## UIU-SESSION-01 persistent presentation admission
+
+Frozen [C5](session-closure.md#c5-minimum-presentation-admission-implementation)
+is closed by the [primary receipt](session-presentation-evidence.json) and
+[actual owner design](design.md#uiu-session-01-c5-existing-persistent-presentation-owners).
+The existing application counter independently admits logical UTF-16 bytes,
+array/object entries and retained/open views. It does not measure JavaScript
+capacity or RSS. Concrete existing DTOs, derived models/strings and actual
+editable-text complements stay covered through hidden retention, rejected
+replacement and final clear/disposal. Parent-bound plots share their witness.
+Old/candidate overlap precedes publication. Native validation and scientific
+limits remain unchanged.
+
+All 416 Qt Rust cases pass, including both actual direction controllers,
+shared dispatch, project/worker/error retention and ten new logical-counter/View
+cases. All eleven QML suites pass: 163 pass records including each suite's
+initialization/cleanup. The original workbench interactions and numerical anchors
+remain. Two existing asynchronous context-refresh assertions now wait for their
+unchanged final state. The workbench run emits two Qt focus warnings; these are
+recorded rather than described as an empty diagnostic stream. All-target Qt
+Clippy, formatting and the final zero-exception scientific API boundary pass.
+The 68 mechanical Rust fixture records preserve original tokens/assertions and
+all five original resource quantities while adding four explicit zeros.
+
+The source handoffs are preparation only. Primary consumer integration corrected
+Qt's implicit Dialog contentItem construction, converted row identity, stale
+measurement-catalog recovery and a tap publication race. Pressure regressions
+preserve observations/context, live worker controls and current Save options.
+Designer/export tests preserve exact invalid-number wire behavior, staged retry
+and successful saved terminal status when optional details reject. Compilation,
+fixture and combined-suite failures remain recorded with their corrected runs.
+No tolerance, numerical vector or original scientific assertion was relaxed.
+
+A fresh optimized executable passes six native VM startup/project probes. Its
+opt-in bundled pressure probe invokes the real receiver Apply exactly once,
+verifies native accepted options while optional details reject, observes failed
+workbench polling and closed FAQ with visible feedback, then proves Help recovery
+after release. The actual dark [user-guide image](../../../images/workbench/presentation-limit-dark.png)
+was captured before pressure was released. The initial capture used a Qt-owned
+item without a QML engine; the corrected real workbench target passes. Validation
+requires the successful JSON record and fresh image, not process exit alone.
+
+This is expanded Level 1 evidence for C5. Scientific/public/Python/schema sources
+are unchanged, so C5 does not rebuild a wheel or repeat unrelated core suites.
+C6 separately executes the complete applicable session/milestone gates. SESSION
+remains unchecked until C6; tabs/actions and the final numeric audit remain with
+their existing tasks. No new requirement or closure row was introduced.

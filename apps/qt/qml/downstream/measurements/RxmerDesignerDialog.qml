@@ -6,27 +6,62 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../../shared/components"
+import "../../shared/presentation"
 WorkbenchDialog {
     id: dialog
     required property var backend
     property var parentOptions: ({})
-    property var information: ({})
+    readonly property var information: presentation.value ? presentation.value.information : ({})
+    property var stagedAdopter: null
+    property string stagedAdoptionMessage: ""
+    property bool stagedAdoptionRejected: false
+    property bool exportOpenRejected: false
+    readonly property string actionLimitMessage: "Presentation limits reached; previous view preserved."
+    readonly property int firstPreviewCapture: 1
+    readonly property int fullSpanStart: 0
+    readonly property int fullSpanCount: 0
 
     // Scientific domains come from the same public Rust owner that admits recipes.
     readonly property var domainLimits: information.limits || ({})
     readonly property bool limitsAvailable: !!information.limits
+    readonly property bool editorTextAdmitted: presentation.textAdmitted && tiltScope.textAdmitted
+        && rippleScope.textAdmitted && notchScope.textAdmitted && editScope.textAdmitted
     readonly property int maximumCaptures: Number.isInteger(domainLimits.maximum_captures) ? domainLimits.maximum_captures : 0
 
     // Existing UI increment, independent of the backend standard-deviation domain.
     readonly property real randomDeviationStepDb: 0.5
-    property var viewport: ({})
+    readonly property var viewport: presentation.value ? presentation.value.viewport : ({})
     property int viewStart: 0
     property int viewCount: 0
-    property var valueEdits: []
+    readonly property var valueEdits: presentation.value ? presentation.value.valueEdits : []
     property bool initializing: false
     property bool working: false
-    property string errorMessage: ""
-    property var diagnostic: null
+    readonly property string errorMessage: presentation.value ? presentation.value.errorMessage : ""
+    readonly property var diagnostic: presentation.value ? presentation.value.diagnostic : null
+    property PresentationOwner presentationCoverage: PresentationOwner {
+        id: presentation
+        theme: dialog.theme
+        initialValue: ({information: {}, viewport: {}, valueEdits: [], errorMessage: "", diagnostic: null,display:{sources:["Imported captures","New flat sequence"],captures:"0 captures",edits:[]}})
+    }
+    property PresentationOwner progressCoverage: PresentationOwner {id:progressLabels;theme:dialog.theme}
+    /** Admit display-only progress; worker flags remain live if details reject. */
+    function refreshProgressLabels() {
+        return progressLabels.replace({preview:"Preview capture "+Math.round(preview.value)+" / "+captureCount,
+            progress:"Designing captures: "+completed+" / "+captureCount})
+    }
+    onCaptureCountChanged: if (progressLabels) {Qt.callLater(dialog.refreshProgressLabels)}
+    onCompletedChanged: if (progressLabels) {Qt.callLater(dialog.refreshProgressLabels)}
+    Component.onCompleted: {Qt.callLater(dialog.admitTextFields);Qt.callLater(dialog.refreshProgressLabels)}
+    Component.onDestruction: {
+        if (presentation) {
+            presentation.clear()
+        }
+    }
+    function admitTextFields() {
+        return presentation.reserveTextFields([count, baseline, randomDeviation, randomSeed, tiltDb,
+            rippleDb, spacing, distance, vf, center, bandwidth, depth, edge, editFirst, editLast, editDb])
+            && tiltScope.reserveText() && rippleScope.reserveText() && notchScope.reserveText() && editScope.reserveText()
+    }
     signal contextHelpRequested(string code)
     property int completed: 0
     property int captureCount: source.currentIndex === 0 ? (information.imported_count || 1) : Number(count.text)
@@ -39,7 +74,7 @@ WorkbenchDialog {
     function recipe() {
         return {random_variation:source.currentIndex === 1 && randomVariation.checked ? {standard_deviation_db:randomDeviation.text.trim().length ? Number(randomDeviation.text):NaN,seed:randomSeed.text.trim().length ? Number(randomSeed.text):NaN} : null,tilt:tilt.checked ? {scope:tiltScope.value(),tilt_db:Number(tiltDb.text)} : null,
             ripple:ripple.checked ? {scope:rippleScope.value(),peak_to_peak_db:Number(rippleDb.text),spacing:distanceMode.checked ? {mode:"echo_distance",distance_metres:Number(distance.text),velocity_factor:Number(vf.text)} : {mode:"frequency",spacing_hz:Math.round(Number(spacing.text)*1e6)}} : null,
-            notch:notch.checked ? {scope:notchScope.value(),center_hz:Math.round(Number(center.text)*1e6),bandwidth_hz:Math.round(Number(bandwidth.text)*1e6),depth_db:Number(depth.text),edge_hz:Math.round(Number(edge.text)*1e6)} : null,edits:valueEdits}
+            notch:notch.checked ? {scope:notchScope.value(),center_hz:Math.round(Number(center.text)*1e6),bandwidth_hz:Math.round(Number(bandwidth.text)*1e6),depth_db:Number(depth.text),edge_hz:Math.round(Number(edge.text)*1e6)} : null,edits:valueEdits.map(editValue)}
     }
     function canStepTilt(delta) {
         const value=Number(tiltDb.text)
@@ -105,33 +140,137 @@ WorkbenchDialog {
             ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus;ToolTip.text:Accessible.name
         }
     }
-    function document() { return JSON.stringify({source:source.currentIndex === 0 ? "imported":"flat",capture_count:captureCount,baseline_db:Number(baseline.text),recipe:recipe()}) }
-    function refresh() { if (!initializing && visible && !working) { viewport=JSON.parse(backend.designer_preview(document(),Math.round(preview.value),viewStart,viewCount));errorMessage=viewport.error || "";diagnostic=viewport.diagnostic || null } }
-    function setWindow(start,count) {viewStart=start;viewCount=count;refresh()}
-    function restore() {
-        viewStart=0;viewCount=0
-        initializing=true
-        information=JSON.parse(backend.designer_begin())
-        errorMessage=information.error || ""
-        if (information.request) {
-            const request=information.request, rules=request.recipe
-            source.currentIndex=request.source === "flat" ? 1:0;count.text=String(request.capture_count);baseline.text=String(request.baseline_db)
-            randomVariation.checked=!!rules.random_variation
-            randomDeviation.text=String(rules.random_variation ? rules.random_variation.standard_deviation_db:1.5)
-            randomSeed.text=String(rules.random_variation ? rules.random_variation.seed:41)
-            tilt.checked=!!rules.tilt;tiltDb.text=String(rules.tilt ? rules.tilt.tilt_db:-4);tiltScope.restore(rules.tilt ? rules.tilt.scope:{mode:"all"})
-            ripple.checked=!!rules.ripple;rippleDb.text=String(rules.ripple ? rules.ripple.peak_to_peak_db:2);rippleScope.restore(rules.ripple ? rules.ripple.scope:{mode:"all"})
-            const period=rules.ripple ? rules.ripple.spacing:{mode:"frequency",spacing_hz:20000000}
-            distanceMode.checked=period.mode === "echo_distance";spacing.text=String((period.spacing_hz || 20000000)/1e6);distance.text=String(period.distance_metres || 6.37);vf.text=String(period.velocity_factor || 0.85)
-            notch.checked=!!rules.notch;notchScope.restore(rules.notch ? rules.notch.scope:{mode:"all"})
-            center.text=String((rules.notch ? rules.notch.center_hz:(information.first_hz+information.last_hz)/2)/1e6)
-            bandwidth.text=String((rules.notch ? rules.notch.bandwidth_hz:10000000)/1e6);depth.text=String(rules.notch ? rules.notch.depth_db:18);edge.text=String((rules.notch ? rules.notch.edge_hz:1000000)/1e6)
-            valueEdits=rules.edits || [];editFirst.text=String(information.first_hz/1e6);editLast.text=editFirst.text;editScope.restore({mode:"all"});preview.value=1
+
+    // Numeric text retains NaN/Infinity draft spelling without changing Rust wire values.
+    function editText(edit) {
+        const scope = Object.assign({}, edit.scope)
+        if (Object.prototype.hasOwnProperty.call(scope, "first")) {
+            scope.first = String(scope.first)
         }
-        initializing=false
-        if (information.request) { refresh() }
+        if (Object.prototype.hasOwnProperty.call(scope, "last")) {
+            scope.last = String(scope.last)
+        }
+        return {scope: scope, first_hz: String(edit.first_hz), last_hz: String(edit.last_hz), value_db: String(edit.value_db)}
     }
-    onOpened:restore()
+    function editValue(edit) {
+        const scope = Object.assign({}, edit.scope)
+        if (Object.prototype.hasOwnProperty.call(scope, "first")) {
+            scope.first = Number(scope.first)
+        }
+        if (Object.prototype.hasOwnProperty.call(scope, "last")) {
+            scope.last = Number(scope.last)
+        }
+        return {scope: scope, first_hz: Number(edit.first_hz), last_hz: Number(edit.last_hz), value_db: Number(edit.value_db)}
+    }
+    function replaceState(nextInformation, nextViewport, nextEdits, nextError, nextDiagnostic) {
+        return presentation.replace({information: nextInformation, viewport: nextViewport,
+            valueEdits: nextEdits, errorMessage: nextError, diagnostic: nextDiagnostic,display:{
+                sources:["Imported captures","New flat sequence"],captures:(nextInformation.imported_count || 0)+" captures",
+                edits:nextEdits.map(function(edit){return (edit.first_hz/1e6)+"–"+(edit.last_hz/1e6)+" MHz: "+edit.value_db+" dB"})}})
+    }
+    function document() { return JSON.stringify({source:source.currentIndex === 0 ? "imported":"flat",capture_count:captureCount,baseline_db:Number(baseline.text),recipe:recipe()}) }
+    function refresh() {
+        if (initializing || !visible || working || !editorTextAdmitted) {
+            return false
+        }
+        const nextViewport = JSON.parse(backend.designer_preview(document(),Math.round(preview.value),viewStart,viewCount))
+        const accepted = replaceState(information, nextViewport, valueEdits, nextViewport.error || "", nextViewport.diagnostic || null)
+        if (accepted) {
+            stagedAdoptionRejected = false
+            exportOpenRejected = false
+        }
+        return accepted
+    }
+    function setWindow(start,count) {viewStart=start;viewCount=count;return refresh()}
+    function restore() {
+        if (!admitTextFields()) {
+            return false
+        }
+        initializing = true
+        try {
+            const nextInformation = JSON.parse(backend.designer_begin())
+            const nextEdits = nextInformation.request ? (nextInformation.request.recipe.edits || []).map(editText) : valueEdits
+            const nextViewport = nextInformation.request
+                ? JSON.parse(backend.designer_preview(JSON.stringify(nextInformation.request),firstPreviewCapture,fullSpanStart,fullSpanCount)) : viewport
+            const nextError = nextInformation.request ? nextViewport.error || "" : nextInformation.error || ""
+            const nextDiagnostic = nextInformation.request ? nextViewport.diagnostic || null : diagnostic
+            if (!replaceState(nextInformation, nextViewport, nextEdits, nextError, nextDiagnostic)) {
+                return false
+            }
+            viewStart = fullSpanStart
+            viewCount = fullSpanCount
+            if (information.request) {
+                const request=information.request, rules=request.recipe
+                source.currentIndex=request.source === "flat" ? 1:0;count.text=String(request.capture_count);baseline.text=String(request.baseline_db)
+                if (!tiltScope.restore(rules.tilt ? rules.tilt.scope:{mode:"all"})
+                        || !rippleScope.restore(rules.ripple ? rules.ripple.scope:{mode:"all"})
+                        || !notchScope.restore(rules.notch ? rules.notch.scope:{mode:"all"})
+                        || !editScope.restore({mode:"all"})) {
+                    return false
+                }
+                randomVariation.checked=!!rules.random_variation
+                randomDeviation.text=String(rules.random_variation ? rules.random_variation.standard_deviation_db:1.5)
+                randomSeed.text=String(rules.random_variation ? rules.random_variation.seed:41)
+                tilt.checked=!!rules.tilt;tiltDb.text=String(rules.tilt ? rules.tilt.tilt_db:-4)
+                ripple.checked=!!rules.ripple;rippleDb.text=String(rules.ripple ? rules.ripple.peak_to_peak_db:2)
+                const period=rules.ripple ? rules.ripple.spacing:{mode:"frequency",spacing_hz:20000000}
+                distanceMode.checked=period.mode === "echo_distance";spacing.text=String((period.spacing_hz || 20000000)/1e6);distance.text=String(period.distance_metres || 6.37);vf.text=String(period.velocity_factor || 0.85)
+                notch.checked=!!rules.notch
+                center.text=String((rules.notch ? rules.notch.center_hz:(information.first_hz+information.last_hz)/2)/1e6)
+                bandwidth.text=String((rules.notch ? rules.notch.bandwidth_hz:10000000)/1e6);depth.text=String(rules.notch ? rules.notch.depth_db:18);edge.text=String((rules.notch ? rules.notch.edge_hz:1000000)/1e6)
+                editFirst.text=String(information.first_hz/1e6);editLast.text=editFirst.text;preview.value=firstPreviewCapture
+            }
+            stagedAdoptionRejected = false
+            exportOpenRejected = false
+            return true
+        } finally {
+            initializing = false
+        }
+    }
+    function addValueEdit() {
+        if (!editorTextAdmitted) {
+            return false
+        }
+        const next = valueEdits.concat([editText({scope:editScope.value(),first_hz:Math.round(Number(editFirst.text)*1e6),last_hz:Math.round(Number(editLast.text)*1e6),value_db:Number(editDb.text)})])
+        if (replaceState(information, viewport, next, errorMessage, diagnostic)) {
+            refresh()
+        }
+    }
+    function removeValueEdit(index) {
+        const next = valueEdits.slice()
+        next.splice(index, 1)
+        if (replaceState(information, viewport, next, errorMessage, diagnostic)) {
+            refresh()
+        }
+    }
+    function applyDesign() {
+        if (!editorTextAdmitted) {
+            return false
+        }
+        const result = JSON.parse(backend.designer_stage(document(),JSON.stringify(parentOptions)))
+        completed = 0
+        working = !!result.running
+        stagedAdoptionRejected = false
+        replaceState(information, viewport, valueEdits, result.error || "", result.diagnostic || null)
+    }
+    function publishStaged(metadata) {
+        if (typeof stagedAdopter === "function" && stagedAdopter(metadata) !== true) {
+            stagedAdoptionRejected = true
+            return false
+        }
+        stagedAdoptionRejected = false
+        staged(metadata)
+        close()
+        return true
+    }
+    function openExport() {
+        if (!editorTextAdmitted) {
+            return false
+        }
+        exportOpenRejected = !pnmExport.showSnapshot(document(),captureCount,Math.round(preview.value))
+        return !exportOpenRejected
+    }
+    onOpened: restore()
     onClosed: { pnmExport.close(); if (working) { backend.designer_cancel() } }
     RxmerPnmExportDialog {
         id:pnmExport;theme:dialog.theme;backend:dialog.backend
@@ -144,8 +283,8 @@ WorkbenchDialog {
             dialog.completed=status.completed || dialog.completed
             if (!status.running) {
                 dialog.working=false
-                if (status.staged) {dialog.staged(status.metadata);dialog.close()}
-                else {dialog.errorMessage=status.error || "";dialog.diagnostic=status.diagnostic || null}
+                if (status.staged) {dialog.publishStaged(status.metadata)}
+                else {dialog.replaceState(dialog.information, dialog.viewport, dialog.valueEdits, status.error || "", status.diagnostic || null)}
             }
         }
     }
@@ -154,12 +293,12 @@ WorkbenchDialog {
         RowLayout {
             enabled:!dialog.working
             Label {text:"Baseline";color:theme.text}
-            ComboBox {id:source;objectName:"designerSource";model:["Imported captures","New flat sequence"];Layout.preferredWidth:200;onActivated:dialog.refresh()}
-            Label {text:source.currentIndex === 0 ? (dialog.information.imported_count || 0)+" captures":"Captures";color:theme.muted}
-            TextField {id:count;objectName:"designerCount";visible:source.currentIndex === 1;text:"50";Layout.preferredWidth:65;validator:IntValidator {bottom:1;top:dialog.maximumCaptures}
+            ComboBox {id:source;objectName:"designerSource";model:presentation.value ? presentation.value.display.sources : [];Layout.preferredWidth:200;onActivated:dialog.refresh()}
+            Label {text:source.currentIndex === 0 && presentation.value ? presentation.value.display.captures : "Captures";color:theme.muted}
+            TextField {id:count;objectName:"designerCount";visible:source.currentIndex === 1;text:presentation.textAdmitted ? "50" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65;validator:IntValidator {bottom:1;top:dialog.maximumCaptures}
  onEditingFinished:dialog.refresh()}
             Label {visible:source.currentIndex === 1;text:"Flat RxMER (dB)";color:theme.text}
-            TextField {id:baseline;visible:source.currentIndex === 1;text:"48";Layout.preferredWidth:65;onEditingFinished:dialog.refresh()}
+            TextField {id:baseline;visible:source.currentIndex === 1;text:presentation.textAdmitted ? "48" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65;onEditingFinished:dialog.refresh()}
             Item {Layout.fillWidth:true}
         }
         RowLayout {
@@ -180,7 +319,7 @@ WorkbenchDialog {
                     RowLayout {
                         enabled:source.currentIndex === 1 && randomVariation.checked;opacity:enabled ? 1:0.5
                         Label {text:"Std deviation (dB)";color:theme.text}
-                        TextField {id:randomDeviation;objectName:"designerRandomDeviation";text:"1.5";Layout.preferredWidth:65;onEditingFinished:dialog.refresh();Accessible.name:"Random variation standard deviation in dB"}
+                        TextField {id:randomDeviation;objectName:"designerRandomDeviation";text:presentation.textAdmitted ? "1.5" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65;onEditingFinished:dialog.refresh();Accessible.name:"Random variation standard deviation in dB"}
                         StepButtons {
                             theme:dialog.theme;namePrefix:"designerRandomDeviation"
                             canIncrease:dialog.limitsAvailable && randomDeviation.text.trim().length>0 && Number.isFinite(Number(randomDeviation.text)) && Number(randomDeviation.text)>=0 && Number(randomDeviation.text)<=dialog.domainLimits.maximum_random_standard_deviation_db-dialog.randomDeviationStepDb
@@ -193,7 +332,7 @@ WorkbenchDialog {
                     RowLayout {
                         enabled:source.currentIndex === 1 && randomVariation.checked;opacity:enabled ? 1:0.5
                         Label {text:"Random seed";color:theme.text}
-                        TextField {id:randomSeed;objectName:"designerRandomSeed";text:"41";Layout.preferredWidth:110;onEditingFinished:dialog.refresh();Accessible.name:"Designer random seed"
+                        TextField {id:randomSeed;objectName:"designerRandomSeed";text:presentation.textAdmitted ? "41" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:110;onEditingFinished:dialog.refresh();Accessible.name:"Designer random seed"
                             ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || (activeFocus && (focusReason === Qt.TabFocusReason || focusReason === Qt.BacktabFocusReason || focusReason === Qt.ShortcutFocusReason));ToolTip.text:"Use the same seed to reproduce the same pattern. Each capture has a different pattern. This is separate from simulation Noise Seed."}
                     }
                     Label {text:source.currentIndex === 1 ? "Same variation across the channel; no frequency weighting." : "Imported captures keep their existing starting values.";color:theme.muted;wrapMode:Text.WordWrap;Layout.fillWidth:true;font.pixelSize:11}
@@ -211,7 +350,7 @@ WorkbenchDialog {
                             Accessible.description:ToolTip.text
                         }
                         TextField {
-                            id:tiltDb;objectName:"designerTiltDb";text:"-4";Layout.preferredWidth:80
+                            id:tiltDb;objectName:"designerTiltDb";text:presentation.textAdmitted ? "-4" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:80
                             Accessible.name:"High minus low edge tilt in dB"
                             onEditingFinished:dialog.refresh()
                             Keys.onUpPressed:dialog.stepTilt(1)
@@ -234,7 +373,7 @@ WorkbenchDialog {
                     RowLayout {
                         Label {text:"Peak-to-peak (dB)";color:theme.text}
                         TextField {
-                            id:rippleDb;objectName:"designerRippleDb";text:"2";Layout.preferredWidth:80
+                            id:rippleDb;objectName:"designerRippleDb";text:presentation.textAdmitted ? "2" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:80
                             Accessible.name:"Ripple peak-to-peak depth in dB"
                             onEditingFinished:dialog.refresh()
                             Keys.onUpPressed:dialog.stepRipple(rippleDb,1)
@@ -254,7 +393,7 @@ WorkbenchDialog {
                         visible:!distanceMode.checked
                         Label {text:"Crest spacing (MHz)";color:theme.text}
                         TextField {
-                            id:spacing;objectName:"designerRippleSpacing";text:"20";Layout.preferredWidth:80
+                            id:spacing;objectName:"designerRippleSpacing";text:presentation.textAdmitted ? "20" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:80
                             Accessible.name:"Ripple crest spacing in MHz"
                             onEditingFinished:dialog.refresh()
                             Keys.onUpPressed:dialog.stepRipple(spacing,1)
@@ -270,15 +409,16 @@ WorkbenchDialog {
                         }
                     }
                     RowLayout {visible:distanceMode.checked;Label {text:"Distance (m)";color:theme.text}
-TextField {id:distance;text:"6.37";Layout.preferredWidth:70;onEditingFinished:dialog.refresh()}
+TextField {id:distance;text:presentation.textAdmitted ? "6.37" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:70;onEditingFinished:dialog.refresh()}
 Label {text:"VF";color:theme.text}
-TextField {id:vf;text:"0.85";Layout.preferredWidth:65;onEditingFinished:dialog.refresh()} }
+TextField {id:vf;text:presentation.textAdmitted ? "0.85" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65;onEditingFinished:dialog.refresh()} }
                     RxmerDesignScope {id:rippleScope;theme:dialog.theme;captureCount:dialog.captureCount;maximumCaptures:dialog.maximumCaptures;onEdited:dialog.refresh()}
                     Rectangle {Layout.fillWidth:true;height:1;color:theme.line}
                     CheckBox {id:notch;objectName:"designerNotch";text:"LTE / 5G-style notch";onToggled:dialog.refresh();ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus;ToolTip.text:"Synthetic reduction in MER over a frequency band, not an LTE or 5G waveform simulation."}
                     GridLayout {
                         id:notchFields;objectName:"designerNotchFields"
                         Layout.fillWidth:true
+
                         // Native font metrics can make two groups exceed the editor's clip.
                         readonly property real pairedWidth: Math.max(notchCenterLabel.implicitWidth,notchDepthLabel.implicitWidth)
                             + center.Layout.preferredWidth + notchCenterSteps.implicitWidth
@@ -287,7 +427,7 @@ TextField {id:vf;text:"0.85";Layout.preferredWidth:65;onEditingFinished:dialog.r
                         columns:effectsScroll.availableWidth>=pairedWidth ? 6:3
                         Label {id:notchCenterLabel;text:"Center MHz";color:theme.text}
                         TextField {
-                            id:center;objectName:"designerNotchCenter";text:"";Layout.preferredWidth:75
+                            id:center;objectName:"designerNotchCenter";text:"";enabled:presentation.textAdmitted;Layout.preferredWidth:75
                             Accessible.name:"Notch center in MHz"
                             onEditingFinished:dialog.refresh()
                             Keys.onUpPressed:dialog.stepNotch(center,1)
@@ -303,7 +443,7 @@ TextField {id:vf;text:"0.85";Layout.preferredWidth:65;onEditingFinished:dialog.r
                         }
                         Label {id:notchWidthLabel;text:"Width MHz";color:theme.text}
                         TextField {
-                            id:bandwidth;objectName:"designerNotchWidth";text:"10";Layout.preferredWidth:65
+                            id:bandwidth;objectName:"designerNotchWidth";text:presentation.textAdmitted ? "10" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65
                             Accessible.name:"Notch width in MHz"
                             onEditingFinished:dialog.refresh()
                             Keys.onUpPressed:dialog.stepNotch(bandwidth,1)
@@ -319,7 +459,7 @@ TextField {id:vf;text:"0.85";Layout.preferredWidth:65;onEditingFinished:dialog.r
                         }
                         Label {id:notchDepthLabel;text:"Depth dB";color:theme.text}
                         TextField {
-                            id:depth;objectName:"designerNotchDepth";text:"18";Layout.preferredWidth:75
+                            id:depth;objectName:"designerNotchDepth";text:presentation.textAdmitted ? "18" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:75
                             Accessible.name:"Notch depth in dB"
                             onEditingFinished:dialog.refresh()
                             Keys.onUpPressed:dialog.stepNotch(depth,1)
@@ -335,7 +475,7 @@ TextField {id:vf;text:"0.85";Layout.preferredWidth:65;onEditingFinished:dialog.r
                         }
                         Label {id:notchEdgeLabel;text:"Edge MHz";color:theme.text}
                         TextField {
-                            id:edge;objectName:"designerNotchEdge";text:"1";Layout.preferredWidth:65
+                            id:edge;objectName:"designerNotchEdge";text:presentation.textAdmitted ? "1" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65
                             Accessible.name:"Notch edge in MHz"
                             onEditingFinished:dialog.refresh()
                             Keys.onUpPressed:dialog.stepNotch(edge,1)
@@ -355,15 +495,15 @@ TextField {id:vf;text:"0.85";Layout.preferredWidth:65;onEditingFinished:dialog.r
                     Label {text:"Replace subcarrier values";color:theme.accent;font.bold:true}
                     Label {text:"Use exact carrier-center frequencies. Equal endpoints edit one subcarrier. Missing values stay missing.";color:theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap;font.pixelSize:11}
                     RowLayout {Label {text:"First / last MHz";color:theme.text}
-TextField {id:editFirst;Layout.preferredWidth:85}
-TextField {id:editLast;Layout.preferredWidth:85} }
+TextField {id:editFirst;enabled:presentation.textAdmitted;Layout.preferredWidth:85}
+TextField {id:editLast;enabled:presentation.textAdmitted;Layout.preferredWidth:85} }
                     RowLayout {Label {text:"RxMER dB";color:theme.text}
-TextField {id:editDb;text:"30";Layout.preferredWidth:75} }
+TextField {id:editDb;text:presentation.textAdmitted ? "30" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:75} }
                     RxmerDesignScope {id:editScope;theme:dialog.theme;captureCount:dialog.captureCount;maximumCaptures:dialog.maximumCaptures}
-                    WorkbenchActionButton {theme:dialog.theme;objectName:"designerAddValueEdit";text:"Add Value Edit";enabled:dialog.limitsAvailable && dialog.valueEdits.length<dialog.domainLimits.maximum_value_edits;onClicked:{dialog.valueEdits=dialog.valueEdits.concat([{scope:editScope.value(),first_hz:Math.round(Number(editFirst.text)*1e6),last_hz:Math.round(Number(editLast.text)*1e6),value_db:Number(editDb.text)}]);dialog.refresh()} }
+                    WorkbenchActionButton {theme:dialog.theme;objectName:"designerAddValueEdit";text:"Add Value Edit";enabled:dialog.limitsAvailable && dialog.valueEdits.length<dialog.domainLimits.maximum_value_edits;onClicked:dialog.addValueEdit() }
                     Repeater {model:dialog.valueEdits;delegate:RowLayout {required property var modelData;required property int index
-                        Label {text:(modelData.first_hz/1e6)+"–"+(modelData.last_hz/1e6)+" MHz: "+modelData.value_db+" dB";color:theme.text;Layout.fillWidth:true;elide:Text.ElideRight}
-                        WorkbenchActionButton {theme:dialog.theme;text:"Remove";compact:true;onClicked:{const next=dialog.valueEdits.slice();next.splice(index,1);dialog.valueEdits=next;dialog.refresh()} }
+                        Label {text:presentation.value ? presentation.value.display.edits[index] || "" : "";color:theme.text;Layout.fillWidth:true;elide:Text.ElideRight}
+                        WorkbenchActionButton {theme:dialog.theme;text:"Remove";compact:true;onClicked:dialog.removeValueEdit(index) }
                     } }
                 }
             }
@@ -377,8 +517,8 @@ TextField {id:editDb;text:"30";Layout.preferredWidth:75} }
                 MeasurementPlot {theme:dialog.theme;viewport:dialog.viewport;Layout.fillWidth:true;Layout.fillHeight:true;onViewportRequested:function(start,count){dialog.setWindow(start,count)} }
                 Label {text:dialog.viewport.plc_summary || "";color:theme.muted;font.pixelSize:11;Layout.fillWidth:true}
                 RowLayout {
-                    Label {text:"Preview capture "+Math.round(preview.value)+" / "+dialog.captureCount;color:theme.text}
-                    Slider {id:preview;objectName:"designerPreviewCapture";Layout.fillWidth:true;from:1;to:Math.max(1,dialog.captureCount);stepSize:1;enabled:!dialog.working;onMoved:dialog.refresh()}
+                    Label {text:progressLabels.value ? progressLabels.value.preview : "";color:theme.text}
+                    Slider {id:preview;objectName:"designerPreviewCapture";Layout.fillWidth:true;from:1;to:Math.max(1,dialog.captureCount);stepSize:1;enabled:!dialog.working;onMoved:dialog.refresh();onValueChanged:if(progressLabels){Qt.callLater(dialog.refreshProgressLabels)}}
                 }
                 Repeater {model:dialog.viewport.timeline || [];delegate:RowLayout {required property var modelData
                     Label {text:modelData.label;Layout.preferredWidth:65;color:theme.muted}
@@ -391,13 +531,13 @@ TextField {id:editDb;text:"30";Layout.preferredWidth:75} }
             }
         }
         ProgressBar {visible:dialog.working;Layout.fillWidth:true;from:0;to:Math.max(1,dialog.captureCount);value:dialog.completed}
-        ContextualStatus {theme:dialog.theme;diagnostic:dialog.diagnostic;onHelpRequested:function(code){dialog.contextHelpRequested(code)};text:dialog.working ? "Designing captures: "+dialog.completed+" / "+dialog.captureCount:dialog.errorMessage;visible:text.length>0;color:dialog.errorMessage.length ? theme.statusError:theme.accent;Layout.fillWidth:true;wrapMode:Text.WordWrap}
+        ContextualStatus {theme:dialog.theme;diagnostic:presentation.rejected || dialog.stagedAdoptionRejected || dialog.exportOpenRejected ? null : dialog.diagnostic;onHelpRequested:function(code){dialog.contextHelpRequested(code)};text:dialog.working ? (progressLabels.value ? progressLabels.value.progress : dialog.actionLimitMessage) : !dialog.editorTextAdmitted ? dialog.actionLimitMessage : presentation.rejected ? presentation.message : dialog.stagedAdoptionRejected ? (dialog.stagedAdoptionMessage || dialog.actionLimitMessage) : dialog.exportOpenRejected ? dialog.actionLimitMessage : dialog.errorMessage;visible:text.length>0;color:dialog.errorMessage.length ? theme.statusError:theme.accent;Layout.fillWidth:true;wrapMode:Text.WordWrap}
     }
     footer:ApplyCancelFooter {
-        theme:dialog.theme;applyObjectName:"designerApply";applyEnabled:dialog.limitsAvailable && !dialog.working && !!dialog.information.request && !dialog.errorMessage.length
-        onApplied: {const result=JSON.parse(dialog.backend.designer_stage(dialog.document(),JSON.stringify(dialog.parentOptions)));dialog.errorMessage=result.error || "";dialog.diagnostic=result.diagnostic || null;dialog.completed=0;dialog.working=!!result.running}
-        WorkbenchActionButton {theme:dialog.theme;objectName:"designerExportPnm";text:"Save";enabled:dialog.limitsAvailable && !dialog.working && !!dialog.information.request && !dialog.errorMessage.length
-            onClicked:{pnmExport.documentSnapshot=dialog.document();pnmExport.captureCount=dialog.captureCount;pnmExport.previewCapture=Math.round(preview.value);pnmExport.open()}}
+        theme:dialog.theme;applyObjectName:"designerApply";applyEnabled:dialog.editorTextAdmitted && !presentation.rejected && dialog.limitsAvailable && !dialog.working && !!dialog.information.request && !dialog.errorMessage.length
+        onApplied: dialog.applyDesign()
+        WorkbenchActionButton {theme:dialog.theme;objectName:"designerExportPnm";text:"Save";enabled:dialog.editorTextAdmitted && !presentation.rejected && dialog.limitsAvailable && !dialog.working && !!dialog.information.request && !dialog.errorMessage.length
+            onClicked:dialog.openExport()}
         onCancelled:dialog.reject()
     }
 }

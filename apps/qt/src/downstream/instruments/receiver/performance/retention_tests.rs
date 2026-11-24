@@ -22,6 +22,10 @@ const FIXTURE_LIMIT: RetainedResources = RetainedResources {
     shared_roots: usize::MAX / 2,
     channel_count: usize::MAX / 2,
     slot_count: usize::MAX / 2,
+    presentation_utf16_bytes: 0,
+    presentation_entries: 0,
+    retained_views: 0,
+    open_views: 0,
 };
 
 fn request() -> FullLoopRequest {

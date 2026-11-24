@@ -5,6 +5,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtTest
+import "fixtures"
 import "../qml/shared/components"
 import "../qml/shell"
 import "../qml/shared/theme"
@@ -13,7 +14,16 @@ import "../qml/downstream"
 Pane {
     id: window
     width: 1240; height: 780; visible: true
-    Theme { id: theme }
+    PresentationBudget {
+        id: presentationBudget
+        // Independent fixture graph includes two complete Workbenches.
+        // It is not a production pressure case: exact small bounds have their own tests.
+        maximumBytes: 32000000
+        maximumEntries: 100000
+        maximumViews: 256
+        maximumOpen: 12
+    }
+    Theme { presentationBackendFactory: presentationBudget.createAdapter; id: theme }
     ThemePalette { targetControl: window; theme: theme }
     ThemePalette { targetControl: window.Window.window; theme: theme }
     ThemePalette { targetControl: workbench.channelPopup; theme: theme }
@@ -259,7 +269,8 @@ Pane {
         function poll_open() { return JSON.stringify(openResponse) }
         function cancel_open() { openResponse={cancelled:true} }
         property var saveResponse: ({cancelled:true})
-        function save(saveAs,settings,receiver,verified,dark) { return JSON.stringify(saveResponse) }
+        property var lastSavedReceiver:null
+        function save(saveAs,settings,receiver,verified,dark) {lastSavedReceiver=JSON.parse(receiver);return JSON.stringify(saveResponse)}
     }
     WorkbenchMenuBar {
         id: appMenu
@@ -267,8 +278,8 @@ Pane {
         onTerminologyRequested: function(target) { openedTerminology=target }
         anchors.top: parent.top; width: parent.width; theme: theme
         onNewRequested: workbench.requestNewProject()
-        onGlobalSettingsRequested: workbench.settingsPopup.open()
-        onAboutRequested: workbench.aboutPopup.open()
+        onGlobalSettingsRequested: workbench.settingsPopup.openChecked()
+        onAboutRequested: workbench.aboutPopup.openChecked()
         onFaqRequested: workbench.openHelp("")
     }
     DownstreamWorkbench {
@@ -297,6 +308,104 @@ Pane {
             compare(button.Accessible.name, "Close " + dialog.title)
             mouseClick(button)
             tryCompare(dialog, "visible", false)
+        }
+        function test_presentation_pressure_preserves_details_and_live_worker_controls() {
+            const limit=presentationBudget.maximumBytes
+            const original={busy:runBackend.busy,paused:runBackend.paused,configured:runBackend.configured,options:runBackend.acceptedRunOptions}
+            try {
+                runBackend.busy=false;runBackend.paused=false;workbench.pollRun()
+                const previous=workbench.runState
+                const oldReason=previous.reason
+                presentationBudget.maximumBytes=presentationBudget.bytes
+                runBackend.busy=true;runBackend.paused=true;workbench.pollRun()
+                compare(workbench.runState,previous)
+                compare(workbench.runState.reason,oldReason)
+                verify(findChild(workbench,"stopButton").enabled)
+                compare(findChild(workbench,"pauseButton").text,"▶  Resume")
+                verify(theme.presentationAdmissionRejected)
+                runBackend.busy=false;runBackend.paused=false;workbench.pollRun()
+                verify(!findChild(workbench,"stopButton").enabled)
+                // Independent seed distinguishes current accepted backend settings
+                // from the old optional displayed options during failed adoption.
+                runBackend.configured=true
+                runBackend.acceptedRunOptions=Object.assign({},original.options,{noise_seed:73})
+                workbench.saveProject(false)
+                compare(fileBackend.lastSavedReceiver.noise_seed,73)
+            } finally {
+                presentationBudget.maximumBytes=limit
+                runBackend.busy=original.busy;runBackend.paused=original.paused
+                runBackend.configured=original.configured;runBackend.acceptedRunOptions=original.options
+                workbench.pollRun()
+            }
+        }
+        function test_presentation_measurement_rejection_requires_a_fresh_native_catalog() {
+            const limit=presentationBudget.maximumBytes
+            const oldAccepted=measurementBackend.acceptedRx
+            const oldProfile=profileBackend.acceptedId
+            const dialog=workbench.rxmerPopup
+            try {
+                profileBackend.acceptedId=0;measurementBackend.acceptedRx=false
+                verify(dialog.openChecked());tryCompare(dialog,"opened",true)
+                compare(dialog.metadata.files.length,0)
+                const previous=dialog.metadata
+                presentationBudget.maximumBytes=presentationBudget.bytes
+                verify(!dialog.setMetadata(measurementBackend.choose_files(true)))
+                verify(measurementBackend.draftRx)
+                compare(dialog.metadata,previous)
+                verify(!dialog.draftSynchronized)
+                presentationBudget.maximumBytes=limit
+                verify(!dialog.chooseMode("hold"))
+                verify(!dialog.refresh())
+                verify(!dialog.draftSynchronized)
+                verify(!findChild(dialog,"measurementApply").enabled)
+                verify(!findChild(dialog,"sharedMeasurementViewer").refresh(0,0))
+                verify(dialog.restoreWorkbench())
+                verify(dialog.draftSynchronized)
+                compare(dialog.metadata.files.length,0)
+                verify(!measurementBackend.draftRx)
+            } finally {
+                presentationBudget.maximumBytes=limit
+                dialog.close();measurementBackend.acceptedRx=oldAccepted;profileBackend.acceptedId=oldProfile
+                workbench.refreshProfileState()
+            }
+        }
+        function test_presentation_rejected_tap_preserves_both_directional_instruments() {
+            const limit=presentationBudget.maximumBytes
+            const rx=workbench.receiverPopup
+            const tx=workbench.transmitterPopup
+            try {
+                verify(rx.selectTap(0))
+                verify(tx.refreshSpectrum(0))
+                const rxState=rx.spectrumState, txState=tx.retainedState
+                presentationBudget.maximumBytes=presentationBudget.bytes
+                verify(!rx.selectTap(3))
+                compare(rx.selectedTap,0);compare(rx.spectrumState,rxState)
+                verify(!tx.refreshSpectrum(1))
+                compare(tx.selectedTap,0);compare(tx.retainedState,txState)
+                verify(!tx.openSpectrum(2))
+                compare(tx.selectedTap,0);compare(tx.retainedState,txState)
+            } finally {
+                presentationBudget.maximumBytes=limit
+                rx.selectTap(0);tx.refreshSpectrum(0)
+            }
+        }
+        function test_presentation_closed_faq_content_rejection_has_visible_feedback() {
+            const limit=presentationBudget.maximumBytes
+            try {
+                workbench.faqPopup.close()
+                theme.presentationAdmissionRejected=false
+                presentationBudget.maximumBytes=presentationBudget.bytes
+                verify(!workbench.faqPopup.showEntry("QamRunUnavailable",null))
+                verify(!workbench.faqPopup.visible)
+                verify(theme.presentationAdmissionRejected)
+                verify(findChild(workbench,"presentationAdmissionNotice").visible)
+                presentationBudget.maximumBytes=limit
+                verify(workbench.faqPopup.showEntry("QamRunUnavailable",null))
+                tryCompare(workbench.faqPopup,"opened",true)
+            } finally {
+                presentationBudget.maximumBytes=limit
+                workbench.faqPopup.close()
+            }
         }
         function test_loading_modal_stays_responsive_and_cancels_without_adoption() {
             const prior=workbench.hasProject
@@ -331,7 +440,7 @@ Pane {
                 for (const dark of [true,false]) {
                     theme.dark=dark
                     const dialog=workbench.rxmerPopup
-                    dialog.open();tryCompare(dialog,"opened",true)
+                    dialog.openChecked();tryCompare(dialog,"opened",true)
                     dialog.chooseMode("hold")
                     const viewer=findChild(dialog,"sharedMeasurementViewer")
                     const controls=findChild(viewer,"measurementPlaybackControls")
@@ -355,7 +464,7 @@ Pane {
             profileBackend.acceptedId=0
             measurementBackend.acceptedRx=true;measurementBackend.multiPreview=true
             const dialog=workbench.rxmerPopup
-            dialog.open();tryCompare(dialog,"opened",true)
+            dialog.openChecked();tryCompare(dialog,"opened",true)
             dialog.chooseMode("hold")
             const viewer=findChild(dialog,"sharedMeasurementViewer")
             const controls=findChild(viewer,"measurementPlaybackControls")
@@ -382,8 +491,11 @@ Pane {
         function test_rxmer_selection_draft_and_single_shot_controls() {
             measurementBackend.acceptedRx=true
             const dialog=workbench.rxmerPopup
-            dialog.open();tryCompare(dialog,"opened",true)
+            dialog.openChecked();tryCompare(dialog,"opened",true)
             const tree=findChild(dialog,"measurementCaptureTree")
+            // Parent bindings are coalesced before the guarded tree publishes a
+            // coherent context. Wait for admission before inspecting its choices.
+            tryCompare(tree.parent,"contextCurrent",true)
             tree.forceLayout()
             tryVerify(function(){return tree.itemAtIndex(0) !== null})
             verify(findChild(tree.itemAtIndex(0),"captureSingle0").checked)
@@ -444,7 +556,7 @@ Pane {
             mouseClick(findChild(workbench, "ofdmBlock"))
             tryCompare(dialog, "opened", true)
             compare(dialog.draft.cyclic_prefix_samples, JSON.parse(original).cyclic_prefix_samples)
-            dialog.draft = Object.assign({}, dialog.draft, {cyclic_prefix_samples: 1024})
+            verify(dialog.updateValue(dialog.registryData.fields.find(function(field){return field.id==="cyclic_prefix_samples"}),1024))
             mouseClick(findChild(dialog, "ofdmApply"))
             tryCompare(dialog, "visible", false)
             compare(JSON.parse(backend.current()).cyclic_prefix_samples, 1024)
@@ -635,7 +747,7 @@ Pane {
             mouseClick(update)
             compare(aboutUpdateSpy.count,1)
             tryCompare(workbench.aboutPopup,"opened",false)
-            workbench.aboutPopup.open()
+            workbench.aboutPopup.openChecked()
             tryCompare(workbench.aboutPopup,"opened",true)
             closeWithX(workbench.aboutPopup)
             mouseClick(appMenu.itemAt(2))
@@ -666,7 +778,7 @@ Pane {
         }
         function test_source_admission_rejection_preserves_dialog_values_and_shows_error() {
             const dialog = workbench.sourcePopup
-            dialog.open()
+            dialog.openChecked()
             tryCompare(dialog, "opened", true)
             dialog.edit("seed", 1) // Independent valid seed retained in this UI draft.
             const draft = JSON.stringify(dialog.draft)
@@ -675,7 +787,7 @@ Pane {
             tryCompare(dialog, "opened", false)
             sourceBackend.beginError = "The session retained-data limit would be exceeded."
             try {
-                dialog.open()
+                dialog.openChecked()
                 tryCompare(dialog, "opened", true)
                 compare(dialog.errorMessage, sourceBackend.beginError)
                 compare(JSON.stringify(dialog.draft), draft)
@@ -860,7 +972,8 @@ Pane {
             workbench.refreshProfileState()
             compare(workbench.transmitterState.status, "attention")
             compare(workbench.transmitterState.has_result, false)
-            compare(dialog.viewport.points.length, 0)
+            // Spectrum refresh waits for the complete parent context notification.
+            tryVerify(function() { return dialog.viewport.points.length === 0 })
             compare(navigation.canZoom, false)
             compare(timingPanel.timing.points.length, 0)
             compare(basebandAxis.enabled,false)
@@ -869,9 +982,9 @@ Pane {
         function test_full_symbol_timing_popup_keyboard_and_resize() {
             transmitterBackend.resultAvailable=true
             transmitterBackend.token=String(Number(transmitterBackend.token)+1)
-            workbench.transmitterState=JSON.parse(transmitterBackend.poll())
+            verify(workbench.adoptTransmitterState(JSON.parse(transmitterBackend.poll())))
             const tx=workbench.transmitterPopup
-            tx.open();tryCompare(tx,"opened",true)
+            tx.openChecked();tryCompare(tx,"opened",true)
             tx.openSpectrum(0)
             tryCompare(tx.spectrumPopup,"opened",true)
             const panel=findChild(tx.spectrumPopup,"saTimingPanel")
@@ -901,7 +1014,7 @@ Pane {
                 host.width=960;host.height=640;window.width=960;window.height=640
                 transmitterBackend.stageCaptured=false
                 for(const dark of [true,false]) {
-                    theme.dark=dark;tx.open();tryCompare(tx,"opened",true)
+                    theme.dark=dark;tx.openChecked();tryCompare(tx,"opened",true)
                     waitForRendering(tx.contentItem)
                     const first=tx.stageRepeater.itemAt(0).tapButton,last=tx.stageRepeater.itemAt(6).tapButton
                     compare(first.observation.available,false)
@@ -923,7 +1036,7 @@ Pane {
         }
         function test_transmitter_graph_cards_and_details() {
             const tx=workbench.transmitterPopup
-            tx.open();tryCompare(tx,"opened",true)
+            tx.openChecked();tryCompare(tx,"opened",true)
             compare(tx.stageRepeater.count,7)
             const widths=[]
             for (let index=0;index<7;index++) {
@@ -968,7 +1081,7 @@ Pane {
             compare(tx.stagePopup.stageIndex,4)
             closeWithX(tx.stagePopup)
             // Keep coverage of the reusable analyzer without a duplicate button.
-            tx.qamPopup.open()
+            tx.qamPopup.openChecked()
             tryCompare(tx.qamPopup,"opened",true)
             verify(tx.qamPopup.observation.points.length>0)
             compare(findChild(tx.qamPopup,"txQamLegend").visible,true)
@@ -1101,7 +1214,7 @@ Pane {
             tryCompare(sa, "opened", true)
             compare(sa.state.tap_id, "channel.output")
             compare(findChild(sa, "saGenerate").enabled, false)
-            sa.viewport = ({points:[{x:0,y:0,readout:"Previous result"}],x_ticks:[],y_ticks:[]})
+            verify(sa.adoptViewport({points:[{x:0,y:0,readout:"Previous result"}],x_ticks:[],y_ticks:[]},""))
             const tap = findChild(sa, "saTestPoint")
             tap.forceActiveFocus(); keyClick(Qt.Key_End); keyClick(Qt.Key_Return)
             compare(sa.state.tap_id, "rx.fft.bins")
@@ -1141,10 +1254,10 @@ Pane {
         }
         function test_fec_overview_profiles_tabs_and_partial_empty_states() {
             const dialog = workbench.receiverPopup.fecPopup
-            workbench.receiverPopup.open();tryCompare(workbench.receiverPopup,"opened",true)
+            workbench.receiverPopup.openChecked();tryCompare(workbench.receiverPopup,"opened",true)
             dialog.profileId = -1
             receiverBackend.retainedCells = true
-            dialog.open();tryCompare(dialog,"opened",true)
+            dialog.openChecked();tryCompare(dialog,"opened",true)
             compare(findChild(findChild(dialog,"fecCounters").itemAt(0),"fecCounter_total_cw").text,"122")
             compare(findChild(dialog,"fecIterationChart").histogram.points.length,2)
             const choice = findChild(dialog,"fecProfileChoice")
@@ -1160,7 +1273,8 @@ Pane {
             verify(controls.width<=600)
             compare(controls.rows.length,6)
             compare(controls.rows[1][0],"NCP")
-            compare(controls.rows[1][2],dialog.statistics.ncp_fields)
+            // Guarded plain rows encode an absent optional counter as null; its visible dash is unchanged.
+            compare(controls.rows[1][2],dialog.statistics.ncp_fields ?? null)
             mouseClick(findChild(dialog,"fecOverviewTab"));wait(30)
             receiverBackend.fecOverride = {available:true,status:"cancelled",profile_id:0,fec:{total_cw:0,ccw:0,ufec:0},iterations:{points:[],maximum:0},words:[]}
             dialog.refresh()
@@ -1190,14 +1304,14 @@ Pane {
                 const dialog = editor[0]
                 const channelEditor = editor[1].indexOf("channel") === 0
                 if (channelEditor) {
-                    workbench.channelPopup.open()
+                    workbench.channelPopup.openChecked()
                     tryCompare(workbench.channelPopup, "opened", true)
                     if (editor[1] === "channelLossApply") {
-                        workbench.channelPopup.modelPopup.open()
+                        workbench.channelPopup.modelPopup.openChecked()
                         tryCompare(workbench.channelPopup.modelPopup, "opened", true)
                     }
                 }
-                dialog.open()
+                dialog.openChecked()
                 tryCompare(dialog, "opened", true)
                 const apply = findChild(dialog, editor[1])
                 const cancel = findChild(dialog, editor[2])
@@ -1233,7 +1347,7 @@ Pane {
                     theme.dark=dark
                     // Match Main.qml: its application window supplies popup palette roles.
                     popup.palette=window.palette
-                    popup.open();tryCompare(popup,"opened",true);wait(100)
+                    popup.openChecked();tryCompare(popup,"opened",true);wait(100)
                     const footer=popup.footer.mapToItem(host.contentItem,popup.footer.width,popup.footer.height)
                     verify(footer.x<=host.width && footer.y<=host.height)
                     const actions=["aboutProjectButton","aboutReportIssue","aboutCheckUpdates"].map(name=>findChild(popup,name))
@@ -1277,10 +1391,10 @@ Pane {
             const previous = [host.width, host.height, window.width, window.height]
             const popup = workbench.profilePopup
             try {
-                popup.open(); tryCompare(popup, "opened", true); popup.close()
+                popup.openChecked(); tryCompare(popup, "opened", true); popup.close()
                 host.width = 960; host.height = 640
                 window.width = 960; window.height = 640
-                popup.open(); tryCompare(popup, "opened", true); wait(200)
+                popup.openChecked(); tryCompare(popup, "opened", true); wait(200)
                 const close = findChild(popup.header, "popupCloseButton")
                 const top = close.mapToItem(host.contentItem, 0, 0)
                 const bottom = popup.footer.mapToItem(host.contentItem, popup.footer.width, popup.footer.height)
@@ -1357,11 +1471,11 @@ Pane {
             const previousMulti=measurementBackend.multiPreview
             try {
                 profileBackend.acceptedId=-1
-                profile.open();tryCompare(profile,"opened",true)
+                profile.openChecked();tryCompare(profile,"opened",true)
                 compare(findChild(profile,"profileRestoreWorkbench").enabled,false)
                 closeWithX(profile)
                 profileBackend.acceptedId=1
-                profile.open();tryCompare(profile,"opened",true)
+                profile.openChecked();tryCompare(profile,"opened",true)
                 mouseClick(findChild(profile,"profileOpenFile"))
                 compare(profile.previewModel.selected_profile_id,0)
                 mouseClick(findChild(profile,"profileRestoreWorkbench"))
@@ -1375,7 +1489,7 @@ Pane {
                 closeWithX(profile)
 
                 measurementBackend.flat=false
-                response.open();tryCompare(response,"opened",true)
+                response.openChecked();tryCompare(response,"opened",true)
                 compare(response.metadata.flat,false)
                 mouseClick(findChild(response,"measurementClear"))
                 response.updateOption("tolerance_seconds",25)
@@ -1386,7 +1500,7 @@ Pane {
                 compare(measurementBackend.flat,false)
                 closeWithX(response)
                 measurementBackend.flat=true
-                response.open();tryCompare(response,"opened",true)
+                response.openChecked();tryCompare(response,"opened",true)
                 mouseClick(findChild(response,"measurementOpen"))
                 compare(response.metadata.flat,false)
                 mouseClick(findChild(response,"measurementRestoreWorkbench"))
@@ -1394,11 +1508,11 @@ Pane {
                 closeWithX(response)
 
                 measurementBackend.acceptedRx=false
-                rxmer.open();tryCompare(rxmer,"opened",true)
+                rxmer.openChecked();tryCompare(rxmer,"opened",true)
                 compare(findChild(rxmer,"measurementRestoreWorkbench").enabled,false)
                 closeWithX(rxmer)
                 measurementBackend.acceptedRx=true;measurementBackend.multiPreview=true
-                rxmer.open();tryCompare(rxmer,"opened",true)
+                rxmer.openChecked();tryCompare(rxmer,"opened",true)
                 compare(rxmer.metadata.files.length,3)
                 rxmer.updateOption("mode","hold")
                 mouseClick(findChild(rxmer,"measurementClear"))
@@ -1496,7 +1610,7 @@ Pane {
             mouseClick(findChild(dialog,"dialogCancel"));tryCompare(dialog,"visible",false)
             compare(runBackend.acceptedRunOptions.receiver_mode,saved.receiver_mode)
             compare(chip.visible,false)
-            dialog.open();tryCompare(dialog,"opened",true)
+            dialog.openChecked();tryCompare(dialog,"opened",true)
             mode.activated(2)
             findChild(dialog,"receiverMceAveraging").value=24
             findChild(dialog,"receiverMceAveraging").valueModified()
@@ -1511,7 +1625,7 @@ Pane {
             compare(heading.horizontalAlignment,Text.AlignHCenter)
             compare(runBackend.acceptedRunOptions.mce.averaging_symbols,24)
             compare(JSON.stringify(runBackend.acceptedRunOptions.channel_filter),JSON.stringify(saved.channel_filter))
-            dialog.open();tryCompare(dialog,"opened",true)
+            dialog.openChecked();tryCompare(dialog,"opened",true)
             compare(mode.currentIndex,2)
             runBackend.busy=true;workbench.pollRun()
             compare(findChild(dialog,"receiverConfigApply").enabled,false)
@@ -1527,32 +1641,32 @@ Pane {
             const dialog=workbench.receiverPopup.responsePopup
             const savedResponse=dialog.response
             const selector=findChild(dialog,"receiverResponseSource")
-            dialog.response={available:true,mce:{tracking:true},points:[],x_ticks:[],y_ticks:[]}
+            verify(dialog.presentationCoverage.replace(dialog.responseCandidate({available:true,mce:{tracking:true},points:[],x_ticks:[],y_ticks:[]},dialog.presentationCoverage.value.query)))
             compare(selector.model[0],"Applied Channel (H)")
             compare(selector.model[1],"MCE Estimate (Ĥ)")
             compare(selector.model[2],"Compare Channel / MCE")
-            dialog.response={available:true,points:[],x_ticks:[],y_ticks:[]}
+            verify(dialog.presentationCoverage.replace(dialog.responseCandidate({available:true,points:[],x_ticks:[],y_ticks:[]},dialog.presentationCoverage.value.query)))
             compare(selector.model[1],"Pilot Estimate (Ĥ)")
             compare(selector.model[2],"Compare Channel / Pilots")
-            dialog.response=savedResponse
+            verify(dialog.presentationCoverage.replace(dialog.responseCandidate(savedResponse,dialog.presentationCoverage.value.query)))
         }
         function test_waveform_channel_apply_and_cancel_preserve_receiver_mode() {
             const saved=JSON.parse(JSON.stringify(runBackend.acceptedRunOptions))
             const channel=workbench.channelPopup
-            channel.open();tryCompare(channel,"opened",true)
+            channel.openChecked();tryCompare(channel,"opened",true)
             const dialog=channel.filterPopup
-            dialog.open();tryCompare(dialog,"opened",true)
+            dialog.openChecked();tryCompare(dialog,"opened",true)
             const source=findChild(dialog,"channelFilterSource")
             source.currentIndex=1;source.activated(1)
             compare(dialog.document().mode,"echoes")
             mouseClick(findChild(dialog,"dialogCancel"));tryCompare(dialog,"visible",false)
             compare(JSON.stringify(runBackend.acceptedRunOptions),JSON.stringify(saved))
-            dialog.open();tryCompare(dialog,"opened",true)
+            dialog.openChecked();tryCompare(dialog,"opened",true)
             source.currentIndex=1;source.activated(1)
             mouseClick(findChild(dialog,"channelFilterApply"));tryCompare(dialog,"visible",false)
             compare(runBackend.acceptedRunOptions.receiver_mode,saved.receiver_mode)
             compare(runBackend.acceptedRunOptions.channel_filter.mode,"echoes")
-            dialog.open();tryCompare(dialog,"opened",true)
+            dialog.openChecked();tryCompare(dialog,"opened",true)
             compare(source.currentIndex,1)
             mouseClick(findChild(dialog,"dialogCancel"));tryCompare(dialog,"visible",false)
             keyClick(Qt.Key_Escape);tryCompare(channel,"visible",false)
@@ -1587,7 +1701,7 @@ Pane {
             runBackend.lastResult = {status:"cancelled",bits_tested:0,bit_errors:0,ber:null,recovered_payloads:0,unrecovered:2}
             receiverBackend.retainedCells = true
             workbench.pollRun()
-            dialog.open();tryCompare(dialog,"opened",true)
+            dialog.openChecked();tryCompare(dialog,"opened",true)
             compare(dialog.statusText,"Cancelled · Partial Result")
             verify(dialog.hasResult)
             verify(findChild(dialog,"verificationWordErrors") !== null)
@@ -1607,7 +1721,7 @@ Pane {
         function test_receiver_profile_performance_navigation_and_scope() {
             const receiver=workbench.receiverPopup
             receiverBackend.retainedCells=true
-            receiver.open();tryCompare(receiver,"opened",true)
+            receiver.openChecked();tryCompare(receiver,"opened",true)
             mouseClick(findChild(receiver,"receiverProfilePerformance"))
             const dialog=receiver.performancePopup
             tryCompare(dialog,"opened",true)
@@ -1633,7 +1747,7 @@ Pane {
             const receiver=workbench.receiverPopup
             receiverBackend.retainedCells=true
             receiver.qamPopup.viewIndex=1
-            receiver.open();tryCompare(receiver,"opened",true)
+            receiver.openChecked();tryCompare(receiver,"opened",true)
             mouseClick(findChild(receiver,"receiverDataQam"));tryCompare(receiver.qamPopup,"opened",true)
             const qam=receiver.qamPopup
             compare(qam.observation.points.length,1)
@@ -1673,7 +1787,7 @@ Pane {
             qam.selectionControls.resetFilters()
             qam.viewIndex=1
             closeWithX(qam);compare(receiver.opened,true)
-            receiver.responsePopup.open();tryCompare(receiver.responsePopup,"opened",true)
+            receiver.responsePopup.openChecked();tryCompare(receiver.responsePopup,"opened",true)
             const view=findChild(receiver.responsePopup,"receiverResponseView")
             const velocity=findChild(receiver.responsePopup,"receiverVelocity")
             compare(velocity.visible,false)
@@ -1696,7 +1810,7 @@ Pane {
         }
         function test_channel_stages_tap_routing_and_loss_draft_cancel() {
             const dialog=workbench.channelPopup
-            dialog.open();tryCompare(dialog,"opened",true)
+            dialog.openChecked();tryCompare(dialog,"opened",true)
             mouseClick(findChild(dialog,"channelRxmer"));tryCompare(workbench.rxmerPopup,"opened",true)
             closeWithX(workbench.rxmerPopup)
             mouseClick(findChild(dialog,"channelEstimate"));tryCompare(workbench.responsePopup,"opened",true)
@@ -1760,7 +1874,7 @@ Pane {
         }
         function test_channel_power_controls_cancel_apply_and_tap_symmetry() {
             const dialog=workbench.channelPopup
-            dialog.open();tryCompare(dialog,"opened",true)
+            dialog.openChecked();tryCompare(dialog,"opened",true)
             mouseClick(findChild(dialog,"channelAmplifier"));tryCompare(dialog.amplifierPopup,"opened",true)
             findChild(dialog.amplifierPopup,"channelAmplifierGain").text="12"
             closeWithX(dialog.amplifierPopup)

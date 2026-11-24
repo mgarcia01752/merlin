@@ -5,8 +5,9 @@
 //! Canonical application identities and dispatch over existing direction owners.
 use super::{
     constants::{
-        MAX_SESSION_CHANNELS, MAX_SESSION_CHANNEL_SLOTS, MAX_SESSION_ORDERED_ENTRIES,
-        MAX_SESSION_PAYLOAD_BYTES, MAX_SESSION_SHARED_ROOTS,
+        MAX_SESSION_CHANNELS, MAX_SESSION_CHANNEL_SLOTS, MAX_SESSION_OPEN_VIEWS,
+        MAX_SESSION_ORDERED_ENTRIES, MAX_SESSION_PAYLOAD_BYTES, MAX_SESSION_PRESENTATION_ENTRIES,
+        MAX_SESSION_PRESENTATION_UTF16_BYTES, MAX_SESSION_RETAINED_VIEWS, MAX_SESSION_SHARED_ROOTS,
     },
     input_paths::InputPaths,
     ActiveRun, Direction, DispatchError, DispatchGate, ProjectSnapshot, Retained,
@@ -54,7 +55,7 @@ impl ApplicationSessions {
     /// Creates two unconfigured direction identities with explicit shared limits.
     ///
     /// # Arguments
-    /// * `maximum` - Independent application payload/entry/root ceilings.
+    /// * `maximum` - Nine independent Rust, channel and logical presentation ceilings.
     ///
     /// # Returns
     /// An idle host initially selecting downstream; no backend or worker starts.
@@ -104,7 +105,8 @@ impl ApplicationSessions {
     /// Creates the normal desktop host using named application safety policies.
     ///
     /// # Returns
-    /// An idle host with independent limits, not a scientific memory guarantee.
+    /// An idle host with independent Rust and logical presentation limits, not RSS
+    /// or a scientific memory guarantee.
     ///
     /// # Errors
     /// Preserves fixed-admission or checked process-identity exhaustion failures.
@@ -115,6 +117,10 @@ impl ApplicationSessions {
             shared_roots: MAX_SESSION_SHARED_ROOTS,
             channel_count: MAX_SESSION_CHANNELS,
             slot_count: MAX_SESSION_CHANNEL_SLOTS,
+            presentation_utf16_bytes: MAX_SESSION_PRESENTATION_UTF16_BYTES,
+            presentation_entries: MAX_SESSION_PRESENTATION_ENTRIES,
+            retained_views: MAX_SESSION_RETAINED_VIEWS,
+            open_views: MAX_SESSION_OPEN_VIEWS,
         })
     }
 

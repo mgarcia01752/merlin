@@ -14,6 +14,10 @@ const LIMITS: RetainedResources = RetainedResources {
     shared_roots: usize::MAX,
     channel_count: usize::MAX,
     slot_count: usize::MAX,
+    presentation_utf16_bytes: 0,
+    presentation_entries: 0,
+    retained_views: 0,
+    open_views: 0,
 };
 
 fn context() -> Context {
@@ -142,6 +146,10 @@ fn receiver_foreign_fixed_target_rejects_before_mutation_and_same_host_attachmen
             shared_roots: LIMITS.shared_roots - accepted.shared_roots,
             channel_count: LIMITS.channel_count - accepted.channel_count,
             slot_count: LIMITS.slot_count - accepted.slot_count,
+            presentation_utf16_bytes: 0,
+            presentation_entries: 0,
+            retained_views: 0,
+            open_views: 0,
         })
         .unwrap();
     model.attach_prepared(target.clone()).unwrap();

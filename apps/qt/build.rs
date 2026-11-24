@@ -41,6 +41,7 @@ fn main() {
             rust_files: &[
                 "src/bridge/branding.rs",
                 "src/bridge/about_info.rs",
+                "src/bridge/presentation_retention.rs",
                 "src/bridge/update_info.rs",
                 "src/bridge/ofdm_settings.rs",
                 "src/bridge/profile_input.rs",
@@ -54,6 +55,9 @@ fn main() {
             ],
             qml_files: &[
                 "qml/Main.qml",
+                "qml/validation/SessionPresentationProbe.qml",
+                "qml/shared/presentation/PresentationOwner.qml",
+                "qml/shared/presentation/LogicalFootprint.js",
                 "qml/downstream/DownstreamWorkbench.qml",
                 "qml/shared/components/WorkbenchDialog.qml",
                 "qml/shared/components/WorkbenchActionButton.qml",

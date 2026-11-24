@@ -44,7 +44,11 @@ impl PreviewError {
                 | RetentionError::OrderedEntriesExceeded { .. }
                 | RetentionError::SharedRootsExceeded { .. }
                 | RetentionError::ChannelsExceeded { .. }
-                | RetentionError::SlotsExceeded { .. },
+                | RetentionError::SlotsExceeded { .. }
+                | RetentionError::PresentationUtf16BytesExceeded { .. }
+                | RetentionError::PresentationEntriesExceeded { .. }
+                | RetentionError::RetainedViewsExceeded { .. }
+                | RetentionError::OpenViewsExceeded { .. },
             ) => "The session retained-data limit would be exceeded.".into(),
             Self::PersistentMetadata(error) => error,
             Self::Unavailable => "No accepted TX configuration.".into(),

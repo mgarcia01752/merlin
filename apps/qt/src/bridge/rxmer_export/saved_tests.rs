@@ -187,6 +187,10 @@ fn rejected_status_after_publication_keeps_the_saved_file_and_truthful_static_re
                 shared_roots: full.shared_roots - pending.shared_roots,
                 channel_count: full.channel_count - pending.channel_count,
                 slot_count: full.slot_count - pending.slot_count,
+                presentation_utf16_bytes: 0,
+                presentation_entries: 0,
+                retained_views: 0,
+                open_views: 0,
             }
         );
         drop(held.lock().unwrap().take());

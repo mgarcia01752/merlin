@@ -620,6 +620,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The independent [bridge Apply-help owner](features/unified-qt-workbench/validation.md#uiu-session-01-apply-help-owner) passes 18 affected Qt Rust cases and six fresh desktop probes. Original message/help and receiver state remain; exhausted detail admission uses the existing static fallback. At that checkpoint core Model metadata was pending; C1 above now closes it. Complete SESSION acceptance remains open; native Apply-pressure interaction is not claimed from owner/helper or startup probes.
 
+  [Persistent presentation admission / C5](features/unified-qt-workbench/validation.md#uiu-session-01-persistent-presentation-admission) passes all 416 Qt Rust cases, eleven QML suites (163 pass records including init/cleanup), optimized build, six current native probes and actual receiver Apply/Help under held pressure plus recovery. Original observations, native validation and scientific limits remain. One frozen condition remains: C6 integrated acceptance; SESSION stays unchecked. Earlier unit frontier/count descriptions are checkpoint history.
+
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
   Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).

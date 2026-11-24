@@ -6,11 +6,20 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtTest
+import "fixtures"
 import "../qml/shared/theme"
 import "../qml/downstream/measurements"
 Pane {
     id:window;width:1240;height:820;visible:true
-    Theme {id:theme}
+    PresentationBudget {
+        id: presentationBudget
+        // Independent capacities for existing presentation-only fixture graphs.
+        maximumBytes: 10000000
+        maximumEntries: 100000
+        maximumViews: 96
+        maximumOpen: 12
+    }
+    Theme { presentationBackendFactory: presentationBudget.createAdapter;id:theme}
     QtObject {
         id:backend
         property var lastRequest:null
@@ -27,7 +36,7 @@ Pane {
         function designer_export_cancel(){}
         // Independent fixture anchors for the public limits report; no production fallback.
         property var limits: ({minimum_mer_db:-30,maximum_mer_db:120,maximum_captures:256,maximum_values:4000000,maximum_value_edits:32,maximum_random_standard_deviation_db:20,maximum_absolute_tilt_db:60,maximum_ripple_peak_to_peak_db:60,maximum_notch_depth_db:60,minimum_echo_distance_metres:0.001,maximum_echo_distance_metres:10000})
-        function designer_begin(){return JSON.stringify({limits:limits,imported_count:50,first_hz:640000000,last_hz:827000000,spacing_hz:25000,request:{source:"imported",capture_count:50,baseline_db:48,recipe:{tilt:null,ripple:null,notch:null,edits:[]}}})}
+        function designer_begin(){return JSON.stringify({limits:limits,imported_count:50,first_hz:640000000,last_hz:827000000,spacing_hz:25000,request:{source:"imported",capture_count:50,baseline_db:48,recipe:{random_variation:null,tilt:null,ripple:null,notch:null,edits:[]}}})}
         function designer_preview(document,position,start,count){lastRequest=JSON.parse(document);return JSON.stringify({points:[{x:0,y:0.2,minimum_y:0.2,gap:false}],comparison:[{x:0,y:0.1,minimum_y:0.1,gap:false}],bands:[{first:0.4,last:0.41,label:"PLC"}],start:count ? start:0,count:count || 7481,total:7481,plc_view:{start:4000,count:80},plc_summary:"PLC first–last: 740.000–740.375 MHz · 16 carriers",axis_label:"RxMER (dB)",summary:"Capture "+position,timeline:[]})}
         function designer_stage(document,options){lastRequest=JSON.parse(document);pending=true;return JSON.stringify({running:true})}
         function designer_poll(){pending=false;return JSON.stringify({running:false,cancelled:true})}
@@ -44,17 +53,63 @@ Pane {
             flick.contentY=Math.max(0,Math.min(flick.contentHeight-flick.height,flick.contentY+point.y-flick.height/2))
             verify(waitForRendering(dialog.contentItem))
         }
+        function test_retained_edit_text_preserves_exact_json_numeric_errors() {
+            // Independent invalid-input anchors; these must reach Rust as the same
+            // JSON null values, rather than becoming valid finite science.
+            const values=[NaN,Infinity,-Infinity,-0,0,0.25,-2]
+            for (const value of values) {
+                const original={scope:{mode:"range",first:value,last:value},first_hz:value,last_hz:value,value_db:value}
+                compare(JSON.stringify(dialog.editValue(dialog.editText(original))),JSON.stringify(original))
+            }
+        }
+        function test_staged_parent_rejection_preserves_the_completed_dialog() {
+            const previous=dialog.stagedAdopter
+            try {
+                dialog.openChecked();tryCompare(dialog,"visible",true)
+                dialog.stagedAdopter=function(metadata){return false}
+                verify(!dialog.publishStaged({files:[]}))
+                verify(dialog.visible);verify(!dialog.working)
+                verify(dialog.stagedAdoptionRejected)
+                dialog.stagedAdopter=function(metadata){return true}
+                verify(dialog.publishStaged({files:[]}))
+                tryCompare(dialog,"visible",false)
+            } finally {
+                dialog.stagedAdopter=previous
+            }
+        }
+        function test_saved_export_terminal_is_preserved_when_details_reject() {
+            const limit=presentationBudget.maximumBytes
+            backend.exportAllowed=true;backend.exportSaves=0
+            try {
+                dialog.openChecked();tryCompare(dialog,"visible",true)
+                verify(dialog.openExport())
+                const popup=findChild(dialog,"rxmerPnmExportDialog")
+                tryCompare(popup,"canExport",true)
+                const oldSummary=popup.summary
+                presentationBudget.maximumBytes=presentationBudget.bytes
+                popup.saveFormat("pnm")
+                tryCompare(popup,"busy",false)
+                verify(popup.saved);compare(backend.exportSaves,1)
+                compare(popup.summary,oldSummary)
+                compare(findChild(popup,"pnmExportStatus").text,popup.savedWithoutDetailsMessage)
+                verify(!findChild(popup,"pnmExportSummary").visible)
+                popup.close()
+            } finally {
+                presentationBudget.maximumBytes=limit
+                backend.exportAllowed=false
+            }
+        }
         function test_button_domains_follow_the_public_report(){
             const original=backend.limits
             try {
                 backend.limits=Object.assign({},original,{maximum_captures:8,maximum_value_edits:3,maximum_absolute_tilt_db:12,maximum_ripple_peak_to_peak_db:7,maximum_notch_depth_db:9,maximum_random_standard_deviation_db:2})
-                dialog.open();tryCompare(dialog,"visible",true)
+                dialog.openChecked();tryCompare(dialog,"visible",true)
                 compare(findChild(dialog,"designerCount").validator.top,8)
-                dialog.valueEdits=[{},{}]
+                verify(dialog.replaceState(dialog.information,dialog.viewport,[{},{}],dialog.errorMessage,dialog.diagnostic))
                 verify(findChild(dialog,"designerAddValueEdit").enabled)
-                dialog.valueEdits=[{},{},{}]
+                verify(dialog.replaceState(dialog.information,dialog.viewport,[{},{},{}],dialog.errorMessage,dialog.diagnostic))
                 verify(!findChild(dialog,"designerAddValueEdit").enabled)
-                dialog.valueEdits=[]
+                verify(dialog.replaceState(dialog.information,dialog.viewport,[],dialog.errorMessage,dialog.diagnostic))
                 findChild(dialog,"designerTilt").checked=true
                 findChild(dialog,"designerTiltDb").text="12"
                 verify(!dialog.canStepTilt(1));verify(dialog.canStepTilt(-1))
@@ -77,7 +132,7 @@ Pane {
             const original=backend.limits
             try {
                 backend.limits=null
-                dialog.open();tryCompare(dialog,"visible",true)
+                dialog.openChecked();tryCompare(dialog,"visible",true)
                 verify(!findChild(dialog,"designerApply").enabled)
                 verify(!findChild(dialog,"designerExportPnm").enabled)
                 verify(!findChild(dialog,"designerAddValueEdit").enabled)
@@ -88,7 +143,7 @@ Pane {
             }
         }
         function test_random_variation_only_for_flat_source(){
-            dialog.open();tryCompare(dialog,"visible",true)
+            dialog.openChecked();tryCompare(dialog,"visible",true)
             const source=findChild(dialog,"designerSource"), toggle=findChild(dialog,"designerRandomVariation")
             const deviation=findChild(dialog,"designerRandomDeviation"), seed=findChild(dialog,"designerRandomSeed")
             verify(!toggle.enabled);verify(!deviation.enabled);compare(backend.lastRequest.recipe.random_variation,null)
@@ -103,7 +158,7 @@ Pane {
             compare(backend.lastRequest.recipe.random_variation.seed,41)
         }
         function test_unchecked_tilt_disables_controls_and_retains_draft(){
-            dialog.open();tryCompare(dialog,"visible",true)
+            dialog.openChecked();tryCompare(dialog,"visible",true)
             const toggle=findChild(dialog,"designerTilt"), field=findChild(dialog,"designerTiltDb")
             const scope=findChild(dialog,"designerTiltScope")
             const up=findChild(dialog,"designerTiltUp"), down=findChild(dialog,"designerTiltDown"), direction=findChild(dialog,"designerTiltDirection")
@@ -127,7 +182,7 @@ Pane {
             compare(backend.lastRequest.recipe.tilt.scope.last,20)
         }
         function test_direction_reverses_signed_tilt_without_changing_magnitude_or_zoom(){
-            dialog.open();tryCompare(dialog,"visible",true)
+            dialog.openChecked();tryCompare(dialog,"visible",true)
             findChild(dialog,"designerTilt").checked=true
             const field=findChild(dialog,"designerTiltDb"), direction=findChild(dialog,"designerTiltDirection")
             verify(direction)
@@ -143,7 +198,7 @@ Pane {
             field.text="61";verify(!direction.enabled)
         }
         function test_tilt_steps_keep_text_entry_keyboard_and_limits(){
-            dialog.open();tryCompare(dialog,"visible",true)
+            dialog.openChecked();tryCompare(dialog,"visible",true)
             const field=findChild(dialog,"designerTiltDb"), up=findChild(dialog,"designerTiltUp"), down=findChild(dialog,"designerTiltDown")
             verify(field);verify(up);verify(down)
             const upper=up.mapToItem(null,0,0), lower=down.mapToItem(null,0,0)
@@ -162,7 +217,7 @@ Pane {
             field.text="-7";field.forceActiveFocus();keyClick(Qt.Key_Tab);compare(backend.lastRequest.recipe.tilt.tilt_db,-7)
         }
         function test_ripple_steps_preserve_fractional_entry_and_limits(){
-            dialog.open();tryCompare(dialog,"visible",true)
+            dialog.openChecked();tryCompare(dialog,"visible",true)
             const field=findChild(dialog,"designerRippleDb"), spacing=findChild(dialog,"designerRippleSpacing")
             const up=findChild(dialog,"designerRippleDepthUp"), down=findChild(dialog,"designerRippleDepthDown")
             verify(!up.enabled);dialog.stepRipple(field,1);compare(field.text,"2")
@@ -186,7 +241,7 @@ Pane {
             compare(dialog.viewStart,4000);compare(dialog.viewCount,80)
         }
         function test_notch_steps_keep_band_edge_bounds_scope_and_zoom(){
-            dialog.open();tryCompare(dialog,"visible",true)
+            dialog.openChecked();tryCompare(dialog,"visible",true)
             const center=findChild(dialog,"designerNotchCenter"), width=findChild(dialog,"designerNotchWidth")
             const depth=findChild(dialog,"designerNotchDepth"), edge=findChild(dialog,"designerNotchEdge")
             verify(!findChild(dialog,"designerNotchCenterUp").enabled)
@@ -226,7 +281,7 @@ Pane {
             const originalWidth=scroll.Layout.preferredWidth
             try {
                 dialog.font.pixelSize=12;scroll.Layout.preferredWidth=600
-                dialog.open();tryCompare(dialog,"visible",true)
+                dialog.openChecked();tryCompare(dialog,"visible",true)
                 verify(waitForRendering(dialog.contentItem))
                 compare(findChild(dialog,"designerNotchFields").columns,6)
                 dialog.font.pixelSize=18;scroll.Layout.preferredWidth=350
@@ -253,7 +308,7 @@ Pane {
         }
         function test_json_save_remains_available_outside_binary_range(){
             backend.exportAllowed=false;backend.exportSaves=0
-            dialog.open();tryCompare(dialog,"visible",true)
+            dialog.openChecked();tryCompare(dialog,"visible",true)
             mouseClick(findChild(dialog,"designerExportPnm"))
             const popup=findChild(dialog,"rxmerPnmExportDialog")
             tryCompare(popup,"canJson",true)
@@ -265,7 +320,7 @@ Pane {
         }
         function test_pnm_export_uses_rust_guard_and_keeps_draft(){
             backend.exportAllowed=false;backend.exportSaves=0
-            dialog.open();tryCompare(dialog,"visible",true)
+            dialog.openChecked();tryCompare(dialog,"visible",true)
             const previous=JSON.stringify(backend.lastRequest)
             mouseClick(findChild(dialog,"designerExportPnm"))
             const popup=findChild(dialog,"rxmerPnmExportDialog")
@@ -293,7 +348,7 @@ Pane {
             verify(dialog.visible)
         }
         function test_zoom_plc_navigation_and_capture_changes_keep_window(){
-            dialog.open();tryCompare(dialog,"visible",true)
+            dialog.openChecked();tryCompare(dialog,"visible",true)
             mouseClick(findChild(dialog,"designerZoomPlc"))
             compare(dialog.viewStart,4000);compare(dialog.viewport.count,80)
             findChild(dialog,"designerPreviewCapture").value=15;dialog.refresh()
@@ -313,7 +368,7 @@ Pane {
             compare(scopeProbe.range,false);compare(scopeProbe.value().mode,"all")
         }
         function test_recipe_and_capture_scope_are_independent(){
-            dialog.open();tryCompare(dialog,"visible",true)
+            dialog.openChecked();tryCompare(dialog,"visible",true)
             const notch=findChild(dialog,"designerNotch");verify(notch);notch.checked=true;dialog.refresh()
             compare(backend.lastRequest.recipe.notch.scope.mode,"all")
             const scope=findChild(dialog,"designerNotchScope");verify(scope)
@@ -328,7 +383,7 @@ Pane {
         }
         function test_cancel_does_not_stage_and_new_flat_source_is_explicit(){
             const previous=backend.pending
-            dialog.open();tryCompare(dialog,"visible",true)
+            dialog.openChecked();tryCompare(dialog,"visible",true)
             const source=findChild(dialog,"designerSource");source.currentIndex=1
             findChild(dialog,"designerCount").text="50";dialog.refresh()
             compare(backend.lastRequest.source,"flat");compare(backend.lastRequest.capture_count,50)

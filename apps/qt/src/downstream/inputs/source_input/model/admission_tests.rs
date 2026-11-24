@@ -14,6 +14,10 @@ const FIXTURE_LIMIT: RetainedResources = RetainedResources {
     shared_roots: usize::MAX,
     channel_count: usize::MAX,
     slot_count: usize::MAX,
+    presentation_utf16_bytes: 0,
+    presentation_entries: 0,
+    retained_views: 0,
+    open_views: 0,
 };
 // Payload bytes, ordered entries and shared roots are three independent quantities.
 const RETENTION_DIMENSION_COUNT: usize = 3;

@@ -10,6 +10,8 @@ import "../instruments/spectrum"
 WorkbenchDialog {
     id:dialog
     property var viewport:({points:[],x_ticks:[],y_ticks:[]})
+    property bool presentationRejected: false
+    property string presentationMessage: ""
     signal contextHelpRequested(string code)
     title:"Combined Channel Response"
     parent:Overlay.overlay;anchors.centerIn:parent
@@ -19,6 +21,6 @@ WorkbenchDialog {
     contentItem:ColumnLayout {
         Label {text:"Accepted configuration · before receiver correction";color:dialog.theme.muted;Layout.fillWidth:true;wrapMode:Text.WordWrap}
         SpectrumPlot {theme:dialog.theme;viewport:dialog.viewport;Layout.fillWidth:true;Layout.fillHeight:true}
-        ContextualStatus {theme:dialog.theme;text:dialog.viewport.error || "";diagnostic:dialog.viewport.diagnostic || null;Layout.fillWidth:true;onHelpRequested:function(code){dialog.contextHelpRequested(code)}}
+        ContextualStatus {theme:dialog.theme;text:dialog.presentationRejected ? dialog.presentationMessage : dialog.viewport.error || "";diagnostic:dialog.presentationRejected ? null : dialog.viewport.diagnostic || null;Layout.fillWidth:true;onHelpRequested:function(code){dialog.contextHelpRequested(code)}}
     }
 }

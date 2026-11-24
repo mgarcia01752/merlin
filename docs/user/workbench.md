@@ -32,6 +32,23 @@ used by its finishing worker. Starting another run also needs room for its timin
 history while the previous timing is still retained. If this preparation cannot
 fit, the previous results, timing and configuration stay available.
 
+## Presentation limits
+
+If a new plot, selector or help view cannot fit, MERLIN displays **Presentation
+limits reached; previous view preserved.** The previously displayed observation
+and its selection stay together. Native Stop, Pause and completion remain live;
+a successfully applied configuration or saved export remains successful even
+when its optional display details cannot be replaced. Start waits for a valid
+current presentation.
+
+Closing a window frees its open-view slot. Its hidden data may still be retained;
+closing alone does not promise that a larger replacement will fit. Try a smaller
+inspection or clear the relevant inputs through their normal controls. Save the
+accepted project before restarting if you need to release all retained views.
+A rejected optional display does not change the scientific simulation limits.
+
+![Presentation limit notice on the actual dark workbench](../images/workbench/presentation-limit-dark.png)
+
 Actions throughout the workbench and its windows share rounded buttons with
 consistent spacing and visible keyboard focus. Apply accepts an editor's draft;
 Cancel or X discards it. Close dismisses a viewer. Tabs, diagram symbols and

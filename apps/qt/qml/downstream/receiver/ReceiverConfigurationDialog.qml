@@ -6,22 +6,38 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../../shared/components"
+import "../../shared/presentation"
 WorkbenchDialog {
     id: dialog
     required property var backend
     required property var settingsBackend
     required property var runState
-    property var draft: ({})
-    property string errorMessage: ""
-    property var diagnostic: null
+    readonly property var draft: presentation.value ? presentation.value.draft : ({})
+    readonly property string errorMessage: presentation.value ? presentation.value.error : ""
+    readonly property var diagnostic: presentation.value ? presentation.value.diagnostic : null
+    property PresentationOwner presentationCoverage: PresentationOwner {id:presentation;theme:dialog.theme}
+    /** Admit the complete existing receiver draft and error/help context. */
+    function adoptDraft(value,error,diagnostic) {
+        return presentation.replace({draft:value,error:error,diagnostic:diagnostic,
+            modes:["Supplied CM channel estimate","Pilot-based channel estimation","Pilot-based channel and noise estimation (MCE)"]})
+    }
+    /** Admit real editor capacities without changing their accepted domains. */
+    function prepareText() {return presentation.reserveTextFields([averaging.contentItem,iterations.contentItem])}
+    Component.onCompleted: prepareText()
     signal contextHelpRequested(string code)
     signal configurationApplied()
-    function setMode(mode) { draft=Object.assign({},draft,{receiver_mode:mode}) }
+    function setMode(mode) { return adoptDraft(Object.assign({},draft,{receiver_mode:mode}),errorMessage,diagnostic) }
     title: "Receiver Configuration"
     parent: Overlay.overlay; anchors.centerIn: parent
     width: Math.min(820,parent ? parent.width - 40 : 820)
     modal: true; standardButtons: Dialog.NoButton
-    onOpened: { draft=Object.assign({},runState.options); draft.mce=Object.assign({minimum_variance:1e-8,averaging_symbols:16},draft.mce || {}); errorMessage="";diagnostic=null }
+    onOpened: {
+        if (prepareText()) {
+            const value=Object.assign({},runState.options)
+            value.mce=Object.assign({minimum_variance:1e-8,averaging_symbols:16},value.mce || {})
+            adoptDraft(value,"",null)
+        }
+    }
     contentItem: ColumnLayout {
         spacing: 14
         GridLayout {
@@ -32,9 +48,7 @@ WorkbenchDialog {
                 objectName: "receiverCorrection"
                 Layout.fillWidth: true
                 Layout.preferredWidth: 480
-                model: ["Supplied CM channel estimate",
-                        "Pilot-based channel estimation",
-                        "Pilot-based channel and noise estimation (MCE)"]
+                model: presentation.value ? presentation.value.modes : []
                 currentIndex: dialog.draft.receiver_mode === "merlin_estimated" ? 2
                             : dialog.draft.receiver_mode === "pilot_estimated" ? 1 : 0
                 onActivated: function(index) {
@@ -58,27 +72,32 @@ WorkbenchDialog {
                 visible: dialog.draft.receiver_mode === "merlin_estimated"
             }
             SpinBox {
+                id:averaging
                 objectName: "receiverMceAveraging"
                 visible: dialog.draft.receiver_mode === "merlin_estimated"
-                from: 1; to: 128; editable: true
+                from: 1; to: 128; enabled:presentation.textAdmitted;editable:presentation.textAdmitted
+                textFromValue:presentation.textAdmitted ? function(value,locale){return Number(value).toLocaleString(locale,"f",0)} : function(value,locale){return ""}
                 value: dialog.draft.mce ? dialog.draft.mce.averaging_symbols : 16
-                onValueModified: dialog.draft.mce.averaging_symbols=value
+                onValueModified: dialog.adoptDraft(Object.assign({},dialog.draft,{mce:Object.assign({},dialog.draft.mce,{averaging_symbols:value})}),dialog.errorMessage,dialog.diagnostic)
                 ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered || visualFocus
                 ToolTip.text: "Smooth the pilot-derived noise estimate over this many symbols. This does not change the 128-symbol full pilot-history span."
             }
             Label { text: "Decoder iteration limit"; color: theme.text }
-            SpinBox { from:1; to:100; editable:true; value:dialog.draft.max_iterations || 50; onValueModified: dialog.draft.max_iterations=value }
+            SpinBox {id:iterations;from:1;to:100;enabled:presentation.textAdmitted;editable:presentation.textAdmitted;value:dialog.draft.max_iterations || 50
+                textFromValue:presentation.textAdmitted ? function(value,locale){return Number(value).toLocaleString(locale,"f",0)} : function(value,locale){return ""}
+                onValueModified:dialog.adoptDraft(Object.assign({},dialog.draft,{max_iterations:value}),dialog.errorMessage,dialog.diagnostic)
+            }
         }
-        ContextualStatus { objectName:"receiverConfigError";theme:dialog.theme;text:dialog.errorMessage;diagnostic:dialog.diagnostic;color:dialog.theme.statusError;Layout.fillWidth:true;onHelpRequested:function(code){dialog.contextHelpRequested(code)} }
+        ContextualStatus { objectName:"receiverConfigError";theme:dialog.theme;text:presentation.rejected ? presentation.message : dialog.errorMessage;diagnostic:presentation.rejected ? null : dialog.diagnostic;color:dialog.theme.statusError;Layout.fillWidth:true;onHelpRequested:function(code){dialog.contextHelpRequested(code)} }
     }
     footer: ApplyCancelFooter {
         theme: dialog.theme
         applyObjectName: "receiverConfigApply"
-        applyEnabled: !dialog.runState.busy
+        applyEnabled: !dialog.runState.busy && presentation.textAdmitted && !presentation.rejected && !!presentation.value
         onApplied: {
-            dialog.errorMessage = backend.apply(JSON.stringify(dialog.draft), settingsBackend.current())
-            dialog.diagnostic=JSON.parse(backend.admission_help())
-            if (!dialog.errorMessage.length) {
+            const error=backend.apply(JSON.stringify(dialog.draft),settingsBackend.current())
+            dialog.adoptDraft(dialog.draft,error,JSON.parse(backend.admission_help()))
+            if (!error.length) {
                 dialog.configurationApplied()
                 dialog.close()
             }

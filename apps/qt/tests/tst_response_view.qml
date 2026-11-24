@@ -5,11 +5,20 @@
 import QtQuick
 import QtQuick.Controls
 import QtTest
+import "fixtures"
 import "../qml/shared/theme"
 import "../qml/downstream/instruments/response"
 Pane {
     id:window;width:1160;height:760;visible:true
-    Theme {id:theme}
+    PresentationBudget {
+        id: presentationBudget
+        // Independent capacities for existing presentation-only fixture graphs.
+        maximumBytes: 10000000
+        maximumEntries: 100000
+        maximumViews: 96
+        maximumOpen: 12
+    }
+    Theme { presentationBackendFactory: presentationBudget.createAdapter;id:theme}
     ThemePalette {targetControl:window;theme:theme}
     ThemePalette {targetControl:window.Window.window;theme:theme}
     ThemePalette {targetControl:dialog;theme:theme}
@@ -27,7 +36,7 @@ Pane {
     TestCase {
         name:"ResponseView";when:windowShown
         function test_frequency_and_echo_controls() {
-            dialog.open();tryCompare(dialog,"opened",true)
+            dialog.openChecked();tryCompare(dialog,"opened",true)
             findChild(dialog,"receiverResponseSource").currentIndex=2
             const velocity=findChild(dialog,"receiverVelocity")
             compare(velocity.visible,false)

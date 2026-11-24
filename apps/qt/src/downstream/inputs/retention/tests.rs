@@ -54,6 +54,10 @@ fn editor_root_underflow_and_every_dimension_reject_without_counter_changes() {
         shared_roots: usize::MAX,
         channel_count: usize::MAX,
         slot_count: usize::MAX,
+        presentation_utf16_bytes: 0,
+        presentation_entries: 0,
+        retained_views: 0,
+        open_views: 0,
     });
     assert!(admit_model(Vec::<u8>::new(), Resources::default(), &budget).is_err());
     assert_eq!(budget.usage(), Resources::default());
