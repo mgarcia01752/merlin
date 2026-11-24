@@ -6,6 +6,7 @@
 pub(crate) mod about_info;
 pub(crate) mod branding;
 pub(crate) mod closed_loop;
+pub(crate) mod direction_shell;
 pub(crate) mod measurement_input;
 pub(crate) mod ofdm_settings;
 pub(crate) mod presentation_retention;

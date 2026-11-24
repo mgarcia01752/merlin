@@ -4871,8 +4871,10 @@ logical UTF-16 bytes, array/object entries, retained views and open views.
 Keep them separate from actual Rust capacities and standard-channel populations.
 No new accounting framework or scientific/public API is required.
 
-Named desktop admission policies are 64 MiB logical UTF-16, 1,000,000 logical
-entries, 128 retained views and 32 open views. These are independent application
+At C5 acceptance, named desktop admission policies were 64 MiB logical UTF-16,
+1,000,000 logical entries, 128 retained views and 32 open views. The later
+[SHELL adjustment](#uiu-shell-01-persistent-tabs-and-scoped-actions) accommodates
+both actual direction trees. These are independent application
 limits, not PHY or Qt allocation/RSS claims. The existing counter checks every
 quantity atomically, and its actual layout remains covered by the original host
 witness. Tests use independent explicit ceilings rather than repeating policy.
@@ -4957,3 +4959,115 @@ the complete applicable acceptance gates. Source-only preparation and historical
 frontier descriptions do not override this current result. Persistent visible
 tabs and action routing remain UIU-SHELL-01; no additional SESSION infrastructure
 is authorized by this closure.
+
+### UIU-SHELL-01 persistent tabs and scoped actions
+
+SESSION is accepted at `50339f01e2c0829350ac39d4be0fe893eee74da6`.
+This implements the existing [REQ-UIU-05/06/08/25](../../../requirements.md#req-uiu-05)
+and [UIU-SHELL-01](../../checklist.md#task-uiu-shell-01), without reopening session,
+scientific API or FEC work. Reuse the reviewed persistent-tab source and existing
+native direction controls. Both view instances remain alive when hidden; the
+canonical application owns selection, direction keys, dirty flags and dispatch.
+Qt never treats a display/result refresh token as session identity.
+
+| Disposition | Owner/file | Responsibility and acceptance |
+| --- | --- | --- |
+| Edit | `apps/qt/src/shell/application.rs` | Expose the existing selected-direction cursor; selection must not configure, cancel or release another direction. |
+| Add | `apps/qt/src/shell/presentation.rs` | Bounded scalar projection of existing canonical keys, dirty flags and active phase, plus exact selected-direction identity validation. No scientific readiness or results are inferred. Test unconfigured identities, selection during run/pause/cancel and stale action rejection. |
+| Add | `apps/qt/src/bridge/direction_shell.rs` | Thin `DirectionShell` QObject returns that projection, accepts two direction tags and validates unchanged opaque identities. Retains existing host handles only; no scientific owner or parallel interface. |
+| Reuse/adapt | `apps/qt/qml/shell/directions/PersistentDirectionTabs.qml`; `apps/qt/tests/shell/` | Adopt only the three prepared component/fixture/test paths from `93dd675`; preserve persistent Loader ownership, selected-source checks and keyboard/focus assertions. Admit dynamic host display via the accepted PresentationOwner. Existing source handoff remains historical. |
+| Edit | `apps/qt/src/{shell,bridge}/mod.rs`; `apps/qt/build.rs`; `apps/qt/qml/Main.qml` | Root-only registration and composition. Poll both native adapters independently of tab visibility; route selected actions after canonical identity validation. Keep File/Settings/About/update infrastructure shared. |
+| Edit | `apps/qt/qml/downstream/DownstreamWorkbench.qml` | Reuse working downstream editors/instruments; make internal title/actions optional for shared-shell composition, retaining standalone defaults and current tests. |
+| Reuse later | Approved isolated `qml/upstream/` source | Source-only preparation proceeds independently. Startup/editing/scientific instruments retain their own US task acceptance; the shell must not fabricate their backend observations or readiness. |
+
+The finite implementation order is canonical scalar identity/selection projection,
+then actual persistent-tab composition/action routing, then complete applicable
+SHELL acceptance and current native visual. Focused units run targeted Qt tests,
+format/Clippy/boundary and traceability; native registration/layout expands to a
+fresh optimized build and real launch/tab-switch checks. Full unchanged backend
+and wheel evidence is reused after exact source verification. Native upstream
+configuration/instruments, unified file/recovery adoption and final numeric audit
+retain their existing delivery tasks and acceptance; no new requirement or
+memory mechanism is introduced. The
+[SHELL receipt](shell-acceptance-evidence.json) and
+[primary validation](validation.md#uiu-shell-01-persistent-tabs-and-scoped-actions)
+record acceptance of this implementation; upstream editing, project/recovery
+and instrument acceptance remain separate.
+
+The shell's concrete presentation owners are Add
+`apps/qt/qml/shell/directions/DirectionShellHost.qml` (admitted scalar metadata,
+independent upstream polling and exact-origin action routing) and Add
+`DirectionRunControls.qml` in that directory (shared presentation-only controls
+with bounded derived text). Their focused QML fixtures/tests live under
+`apps/qt/tests/shell/`. The current downstream action row/header retain their
+standalone defaults and become optional only in Main's shared composition.
+Upstream Configure initially routes to the approved UCD drill-in; editing and
+scientific observation bindings remain the explicit US task gates. File actions
+remain available only for the direction whose native file adapter is implemented;
+an upstream selection must never fall through into downstream Save/Open/New.
+Unified project/recovery delivery retains UIU-FILE-01/UIU-RECOVERY-01.
+
+
+Edit `shared/theme/Theme.qml` for one named session-poll cadence. Main uses one
+Timer for both adapters, and the downstream standalone Timer is optional rather
+than duplicated. Edit the existing opt-in `validation/SessionPresentationProbe.qml`
+only to accept a caller-owned capture Item and find the shared footer notice;
+its accepted Apply/Help checks remain unchanged. The shell capture includes tabs
+and controls while both native direction owners remain independent.
+The [isolated upstream source receipt](agent-handoffs/upstream-presentation-integration.md)
+is reviewed preparation; actual Main creation and task acceptance remain primary.
+
+The focused shell review identified three compatibility corrections within this
+task: retry rejected footer text on the existing host poll cadence after pressure
+clears; retain the existing ContextualStatus diagnostic/F1 and progress-age help;
+and observe the preserved void downstream Start signature through its actual
+polled busy state or changed result token with real run timing. Result tokens are
+only run-refresh evidence, never session identities. Rejected Start keeps its
+original native reason. Tests use a void downstream fixture, including rejection
+and completion before polling, rather than a string-returning substitute.
+
+The actual linked build found a pinned qt-build-utils 0.7.3 basename collision
+between the two VerificationDialog files. Rename only the incoming upstream type
+to UpstreamVerificationDialog and update its owning reference/registration.
+Build registration rejects duplicate cache basenames before compilation; retain
+all compiled dependencies and caches. The source-only adoption receipt preserves
+the original names/hashes; final integration evidence records this narrow change.
+
+Add `qml/validation/DirectionShellProbe.qml` as one fixed opt-in native acceptance
+consumer; Main/build registration remain root-owned. The isolated source hash is
+`74b3aaca68c9f3f2466a94219bcef95e731528a31aa52882e3087dc9cc6da082`.
+It uses actual Main menu/control/tab routes and native keys, acknowledged paused
+lease, exact preserved options, dark images and terminal cancellation. No general
+loader or scientific API is introduced. The
+[debug inventory](../../debugging.md#direction-shell-probe) documents invocation
+and evidence requirements. Source syntax alone does not establish native success.
+
+Actual two-canvas startup saturated the existing 128 retained-view slots:
+the diagnostic counter showed 128 retained views, zero open views, 6,501,756
+logical bytes and 8,144,194 Rust payload bytes. Workbench Open completed, but the
+shared footer and a new receiver window could not obtain view admission.
+The upstream tree alone adds 21 existing owners before any drill-in opens.
+Change only `src/shell/constants.rs::MAX_SESSION_RETAINED_VIEWS` to 256 so both
+persistent trees can keep their original guarded data. Existing byte, entry,
+root, transport, open-view and scientific limits remain unchanged. This resolves
+REQ-UIU-05/08 under the existing REQ-UIU-07 contract; it adds no accounting
+category, mechanism or scientific API and does not reopen SESSION acceptance.
+Keep exact-ceiling rejection tests and actual two-canvas/native-open acceptance.
+Temporary private counter logging is removed before the accepted build.
+
+The SHELL implementation adopts only the thirteen upstream startup/drill-in QML
+files and startup test. ResourceGridDialog/View, its test and two fixtures stay
+preserved at `aaddc5ba61698f7b346116484b5d6be4a24fe57a` in the isolated upstream
+worktree for UIU-US-04. Their earlier primary fixture run remains recorded as
+source preparation, not shipped grid functionality or task acceptance.
+
+The final primary executable passes actual persistent-child, canonical-cursor,
+idle/running/paused switching, shared Settings/About, Configure, foreign control
+and File rejection, and genuine downstream terminal checks. Its pressure probe
+also preserves accepted receiver Apply and Help recovery with both view trees
+retained. Complete affected Qt Rust/QML, boundary, packaging-resource and
+documentation gates are recorded in the receipt. Unchanged backend/native Python
+milestone evidence is explicitly reused after all 852 relevant source files
+match the accepted SESSION commit. No new wheel or installed-platform claim is
+made. Continue UIU-US-01 with the existing approved layout and configuration
+contract, without reopening SESSION or backend planning.

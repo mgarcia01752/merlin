@@ -202,6 +202,24 @@ impl ApplicationSessions {
         lock(self.sessions.value()).open_target(direction)
     }
 
+    /// Reads the existing presentation cursor without consulting an active worker.
+    ///
+    /// # Returns
+    /// The selected direction, including when both native owners are unconfigured.
+    pub(crate) fn selected_direction(&self) -> Direction {
+        lock(self.sessions.value()).save_target().key.direction
+    }
+
+    /// Selects a presentation context without changing configuration or execution.
+    ///
+    /// # Arguments
+    /// * `direction` - Existing direction whose own controls should be presented.
+    ///
+    /// Selection does not cancel, pause, resume or release the global run lease.
+    pub(crate) fn select_direction(&self, direction: Direction) {
+        lock(self.sessions.value()).select(direction);
+    }
+
     /// Adopts readiness after the downstream owner accepts a configuration change.
     ///
     /// # Arguments

@@ -55,7 +55,14 @@ Cancel or X discards it. Close dismisses a viewer. Tabs, diagram symbols and
 capture-tree arrows retain their own shapes. See
 [workbench configuration](workbench-configuration.md) for the shared controls.
 
-The native Qt workbench starts with the single-channel system diagram. Click
+The native Qt workbench has persistent **Downstream (OFDM)** and
+**Upstream (OFDMA)** tabs below the shared menus. Switching tabs preserves each
+direction's work. One simulation can run at a time; a paused run still owns that
+slot. The lower-right controls always address the selected direction. To stop or
+resume a downstream run while viewing Upstream, return to Downstream. The other
+tab displays which direction is active.
+
+Downstream opens the existing single-channel system diagram. Click
 OFDM Channel Descriptor (OCD), PRBS-TX, Transmitter, Channel Simulator, Receiver, PRBS-RX or one
 of the measurement-input blocks to open its section dialog. Close the dialog
 or press Escape to return. Use **Settings → Global → Light/Dark mode** to change the palette and icon
@@ -65,22 +72,27 @@ Use the [curated workbench examples](workbench-examples.md) for single or multip
 RxMER inputs on a matching OFDM grid. Native Open begins in that examples root;
 future installed desktop packages must ship the same portable WB bundles.
 
-The left icon/WB gutter has been removed so the diagram uses the available width.
-Menus and the branded header remain at the top. PRBS-RX opens a structured
+The left icon/WB gutter and large internal branding header are removed so the
+diagram uses the available space. Shared File, Settings, About and update actions
+remain above the tabs. PRBS-RX opens a structured
 [comparison summary with payload graphs](closed-loop-workbench.md#inspect-actual-results).
 
-The heading displays the full toolkit title and logo; the small MERLIN label
-above the title is removed. The secondary subtitle has
-been removed to keep the header compact.
+![Downstream tab with its original simulation paused](../images/workbench/unified-downstream-dark.png)
 
-![Workbench header and system diagram](../images/workbench/workbench-header-dark.png)
+The Upstream tab shows the approved CM transmitter → channel → CMTS receiver
+layout. Its current drill-ins are read-only; upstream configuration, scientific
+instrument bindings and project actions remain under integration. Missing data
+is shown as unavailable. File actions are currently enabled on Downstream only;
+selecting Upstream cannot save or replace the downstream project. Settings and
+About remain available from either tab.
+
+![Upstream tab while the downstream simulation remains paused](../images/workbench/unified-upstream-dark.png)
 
 The revised diagram groups **OCD** and **DPD** inside **Transmitter Configuration**
 at the left. Click either card to open its own editor. Their shared connector
 feeds Transmitter; their status stripes still reflect independent validation.
 PRBS-TX, RxMER and PRBS-RX align above Transmitter, Channel Simulator and Receiver.
-The MERLIN logo and accent divider complete the header. All cards retain the
-same keyboard, hover and light/dark behavior.
+All cards retain the same keyboard, hover and light/dark behavior.
 
 OCD/DPD merge at the center of their two cards; DS Channel Estimate branches
 equally into the centers of Channel Simulator and Receiver. The old supplied-H

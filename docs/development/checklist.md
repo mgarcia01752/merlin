@@ -624,12 +624,12 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   [Persistent presentation admission / C5](features/unified-qt-workbench/validation.md#uiu-session-01-persistent-presentation-admission) passes all 416 Qt Rust cases, eleven QML suites (163 pass records including init/cleanup), optimized build, six current native probes and actual receiver Apply/Help under held pressure plus recovery. Original observations, native validation and scientific limits remain. One frozen condition remains: C6 integrated acceptance; SESSION stays unchecked. Earlier unit frontier/count descriptions are checkpoint history.
 
 <a id="task-uiu-shell-01"></a>
-- [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
-  Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).
+- [x] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
+  Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-07](../requirements.md#req-uiu-07), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).
   Dependencies: [UIU-SESSION-01](#task-uiu-session-01).
   Architecture/files: [shell owner](../architecture.md#unified-qt-session-and-file-lifecycle), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Preserve File/Settings/About/update and DS workbench, remove internal canvas title, retain controls/focus; test switching during idle/run/pause, selections, separate dirty states and second Start rejection.
-  Evidence: [shell acceptance plan](features/unified-qt-workbench/validation.md#shell); pending implementation/acceptance.
+  Evidence: [SHELL acceptance](features/unified-qt-workbench/validation.md#uiu-shell-01-persistent-tabs-and-scoped-actions) passes all 421 Qt Rust cases, fourteen QML suites (198 pass records including init/cleanup), Clippy/format/final boundary, optimized build, six native startup/project probes, actual idle/run/pause/menu/control routing and receiver Apply/Help pressure/recovery. Twenty-five packaging resource contracts pass. Unchanged backend/native milestone evidence is explicitly reused; US editing/instruments, unified File/recovery and installed-platform acceptance remain separate. Continue UIU-US-01.
 
 <a id="task-uiu-us-01"></a>
 - [ ] **UIU-US-01** Implement approved upstream startup layout and configuration drill-ins.

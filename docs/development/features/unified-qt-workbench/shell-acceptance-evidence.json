@@ -1,0 +1,758 @@
+{
+  "task": "UIU-SHELL-01",
+  "accepted_base": "50339f01e2c0829350ac39d4be0fe893eee74da6",
+  "status": "Accepted in primary MERLIN workspace; focused local commit follows.",
+  "requirements": [
+    "REQ-UIU-05",
+    "REQ-UIU-06",
+    "REQ-UIU-07",
+    "REQ-UIU-08",
+    "REQ-UIU-25"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-session-and-file-lifecycle",
+  "design": "docs/development/features/unified-qt-workbench/design.md#uiu-shell-01-persistent-tabs-and-scoped-actions",
+  "validation_level": "Level 2 official SHELL acceptance; native/CXX/cross-direction consumer expansion",
+  "raw_evidence": "Ignored docs/development/local/unified-qt-workbench/shell-01/; final pressure raw under session-01-presentation/shell-01-accepted/; six smokes in shell-01-accepted-native-results.json",
+  "source_sha256": {
+    "apps/qt/build.rs": "909b010fee27ae0384baa2dd39fd594dd6f0c6ee4d724999490d95af4537d642",
+    "apps/qt/qml/Main.qml": "19b65f7b4167c3a87f811d8298a530272c133f79c9cc40ce82e6d2dc76d25cc9",
+    "apps/qt/qml/downstream/DownstreamWorkbench.qml": "96417859d0067d9f3b930d8061addaaf2114a026149aa6a2127b1c35c8aa0423",
+    "apps/qt/qml/shared/theme/Theme.qml": "863426e3b60eaa48f0dc3f818c09065a85aa83bbbdf49b6a94475a12b6e437e3",
+    "apps/qt/qml/shell/directions/DirectionRunControls.qml": "32ad3eb02f4b550ce2f3f940568f0ba6a9f6f702844bca91b84946430746dd06",
+    "apps/qt/qml/shell/directions/DirectionShellHost.qml": "4aeba0c780e0d04c744640657643f6056e2b6c5e9ee80c583a0783a95678a93e",
+    "apps/qt/qml/shell/directions/PersistentDirectionTabs.qml": "28305e8de788d8ae437a69c56484b61fc11e39377a7dda806c1d72742d6c151b",
+    "apps/qt/qml/upstream/BurstProfilesDialog.qml": "bb48727854c1762e09e2e5a4989c68890321ae5eeff8fa28a679b840fa6c9613",
+    "apps/qt/qml/upstream/ChannelDialog.qml": "3609b2cb7b10f73e55b93dcfd11c724baf5d06da1d226b2cf82911d593dbab6e",
+    "apps/qt/qml/upstream/GrantsDialog.qml": "1c3d7f841d29167ae526176252b68174222ae6224af02fe699ae5a074ec25422",
+    "apps/qt/qml/upstream/PreEqualizationDialog.qml": "f74c9259cefdef90d9c863895eff730919e5191d8319e2ec99bcd8bf4ce4eaef",
+    "apps/qt/qml/upstream/ReceiverDialog.qml": "8807c368205eff35ddb6d3da2b77e3aa2f7406c588236945283b3edc9252914a",
+    "apps/qt/qml/upstream/RxmerDialog.qml": "0c49ac043a35f8de48d0a5fadb364e3e1f7583cc53d1bf300c37a0f93c6abd2c",
+    "apps/qt/qml/upstream/SourceDialog.qml": "313442d568d64379a3583584bdb7b29f88c495ca5e6ff87d4b70e190aa0af294",
+    "apps/qt/qml/upstream/TransmitterDialog.qml": "75ab6f87f41dbc308f4a8d5fef37adef4a6d33a7532b3d3a9a71f467d4e105f2",
+    "apps/qt/qml/upstream/UcdConfigurationDialog.qml": "9937af805e01e73277ee3f8d8c49095b10d846304223d23afeb7b6c86f51800a",
+    "apps/qt/qml/upstream/UpstreamConnection.qml": "9167d353dda8a5023a958eda55954988d94a04a58ea34b950fbd588af5f8de82",
+    "apps/qt/qml/upstream/UpstreamDetailDialog.qml": "b45c958895e7c6a7d92a4571228b3a1f892c0a14170d0bf374889bbf6e8dd285",
+    "apps/qt/qml/upstream/UpstreamVerificationDialog.qml": "cc28492549922058ba408b60e7807eb7fa4ee539060e2c287185ec5d2ff53a30",
+    "apps/qt/qml/upstream/UpstreamWorkbench.qml": "77cfcb92f38426b970e2d2d539360e3b4654c4355adbc899ee693706f8f1dcaf",
+    "apps/qt/qml/validation/DirectionShellProbe.qml": "7317d1a5f2082c8fd9fa9daa53daf913876c221f14464b227281c3abf43c7566",
+    "apps/qt/qml/validation/SessionPresentationProbe.qml": "3507a6fcd5481a969aba3379fb886c70ebe28e33cd4129a59caada524c082fd7",
+    "apps/qt/src/bridge/direction_shell.rs": "9e93dc38c93c00bac9a427abe0df90c0410d8070e7efcc4c0e86b332ffab3a6d",
+    "apps/qt/src/bridge/direction_shell/tests.rs": "78c186c1aca5b0394fd0a5f0187e5046c64d5ef1a3d3b3e8c6cb75a758e564b6",
+    "apps/qt/src/bridge/mod.rs": "8ccb588883369ee37178d381a4da27715a8f9a89996f0a5467971bea7eb6d55a",
+    "apps/qt/src/shell/application.rs": "569e63bf1f10a1f7c08c1f2667a72ffa3f157ba7007dbf65f3cb51482fa624be",
+    "apps/qt/src/shell/constants.rs": "f2fdd0e1d0a4d7355437be97242ec9570540094a90839d5407150098a66c9ffb",
+    "apps/qt/src/shell/mod.rs": "c8726fa551286b661fb9b2611ba90358ea086deb6ec952d921ffd75ddf2b6e1d",
+    "apps/qt/src/shell/presentation.rs": "c17bc4ec52d90d2695a809c63110b42f7a9f3bfc4aa9794ba7bcb5257c564dd3",
+    "apps/qt/src/shell/presentation/tests.rs": "d462fcadfc3b5b0436db7fc459f8dd2ace63302b0f07db31bc59a6ad1c3ff596",
+    "apps/qt/tests/shell/DirectionPresentationFixture.qml": "cffaacfccf13a9892d0f71ad58d1858795d091148ee3817c0ca43e2a204b385a",
+    "apps/qt/tests/shell/tst_direction_tabs.qml": "f085b55568e50f614ed3ea9ec66ff161507c43138789ddf0ac24f661e747181e",
+    "apps/qt/tests/shell/tst_shell_host.qml": "7f98895ffc9f97fad0b0cc527480543a6a3a5a6153202bb2d862bd85dcb5a63e",
+    "apps/qt/tests/upstream/tst_upstream_workbench.qml": "7779c4e002e8dc40bf4644be8c432a7d0651541b3619dff771f6a95f0ca599d9"
+  },
+  "source_adoption": {
+    "tabs": {
+      "commit": "93dd675fc34250ce961d14c640f9decd76f66f16",
+      "parent": "65c91e73f9c09fce56b880b7c303ca72483cf2ee",
+      "paths": [
+        "apps/qt/qml/shell/directions/PersistentDirectionTabs.qml",
+        "apps/qt/tests/shell/DirectionPresentationFixture.qml",
+        "apps/qt/tests/shell/tst_direction_tabs.qml"
+      ],
+      "excluded_existing_handoff": "session-shell.md preserved unchanged",
+      "scope": "Reviewed source-only prepared component;primary runtime/host adoption pending."
+    },
+    "upstream_frozen_commit": "aaddc5ba61698f7b346116484b5d6be4a24fe57a",
+    "upstream_final_scope": "13 startup/drill-in QML, startup test, unique handoff. Incoming VerificationDialog renamed UpstreamVerificationDialog to avoid real compiled-cache basename collision.",
+    "deferred_grid": {
+      "source_commit": "aaddc5ba61698f7b346116484b5d6be4a24fe57a",
+      "files": [
+        {
+          "path": "apps/qt/qml/upstream/ResourceGridDialog.qml",
+          "sha256": "81b71ab8a77198dc305c5e1572e7037482f30583a3af61d2bdd9fa73f5bb9574",
+          "disposition": "Preserved exact frozen source commit/worktree; defer primary adoption to UIU-US-04"
+        },
+        {
+          "path": "apps/qt/qml/upstream/ResourceGridView.qml",
+          "sha256": "a4dd09d89ed7484da58637f5a0144524daae959f742d388f9a6fc86fd124b8b7",
+          "disposition": "Preserved exact frozen source commit/worktree; defer primary adoption to UIU-US-04"
+        },
+        {
+          "path": "apps/qt/tests/upstream/tst_resource_grid.qml",
+          "sha256": "2658aa1227ef72f1e3baf6c643115e7fa9c609cb3768464c76bde5602c81ad3c",
+          "disposition": "Preserved exact frozen source commit/worktree; defer primary adoption to UIU-US-04"
+        },
+        {
+          "path": "apps/qt/tests/upstream/fixtures/ResourceGridFixture.js",
+          "sha256": "e527493ed9bcfe45bbe85c407e22928db32f9ed946ad7563f4aa01c90e3f344c",
+          "disposition": "Preserved exact frozen source commit/worktree; defer primary adoption to UIU-US-04"
+        },
+        {
+          "path": "apps/qt/tests/upstream/fixtures/README.md",
+          "sha256": "0f10f702a27073f294effa2c6c9ffa34fca82c3987726650671f2584b2c2ccbe",
+          "disposition": "Preserved exact frozen source commit/worktree; defer primary adoption to UIU-US-04"
+        }
+      ]
+    },
+    "source_only_evidence_not_task_acceptance": true,
+    "probe_source_commit": "Uncommitted isolated preparation; original SHA256 74b3aaca68c9f3f2466a94219bcef95e731528a31aa52882e3087dc9cc6da082; root adapted only scalar diagnostics and strengthened idle/running checks."
+  },
+  "acceptance": {
+    "persistent_native_direction_views": "Actual Main children remain identical through idle/running/paused switching; hidden direction is disabled without destruction.",
+    "canonical_context": "Native cursor and opaque direction/session/generation strings; stale/foreign/hidden action rejection; independently changed dirty states and identities tested.",
+    "shared_actions": "Actual upstream Settings/About, downstream Configure and native Start/Pause/Stop; no upstream File fallthrough. Existing standalone downstream defaults preserved.",
+    "single_run_gate": "Paused downstream lease survives upstream selection; foreign controls reject; actual genuine terminal returns execution slot.",
+    "bounded_presentation": "Original DTO/text owners retained; old/new overlap, static pressure feedback and retry after release. Actual receiver Apply and Help pressure/recovery pass with both trees.",
+    "api_boundary": "Final zero-exception boundary; new native QObject projects existing scalar metadata only. No science/API/schema/dependency changes."
+  },
+  "demonstrated_regressions_and_corrections": [
+    {
+      "failure": "128 existing retained-view slots saturated with both persistent trees; workbench accepted but footer and fresh receiver window rejected.",
+      "actual_counters": {
+        "payload_bytes": 8144194,
+        "container_entries": 8483,
+        "shared_roots": 70,
+        "presentation_utf16_bytes": 6501756,
+        "presentation_entries": 6322,
+        "retained_views": 128,
+        "open_views": 0
+      },
+      "minimum_change": "MAX_SESSION_RETAINED_VIEWS 128 to 256 in existing shared policy owner. All other ceilings and scientific contracts unchanged. Temporary diagnostic logging removed before accepted executable."
+    },
+    {
+      "failure": "Pinned qt-build-utils0.7.3 overwrote generated cache for duplicate VerificationDialog basenames; linker failed.",
+      "minimum_change": "Rename only incoming upstream type; reject duplicate module cache basenames before compilation. Preserve caches/dependency versions."
+    },
+    {
+      "failure": "Injected Main Component theme self-binding produced native missing-theme errors.",
+      "minimum_change": "Unique applicationTheme id; final native stderr clean."
+    },
+    {
+      "failure": "Read-only review identified footer recovery latch, lost ContextualStatus help and false interpretation of void downstream Start.",
+      "minimum_change": "Retry rejected text on existing poll, preserve original help/status, observe actual busy/result-token+timing without changing native signature; direct regression tests."
+    }
+  ],
+  "validation": {
+    "qt_rust": {
+      "label": "qt-rust-consumers",
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+        "--locked",
+        "--bin",
+        "merlin-qt",
+        "--",
+        "--test-threads=2"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 439.6988737849897,
+      "passed": 421,
+      "failed": 0,
+      "ignored": 0,
+      "test_executable_sha256": "ff6a35f03696d61bcc1f2056a74bab7fc6950e6a534a3b8c719a40c0e21676fb"
+    },
+    "qml": {
+      "suites": 14,
+      "pass_records": 198,
+      "functional_records": 170,
+      "initialization_cleanup_records": 28,
+      "failed": 0,
+      "skipped": 0,
+      "commands": [
+        {
+          "label": "tst_presentation_footprint.qml",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/tst_presentation_footprint.qml",
+            "-platform",
+            "offscreen",
+            "-style",
+            "Fusion"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.22098582799662836
+        },
+        {
+          "label": "tst_presentation_owner.qml",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/tst_presentation_owner.qml",
+            "-platform",
+            "offscreen",
+            "-style",
+            "Fusion"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.1277999090088997
+        },
+        {
+          "label": "tst_measurement_presentation.qml",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/tst_measurement_presentation.qml",
+            "-platform",
+            "offscreen",
+            "-style",
+            "Fusion"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.16868040099507198
+        },
+        {
+          "label": "tst_rxmer_designer.qml",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/tst_rxmer_designer.qml",
+            "-platform",
+            "offscreen",
+            "-style",
+            "Fusion"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 4.209143903994118
+        },
+        {
+          "label": "tst_workbench.qml",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+            "-platform",
+            "offscreen",
+            "-style",
+            "Fusion"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 11.797615552990464
+        },
+        {
+          "label": "tst_buttons.qml",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/tst_buttons.qml",
+            "-platform",
+            "offscreen",
+            "-style",
+            "Fusion"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.13813413599564228
+        },
+        {
+          "label": "tst_control_palette.qml",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/tst_control_palette.qml",
+            "-platform",
+            "offscreen",
+            "-style",
+            "Fusion"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.0439708699996118
+        },
+        {
+          "label": "tst_tooltips.qml",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/tst_tooltips.qml",
+            "-platform",
+            "offscreen",
+            "-style",
+            "Fusion"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 5.024347896993277
+        },
+        {
+          "label": "tst_response_view.qml",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/tst_response_view.qml",
+            "-platform",
+            "offscreen",
+            "-style",
+            "Fusion"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.43540988900349475
+        },
+        {
+          "label": "tst_soft_diagnostics.qml",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/tst_soft_diagnostics.qml",
+            "-platform",
+            "offscreen",
+            "-style",
+            "Fusion"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.7153282619983656
+        },
+        {
+          "label": "tst_updates.qml",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/tst_updates.qml",
+            "-platform",
+            "offscreen",
+            "-style",
+            "Fusion"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.49213692800549325
+        },
+        {
+          "label": "shell/tst_direction_tabs.qml",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/shell/tst_direction_tabs.qml",
+            "-platform",
+            "offscreen",
+            "-style",
+            "Fusion"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.9521956349926768
+        },
+        {
+          "label": "shell/tst_shell_host.qml",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/shell/tst_shell_host.qml",
+            "-platform",
+            "offscreen",
+            "-style",
+            "Fusion"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.09677625000767875
+        },
+        {
+          "label": "upstream/tst_upstream_workbench.qml",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_workbench.qml",
+            "-platform",
+            "offscreen",
+            "-style",
+            "Fusion"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 11.638478171007591
+        }
+      ],
+      "diagnostics": "Two existing Workbench focus warnings retained in raw output."
+    },
+    "checks": [
+      {
+        "label": "clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 85.85433551800088
+      },
+      {
+        "label": "format-check",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.7344822070008377
+      },
+      {
+        "label": "boundary",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.4264930070057744
+      }
+    ],
+    "optimized_build": [
+      {
+        "label": "build",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/qt-desktop.sh",
+          "build"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 98.4604255160084
+      }
+    ],
+    "native_interactions": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--direction-shell-probe",
+        "--direction-shell-downstream-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/native-final/downstream-dark.png",
+        "--direction-shell-upstream-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/native-final/upstream-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.3771462330041686,
+      "executable_sha256": "5cd6686bf17469525205f662053df16a716f1d7325147b82a1131094ea7bcfde",
+      "display": ":0",
+      "probe_output": [
+        "{\"probe\":\"direction-shell\",\"success\":true,\"phase\":\"terminal\",\"error\":\"\",\"loadingProject\":false,\"hasProject\":true,\"controlsContextCurrent\":true,\"controlDirection\":\"downstream\",\"controlIdentity\":\"downstream/1/5\",\"shellMetadata\":{\"applicationBusy\":false,\"downstreamDirty\":true,\"downstreamIdentity\":\"downstream/1/5\",\"executionDirection\":null,\"executionStatus\":\"\",\"selectedDirection\":\"downstream\",\"upstreamDirty\":false,\"upstreamIdentity\":\"upstream/2/0\"},\"shellPresentationRejected\":false,\"controlsPresentationRejected\":false,\"fileMessage\":\"Opened /home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json\",\"persistentChildren\":true,\"nativeCursor\":true,\"sharedSettingsOnUpstream\":true,\"sharedAboutOnUpstream\":true,\"fileRejectedOnUpstream\":true,\"configureRouted\":true,\"pausedLeaseAcrossSwitch\":true,\"foreignControlsRejected\":true,\"genuineTerminalObserved\":true,\"idleSwitchObserved\":true,\"runningSwitchObserved\":true,\"dark\":true,\"downstreamImage\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/native-final/downstream-dark.png\",\"upstreamImage\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/native-final/upstream-dark.png\"}"
+      ],
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/native-final/downstream-dark.png",
+      "upstream_image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/native-final/upstream-dark.png",
+      "upstream_image_sha256": "486345a60178f2af414739e4b00471b874fa84532bb96ef9af9f0c6e6af15494",
+      "image_sha256": "3f4dd220f6173ed9b281d50c555910a399b67b974b4c23e49016eba155a4d5ff"
+    },
+    "native_receiver_apply_help_pressure": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--session-presentation-probe",
+        "--session-presentation-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-presentation/shell-01-accepted/presentation-limit-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.44754490100604,
+      "executable_sha256": "5cd6686bf17469525205f662053df16a716f1d7325147b82a1131094ea7bcfde",
+      "display": ":0",
+      "probe_output": [
+        "{\"probe\":\"session-presentation\",\"receiver_apply_count\":1,\"native_accepted_options\":true,\"optional_receiver_details_rejected\":true,\"poll_notice_visible\":true,\"help_rejected_under_pressure\":true,\"help_recovered\":true,\"largest_padding_code_units\":30302992,\"maximum_policy_code_units\":33554432,\"search_trials\":25,\"screenshot\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-presentation/shell-01-accepted/presentation-limit-dark.png\",\"dark_theme\":true}"
+      ],
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-presentation/shell-01-accepted/presentation-limit-dark.png",
+      "image_sha256": "ab3dc9c3fcdad7a5c758b423322ce35165d69153c8110b3e3ae4f2945a979d20"
+    },
+    "native_startup_project_probes": {
+      "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+      "sha256": "5cd6686bf17469525205f662053df16a716f1d7325147b82a1131094ea7bcfde",
+      "display": ":0",
+      "display_dimensions": [
+        "dimensions:    1280x800 pixels (338x211 millimeters)"
+      ],
+      "qt_sdk_version": "6.8.3",
+      "commands": [
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.04461622600501869,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.058780680992640555,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.5677566359954653,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.048314660001778975,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.1668422109942185,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test",
+            "--workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.137735762997181,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        }
+      ]
+    },
+    "packaging_resources": {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/packaging",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.508992364993901,
+      "passed": 25
+    },
+    "documentation": [
+      {
+        "label": "final-boundary",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.33768365099967923
+      },
+      {
+        "label": "strict-matrix",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/api_operation_matrix.py",
+          "--exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-control-metadata/rust-exports.json",
+          "--native-exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-control-metadata-native/native-exports.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/namespace-test-results.json",
+          "--executed-record",
+          "docs/development/features/pnm-measurement-inputs/decoder-test-results.json",
+          "--executed-record",
+          "docs/development/features/pnm-measurement-inputs/association-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/python-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/python-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-estimate-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-soft-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-resource-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-downstream-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-input-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-archive-bound-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-output-bound-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-query-envelope-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-control-metadata-operation-test-results.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 8.18706353000016
+      },
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.607285368998419
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 8.093946906999918
+      },
+      {
+        "label": "uiu-history",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/audit_shell_acceptance_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.14017487000091933
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.080592391997925
+      },
+      {
+        "label": "guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.06742827600101009
+      }
+    ]
+  },
+  "earlier_attempts_preserved": [
+    "Full Qt run had418 pass/3 existing20-second worker timeouts while CXX compilation competed for CPU. All3 passed isolated, then complete final421/421 passed without competing compilation. Watchdogs/tolerances/assertions unchanged.",
+    "Initial linked build failed duplicate cache basename; native theme and128-view pressure failures retained with corrected final native records.",
+    "Bare boundary invocation lacked pinned Cargo environment; final pinned checks pass.",
+    "Preaccept documentation runner used SESSION-only historical assertion against already accepted SESSION HEAD. Corrected task-specific audit permits only SHELL unchecked-to-checked; preserves all other task headers/states.",
+    "Resource-grid fixture passed23 records before scope deferral; preserved source only, excluded from final14 suites and SHELL shipping/acceptance."
+  ],
+  "reuse_and_not_required": {
+    "verified_backend": {
+      "accepted_base": "50339f01e2c0829350ac39d4be0fe893eee74da6",
+      "scope": [
+        "crates",
+        "bindings",
+        "Cargo.toml",
+        "Cargo.lock"
+      ],
+      "verified_files": 852,
+      "aggregate_sha256": "aa4c80c70efea08a2585ea88429483ec965f2cfdb432b603ad35eb3f52d0e015",
+      "meaning": "Every tracked backend/binding/manifest/lock byte equals accepted SESSION; no new files in scope. Reuse current C6 root/native/CLI/project evidence; no wheel rebuild."
+    },
+    "reused_receipt": "session-acceptance-evidence.json: full root905 workspace/140 analysis, doctest/examples,203 installed native Python, CLI/project compatibility; C4 actual UI-saved Rust/native parity.",
+    "not_required": "No scientific/public API/Python/writer/schema/dependency bytes changed. No new wheel, unrelated complete backend suite or duplicate independent source-agent regression was needed.",
+    "prepared_grid": "Five untracked grid-only files removed from primary only after exact frozen Git-object/hash verification; preserved isolated commit/worktree for US04."
+  },
+  "deferred_existing_tasks": {
+    "UIU-US-01": "Real native correlated configuration editing and supported-mode admission; startup source alone does not accept task.",
+    "UIU-US-02": "Visible upstream actual execution and direction lifecycle acceptance.",
+    "UIU-US-03/UIU-US-04/UIU-SHARED-01/UIU-SHARED-02": "Upstream measurements, resource grid and dual-consumer instruments.",
+    "UIU-FILE-01/UIU-RECOVERY-01": "Upstream active-direction project actions and both-direction update/restart recovery; conservative update guard until delivered.",
+    "UIU-QA-01": "Final complete integration, line-by-line numeric audit and guide/skill/platform reconciliation."
+  },
+  "limitations": "No new scientific mode, installed Windows/MSI/DEB lifecycle, UAC, hosted CI, remote publication, push or merge is claimed."
+}

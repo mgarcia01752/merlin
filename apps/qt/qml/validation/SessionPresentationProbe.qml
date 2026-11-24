@@ -13,6 +13,7 @@ QtObject {
     required property var workbench
     required property var window
     required property string screenshotPath
+    property var captureItem: workbench
     signal finished(bool success, string message)
 
     // Scheduling and traversal bounds, independent of presentation/scientific limits.
@@ -94,8 +95,9 @@ QtObject {
         while (pending.length && visited < itemTraversalLimit) {
             const item = pending.pop()
             visited += 1
-            if (item.objectName === "presentationAdmissionNotice") {
-                return item.visible
+            if ((item.objectName === "presentationAdmissionNotice"
+                    || item.objectName === "shellPresentationAdmissionNotice") && item.visible) {
+                return true
             }
             const children = item.children || []
             require(pending.length + children.length <= itemTraversalLimit,
@@ -167,7 +169,7 @@ QtObject {
                 "Pressure was released before the screenshot.")
         next("capturing")
         // ApplicationWindow.contentItem is Qt-owned and has no QML engine.
-        const started = workbench.grabToImage(function(result) {
+        const started = captureItem.grabToImage(function(result) {
             if (state.done) {
                 return
             }

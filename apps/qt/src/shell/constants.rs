@@ -32,7 +32,9 @@ pub(crate) const MAX_SESSION_PRESENTATION_ENTRIES: usize = 1_000_000;
 
 /// Data-retaining presentation views, including hidden or closed owners.
 /// This ceiling is independent of the population currently open on screen.
-pub(crate) const MAX_SESSION_RETAINED_VIEWS: usize = 128;
+/// Both persistent direction trees retain their existing views simultaneously.
+/// Byte/entry/open-view limits remain independent; this is not a scientific limit.
+pub(crate) const MAX_SESSION_RETAINED_VIEWS: usize = 256;
 
 /// Presentation views simultaneously open, admitted before opening.
 /// Closing releases this population while retained data keeps its other charges.

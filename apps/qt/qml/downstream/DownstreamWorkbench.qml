@@ -29,6 +29,13 @@ Item {
     required property var fileBackend
     signal updatesRequested()
     signal externalLinkRequested(url target)
+    // Standalone defaults preserve existing downstream consumers and tests.
+    property bool showHeader: true
+    property bool showRunControls: true
+    property bool pollInView: true
+    readonly property string progressText: states.value ? states.value.display.progress : ""
+    readonly property string elapsedText: states.value ? states.value.display.elapsed : ""
+    readonly property string activityText: states.value ? states.value.display.activity : ""
 
     // This owner covers persistent workbench DTOs and their native text copies.
     // Prepared project input states are adopted together. Optional rejection must
@@ -249,6 +256,7 @@ Item {
         anchors.topMargin: 24; anchors.bottomMargin: 20; spacing: 16
         Item {
             id: workbenchHeader
+            visible: workbench.showHeader
             Layout.fillWidth: true; Layout.preferredHeight: 88
             Text {
                 id: toolkitTitle
@@ -418,6 +426,7 @@ Item {
             }
         }
         RowLayout {
+            visible: workbench.showRunControls
             Layout.fillWidth: true; spacing: 10
             ColumnLayout {
                 Layout.fillWidth: true; Layout.minimumWidth: 0; spacing: 4
@@ -545,7 +554,7 @@ Item {
         onSourceApplied: workbench.refreshSourceState()
     }
     Timer {
-        interval: 100; running: true; repeat: true
+        interval: workbench.theme.sessionPollIntervalMs; running: workbench.pollInView; repeat: true
         onTriggered: { workbench.adoptTransmitterState(JSON.parse(workbench.transmitterBackend.poll()));workbench.pollRun() }
     }
     TransmitterWorkbenchDialog {

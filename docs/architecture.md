@@ -1524,8 +1524,13 @@ Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](de
 closes the frozen C1–C6 conditions with actual native direction/lifecycle,
 retention and compatibility evidence. Earlier focused-unit frontier descriptions
 below are checkpoint history. The native owners are implemented; persistent
-visible tabs and direction-scoped shell actions remain UIU-SHELL-01. Unified
-Qt project/recovery adoption and final platform/numeric gates retain their
+visible tabs and direction-scoped shell actions now pass
+[SHELL acceptance](development/features/unified-qt-workbench/validation.md#uiu-shell-01-persistent-tabs-and-scoped-actions).
+Both view instances persist through idle, running and paused selection changes;
+the existing native cursor and exact opaque direction keys guard each action.
+Shared Settings/About remain available from either direction. Upstream File
+actions remain disabled until their native adapter is delivered by UIU-FILE-01.
+Unified Qt project/recovery adoption and final platform/numeric gates retain their
 separate official tasks.
 
 Accepted user choices: **one active run across both tabs initially** and
@@ -1784,7 +1789,9 @@ application counter now also admits persistent presentation through the thin
 `bridge/presentation_retention.rs` QObject, `shared/presentation/retention.rs`
 state and QML `shared/presentation/PresentationOwner.qml`. The named desktop
 policies independently allow 64 MiB logical UTF-16, 1,000,000 array/object entries,
-128 retained owners and 32 open views. They are application policies, separate
+256 retained owners and 32 open views. The retained-view ceiling accommodates
+both persistent direction trees; the earlier single-canvas ceiling of 128
+exhausted during actual shell startup. They are application policies, separate
 from Rust storage and scientific execution limits; no JavaScript capacity or
 heap/RSS guarantee is claimed. `LogicalFootprint.js` counts ordinary JSON-shaped
 values and derived copies before publication. Old/candidate reservations overlap;
@@ -1955,8 +1962,26 @@ application/control/transport/DTO owners and complete aggregate admission remain
 pending. A registered UpstreamSession QObject now owns a direction model with
 background preparation, exact-token controls, canonical callback validation and
 genuine terminal acknowledgement. Main creates the independent adapter on the
-fixed desktop host; upstream controls/layout and complete session acceptance
-remain separate gates.
+fixed desktop host. The initial outer-owner/aggregate frontier above is historical;
+[C6](development/features/unified-qt-workbench/validation.md#uiu-session-01-integrated-acceptance)
+now accepts complete SESSION. Upstream controls/layout retain their separate gates.
+
+The shared shell uses `qml/shell/directions/PersistentDirectionTabs.qml` with
+two persistent Loaders. Main polls both real adapters regardless of selected tab.
+The thin `bridge/direction_shell.rs` projects canonical scalar keys, dirty flags,
+selection and dispatch phase through `shell/presentation.rs`; opaque identity
+text preserves native integers without JavaScript numeric conversion. Selection
+never redirects a run or releases its slot. DirectionShellHost rechecks captured
+origin immediately before dispatch to the existing direction adapter. Shared
+DirectionRunControls retain the established diagnostic/F1 Help, elapsed/activity
+semantics and lower-right controls; rejected optional text cannot redirect Stop
+or Pause. Existing presentation owners admit coherent display replacements.
+The [shell design](development/features/unified-qt-workbench/design.md#uiu-shell-01-persistent-tabs-and-scoped-actions)
+maps these owners and acceptance. Upstream editing/instrument bindings remain
+US tasks. File actions are enabled only for the current downstream file adapter;
+upstream must not fall through to downstream Save/Open/New. Unified file and
+restart recovery remain UIU-FILE-01/UIU-RECOVERY-01, including the conservative
+update guard while an upstream configuration exists.
 
 Normal project files remain direction-specific. Open validates/detects direction
 and guards that target tab's dirty state before mutation. Schema 1/2 retain DS

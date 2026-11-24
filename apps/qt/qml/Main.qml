@@ -9,6 +9,8 @@ import Merlin.Workbench
 import "shell"
 import "shared/theme"
 import "downstream"
+import "upstream"
+import "shell/directions"
 import "validation"
 
 ApplicationWindow {
@@ -18,7 +20,7 @@ ApplicationWindow {
     minimumWidth: 960
     minimumHeight: 640
     visible: true
-    title: "MERLIN — DOCSIS OFDM Simulation Toolkit"
+    title: "MERLIN — DOCSIS OFDM/OFDMA Simulation Workbench"
     Timer { id: smokeTimer; interval:750; onTriggered:Qt.quit() }
     Branding { id: branding }
     AboutInfo { id: aboutInfo }
@@ -30,15 +32,78 @@ ApplicationWindow {
     ReceiverInstruments { id: receiverInstruments }
     ClosedLoop { id: closedLoop }
     UpstreamSession { id: upstreamSession }
+    DirectionShell { id: directionBackend }
+    DirectionShellHost {
+        id: directionHost
+        theme: applicationTheme
+        backend: directionBackend
+        downstreamBackend: closedLoop
+        upstreamBackend: upstreamSession
+        downstreamView: window.workbench
+        upstreamView: directionTabs.upstreamItem
+    }
+    readonly property var workbench: directionTabs.downstreamItem
+    property alias tabs: directionTabs
+    property alias shellHost: directionHost
+    property alias runControls: sharedControls
+    readonly property string selectedDirection: directionHost.presentation.selectedDirection || ""
+    /** Keep active-direction file actions away from an unsupported foreign adapter. */
+    function routeFile(action, saveAs) {
+        const identity = directionTabs.identityFor(selectedDirection)
+        if (selectedDirection !== "downstream" || !workbench
+                || !directionHost.accepts(selectedDirection, identity)) {
+            return false
+        }
+        if (action === "new") {
+            workbench.requestNewProject()
+        } else if (action === "open") {
+            workbench.openProject()
+        } else if (action === "save") {
+            workbench.saveProject(saveAs)
+        } else {
+            return false
+        }
+        return true
+    }
     WorkbenchFile { id: workbenchFile }
     TransmitterAnalyzer { id: transmitterAnalyzer }
     property Component presentationBackendComponent: Component { PresentationRetention {} }
     function createPresentationBackend(parent) {
         return presentationBackendComponent.createObject(parent)
     }
-    Theme { id: theme; presentationBackendFactory: window.createPresentationBackend; onDarkChanged: branding.update_icon(dark) }
+    Theme { id: applicationTheme; presentationBackendFactory: window.createPresentationBackend; onDarkChanged: branding.update_icon(dark) }
     readonly property bool presentationProbeRequested: Qt.application.arguments.indexOf("--session-presentation-probe") >= 0
+    readonly property bool directionProbeRequested: Qt.application.arguments.indexOf("--direction-shell-probe") >= 0
     property QtObject presentationProbe: null
+    property QtObject directionProbe: null
+    property Component directionProbeComponent: Component {
+        DirectionShellProbe {
+            onFinished: function(success, message) {
+                console.log("MERLIN_DIRECTION_SHELL_PROBE " + message)
+                Qt.exit(success ? 0 : 1)
+            }
+        }
+    }
+    /** Run the fixed native shell check only with two caller-owned evidence paths. */
+    function startDirectionProbe() {
+        const args = Qt.application.arguments
+        const downstreamImage = args.indexOf("--direction-shell-downstream-image")
+        const upstreamImage = args.indexOf("--direction-shell-upstream-image")
+        if (downstreamImage < 0 || downstreamImage + 1 >= args.length
+                || upstreamImage < 0 || upstreamImage + 1 >= args.length) {
+            console.error("Direction shell probe requires two fresh screenshot paths.")
+            Qt.exit(1)
+            return
+        }
+        directionProbe = directionProbeComponent.createObject(window, {
+            rootWindow: window, workbench: workbench, tabs: directionTabs,
+            host: directionHost, controls: sharedControls, captureItem: unifiedFrame,
+            downstreamImagePath: args[downstreamImage + 1], upstreamImagePath: args[upstreamImage + 1]
+        })
+        if (!directionProbe) {
+            Qt.exit(1)
+        }
+    }
     property Component presentationProbeComponent: Component {
         SessionPresentationProbe {
             onFinished: function(success, message) {
@@ -57,15 +122,15 @@ ApplicationWindow {
             return
         }
         presentationProbe = presentationProbeComponent.createObject(window, {
-            theme: theme, workbench: workbench, window: window,
-            screenshotPath: applicationArguments[imageArgument + 1]
+            theme: applicationTheme, workbench: workbench, window: window,
+            screenshotPath: applicationArguments[imageArgument + 1], captureItem: unifiedFrame
         })
         if (!presentationProbe) {
             Qt.exit(1)
         }
     }
     Component.onCompleted: {
-        branding.update_icon(theme.dark)
+        branding.update_icon(applicationTheme.dark)
         if (Qt.application.arguments.indexOf("--restore-update") >= 0) {
             Qt.callLater(function() { workbench.restoreUpdate() })
         } else {
@@ -73,14 +138,16 @@ ApplicationWindow {
         }
         if (presentationProbeRequested) {
             Qt.callLater(startPresentationProbe)
+        } else if (directionProbeRequested) {
+            Qt.callLater(startDirectionProbe)
         } else if (Qt.application.arguments.indexOf("--smoke-test") >= 0) {
             smokeTimer.start()
         } else if (Qt.application.arguments.indexOf("--check-updates") >= 0) {
             Qt.callLater(function() { updates.showUpdates(); updates.refresh() })
         }
     }
-    ThemePalette { targetControl: window; theme: theme }
-    color: theme.background
+    ThemePalette { targetControl: window; theme: applicationTheme }
+    color: applicationTheme.background
     onClosing: function(close) {
         if (updates.state.installing) {
             close.accepted = false
@@ -89,17 +156,18 @@ ApplicationWindow {
     }
     menuBar: Item {
         implicitHeight: Math.max(topMenu.implicitHeight, 32)
-        Rectangle { anchors.fill: parent; color: theme.panel }
+        Rectangle { anchors.fill: parent; color: applicationTheme.panel }
         RowLayout {
             anchors.fill: parent; spacing: 12
             WorkbenchMenuBar {
                 id: topMenu
                 Layout.fillWidth: true
-                theme: theme
-                fileActionsEnabled: !workbench.runState.busy && !workbench.loadingProject && !updates.state.installing
-                onNewRequested: workbench.requestNewProject()
-                onOpenRequested: workbench.openProject()
-                onSaveRequested: function(saveAs) { workbench.saveProject(saveAs) }
+                theme: applicationTheme
+                fileActionsEnabled: window.selectedDirection === "downstream" && !!window.workbench
+                    && !window.workbench.runState.busy && !window.workbench.loadingProject && !updates.state.installing
+                onNewRequested: window.routeFile("new", false)
+                onOpenRequested: window.routeFile("open", false)
+                onSaveRequested: function(saveAs) { window.routeFile("save", saveAs) }
                 onGlobalSettingsRequested: { if (!updates.state.installing) workbench.settingsPopup.openChecked() }
                 onAboutRequested: workbench.aboutPopup.openChecked()
                 onFaqRequested: workbench.openHelp("")
@@ -109,28 +177,108 @@ ApplicationWindow {
                 id: updates
                 Layout.preferredWidth: 80; Layout.preferredHeight: 28
                 Layout.rightMargin: 12
-                theme: theme; backend: updateInfo
-                canUpdate: !workbench.runState.busy && !workbench.loadingProject
+                theme: applicationTheme; backend: updateInfo
+                canUpdate: !!window.workbench && !directionHost.presentation.applicationBusy
+                    && !directionHost.upstreamState.busy && !directionHost.upstreamState.configured
+                    && !window.workbench.loadingProject
                 prepareUpdate: function() { return workbench.saveUpdateRecovery() }
-                startupCheck: !window.presentationProbeRequested && Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
+                startupCheck: !window.presentationProbeRequested && !window.directionProbeRequested && Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
             }
         }
     }
-    DownstreamWorkbench {
-        id: workbench
-        enabled: !updates.state.installing
+    ColumnLayout {
+        id: unifiedFrame
         anchors.fill: parent
-        theme: theme
-        settingsBackend: ofdmSettings
-        profileBackend: profileInput
-        sourceBackend: sourceInput
-        transmitterBackend: transmitterAnalyzer
-        measurementBackend: measurementInputs
-        aboutBackend: aboutInfo
-        receiverBackend: receiverInstruments
-        runBackend: closedLoop
-        fileBackend: workbenchFile
-        onUpdatesRequested: { updates.showUpdates(); updates.refresh() }
-        onExternalLinkRequested: function(target) { Qt.openUrlExternally(target) }
+        enabled: !updates.state.installing
+        readonly property int shellEdgeMargin: 16
+        readonly property int shellRowGap: 8
+        spacing: shellRowGap
+        PersistentDirectionTabs {
+            id: directionTabs
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            theme: applicationTheme
+            presentationHost: directionHost.presentation
+            downstreamComponent: Component {
+                DownstreamWorkbench {
+                    showHeader: false
+                    showRunControls: false
+                    pollInView: false
+                    theme: applicationTheme
+                    settingsBackend: ofdmSettings
+                    profileBackend: profileInput
+                    sourceBackend: sourceInput
+                    transmitterBackend: transmitterAnalyzer
+                    measurementBackend: measurementInputs
+                    aboutBackend: aboutInfo
+                    receiverBackend: receiverInstruments
+                    runBackend: closedLoop
+                    fileBackend: workbenchFile
+                    onUpdatesRequested: { updates.showUpdates(); updates.refresh() }
+                    onExternalLinkRequested: function(target) { Qt.openUrlExternally(target) }
+                }
+            }
+            upstreamComponent: Component {
+                UpstreamWorkbench {
+                    theme: applicationTheme
+                    host: directionHost
+                }
+            }
+            onDirectionRequested: function(direction) { directionHost.selectDirection(direction) }
+            onRunActionRequested: function(action, direction, identity) {
+                directionHost.runAction(action, direction, identity)
+            }
+            onSaveRequested: function(direction, identity, saveAs) {
+                if (directionHost.accepts(direction, identity)) window.routeFile("save", saveAs)
+            }
+            onOpenRequested: window.routeFile("open", false)
+        }
+        DirectionRunControls {
+            id: sharedControls
+            Layout.fillWidth: true
+            Layout.leftMargin: unifiedFrame.shellEdgeMargin
+            Layout.rightMargin: unifiedFrame.shellEdgeMargin
+            Layout.bottomMargin: unifiedFrame.shellEdgeMargin
+            theme: applicationTheme
+            direction: window.selectedDirection
+            identity: directionTabs.identityFor(direction)
+            readonly property bool downstream: direction === "downstream"
+            readonly property var currentState: downstream
+                ? (window.workbench ? window.workbench.runState : ({})) : directionHost.upstreamState
+            canConfigure: !!directionTabs.downstreamItem && !!directionTabs.upstreamItem
+                && !currentState.busy && !directionHost.presentationRejected
+                && (!downstream || !window.workbench.loadingProject)
+            canStart: !!currentState.can_start && !directionHost.presentationRejected
+                && (!downstream || (window.workbench && window.workbench.hasProject
+                    && window.workbench.allBlocksComplete && !window.workbench.loadingProject))
+            busy: !!currentState.busy
+            paused: downstream ? !!currentState.paused : !!currentState.progress && currentState.progress.status === "Paused"
+            status: downstream ? (window.workbench ? window.workbench.progressText : "")
+                : (directionHost.presentation.display ? directionHost.presentation.display.upstreamStatus : "")
+            elapsed: downstream && window.workbench ? window.workbench.elapsedText : ""
+            diagnostic: downstream && window.workbench ? window.workbench.runState.diagnostic : null
+            activityTooltip: downstream && window.workbench ? window.workbench.activityText : ""
+            onHelpRequested: function(code, direction, identity) {
+                if (direction === "downstream" && directionHost.accepts(direction, identity)) {
+                    window.workbench.openHelp(code)
+                }
+            }
+            onActionRequested: function(action, direction, identity) {
+                directionTabs.requestRunAction(action, direction, identity)
+            }
+        }
+    }
+    Timer {
+        interval: applicationTheme.sessionPollIntervalMs
+        running: true
+        repeat: true
+        onTriggered: {
+            if (window.workbench) {
+                window.workbench.adoptTransmitterState(JSON.parse(transmitterAnalyzer.poll()))
+                window.workbench.pollRun()
+            }
+            directionHost.poll()
+            sharedControls.retryRejectedText()
+        }
     }
 }

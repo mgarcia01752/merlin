@@ -4703,3 +4703,53 @@ receipt. Persistent visible tabs and active-direction actions are still
 UIU-SHELL-01, followed in dependency order; no UI implementation is claimed
 from native session tests. Final numeric audit, unified project/recovery UI,
 complete final integration and platform gates remain with their existing tasks.
+
+
+## UIU-SHELL-01 persistent tabs and scoped actions
+
+The [primary receipt](shell-acceptance-evidence.json) accepts the persistent
+Downstream/Upstream shell over the accepted canonical native owners. Both
+workbenches remain instantiated when hidden. Exact opaque direction identities
+guard Configure/run/File intents; tab changes preserve independent dirty states,
+configuration and the genuine single-run lease, including pause. Shared
+Settings/About and existing downstream editors/instruments remain available.
+Upstream configuration editing, scientific instruments and unified project/
+recovery behavior retain their existing US/FILE/RECOVERY tasks.
+
+All 421 Qt Rust cases pass with no failures or ignored cases. Fourteen complete
+QML suites pass: 198 pass records, including 28 initialization/cleanup records.
+The original numerical anchors and assertions are preserved. Two existing
+workbench focus warnings remain recorded. All-target Qt Clippy, formatting,
+the final zero-exception scientific API boundary and the optimized desktop build
+pass. The final executable is used for six startup/project probes and both
+interactive native probes, rather than a source-only fixture claim.
+
+The actual shell probe checks persistent view identities, native selection,
+idle/running/paused switches, Configure, shared Settings/About from Upstream,
+second/foreign control rejection, upstream File rejection and genuine downstream
+terminal disposal. Its fresh dark direction images update the user guide. The
+receiver pressure probe independently confirms exactly one real Apply, native
+accepted options despite optional detail rejection, visible pressure feedback,
+Help rejection and recovery. All 25 packaging resource/unit contracts also pass;
+installed MSI/DEB, UAC, hosted and release behavior remains unverified here.
+
+The real two-canvas composition exposed retained-view saturation at 128 while
+the other budgets had room. Only that existing policy becomes 256; no new
+category, scientific limit or mechanism is introduced. The final complete Rust
+suite and actual receiver-open/pressure checks use the resulting policy. The
+linked build also exposed duplicate QML cache basenames: only the incoming
+upstream VerificationDialog is renamed, and registration now rejects duplicates.
+Earlier compile, timing-sensitive test, fixture and diagnostic failures remain
+in the raw evidence. Three existing 20-second worker cases initially timed out
+while compilation competed for CPU; all 421 pass in the final complete run
+without competing compilation. No watchdog, tolerance or scientific assertion
+was relaxed.
+
+All 852 tracked backend/binding/root-manifest files match accepted SESSION
+`50339f01e2c0829350ac39d4be0fe893eee74da6`; no new file occurs in that scope.
+Its full workspace/native Python/CLI/project milestone evidence is reused with
+that explicit source check. No unrelated complete science suite or Python wheel
+is rebuilt for this presentation-only integration. The prepared resource-grid
+files remain preserved in the isolated source commit for UIU-US-04 and are not
+included in SHELL acceptance. Official history changes only UIU-SHELL-01;
+UIU-US-01 is the next eligible task.

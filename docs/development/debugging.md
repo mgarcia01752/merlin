@@ -79,3 +79,23 @@ not just the process exit code. No arbitrary QML is loaded. The probe is opt-in;
 normal startup creates no probe owner. Automatic update lookup is suppressed
 for this offline check. It does not run a simulation or change scientific limits.
 See the [SESSION evidence](features/unified-qt-workbench/validation.md#uiu-session-01-persistent-presentation-admission).
+
+## Direction shell probe
+
+`--direction-shell-probe --direction-shell-downstream-image /absolute/fresh/ds.png
+--direction-shell-upstream-image /absolute/fresh/us.png` runs the fixed bundled
+Main shell probe. Supply the existing single workbench with `--workbench` and
+two distinct new ignored output paths. The probe opens the actual Configure,
+Settings and About actions, switches the persistent tabs while idle and running,
+pauses a real downstream run and switches again, rejects foreign controls/files,
+captures both dark views
+and stops its own worker through terminal acknowledgement. Normal startup does
+not instantiate it; automatic update lookup is suppressed during the probe.
+It changes only its loaded test session and writes the two requested images.
+There is no arbitrary external QML loader or scientific implementation.
+
+Require one successful `MERLIN_DIRECTION_SHELL_PROBE` JSON record and both fresh
+images; process exit alone is insufficient evidence. The overall and phase
+watchdogs are finite. Failed runs request cancellation only after this probe
+started its own worker. Target-specific native execution, rather than source
+parsing or fixture tests, establishes this acceptance evidence.

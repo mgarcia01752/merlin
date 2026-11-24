@@ -8,6 +8,8 @@ import QtQuick
 QtObject {
     // Shared hover/focus tooltip timing, in milliseconds, for every MERLIN view.
     readonly property int tooltipDelayMs: 1000
+    // Shared native-session presentation polling cadence; independent of hover timing.
+    readonly property int sessionPollIntervalMs: 100
     // Injected by the native application; tests supply an explicit fixture.
     property var presentationBackendFactory: null
     property bool presentationAdmissionRejected: false
