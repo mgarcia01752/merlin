@@ -71,14 +71,17 @@ impl RetainedStages {
         }
     }
     pub(super) fn inventory(&self) -> Vec<FullLoopStageInfo> {
-        self.events
+        let mut inventory = self
+            .events
             .iter()
             .map(|(stage, events)| FullLoopStageInfo {
                 stage: *stage,
                 snapshots: events.len(),
                 retained_elements: events.iter().map(|event| event.data.len()).sum(),
             })
-            .collect()
+            .collect();
+        super::super::result_retention::normalize::vector(&mut inventory);
+        inventory
     }
     pub(super) fn query(
         &self,
@@ -123,7 +126,7 @@ impl RetainedStages {
                 "Stage viewport is outside retained values",
             ));
         }
-        Ok(FullLoopStageSnapshot {
+        let mut output = FullLoopStageSnapshot {
             stage,
             retained_index: event.retained_index,
             direction: event.direction,
@@ -133,7 +136,9 @@ impl RetainedStages {
             element_start: event.element_start + viewport.start,
             total_elements: event.total_elements,
             data: event.data.window(viewport.start, viewport.start + count),
-        })
+        };
+        super::query_storage::normalize_snapshot(&mut output);
+        Ok(output)
     }
 }
 
@@ -166,7 +171,7 @@ impl RetainedStages {
     /// # Returns
     /// Unit; original budget, statistics, context and all actual values survive.
     pub(in crate::api::full_loop) fn normalize_result_storage(&mut self) {
-        use super::super::result_retention::normalize::{text, vector};
+        use super::super::result_retention::normalize::vector;
         let Self {
             events,
             stats: _,
@@ -174,50 +179,7 @@ impl RetainedStages {
         } = self;
         for snapshots in events.values_mut() {
             for snapshot in snapshots.iter_mut() {
-                let FullLoopStageSnapshot {
-                    stage: _,
-                    retained_index: _,
-                    direction: _,
-                    context,
-                    domain: _,
-                    units: _,
-                    element_start: _,
-                    total_elements: _,
-                    data,
-                } = snapshot;
-                let FullLoopStageContext {
-                    run_id,
-                    configuration_id,
-                    phase: _,
-                    source_symbol_index: _,
-                    channel_symbol_index: _,
-                    sample_start_index: _,
-                    codeword_index: _,
-                    profile_id: _,
-                    plc_phase: _,
-                    reference: _,
-                    plc_grid: _,
-                    physical_grid: _,
-                    waveform_grid: _,
-                    cell_grid: _,
-                    transmit_cell_roles,
-                } = context;
-                text(run_id);
-                text(configuration_id);
-                if let Some(roles) = transmit_cell_roles {
-                    vector(roles);
-                }
-                match data {
-                    FullLoopStageData::Bits(values) | FullLoopStageData::Bytes(values) => {
-                        vector(values)
-                    }
-                    FullLoopStageData::Iq(values) => vector(values),
-                    FullLoopStageData::OptionalIq(values) => vector(values),
-                    FullLoopStageData::QamLabels(values) => vector(values),
-                    FullLoopStageData::TransportCells(values) => vector(values),
-                    FullLoopStageData::Pilots(values) => vector(values),
-                    FullLoopStageData::Llrs(values) => vector(values),
-                }
+                super::query_storage::normalize_snapshot(snapshot);
             }
             vector(snapshots);
         }
@@ -289,6 +251,10 @@ impl ProbeObserver for RetainedStages {
 #[cfg(test)]
 #[path = "result_retention_tests.rs"]
 mod result_retention_tests;
+
+#[cfg(test)]
+#[path = "query_storage_tests.rs"]
+mod query_storage_tests;
 
 #[cfg(test)]
 mod tests {

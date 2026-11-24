@@ -557,6 +557,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [downstream request/plan owner admission](features/unified-qt-workbench/validation.md#uiu-session-01-downstream-request-and-plan-owner-admission) passes 87 primary-worktree Rust cases, all-target Clippy, formatting/boundary, optimized build and six native probes. Valid candidate rejection covers all three aggregate dimensions; old worker/final aliases and pre-reserved cross-host rebind are tested using actual roots and reports. Per-profile working requests, result/DTO/input/preview/history/infrastructure owners and complete Level 2/milestone gates remain open.
 
+  The [existing observation-query envelope](features/unified-qt-workbench/validation.md#uiu-session-01-existing-observation-query-copy-envelope) passes 93 scoped Rust/25 installed-native cases, four QML behaviors, Clippy, fresh optimized build and six native probes. Exact final capacities let each existing stage/inventory Rust return fit the source result payload, without new operations or changed values/errors. Individual queries, concatenated observations and JSON/native presentation owners remain separately charged; SESSION acceptance stays open.
+
 
 
 <a id="task-uiu-shell-01"></a>

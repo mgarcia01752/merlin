@@ -25981,7 +25981,7 @@
       "lifecycle_behavior": "lifecycle.inspect",
       "report_contract": {
         "rust_return": "Vec<FullLoopStageInfo>",
-        "scope": "Owned bounded actual stage data and frozen policy, original phase/reference/grid/role/offset metadata. Original numerical producers remain authoritative. Native projections own copies; named tests do not assert exhaustive helper/getter branches."
+        "scope": "Owned bounded actual stage data and frozen policy, original phase/reference/grid/role/offset metadata. Original numerical producers remain authoritative. Native projections own copies; named tests do not assert exhaustive helper/getter branches. Existing Rust query now has exact final capacities and a per-copy retained-payload envelope no greater than its immutable source FullLoopResult; zero entries/roots. Python transport objects and concatenated application copies remain separate. See session-query-envelope-evidence.json; existing signatures/values/errors preserved."
       },
       "compatibility": "compatibility.ds",
       "requirement": [
@@ -25996,7 +25996,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-02"
+        "UIU-API-02",
+        "UIU-SESSION-01"
       ],
       "tests": {
         "rust": [
@@ -26021,7 +26022,11 @@
           "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
           "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
           "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused",
-          "crates/ofdm/src/api/full_loop/observations/store.rs::stage_retention_preserves_missing_explicit_zero_and_original_offset_as_owned_data"
+          "crates/ofdm/src/api/full_loop/observations/store.rs::stage_retention_preserves_missing_explicit_zero_and_original_offset_as_owned_data",
+          "crates/ofdm/src/api/full_loop/observations/query_storage_tests.rs::all_eight_query_variants_fit_the_source_without_changing_values_or_source_capacities",
+          "crates/ofdm/src/api/full_loop/observations/query_storage_tests.rs::inventory_fixed_layout_and_empty_copy_fit_the_source_root",
+          "crates/ofdm/tests/api_result_retained_bound.rs::actual_owned_query_copies_fit_the_source_envelope_and_keep_original_coordinates",
+          "crates/ofdm/tests/api_result_retained_bound.rs::capture_disabled_inventory_has_exact_empty_storage_and_preserves_missing_coverage"
         ],
         "python": {
           "status": "installed native actual stage/resource/direct-process cases",
@@ -26135,7 +26140,7 @@
       "lifecycle_behavior": "lifecycle.inspect",
       "report_contract": {
         "rust_return": "ApiResult<FullLoopStageSnapshot>",
-        "scope": "Owned bounded actual stage data and frozen policy, original phase/reference/grid/role/offset metadata. Original numerical producers remain authoritative. Native projections own copies; named tests do not assert exhaustive helper/getter branches."
+        "scope": "Owned bounded actual stage data and frozen policy, original phase/reference/grid/role/offset metadata. Original numerical producers remain authoritative. Native projections own copies; named tests do not assert exhaustive helper/getter branches. Existing Rust query now has exact final capacities and a per-copy retained-payload envelope no greater than its immutable source FullLoopResult; zero entries/roots. Python transport objects and concatenated application copies remain separate. See session-query-envelope-evidence.json; existing signatures/values/errors preserved."
       },
       "compatibility": "compatibility.ds",
       "requirement": [
@@ -26150,7 +26155,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-02"
+        "UIU-API-02",
+        "UIU-SESSION-01"
       ],
       "tests": {
         "rust": [
@@ -26175,7 +26181,11 @@
           "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
           "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
           "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused",
-          "crates/ofdm/src/api/full_loop/observations/store.rs::stage_retention_preserves_missing_explicit_zero_and_original_offset_as_owned_data"
+          "crates/ofdm/src/api/full_loop/observations/store.rs::stage_retention_preserves_missing_explicit_zero_and_original_offset_as_owned_data",
+          "crates/ofdm/src/api/full_loop/observations/query_storage_tests.rs::all_eight_query_variants_fit_the_source_without_changing_values_or_source_capacities",
+          "crates/ofdm/src/api/full_loop/observations/query_storage_tests.rs::inventory_fixed_layout_and_empty_copy_fit_the_source_root",
+          "crates/ofdm/tests/api_result_retained_bound.rs::actual_owned_query_copies_fit_the_source_envelope_and_keep_original_coordinates",
+          "crates/ofdm/tests/api_result_retained_bound.rs::capture_disabled_inventory_has_exact_empty_storage_and_preserves_missing_coverage"
         ],
         "python": {
           "status": "installed native actual stage/resource/direct-process cases",
@@ -35628,7 +35638,8 @@
     "docs/development/features/unified-qt-workbench/session-downstream-metadata-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/session-input-metadata-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/session-archive-bound-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/session-output-bound-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/session-output-bound-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/session-query-envelope-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -64913,7 +64924,7 @@
       "lifecycle_behavior": "lifecycle.inspect",
       "report_contract": {
         "rust_type": "merlin::downstream::FullLoopResult",
-        "scope": "Owned typed-kind stage/context data or immutable policy; no generated placeholders, source advancement or private engine access."
+        "scope": "Owned typed-kind stage/context data or immutable policy; no generated placeholders, source advancement or private engine access. Existing Rust query now has exact final capacities and a per-copy retained-payload envelope no greater than its immutable source FullLoopResult; zero entries/roots. Python transport objects and concatenated application copies remain separate. See session-query-envelope-evidence.json; existing signatures/values/errors preserved."
       },
       "compatibility": "compatibility.ds",
       "requirement": [
@@ -64928,7 +64939,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-02"
+        "UIU-API-02",
+        "UIU-SESSION-01"
       ],
       "tests": {
         "rust": [
@@ -64953,7 +64965,11 @@
           "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
           "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
           "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused",
-          "crates/ofdm/src/api/full_loop/observations/store.rs::stage_retention_preserves_missing_explicit_zero_and_original_offset_as_owned_data"
+          "crates/ofdm/src/api/full_loop/observations/store.rs::stage_retention_preserves_missing_explicit_zero_and_original_offset_as_owned_data",
+          "crates/ofdm/src/api/full_loop/observations/query_storage_tests.rs::all_eight_query_variants_fit_the_source_without_changing_values_or_source_capacities",
+          "crates/ofdm/src/api/full_loop/observations/query_storage_tests.rs::inventory_fixed_layout_and_empty_copy_fit_the_source_root",
+          "crates/ofdm/tests/api_result_retained_bound.rs::actual_owned_query_copies_fit_the_source_envelope_and_keep_original_coordinates",
+          "crates/ofdm/tests/api_result_retained_bound.rs::capture_disabled_inventory_has_exact_empty_storage_and_preserves_missing_coverage"
         ],
         "python": {
           "status": "installed native signature and actual stage owner cases",
@@ -64996,7 +65012,7 @@
       "lifecycle_behavior": "lifecycle.inspect",
       "report_contract": {
         "rust_type": "merlin::downstream::FullLoopResult",
-        "scope": "Owned typed-kind stage/context data or immutable policy; no generated placeholders, source advancement or private engine access."
+        "scope": "Owned typed-kind stage/context data or immutable policy; no generated placeholders, source advancement or private engine access. Existing Rust query now has exact final capacities and a per-copy retained-payload envelope no greater than its immutable source FullLoopResult; zero entries/roots. Python transport objects and concatenated application copies remain separate. See session-query-envelope-evidence.json; existing signatures/values/errors preserved."
       },
       "compatibility": "compatibility.ds",
       "requirement": [
@@ -65011,7 +65027,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-02"
+        "UIU-API-02",
+        "UIU-SESSION-01"
       ],
       "tests": {
         "rust": [
@@ -65036,7 +65053,11 @@
           "crates/ofdm/tests/channel_job.rs::pre_cancel_and_invalid_work_limits_do_not_fabricate_compared_bits",
           "crates/ofdm/tests/channel_job.rs::failed_sink_preserves_science_completed_before_the_callback",
           "crates/ofdm/tests/channel_job.rs::paused_run_resumes_without_restarting_science_and_stop_works_while_paused",
-          "crates/ofdm/src/api/full_loop/observations/store.rs::stage_retention_preserves_missing_explicit_zero_and_original_offset_as_owned_data"
+          "crates/ofdm/src/api/full_loop/observations/store.rs::stage_retention_preserves_missing_explicit_zero_and_original_offset_as_owned_data",
+          "crates/ofdm/src/api/full_loop/observations/query_storage_tests.rs::all_eight_query_variants_fit_the_source_without_changing_values_or_source_capacities",
+          "crates/ofdm/src/api/full_loop/observations/query_storage_tests.rs::inventory_fixed_layout_and_empty_copy_fit_the_source_root",
+          "crates/ofdm/tests/api_result_retained_bound.rs::actual_owned_query_copies_fit_the_source_envelope_and_keep_original_coordinates",
+          "crates/ofdm/tests/api_result_retained_bound.rs::capture_disabled_inventory_has_exact_empty_storage_and_preserves_missing_coverage"
         ],
         "python": {
           "status": "installed native signature and actual stage owner cases",

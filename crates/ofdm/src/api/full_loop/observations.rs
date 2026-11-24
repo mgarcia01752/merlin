@@ -5,6 +5,7 @@
 //! Typed owned retention and bounded queries over actual borrowed core test-point events.
 mod data;
 mod policy;
+mod query_storage;
 mod store;
 use super::*;
 pub use crate::signal_processing::pilots::PilotValue as FullLoopPilotValue;
@@ -58,6 +59,10 @@ impl FullLoopResult {
     /// Copies a bounded per-stage inventory in registered stage order.
     /// # Returns
     /// Registered IDs and actual event/element counts; no data is reconstructed or rerun.
+    /// Final vector capacity equals length. Its retained payload fits within this
+    /// result's retained_footprint payload bytes, with zero ordered entries/shared
+    /// roots. Reserve each simultaneous copy separately; Python/JSON and consumers'
+    /// derived containers have independent ownership and are outside this envelope.
     pub fn stage_inventory(&self) -> Vec<FullLoopStageInfo> {
         self.stages.inventory()
     }
@@ -74,6 +79,12 @@ impl FullLoopResult {
     /// * `viewport` - Contiguous original retained-element window; at most 4096 copied elements.
     /// # Returns
     /// Owned typed values, exact reference/phase/grid/context and original totals/offsets.
+    /// Final text/vector capacities equal lengths. This individual returned owner's
+    /// complete retained payload is no larger than this immutable result's
+    /// retained_footprint payload bytes, with zero ordered entries/shared roots.
+    /// This conservative copy envelope is specific to stage/stage_inventory;
+    /// it is not a general future-output or allocator/scratch/RSS bound. Reserve
+    /// each simultaneous query, concatenation and consumer copy independently.
     /// # Errors
     /// MissingCoverage for absent retained stages, InvalidIdentifier for absent snapshots;
     /// invalid/overflow/outside windows and query work budgets reject without mutation.

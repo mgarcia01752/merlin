@@ -9,6 +9,12 @@ does not run simulation, serialize a report or allocate copies of its payload.
 This metadata describes one existing Rust owner. It helps an application account
 for accepted inputs, retained results and replaced or queued owners that remain
 alive. It does not reserve resources or provide a bound for a future result.
+The existing downstream `stage` and `stage_inventory` queries additionally
+promise a conservative per-copy envelope: after exact final-capacity normalization,
+each returned Rust payload fits the source result's payload quantity, with zero
+ordered entries/shared roots. See [stage observations](full-loop-observations.md).
+Reserve simultaneous source/query/consumer copies separately; native Python and
+JSON allocations remain outside this Rust envelope.
 Unified Qt aggregate admission remains under implementation.
 
 ```mermaid

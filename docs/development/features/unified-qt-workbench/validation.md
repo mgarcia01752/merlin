@@ -3568,3 +3568,32 @@ result/queued/DTO targets, input/editor/saved JSON, previews/history and applica
 infrastructure remain concrete open owners. This unit does not accept aggregate
 retention or UIU-SESSION-01. Disk remains 80% used, 24 GiB free and 13% inodes;
 active caches/artifacts are preserved.
+
+## UIU-SESSION-01 existing observation-query copy envelope
+
+The [query storage design](design.md#uiu-session-01-existing-observation-query-copy-envelope)
+closes the concrete stage/inventory copy prerequisite without new public methods.
+Exact final capacities preserve scientific values, source capacity, original
+coordinates, missing/zero distinctions and errors. Exhaustive eight-variant and
+fixed-layout tests prove the conservative per-return source-payload envelope;
+all simultaneous queries and derived containers need independent reservations.
+Independent QA reviewed the source proof; its review is not execution evidence.
+
+[Exact command/artifact receipt](session-query-envelope-evidence.json) and
+[named operation cases](session-query-envelope-operation-test-results.json) record
+93 unique Rust cases: 32 owner/API, 29 facade and 32 actual Qt consumers. All pass,
+with scoped all-target Clippy, formatting and final dependency-boundary checks.
+One freshly built exact wheel passes 25 installed-native cases with no skips:
+full-loop science/lifecycle, observed values/errors/ownership/direct-Rust parity,
+bounded outputs, retained metadata and import/legacy namespace compatibility.
+Four QML behavior cases/two fixture hooks pass; two pre-existing activeFocusOnTab
+warnings remain unsuppressed. The fresh optimized executable passes six desktop
+workbench/launch probes. Fresh Rustdoc/native inventories retain 623/594 operations,
+all prior signatures/types, and historical operation records.
+
+Existing independent process references remain valid because only owned capacities
+change; native numerical comparisons executed against them. No algorithm, schema,
+namespace, manifest, registration or operating-mode change. Unrelated full workspace,
+analysis, CLI, upstream and packaging runs were not required for this focused unit.
+Complete retained-owner integration, SESSION Level 2 and milestone/final Level 3
+remain mandatory. UIU-SESSION-01 and all previous checklist states are unchanged.

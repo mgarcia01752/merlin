@@ -1622,6 +1622,15 @@ required before session acceptance. The [downstream Qt adoption](development/fea
 uses these bounded calls in the existing full-loop/preview workers and detached
 history copy; supplying the backend target bound does not reserve host resources.
 
+The existing downstream observation queries also provide a
+[per-copy storage envelope](development/features/unified-qt-workbench/validation.md#uiu-session-01-existing-observation-query-copy-envelope).
+Exact final text/vector capacities make either individual `stage` or
+`stage_inventory` Rust return fit within the immutable source result's retained
+payload quantity, with no ordered entries/shared roots. The scientific owner
+enforces this without changing signatures, values or errors. Applications must
+reserve each simultaneously live copy and independently admit concatenated
+observations, plotting containers and JSON/native-Python transport storage.
+
 The [independent input/idle-preview owner closure](development/features/unified-qt-workbench/design.md#independent-input-and-idle-preview-owner-closure)
 tracks partial input, draft, Designer and preview ownership outside those four
 downstream roots. Its standalone metadata operations and paired native consumers have

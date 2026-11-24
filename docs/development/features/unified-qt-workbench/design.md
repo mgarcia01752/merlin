@@ -3864,3 +3864,31 @@ layout and two shared roots. Rebind reserves full target coverage before cloning
 only the inner handle. This is a concrete project-transfer owner, not a general
 accounting abstraction. Its primary acceptance is linked from the official
 checklist; all independent source-agent checks remain historically source-only.
+
+
+### UIU-SESSION-01 existing observation-query copy envelope
+
+The actual Observations::from_result consumer requires pre-copy bounds for public
+stage_inventory and stage returns. The owner audit proves a reuse path, avoiding
+new public operations. A stage copy is one same-typed source snapshot slot, its
+unchanged context and a data subsequence; all eight data variants have fixed-size
+values. Inventory contains fixed Info entries, each backed by a source snapshot.
+After exact final-capacity normalization, either individual Rust return has payload
+bytes no greater than the immutable source result's retained_footprint payload,
+with zero ordered entries/shared roots. Empty inventory fits the source root.
+Use size_of assertions for layout inequalities; no numeric multiplier or clone
+capacity assumption. This is a per-copy envelope: simultaneous copies, paged
+concatenation, Qt JSON/observations and Python transport/objects remain separate.
+
+| Disposition / exact owner | Implementation and acceptance |
+| --- | --- |
+| EDIT `crates/ofdm/src/api/full_loop/observations/store.rs` and `observations.rs`; ADD focused `observations/query_storage.rs` | Reuse existing exact-capacity normalization for current query returns; reuse it in retained-result finalization rather than duplicate it. Preserve values, errors, original contexts/coordinates and signatures. Document the conservative source-root envelope on these existing operations only; it is not a general future-output bound. |
+| ADD focused private query-storage tests; EDIT `crates/ofdm/tests/api_result_retained_bound.rs` | Exhaustive eight variants, string/grid-role capacity spares, null/zero and source immutability, actual observed/disabled results, layout dominance, all three quantities and owned lifetime. Keep all existing vectors/assertions. |
+| REUSE native `bindings/python/src/full_loop/observations.rs` and existing native observation/bounded-output regressions | Existing native methods call the same Rust owner. Rebuild one exact native wheel for changed linked code, test installed imports/values/errors and direct Rust parity; no new signatures or operation-matrix rows. |
+
+Root owns this scientific-owner storage/API documentation unit, native pairing,
+all canonical records and acceptance. The session agent remains isolated to its
+Qt result-owner preparation. No DSP/FEC math, default, schema or namespace change.
+Run focused owner/API/native and affected Qt consumers; preserve caches. Commit
+this independently validated prerequisite before any Qt consumer relies on its
+new capacity guarantee. Complete session Level 2/milestone gates remain open.

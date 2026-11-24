@@ -16,6 +16,15 @@ request remain unchanged. Capture never starts until explicit `run`.
 | `result.observation_stats()` | `result.observation_stats()` | Owner-accounted bytes/events/elements and byte-budget dropped-copy counts, distinct from core dispatcher statistics. |
 | `result.stage(FullLoopStage, snapshot, FullLoopStageViewport)` | `result.stage(stage, snapshot=0, start=0, count=0)` | Owned actual contiguous data/context window with original offsets/totals; at most 4096 copied values. |
 
+For aggregate admission in a Rust application, each individual `stage_inventory`
+or `stage` return has exact final owned capacities. Its payload is no larger than
+`result.retained_footprint().payload_bytes`, with no ordered entries or shared
+roots. Keep the source charged and reserve each simultaneously live query copy
+separately. This conservative envelope covers these two Rust returns; paged
+concatenation, plotting containers, JSON transport and native Python dictionaries
+have independent storage. Temporary construction follows the existing finite
+query/retention limits; this is not a process-memory bound.
+
 Rust exposes the existing registered IDs through `FullLoopStage`; Python uses
 their original serde strings. Discover configured IDs from policy settings and
 available events from the result inventory. The default policy selects 22 existing

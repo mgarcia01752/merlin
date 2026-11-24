@@ -91,6 +91,74 @@ fn fits(actual: RetainedFootprint, bound: RetainedFootprint) -> bool {
         && actual.shared_roots <= bound.shared_roots
 }
 
+#[test]
+fn actual_owned_query_copies_fit_the_source_envelope_and_keep_original_coordinates() {
+    let request = observed(&request(None));
+    let result = request
+        .run_bounded(
+            &FullLoopControl::new(),
+            request.result_retained_bound().unwrap(),
+        )
+        .unwrap();
+    let source = result.retained_footprint().unwrap();
+    let inventory = result.stage_inventory();
+    assert_eq!(inventory.capacity(), inventory.len());
+    assert!(
+        std::mem::size_of_val(&inventory)
+            + inventory.capacity() * std::mem::size_of::<FullLoopStageInfo>()
+            <= source.payload_bytes
+    );
+    let source_inventory = serde_json::to_value(&inventory).unwrap();
+    let mut copies = Vec::new();
+    for info in inventory {
+        for index in 0..info.snapshots {
+            let snapshot = result.stage(info.stage, index, Default::default()).unwrap();
+            let actual = merlin_api::retention_support::retained_footprint(&snapshot).unwrap();
+            assert!(actual.payload_bytes <= source.payload_bytes);
+            assert_eq!(actual.ordered_entries, 0);
+            assert_eq!(actual.shared_roots, 0);
+            assert_eq!(snapshot.stage, info.stage);
+            assert_eq!(snapshot.retained_index, index);
+            copies.push(snapshot);
+        }
+    }
+    assert!(!copies.is_empty());
+    assert_eq!(
+        serde_json::to_value(result.stage_inventory()).unwrap(),
+        source_inventory
+    );
+    assert_eq!(result.retained_footprint().unwrap(), source);
+    let first = serde_json::to_value(&copies[0]).unwrap();
+    drop(result);
+    drop(request);
+    assert_eq!(serde_json::to_value(&copies[0]).unwrap(), first);
+}
+
+#[test]
+fn capture_disabled_inventory_has_exact_empty_storage_and_preserves_missing_coverage() {
+    let request = request(None);
+    let result = request
+        .run_bounded(
+            &FullLoopControl::new(),
+            request.result_retained_bound().unwrap(),
+        )
+        .unwrap();
+    let inventory = result.stage_inventory();
+    assert!(inventory.is_empty());
+    assert_eq!(inventory.capacity(), 0);
+    assert!(
+        std::mem::size_of_val(&inventory) <= result.retained_footprint().unwrap().payload_bytes
+    );
+    assert_eq!(
+        result
+            .stage(FullLoopStage::PhysicalBins, 0, Default::default())
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::MissingCoverage
+    );
+}
+
 fn stable_report(result: &FullLoopResult) -> Value {
     let mut value = serde_json::to_value(result.report()).unwrap();
     // Host wall time is independent of deterministic scientific output.
