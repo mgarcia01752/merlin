@@ -187,7 +187,7 @@ impl RetentionBudget {
     ///
     /// # Returns
     /// True only for the same budget allocation, not merely equal ceilings.
-    pub(super) fn owns<T>(&self, payload: &Retained<T>) -> bool {
+    pub(crate) fn owns<T>(&self, payload: &Retained<T>) -> bool {
         Arc::ptr_eq(&self.0, &payload.reservation.budget.0)
     }
 }

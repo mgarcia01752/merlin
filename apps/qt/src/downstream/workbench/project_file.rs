@@ -7,15 +7,15 @@ use base64::{engine::general_purpose::STANDARD, Engine};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
-use std::{collections::BTreeMap, io::Write, path::Path};
+use std::{borrow::Borrow, collections::BTreeMap, io::Write, path::Path};
 pub(crate) const MAX_PROJECT_BYTES: usize = 144 * 1024 * 1024;
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(crate) struct Project {
+pub(crate) struct Project<Sections = BTreeMap<String, Value>> {
     pub schema_version: u32,
     pub application: String,
     pub transmission: merlin::downstream::TransmissionSettings,
-    pub sections: BTreeMap<String, Value>,
+    pub sections: Sections,
     pub receiver: Option<crate::downstream::simulation::closed_loop::Options>,
     pub comparison_enabled: bool,
     pub dark: bool,
@@ -65,7 +65,7 @@ pub(crate) fn decode(value: &Value) -> Result<(String, Vec<u8>), String> {
     }
     Ok((stored.name, bytes))
 }
-impl Project {
+impl<Sections: Borrow<BTreeMap<String, Value>> + Serialize> Project<Sections> {
     /// Validates every section into a fresh Rust snapshot before atomic adoption.
     /// # Returns
     /// Independent accepted source/profile/measurement inputs.
@@ -82,10 +82,11 @@ impl Project {
     pub(crate) fn prepare(
         &self,
     ) -> Result<(crate::downstream::workbench::session::Inputs, Editors), String> {
+        let sections = self.sections.borrow();
         if ![1, 2].contains(&self.schema_version)
             || self.application != "MERLIN"
-            || self.sections.len() > 5
-            || self.sections.keys().any(|k| {
+            || sections.len() > 5
+            || sections.keys().any(|k| {
                 ![
                     "source",
                     "profile",
@@ -101,13 +102,13 @@ impl Project {
         self.transmission.validate().map_err(|e| e.to_string())?;
         let editors = Editors {
             source: crate::downstream::inputs::source_input::model::SourceModel::from_saved(
-                self.sections.get("source").unwrap_or(&Value::Null),
+                sections.get("source").unwrap_or(&Value::Null),
             )?,
             profile: crate::downstream::inputs::profile_input::ProfileModel::from_saved(
-                self.sections.get("profile").unwrap_or(&Value::Null),
+                sections.get("profile").unwrap_or(&Value::Null),
             )?,
             measurements: crate::downstream::inputs::measurement_input::model::Model::from_saved(
-                self.sections.get("measurements").unwrap_or(&Value::Null),
+                sections.get("measurements").unwrap_or(&Value::Null),
             )?,
         };
         let profile = editors
@@ -119,7 +120,7 @@ impl Project {
         let measurements = editors.measurements.published(profile.as_ref())?;
         let inputs = crate::downstream::workbench::session::Inputs {
             power: crate::downstream::inputs::channel_model::restore_power(
-                self.sections.get("channel_power").unwrap_or(&Value::Null),
+                sections.get("channel_power").unwrap_or(&Value::Null),
             )?,
             source: editors.source.snapshot(),
             profiles: editors
@@ -139,7 +140,7 @@ impl Project {
             playback: measurements.playback,
             response: measurements.response,
             additional_loss: crate::downstream::inputs::channel_model::restore(
-                self.sections.get("channel_model").unwrap_or(&Value::Null),
+                sections.get("channel_model").unwrap_or(&Value::Null),
             )?,
         };
         if let Some(options) = &self.receiver {
@@ -508,3 +509,7 @@ mod tests {
         assert!(project.write(&root).is_err());
     }
 }
+
+#[cfg(test)]
+#[path = "project_file/borrowed_tests.rs"]
+mod borrowed_tests;

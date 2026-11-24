@@ -1558,6 +1558,20 @@ is the historical context-only checkpoint. The later host adoption establishes
 downstream dispatch and identity wiring; the subsequent upstream adapter adds
 canonical GUI adoption. Complete aggregate admission remains pending.
 
+Downstream Context now couples accepted Inputs and saved sections in one
+immutable admitted owner. Read handles retain that owner across replacement;
+source/profile/measurement/power/loss Apply prepares a complete candidate and
+matching saved document before publication. Rejection preserves accepted editor
+and input state. Save/recovery borrows the charged section map through the
+existing project validator/serializer and atomic write, preserving legacy JSON.
+Queued Open inputs use the target budget, captured downstream key and original
+accepted snapshot; a compare/swap checks owner identity under one store lock,
+covering intervening Apply before generation refresh. Adoption
+rejects stale/foreign targets before replacing inputs, transfer storage or the
+native Save path. Prepared editor/scientific model target preflight and other
+retained transport/infrastructure closure remain open under UIU-SESSION-01.
+See the [focused design](development/features/unified-qt-workbench/design.md#uiu-session-01-atomic-accepted-inputs-and-prepared-projects).
+
 The shared [terminal transport](development/features/unified-qt-workbench/design.md#uiu-session-01-terminal-worker-transport)
 under `shell/worker.rs` keeps genuine run leases outside worker unwinding and
 tags queued callbacks explicitly. Known completion can release admission after

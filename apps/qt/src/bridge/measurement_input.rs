@@ -250,13 +250,21 @@ fn parse_selection<T: serde::de::DeserializeOwned>(document: &str) -> Result<T, 
     serde_json::from_str(document).map_err(|error| error.to_string())
 }
 impl MeasurementInputsRust {
+    /// Reads draft metadata while borrowing the exact admitted profile owner.
+    ///
+    /// # Arguments
+    /// * `rxmer` - Existing RX or response editor selection.
+    ///
+    /// # Returns
+    /// Original compact files/options; no accepted scientific payload is cloned.
     pub(super) fn metadata(&self, rxmer: bool) -> Value {
-        let profile = crate::downstream::workbench::session::snapshot(&self.context).profile;
+        let inputs = crate::downstream::workbench::session::snapshot(&self.context);
+        let profile = inputs.profile.as_ref();
         let mut options = self.model.options.clone();
         if !rxmer {
             options.tolerance_seconds = self.model.response_tolerance;
         }
-        json!({"files":self.model.files(rxmer,profile.as_ref()),"options":options,"flat":!rxmer&&self.model.draft_response.is_none()})
+        json!({"files":self.model.files(rxmer,profile),"options":options,"flat":!rxmer&&self.model.draft_response.is_none()})
     }
     fn stage_urls(&mut self, rxmer: bool, urls: Vec<String>) -> Result<(), String> {
         if urls.len() > merlin::downstream::MAX_SEQUENCE_CAPTURES {
@@ -289,13 +297,13 @@ impl MeasurementInputsRust {
         settings: &TransmissionSettings,
     ) -> Result<Value, String> {
         let inputs = crate::downstream::workbench::session::snapshot(&self.context);
-        let profile = inputs.profile;
+        let profile = inputs.profile.as_ref();
         if rxmer {
             let plan = Model::playback(
                 &self.model.draft_rx,
                 options,
                 settings,
-                profile.as_ref(),
+                profile,
                 inputs.profile_capture.as_ref(),
             )?;
             let info = plan.info();
@@ -313,7 +321,7 @@ impl MeasurementInputsRust {
             Model::response(
                 self.model.draft_response.as_ref(),
                 settings,
-                profile.as_ref(),
+                profile,
                 options.tolerance_seconds,
                 inputs.profile_capture.as_ref(),
             )?;
@@ -347,8 +355,8 @@ impl bridge::MeasurementInputs {
                 .rust()
                 .model
                 .preview_frame(&options, position, start, count)?;
-            let profile =
-                crate::downstream::workbench::session::snapshot(&self.rust().context).profile;
+            let inputs = crate::downstream::workbench::session::snapshot(&self.rust().context);
+            let profile = inputs.profile.as_ref();
             if let Some(capture) = value["source_index"]
                 .as_u64()
                 .and_then(|index| self.rust().model.draft_rx.get(index as usize))
@@ -356,9 +364,7 @@ impl bridge::MeasurementInputs {
                 crate::downstream::inputs::measurement_input::plc::annotate(
                     &mut value,
                     &capture.key().grid,
-                    profile
-                        .as_ref()
-                        .filter(|profile| &profile.key == capture.key()),
+                    profile.filter(|profile| &profile.key == capture.key()),
                 );
             }
             Ok::<_, String>(value)
@@ -593,39 +599,11 @@ impl bridge::MeasurementInputs {
         let context = self.rust().context.clone();
         let result = parse_selection::<Options>(&options.to_string()).and_then(|options| {
             let settings = parse::<TransmissionSettings>(&settings.to_string())?;
-            self.rust().admission(rxmer, &options, &settings)?;
-            let model = &mut self.as_mut().rust_mut().model;
-            if rxmer {
-                model.accepted_rx = model.draft_rx.clone();
-                model.options = options;
-            } else {
-                model.accepted_response = model.draft_response.clone();
-                model.response_tolerance = options.tolerance_seconds;
-            }
-            if rxmer {
-                let profile = crate::downstream::workbench::session::snapshot(&context).profile;
-                let published = model.published(profile.as_ref())?;
-                crate::downstream::workbench::session::set_playback(&context, published.playback);
-            } else {
-                crate::downstream::workbench::session::set_response(
-                    &context,
-                    model
-                        .accepted_response
-                        .as_ref()
-                        .map(Capture::response)
-                        .transpose()?,
-                    model.response_tolerance,
-                );
-            }
-            Ok(())
+            self.as_mut()
+                .rust_mut()
+                .model
+                .apply_transactional(&context, rxmer, options, &settings)
         });
-        if result.is_ok() {
-            crate::downstream::workbench::session::put_saved(
-                &context,
-                "measurements",
-                self.rust().model.export(),
-            );
-        }
         QString::from(result.err().unwrap_or_default())
     }
     /// Returns accepted additional-loss parameters for a new editor draft.
@@ -677,13 +655,15 @@ impl bridge::MeasurementInputs {
                 &loss,
                 &parse(&settings.to_string())?,
             )?;
-            crate::downstream::workbench::session::put_saved(
+            let section = crate::downstream::inputs::channel_model::saved(&loss);
+            crate::downstream::workbench::session::update(
                 &self.rust().context,
-                "channel_model",
-                crate::downstream::inputs::channel_model::saved(&loss),
-            );
-            crate::downstream::workbench::session::set_additional_loss(&self.rust().context, loss);
-            Ok(())
+                |inputs, sections| {
+                    inputs.additional_loss = loss;
+                    sections.insert("channel_model".into(), section);
+                    Ok(())
+                },
+            )
         });
         QString::from(result.err().unwrap_or_default())
     }
@@ -693,28 +673,15 @@ impl bridge::MeasurementInputs {
     /// # Returns
     /// Independent RxMER/response statuses and joint Channel Simulator readiness.
     pub fn state(&self, settings: &QString) -> QString {
-        let profile = crate::downstream::workbench::session::snapshot(&self.rust().context).profile;
         let settings = parse::<TransmissionSettings>(&settings.to_string());
         let model = &self.rust().model;
-        if let Ok(inputs) = model.published(profile.as_ref()) {
-            crate::downstream::workbench::session::set_playback(
-                &self.rust().context,
-                inputs.playback,
-            );
-            crate::downstream::workbench::session::set_response(
-                &self.rust().context,
-                inputs.response,
-                model.response_tolerance,
-            );
+        let refresh = model.refresh_transactional(&self.rust().context);
+        let inputs = crate::downstream::workbench::session::snapshot(&self.rust().context);
+        let mut value = model.state(settings, &inputs);
+        if let Err(error) = refresh {
+            value["channel"] = json!({"status":"error","reason":error});
         }
-        QString::from(
-            model
-                .state(
-                    settings,
-                    &crate::downstream::workbench::session::snapshot(&self.rust().context),
-                )
-                .to_string(),
-        )
+        QString::from(value.to_string())
     }
 }
 
@@ -745,13 +712,15 @@ impl bridge::MeasurementInputs {
                     },
                 )
                 .map_err(|cause| cause.message().to_owned())?;
-                crate::downstream::workbench::session::put_saved(
+                let section = crate::downstream::inputs::channel_model::saved_power(&power);
+                crate::downstream::workbench::session::update(
                     &self.rust().context,
-                    "channel_power",
-                    crate::downstream::inputs::channel_model::saved_power(&power),
-                );
-                crate::downstream::workbench::session::set_power(&self.rust().context, power);
-                Ok(())
+                    |inputs, sections| {
+                        inputs.power = power;
+                        sections.insert("channel_power".into(), section);
+                        Ok(())
+                    },
+                )
             });
         QString::from(result.err().unwrap_or_default())
     }

@@ -145,16 +145,18 @@ fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedRe
 
     // Exactly one complete report fits in the selected dimension. A second
     // actual target must reject while the first immutable report remains owned.
+    let input_charge =
+        crate::downstream::workbench::session::fixture_candidate_resources(&inputs, &sections);
     let maximum = limited(
         sum(
-            sum(metadata, initial),
+            sum(sum(metadata, input_charge), initial),
             sum(accepted_charge, sum(working_charge, report_charge)),
         ),
         dimension,
     );
     let mut context = Context::isolated();
     context.application = ApplicationSessions::new(maximum).unwrap();
-    crate::downstream::workbench::session::restore(&context, inputs, sections);
+    crate::downstream::workbench::session::restore(&context, inputs, sections).unwrap();
     let request =
         request_retention::rebind_request(&request, context.application.budget()).unwrap();
     let plan = request_retention::rebind_plan(&plan, context.application.budget()).unwrap();
@@ -166,7 +168,11 @@ fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedRe
     model.request = Some(request);
     model.plan = Some(plan);
     model.generation = Some(key);
-    (model, sum(metadata, accepted_charge), report_charge)
+    (
+        model,
+        sum(sum(metadata, input_charge), accepted_charge),
+        report_charge,
+    )
 }
 
 fn fixture_budget_limits() -> RetainedResources {
@@ -403,10 +409,14 @@ fn rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension(
         publish(&context, None);
         crate::downstream::instruments::receiver::performance::clear(&context);
         drop(model);
-        let metadata = ApplicationSessions::new(fixture_budget_limits())
-            .unwrap()
-            .budget()
-            .usage();
+        let metadata = sum(
+            ApplicationSessions::new(fixture_budget_limits())
+                .unwrap()
+                .budget()
+                .usage(),
+            crate::downstream::workbench::session::fixture_reserved_resources(&context),
+        );
+        // The Context still owns accepted Inputs after the model/result is dropped.
         assert_eq!(context.application.budget().usage(), sum(metadata, charge));
         drop(old);
         assert_eq!(context.application.budget().usage(), metadata);

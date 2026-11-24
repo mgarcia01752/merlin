@@ -49,8 +49,7 @@ impl Model {
         settings: &str,
     ) -> Result<(), String> {
         let inputs = crate::downstream::workbench::session::snapshot(&self.context);
-        let sections = crate::downstream::workbench::session::saved_sections(&self.context);
-        let result = self.configure_owned(settings, &inputs, &sections, options, verify);
+        let result = self.configure_owned(settings, &inputs, inputs.sections(), options, verify);
         if let Err(message) = &result {
             self.error = message.clone();
         }

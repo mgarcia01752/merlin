@@ -4023,3 +4023,61 @@ QML, Clippy/format/boundary/traceability and optimized/native execution. Reuse
 unchanged backend/native evidence; no wheel rebuild. Registry capacities, QAM
 status/catalog, other input/editor/project/query/transport and infrastructure
 owners and full SESSION Level2/milestone acceptance remain explicitly open.
+
+
+### UIU-SESSION-01 atomic accepted inputs and prepared projects
+
+The next concrete consumer is the existing Context Inputs/saved stores. Source,
+profile, measurement, loss and power Apply currently publish independently after
+mutating their editor; project adoption also publishes before later model rebind.
+REQ-UIU-03/06/07 requires one immutable admitted accepted-state owner and an
+infallible final adoption boundary. This extends existing owners; no scientific
+API, namespace, schema, decoder, simulation behavior or Qt registration changes.
+
+| Owner/file | Decision and concrete behavior |
+| --- | --- |
+| EDIT downstream/workbench/session.rs; ADD session/accepted.rs and focused tests | Replace the two mutable stores with one immutable Arc/Retained accepted Inputs+sections. Existing readers use charged shared snapshots or scoped borrows. Prepare the complete replacement and matching saved section before adoption; rejected candidates preserve all old aliases/data. Reuse public opaque root metadata and actual visible DTO/JSON capacities; include the actual wrapper/root once. |
+| EDIT bridge/source_input.rs, profile_input.rs, measurement_input.rs; existing input model Clone derivations/acceptance helpers only as needed | Validate a finite editor candidate, prepare matching published inputs/section, admit the complete target, then commit accepted editor/state together. Keep invokable signatures and original bytes/hashes/values. Measurement dependency refresh publishes only when its accepted profile-presence dependency changes, through the same transaction. |
+| ADD reviewed passive visitors beneath existing Source/Profile/Measurement/Designer owners and inputs/retention.rs; EDIT only owning registrations/forwarders | Count actual requested storage, public root children and independent copies. Reuse one concrete JSON/input-DTO visitor across these real consumers; no new budget/admission abstraction. Private application Designer Origin/Record ownership stays owner-local. Context/accounting graph ownership remains a separate lead-owned consumer. |
+| EDIT workbench/project_load.rs, project_file.rs, bridge/workbench_file.rs and existing receiver/preview preparation hooks | Prepare/charge canonical target owners before queued project retention. Preserve independent preparation contexts to avoid Context/prepared-model cycles. Admit all target scientific/editor/input/document ownership before global generation, accepted sections, native path or original-path registry change. Final GUI transfer reuses pre-admitted target aliases; failed/stale/cancelled candidates preserve the old project. |
+| EDIT existing closed_loop lifecycle and input/Designer callers | Borrow the admitted snapshot while preparing existing public requests; avoid uncharged deep snapshots escaping to workers. Existing finite construction stays separate from aggregate retained ownership. |
+
+The project preparation worker receives the exact accepting host budget and
+identity without retaining a target Context/prepared-store cycle. Existing public
+operations still own validation and science. Same-budget prepared aliases need
+no second scientific copy/reservation on GUI reload; identity/readiness adoption
+must remain checked. Save/recovery serialization borrows accepted sections or
+keeps an explicit copy charge through writing, preserving exact legacy JSON and
+atomic destination rules. Do not silently drop guards when moving data.
+
+Validation covers actual capacity/entry/root arithmetic, old snapshot/final-alias
+lifetimes, rejected coupled Apply, read refresh passivity, fully queued cancelled/
+stale/failed project ownership, no owner cycles, target admission rollback and
+existing saved/legacy project behavior. Run all affected editor/project/receiver/
+preview/shared-direction lifecycle cases, native project compatibility where
+applicable, QML, Clippy/format/boundary/traceability and optimized/native checks.
+Unchanged linked scientific APIs do not require rebuilding wheels. Independent
+returned instrument/Qt transport, registry spare capacity and outer infrastructure
+owners plus complete SESSION Level2/milestone acceptance remain open.
+
+
+This implementation unit closes accepted Inputs/sections, their shared read
+aliases, coupled editor Apply, borrowed Save serialization and queued project
+input admission against the captured target budget/key. The general project
+model preflight described above remains the next concrete owner work: prepared
+editors, receiver/preview target readiness and independent metadata/path owners
+must all be admitted before claiming complete project/SESSION acceptance.
+The [source Apply handoff](agent-handoffs/runtime-apply-transactions.md) records
+its unexecuted source-only checkpoint; primary tests establish runtime evidence.
+Only the shared JSON/profile/RxMER visitor leaves are adopted from the frozen
+passive metadata preparation in this unit. The additional model/Designer visitors
+remain source-only until their actual retained consumers are wired. Existing
+performance JSON metadata now reuses that same actual-capacity leaf.
+
+The worker also retains the original charged Snapshot captured at Open start.
+Canonical SessionKey alone misses an accepted update before receiver refresh;
+accepted adoption compares original/current owner identity and swaps under the
+same store lock. It preserves intervening edits without copied JSON fingerprints
+or target Context cycles. [Primary execution and limitations](validation.md#uiu-session-01-atomic-accepted-input-and-saved-document-admission)
+cover this source-audited gap and the focused unit; remaining all-target project
+preflight stays separate.

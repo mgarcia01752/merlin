@@ -3,23 +3,23 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Explicit downstream accepted inputs, results and editor transfer ownership.
+mod accepted;
 use super::store::Store;
 use crate::downstream::common::constants::DEFAULT_RESPONSE_ASSOCIATION_SECONDS;
+pub(crate) use accepted::{Section, SectionSnapshot, Shared as AcceptedState, Snapshot};
 use merlin::downstream::{
     AdditionalLoss, ChannelEstimate, MeasurementMode, PowerConditioning, ProfileCapture,
     RxMerFrame, SourceInput, SourceProfileFrame,
 };
-use std::{collections::BTreeMap, sync::Arc};
+use std::sync::Arc;
 
 /// Explicit downstream application owner; queries never follow tab selection.
 #[derive(Clone)]
 pub(crate) struct Context {
     /// Canonical two-direction identities and global dispatch for this workbench.
     pub(crate) application: crate::shell::ApplicationSessions,
-    /// Accepted scientific input snapshots for this downstream owner.
-    pub(crate) inputs: Store<Inputs>,
-    /// Exact accepted editor sections and original embedded bytes.
-    pub(crate) saved: Store<BTreeMap<String, serde_json::Value>>,
+    /// Matching immutable inputs/documents, admitted before their one owner swap.
+    accepted: Store<Option<AcceptedState>>,
     /// Latest actual public result, independent of other contexts.
     pub(crate) result: Store<Option<Arc<crate::downstream::simulation::closed_loop::ResultData>>>,
     /// Detached bounded QAM history for this owner only.
@@ -53,8 +53,7 @@ impl Context {
         Self {
             application: crate::shell::ApplicationSessions::desktop()
                 .expect("Application session identities unavailable"),
-            inputs: Store::default(),
-            saved: Store::default(),
+            accepted: Store::default(),
             result: Store::default(),
             qam: Store::default(),
             performance: Store::default(),
@@ -135,166 +134,212 @@ pub(crate) fn profile_source<'input>(
     Ok((capture, profile.profile_id))
 }
 
-/// Publishes an accepted immutable source on the Qt GUI thread.
+/// Prepares a coupled accepted input/document update before any editor commit.
+///
 /// # Arguments
-/// * `context` - Exact downstream owner; never inferred from tab selection.
-/// * `source` - Validated configuration and seed; shared file bytes stay Rust-owned.
-pub(crate) fn set_source(context: &Context, source: Option<AcceptedSource>) {
-    context
-        .inputs
-        .with(|inputs| inputs.borrow_mut().source = source);
-}
-
-/// Publishes accepted profile selection/removal, never a draft.
-/// # Arguments
-/// * `context` - Exact downstream owner; never inferred from tab selection.
-/// * `profile`, `capture` - Selected assignments and exact original catalog, or removal.
-pub(crate) fn set_profile(
-    context: &Context,
-    profile: Option<SourceProfileFrame>,
-    capture: Option<ProfileCapture>,
-) {
-    context.inputs.with(|inputs| {
-        let mut inputs = inputs.borrow_mut();
-        inputs.profiles = profile.iter().cloned().collect();
-        inputs.profile = profile;
-        inputs.profile_capture = capture;
-    });
-}
-
-/// Publishes all profiles from the accepted original capture, never editor drafts.
-/// # Arguments
-/// * `context` - Exact downstream owner; never inferred from tab selection.
-/// * `profiles` - Validated captured profiles in source identity order.
-pub(crate) fn set_profiles(context: &Context, profiles: Vec<SourceProfileFrame>) {
-    context
-        .inputs
-        .with(|inputs| inputs.borrow_mut().profiles = profiles);
-}
-
-/// Copies the current GUI-thread inputs for an independent immutable worker request.
-/// # Arguments
-/// * `context` - Exact downstream owner; never inferred from tab selection.
+/// * `context` - Exact downstream owner; selected tabs never redirect publication.
+/// * `change` - Finite candidate edits; matching editor acceptance happens after success.
+///
 /// # Returns
-/// Typed snapshot; QML never receives source bytes or full assignment arrays.
-pub(crate) fn snapshot(context: &Context) -> Inputs {
-    context.inputs.with(|inputs| inputs.borrow().clone())
+/// Unit after the complete immutable owner is admitted and adopted.
+///
+/// # Errors
+/// Preserves current inputs/documents/aliases on validation or aggregate failure.
+pub(crate) fn update(
+    context: &Context,
+    change: impl FnOnce(&mut Inputs, &mut accepted::Sections) -> Result<(), String>,
+) -> Result<(), String> {
+    accepted::update(context, change)
 }
 
-/// Reads bounded profile identities without cloning captured assignments or RxMER arrays.
+/// Borrows current accepted inputs through their original charged immutable owner.
+///
 /// # Arguments
-/// * `context` - Exact downstream owner; never inferred from tab selection.
+/// * `context` - Exact downstream owner.
+///
+/// # Returns
+/// A shared read handle; replacing the accepted state cannot release old aliases.
+pub(crate) fn snapshot(context: &Context) -> Snapshot {
+    accepted::snapshot(context)
+}
+
+/// Reads bounded profile identities without copying assignments or measurements.
+///
+/// # Arguments
+/// * `context` - Exact downstream owner.
+///
 /// # Returns
 /// Sorted unique captured IDs and the currently applied ID, if any.
 pub(crate) fn profile_catalog(context: &Context) -> (Vec<u8>, Option<u8>) {
-    context.inputs.with(|current| {
-        let inputs = current.borrow();
-        let mut ids = inputs
-            .profiles
-            .iter()
-            .chain(inputs.profile.iter())
-            .map(|profile| profile.profile_id)
-            .collect::<Vec<_>>();
-        ids.sort_unstable();
-        ids.dedup();
-        (
-            ids,
-            inputs.profile.as_ref().map(|profile| profile.profile_id),
-        )
-    })
+    let inputs = snapshot(context);
+    let mut ids = inputs
+        .profiles
+        .iter()
+        .chain(inputs.profile.iter())
+        .map(|profile| profile.profile_id)
+        .collect::<Vec<_>>();
+    ids.sort_unstable();
+    ids.dedup();
+    (
+        ids,
+        inputs.profile.as_ref().map(|profile| profile.profile_id),
+    )
 }
 
-/// Publishes accepted RxMER playback inputs for independent worker snapshots.
+/// Borrows an accepted block while preserving the original charged owner.
+///
 /// # Arguments
-/// * `context` - Exact downstream owner; never inferred from tab selection.
-/// * `playback` - Original frames and explicit combination/schedule, or removal.
-pub(crate) fn set_playback(context: &Context, playback: Option<PlaybackInputs>) {
-    context
-        .inputs
-        .with(|inputs| inputs.borrow_mut().playback = playback);
-}
-/// Publishes accepted channel response H; None explicitly means synthetic unity.
-/// # Arguments
-/// * `context` - Exact downstream owner; never inferred from tab selection.
-/// * `response` - Original validated response, never reciprocal correction.
-/// * `tolerance` - Independent accepted response-association seconds.
-pub(crate) fn set_response(context: &Context, response: Option<ChannelEstimate>, tolerance: u32) {
-    context.inputs.with(|inputs| {
-        let mut inputs = inputs.borrow_mut();
-        inputs.response = response;
-        inputs.response_tolerance = tolerance;
-    });
+/// * `context` - Exact downstream owner.
+/// * `key` - Existing static application block identifier.
+///
+/// # Returns
+/// Immutable section or null before Apply; embedded originals are not cloned.
+pub(crate) fn saved(context: &Context, key: &'static str) -> Section {
+    accepted::section(context, key)
 }
 
-/// Stores accepted editor state in Rust for workbench persistence.
+/// Borrows all matching accepted sections through the same charged owner.
+///
 /// # Arguments
-/// * `context` - Exact downstream owner; never inferred from tab selection.
-/// * `key` - Known block identifier.
-/// * `value` - Accepted options and encoded original inputs, never a draft.
-pub(crate) fn put_saved(context: &Context, key: &str, value: serde_json::Value) {
-    context.saved.with(|saved| {
-        saved.borrow_mut().insert(key.into(), value);
-    });
-}
-/// Copies one accepted block document without passing original arrays through QML.
-/// # Arguments
-/// * `context` - Exact downstream owner; never inferred from tab selection.
-/// * `key` - Known block identifier.
+/// * `context` - Exact downstream owner.
+///
 /// # Returns
-/// The saved document, or null before explicit acceptance.
-pub(crate) fn saved(context: &Context, key: &str) -> serde_json::Value {
-    context.saved.with(|saved| {
-        saved
-            .borrow()
-            .get(key)
-            .cloned()
-            .unwrap_or(serde_json::Value::Null)
-    })
+/// Read handle; independently copied/queued documents require separate admission.
+pub(crate) fn saved_sections(context: &Context) -> SectionSnapshot {
+    accepted::sections(context)
 }
-/// Copies all accepted block documents for a project file.
+
+/// Admits matching validated inputs/documents before target adoption.
+///
 /// # Arguments
-/// * `context` - Exact downstream owner; never inferred from tab selection.
+/// * `context` - Exact accepting owner.
+/// * `inputs`, `sections` - Finite completed candidates, preserving original bytes.
+///
 /// # Returns
-/// Rust-owned section map; inputs remain offline and self-contained.
-pub(crate) fn saved_sections(
-    context: &Context,
-) -> std::collections::BTreeMap<String, serde_json::Value> {
-    context.saved.with(|saved| saved.borrow().clone())
-}
-/// Replaces all accepted inputs and sections after complete project validation.
-/// # Arguments
-/// * `context` - Exact downstream owner; never inferred from tab selection.
-/// * `inputs` - Independently validated scientific snapshot.
-/// * `sections` - Matching original-byte editor documents.
+/// Unit after one immutable owner swap.
+///
+/// # Errors
+/// Metadata or aggregate rejection preserves the old state and aliases.
 pub(crate) fn restore(
     context: &Context,
     inputs: Inputs,
-    sections: std::collections::BTreeMap<String, serde_json::Value>,
-) {
-    context
-        .inputs
-        .with(|current| *current.borrow_mut() = inputs);
-    context.saved.with(|saved| *saved.borrow_mut() = sections);
+    sections: accepted::Sections,
+) -> Result<(), String> {
+    let candidate = accepted::admit(inputs, sections, context.application.budget())?;
+    *context.accepted.borrow_mut() = Some(candidate);
+    Ok(())
 }
 
-/// Publishes the accepted synthetic magnitude response for the next frozen run.
+/// Admits completed project preparation against its canonical target before queueing.
+///
 /// # Arguments
-/// * `context` - Exact downstream owner; never inferred from tab selection.
-/// * `loss` - Validated additional loss; original measurements remain unchanged.
-pub(crate) fn set_additional_loss(context: &Context, loss: AdditionalLoss) {
-    context
-        .inputs
-        .with(|inputs| inputs.borrow_mut().additional_loss = loss);
+/// * `inputs`, `sections` - Matching validated candidates.
+/// * `budget` - Actual accepting host counter, shared with accepted/old/queued owners.
+///
+/// # Returns
+/// Charged immutable owner; no target Context is retained by this handle.
+///
+/// # Errors
+/// Metadata or aggregate rejection before publication.
+pub(crate) fn prepare_accepted(
+    inputs: Inputs,
+    sections: accepted::Sections,
+    budget: &crate::shell::RetentionBudget,
+) -> Result<AcceptedState, String> {
+    accepted::admit(inputs, sections, budget)
 }
 
-/// Publishes validated amplifier, attenuation and electrical-reference settings.
+/// Publishes a previously admitted exact-target state without copying its payloads.
+///
 /// # Arguments
-/// * `context` - Exact downstream owner; never inferred from tab selection.
-/// * `power` - Accepted configuration, independent of measurement originals.
-pub(crate) fn set_power(context: &Context, power: PowerConditioning) {
+/// * `context` - Exact accepting owner.
+/// * `state` - Candidate carrying this host's canonical reservation.
+/// * `expected` - Original charged accepted owner captured before loading.
+///
+/// # Returns
+/// Unit after the infallible owner swap.
+///
+/// # Errors
+/// Rejects a foreign budget or changed accepted owner before target mutation.
+pub(crate) fn adopt_accepted(
+    context: &Context,
+    state: AcceptedState,
+    expected: &Snapshot,
+) -> Result<(), String> {
+    accepted::adopt(context, state, expected)
+}
+
+/// Reads the actual current accepted owner's test ledger, without estimating science.
+///
+/// # Arguments
+/// * `context` - Exact fixture owner.
+///
+/// # Returns
+/// Stored reservation only; capacity arithmetic is validated independently.
+#[cfg(test)]
+pub(crate) fn fixture_reserved_resources(context: &Context) -> crate::shell::RetainedResources {
     context
-        .inputs
-        .with(|inputs| inputs.borrow_mut().power = power);
+        .accepted
+        .borrow()
+        .as_ref()
+        .map_or(Default::default(), |owner| {
+            owner.fixture_reserved_resources()
+        })
+}
+
+/// Measures an actual fixture candidate before moving it into the target budget.
+///
+/// # Arguments
+/// * `inputs`, `sections` - The actual unchanged candidates subsequently moved to restore.
+///
+/// # Returns
+/// Concrete owner quantities, not a clone or serialized-size estimate.
+#[cfg(test)]
+pub(crate) fn fixture_candidate_resources(
+    inputs: &Inputs,
+    sections: &accepted::Sections,
+) -> crate::shell::RetainedResources {
+    accepted::resources(inputs, sections).unwrap()
+}
+
+// Existing fixture publication helpers keep historical callsites readable. Runtime
+// Apply uses the coupled transaction above; these helpers never accept an editor.
+/// Publishes fixture source selection through the runtime transaction.
+///
+/// # Arguments
+/// * `context, source` - Actual fixture target and validated data.
+///
+/// # Panics
+/// Panics when the fixture host cannot admit its complete replacement.
+#[cfg(test)]
+pub(crate) fn set_source(context: &Context, source: Option<AcceptedSource>) {
+    update(context, |inputs, _| {
+        inputs.source = source;
+        Ok(())
+    })
+    .unwrap();
+}
+/// Publishes fixture selected profile and original catalog through the runtime transaction.
+///
+/// # Arguments
+/// * `context, profile, capture` - Actual fixture target and validated data.
+///
+/// # Panics
+/// Panics when the fixture host cannot admit its complete replacement.
+/// Publishes fixture saved original section through the runtime transaction.
+///
+/// # Arguments
+/// * `context, key, value` - Actual fixture target and validated data.
+///
+/// # Panics
+/// Panics when the fixture host cannot admit its complete replacement.
+#[cfg(test)]
+pub(crate) fn put_saved(context: &Context, key: &str, value: serde_json::Value) {
+    update(context, |_, sections| {
+        sections.insert(key.into(), value);
+        Ok(())
+    })
+    .unwrap();
 }
 
 #[cfg(test)]
@@ -325,14 +370,14 @@ mod tests {
             );
             put_saved(context, "source", json!({"seed":seed}));
         }
-        assert_eq!(snapshot(&left).source.unwrap().seed, 17);
-        assert_eq!(snapshot(&right).source.unwrap().seed, 31);
+        assert_eq!(snapshot(&left).source.as_ref().unwrap().seed, 17);
+        assert_eq!(snapshot(&right).source.as_ref().unwrap().seed, 31);
         assert_eq!(saved(&left, "source")["seed"], 17);
         assert_eq!(saved(&right, "source")["seed"], 31);
         let shared = left.clone();
         set_source(&shared, None);
         assert!(snapshot(&left).source.is_none());
-        assert_eq!(snapshot(&right).source.unwrap().seed, 31);
+        assert_eq!(snapshot(&right).source.as_ref().unwrap().seed, 31);
         assert!(saved_sections(&Context::isolated()).is_empty());
     }
 
@@ -383,11 +428,20 @@ mod tests {
         let released = std::thread::spawn(|| {
             let target = Context::default();
             let other = Context::isolated();
-            let weak = target.inputs.downgrade();
+            let weak = target.accepted.downgrade();
             let project = serde_json::from_slice(PROJECT).unwrap();
-            let prepared =
-                super::super::project_load::PreparedProject::prepare(project, None).unwrap();
-            prepared.adopt(&target);
+            let prepared = super::super::project_load::PreparedProject::prepare(
+                project,
+                None,
+                target.application.budget(),
+                target
+                    .application
+                    .snapshot(crate::shell::Direction::Downstream)
+                    .key,
+                snapshot(&target),
+            )
+            .unwrap();
+            prepared.adopt(&target).unwrap();
             assert!(snapshot(&target).source.is_some());
             assert!(snapshot(&other).source.is_none());
             assert!(

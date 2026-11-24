@@ -26,7 +26,8 @@ fn prepared_model(context: Context) -> Model {
 
 fn prepared_model_with_duration(context: Context, duration_ms: u64) -> Model {
     let (inputs, transmission, sections) = super::tests::accepted_inputs();
-    crate::downstream::workbench::session::restore(&context, inputs.clone(), sections.clone());
+    crate::downstream::workbench::session::restore(&context, inputs.clone(), sections.clone())
+        .unwrap();
     let mut model = Model::default();
     model.context = context;
     model.options = Some(Options {

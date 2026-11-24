@@ -40,13 +40,14 @@ struct SourceFile {
     payload: SourceInput,
 }
 
+#[derive(Clone)]
 struct Accepted {
     options: Options,
     file: Option<SourceFile>,
     config: SourceInput,
 }
 
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub(crate) struct SourceModel {
     file: Option<SourceFile>,
     accepted: Option<Accepted>,
@@ -233,6 +234,36 @@ impl SourceModel {
         Ok(())
     }
 
+    /// Publishes a validated editor candidate and its matching saved section atomically.
+    ///
+    /// # Arguments
+    /// * `context` - Exact canonical downstream owner.
+    /// * `document` - Existing bounded source options; original staged bytes stay unchanged.
+    ///
+    /// # Returns
+    /// Unit after complete Inputs/section admission and infallible editor replacement.
+    ///
+    /// # Errors
+    /// Scientific validation or host rejection preserves accepted editor/Inputs/section.
+    /// Temporary editor preparation is separate; model-graph admission remains follow-up.
+    pub(crate) fn apply_transactional(
+        &mut self,
+        context: &crate::downstream::workbench::session::Context,
+        document: &str,
+    ) -> Result<(), String> {
+        let mut candidate = self.clone();
+        candidate.accept(document)?;
+        let source = candidate.snapshot();
+        let section = candidate.export();
+        crate::downstream::workbench::session::update(context, |inputs, sections| {
+            inputs.source = source;
+            sections.insert("source".into(), section);
+            Ok(())
+        })?;
+        *self = candidate;
+        Ok(())
+    }
+
     /// Reports explicit source acceptance rather than simulation completion.
     /// # Returns
     /// Block status and accessible readiness reason, without source bytes.
@@ -366,3 +397,7 @@ mod tests {
         assert_eq!(restored.snapshot().unwrap().seed, 0);
     }
 }
+
+#[cfg(test)]
+#[path = "model/apply_tests.rs"]
+mod apply_tests;

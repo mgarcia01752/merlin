@@ -244,26 +244,8 @@ fn append(
 }
 
 fn json_children(value: &Value) -> Result<RetainedResources, RetentionError> {
-    let mut resources = RetainedResources::default();
-    match value {
-        Value::Null | Value::Bool(_) | Value::Number(_) => {}
-        Value::String(value) => resources.payload_bytes = value.capacity(),
-        Value::Array(values) => {
-            resources.payload_bytes = product(values.capacity(), size_of::<Value>())?;
-            for value in values {
-                append(&mut resources, json_children(value)?)?;
-            }
-        }
-        Value::Object(values) => {
-            resources.payload_bytes = product(values.len(), size_of::<(String, Value)>())?;
-            resources.ordered_entries = values.len();
-            for (key, value) in values {
-                resources.payload_bytes = add(resources.payload_bytes, key.capacity())?;
-                append(&mut resources, json_children(value)?)?;
-            }
-        }
-    }
-    Ok(resources)
+    crate::downstream::inputs::retention::json_children(value)
+        .map_err(|_| RetentionError::ArithmeticOverflow)
 }
 
 #[cfg(test)]

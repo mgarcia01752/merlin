@@ -229,28 +229,7 @@ impl bridge::ProfileInput {
         let result = self
             .as_mut()
             .rust_mut()
-            .accept(profile_id, &settings.to_string());
-        let result = result.and_then(|()| {
-            let profiles = self
-                .rust()
-                .accepted
-                .as_ref()
-                .map(|(capture, _)| capture.owned_profiles())
-                .transpose()?
-                .unwrap_or_default();
-            let selected = self
-                .rust()
-                .accepted
-                .as_ref()
-                .and_then(|(capture, id)| capture.profile(*id).ok())
-                .cloned();
-            let catalog = self.rust().accepted.as_ref().map(|(capture, _)| capture.catalog.clone());
-            crate::downstream::workbench::session::set_profile(&self.rust().context,selected, catalog);
-            crate::downstream::workbench::session::set_profiles(&self.rust().context,profiles);
-            let section=self.rust().accepted.as_ref().map(|(c,id)|json!({"file":crate::downstream::workbench::project_file::encode(&c.name,c.original.bytes()),"profile_id":id})).unwrap_or(Value::Null);
-            crate::downstream::workbench::session::put_saved(&self.rust().context,"profile", section);
-            Ok(())
-        });
+            .apply_transactional(profile_id, &settings.to_string());
         QString::from(result.err().unwrap_or_default())
     }
     /// Discards draft input and restores the accepted snapshot without I/O.

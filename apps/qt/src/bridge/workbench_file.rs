@@ -142,7 +142,11 @@ impl bridge::WorkbenchFile {
         if self.rust().loader.is_loading() {
             return QString::from("{\"error\":\"Wait for workbench loading to finish.\"}");
         }
-        workbench_session::restore(&self.rust().context, Default::default(), Default::default());
+        if let Err(error) =
+            workbench_session::restore(&self.rust().context, Default::default(), Default::default())
+        {
+            return QString::from(json!({"error":error}).to_string());
+        }
         crate::platform::input_file::clear_original_paths();
         self.as_mut().rust_mut().path = None;
         QString::from(json!({"created":true,"transmission":merlin::downstream::TransmissionSettings::default(),
@@ -196,7 +200,13 @@ impl bridge::WorkbenchFile {
     /// Loading status, or an inactive document for ordinary desktop startup.
     pub fn startup(mut self: core::pin::Pin<&mut Self>) -> QString {
         let result = match crate::platform::startup::take_workbench() {
-            Some(source) => self.as_mut().rust_mut().loader.start_requested(source),
+            Some(source) => {
+                let context = self.rust().context.clone();
+                self.as_mut()
+                    .rust_mut()
+                    .loader
+                    .start_requested(&context, source)
+            }
             None => json!({"loading":false}),
         };
         QString::from(result.to_string())
@@ -207,7 +217,10 @@ impl bridge::WorkbenchFile {
     /// Loading metadata; poll_open preserves the current WB on any failure.
     pub fn restore_update(mut self: core::pin::Pin<&mut Self>) -> QString {
         let result = match recovery_path() {
-            Ok(path) => self.as_mut().rust_mut().loader.start(Some(path)),
+            Ok(path) => {
+                let context = self.rust().context.clone();
+                self.as_mut().rust_mut().loader.start(&context, Some(path))
+            }
             Err(error) => json!({"error":error}),
         };
         QString::from(result.to_string())
@@ -217,7 +230,14 @@ impl bridge::WorkbenchFile {
     /// # Returns
     /// Loading status or a diagnostic; completion is collected by poll_open.
     pub fn open(mut self: core::pin::Pin<&mut Self>) -> QString {
-        QString::from(self.as_mut().rust_mut().loader.start(None).to_string())
+        let context = self.rust().context.clone();
+        QString::from(
+            self.as_mut()
+                .rust_mut()
+                .loader
+                .start(&context, None)
+                .to_string(),
+        )
     }
 
     /// Collects completed Open and publishes only a fully prepared project.
@@ -226,8 +246,14 @@ impl bridge::WorkbenchFile {
     pub fn poll_open(mut self: core::pin::Pin<&mut Self>) -> QString {
         let (status, prepared) = self.as_mut().rust_mut().loader.poll();
         let result = if let Some(prepared) = prepared {
-            self.as_mut().rust_mut().path = prepared.path.clone();
-            prepared.adopt(&self.rust().context)
+            let path = prepared.path.clone();
+            match prepared.adopt(&self.rust().context) {
+                Ok(metadata) => {
+                    self.as_mut().rust_mut().path = path;
+                    metadata
+                }
+                Err(error) => json!({"error":error}),
+            }
         } else {
             status
         };

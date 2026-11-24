@@ -270,6 +270,12 @@ validating embedded captures. The application remains responsive. **Cancel**
 keeps the current workbench; an active preparation stage finishes in the
 background before the loader closes. Opening a file never starts a simulation.
 
+Source, profile and measurement Apply accepts the matching simulation inputs and
+saved section together. A retained-data limit error keeps the previous accepted
+configuration; the staged edit remains available for correction or cancellation.
+Open rejects a prepared input replacement if its target changed during loading.
+Save continues to use the accepted original input bytes and hashes.
+
 The bar indicates activity, not a completion percentage. Timing is hidden during
 normal loading. Launch with **--debug-ui** to show **Time since Open**, which
 includes file selection, reading and validation; it is not simulation time or

@@ -3,9 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Real accepted request/plan quantities and partial application-owner lifetimes.
-use super::super::{
-    latest, prepare_sweep, Context, Inputs, Model, Options, Sections, TransmissionSettings,
-};
+use super::super::{latest, prepare_sweep, Context, Model, Options, TransmissionSettings};
 use super::*;
 use crate::shell::{ApplicationSessions, Direction, DispatchPhase};
 use merlin::downstream::ChannelJobStatus;
@@ -165,12 +163,14 @@ fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Model, String)
         resources::<FullLoopSweepPlan>(plan.retained_footprint().unwrap()).unwrap(),
     );
     assert!(actual.payload_bytes > 0 && actual.ordered_entries > 0 && actual.shared_roots > 0);
+    let input_charge =
+        crate::downstream::workbench::session::fixture_candidate_resources(&inputs, &sections);
     let maximum = tight.map_or(TEST_MAXIMUM, |dimension| {
         // The test first completes real science. Keep its independently preflighted
         // result and active working-request charges before pressuring a new candidate.
         limited(
             sum(
-                sum(base_resources(), initial),
+                sum(sum(base_resources(), input_charge), initial),
                 sum(
                     actual,
                     sum(working_allowance(&request), report_allowance(&request)),
@@ -181,7 +181,7 @@ fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Model, String)
     });
     let mut context = Context::isolated();
     context.application = ApplicationSessions::new(maximum).unwrap();
-    crate::downstream::workbench::session::restore(&context, inputs, sections);
+    crate::downstream::workbench::session::restore(&context, inputs, sections).unwrap();
     // Admit canonical metadata while the actual prepared scientific candidates
     // still belong to their finite preparation builders, before final wrappers.
     let key = context.application.configure_downstream(true).unwrap();
@@ -246,7 +246,13 @@ fn exact_public_quantities_and_cross_budget_aliases_cover_both_real_roots() {
     let alias = Arc::clone(&rebound_request);
     drop(request);
     drop(plan);
-    assert_eq!(source.budget().usage(), base_resources());
+    assert_eq!(
+        source.budget().usage(),
+        sum(
+            base_resources(),
+            crate::downstream::workbench::session::fixture_reserved_resources(&model.context)
+        )
+    );
     drop(rebound_request);
     drop(rebound_plan);
     assert_eq!(target.usage(), request_charge);
@@ -270,8 +276,8 @@ fn every_real_candidate_dimension_preserves_accepted_science_generation_and_repo
         let accepted_options = serde_json::to_value(&model.options).unwrap();
         let mut changed = model.options.clone().unwrap();
         changed.duration_ms = CHANGED_OBSERVATION_MS;
-        let inputs: Inputs = crate::downstream::workbench::session::snapshot(&context);
-        let sections: Sections = crate::downstream::workbench::session::saved_sections(&context);
+        let inputs = crate::downstream::workbench::session::snapshot(&context);
+        let sections = crate::downstream::workbench::session::saved_sections(&context);
         let transmission: TransmissionSettings = serde_json::from_str(&settings).unwrap();
         prepare_sweep(&transmission, &inputs, &changed, &sections).unwrap();
         assert!(model
@@ -296,6 +302,10 @@ fn every_real_candidate_dimension_preserves_accepted_science_generation_and_repo
 fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     let (mut model, settings) = prepared_model(PAUSABLE_OBSERVATION_MS, None);
     let application = model.context.application.clone();
+    let base = sum(
+        base_resources(),
+        crate::downstream::workbench::session::fixture_reserved_resources(&model.context),
+    );
     let old_charge = owners(&model);
     let old_result_charge = report_allowance(model.request.as_ref().unwrap().value());
     let old_working_charge = working_allowance(model.request.as_ref().unwrap().value());
@@ -315,7 +325,7 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
         application.budget().usage(),
         sum(
             sum(
-                base_resources(),
+                base,
                 crate::downstream::instruments::receiver::performance::fixture_reserved_resources(
                     &model.context
                 )
@@ -332,10 +342,7 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     // Profile plus Finished delivery cannot both pass the unchanged one-slot
     // backpressure before GUI polling; the old closure still owns both aliases.
     assert!(old_request.upgrade().is_some() && old_plan.upgrade().is_some());
-    let stable = sum(
-        base_resources(),
-        sum(old_result_charge, sum(old_charge, new_charge)),
-    );
+    let stable = sum(base, sum(old_result_charge, sum(old_charge, new_charge)));
     let actual = application.budget().usage();
     // Cancellation can finish the numerical call before Profile delivery. Only
     // that call's execution-input charge may already have dropped; queued science
@@ -352,22 +359,22 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     );
     wait_for(|| model.poll()["busy"] == false);
     assert!(old_request.upgrade().is_none() && old_plan.upgrade().is_none());
-    assert_eq!(
-        application.budget().usage(),
-        sum(base_resources(), new_charge)
-    );
+    assert_eq!(application.budget().usage(), sum(base, new_charge));
     assert!(latest(&model.context).is_none());
     assert_eq!(
         model.options.as_ref().unwrap().duration_ms,
         CHANGED_OBSERVATION_MS
     );
     assert!(model.invalidate());
-    assert_eq!(application.budget().usage(), base_resources());
+    assert_eq!(application.budget().usage(), base);
 }
 
 #[test]
 fn rebind_reserves_both_target_roots_before_replacing_source_ownership() {
     let (mut model, _) = prepared_model(COMPLETE_OBSERVATION_MS, None);
+    // Keep the accepted source Context, not just its host metadata, alive while
+    // testing transfer rollback. Its newly admitted Inputs have their own lifetime.
+    let source_context = model.context.clone();
     let source = model.context.application.clone();
     let request = Arc::clone(model.request.as_ref().unwrap());
     let plan = Arc::clone(model.plan.as_ref().unwrap());
@@ -421,6 +428,7 @@ fn rebind_reserves_both_target_roots_before_replacing_source_ownership() {
     );
     drop(request);
     drop(plan);
+    drop(source_context);
     assert_eq!(source.budget().usage(), base_resources());
     assert!(model.invalidate());
     assert_eq!(

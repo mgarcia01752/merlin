@@ -130,18 +130,12 @@ impl bridge::SourceInput {
     /// # Returns
     /// Empty on success; error text otherwise.
     pub fn apply(mut self: core::pin::Pin<&mut Self>, document: &QString) -> QString {
-        let result = self.as_mut().rust_mut().model.accept(&document.to_string());
-        if result.is_ok() {
-            crate::downstream::workbench::session::set_source(
-                &self.rust().context,
-                self.rust().model.snapshot(),
-            );
-            crate::downstream::workbench::session::put_saved(
-                &self.rust().context,
-                "source",
-                self.rust().model.export(),
-            );
-        }
+        let context = self.rust().context.clone();
+        let result = self
+            .as_mut()
+            .rust_mut()
+            .model
+            .apply_transactional(&context, &document.to_string());
         QString::from(result.err().unwrap_or_default())
     }
 

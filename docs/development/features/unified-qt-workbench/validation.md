@@ -3690,7 +3690,7 @@ No backend/binding/API signature, schema, registration or dependency change requ
 another wheel or unrelated complete scientific/CLI/packaging suites. Reuse the
 accepted 42d177e backend/native record and unchanged 623/594 operation inventories.
 Independent instrument/transport copies, input/editor/project, preview/history and
-infrastructure owners remain open. SESSION Level2/milestone/finalLevel3 acceptance
+infrastructure owners remain open. SESSION Level2/milestone/final Level 3 acceptance
 is still required; all historical receipts and checklist checkbox states survive.
 
 
@@ -3759,7 +3759,7 @@ change requires another wheel or unrelated complete scientific/CLI/packaging
 suites. Reuse the exact 42d177e backend/native record and unchanged inventories.
 Performance, Entry diagnostics/registry capacity, input/editor/project, independent
 instrument/transport and infrastructure owners remain open, along with complete
-SESSION Level2 and applicable milestone/finalLevel3. This unit accepts no parent.
+SESSION Level2 and applicable milestone/final Level 3. This unit accepts no parent.
 
 
 ## UIU-SESSION-01 copied receiver performance admission
@@ -3806,5 +3806,47 @@ requires another wheel or unrelated complete scientific/CLI/packaging suites.
 Reuse the exact 42d177e backend/native record and unchanged inventories. Accepted
 input/editor/Designer/saved-project, registry spare capacity/QAM diagnostics,
 independently returned query/UI transport and infrastructure owners remain open,
-with complete SESSION Level2 and applicable milestone/finalLevel3 gates. This
+with complete SESSION Level2 and applicable milestone/final Level 3 gates. This
 focused unit does not accept the parent.
+
+
+## UIU-SESSION-01 atomic accepted input and saved-document admission
+
+The [concrete design](design.md#uiu-session-01-atomic-accepted-inputs-and-prepared-projects)
+couples matching accepted Inputs and saved sections in one immutable admitted
+owner. Shared read handles preserve original data/charges through replacement and
+final drop. Source/profile/measurement Apply validates a candidate, publishes the
+complete input/document pair once, then commits its editor. Power/loss are paired
+updates. Matching measurement presence refresh returns without new publication.
+Save/recovery borrows the original charged map through unchanged validation,
+serialization and atomic writing; complete and empty schemas 1/2 parity pass.
+
+Queued project inputs carry the actual target budget, full canonical key and a
+charged snapshot of its original accepted owner. This snapshot cannot form a
+Context cycle. Adoption rejects foreign/stale targets before path/registry/input
+mutation. The accepted-owner comparison and swap share one lock, also rejecting
+an intervening Apply before the canonical generation advances. Independent QA
+reviews concrete arithmetic/lifetimes/transactions only; runtime evidence comes
+from primary integration checks.
+
+[Exact primary execution record](session-input-admission-evidence.json) retains
+all attempts: initial 102 Rust cases (100 passed/two old fixture failures), a
+new test-helper visibility compile failure, corrected 17-case rerun, and final
+27-case owner/project/shared-lifecycle rerun. All 115 selected unique cases have
+passing results across those runs. The fixture corrections explicitly retain
+the source Context through transfer assertions and include still-live accepted
+Inputs when isolating final report aliases; no scientific assertion is weakened.
+Six installed native saved-project cases pass with the unchanged wheel/reference;
+the initial missing-reference environment failure remains recorded. Four QML
+behaviors/two hooks pass, with two existing unsuppressed focus warnings. Final
+all-target Clippy, format/boundary, optimized build and six fresh desktop probes
+pass. Documentation/traceability checks are linked in the exact record.
+
+Public scientific/binding APIs, data values, schema, dependency/registration and
+CLI contracts remain unchanged; reuse their existing inventories/evidence and do
+not rebuild another wheel or run unrelated full suites. The shared performance
+JSON counter uses the same live actual-capacity leaf. Prepared editor/Designer
+model graphs, all-target receiver/preview readiness before project publication,
+registry/instrument/transport and infrastructure owners, complete SESSION Level 2
+and applicable milestone/final Level 3 acceptance remain open. This unit leaves
+UIU-SESSION-01 unchecked and preserves historical completed tasks.

@@ -12,7 +12,7 @@ use merlin::downstream::{
 use serde_json::json;
 use serde_json::Value;
 /// Profile editor state retains original bytes independently of Qt.
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub struct ProfileModel {
     pub(crate) context: crate::downstream::workbench::session::Context,
     pub(crate) draft: Option<Capture>,
@@ -127,6 +127,55 @@ impl ProfileModel {
         } else {
             self.accepted = None;
         }
+        Ok(())
+    }
+
+    /// Publishes selected profile, complete catalog and matching document in one transaction.
+    ///
+    /// # Arguments
+    /// * `profile_id` - Exact staged captured identity, ignored for staged removal.
+    /// * `document` - Existing bounded accepted transmission document.
+    ///
+    /// # Returns
+    /// Unit after target admission and infallible candidate editor replacement.
+    ///
+    /// # Errors
+    /// Validation/publication rejection preserves accepted editor, Inputs and section.
+    /// Temporary clones are preparation; this does not admit the editor model graph.
+    pub(crate) fn apply_transactional(
+        &mut self,
+        profile_id: i32,
+        document: &str,
+    ) -> Result<(), String> {
+        let mut candidate = self.clone();
+        candidate.accept(profile_id, document)?;
+        let profiles = candidate
+            .accepted
+            .as_ref()
+            .map(|(capture, _)| capture.owned_profiles())
+            .transpose()?
+            .unwrap_or_default();
+        let selected = candidate
+            .accepted
+            .as_ref()
+            .map(|(capture, id)| capture.profile(*id).cloned())
+            .transpose()?;
+        let catalog = candidate
+            .accepted
+            .as_ref()
+            .map(|(capture, _)| capture.catalog.clone());
+        let section = candidate.accepted.as_ref().map(|(capture, id)| json!({
+            "file":crate::downstream::workbench::project_file::encode(&capture.name,capture.original.bytes()),
+            "profile_id":id
+        })).unwrap_or(Value::Null);
+        crate::downstream::workbench::session::update(&self.context, |inputs, sections| {
+            inputs.profile = selected;
+            inputs.profiles = profiles;
+            inputs.profile_capture = catalog;
+            sections.insert("profile".into(), section);
+            Ok(())
+        })?;
+        *self = candidate;
         Ok(())
     }
 }
@@ -391,3 +440,7 @@ mod tests {
         assert_eq!(model.draft.as_ref().unwrap().sha256, previous);
     }
 }
+
+#[cfg(test)]
+#[path = "apply_tests.rs"]
+mod apply_tests;

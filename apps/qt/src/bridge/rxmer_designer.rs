@@ -55,13 +55,16 @@ impl bridge::MeasurementInputs {
             let inputs = crate::downstream::workbench::session::snapshot(&self.rust().context);
             let profile = inputs
                 .profile
+                .as_ref()
                 .ok_or("Apply a modulation profile before opening RxMER Designer.")?;
             let session = Session::begin(
                 &self.rust().model.draft_rx,
-                Arc::new(profile),
+                Arc::new(profile.clone()),
                 inputs
                     .profile_capture
-                    .ok_or("Apply the original modulation-profile capture.")?,
+                    .as_ref()
+                    .ok_or("Apply the original modulation-profile capture.")?
+                    .clone(),
             )?;
             let grid = &session.profile.key.grid;
             let value = json!({"request":session.request,"imported_count":session.hashes.len(),"first_hz":grid.frequency(0).map_err(|error|error.to_string())?,"last_hz":grid.frequency(grid.sample_count-1).map_err(|error|error.to_string())?,"spacing_hz":grid.spacing_hz,"limits":merlin::downstream::inputs::RxMerDesign::limits()});
@@ -167,13 +170,9 @@ impl bridge::MeasurementInputs {
             Err(_) => Err("Designer worker ended unexpectedly.".into()),
         };
         let work = self.as_mut().rust_mut().designer_work.take().unwrap();
-        let profile = crate::downstream::workbench::session::snapshot(&self.rust().context).profile;
-        let result = adopt(
-            work,
-            result,
-            &mut self.as_mut().rust_mut().model,
-            profile.as_ref(),
-        );
+        let inputs = crate::downstream::workbench::session::snapshot(&self.rust().context);
+        let profile = inputs.profile.as_ref();
+        let result = adopt(work, result, &mut self.as_mut().rust_mut().model, profile);
         response(result)
     }
     /// Cancels pending generation; already accepted captures are never modified.

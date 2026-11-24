@@ -572,6 +572,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [copied performance unit](features/unified-qt-workbench/validation.md#uiu-session-01-copied-receiver-performance-admission) records 71 unique selected Rust passes across the wider run and corrected 15-case rerun, four QML behaviors, Clippy, optimized build and six desktop probes. Final normalized Entry storage is admitted before adoption; initial catalog failure preserves both histories and returns the unstarted lease. Completed science survives later display rejection. Three historical fixtures now include actual initial/cache reservations; failed initial logs remain. Input/editor/project, registry/query/transport and infrastructure owners remain open; SESSION stays unchecked.
 
+  The [atomic input/document unit](features/unified-qt-workbench/validation.md#uiu-session-01-atomic-accepted-input-and-saved-document-admission) records 115 unique Rust passes across retained initial failures and targeted reruns, six installed-native saved-project cases, four QML behaviors, final Clippy/format/boundary, optimized build and six desktop probes. Matching inputs/sections publish once before editor acceptance; read/Save aliases retain their owner. Queued Open inputs reject foreign/stale canonical keys and intervening accepted-owner changes before target/path publication. Prepared editor/Designer and all-target receiver/preview readiness, other registry/query/transport/infrastructure owners and complete SESSION gates remain open; keep this parent unchecked.
+
 
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.

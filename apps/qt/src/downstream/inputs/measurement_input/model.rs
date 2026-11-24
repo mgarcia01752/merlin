@@ -114,6 +114,7 @@ impl Options {
         .map_err(|cause| cause.message().to_owned())
     }
 }
+#[derive(Clone)]
 pub(crate) struct Model {
     pub draft_rx: Vec<Capture>,
     pub accepted_rx: Vec<Capture>,
@@ -296,6 +297,94 @@ impl Model {
             .transpose()?;
         Ok(super::RestoredMeasurements { playback, response })
     }
+    /// Admits one complete measurement candidate before replacing accepted editor state.
+    ///
+    /// # Arguments
+    /// * `context` - Exact downstream accepted input/document owner.
+    /// * `rxmer` - Existing RX playback or response editor selection.
+    /// * `options`, `settings` - Parsed bounded draft controls and accepted OCD.
+    ///
+    /// # Returns
+    /// Unit after playback/response/tolerance/section adoption, then editor replacement.
+    ///
+    /// # Errors
+    /// Existing scientific validation, preparation or aggregate failure preserves all
+    /// accepted editor/Inputs/saved state. Editor graph admission remains separate.
+    pub(crate) fn apply_transactional(
+        &mut self,
+        context: &crate::downstream::workbench::session::Context,
+        rxmer: bool,
+        options: Options,
+        settings: &TransmissionSettings,
+    ) -> Result<(), String> {
+        let mut candidate = self.clone();
+        if rxmer {
+            candidate.accepted_rx = candidate.draft_rx.clone();
+            candidate.options = options;
+        } else {
+            candidate.accepted_response = candidate.draft_response.clone();
+            candidate.response_tolerance = options.tolerance_seconds;
+        }
+        let section = candidate.export();
+        crate::downstream::workbench::session::update(context, |inputs, sections| {
+            if rxmer {
+                Self::playback(
+                    &candidate.accepted_rx,
+                    &candidate.options,
+                    settings,
+                    inputs.profile.as_ref(),
+                    inputs.profile_capture.as_ref(),
+                )?;
+            } else {
+                Self::response(
+                    candidate.accepted_response.as_ref(),
+                    settings,
+                    inputs.profile.as_ref(),
+                    candidate.response_tolerance,
+                    inputs.profile_capture.as_ref(),
+                )?;
+            }
+            let published = candidate.published(inputs.profile.as_ref())?;
+            inputs.playback = published.playback;
+            inputs.response = published.response;
+            inputs.response_tolerance = candidate.response_tolerance;
+            sections.insert("measurements".into(), section);
+            Ok(())
+        })?;
+        *self = candidate;
+        Ok(())
+    }
+
+    /// Refreshes the existing profile-presence publication dependency only when needed.
+    ///
+    /// # Arguments
+    /// * `context` - Actual accepted owner, including externally restored state.
+    ///
+    /// # Returns
+    /// Unit without cloning/publication when actual playback presence already matches
+    /// profile presence plus the accepted nonempty RX collection. No adapter cache is used.
+    ///
+    /// # Errors
+    /// Preparation/admission failure keeps original accepted Inputs, section and editor.
+    pub(crate) fn refresh_transactional(
+        &self,
+        context: &crate::downstream::workbench::session::Context,
+    ) -> Result<(), String> {
+        let inputs = crate::downstream::workbench::session::snapshot(context);
+        let expected = inputs.profile.is_some() && !self.accepted_rx.is_empty();
+        if inputs.playback.is_some() == expected {
+            return Ok(());
+        }
+        drop(inputs);
+        crate::downstream::workbench::session::update(context, |inputs, _sections| {
+            let published = self.published(inputs.profile.as_ref())?;
+            inputs.playback = published.playback;
+            inputs.response = published.response;
+            inputs.response_tolerance = self.response_tolerance;
+            Ok(())
+        })
+    }
+
     /// Starts a fresh draft from accepted immutable input snapshots.
     /// # Arguments
     /// * `rxmer` - Selects RxMER or response editor.
@@ -933,3 +1022,7 @@ mod tests {
         assert_eq!(capture.provenance().original_bytes(), bytes);
     }
 }
+
+#[cfg(test)]
+#[path = "model/apply_tests.rs"]
+mod apply_tests;

@@ -5,7 +5,7 @@
 //! Single-flight background Open; only completed owned state crosses threads.
 use super::{
     project_file::{Editors, Project, MAX_PROJECT_BYTES},
-    session::{Context, Inputs},
+    session::{AcceptedState, Context, Snapshot},
 };
 use crate::downstream::{
     instruments::transmitter::preview::Analyzer, simulation::closed_loop::Model,
@@ -48,8 +48,9 @@ pub(crate) fn take<T>(
 
 pub(crate) struct PreparedProject {
     pub path: Option<PathBuf>,
-    project: Project,
-    inputs: Inputs,
+    accepted: AcceptedState,
+    target: crate::shell::SessionKey,
+    expected: Snapshot,
     models: PreparedModels,
     metadata: Value,
 }
@@ -58,11 +59,20 @@ impl PreparedProject {
     /// # Arguments
     /// * `project` - Bounded, decoded file document.
     /// * `path` - Explicit Save destination, None for update recovery.
+    /// * `budget` - Actual accepting host, covering accepted and queued input owners.
+    /// * `target` - Exact downstream identity/generation captured when Open started.
+    /// * `expected` - Original accepted owner captured at the same request boundary.
     /// # Returns
     /// Validated models and bounded readiness metadata; never starts a run.
     /// # Errors
     /// Preserves project validation errors without publishing partial state.
-    pub(crate) fn prepare(project: Project, path: Option<PathBuf>) -> Result<Self, String> {
+    pub(crate) fn prepare(
+        project: Project,
+        path: Option<PathBuf>,
+        budget: &crate::shell::RetentionBudget,
+        target: crate::shell::SessionKey,
+        expected: Snapshot,
+    ) -> Result<Self, String> {
         let (
             inputs,
             Editors {
@@ -92,10 +102,12 @@ impl PreparedProject {
             "verified":project.comparison_enabled,"dark":project.dark,
             "source_state":source.state(),"profile_state":profile.state(&settings),
             "measurement_state":measurements.state(Ok(project.transmission.clone()), &inputs)});
+        let accepted = super::session::prepare_accepted(inputs, project.sections, budget)?;
         Ok(Self {
             path,
-            project,
-            inputs,
+            accepted,
+            target,
+            expected,
             models: PreparedModels {
                 source: Some(source),
                 profile: Some(profile),
@@ -112,13 +124,24 @@ impl PreparedProject {
     /// * `context` - Validated target owner; other contexts and transfers stay untouched.
     /// # Returns
     /// Small adoption metadata; original bytes and requests remain in Rust.
-    pub(crate) fn adopt(self, context: &Context) -> Value {
-        super::session::restore(context, self.inputs, self.project.sections);
+    /// # Errors
+    /// Rejects a stale generation or foreign host before any target state changes.
+    /// Editor/scientific model rebind remains a separate checked transfer.
+    pub(crate) fn adopt(self, context: &Context) -> Result<Value, String> {
+        if context
+            .application
+            .snapshot(crate::shell::Direction::Downstream)
+            .key
+            != self.target
+        {
+            return Err("The prepared workbench target is stale.".into());
+        }
+        super::session::adopt_accepted(context, self.accepted, &self.expected)?;
         crate::platform::input_file::clear_original_paths();
         context
             .prepared
             .with(|prepared| *prepared.borrow_mut() = self.models);
-        self.metadata
+        Ok(self.metadata)
     }
 }
 
@@ -143,11 +166,13 @@ impl Loader {
     }
     /// Starts the native picker or recovery read on a background thread.
     /// # Arguments
+    /// * `context` - Exact target captured before background work.
     /// * `recovery` - Private recovery path; None selects an explicit project.
     /// # Returns
     /// Loading metadata, or a busy/spawn diagnostic; repeated Open is rejected.
-    pub(crate) fn start(&mut self, recovery: Option<PathBuf>) -> Value {
+    pub(crate) fn start(&mut self, context: &Context, recovery: Option<PathBuf>) -> Value {
         self.start_source(
+            context,
             recovery.map(crate::platform::startup::WorkbenchSource::File),
             false,
         )
@@ -155,21 +180,32 @@ impl Loader {
 
     /// Starts a command-line file or redirected standard-input workbench.
     /// # Arguments
+    /// * `context` - Exact target captured before background work.
     /// * `source` - Owned input request; stdin never becomes a Save destination.
     /// # Returns
     /// Immediate loading status; validation and reads run on the single worker.
     pub(crate) fn start_requested(
         &mut self,
+        context: &Context,
         source: crate::platform::startup::WorkbenchSource,
     ) -> Value {
-        self.start_source(Some(source), true)
+        self.start_source(context, Some(source), true)
     }
 
     fn start_source(
         &mut self,
+        context: &Context,
         source: Option<crate::platform::startup::WorkbenchSource>,
         remember_path: bool,
     ) -> Value {
+        // Only the budget and immutable identity cross this boundary. Retaining
+        // the target Context inside its own prepared-model store would form a cycle.
+        let budget = context.application.budget().clone();
+        let target = context
+            .application
+            .snapshot(crate::shell::Direction::Downstream)
+            .key;
+        let expected = super::session::snapshot(context);
         self.start_with(move |stage, cancelled| {
             use crate::platform::startup::WorkbenchSource;
             use std::io::IsTerminal;
@@ -229,7 +265,7 @@ impl Loader {
                 return Ok(None);
             }
             stage.store(3, Ordering::Relaxed);
-            PreparedProject::prepare(project, destination).map(Some)
+            PreparedProject::prepare(project, destination, &budget, target, expected).map(Some)
         })
     }
 
@@ -373,15 +409,26 @@ fn read_bounded(
 mod tests {
     use super::*;
 
-    fn drain(loader: &mut Loader) -> (Value, Option<PreparedProject>) {
-        let deadline = Instant::now() + std::time::Duration::from_secs(60);
+    // Test-host scheduling bounds, independent of capture and scientific limits.
+    const LOAD_TEST_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(60);
+    const LOAD_TEST_POLL_INTERVAL: std::time::Duration = std::time::Duration::from_millis(1);
+
+    /// Drains a real loader under the existing bounded test-host watchdog.
+    /// # Arguments
+    /// * `loader` - Tracked fixture worker; polling does not block on completion.
+    /// # Returns
+    /// Terminal status and the optional completed project.
+    /// # Panics
+    /// Panics if the fixture does not terminate before the watchdog.
+    pub(super) fn drain(loader: &mut Loader) -> (Value, Option<PreparedProject>) {
+        let deadline = Instant::now() + LOAD_TEST_TIMEOUT;
         loop {
             let result = loader.poll();
             if result.0["loading"] != true {
                 return result;
             }
             assert!(Instant::now() < deadline, "Loader did not complete");
-            std::thread::sleep(std::time::Duration::from_millis(1));
+            std::thread::sleep(LOAD_TEST_POLL_INTERVAL);
         }
     }
 
@@ -408,15 +455,19 @@ mod tests {
         let mut loader = Loader::default();
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("../../examples/workbench/single/workbench.merlin.json");
-        loader.start_requested(crate::platform::startup::WorkbenchSource::File(
-            path.clone(),
-        ));
+        loader.start_requested(
+            &Context::isolated(),
+            crate::platform::startup::WorkbenchSource::File(path.clone()),
+        );
         let (status, prepared) = drain(&mut loader);
         assert!(prepared.is_some(), "{status}");
         assert_eq!(prepared.unwrap().path, Some(path));
-        loader.start_requested(crate::platform::startup::WorkbenchSource::File(
-            PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml"),
-        ));
+        loader.start_requested(
+            &Context::isolated(),
+            crate::platform::startup::WorkbenchSource::File(
+                PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml"),
+            ),
+        );
         assert!(drain(&mut loader).0["error"]
             .as_str()
             .unwrap()
@@ -466,14 +517,27 @@ mod tests {
                 comparison_enabled: false,
                 dark: true,
             };
-            PreparedProject::prepare(project, None).map(Some)
+            {
+                let context = Context::isolated();
+                PreparedProject::prepare(
+                    project,
+                    None,
+                    context.application.budget(),
+                    context
+                        .application
+                        .snapshot(crate::shell::Direction::Downstream)
+                        .key,
+                    super::super::session::snapshot(&context),
+                )
+                .map(Some)
+            }
         });
         loader.cancel();
         release.send(()).unwrap();
         let (status, result) = drain(&mut loader);
         assert_eq!(status["cancelled"], true);
         assert!(result.is_none());
-        assert_eq!(super::super::session::saved_sections(context), previous);
+        assert_eq!(&*super::super::session::saved_sections(context), &*previous);
     }
 
     #[test]
@@ -484,7 +548,20 @@ mod tests {
                 "../../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json"
             ))
             .unwrap();
-            PreparedProject::prepare(project, None).map(Some)
+            {
+                let context = Context::isolated();
+                PreparedProject::prepare(
+                    project,
+                    None,
+                    context.application.budget(),
+                    context
+                        .application
+                        .snapshot(crate::shell::Direction::Downstream)
+                        .key,
+                    super::super::session::snapshot(&context),
+                )
+                .map(Some)
+            }
         });
         let (_, result) = drain(&mut loader);
         let prepared = result.expect("Real curated workbench must load");
@@ -504,3 +581,7 @@ mod tests {
         assert!(prepared.metadata.to_string().len() < 8192);
     }
 }
+
+#[cfg(test)]
+#[path = "project_load/admission_tests.rs"]
+mod admission_tests;

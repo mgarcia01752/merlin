@@ -155,19 +155,15 @@ impl bridge::ClosedLoop {
                 .mce
                 .validate()
                 .map_err(crate::downstream::help::AdmissionError::classified)?;
-            options.validate(&crate::downstream::workbench::session::snapshot(
-                &self.rust().model.context,
-            ))?;
             let inputs =
                 crate::downstream::workbench::session::snapshot(&self.rust().model.context);
+            options.validate(&inputs)?;
             if inputs.source.is_some() && inputs.profile.is_some() && inputs.playback.is_some() {
                 model::prepare(
                     transmission.settings(),
                     &inputs,
                     &options,
-                    &crate::downstream::workbench::session::saved_sections(
-                        &self.rust().model.context,
-                    ),
+                    inputs.sections(),
                 )?;
             }
             Ok(options)
