@@ -3597,3 +3597,31 @@ namespace, manifest, registration or operating-mode change. Unrelated full works
 analysis, CLI, upstream and packaging runs were not required for this focused unit.
 Complete retained-owner integration, SESSION Level 2 and milestone/final Level 3
 remain mandatory. UIU-SESSION-01 and all previous checklist states are unchanged.
+
+## UIU-SESSION-01 downstream backend-result target admission
+
+The [concrete result-owner design](design.md#uiu-session-01-actual-downstream-result-and-presentation-owners)
+is implemented in the primary checkout from the isolated source preparation.
+PreparedResult borrows the exact narrowed request and reserves its public result
+bound plus the actual fixed ResultData layout/final Arc root before execution.
+No completed science is rejected by a later size measurement. The same charge
+survives queued Box, current and old Arc owners; Start keeps the previous report
+until actual replacement. Input invalidation and original scientific values remain
+compatible. Projection buffers and other enumerated owners remain open.
+
+[Exact adoption/execution record](session-downstream-result-admission-evidence.json)
+records 93 primary-worktree Rust cases, including six new real target tests:
+all three pre-control rejections, exact complete/precancel science, Busy rollback,
+genuine worker queue/terminal/final-alias lifetime, old-report preservation and
+checked fixed-wrapper overflow. Existing request tests include the newly real
+result charge without removing their historical assertions. Four QML behaviors
+and two hooks pass with two existing unsuppressed activeFocusOnTab warnings.
+All-target Clippy, formatting, final boundary/traceability, fresh optimized build
+and six desktop workbench/launch probes pass. Agent source-only checks remain
+separate from these primary runtime results.
+
+No linked backend/binding code, signature, algorithm, schema, manifest or QML
+changed; the exact 42d177e wheel/native scientific record remains applicable.
+Rebuilding that wheel or unrelated complete scientific/CLI/packaging regressions
+was not required. Full retained-owner closure, SESSION Level 2 and milestone/final
+Level 3 remain open; no checklist checkbox or historical evidence was changed.

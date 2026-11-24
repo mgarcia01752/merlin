@@ -1576,8 +1576,12 @@ The [downstream request/plan admission](development/features/unified-qt-workbenc
 uses actual public root metadata with concrete wrapper storage and two added Arc
 roots. Model and Worker share immutable charged owners. Cross-host prepared-project
 rebind admits complete target coverage before aliasing the same scientific roots;
-original aliases retain their source charge. Per-profile working requests, results,
-DTOs and other application owners still require separate admission.
+original aliases retain their source charge. The
+[backend result target](development/features/unified-qt-workbench/validation.md#uiu-session-01-downstream-backend-result-target-admission)
+is reserved before execution and retains its charge through queued/current/old
+aliases. Its fixed root is replaced once with the actual ResultData wrapper and
+final shared root. Rejected targets preserve accepted science. Per-profile working
+requests, dynamic DTOs and other application owners still require separate admission.
 
 Explicit [accepted-edit cancellation transitions](development/features/unified-qt-workbench/design.md#uiu-session-01-accepted-edits-during-cancellation)
 preflight immutable candidates and checked revisions before cancelling the old

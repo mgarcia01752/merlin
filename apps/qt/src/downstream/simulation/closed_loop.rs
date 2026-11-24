@@ -7,12 +7,14 @@ mod lifecycle;
 mod observations;
 mod request;
 mod request_retention;
+mod result_retention;
 mod worker;
 use super::run_timing::RunTiming;
 use crate::downstream::help::{AdmissionError, Diagnostic};
 use crate::downstream::workbench::session::{Context, Inputs};
 use crate::shell::{
-    ApplicationError, Direction, DispatchError, SessionError, SessionKey, WorkerEvent, WorkerStatus,
+    ApplicationError, Direction, DispatchError, Retained, SessionError, SessionKey, WorkerEvent,
+    WorkerStatus,
 };
 use merlin::downstream::{FullLoopReport, FullLoopResult, TransmissionSettings};
 use request::Sections;
@@ -28,14 +30,14 @@ use worker::run_one;
 use worker::{DownstreamControl, Worker, WorkerMessage};
 
 /// Read-only compatibility projection of the authoritative public result.
-pub(crate) struct JobView(FullLoopResult);
+pub(crate) struct JobView(Retained<FullLoopResult>);
 impl Deref for JobView {
     type Target = FullLoopReport;
     /// Borrows the unchanged actual report; no mutable engine state is exposed.
     /// # Returns
     /// Public immutable report owned for the lifetime of this result.
     fn deref(&self) -> &Self::Target {
-        self.0.report()
+        self.0.value().report()
     }
 }
 
@@ -44,23 +46,42 @@ pub(crate) struct ResultData {
     pub observations: observations::Observations,
 }
 impl ResultData {
-    /// Retains the public result and bounded presentation copies together.
+    /// Preserves legacy already-completed scientific query fixtures only.
+    ///
     /// # Arguments
-    /// * `result` - Actual completed or partial high-level backend result.
+    /// * `result` - Actual fixture output, admitted from its current metadata here.
+    ///
     /// # Returns
-    /// Immutable scientific ownership independent of future workbench runs.
+    /// Query-compatible fixture owner; production reserves before executing instead.
+    ///
+    /// # Panics
+    /// Panics if the small fixture's checked metadata or wrapper arithmetic fails.
+    #[cfg(test)]
     pub(crate) fn new(result: FullLoopResult) -> Self {
-        let observations = observations::Observations::from_result(&result);
+        Self::from_retained(result_retention::retain_fixture(result))
+    }
+
+    /// Moves an already pre-admitted backend result into its fixed presentation owner.
+    ///
+    /// # Arguments
+    /// * `result` - Actual complete/partial science with its pre-execution reservation.
+    ///
+    /// # Returns
+    /// Immutable result; dynamic observation/capture copies remain separate unclosed
+    /// owners. Existing projection warnings never reject completed scientific output.
+    fn from_retained(result: Retained<FullLoopResult>) -> Self {
+        let observations = observations::Observations::from_result(result.value());
         Self {
             job: JobView(result),
             observations,
         }
     }
+
     /// Borrows the authoritative public result without reconstructing observations.
     /// # Returns
     /// Read-only data and public instrument operations for this result's lifetime.
     pub(crate) fn backend(&self) -> &FullLoopResult {
-        &self.job.0
+        self.job.0.value()
     }
 }
 /// Borrows the current result through a GUI-thread shared owner.
@@ -148,12 +169,20 @@ impl Model {
         self.error.clear();
         self.diagnostic = None;
         self.timing = None;
-        publish(&self.context, None);
+
+        // Retain accepted science until a new identified Profile replaces it.
         self.token = self.token.wrapping_add(1);
         crate::downstream::instruments::receiver::performance::clear(&self.context);
         crate::downstream::instruments::receiver::performance::begin(&self.context, &catalog);
         let timing = Arc::new(RunTiming::new());
-        match Worker::spawn(settings, plan, timing.clone(), control, lease) {
+        match Worker::spawn(
+            settings,
+            plan,
+            timing.clone(),
+            control,
+            lease,
+            self.context.application.budget().clone(),
+        ) {
             Ok(worker) => {
                 self.timing = Some(timing);
                 self.worker = Some(worker);

@@ -124,6 +124,15 @@ fn owners(model: &Model) -> RetainedResources {
     sum(request, plan)
 }
 
+fn report_allowance(request: &FullLoopRequest) -> RetainedResources {
+    let budget = super::super::result_retention::fixture_budget();
+    let prepared = super::super::result_retention::PreparedResult::new(request, &budget).unwrap();
+    let actual = budget.usage();
+    drop(prepared);
+    assert_eq!(budget.usage(), RetainedResources::default());
+    actual
+}
+
 fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Model, String) {
     let (inputs, transmission, sections) = super::super::tests::accepted_inputs();
     let options = Options {
@@ -139,7 +148,12 @@ fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Model, String)
     );
     assert!(actual.payload_bytes > 0 && actual.ordered_entries > 0 && actual.shared_roots > 0);
     let maximum = tight.map_or(TEST_MAXIMUM, |dimension| {
-        limited(sum(base_resources(), actual), dimension)
+        // The test first completes real science. Keep its independently preflighted
+        // result charge as well as accepted requests before pressuring a new candidate.
+        limited(
+            sum(base_resources(), sum(actual, report_allowance(&request))),
+            dimension,
+        )
     });
     let mut context = Context::isolated();
     context.application = ApplicationSessions::new(maximum).unwrap();
@@ -259,6 +273,7 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     let (mut model, settings) = prepared_model(PAUSABLE_OBSERVATION_MS, None);
     let application = model.context.application.clone();
     let old_charge = owners(&model);
+    let old_result_charge = report_allowance(model.request.as_ref().unwrap().value());
     let old_request = Arc::downgrade(model.request.as_ref().unwrap());
     let old_plan = Arc::downgrade(model.plan.as_ref().unwrap());
     model.start();
@@ -281,7 +296,10 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     assert!(old_request.upgrade().is_some() && old_plan.upgrade().is_some());
     assert_eq!(
         application.budget().usage(),
-        sum(base_resources(), sum(old_charge, new_charge))
+        sum(
+            base_resources(),
+            sum(old_result_charge, sum(old_charge, new_charge))
+        )
     );
     assert_eq!(
         application.active().unwrap().phase,

@@ -5,11 +5,15 @@
 //! One bounded serial dispatcher using only public downstream jobs and controls.
 use super::{
     request_retention::{SharedPlan, SharedRequest},
+    result_retention::{PreparedResult, ResultError},
     ResultData, RunTiming,
 };
 use crate::{
     downstream::common::constants::PROFILE_COMPLETION_CAPACITY,
-    shell::{spawn_worker, RunCancellation, RunLease, RunToken, WorkerEvent, WorkerSpawnError},
+    shell::{
+        spawn_worker, RetentionBudget, RunCancellation, RunLease, RunToken, WorkerEvent,
+        WorkerSpawnError,
+    },
 };
 use merlin::downstream::{ChannelJobStatus, FullLoopControl, FullLoopRequest, FullLoopState};
 use std::sync::{mpsc, Arc, Mutex, MutexGuard};
@@ -48,30 +52,57 @@ fn lock(state: &Mutex<Dispatch>) -> MutexGuard<'_, Dispatch> {
     state.lock().unwrap_or_else(|cause| cause.into_inner())
 }
 
-/// Executes one already admitted request with a narrowed remaining active-time budget.
+/// Executes a public profile only after its backend result target is admitted.
+///
 /// # Arguments
-/// * `request` - Immutable public request including its bounded observation policy.
-/// * `runtime_ms` - Remaining sweep budget; may narrow but never widen admission.
-/// * `control` - Fresh public one-shot control for this profile.
+/// * `request` - Immutable public request with its accepted observation policy.
+/// * `runtime_ms` - Remaining active sweep budget; never widens admission.
+/// * `control` - Existing fresh public one-shot profile control.
+/// * `budget` - Canonical host budget shared with old, queued and accepted owners.
+///
 /// # Returns
-/// Actual complete/partial report with backend-controlled retained capacities,
-/// plus passive instrument copies. Aggregate application ownership is separate.
+/// Actual complete/partial result with its pre-execution charge. Existing dynamic
+/// observation/capture copies remain explicit separate application work.
+///
 /// # Errors
-/// Preserves public admission or dispatch failure; completed reports are not discarded
-/// when a presentation observation is unavailable.
+/// Preserves public and target-admission failure before scientific control claim;
+/// projection warnings never discard completed FEC comparisons.
+pub(super) fn run_one_admitted(
+    request: &FullLoopRequest,
+    runtime_ms: u64,
+    control: &FullLoopControl,
+    budget: &RetentionBudget,
+) -> Result<ResultData, String> {
+    let request = request
+        .with_runtime_limit(runtime_ms)
+        .map_err(|error| error.message().to_owned())?;
+    let prepared = PreparedResult::new(&request, budget).map_err(ResultError::into_message)?;
+    let result = prepared.run(control).map_err(ResultError::into_message)?;
+    Ok(ResultData::from_retained(result))
+}
+
+/// Preserves existing scientific fixture calls through the admitted real path.
+///
+/// # Arguments
+/// * `request`, `runtime_ms`, `control` - Original public fixture execution inputs.
+///
+/// # Returns
+/// Real science using an independently supplied test-only budget, never production policy.
+///
+/// # Errors
+/// Preserves the common admitted execution errors.
+#[cfg(test)]
 pub(super) fn run_one(
     request: &FullLoopRequest,
     runtime_ms: u64,
     control: &FullLoopControl,
 ) -> Result<ResultData, String> {
-    request
-        .with_runtime_limit(runtime_ms)
-        .and_then(|request| {
-            let target = request.result_retained_bound()?;
-            request.run_bounded(control, target)
-        })
-        .map(ResultData::new)
-        .map_err(|cause| cause.message().to_owned())
+    run_one_admitted(
+        request,
+        runtime_ms,
+        control,
+        &super::result_retention::fixture_budget(),
+    )
 }
 
 impl DownstreamControl {
@@ -171,6 +202,7 @@ impl Worker {
     /// * `timing` - Shared presentation clock, always locked after dispatch state.
     /// * `control` - Same cancellation adapter admitted by the canonical gate.
     /// * `lease` - Genuine exact-session admission retained until common termination.
+    /// * `retention` - Canonical host budget for every actual profile target.
     /// # Returns
     /// Controls and identified data/terminal receiver; the GUI never joins.
     /// Finished is data only: retain this Worker until its common terminal arrives.
@@ -183,6 +215,7 @@ impl Worker {
         timing: Arc<RunTiming>,
         control: Arc<DownstreamControl>,
         lease: RunLease,
+        retention: RetentionBudget,
     ) -> Result<Self, WorkerSpawnError> {
         let ids = plan
             .as_ref()
@@ -240,7 +273,9 @@ impl Worker {
                     }
                     let outcome = prepared
                         .map_err(|cause| cause.message().to_owned())
-                        .and_then(|request| run_one(&request, budget - elapsed, &control));
+                        .and_then(|request| {
+                            run_one_admitted(&request, budget - elapsed, &control, &retention)
+                        });
                     {
                         let mut dispatch = lock(&shared.state);
                         dispatch.completed = timing.observe(&control);

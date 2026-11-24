@@ -559,6 +559,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [existing observation-query envelope](features/unified-qt-workbench/validation.md#uiu-session-01-existing-observation-query-copy-envelope) passes 93 scoped Rust/25 installed-native cases, four QML behaviors, Clippy, fresh optimized build and six native probes. Exact final capacities let each existing stage/inventory Rust return fit the source result payload, without new operations or changed values/errors. Individual queries, concatenated observations and JSON/native presentation owners remain separately charged; SESSION acceptance stays open.
 
+  The [downstream backend-result target](features/unified-qt-workbench/validation.md#uiu-session-01-downstream-backend-result-target-admission) passes 93 Rust cases, four QML behaviors, all-target Clippy, fresh optimized build and six desktop probes. Exact public target/wrapper admission occurs before execution, preserves queued/old aliases and keeps the previous report on rejected replacement. Dynamic projections, working requests and independent input/preview/history/infrastructure owners remain open; this is not SESSION acceptance.
+
 
 
 <a id="task-uiu-shell-01"></a>

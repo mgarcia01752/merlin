@@ -3830,13 +3830,19 @@ still required and must not be inferred from this registered adapter.
 
 ### UIU-SESSION-01 actual downstream result and presentation owners
 
-The next concrete retention gap is Worker run_one returning a FullLoopResult and
-ResultData observation copies without a common-budget reservation. REUSE the public
-result_retained_bound/run_bounded pair and existing Retained/Arc lifetimes. Admit
-the backend result target before scientific execution and carry its reservation
-through queued/latest/old result aliases. Charge actual ResultData/application
-wrapper layouts separately from the public root. No completed scientific result
-may be discarded because a later presentation copy cannot be admitted.
+The actual Worker now admits each backend result target before scientific
+execution through result_retained_bound/run_bounded and existing Retained/Arc
+lifetimes. PreparedResult borrows the exact runtime-narrowed request. Its checked
+charge replaces the FullLoopResult fixed root with the actual ResultData layout
+once and adds the final Arc root; backend entries/roots otherwise pass through.
+The reservation survives queued Box, current Arc and old aliases until final drop.
+Start preserves accepted science until a genuine new Profile replaces it; target
+rejection never discards the previous report. Dynamic ResultData observations
+remain a separate open owner. See [primary acceptance](validation.md#uiu-session-01-downstream-backend-result-target-admission).
+No completed scientific result may be discarded because a later presentation
+copy cannot be admitted.
+The isolated [source preparation](agent-handoffs/downstream-result-admission.md)
+retains its historical source-only checks; primary runtime acceptance is separate.
 
 The existing observation/capture projectors are application-owned copies, not new
 scientific algorithms. Their concrete typed vectors/maps/JSON and intermediate

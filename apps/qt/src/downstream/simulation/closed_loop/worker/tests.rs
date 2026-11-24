@@ -128,6 +128,7 @@ fn paused_public_worker_cancels_and_retains_its_actual_partial_report() {
         timing.clone(),
         adapter,
         lease,
+        budget.clone(),
     ));
     worker.pause();
     let deadline = Instant::now() + CONTROL_ACK_TIMEOUT;
@@ -199,6 +200,7 @@ fn finished_data_keeps_real_completion_busy_until_terminal_disposal() {
         Arc::new(RunTiming::new()),
         adapter,
         lease,
+        budget.clone(),
     ));
     let WorkerMessage::Profile(result) = data(&worker) else {
         panic!("Genuine completion must retain its public report");
