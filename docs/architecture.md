@@ -1821,11 +1821,12 @@ downstream Open/New clears only downstream ownership. Existing inputs, project
 encoding and atomic writes remain compatible, with [primary evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-original-source-path-ownership).
 Other loader/project path copies and complete SESSION acceptance remain pending.
 
-The next [persistent model metadata unit](development/features/unified-qt-workbench/design.md#uiu-session-01-persistent-direction-model-metadata)
-will reuse admitted application failures for GUI error/Diagnostic pointees and
-bound the receiver options' actual dynamic children. Prepared project transfers
-must cover those owners on the target budget before changing host state.
-Implementation and primary validation remain pending.
+The [persistent model metadata unit](development/features/unified-qt-workbench/design.md#uiu-session-01-persistent-direction-model-metadata)
+reuses admitted application failures for GUI error/Diagnostic pointees and will
+bound receiver options' actual dynamic children. The separate bridge Apply-help
+owner has [focused primary evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-apply-help-owner);
+its guard does not cover core Model errors or opaque Qt/QML copies. Core metadata
+and target-budget project-transfer validation remain pending.
 
 The [pre-production archive pair](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds)
 computes exact detached target quantities and checks every limit before copying.

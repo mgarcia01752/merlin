@@ -77,10 +77,42 @@ pub mod bridge {
     }
 }
 /// GUI-thread lifecycle owner; worker jobs use frozen scientific snapshots.
-#[derive(Default)]
 pub struct ClosedLoopRust {
     pub(crate) model: model::Model,
-    admission_diagnostic: Option<Box<crate::downstream::help::Diagnostic>>,
+    admission_failure: crate::shared::worker_failure::WorkerFailure,
+}
+impl Default for ClosedLoopRust {
+    /// Creates the original receiver model with no retained Apply diagnostic.
+    ///
+    /// # Returns
+    /// The unchanged downstream construction owner and allocation-free empty help.
+    fn default() -> Self {
+        Self {
+            model: model::Model::default(),
+            admission_failure: crate::shared::worker_failure::WorkerFailure::Static(""),
+        }
+    }
+}
+impl ClosedLoopRust {
+    /// Retains actual Apply help independently of the receiver's status owner.
+    ///
+    /// # Arguments
+    /// * `error` - Original bounded Apply failure and optional known-code help.
+    ///
+    /// # Returns
+    /// Unchanged admitted message, or the existing static fallback when detail
+    /// admission fails. The returned copy is a temporary Qt response; the stored
+    /// pointee remains charged until replacement or this adapter's destruction.
+    fn admit_failure(&mut self, error: crate::downstream::help::AdmissionError) -> String {
+        let failure = crate::shared::worker_failure::WorkerFailure::admit_with_fallback(
+            error,
+            self.model.context.application.budget(),
+            crate::shared::presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE,
+        );
+        let message = failure.message().to_owned();
+        self.admission_failure = failure;
+        message
+    }
 }
 impl bridge::ClosedLoop {
     /// Resolves accepted inputs and invalidates prior results.
@@ -176,21 +208,18 @@ impl bridge::ClosedLoop {
                     verified,
                     &settings.to_string(),
                 );
-                self.as_mut().rust_mut().admission_diagnostic = None;
+                self.as_mut().rust_mut().admission_failure =
+                    crate::shared::worker_failure::WorkerFailure::Static("");
                 QString::from(accepted.err().unwrap_or_default())
             }
-            Err(error) => {
-                let message = error.to_string();
-                self.as_mut().rust_mut().admission_diagnostic = error.diagnostic;
-                QString::from(message)
-            }
+            Err(error) => QString::from(self.as_mut().rust_mut().admit_failure(error)),
         }
     }
     /// Reads transient Apply help while preserving the accepted simulation state.
     /// # Returns
     /// Registered catalog metadata or null; never parses an error message for identity.
     pub fn admission_help(&self) -> QString {
-        QString::from(serde_json::json!(self.rust().admission_diagnostic).to_string())
+        QString::from(serde_json::json!(self.rust().admission_failure.diagnostic()).to_string())
     }
     /// Restores saved receiver choices, deriving readiness from restored accepted inputs.
     /// # Arguments
@@ -250,3 +279,7 @@ impl bridge::ClosedLoop {
         QString::from(self.as_mut().rust_mut().model.poll().to_string())
     }
 }
+
+#[cfg(test)]
+#[path = "closed_loop/admission_tests.rs"]
+mod admission_tests;

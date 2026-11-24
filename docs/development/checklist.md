@@ -611,6 +611,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   Subsequent finite owner: [persistent direction-model metadata](features/unified-qt-workbench/design.md#uiu-session-01-persistent-direction-model-metadata). Reuse the admitted failure owner for GUI error/Diagnostic pointees, borrow static notices and charge actual receiver-options children before configuration/project adoption. Source preparation and primary acceptance remain pending; outer fixed layouts, transport, loader paths and persistent QML remain separate.
 
+  The independent [bridge Apply-help owner](features/unified-qt-workbench/validation.md#uiu-session-01-apply-help-owner) passes 18 affected Qt Rust cases and six fresh desktop probes. Original message/help and receiver state remain; exhausted detail admission uses the existing static fallback. Core Model metadata and complete SESSION acceptance remain pending; native Apply-pressure interaction is not claimed from owner/helper or startup probes.
+
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
   Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).

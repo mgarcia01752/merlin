@@ -4704,6 +4704,14 @@ No public scientific/native API, QML registration, saved schema or algorithm cha
 | EDIT `upstream/workbench/mod.rs`, `presentation.rs`, preparation/tests as required | Persistent GUI error copies use the existing bounded character policy. | Queued/terminal source guards do not cover a later independent GUI String. | REUSE admitted failure owner, moving eligible preparation failures and admitting borrowed-terminal copies before disposal. Preserve bounded text, category at the original terminal, controller/report and lifecycle semantics. |
 | EDIT `bridge/closed_loop.rs` and focused bridge tests | Apply retains a separate admission Diagnostic outside Model. | Model's error guard cannot cover this independent owner. | REUSE the same concrete failure owner for the actual Apply error/help; admission_help returns unchanged Diagnostic/null JSON. Clear with borrowed empty text. No qinvokable/signature changes. |
 
+The lead-owned bridge row is independently implemented and validated while the
+isolated source agent prepares the non-overlapping core rows. Its [receipt](session-apply-help-owner-evidence.json)
+and [validation](validation.md#uiu-session-01-apply-help-owner) record 18 affected
+Qt Rust passes and six fresh desktop probes. Explicit static-empty bridge
+Default/reset preserves original construction without depending on the pending
+core owner's Default helper. Tests exercise the actual Rust owner/helper; they
+do not establish native invokable Apply-pressure or complete SESSION acceptance.
+
 For normal status updates, rejected detail admission drops the unadmitted copy
 and uses the existing static fallback without inventing help; completed science
 still publishes and previous accepted results remain. Message-only updates retain

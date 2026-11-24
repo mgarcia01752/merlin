@@ -350,6 +350,10 @@ workers also admit queued failure details. If details cannot fit, a fixed messag
 is used; previous accepted results remain protected. Full unified-session
 acceptance remains pending.
 
+Receiver Apply help also retains admitted error details. If those details cannot
+fit, the existing fixed limit message appears without generated help; accepted
+receiver settings and results remain available.
+
 ## Help and chart details
 
 Hover or focus a known workbench

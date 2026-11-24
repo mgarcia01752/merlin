@@ -4413,3 +4413,31 @@ standalone QML suite was required. Final/milestone gates remain intact.
 Persistent direction-model metadata is the next finite owner. Other fixed
 runtime/transport, loader paths, persistent QML, pending channel/QML decisions,
 complete SESSION Level 2 and final Level 3 remain open; SESSION stays unchecked.
+
+## UIU-SESSION-01 Apply-help owner
+
+The [persistent metadata design](design.md#uiu-session-01-persistent-direction-model-metadata)
+identifies the bridge's Apply Diagnostic as independent of core Model status.
+`ClosedLoopRust` now retains that error/help with the existing boxed WorkerFailure
+on its actual Context budget. Admission runs while prior help remains charged;
+normal text/help stays unchanged. Rejected detail selects the existing static
+fallback, drops unadmitted data and releases old help. Default and successful
+prepare reset with borrowed empty text, keeping original construction and Apply
+control flow. Accepted receiver state, scientific APIs, saved JSON and CXX
+declarations/signatures/registration remain unchanged. Qt/QML copies are separate.
+
+The [focused primary receipt](session-apply-help-owner-evidence.json) records
+18 distinct passes: two actual owner/helper cases, eleven help cases, three shared
+failure cases and two original bridge failure cases. They cover unchanged help
+JSON/message and receiver state, independent lifetime, pressure fallback, exact
+old-charge release and final disposal. Read-only QA found no defect and ran no
+tests. Qt all-target Clippy, formatting, final API boundary and optimized build
+pass; six fresh registered desktop startup/project probes pass with empty stderr.
+The owner/helper cases and those probes do not exercise native invokable Apply
+under memory pressure; that interaction remains in complete relevant UI acceptance.
+
+Scientific/native sources and standalone QML/test inputs remain unchanged, so
+their preceding API/wheel/QML evidence is explicitly reused. No repeated complete
+Qt/scientific workspace, wheel, unrelated CLI/package or standalone QML execution
+is claimed. The isolated core error/options unit, remaining fixed runtime/transport,
+loader paths, persistent QML/policy decisions and full SESSION/final gates stay open.
