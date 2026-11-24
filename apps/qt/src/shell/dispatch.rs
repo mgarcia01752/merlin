@@ -3,8 +3,14 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! One application run slot; a cancellation request is not terminal acknowledgement.
-use super::identity::{RunToken, SessionId};
-use std::sync::{Arc, Mutex, MutexGuard};
+use super::{
+    identity::{RunToken, SessionId},
+    RetainedResources, RetentionBudget, RetentionError, RetentionReservation,
+};
+use std::{
+    mem::size_of,
+    sync::{Arc, Mutex, MutexGuard},
+};
 
 /// Thin application adapter around the owning direction's existing public control.
 pub trait RunCancellation: Send + Sync {
@@ -44,12 +50,25 @@ struct Occupied {
     cancellation_requested: bool,
 }
 
+#[derive(Default)]
+struct GateStorage {
+    state: Mutex<Option<Occupied>>,
+
+    // Destroy the slot and its control before releasing the fixed gate charge.
+    _reservation: Option<RetentionReservation>,
+}
+
+// Every admitted gate has one shared pointee, reused by every worker lease.
+const APPLICATION_GATE_ROOTS: usize = 1;
+
 /// Application-owned dispatch gate, shared with workers and successor UI owners.
 ///
 /// Every coordinator in the application must share the same gate. A fresh gate
-/// is not a way to replace an owner whose worker has not terminated.
+/// is not a way to replace an owner whose worker has not terminated. Generic
+/// Default construction carries no admission; application hosts must use the guarded
+/// constructor so leases keep its fixed allocation charged after host destruction.
 #[derive(Clone, Default)]
-pub struct DispatchGate(Arc<Mutex<Option<Occupied>>>);
+pub struct DispatchGate(Arc<GateStorage>);
 
 /// Unique worker lease, consumed only after the associated worker has terminated.
 ///
@@ -63,12 +82,37 @@ pub struct RunLease {
 }
 
 impl DispatchGate {
+    /// Admits an application's fixed dispatch allocation before allocating its Arc.
+    ///
+    /// # Arguments
+    /// * `budget` - Canonical host counter, also retained by the gate reservation.
+    ///
+    /// # Returns
+    /// One guarded slot charging its exact GateStorage layout and one shared root,
+    /// with no ordered entries. Clones and worker leases share the last guard.
+    /// The control pointee requires its own separate concrete owner admission.
+    ///
+    /// # Errors
+    /// Rejects checked accounting overflow or byte/root admission before allocation,
+    /// preserving existing accounting, controls and execution ownership.
+    pub(super) fn for_application(budget: &RetentionBudget) -> Result<Self, RetentionError> {
+        let reservation = budget.reserve_resources(RetainedResources {
+            payload_bytes: size_of::<GateStorage>(),
+            ordered_entries: 0,
+            shared_roots: APPLICATION_GATE_ROOTS,
+        })?;
+        Ok(Self(Arc::new(GateStorage {
+            state: Mutex::new(None),
+            _reservation: Some(reservation),
+        })))
+    }
+
     /// Reads global admission state without changing execution or selection.
     ///
     /// # Returns
     /// The current running/paused/cancelling owner, or None when idle.
     pub fn active(&self) -> Option<ActiveRun> {
-        lock(&self.0).as_ref().map(|occupied| occupied.active)
+        lock(&self.0.state).as_ref().map(|occupied| occupied.active)
     }
 
     /// Occupies the shared slot before the host dispatches its worker.
@@ -87,7 +131,7 @@ impl DispatchGate {
         token: RunToken,
         cancellation: Arc<dyn RunCancellation>,
     ) -> Result<RunLease, DispatchError> {
-        let mut slot = lock(&self.0);
+        let mut slot = lock(&self.0.state);
         if let Some(occupied) = slot.as_ref() {
             return Err(DispatchError::Busy(occupied.active));
         }
@@ -118,7 +162,7 @@ impl DispatchGate {
     /// # Errors
     /// Rejects stale tokens and pause/resume after cancellation was requested.
     pub fn acknowledge_pause(&self, token: RunToken, paused: bool) -> Result<(), DispatchError> {
-        let mut slot = lock(&self.0);
+        let mut slot = lock(&self.0.state);
         let occupied = slot.as_mut().ok_or(DispatchError::StaleCallback)?;
         if occupied.active.token != token {
             return Err(DispatchError::StaleCallback);
@@ -146,7 +190,7 @@ impl DispatchGate {
     /// Rejects stale callbacks without touching another run's control.
     pub fn request_cancel(&self, token: RunToken) -> Result<(), DispatchError> {
         let control = {
-            let mut slot = lock(&self.0);
+            let mut slot = lock(&self.0.state);
             let occupied = slot.as_mut().ok_or(DispatchError::StaleCallback)?;
             if occupied.active.token != token {
                 return Err(DispatchError::StaleCallback);
@@ -178,7 +222,7 @@ impl DispatchGate {
     }
 
     fn acknowledge_termination(&self, token: RunToken) -> Result<(), DispatchError> {
-        let mut slot = lock(&self.0);
+        let mut slot = lock(&self.0.state);
         if slot.as_ref().map(|occupied| occupied.active.token) != Some(token) {
             return Err(DispatchError::StaleCallback);
         }
@@ -230,6 +274,9 @@ fn lock<T>(mutex: &Mutex<T>) -> MutexGuard<'_, T> {
         .lock()
         .unwrap_or_else(|poisoned| poisoned.into_inner())
 }
+
+#[cfg(test)]
+mod retention_tests;
 
 #[cfg(test)]
 mod tests {

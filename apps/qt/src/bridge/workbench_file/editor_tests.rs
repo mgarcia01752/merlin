@@ -138,5 +138,8 @@ fn successful_new_transfers_all_blank_editors_under_full_pressure_and_preserves_
     drop(profile_parts);
     drop(measurement_parts);
     drop(owner);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }

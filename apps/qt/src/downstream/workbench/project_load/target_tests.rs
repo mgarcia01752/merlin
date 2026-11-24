@@ -122,7 +122,10 @@ fn prepared_receiver_and_preview_attach_under_full_counter_pressure_without_anot
     drop(receiver);
     drop(preview);
     drop(context);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]

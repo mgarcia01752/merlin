@@ -57,7 +57,10 @@ fn actual_spare_slots_and_statuses_remain_charged_until_clear_or_final_store_dro
     assert_eq!(budget.usage(), baseline);
     assert_eq!(alias.qam.borrow().entries.capacity(), 0);
     drop(alias);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]
@@ -149,7 +152,13 @@ fn rejected_catalog_and_late_status_replacement_preserve_exact_old_scientific_al
     assert!(get(&context, i32::from(profile.profile_id)).is_err());
     assert_eq!(old.backend.retained_footprint().unwrap(), science_before);
     drop(context);
-    assert!(budget.used().0 > 0);
+    assert!(
+        budget.used().0
+            > crate::shell::ApplicationSessions::fixture_counter_resources().payload_bytes
+    );
     drop(old);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }

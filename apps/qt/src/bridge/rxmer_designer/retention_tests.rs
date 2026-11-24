@@ -77,7 +77,10 @@ fn rejected_gui_replacement_and_worker_copy_keep_the_same_original_session_in_al
     }
     drop(original_profile);
     drop(owner);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]
@@ -110,12 +113,20 @@ fn actual_worker_session_survives_gui_replacement_cancel_and_owner_destruction_u
     owner.replace_designer(super::tests::fixture().0).unwrap();
     cancel.store(true, Ordering::Relaxed);
     drop(owner);
-    assert_eq!(budget.usage(), work_charge);
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+            .checked_add(work_charge)
+            .unwrap()
+    );
     assert!(old_profile.upgrade().is_some());
     finish_tx.send(()).unwrap();
     thread.join().unwrap();
     assert!(old_profile.upgrade().is_none());
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]
@@ -164,5 +175,8 @@ fn generation_and_export_copies_are_independent_admitted_inputs_with_unchanged_p
     drop(export);
     assert_eq!(budget.usage(), before);
     drop(owner);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }

@@ -102,9 +102,17 @@ fn actual_json_publication_retains_queued_status_then_preserves_exact_ready_and_
     assert!(Arc::ptr_eq(admission_tests::ready(&owner), &original));
     assert_eq!(budget.usage(), before);
     drop(owner);
-    assert_eq!(budget.usage(), original.fixture_reserved_resources());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+            .checked_add(original.fixture_reserved_resources())
+            .unwrap()
+    );
     drop(original);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]
@@ -162,7 +170,10 @@ fn rejected_status_after_publication_keeps_the_saved_file_and_truthful_static_re
         assert_eq!(budget.usage(), before);
         drop(owner);
         drop(original);
-        assert_eq!(budget.usage(), RetainedResources::default());
+        assert_eq!(
+            budget.usage(),
+            crate::shell::ApplicationSessions::fixture_counter_resources()
+        );
     }
 }
 
@@ -239,5 +250,8 @@ fn picker_cancel_and_rejected_existing_output_preserve_ready_and_destination_byt
     assert_eq!(budget.usage(), before);
     drop(owner);
     drop(original);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }

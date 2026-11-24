@@ -21,6 +21,9 @@ struct DownstreamReadiness(bool);
 struct UpstreamReadiness(bool);
 type Sessions = ShellSessions<DownstreamReadiness, (), UpstreamReadiness, ()>;
 
+// The canonical lifecycle owner adds one shared Sessions pointee to the host.
+const APPLICATION_SESSION_ROOTS: usize = 1;
+
 /// Application-host failure preserving previously accepted ownership.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum ApplicationError {
@@ -33,10 +36,10 @@ pub enum ApplicationError {
 ///
 /// Clone handles only; no scientific input or report is cloned. Retained science,
 /// presentation copies, controls and transport still require their actual owner
-/// charges. This host's fixed metadata charges alone do not prove that closure.
+/// charges. This host's fixed infrastructure charges alone do not prove that closure.
 #[derive(Clone)]
 pub struct ApplicationSessions {
-    sessions: Arc<Mutex<Sessions>>,
+    sessions: Arc<Retained<Mutex<Sessions>>>,
     budget: RetentionBudget,
     gate: DispatchGate,
 }
@@ -51,16 +54,38 @@ impl ApplicationSessions {
     /// An idle host initially selecting downstream; no backend or worker starts.
     ///
     /// # Errors
-    /// Rejects insufficient fixed metadata admission or exhausted identity space.
+    /// Rejects insufficient counter/gate/session storage or exhausted identity space.
     pub fn new(maximum: RetainedResources) -> Result<Self, ApplicationError> {
-        let budget = RetentionBudget::with_limits(maximum);
-        let gate = DispatchGate::default();
+        let budget =
+            RetentionBudget::for_application(maximum).map_err(ApplicationError::Retention)?;
+        Self::from_budget(budget)
+    }
+
+    // Production constructor seam: retain this exact admitted counter through any
+    // partial construction so tests can observe real rollback without guessing bytes.
+    fn from_budget(budget: RetentionBudget) -> Result<Self, ApplicationError> {
+        let gate = DispatchGate::for_application(&budget).map_err(ApplicationError::Retention)?;
         let downstream = metadata(&budget, DownstreamReadiness(false))?;
         let upstream = metadata(&budget, UpstreamReadiness(false))?;
+        // Readiness guards already cover these two actual inline fields. Charge
+        // only the rest of their enclosing shared layout, including its own guard.
+        let payload_bytes = size_of::<Retained<Mutex<Sessions>>>()
+            .checked_sub(size_of::<Retained<DownstreamReadiness>>())
+            .and_then(|bytes| bytes.checked_sub(size_of::<Retained<UpstreamReadiness>>()))
+            .ok_or(ApplicationError::Retention(
+                RetentionError::ArithmeticOverflow,
+            ))?;
+        let reservation = budget
+            .reserve_resources(RetainedResources {
+                payload_bytes,
+                ordered_entries: 0,
+                shared_roots: APPLICATION_SESSION_ROOTS,
+            })
+            .map_err(ApplicationError::Retention)?;
         let sessions = ShellSessions::new(budget.clone(), gate.clone(), downstream, upstream)
             .map_err(ApplicationError::Session)?;
         Ok(Self {
-            sessions: Arc::new(Mutex::new(sessions)),
+            sessions: Arc::new(reservation.retain(Mutex::new(sessions))),
             budget,
             gate,
         })
@@ -89,6 +114,23 @@ impl ApplicationSessions {
         &self.budget
     }
 
+    /// Measures only the permanent application counter baseline for owner fixtures.
+    ///
+    /// # Returns
+    /// Exact app-only counter bytes/root with no host, gate, readiness or Stores.
+    /// Generic counters retain their original zero baseline. This constructs only
+    /// an unbounded test probe; it supplies no scientific size or production policy.
+    #[cfg(test)]
+    pub(crate) fn fixture_counter_resources() -> RetainedResources {
+        RetentionBudget::for_application(RetainedResources {
+            payload_bytes: usize::MAX,
+            ordered_entries: usize::MAX,
+            shared_roots: usize::MAX,
+        })
+        .expect("Application counter baseline probe must fit")
+        .usage()
+    }
+
     /// Reads the exact current direction identity, independent of tab selection.
     ///
     /// # Arguments
@@ -97,7 +139,7 @@ impl ApplicationSessions {
     /// # Returns
     /// Current configuration generation and dirty revision for this direction.
     pub fn snapshot(&self, direction: Direction) -> ProjectSnapshot {
-        lock(&self.sessions).open_target(direction)
+        lock(self.sessions.value()).open_target(direction)
     }
 
     /// Adopts readiness after the downstream owner accepts a configuration change.
@@ -112,7 +154,7 @@ impl ApplicationSessions {
     /// Rejects metadata limits, shutdown or revision exhaustion before cancellation.
     pub fn configure_downstream(&self, ready: bool) -> Result<SessionKey, ApplicationError> {
         let candidate = metadata(&self.budget, DownstreamReadiness(ready))?;
-        let mut sessions = lock(&self.sessions);
+        let mut sessions = lock(self.sessions.value());
         sessions
             .configure_downstream_cancelling(candidate)
             .map_err(ApplicationError::Session)?;
@@ -138,7 +180,7 @@ impl ApplicationSessions {
         ready: bool,
     ) -> Result<SessionKey, ApplicationError> {
         let candidate = metadata(&self.budget, DownstreamReadiness(ready))?;
-        let mut sessions = lock(&self.sessions);
+        let mut sessions = lock(self.sessions.value());
         if expected.direction != Direction::Downstream
             || sessions.open_target(Direction::Downstream).key != expected
         {
@@ -162,7 +204,7 @@ impl ApplicationSessions {
     /// Rejects metadata limits, shutdown or revision exhaustion before cancellation.
     pub fn configure_upstream(&self, ready: bool) -> Result<SessionKey, ApplicationError> {
         let candidate = metadata(&self.budget, UpstreamReadiness(ready))?;
-        let mut sessions = lock(&self.sessions);
+        let mut sessions = lock(self.sessions.value());
         sessions
             .configure_upstream_cancelling(candidate)
             .map_err(ApplicationError::Session)?;
@@ -185,7 +227,7 @@ impl ApplicationSessions {
         key: SessionKey,
         control: Arc<dyn RunCancellation>,
     ) -> Result<RunLease, ApplicationError> {
-        let mut sessions = lock(&self.sessions);
+        let mut sessions = lock(self.sessions.value());
         if sessions.open_target(key.direction).key != key {
             return Err(ApplicationError::Session(SessionError::StaleGuard));
         }
@@ -209,7 +251,7 @@ impl ApplicationSessions {
     /// # Errors
     /// Rejects shutdown and any stale session, generation, run or direction.
     pub fn validate_callback(&self, token: RunToken) -> Result<(), ApplicationError> {
-        lock(&self.sessions)
+        lock(self.sessions.value())
             .validate_callback(token)
             .map_err(ApplicationError::Session)
     }
@@ -222,7 +264,7 @@ impl ApplicationSessions {
     /// # Errors
     /// Reports stale/shutdown callbacks while still acknowledging actual termination.
     pub fn finish(&self, lease: RunLease) -> Result<(), ApplicationError> {
-        let mut sessions = lock(&self.sessions);
+        let mut sessions = lock(self.sessions.value());
         match lease.token().key.direction {
             Direction::Downstream => sessions.finish_downstream(lease, None),
             Direction::Upstream => sessions.finish_upstream(lease, None),
@@ -278,3 +320,6 @@ fn lock<T>(mutex: &Mutex<T>) -> MutexGuard<'_, T> {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod retention_tests;

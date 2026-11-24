@@ -118,7 +118,10 @@ fn measurement_draft_and_apply_rejection_keep_exact_accepted_originals_and_model
     }
     drop(saved);
     drop(owner);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]
@@ -164,5 +167,8 @@ fn admitted_measurement_transfer_survives_full_pressure_without_copy_or_new_char
     drop(pressure);
     assert_eq!(budget.usage(), used);
     drop(owner);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }

@@ -108,7 +108,10 @@ fn real_queued_export_error_preserves_original_message_and_previous_ready() {
     assert_eq!(budget.usage(), before);
     drop(owner);
     drop(original);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]
@@ -145,9 +148,17 @@ fn parsed_export_input_rejection_after_session_copy_preserves_exact_ready_owner(
     drop(pressure);
     assert_eq!(budget.usage(), before);
     drop(owner);
-    assert_eq!(budget.usage(), original.fixture_reserved_resources());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+            .checked_add(original.fixture_reserved_resources())
+            .unwrap()
+    );
     drop(original);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]
@@ -192,13 +203,21 @@ fn detached_export_preparation_retains_parsed_input_after_gui_cancel_and_disposa
     cancel.store(true, Ordering::Relaxed);
     assert_eq!(budget.usage(), total);
     drop(owner);
-    assert_eq!(budget.usage(), expected);
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+            .checked_add(expected)
+            .unwrap()
+    );
     // Execute the genuine cancelled operation on a native thread after its GUI
     // and terminal receiver are gone; failed delivery must drop both inputs.
     std::thread::spawn(held.into_inner().unwrap())
         .join()
         .unwrap();
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[derive(Clone, Copy)]
@@ -276,9 +295,17 @@ fn prior_ready_survives_real_input_admission_parse_and_prepare_or_save_spawn_fai
     );
     assert_eq!(budget.usage(), before);
     drop(owner);
-    assert_eq!(budget.usage(), original.fixture_reserved_resources());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+            .checked_add(original.fixture_reserved_resources())
+            .unwrap()
+    );
     drop(original);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]
@@ -309,9 +336,17 @@ fn late_product_admission_rejection_restores_prior_ready_in_every_positive_dimen
         drop(reservation.into_inner());
         assert_eq!(budget.usage(), before);
         drop(owner);
-        assert_eq!(budget.usage(), original.fixture_reserved_resources());
+        assert_eq!(
+            budget.usage(),
+            crate::shell::ApplicationSessions::fixture_counter_resources()
+                .checked_add(original.fixture_reserved_resources())
+                .unwrap()
+        );
         drop(original);
-        assert_eq!(budget.usage(), RetainedResources::default());
+        assert_eq!(
+            budget.usage(),
+            crate::shell::ApplicationSessions::fixture_counter_resources()
+        );
     }
 }
 
@@ -367,11 +402,23 @@ fn queued_success_cancel_disconnect_and_final_aliases_keep_actual_product_guards
     let new_charge = new.fixture_reserved_resources();
     drop(owner);
     assert_eq!(
-        budget.usage().payload_bytes,
-        old_charge.payload_bytes + new_charge.payload_bytes
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+            .checked_add(old_charge)
+            .unwrap()
+            .checked_add(new_charge)
+            .unwrap()
     );
     drop(new);
-    assert_eq!(budget.usage(), old_charge);
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+            .checked_add(old_charge)
+            .unwrap()
+    );
     drop(old);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }

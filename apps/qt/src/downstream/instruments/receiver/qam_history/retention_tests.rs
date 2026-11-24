@@ -279,9 +279,17 @@ fn registry_replacement_clear_and_context_drop_keep_selected_old_aliases_until_f
     drop(current);
     assert_eq!(budget.usage(), plus(metadata, target));
     drop(context);
-    assert_eq!(budget.usage(), target);
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+            .checked_add(target)
+            .unwrap()
+    );
     drop(old);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]

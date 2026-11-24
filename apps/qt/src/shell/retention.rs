@@ -3,7 +3,10 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Application resource accounting for accepted, queued and old-run ownership.
-use std::sync::{Arc, Mutex, MutexGuard};
+use std::{
+    mem::size_of,
+    sync::{Arc, Mutex, MutexGuard},
+};
 
 /// Retained payload bytes, including requested capacity and nested cached data.
 ///
@@ -46,6 +49,9 @@ struct Accounting {
     maximum: RetainedResources,
     used: RetainedResources,
 }
+
+// The application counter owns one shared payload allocation for its entire life.
+const APPLICATION_ACCOUNTING_ROOTS: usize = 1;
 
 /// Shared application policy; cloning shares one counter rather than a new budget.
 #[derive(Clone, Debug)]
@@ -101,6 +107,43 @@ impl RetentionBudget {
             maximum,
             used: RetainedResources::default(),
         })))
+    }
+
+    /// Creates application accounting that includes its own fixed allocation.
+    ///
+    /// # Arguments
+    /// * `maximum` - Inclusive host policy, including this exact counter baseline.
+    ///
+    /// # Returns
+    /// A counter initially charging its Mutex<Accounting> layout and one root,
+    /// with zero ordered entries. Clones share this baseline until final drop.
+    /// No reservation points back to its own counter; generic constructors retain
+    /// their original zero baseline.
+    ///
+    /// # Errors
+    /// Rejects an insufficient payload or root ceiling before allocating the Arc.
+    pub(super) fn for_application(maximum: RetainedResources) -> Result<Self, RetentionError> {
+        let baseline = RetainedResources {
+            payload_bytes: size_of::<Mutex<Accounting>>(),
+            ordered_entries: 0,
+            shared_roots: APPLICATION_ACCOUNTING_ROOTS,
+        };
+        if baseline.payload_bytes > maximum.payload_bytes {
+            return Err(RetentionError::LimitExceeded {
+                maximum: RetainedBytes(maximum.payload_bytes),
+                requested: RetainedBytes(baseline.payload_bytes),
+            });
+        }
+        if baseline.shared_roots > maximum.shared_roots {
+            return Err(RetentionError::SharedRootsExceeded {
+                maximum: maximum.shared_roots,
+                requested: baseline.shared_roots,
+            });
+        }
+        Ok(Self(Arc::new(Mutex::new(Accounting {
+            maximum,
+            used: baseline,
+        }))))
     }
 
     /// Reserves bytes before creating or cloning retained payload allocations.
@@ -175,6 +218,8 @@ impl RetentionBudget {
     ///
     /// # Returns
     /// One consistent aggregate snapshot across every clone of this budget.
+    /// Application accounting includes its permanent fixed baseline; generic
+    /// constructors begin at zero and charge only their explicit reservations.
     pub fn usage(&self) -> RetainedResources {
         lock(&self.0).used
     }
@@ -251,7 +296,18 @@ impl Drop for RetentionReservation {
 }
 
 impl RetainedResources {
-    fn checked_add(self, additional: Self) -> Result<Self, RetentionError> {
+    /// Adds audited quantities without changing any application counter.
+    ///
+    /// # Arguments
+    /// * `self` - Existing payload, ordered-entry and shared-root quantities.
+    /// * `additional` - Independent quantities to include in the same aggregate.
+    ///
+    /// # Returns
+    /// Checked totals for every dimension; admission remains the budget's job.
+    ///
+    /// # Errors
+    /// Returns ArithmeticOverflow when any sum exceeds usize.
+    pub(crate) fn checked_add(self, additional: Self) -> Result<Self, RetentionError> {
         Ok(Self {
             payload_bytes: self
                 .payload_bytes
@@ -274,6 +330,9 @@ fn lock<T>(mutex: &Mutex<T>) -> MutexGuard<'_, T> {
         .lock()
         .unwrap_or_else(|poisoned| poisoned.into_inner())
 }
+
+#[cfg(test)]
+mod application_tests;
 
 #[cfg(test)]
 #[path = "retention_tests.rs"]

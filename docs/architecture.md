@@ -1679,8 +1679,22 @@ passes only that host across the worker boundary. Explicit-context editor,
 receiver and preview construction avoids unused worker bootstrap hosts. Three
 queued editor wrappers are boxed, keeping their already charged storage separate
 from the fixed PreparedModels Store. Take-before-attach preserves acyclic target
-ownership. Fixed application/gate/accounting, worker infrastructure and persistent
-presentation admission remain separate pending acceptance gates.
+ownership. The fixed application/gate/accounting graph is now covered by the
+[canonical host unit](development/features/unified-qt-workbench/design.md#uiu-session-01-canonical-fixed-application-host).
+Worker infrastructure and persistent presentation admission remain separate gates.
+
+The canonical host admits its three fixed shared pointees: Accounting, GateStorage
+and Sessions. Application-only counter construction checks its exact baseline
+before allocation and retains it until final counter disposal, without a strong
+reservation back to itself. Generic counters retain their zero baseline. Gate
+state drops before its covering guard; lease aliases keep that guard alive after
+host destruction, through genuine terminal acknowledgement or disposal. The
+Sessions complement subtracts the two already charged inline readiness layouts,
+so the idle total counts each fixed pointee once. Readiness candidate admission
+and all dispatch transitions remain unchanged. Scientific controls, concrete
+worker/transport owners, other retained metadata and persistent presentation
+remain separate pending closure; this fixed graph does not establish SESSION
+acceptance or total heap/RSS bounds.
 
 The [downstream request/plan admission](development/features/unified-qt-workbench/validation.md#uiu-session-01-downstream-request-and-plan-owner-admission)
 uses actual public root metadata with concrete wrapper storage and two added Arc

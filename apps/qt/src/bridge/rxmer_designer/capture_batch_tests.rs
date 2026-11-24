@@ -90,7 +90,10 @@ fn actual_queued_batch_is_charged_until_cancel_or_stale_completion_disposes_it()
         assert_eq!(budget.usage(), baseline);
     }
     drop(owner);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]
@@ -178,5 +181,8 @@ fn staged_source_guard_survives_target_admission_and_rejection_in_every_dimensio
     );
     drop(owner);
     assert!(original.upgrade().is_none());
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }

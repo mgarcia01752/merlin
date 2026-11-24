@@ -248,11 +248,17 @@ fn successful_apply_keeps_model_and_accepted_originals_until_each_final_owner_dr
     let with_model_charge = budget.usage();
     drop(reservation);
     assert!(budget.usage().payload_bytes < with_model_charge.payload_bytes);
-    assert!(budget.usage().payload_bytes > 0);
+    assert!(
+        budget.usage().payload_bytes
+            > crate::shell::ApplicationSessions::fixture_counter_resources().payload_bytes
+    );
     assert_eq!(
         inputs.source.as_ref().unwrap().config.original_bytes(),
         Some(REPLACEMENT_BYTES)
     );
     drop(inputs);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }

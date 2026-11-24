@@ -53,7 +53,10 @@ fn queued_input_owner_stays_charged_until_disposal_or_successful_target_transfer
     assert!(session::snapshot(&context).source.is_some());
     assert_eq!(budget.usage(), complete);
     drop(context);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]

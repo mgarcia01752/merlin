@@ -92,7 +92,10 @@ fn profile_editor_candidate_and_apply_rejection_preserve_old_model_inputs_and_gu
     }
     drop(saved);
     drop(owner);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]
@@ -123,5 +126,8 @@ fn profile_queue_transfer_needs_no_new_reservation_and_foreign_transfer_preserve
     drop(pressure);
     assert_eq!(budget.usage(), used);
     drop(owner);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }

@@ -4152,3 +4152,36 @@ The existing wheel is reused; no new wheel, full root workspace or unrelated
 CLI/packaging suite ran. Fixed host/gate/accounting, worker infrastructure, other
 metadata and persistent presentation remain pending. UIU-SESSION-01 stays open
 until complete Level 2 and applicable milestone/final Level 3 acceptance.
+
+
+## UIU-SESSION-01 canonical fixed application host
+
+The [focused design](design.md#uiu-session-01-canonical-fixed-application-host)
+admits actual Accounting, GateStorage and Sessions pointees, with three roots and
+zero ordered entries. Generic counters stay zero-based. The app counter baseline
+lasts until final counter destruction without a self-cycle. Gate state/control
+drops before its guard, which survives host destruction through lease aliases.
+Sessions charges its full layout once, subtracting the two readiness fields
+already covered by their guards. Existing readiness and dispatch behavior stays.
+
+[Primary execution record](session-fixed-host-evidence.json) records all 321 Qt
+Rust passes, including 13 new counter/gate/host cases, all-target Clippy,
+formatting/final boundary, optimized build and six fresh desktop probes with empty
+stderr. Tests cover exact/below limits, every constructor prefix rollback,
+readiness rejection, final aliases, both direction host destruction during
+paused/cancelling work, real completed/error/panic/disconnected terminals, and
+invalid-label unstarted lease recovery. The latter is not an OS-failure claim.
+Thirty-two cleanup expectations and explicit intermediate aliases preserve only
+the actual surviving counter plus original owners; generic zero, science and
+pressure assertions remain. Initial private-helper compilation failure remains
+recorded; existing arithmetic was reused with internal visibility and no body
+change. Independent source review and documentation/traceability join the receipt.
+
+The previous exact 93-check QML and six-case installed-native saved-project
+execution is reused because those sources/inputs/artifacts are unchanged. Its
+two Qt receiver focus warnings remain final-QA observations; no repeat suites,
+new wheel, full root workspace or unrelated CLI/packaging execution is claimed.
+Scientific control metadata, concrete worker/transport owners, other metadata and
+persistent presentation remain pending. Channel-bookkeeping and QML policy
+clarifications remain open. UIU-SESSION-01 stays unchecked until complete Level 2
+and applicable milestone/final Level 3 acceptance.

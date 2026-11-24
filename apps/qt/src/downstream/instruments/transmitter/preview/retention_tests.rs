@@ -356,9 +356,17 @@ fn genuine_box_queue_and_stale_discard_release_only_the_final_product_owner() {
     assert_eq!(budget.usage(), plus(before, product));
     assert!(queued.value().info().sample_count > 0);
     drop(model);
-    assert_eq!(budget.usage(), product);
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+            .checked_add(product)
+            .unwrap()
+    );
     drop(queued);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 
     let mut stale = configured();
     let budget = stale.context.application.budget().clone();
@@ -448,5 +456,8 @@ fn analyzer_rebind_is_transactional_and_rejects_active_or_result_bearing_transfe
     let source_metadata = context().application.budget().usage();
     assert_eq!(source_budget.usage(), source_metadata);
     drop(source_context);
-    assert_eq!(source_budget.usage(), RetainedResources::default());
+    assert_eq!(
+        source_budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }

@@ -4374,3 +4374,31 @@ separate pending owners; complete SESSION Level 2/milestone gates stay open.
 The isolated [source handoff](agent-handoffs/fixed-context-stores.md) preserves
 its preparation-only boundary; primary execution is in the
 [validation record](validation.md#uiu-session-01-canonical-fixed-downstream-stores).
+
+
+### UIU-SESSION-01 canonical fixed application host
+
+REQ-UIU-03/06/07 and the existing open SESSION aggregate-admission gate require
+actual Accounting, DispatchGate and ApplicationSessions shared pointees to remain
+charged through their final aliases. Existing readiness metadata alone covers
+only its two inline Retained fields. Reuse the existing counter/reservation and
+concrete owners; no new memory-accounting framework or scientific API.
+
+| Path/symbol and disposition | Contract and focused acceptance |
+| --- | --- |
+| EDIT `shell/retention.rs`; ADD application baseline tests | Application-only fallible construction admits exact Mutex<Accounting> bytes/root before Arc allocation. Its used baseline lasts until the final counter alias disappears, without a strong reservation back to itself. Generic new/with_limits preserve their zero-baseline contract. Reuse the existing checked aggregate addition internally across actual owner fixtures; no new arithmetic implementation. |
+| EDIT `shell/dispatch.rs`; ADD retained gate tests | Concrete GateStorage owns state before its optional reservation, admitted by the application-only factory. Generic Default stays available for pure fixtures. Clones and real RunLease keep fixed bytes/root alive after host destruction; control data drops before the guard. Preserve every dispatch/cancellation transition. |
+| EDIT `shell/application.rs`; ADD concrete host tests | Shared Sessions becomes Arc<Retained<Mutex<Sessions>>>. Its complement subtracts the two already charged inline Retained readiness layouts using checked arithmetic, so total idle fixed bytes count each pointee once. Admit before Arc allocation and preserve readiness candidate rollback, known-terminal shutdown and original identities. |
+| EDIT affected ownership fixtures only | Measure exact host/counter baselines following actual Store, host, queued lease and budget aliases. Preserve existing science, pressure/rejection, generation and final-drop assertions; generic counter tests stay unchanged. |
+
+Test exact and one-below byte/root limits, zero ordered-entry demand, constructor
+rollback, readiness replacement rejection, paused/cancelling host destruction,
+real terminal/error/panic/spawn-failure disposal and final budget-only ownership.
+Broaden to both direction/lifecycle consumers and all affected Qt Rust, QML,
+boundary/Clippy/format/traceability and fresh executable probes. Reuse unchanged
+scientific/Python artifacts, not unexecuted pass claims. Controls/closure/channel,
+other retained metadata and persistent presentation remain separate owners;
+SESSION full Level 2 and applicable milestone/final gates stay open.
+
+The isolated [fixed-host preparation](agent-handoffs/fixed-host-owners.md) records
+the source-only boundary. Primary integration owns actual execution and acceptance.

@@ -21,7 +21,9 @@ and a nonempty compatible profile selection. See
 Opening a project prepares its editors independently while the current project
 remains available. Both sets of retained data share the application's resource
 limits. If preparation cannot fit, Open preserves the accepted project, results
-and Save destination; cancelling a load also preserves them.
+and Save destination; cancelling a load also preserves them. The application's
+own retained storage also uses part of these limits. During cancellation, the
+active run keeps its slot until its worker has actually finished.
 
 Actions throughout the workbench and its windows share rounded buttons with
 consistent spacing and visible keyboard focus. Apply accepts an editor's draft;

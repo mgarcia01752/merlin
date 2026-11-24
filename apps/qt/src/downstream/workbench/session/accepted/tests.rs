@@ -146,17 +146,35 @@ fn read_handles_and_old_sections_keep_exact_original_charges_until_the_final_dro
     )
     .unwrap();
     drop(context);
-    assert_eq!(budget.usage(), both);
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+            .checked_add(both)
+            .unwrap()
+    );
     assert_eq!(old_section["seed"], OLD_SEED);
     assert_eq!(old_sections["source"]["seed"], OLD_SEED);
     drop(new);
-    assert_eq!(budget.usage(), original_charge);
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+            .checked_add(original_charge)
+            .unwrap()
+    );
     drop(old);
     drop(old_section);
     drop(old_sections);
-    assert_eq!(budget.usage(), original_charge);
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+            .checked_add(original_charge)
+            .unwrap()
+    );
     drop(clone);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]

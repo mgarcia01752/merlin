@@ -230,7 +230,10 @@ fn real_complete_and_precancelled_entries_preserve_science_nulls_coordinates_and
             source_before
         );
         drop(context);
-        assert_eq!(budget.usage(), RetainedResources::default());
+        assert_eq!(
+            budget.usage(),
+            crate::shell::ApplicationSessions::fixture_counter_resources()
+        );
     }
 }
 
@@ -390,7 +393,10 @@ fn rejected_setup_preserves_the_full_error_and_host_failure_keeps_its_prior_entr
     assert_eq!(performance::fec_view(&context, 3), before);
     drop(pressure);
     drop(context);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]
@@ -422,7 +428,10 @@ fn retained_catalogs_have_no_spare_slots_after_every_runtime_mutation() {
     assert_eq!(context.performance.borrow().capacity(), 0);
     assert_eq!(budget.usage(), baseline);
     drop(context);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
 
 #[test]
@@ -483,5 +492,8 @@ fn admitted_candidate_overlap_replacement_clear_and_context_drop_release_concret
     performance::insert(&context, candidate(&result).admit(&budget).unwrap());
     assert_eq!(budget.usage(), plus(metadata, required));
     drop(context);
-    assert_eq!(budget.usage(), RetainedResources::default());
+    assert_eq!(
+        budget.usage(),
+        crate::shell::ApplicationSessions::fixture_counter_resources()
+    );
 }
