@@ -4,7 +4,7 @@
  */
 //! One bounded serial dispatcher using only public downstream jobs and controls.
 use super::{
-    request_retention::{SharedPlan, SharedRequest},
+    request_retention::{self, OwnerError, SharedPlan, SharedRequest},
     result_retention::{PreparedResult, ResultError},
     ResultData, RunTiming,
 };
@@ -52,10 +52,10 @@ fn lock(state: &Mutex<Dispatch>) -> MutexGuard<'_, Dispatch> {
     state.lock().unwrap_or_else(|cause| cause.into_inner())
 }
 
-/// Executes a public profile only after its backend result target is admitted.
+/// Executes a public profile only after its working input and result are admitted.
 ///
 /// # Arguments
-/// * `request` - Immutable public request with its accepted observation policy.
+/// * `request` - Owned finite profile preparation candidate; consumed before execution.
 /// * `runtime_ms` - Remaining active sweep budget; never widens admission.
 /// * `control` - Existing fresh public one-shot profile control.
 /// * `budget` - Canonical host budget shared with old, queued and accepted owners.
@@ -68,15 +68,22 @@ fn lock(state: &Mutex<Dispatch>) -> MutexGuard<'_, Dispatch> {
 /// Preserves public and target-admission failure before scientific control claim;
 /// projection warnings never discard completed FEC comparisons.
 pub(super) fn run_one_admitted(
-    request: &FullLoopRequest,
+    request: FullLoopRequest,
     runtime_ms: u64,
     control: &FullLoopControl,
     budget: &RetentionBudget,
 ) -> Result<ResultData, String> {
-    let request = request
-        .with_runtime_limit(runtime_ms)
-        .map_err(|error| error.message().to_owned())?;
-    let prepared = PreparedResult::new(&request, budget).map_err(ResultError::into_message)?;
+    let request =
+        request_retention::admit_run_request(request, runtime_ms, budget).map_err(|error| {
+            match error {
+                OwnerError::Metadata(error) => error.message().to_owned(),
+                OwnerError::Retention(error) => {
+                    super::application_error(crate::shell::ApplicationError::Retention(error))
+                }
+            }
+        })?;
+    let prepared =
+        PreparedResult::new(request.value(), budget).map_err(ResultError::into_message)?;
     let result = prepared.run(control).map_err(ResultError::into_message)?;
     Ok(ResultData::from_retained(result))
 }
@@ -98,7 +105,7 @@ pub(super) fn run_one(
     control: &FullLoopControl,
 ) -> Result<ResultData, String> {
     run_one_admitted(
-        request,
+        request.clone(),
         runtime_ms,
         control,
         &super::result_retention::fixture_budget(),
@@ -249,8 +256,8 @@ impl Worker {
                     if lock(&shared.state).cancelled || elapsed >= budget {
                         break;
                     }
-                    // Per-profile working requests retain the existing public copy
-                    // behavior; their separate admission is outside this owner unit.
+                    // Public selection/narrowing is finite preparation. The final
+                    // candidate is separately admitted before control/source execution.
                     let prepared = plan.as_ref().map_or_else(
                         || Ok(request.value().as_ref().clone()),
                         |plan| plan.value().request(index),
@@ -274,7 +281,7 @@ impl Worker {
                     let outcome = prepared
                         .map_err(|cause| cause.message().to_owned())
                         .and_then(|request| {
-                            run_one_admitted(&request, budget - elapsed, &control, &retention)
+                            run_one_admitted(request, budget - elapsed, &control, &retention)
                         });
                     {
                         let mut dispatch = lock(&shared.state);

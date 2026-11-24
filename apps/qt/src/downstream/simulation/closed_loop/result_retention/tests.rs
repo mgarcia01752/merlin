@@ -101,6 +101,20 @@ fn wait_for(mut ready: impl FnMut() -> bool) {
     }
 }
 
+fn working_allowance(request: &FullLoopRequest) -> RetainedResources {
+    let budget = fixture_budget();
+    let owner = request_retention::admit_run_request(
+        request.clone(),
+        request.options().max_runtime_ms,
+        &budget,
+    )
+    .unwrap();
+    let actual = budget.usage();
+    drop(owner);
+    assert_eq!(budget.usage(), RetainedResources::default());
+    actual
+}
+
 fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedResources) {
     let (inputs, transmission, sections) = super::super::tests::accepted_inputs();
     let options = Options {
@@ -111,6 +125,7 @@ fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedRe
     let plan = prepare_sweep(&transmission, &inputs, &options, &sections).unwrap();
     let request = plan.request(0).unwrap();
     let report_charge = resources(request.result_retained_bound().unwrap()).unwrap();
+    let working_charge = working_allowance(&request);
     let source = fixture_budget();
     let request = request_retention::admit_request(request, &source).unwrap();
     let plan = request_retention::admit_plan(plan, &source).unwrap();
@@ -123,7 +138,10 @@ fn prepared_model(dimension: Dimension) -> (Model, RetainedResources, RetainedRe
     // Exactly one complete report fits in the selected dimension. A second
     // actual target must reject while the first immutable report remains owned.
     let maximum = limited(
-        sum(metadata, sum(accepted_charge, report_charge)),
+        sum(
+            metadata,
+            sum(accepted_charge, sum(working_charge, report_charge)),
+        ),
         dimension,
     );
     let mut context = Context::isolated();
@@ -159,14 +177,24 @@ fn every_actual_result_dimension_rejects_before_public_control_or_source_advance
     assert!(target.payload_bytes > 0 && target.ordered_entries > 0 && target.shared_roots > 0);
     let settings = serde_json::to_value(request.settings()).unwrap();
     for dimension in [Dimension::Payload, Dimension::Entries, Dimension::Roots] {
-        let budget = RetentionBudget::with_limits(one_less(target, dimension));
+        let budget = RetentionBudget::with_limits(one_less(
+            sum(working_allowance(&request), target),
+            dimension,
+        ));
         let control = FullLoopControl::new();
-        assert!(worker::run_one_admitted(&request, ACTIVE_RUNTIME_MS, &control, &budget).is_err());
+        assert!(
+            worker::run_one_admitted(request.clone(), ACTIVE_RUNTIME_MS, &control, &budget)
+                .is_err()
+        );
         assert_eq!(control.snapshot().state, FullLoopState::Idle);
         assert!(control.snapshot().progress.is_none());
         assert_eq!(budget.usage(), RetainedResources::default());
         assert_eq!(serde_json::to_value(request.settings()).unwrap(), settings);
-        let Err(ResultError::Retention(error)) = PreparedResult::new(&request, &budget) else {
+        let working =
+            request_retention::admit_run_request(request.clone(), ACTIVE_RUNTIME_MS, &budget)
+                .unwrap();
+        let Err(ResultError::Retention(error)) = PreparedResult::new(working.value(), &budget)
+        else {
             panic!("Insufficient real target must retain its typed dimension error");
         };
         assert!(matches!(

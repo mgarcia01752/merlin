@@ -561,6 +561,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [downstream backend-result target](features/unified-qt-workbench/validation.md#uiu-session-01-downstream-backend-result-target-admission) passes 93 Rust cases, four QML behaviors, all-target Clippy, fresh optimized build and six desktop probes. Exact public target/wrapper admission occurs before execution, preserves queued/old aliases and keeps the previous report on rejected replacement. Dynamic projections, working requests and independent input/preview/history/infrastructure owners remain open; this is not SESSION acceptance.
 
+  The [per-profile execution request unit](features/unified-qt-workbench/validation.md#uiu-session-01-per-profile-execution-request-admission) records 95 unique selected Rust passes across the initial run and corrected seven-case rerun, four QML behaviors, Clippy, fresh optimized build and six desktop probes. Final narrowed candidates use existing current-root admission; intermediate copies release before execution. Test-only zero-entry and cancel-lifetime corrections retain the failed initial logs. Working requests are now covered; dynamic projections, inputs, preview/history and infrastructure remain open.
+
 
 
 <a id="task-uiu-shell-01"></a>

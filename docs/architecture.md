@@ -1580,8 +1580,12 @@ original aliases retain their source charge. The
 [backend result target](development/features/unified-qt-workbench/validation.md#uiu-session-01-downstream-backend-result-target-admission)
 is reserved before execution and retains its charge through queued/current/old
 aliases. Its fixed root is replaced once with the actual ResultData wrapper and
-final shared root. Rejected targets preserve accepted science. Per-profile working
-requests, dynamic DTOs and other application owners still require separate admission.
+final shared root. Rejected targets preserve accepted science.
+[Per-profile execution requests](development/features/unified-qt-workbench/validation.md#uiu-session-01-per-profile-execution-request-admission)
+finish finite selection/runtime preparation, release the intermediate candidate,
+and admit the final actual public footprint before execution. Their charged
+immutable owners survive until that call returns; accepted sources remain charged.
+Dynamic DTOs and other application owners still require separate admission.
 
 Explicit [accepted-edit cancellation transitions](development/features/unified-qt-workbench/design.md#uiu-session-01-accepted-edits-during-cancellation)
 preflight immutable candidates and checked revisions before cancelling the old

@@ -133,6 +133,16 @@ fn report_allowance(request: &FullLoopRequest) -> RetainedResources {
     actual
 }
 
+fn working_allowance(request: &FullLoopRequest) -> RetainedResources {
+    let budget = super::super::result_retention::fixture_budget();
+    let owner =
+        admit_run_request(request.clone(), request.options().max_runtime_ms, &budget).unwrap();
+    let actual = budget.usage();
+    drop(owner);
+    assert_eq!(budget.usage(), RetainedResources::default());
+    actual
+}
+
 fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Model, String) {
     let (inputs, transmission, sections) = super::super::tests::accepted_inputs();
     let options = Options {
@@ -149,9 +159,15 @@ fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Model, String)
     assert!(actual.payload_bytes > 0 && actual.ordered_entries > 0 && actual.shared_roots > 0);
     let maximum = tight.map_or(TEST_MAXIMUM, |dimension| {
         // The test first completes real science. Keep its independently preflighted
-        // result charge as well as accepted requests before pressuring a new candidate.
+        // result and active working-request charges before pressuring a new candidate.
         limited(
-            sum(base_resources(), sum(actual, report_allowance(&request))),
+            sum(
+                base_resources(),
+                sum(
+                    actual,
+                    sum(working_allowance(&request), report_allowance(&request)),
+                ),
+            ),
             dimension,
         )
     });
@@ -274,6 +290,7 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     let application = model.context.application.clone();
     let old_charge = owners(&model);
     let old_result_charge = report_allowance(model.request.as_ref().unwrap().value());
+    let old_working_charge = working_allowance(model.request.as_ref().unwrap().value());
     let old_request = Arc::downgrade(model.request.as_ref().unwrap());
     let old_plan = Arc::downgrade(model.plan.as_ref().unwrap());
     model.start();
@@ -285,6 +302,14 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
             .is_some_and(|run| run.phase == DispatchPhase::Paused)
     });
     assert!(old_request.strong_count() >= 2 && old_plan.strong_count() >= 2);
+    // Actual acknowledged pause keeps the execution input and target alive.
+    assert_eq!(
+        application.budget().usage(),
+        sum(
+            base_resources(),
+            sum(old_charge, sum(old_working_charge, old_result_charge))
+        )
+    );
     let mut changed = model.options.clone().unwrap();
     changed.duration_ms = CHANGED_OBSERVATION_MS;
     model
@@ -294,13 +319,15 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     // Profile plus Finished delivery cannot both pass the unchanged one-slot
     // backpressure before GUI polling; the old closure still owns both aliases.
     assert!(old_request.upgrade().is_some() && old_plan.upgrade().is_some());
-    assert_eq!(
-        application.budget().usage(),
-        sum(
-            base_resources(),
-            sum(old_result_charge, sum(old_charge, new_charge))
-        )
+    let stable = sum(
+        base_resources(),
+        sum(old_result_charge, sum(old_charge, new_charge)),
     );
+    let actual = application.budget().usage();
+    // Cancellation can finish the numerical call before Profile delivery. Only
+    // that call's execution-input charge may already have dropped; queued science
+    // and accepted source aliases remain charged until the original terminal gate.
+    assert!(actual == stable || actual == sum(stable, old_working_charge));
     assert_eq!(
         application.active().unwrap().phase,
         DispatchPhase::Cancelling
@@ -417,3 +444,6 @@ fn wrapper_layout_adds_scientific_root_once_and_checks_every_arithmetic_boundary
         Err(RetentionError::ArithmeticOverflow)
     );
 }
+
+#[path = "execution_tests.rs"]
+mod execution_tests;

@@ -3625,3 +3625,33 @@ changed; the exact 42d177e wheel/native scientific record remains applicable.
 Rebuilding that wheel or unrelated complete scientific/CLI/packaging regressions
 was not required. Full retained-owner closure, SESSION Level 2 and milestone/final
 Level 3 remain open; no checklist checkbox or historical evidence was changed.
+
+## UIU-SESSION-01 per-profile execution request admission
+
+The [concrete execution-input design](design.md#uiu-session-01-per-profile-execution-request-admission)
+reuses existing public preparation/metadata and request_retention::admit_request.
+Selection/runtime narrowing are finite temporary preparation; the intermediate
+request drops before final candidate admission. The final immutable charged owner
+is borrowed throughout result preflight, execution and projection. Accepted source
+request/plan and old results retain their independent charges. No new public API
+or accounting abstraction was introduced.
+
+[Exact case/command record](session-execution-request-admission-evidence.json)
+records 95 unique selected Rust cases with passing results across the initial
+expanded run and corrected seven-case request rerun. The initial command itself
+failed: 93 passed/two test-fixture failures. Independent QA found a zero-entry
+request underflow and a cancel-time lifetime race. The corrected tests assert
+exact zero-entry admission, payload/root rejection before control, exact paused
+ownership and permitted execution-input release after cancellation. Existing
+plan/result tests retain genuine all-three-dimension rejection. All seven corrected
+request tests pass; repeated cases are excluded from the unique total. Original
+failure/source logs remain retained, and the failed command is not labeled passed.
+
+Four QML behaviors/two fixture hooks pass, with two existing unsuppressed focus
+warnings. Final all-target Clippy, formatting, dependency boundary/traceability,
+fresh optimized build and six desktop probes pass. Existing scientific assertions,
+source/old aliases, complete/partial outcomes and historical checkboxes survive.
+No backend/binding/signature/schema/registration change required a new wheel or
+unrelated full scientific/CLI/packaging runs; reuse the accepted 42d177e artifact.
+Other retained owners, complete SESSION Level 2 and milestone/final Level 3 remain
+open; this unit does not mark the parent complete.

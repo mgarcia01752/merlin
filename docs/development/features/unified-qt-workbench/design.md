@@ -3898,3 +3898,27 @@ Qt result-owner preparation. No DSP/FEC math, default, schema or namespace chang
 Run focused owner/API/native and affected Qt consumers; preserve caches. Commit
 this independently validated prerequisite before any Qt consumer relies on its
 new capacity guarantee. Complete session Level 2/milestone gates remain open.
+
+
+### UIU-SESSION-01 per-profile execution request admission
+
+The worker now closes its selected-profile/runtime-narrowed owner gap using the
+accepted finite preparation boundary: build/narrow the temporary candidate through existing public owners,
+drop the intermediate request, then admit the final candidate's actual public
+footprint using request_retention::admit_request. Borrow that charged immutable
+owner through result preflight, execution and projection. The accepted source
+request/plan remain independently charged. No new public API, accounting framework
+or scientific reconstruction is needed. Independent QA confirmed this consistency
+with existing accepted input-candidate preparation; its review is source-only.
+
+EDIT request_retention.rs for the concrete owned-candidate admission helper and
+worker.rs for ownership transfer, retaining cfg(test)-only legacy borrowed fixture
+entry points. EDIT existing exact-pressure fixtures only to include the real
+working owner during execution; preserve their assertions and all prior science.
+ADD focused child tests beside request_retention tests for exact current-root
+charges, runtime narrowing, intermediate release and rejection in owned dimensions before control/source execution, exact zero-entry
+admission, and existing plan/result entry-limit rejection. Run targeted DS/US shared lifecycle/project
+consumers, QML run/instrument behavior, Clippy/format/boundary/traceability and
+fresh optimized/native checks. Reuse the unchanged backend wheel/scientific
+acceptance. REQ-UIU-03/06/07 and UIU-SESSION-01 own this partial closure; all other
+retained owners and full task/milestone acceptance remain open.

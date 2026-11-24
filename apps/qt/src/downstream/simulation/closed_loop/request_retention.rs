@@ -44,6 +44,33 @@ pub(super) fn admit_request(
     Ok(Arc::new(reservation.retain(Arc::new(request))))
 }
 
+/// Finishes finite runtime preparation before retaining the actual execution input.
+///
+/// # Arguments
+/// * `request` - Owned selected-profile preparation candidate, consumed here.
+/// * `runtime_ms` - Remaining active runtime; the public API only permits narrowing.
+/// * `budget` - Canonical host policy, including accepted source and old result owners.
+///
+/// # Returns
+/// The exact narrowed request with its current public footprint and concrete wrappers
+/// charged throughout execution. The intermediate candidate drops before admission;
+/// finite preparation builders are separate from final retained ownership.
+///
+/// # Errors
+/// Preserves public runtime validation and atomic aggregate admission errors before
+/// any execution control, source or scientific stage advances.
+pub(super) fn admit_run_request(
+    request: FullLoopRequest,
+    runtime_ms: u64,
+    budget: &RetentionBudget,
+) -> Result<SharedRequest, OwnerError> {
+    let narrowed = request
+        .with_runtime_limit(runtime_ms)
+        .map_err(OwnerError::Metadata)?;
+    drop(request);
+    admit_request(narrowed, budget)
+}
+
 /// Admits an actual prepared sweep before allocating its final shared wrappers.
 ///
 /// # Arguments
