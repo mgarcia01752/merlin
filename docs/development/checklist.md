@@ -603,6 +603,10 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   [Concrete run-timing admission](features/unified-qt-workbench/validation.md#uiu-session-01-concrete-run-timing-admission) passes 85 distinct affected Qt Rust cases and six fresh rebuilt-desktop probes. Exact capacity, clock epoch, overlapping old/candidate reservations, transactional Start rejection and final aliases are covered. Existing QML/native evidence is explicitly reused without a rerun claim. Outer runtime/transport, errors/paths/help and persistent presentation remain separate; SESSION stays unchecked.
 
+  Next: [admitted worker failure payloads](features/unified-qt-workbench/design.md#uiu-session-01-admitted-worker-failure-payloads), reusing the existing application failure owner and preserving upstream category/text. Payload, envelope and later GUI-copy acceptance remain distinct; no channel policy answer is assumed.
+
+  [Offline help catalog lifetime](features/unified-qt-workbench/validation.md#uiu-session-01-offline-help-catalog-lifetime) passes 14 distinct Qt Rust cases (one strengthened exact-source boundary rerun) and six fresh desktop probes. The permanent parsed heap cache is removed; original help output, numeric context and retained Diagnostic accounting remain. Queued failure integration, other owners and complete SESSION acceptance are still pending.
+
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
   Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).

@@ -348,7 +348,8 @@ export formats. Full unified-session acceptance remains pending.
 
 Hover or focus a known workbench
 message for its suggested fix; click or press Enter/Space/F1 for the offline
-[FAQ](faq.md). About → FAQ opens the offline index. Duration suggestions
+[FAQ](faq.md). About → FAQ opens the offline index. Help lookup uses the
+bounded bundled catalog without keeping a permanent parsed copy. Duration suggestions
 use the current playback settings.
 Spectrum acquisition details appear below the axes and can be hidden with
 **Details**, independently of warnings and power readings.

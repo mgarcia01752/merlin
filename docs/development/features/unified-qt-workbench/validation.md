@@ -4301,3 +4301,36 @@ The [source handoff](agent-handoffs/run-timing-admission.md) remains preparation
 evidence. Outer runtime/closure/transport, error/path/help and persistent QML owners
 remain separate. Channel/QML policy answers are still pending. Complete SESSION
 Level 2 and applicable milestone/final Level 3 gates remain; the parent stays open.
+
+
+## UIU-SESSION-01 offline help catalog lifetime
+
+The [focused design](design.md#uiu-session-01-offline-help-catalog-lifetime) removes
+the permanent parsed global catalog cache. Owned bounded lookup drops unselected
+entries and the catalog after each call. Embedded JSON/FAQ source, existing limits,
+help text, numeric context, unavailable-help behavior and Diagnostic fields/walker
+remain unchanged. Returned messages, diagnostics and GUI data are separate owners.
+Repeated small parsing is finite temporary execution work; no new accounting
+framework or performance/total-heap guarantee is introduced.
+
+The [primary receipt](session-help-catalog-lifetime-evidence.json) records 14
+distinct Qt Rust passes and one additional execution of the strengthened byte-limit
+case. Eleven help cases include all original guidance/numeric-context/retention
+tests and three new owned-catalog cases; two original guarded-failure cases and
+one actual queued-export-error case also pass. The initial malformed-whitespace
+upper-bound fixture passed but did not isolate byte admission. It was strengthened
+to accept valid catalog JSON padded to the exact source limit and reject one byte
+above, then rerun alone. The other thirteen unchanged passes were not repeated.
+Independent owned storage, detached output and exact/above entry limits pass.
+
+Qt all-target Clippy, formatting, the final API boundary and optimized build pass;
+the changed boundary test also received final Clippy/format/build checks. Six fresh
+desktop probes pass with empty stderr. Read-only QA confirms ownership and output
+preservation; no reviewer runtime is claimed. Scientific/native source hashes and
+standalone QML inputs are unchanged, so prior API/wheel/QML evidence is explicitly
+reused without another wheel or suite execution claim. No full workspace, unrelated
+CLI, complete Qt/QML or packaging regression is reported as run for this unit.
+
+The separate worker-failure design remains planned; its source worktree has not
+been accepted by these checks. Other runtime/transport/path/GUI owners, pending
+channel/QML policy and complete SESSION Level 2/3 gates remain open.

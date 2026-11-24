@@ -11,7 +11,6 @@ use crate::downstream::common::constants::{
 use merlin::downstream::{ApiError, ObservationDuration, TransmissionConfiguration};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
-use std::sync::OnceLock;
 
 const CATALOG: &str = include_str!("../../../../resources/help/diagnostics.json");
 const FAQ: &str = include_str!("../../../../docs/user/faq.md");
@@ -141,25 +140,29 @@ impl std::fmt::Display for AdmissionError {
         formatter.write_str(&self.message)
     }
 }
-fn catalog() -> Option<&'static Catalog> {
-    static PARSED: OnceLock<Option<Catalog>> = OnceLock::new();
-    PARSED
-        .get_or_init(|| {
-            if CATALOG.len() > MAX_HELP_DOCUMENT_BYTES {
-                return None;
-            }
-            let parsed: Catalog = serde_json::from_str(CATALOG).ok()?;
-            (parsed.schema_version == HELP_CATALOG_SCHEMA_VERSION
-                && parsed.entries.len() <= MAX_HELP_ENTRIES)
-                .then_some(parsed)
-        })
-        .as_ref()
+fn catalog() -> Option<Catalog> {
+    catalog_from_source(CATALOG)
 }
-fn entry(code: &str) -> Option<&'static Entry> {
+
+// Parsing is bounded temporary execution work; no parsed heap survives a query.
+fn catalog_from_source(source: &str) -> Option<Catalog> {
+    if source.len() > MAX_HELP_DOCUMENT_BYTES {
+        return None;
+    }
+    let parsed: Catalog = serde_json::from_str(source).ok()?;
+    (parsed.schema_version == HELP_CATALOG_SCHEMA_VERSION
+        && parsed.entries.len() <= MAX_HELP_ENTRIES)
+        .then_some(parsed)
+}
+
+fn entry(code: &str) -> Option<Entry> {
     if code.len() > MAX_DIAGNOSTIC_CODE_BYTES {
         return None;
     }
-    catalog()?.entries.iter().find(|entry| entry.code == code)
+    catalog()?
+        .entries
+        .into_iter()
+        .find(|entry| entry.code == code)
 }
 fn playback_help(
     transmission: &TransmissionConfiguration,
@@ -280,6 +283,10 @@ fn faq_document_from_source(code: &str, source: &str) -> Value {
 #[cfg(test)]
 #[path = "help/retention_tests.rs"]
 mod retention_tests;
+
+#[cfg(test)]
+#[path = "help/catalog_tests.rs"]
+mod catalog_tests;
 
 #[cfg(test)]
 mod tests {

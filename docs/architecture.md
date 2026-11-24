@@ -1799,6 +1799,19 @@ reservation until final drop. The
 preserves timing/progress and scientific behavior. Remaining application owners
 and complete SESSION acceptance stay pending.
 
+The next [worker failure payload unit](development/features/unified-qt-workbench/design.md#uiu-session-01-admitted-worker-failure-payloads)
+will reuse the existing retained application failure owner across worker queues.
+Upstream terminal errors will project existing public category/text before
+publication rather than retain opaque backend error internals in Qt. Scientific
+error APIs remain unchanged; primary payload acceptance and complete transport
+accounting are still pending.
+
+The [offline help catalog](development/features/unified-qt-workbench/design.md#uiu-session-01-offline-help-catalog-lifetime)
+uses bounded temporary owned parsing/lookup instead of a permanent parsed heap
+cache. Embedded source data and existing message/Diagnostic contracts remain
+unchanged, with [focused evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-offline-help-catalog-lifetime).
+Returned diagnostics and persistent GUI copies remain separate owners.
+
 The [pre-production archive pair](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds)
 computes exact detached target quantities and checks every limit before copying.
 It preserves the legacy archive operation/statistic and scientific queries.

@@ -4557,3 +4557,75 @@ executes all six new owner/Model cases and affected existing consumers. The
 source/executable identities and unchanged-consumer reuse. Read-only QA corrected
 a stale-cancellation test race before primary execution without extending actual
 production lifetime. Complete SESSION acceptance remains open.
+
+### UIU-SESSION-01 admitted worker failure payloads
+
+This finite REQ-UIU-03/06/07 unit covers queued failure payloads. REUSE the
+existing `bridge/worker_failure.rs` owner, actual AdmissionError/Diagnostic
+metadata, canonical budget and allocation-free fallbacks. Its current Designer
+callers and wording remain compatible. No new scientific API, error interpretation
+or channel framework is needed. Standard-channel private storage is a separate
+pending policy/owner; this unit does not claim complete transport acceptance.
+
+| Path and symbol | Current contract and evidence | Requirement gap | Decision / destination |
+| --- | --- | --- | --- |
+| EDIT `apps/qt/src/bridge/worker_failure.rs`; ADD `apps/qt/src/shared/worker_failure.rs`; EDIT `shared/mod.rs` | WorkerFailure already admits original message/private Diagnostic metadata or uses a static fallback. | Other application workers need the same payload contract without depending on bridge ownership or Designer-specific fallback text. | SHARE the one implementation through a private application module; retain a bridge re-export and existing tests/imports. Add consumer-selected borrowed fallback text while preserving the original Designer default. Detailed data uses a boxed retained pointee so future envelope slots do not recount its inline payload. |
+| REUSE `apps/qt/src/downstream/help/retention.rs`, `inputs/retention.rs`, existing Designer/export consumers and tests | Actual error graph and retained-wrapper arithmetic are already implemented. | Relocation/boxing must preserve exact pointee accounting and old behavior. | REUSE, with focused existing tests; do not duplicate the walker or add another accounting abstraction. |
+| EDIT `apps/qt/src/downstream/simulation/closed_loop/worker.rs`, `closed_loop.rs` and affected adjacent tests | Rejected carries an owned String; Finished selects only static literals; generic terminal errors are application-owned. | Queued dynamic failures need admission and static reasons need no allocation. | ADAPT Rejected/terminal failure payloads to the existing owner before send; borrow Finished literals. GUI/performance consumers read the same text/help without cloning guards. Later retained GUI copies remain separately accountable. |
+| EDIT `apps/qt/src/downstream/instruments/transmitter/preview.rs` and affected adjacent tests | Worker returns owned error text through a bounded channel. | That error can remain queued after GUI disposal. | ADAPT to the same admitted failure owner before publication; preserve accepted source/results and cancellation/stale behavior. |
+| EDIT `apps/qt/src/upstream/workbench/preparation.rs`, `workbench/mod.rs` and affected adjacent tests | Configuration/target preparation queues owned String errors; run preparation retains its original controller. | Queued errors need canonical-budget admission without losing the controller on failure. | ADAPT both result variants; pass the existing host budget explicitly for run preparation, and keep disconnected/cancelled diagnostics static. |
+| EDIT `apps/qt/src/upstream/session.rs`, `upstream/tests.rs` and adjacent failure tests | Terminal ApiError can retain opaque serde_json/codec internals. Current Qt consumers use category and rendered text. | Qt cannot soundly measure those private error allocations. | SEPARATE a small application-only category/text projection before terminal publication. Preserve the public ErrorCode even if text admission falls back; drop the opaque error before enqueue. Scientific/native error APIs remain unchanged. |
+| ADD focused shared/worker and adjacent direction failure tests where needed | Existing real Busy/error/panic/disconnection and old-result cases remain. | Prove the new queued ownership boundaries. | Exact/below error capacity and actual wrapper checks, static fallback/category preservation, genuine queued/stale/GUI-dropped/final-disposal cases; preserve original assertions and source bytes. |
+
+Each detailed box charges the actual retained AdmissionError pointee and all
+owned message/Diagnostic capacities once, using existing checked arithmetic.
+Its enclosing enum/terminal/channel slot and later GUI copies are distinct
+concrete owners; do not claim that moving a guard also charges an independent
+copy. Borrowed static fallbacks retain no dynamic text. Preserve current bounded
+upstream text policy and original Designer message/diagnostic behavior. Shared
+failure relocation may widen only private application visibility, with no CXX-Qt
+or QML registration change.
+
+Lead owns primary adoption, canonical records and executed acceptance. Expand
+focused tests across all changed Designer/export/downstream/preview/upstream
+consumers, actual error/Busy/cancellation/partial/stale/terminal paths, relevant Qt
+Clippy/format/boundary checks and current executable. Reuse unchanged scientific/
+native and standalone QML evidence explicitly. Fixed outer runtime, closure/
+channel storage, GUI metadata, paths/help and persistent QML remain separate;
+parent SESSION and its complete Level 2/3 gates stay open.
+
+### UIU-SESSION-01 offline help catalog lifetime
+
+This independent REQ-UIU-03/07 owner unit removes the parsed help catalog's
+permanent heap cache. The embedded JSON and FAQ are static program data;
+`downstream/help.rs::catalog` currently retains a parsed Vec and owned strings
+through a global OnceLock outside the application budget. Catalog lookup needs
+no persistent mutable state or scientific calculation.
+
+| Path and symbol | Current contract and evidence | Requirement gap | Decision / destination |
+| --- | --- | --- | --- |
+| EDIT `apps/qt/src/downstream/help.rs`: catalog/entry | Parse bounded bundled JSON once, then permanently retain Catalog/Entry heap data. Existing help tests establish exact messages, keys, FAQ links and numeric context. | The global cache has no canonical host lifetime or admission. | ADAPT to bounded on-demand owned parsing/lookup; drop Catalog/Entry after each call. Reuse the existing source-byte/schema/entry limits and every rendering/diagnostic operation. Preserve output and unavailable-help behavior. No new budget wrapper, public API, dependency or GUI registration. |
+| ADD `apps/qt/src/downstream/help/catalog_tests.rs`; REUSE existing help and worker-failure tests | Private help rendering and existing retained Diagnostic metadata are separate owners. | Prove owned lookup isolation, unchanged detached output and source admission limits. | SEPARATE targeted catalog-lifetime/input tests; retain all original assertions and existing Diagnostic walker. |
+
+The private catalog parse is temporary execution work, bounded by the existing
+embedded source-byte and entry limits and the parser's existing finite recursion
+limit. It is not retained between queries. Returned Diagnostic/message/JSON data
+remain distinct consumers; their existing guards or pending GUI/presentation
+ownership still apply. Do not count borrowed static source bytes as dynamic heap,
+claim a total-heap/RSS bound or alter scientific validation to avoid help errors.
+Removing the small cache exchanges repeated bounded parsing for eliminating one
+global retained owner; no throughput or memory-performance measurement is claimed.
+
+This unit is independent of the worker-failure source worktree: no AdmissionError,
+Diagnostic field, retention walker, bridge/shared module or error type changes.
+Lead owns these exact files and canonical records; the source agent owns its
+non-overlapping failure unit. Run focused help/failure-consumer tests, Qt Clippy/
+format/boundary checks and build/probes. Full scientific/native/QML/packaging gates
+remain unchanged and are not required for identical private help outputs.
+
+
+The [help catalog receipt](session-help-catalog-lifetime-evidence.json) and
+[integrated validation](validation.md#uiu-session-01-offline-help-catalog-lifetime)
+record the actual focused checks, strengthened exact valid-source boundary and
+unchanged-output/consumer evidence. Read-only QA found no other concrete issue.
+The independently planned failure unit and complete SESSION acceptance remain open.
