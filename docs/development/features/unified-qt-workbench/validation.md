@@ -4334,3 +4334,45 @@ CLI, complete Qt/QML or packaging regression is reported as run for this unit.
 The separate worker-failure design remains planned; its source worktree has not
 been accepted by these checks. Other runtime/transport/path/GUI owners, pending
 channel/QML policy and complete SESSION Level 2/3 gates remain open.
+
+
+## UIU-SESSION-01 admitted worker failure payloads
+
+The [focused design](design.md#uiu-session-01-admitted-worker-failure-payloads)
+shares the existing application failure owner across downstream terminal/rejection,
+preview and upstream preparation/terminal queues. Detailed message/Diagnostic
+pointees retain their actual admitted capacities until disposal. Static reasons
+and failed detail admission use borrowed fallbacks. The original Designer import,
+fallback and diagnostic contract remain. Upstream projects the original public
+category and existing bounded Qt text, dropping opaque backend errors before send;
+category survives detail rejection. Enclosing slots, closure/channel storage and
+later GUI copies are separate owners, without a whole-transport acceptance claim.
+
+The [primary receipt](session-worker-failure-admission-evidence.json) separates
+source preparation at `325017c` from executed integration on `cd01664`. All 127
+distinct affected Qt Rust cases pass: three shared-failure, two original bridge,
+ten Designer, eleven export, fifty-one downstream, seventeen preview, twenty-six
+upstream and seven host cases. Ten added cases exercise actual capacity/wrapper
+boundaries, genuine Diagnostic/disconnected publication, borrowed reasons,
+stale-error and terminal disposal, preview preservation, original category/bounded
+projection, stale preparation and controller/report restoration under pressure.
+Existing Busy, pause/cancel/partial, panic, control and scientific assertions remain.
+
+The initial downstream run passed fifty cases and failed one new fixture that
+expected success when finishing an intentionally stale token. The existing API
+reports `StaleCallback` and releases the lease. Primary correction asserts both
+facts; that single case passes on rerun. The unchanged fifty passes were retained
+without repetition. No production or scientific fix was needed. Read-only QA
+found no source defect before execution; no reviewer runtime is claimed.
+
+Qt all-target Clippy, formatting, final API boundary and optimized build pass.
+Six fresh desktop probes pass with empty stderr. Sixteen scientific/native API
+source hashes and standalone QML/test inputs are unchanged: preceding API/wheel
+and QML evidence is explicitly reused without claiming a new execution. Full
+workspace, unrelated CLI, complete Qt/QML and packaging suites were not required
+for this private owner unit; milestone/final gates remain intact.
+
+The original-path registry is the next independently prepared owner. Remaining
+outer runtime/transport, loader/path and GUI metadata, pending channel/QML policy,
+complete SESSION Level 2 and final Level 3 gates remain open. This evidence does
+not check the parent SESSION task.

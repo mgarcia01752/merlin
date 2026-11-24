@@ -10,6 +10,9 @@ use super::{
 };
 use crate::{
     downstream::common::constants::PROFILE_COMPLETION_CAPACITY,
+    shared::{
+        presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE, worker_failure::WorkerFailure,
+    },
     shell::{
         spawn_worker, Retained, RetainedResources, RetentionBudget, RetentionError,
         RunCancellation, RunLease, RunToken, WorkerEvent, WorkerSpawnError,
@@ -23,8 +26,8 @@ use std::{
 
 pub(super) enum WorkerMessage {
     Profile(Box<ResultData>),
-    Rejected(u8, u8, String),
-    Finished(String),
+    Rejected(u8, u8, WorkerFailure),
+    Finished(&'static str),
 }
 
 #[derive(Default)]
@@ -48,7 +51,7 @@ pub(super) struct DownstreamControl {
 pub(super) struct Worker {
     control: Arc<DownstreamControl>,
     token: RunToken,
-    pub receiver: mpsc::Receiver<WorkerEvent<WorkerMessage, String>>,
+    pub receiver: mpsc::Receiver<WorkerEvent<WorkerMessage, WorkerFailure>>,
     pub profile_count: usize,
     pub stale: bool,
 }
@@ -344,6 +347,11 @@ impl Worker {
                                 .playback
                                 .as_ref()
                                 .map_or(0, |playback| playback.profile.key.channel_id);
+                            let error = WorkerFailure::admit_with_fallback(
+                                error.into(),
+                                &retention,
+                                WORKER_FAILURE_ADMISSION_MESSAGE,
+                            );
                             if sender
                                 .send(WorkerMessage::Rejected(id, channel, error))
                                 .is_err()
@@ -362,7 +370,7 @@ impl Worker {
                     ""
                 };
                 timing.finish();
-                let _ = sender.send(WorkerMessage::Finished(reason.into()));
+                let _ = sender.send(WorkerMessage::Finished(reason));
                 Ok(())
             },
         )?;
@@ -491,3 +499,6 @@ mod control_retention_tests;
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+mod failure_retention_tests;

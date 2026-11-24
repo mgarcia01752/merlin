@@ -17,5 +17,5 @@ pub(crate) mod workbench;
 
 pub use session::{
     AdmissionError, ControllerError, ControllerEvent, PreparedRun, PreparedSession, RetainedReport,
-    StartError, StartFailure, UpstreamControl, UpstreamController,
+    RunFailure, StartError, StartFailure, UpstreamControl, UpstreamController,
 };

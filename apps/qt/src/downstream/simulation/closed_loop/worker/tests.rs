@@ -54,7 +54,18 @@ fn admit(
     (budget, gate, identities, lease)
 }
 
-fn request(duration_ms: u64, budget: &RetentionBudget) -> SharedRequest {
+/// Prepares the existing genuine small public request for adjacent worker fixtures.
+///
+/// # Arguments
+/// * `duration_ms` - Original fixture observation interval, without changing science.
+/// * `budget` - Actual independent fixture host counter shared with its worker.
+///
+/// # Returns
+/// One admitted immutable request owner; no result or control is substituted.
+///
+/// # Panics
+/// Panics if the established accepted input fixture fails public preparation/admission.
+pub(super) fn request(duration_ms: u64, budget: &RetentionBudget) -> SharedRequest {
     let (inputs, transmission, sections) = super::super::tests::accepted_inputs();
     let request = prepare(
         &transmission,
@@ -96,7 +107,7 @@ fn data(worker: &Worker) -> WorkerMessage {
     }
 }
 
-fn terminal(worker: &Worker) -> WorkerTerminal<String> {
+fn terminal(worker: &Worker) -> WorkerTerminal<WorkerFailure> {
     let WorkerEvent::Terminal(terminal) =
         worker.receiver.recv_timeout(CONTROL_ACK_TIMEOUT).unwrap()
     else {
@@ -182,7 +193,7 @@ fn paused_public_worker_cancels_and_retains_its_actual_partial_report() {
     assert_eq!(worker.progress(&timing).1, 0);
     busy(&mut identities, &worker);
     let terminal = terminal(&worker);
-    assert_eq!(terminal.status(), &WorkerStatus::Completed);
+    assert!(matches!(terminal.status(), WorkerStatus::Completed));
     assert_eq!(gate.active().unwrap().token, worker.token());
     drop(terminal);
     assert!(gate.active().is_none());
@@ -221,7 +232,7 @@ fn finished_data_keeps_real_completion_busy_until_terminal_disposal() {
     assert_eq!(worker.acknowledged_pause(), None);
     busy(&mut identities, &worker);
     let terminal = terminal(&worker);
-    assert_eq!(terminal.status(), &WorkerStatus::Completed);
+    assert!(matches!(terminal.status(), WorkerStatus::Completed));
     drop(worker);
     assert!(gate.active().is_some());
     terminal.into_lease().acknowledge_termination().unwrap();
@@ -231,7 +242,9 @@ fn finished_data_keeps_real_completion_busy_until_terminal_disposal() {
 // These fixtures exercise only the Worker adapter around the accepted transport.
 // No public simulation, result or scientific error is substituted by their closure.
 fn transport_worker(
-    operation: impl FnOnce(WorkerSender<WorkerMessage, String>) -> Result<(), String> + Send + 'static,
+    operation: impl FnOnce(WorkerSender<WorkerMessage, WorkerFailure>) -> Result<(), WorkerFailure>
+        + Send
+        + 'static,
 ) -> (DispatchGate, Identities, Worker) {
     let budget = RetentionBudget::with_limits(TEST_OWNER_LIMITS);
     let control = DownstreamControl::new(&budget).unwrap();
@@ -265,16 +278,16 @@ fn error_and_panic_terminals_keep_the_worker_lease_until_disposed() {
             if panic_operation {
                 panic!("Application terminal panic fixture");
             }
-            Err("Application terminal error fixture".to_owned())
+            Err(WorkerFailure::Static("Application terminal error fixture"))
         });
         let terminal = terminal(&worker);
         if panic_operation {
-            assert_eq!(terminal.status(), &WorkerStatus::Panicked);
+            assert!(matches!(terminal.status(), WorkerStatus::Panicked));
         } else {
-            assert_eq!(
-                terminal.status(),
-                &WorkerStatus::Failed("Application terminal error fixture".to_owned())
-            );
+            let WorkerStatus::Failed(error) = terminal.status() else {
+                panic!("Actual closure failure must remain a failed terminal");
+            };
+            assert_eq!(error.message(), "Application terminal error fixture");
         }
         assert_eq!(gate.active().unwrap().token, worker.token());
         drop(worker);

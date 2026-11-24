@@ -199,3 +199,99 @@ fn exhausted_input_admission_rejects_before_copy_and_preserves_the_accepted_cont
     drop(pressure);
     assert_eq!(application.budget().usage(), before);
 }
+
+// Independent accounting ceilings for the actual queued failure pressure fixtures.
+const FAILURE_TEST_LIMITS: RetainedResources = RetainedResources {
+    payload_bytes: usize::MAX,
+    ordered_entries: usize::MAX,
+    shared_roots: usize::MAX,
+};
+
+#[test]
+fn stale_configuration_error_keeps_its_charge_until_discard_without_replacing_old_report() {
+    let application = ApplicationSessions::new(FAILURE_TEST_LIMITS).unwrap();
+    let mut model = configured(application.clone());
+    model.start().unwrap();
+    wait_for(|| model.poll()["busy"] == false);
+    let (token, report) = model.report.as_ref().unwrap();
+    let token = *token;
+    let report = Arc::clone(report);
+    let baseline = application.budget().usage();
+    let key = model.key;
+    model.apply(b"{}").unwrap();
+    let mut prepared = None;
+    wait_for(|| {
+        prepared = model.pending.as_ref().and_then(Pending::poll);
+        prepared.is_some()
+    });
+    model.pending = None;
+    let Prepared::Configuration {
+        expected,
+        candidate: Err(error),
+    } = prepared.unwrap()
+    else {
+        panic!("Invalid real document must yield its original preparation error");
+    };
+    let crate::shared::worker_failure::WorkerFailure::Detailed(retained) = &error else {
+        panic!("Original bounded preparation text fits the fixture host");
+    };
+    let charge = retained.fixture_reserved_resources();
+    let queued = RetainedResources {
+        payload_bytes: baseline.payload_bytes + charge.payload_bytes,
+        ..baseline
+    };
+
+    // Receiving completion does not prove closure return; wait for input disposal.
+    wait_for(|| application.budget().usage() == queued);
+    application.configure_upstream(true).unwrap();
+    let result = model.adopt_prepared(Prepared::Configuration {
+        expected,
+        candidate: Err(error),
+    });
+    assert!(result.unwrap_err().contains("changed during preparation"));
+    assert_eq!(model.key, key);
+    assert_eq!(model.report.as_ref().unwrap().0, token);
+    assert!(Arc::ptr_eq(&model.report.as_ref().unwrap().1, &report));
+    assert_eq!(application.budget().usage(), baseline);
+}
+
+#[test]
+fn target_preparation_fallback_restores_controller_and_same_completed_report() {
+    let application = ApplicationSessions::new(FAILURE_TEST_LIMITS).unwrap();
+    let mut model = configured(application.clone());
+    model.start().unwrap();
+    wait_for(|| model.poll()["busy"] == false);
+    let (token, report) = model.report.as_ref().unwrap();
+    let token = *token;
+    let report = Arc::clone(report);
+    let key = model.key;
+    let budget = application.budget();
+    let before = budget.usage();
+
+    // Actual target preflight runs before shared admission. Synthetic byte pressure
+    // rejects that reservation and then the detailed error, selecting borrowed text.
+    let pressure = budget
+        .reserve_resources(RetainedResources {
+            payload_bytes: FAILURE_TEST_LIMITS.payload_bytes - before.payload_bytes,
+            ..Default::default()
+        })
+        .unwrap();
+    model.start().unwrap();
+    assert!(model.pending.is_some());
+    wait_for(|| model.poll()["preparing"] == false);
+    assert_eq!(
+        model.error,
+        crate::shared::presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE
+    );
+    assert_eq!(model.key, key);
+    assert!(model.controller.is_some());
+    assert_eq!(model.report.as_ref().unwrap().0, token);
+    assert!(Arc::ptr_eq(&model.report.as_ref().unwrap().1, &report));
+    assert!(application.active().is_none());
+    assert_eq!(
+        budget.usage().payload_bytes,
+        FAILURE_TEST_LIMITS.payload_bytes
+    );
+    drop(pressure);
+    assert_eq!(budget.usage(), before);
+}

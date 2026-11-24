@@ -66,3 +66,8 @@ pub(crate) const FFT_POWER_VIEW_POWER_INTERVALS: u32 = 4;
 
 /// Percent units per dimensionless ratio, independent of any admitted editor range.
 pub(crate) const PERCENT_PER_UNIT: f64 = 100.0;
+
+/// Borrowed non-Designer fallback when a worker's detailed error cannot be retained.
+/// This is application feedback, not a scientific failure category or channel policy.
+pub(crate) const WORKER_FAILURE_ADMISSION_MESSAGE: &str =
+    "Worker failure details exceed retained-data limits.";

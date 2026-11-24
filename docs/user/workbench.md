@@ -342,7 +342,10 @@ cannot fit after a successful write, the message explicitly says **Export saved*
 the output remains intact, and the unavailable path is not displayed. Cancelled
 and failed exports have distinct messages. Existing destinations remain protected
 from overwrite. This change does not alter the recipe, measured source data or
-export formats. Full unified-session acceptance remains pending.
+export formats. Simulation and transmitter-preview
+workers also admit queued failure details. If details cannot fit, a fixed message
+is used; previous accepted results remain protected. Full unified-session
+acceptance remains pending.
 
 ## Help and chart details
 

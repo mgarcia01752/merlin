@@ -101,7 +101,7 @@ impl Model {
         let Some(controller) = self.controller.take() else {
             return Err("Apply an upstream configuration before starting.".into());
         };
-        match Pending::run(controller) {
+        match Pending::run(controller, self.application.budget().clone()) {
             Ok(pending) => self.pending = Some(pending),
             Err((controller, error)) => {
                 self.controller = Some(controller);
@@ -215,7 +215,7 @@ impl Model {
                 if self.application.snapshot(Direction::Upstream).key != expected {
                     return Err("Upstream configuration changed during preparation.".into());
                 }
-                let candidate = candidate?;
+                let candidate = candidate.map_err(|error| error.message().to_owned())?;
                 let key = self
                     .application
                     .configure_upstream(true)
@@ -231,7 +231,7 @@ impl Model {
                 if self.preparation_cancelled {
                     return Ok(());
                 }
-                self.dispatch(target?)?;
+                self.dispatch(target.map_err(|error| error.message().to_owned())?)?;
             }
         }
         Ok(())
@@ -270,7 +270,15 @@ impl Model {
     }
 }
 
-fn error_text(error: String) -> String {
+/// Preserves the existing Qt diagnostic character limit for every upstream path.
+///
+/// # Arguments
+/// * `error` - Temporary rendered text from the original application/public error.
+///
+/// # Returns
+/// The unchanged bounded prefix. Retained worker text is separately admitted before
+/// enqueue; later GUI-owned copies remain a distinct concrete owner.
+pub(super) fn error_text(error: String) -> String {
     error.chars().take(MAX_ERROR_CHARACTERS).collect()
 }
 

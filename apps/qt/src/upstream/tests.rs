@@ -100,7 +100,7 @@ fn wait_for(mut condition: impl FnMut() -> bool) {
     }
 }
 
-fn terminal(controller: &mut UpstreamController) -> WorkerTerminal<ApiError> {
+fn terminal(controller: &mut UpstreamController) -> WorkerTerminal<RunFailure> {
     let deadline = Instant::now() + ASYNC_TEST_DEADLINE;
     loop {
         match controller.poll().unwrap() {

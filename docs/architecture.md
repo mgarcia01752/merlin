@@ -1799,18 +1799,25 @@ reservation until final drop. The
 preserves timing/progress and scientific behavior. Remaining application owners
 and complete SESSION acceptance stay pending.
 
-The next [worker failure payload unit](development/features/unified-qt-workbench/design.md#uiu-session-01-admitted-worker-failure-payloads)
-will reuse the existing retained application failure owner across worker queues.
-Upstream terminal errors will project existing public category/text before
-publication rather than retain opaque backend error internals in Qt. Scientific
-error APIs remain unchanged; primary payload acceptance and complete transport
-accounting are still pending.
+The [worker failure payload owner](development/features/unified-qt-workbench/design.md#uiu-session-01-admitted-worker-failure-payloads)
+reuses admitted message/Diagnostic pointees across affected worker queues.
+Upstream terminal errors retain the original public category and bounded Qt text,
+dropping opaque backend errors before publication. Scientific error APIs remain
+unchanged. [Focused primary evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-admitted-worker-failure-payloads)
+covers queued/stale/disconnected disposal; enclosing transport and later GUI
+copies remain separate pending owners.
 
 The [offline help catalog](development/features/unified-qt-workbench/design.md#uiu-session-01-offline-help-catalog-lifetime)
 uses bounded temporary owned parsing/lookup instead of a permanent parsed heap
 cache. Embedded source data and existing message/Diagnostic contracts remain
 unchanged, with [focused evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-offline-help-catalog-lifetime).
 Returned diagnostics and persistent GUI copies remain separate owners.
+
+The next [original-path registry unit](development/features/unified-qt-workbench/design.md#uiu-session-01-original-source-path-ownership)
+will scope imported source protection to the canonical host, charge actual path
+records and retain independent direction ownership. Save checks the host union;
+successful Open releases only its direction's records. Existing downstream
+inputs/project schema remain unchanged; integrated acceptance is pending.
 
 The [pre-production archive pair](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds)
 computes exact detached target quantities and checks every limit before copying.

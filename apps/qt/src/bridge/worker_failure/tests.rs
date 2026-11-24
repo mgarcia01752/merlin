@@ -4,7 +4,13 @@
  */
 //! Admitted detailed completions and payload-free fallback under host pressure.
 use super::*;
-use crate::{downstream::help, shell::RetainedResources};
+use crate::{
+    downstream::{
+        common::constants::DESIGNER_WORKER_ERROR_ADMISSION_MESSAGE,
+        help::{self, AdmissionError},
+    },
+    shell::{RetainedResources, RetentionBudget},
+};
 use serde_json::json;
 use std::sync::mpsc;
 
@@ -64,7 +70,7 @@ fn rejected_error_queues_only_static_fallback_without_changing_the_full_counter(
         .unwrap();
     let before = budget.usage();
     let failure = WorkerFailure::admit(error(), &budget);
-    assert!(matches!(failure, WorkerFailure::AdmissionRejected));
+    assert!(matches!(failure, WorkerFailure::AdmissionRejected(_)));
     let (sender, receiver) = mpsc::sync_channel(TERMINAL_CAPACITY);
     sender.send(failure).unwrap();
     drop(sender);

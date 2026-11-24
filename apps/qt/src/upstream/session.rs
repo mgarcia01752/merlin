@@ -3,11 +3,13 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Actual upstream sessions and reports, without another scientific interface.
+mod failure;
 use crate::shell::{
     spawn_worker, Direction, Retained, RetainedResources, RetentionBudget, RetentionError,
     RetentionReservation, RunCancellation, RunLease, RunToken, SessionKey, WorkerEvent,
     WorkerTerminal,
 };
+pub use failure::RunFailure;
 use merlin::{
     common::RetainedFootprint,
     upstream::{
@@ -32,7 +34,7 @@ use std::{
 pub type RetainedReport = Arc<Retained<merlin::upstream::BatchReport>>;
 
 type SharedSession = Arc<Retained<Mutex<SessionStorage>>>;
-type Events = Receiver<WorkerEvent<RetainedReport, ApiError>>;
+type Events = Receiver<WorkerEvent<RetainedReport, RunFailure>>;
 
 struct SessionStorage {
     simulation: Option<Simulation>,
@@ -108,8 +110,8 @@ pub enum ControllerEvent {
         token: RunToken,
         report: RetainedReport,
     },
-    /// Host inspects the original typed status, then consumes or drops the lease.
-    Terminal(WorkerTerminal<ApiError>),
+    /// Host reads the original category/bounded text, then consumes or drops the lease.
+    Terminal(WorkerTerminal<RunFailure>),
 }
 
 struct Active {
@@ -381,6 +383,7 @@ impl UpstreamController {
             });
         }
         let backend = Arc::clone(&control);
+        let budget = self.budget.clone();
         let events = spawn_worker("merlin-upstream", capacity, lease, move |publisher| {
             let PreparedRun {
                 key: _,
@@ -388,12 +391,14 @@ impl UpstreamController {
                 backend_limit,
                 reservation,
             } = prepared;
-            let mut session = RunningSession::take(owner)?;
+            let mut session =
+                RunningSession::take(owner).map_err(|error| RunFailure::admit(error, &budget))?;
             let report = session
                 .simulation
                 .as_mut()
                 .expect("Running guard owns its session")
-                .run_with_control_bounded(&backend.backend, backend_limit)?;
+                .run_with_control_bounded(&backend.backend, backend_limit)
+                .map_err(|error| RunFailure::admit(error, &budget))?;
 
             // Restore accepted configuration before publishing independent results.
             drop(session);
@@ -610,3 +615,7 @@ mod tests;
 #[cfg(test)]
 #[path = "session/control_retention_tests.rs"]
 mod control_retention_tests;
+
+#[cfg(test)]
+#[path = "session/failure_tests.rs"]
+mod failure_tests;

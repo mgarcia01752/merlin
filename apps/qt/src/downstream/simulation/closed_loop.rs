@@ -343,7 +343,7 @@ impl Model {
                                 &self.context,
                                 id,
                                 channel,
-                                error.clone(),
+                                error.message().to_owned(),
                             )
                         {
                             log::warn!(
@@ -351,7 +351,7 @@ impl Model {
                                 application_error(ApplicationError::Retention(retention_error))
                             );
                         }
-                        self.error = error;
+                        self.error = error.message().to_owned();
                         self.token = self.token.wrapping_add(1);
                     }
                 }
@@ -360,7 +360,7 @@ impl Model {
                     value: WorkerMessage::Finished(reason),
                 }) => {
                     if self.accepts_callback(token) && !reason.is_empty() {
-                        self.error = reason;
+                        self.error = reason.to_owned();
                     }
                     // This is sweep status, not proof that its closure has returned.
                     self.token = self.token.wrapping_add(1);
@@ -369,7 +369,7 @@ impl Model {
                     if self.accepts_callback(terminal.token()) {
                         match terminal.status() {
                             WorkerStatus::Completed => {}
-                            WorkerStatus::Failed(error) => self.error = error.clone(),
+                            WorkerStatus::Failed(error) => self.error = error.message().to_owned(),
                             WorkerStatus::Panicked => {
                                 self.error = "Receiver worker stopped unexpectedly.".into()
                             }

@@ -4594,6 +4594,16 @@ native and standalone QML evidence explicitly. Fixed outer runtime, closure/
 channel storage, GUI metadata, paths/help and persistent QML remain separate;
 parent SESSION and its complete Level 2/3 gates stay open.
 
+The [primary receipt](session-worker-failure-admission-evidence.json) and
+[validation](validation.md#uiu-session-01-admitted-worker-failure-payloads) record
+127 distinct affected Qt Rust passes and six fresh desktop probes. Source-only
+preparation at `325017c` is separate; its [handoff](agent-handoffs/worker-failure-admission.md)
+retains the source-only validation boundary. Primary execution found one new stale fixture
+that expected success from finishing an intentionally invalidated token. The
+existing contract returns `StaleCallback` while releasing the lease; the corrected
+fixture asserts both facts and passes alone. No production change was needed,
+and the unchanged fifty downstream passes were preserved without another run.
+
 ### UIU-SESSION-01 offline help catalog lifetime
 
 This independent REQ-UIU-03/07 owner unit removes the parsed help catalog's
@@ -4628,4 +4638,42 @@ The [help catalog receipt](session-help-catalog-lifetime-evidence.json) and
 [integrated validation](validation.md#uiu-session-01-offline-help-catalog-lifetime)
 record the actual focused checks, strengthened exact valid-source boundary and
 unchanged-output/consumer evidence. Read-only QA found no other concrete issue.
-The independently planned failure unit and complete SESSION acceptance remain open.
+That help receipt predates the separately recorded worker-failure acceptance above.
+Complete SESSION acceptance remains open.
+
+### UIU-SESSION-01 original source-path ownership
+
+This finite REQ-UIU-03/06/07 unit replaces the process-thread-global
+`platform/input_file.rs::INPUT_PATHS` with one charged registry per canonical
+ApplicationSessions host. Protection is the union of both direction owners;
+successful downstream Open clears only downstream ownership. Current import
+callers remain downstream; this introduces no upstream importer or UI behavior.
+Preserve the existing distinct-path cap as one named shell domain limit.
+
+| Path and symbol | Current contract and evidence | Requirement gap | Decision / destination |
+| --- | --- | --- | --- |
+| ADD `apps/qt/src/shell/input_paths.rs`, adjacent tests; EDIT `shell/mod.rs`, `shell/constants.rs` | Global BTreeSet tracks canonical originals until project adoption. | Path capacity, entry/container counts, host isolation and direction ownership need explicit admission. | SEPARATE one concrete registry using existing Retained/budget only. Each canonical path carries direction flags and its final guard in the same owning record; ordering/lookup depend only on the immutable path. Use BTreeSet records with interior flags under the registry mutex, or an equally explicit destruction-safe representation. |
+| EDIT `apps/qt/src/shell/application.rs`, application tests/retention tests; REUSE existing counter/gate/Sessions | Clones share three guarded canonical roots. | Registry must have host lifetime without a second budget or source-path/global cycle. | ADAPT constructor with one shared guarded registry root, rollback and documented fourth-root accounting. Registry never owns Context/ApplicationSessions; its reservations retain only the existing counter. Preserve core three-root assertions/history while verifying expanded host totals. |
+| EDIT `apps/qt/src/platform/input_file.rs`; REUSE bounded file reader/canonicalization | read_local registers every successful bounded read before editor adoption; project reads stay untracked. | Import registration and overwrite queries must use an explicit host/direction. | ADAPT internal Rust signatures; admit actual canonical PathBuf capacity before insertion, avoid duplicate charges and preserve existing read/protection behavior. Rejected registry admission leaves all prior records intact. |
+| EDIT `bridge/source_input.rs`, `profile_input.rs`, `measurement_input.rs` | Existing GUI imports already carry Context and its host. | Pass fixed downstream ownership explicitly. | REUSE context, limits and all scientific/staging operations; no QML/CXX signature or file-content changes. |
+| EDIT `downstream/workbench/project_file.rs`, `project_load.rs`, `bridge/workbench_file.rs` and exact adjacent fixtures | Save protects imported originals; successful Open currently clears the global set. | Host-wide Save protection and direction-local Open cleanup must agree. | ADAPT private project write/recovery calls to query the explicit host union; clear downstream flags only after successful guarded project adoption. Rejected/stale/cancelled Open never clears paths. Preserve schemas, self-contained originals, accepted Save paths and atomic write behavior. |
+| EDIT existing `session/fixed_tests.rs`, project-file/load and WorkbenchFile editor fixtures; ADD focused path tests | Existing precise host/Stores/project tests remain. | New fixed registry baseline and meaningful source-protection coverage. | ADAPT exact measured allowances only; retain original assertions. Test actual canonical/symlink protection, duplicate/cap boundaries, both direction flags, independent hosts, rejection/rollback and final aliases. |
+
+Charge the registry's actual final retained mutex pointee and one shared root
+once. Every distinct record charges its actual complete record layout (including
+its guard), PathBuf capacity and one ordered entry, with no extra shared root.
+Do not count fixed registry/entry fields twice or depend on private BTreeMap
+key/value drop ordering. Path data precedes its guard; flags never affect ordering.
+Borrowed canonical lookup avoids another retained path copy. Private tree-node,
+allocator and shared-owner bookkeeping retain the accepted exclusions, bounded
+separately by the existing entry/root policies. No numeric limit is inferred from
+another domain solely because its value matches.
+
+Lead owns architecture/checklist/evidence and integrated tests/commits. Source
+preparation may use exact accepted `cd01664` in the existing isolated worktree;
+its paths do not overlap queued-failure source. Adoption must verify each actual
+base file before importing either unit. Public scientific/Python and saved JSON
+contracts remain unchanged. Expand tests across fixed host/Stores, actual
+imports/project Save/Open/recovery, both direction isolation and original-input
+survival; keep source-only checks separate. This does not accept pending loader
+path/GUI copies, channel/QML policy, remaining runtime owners or complete SESSION.

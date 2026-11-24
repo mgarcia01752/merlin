@@ -148,7 +148,7 @@ fn actual_worker_control_rejection_keeps_source_idle_and_terminal_owns_lease() {
     });
     assert!(matches!(worker.receiver.recv_timeout(WATCHDOG).unwrap(),
         WorkerEvent::Message { token: actual, value: WorkerMessage::Rejected(_, _, ref error) }
-            if actual == token && error.contains("retained-data limit")));
+            if actual == token && error.message().contains("retained-data limit")));
     assert!(lock(&control.state).active.is_none());
     assert_eq!(
         serde_json::to_value(request.value().settings()).unwrap(),
@@ -164,7 +164,7 @@ fn actual_worker_control_rejection_keeps_source_idle_and_terminal_owns_lease() {
     let WorkerEvent::Terminal(terminal) = worker.receiver.recv_timeout(WATCHDOG).unwrap() else {
         panic!("Actual worker must publish its sole terminal");
     };
-    assert_eq!(terminal.status(), &WorkerStatus::Completed);
+    assert!(matches!(terminal.status(), WorkerStatus::Completed));
     assert_eq!(application.active().unwrap().token, token);
     application.finish(terminal.into_lease()).unwrap();
     drop(worker);

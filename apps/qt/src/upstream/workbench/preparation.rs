@@ -4,8 +4,13 @@
  */
 //! Finite off-GUI preparation; these threads never hold a simulation run lease.
 use super::{error_text, UpstreamController};
-use crate::shell::{Retained, RetentionBudget, SessionKey};
 use crate::upstream::{PreparedRun, PreparedSession};
+use crate::{
+    shared::{
+        presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE, worker_failure::WorkerFailure,
+    },
+    shell::{Retained, RetentionBudget, SessionKey},
+};
 use merlin::upstream::{ConfigurationDocument, ReceiverObservationPolicy};
 use std::sync::{
     mpsc::{self, Receiver, TryRecvError},
@@ -20,10 +25,10 @@ type ControllerSlot = Arc<Mutex<Option<UpstreamController>>>;
 pub(super) enum Pending {
     Configuration {
         expected: SessionKey,
-        receiver: Receiver<Result<PreparedSession, String>>,
+        receiver: Receiver<Result<PreparedSession, WorkerFailure>>,
     },
     Run {
-        receiver: Receiver<Result<PreparedRun, String>>,
+        receiver: Receiver<Result<PreparedRun, WorkerFailure>>,
         owner: ControllerSlot,
     },
 }
@@ -31,11 +36,11 @@ pub(super) enum Pending {
 pub(super) enum Prepared {
     Configuration {
         expected: SessionKey,
-        candidate: Result<PreparedSession, String>,
+        candidate: Result<PreparedSession, WorkerFailure>,
     },
     Run {
         controller: UpstreamController,
-        target: Result<PreparedRun, String>,
+        target: Result<PreparedRun, WorkerFailure>,
     },
 }
 
@@ -68,7 +73,14 @@ impl Pending {
                         )
                         .map_err(|error| format!("{error:?}"))
                     })
-                    .map_err(error_text);
+                    .map_err(error_text)
+                    .map_err(|message| {
+                        WorkerFailure::admit_with_fallback(
+                            message.into(),
+                            &budget,
+                            WORKER_FAILURE_ADMISSION_MESSAGE,
+                        )
+                    });
                 let _ = sender.send(prepared);
             })
             .map_err(|error| error_text(error.to_string()))?;
@@ -78,12 +90,14 @@ impl Pending {
     /// Preflights the actual report target while preserving the idle controller.
     /// # Arguments
     /// * `controller` - Accepted idle owner; never cloned or scientifically run here.
+    /// * `budget` - Canonical counter for the prepared target and queued failure.
     /// # Returns
     /// Pending result retaining the original owner even if preflight unwinds.
     /// # Errors
     /// Spawn failure returns the original controller for immediate restoration.
     pub(super) fn run(
         controller: UpstreamController,
+        budget: RetentionBudget,
     ) -> Result<Self, (UpstreamController, String)> {
         let owner = Arc::new(Mutex::new(Some(controller)));
         let worker_owner = Arc::clone(&owner);
@@ -99,6 +113,13 @@ impl Pending {
                         .expect("Preparation owns its accepted controller")
                         .prepare_run()
                         .map_err(|error| error_text(format!("{error:?}")))
+                        .map_err(|message| {
+                            WorkerFailure::admit_with_fallback(
+                                message.into(),
+                                &budget,
+                                WORKER_FAILURE_ADMISSION_MESSAGE,
+                            )
+                        })
                 };
                 let _ = sender.send(target);
             });
@@ -128,13 +149,13 @@ impl Pending {
     }
 }
 
-fn receive<T>(receiver: &Receiver<Result<T, String>>) -> Option<Result<T, String>> {
+fn receive<T>(receiver: &Receiver<Result<T, WorkerFailure>>) -> Option<Result<T, WorkerFailure>> {
     match receiver.try_recv() {
         Ok(value) => Some(value),
         Err(TryRecvError::Empty) => None,
-        Err(TryRecvError::Disconnected) => {
-            Some(Err("Upstream preparation stopped unexpectedly.".into()))
-        }
+        Err(TryRecvError::Disconnected) => Some(Err(WorkerFailure::Static(
+            "Upstream preparation stopped unexpectedly.",
+        ))),
     }
 }
 

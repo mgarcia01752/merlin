@@ -7,7 +7,10 @@ mod retention;
 use crate::downstream::common::constants::IDLE_PREVIEW_COMPLETION_CAPACITY;
 use crate::downstream::inputs::public_inputs::transmitter_inputs;
 use crate::downstream::workbench::session::Context;
-use crate::shared::presentation::constants::MIN_SPECTRUM_DISPLAY_BINS;
+use crate::shared::{
+    presentation::constants::{MIN_SPECTRUM_DISPLAY_BINS, WORKER_FAILURE_ADMISSION_MESSAGE},
+    worker_failure::WorkerFailure,
+};
 use crate::shell::{Retained, RetentionBudget};
 use merlin::downstream::{
     ChannelConfiguration, ChannelConfigurationInput, PhysicalLayoutView, TransmissionConfiguration,
@@ -35,7 +38,7 @@ struct PreparedPreview {
 struct Job {
     revision: u64,
     control: Arc<Retained<TransmitterPreviewControl>>,
-    receiver: Receiver<Result<Box<Retained<TransmitterPreview>>, String>>,
+    receiver: Receiver<Result<Box<Retained<TransmitterPreview>>, WorkerFailure>>,
 }
 
 pub(crate) struct Analyzer {
@@ -211,7 +214,13 @@ impl Analyzer {
             .spawn(move || {
                 let result = retention::generate(prepared, worker_control.value(), &budget)
                     .map(Box::new)
-                    .map_err(PreviewError::into_message);
+                    .map_err(|error| {
+                        WorkerFailure::admit_with_fallback(
+                            error.into_message().into(),
+                            &budget,
+                            WORKER_FAILURE_ADMISSION_MESSAGE,
+                        )
+                    });
                 let _ = sender.send(result);
             });
         match spawn {
@@ -260,7 +269,7 @@ impl Analyzer {
                                         "Completed TX sample snapshot before channel impairments."
                                             .into();
                                 }
-                                Err(error) => self.error = error,
+                                Err(error) => self.error = error.message().to_owned(),
                             }
                         }
                     }
@@ -680,3 +689,6 @@ mod target_preflight_tests;
 
 #[cfg(test)]
 mod control_retention_tests;
+
+#[cfg(test)]
+mod failure_retention_tests;
