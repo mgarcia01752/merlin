@@ -1593,6 +1593,14 @@ Designer Origin children retained by captures are counted here; separate Designe
 sessions/workers/exports, retained QML presentation and outer infrastructure still
 require closure before UIU-SESSION-01 acceptance.
 
+Receiver QAM registries admit their actual Vec slot and status-string capacities
+before replacement; selected immutable Snapshot aliases retain their original
+scientific guards. Performance registries normalize retained buffers to occupied
+slots already covered by each Entry, and clear drops the full buffer. Initial
+catalog preparation admits both registries before replacing either old history.
+The fixed Store/Context graph remains separately pending. See the
+[registry storage design](development/features/unified-qt-workbench/design.md#uiu-session-01-receiver-registry-storage).
+
 The shared [terminal transport](development/features/unified-qt-workbench/design.md#uiu-session-01-terminal-worker-transport)
 under `shell/worker.rs` keeps genuine run leases outside worker unwinding and
 tags queued callbacks explicitly. Known completion can release admission after

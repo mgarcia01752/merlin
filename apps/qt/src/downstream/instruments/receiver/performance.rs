@@ -15,6 +15,8 @@ use crate::downstream::{
 };
 use crate::shared::presentation::constants::HERTZ_PER_MEGAHERTZ;
 use crate::shell::{Retained, RetentionError};
+#[cfg(test)]
+mod registry_retention;
 mod retention;
 use merlin::downstream::{FecReport, SourceProfileFrame};
 use serde_json::{json, Value};
@@ -44,9 +46,7 @@ pub(crate) struct Entry {
 /// Clears all transient profile results after new accepted input or Start.
 pub(crate) fn clear(context: &Context) {
     super::qam_history::clear(context);
-    context
-        .performance
-        .with(|entries| entries.borrow_mut().clear());
+    *context.performance.borrow_mut() = Vec::new();
 }
 
 /// Reads assigned stored-history charges for surrounding lifecycle fixtures.
@@ -84,13 +84,16 @@ pub(crate) fn fixture_initial_resources<'profile>(
         ordered_entries: usize::MAX,
         shared_roots: usize::MAX,
     });
-    let mut total = crate::shell::RetainedResources::default();
+    let profiles = profiles.into_iter().collect::<Vec<_>>();
+    let registry = super::qam_history::prepare(profiles.iter().copied(), &budget).unwrap();
+    let mut total = budget.usage();
     for profile in profiles {
         let entry = retention::PreparedEntry::not_started(profile)
             .admit(&budget)
             .unwrap();
         fixture_add(&mut total, entry._retained.fixture_reserved_resources());
     }
+    drop(registry);
     assert_eq!(budget.usage(), crate::shell::RetainedResources::default());
     total
 }
@@ -129,13 +132,23 @@ pub(crate) fn begin(
             retention::PreparedEntry::not_started(profile).admit(context.application.budget())
         })
         .collect::<Result<Vec<_>, _>>()?;
-    clear(context);
-    super::qam_history::begin(context, profiles);
-    for entry in entries {
-        insert(context, entry);
-    }
+    let entries = normalized(entries);
+    let qam = super::qam_history::prepare(profiles, context.application.budget())?;
+
+    // Both complete candidates are admitted before either old history changes.
+    let mut old_qam = context.qam.borrow_mut();
+    let mut old_performance = context.performance.borrow_mut();
+    *old_qam = qam;
+    *old_performance = entries;
     Ok(())
 }
+
+// Construction is finite under MAX_PROFILES. Boxed-slice conversion removes all
+// spare slots before retained publication; each live Entry charges its own slot.
+fn normalized(entries: Vec<Entry>) -> Vec<Entry> {
+    entries.into_boxed_slice().into_vec()
+}
+
 fn insert(context: &Context, entry: Entry) {
     context.performance.with(|entries| {
         let mut entries = entries.borrow_mut();
@@ -143,6 +156,7 @@ fn insert(context: &Context, entry: Entry) {
             entries[index] = entry;
         } else if entries.len() < MAX_PROFILES {
             entries.push(entry);
+            *entries = normalized(std::mem::take(&mut *entries));
         }
     });
 }

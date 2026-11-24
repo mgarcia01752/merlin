@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Independent application identities around detached authoritative public receiver histories.
+mod registry_retention;
 mod retention;
 use crate::downstream::simulation::closed_loop::ResultData;
 use crate::downstream::workbench::session::Context;
-use crate::shell::Retained;
+use crate::shell::{Retained, RetentionBudget, RetentionError};
 use merlin::downstream::{
     FullLoopReceiverArchive, FullLoopReceiverArchivePolicy, SourceProfileFrame,
 };
@@ -21,10 +22,67 @@ pub(crate) struct Snapshot {
     // All charged archive data drops before its reservation.
     _retained: Retained<()>,
 }
+#[derive(Clone)]
 pub(crate) struct Entry {
     id: u8,
     status: String,
     snapshot: Option<Arc<Snapshot>>,
+}
+
+/// Concrete registry buffers; immutable Snapshot pointees retain their own guards.
+#[derive(Default)]
+pub(crate) struct Registry {
+    entries: Vec<Entry>,
+
+    // Destroy all slots/statuses before releasing their aggregate reservation.
+    _retained: Option<Retained<()>>,
+}
+
+impl Registry {
+    fn admit(entries: Vec<Entry>, budget: &RetentionBudget) -> Result<Self, RetentionError> {
+        let reservation = budget.reserve_resources(registry_retention::resources(&entries)?)?;
+        Ok(Self {
+            entries,
+            _retained: Some(reservation.retain(())),
+        })
+    }
+}
+
+impl std::ops::Deref for Registry {
+    type Target = Vec<Entry>;
+
+    /// Borrows current entries without exposing a mutation that could bypass admission.
+    /// # Returns
+    /// Read-only catalog; each selected Snapshot keeps its original separate charge.
+    fn deref(&self) -> &Self::Target {
+        &self.entries
+    }
+}
+
+/// Prepares and admits an entire finite catalog before either history is replaced.
+/// # Arguments
+/// * `'profile`, `profiles` - Borrowed captured identities bounded by the history policy.
+/// * `budget` - Canonical host, also covering old registries and scientific roots.
+/// # Returns
+/// Complete registry whose slots/statuses drop before their reservation.
+/// # Errors
+/// Checked current-capacity overflow or host rejection; no Context is mutated.
+pub(super) fn prepare<'profile>(
+    profiles: impl IntoIterator<Item = &'profile SourceProfileFrame>,
+    budget: &RetentionBudget,
+) -> Result<Registry, RetentionError> {
+    Registry::admit(
+        profiles
+            .into_iter()
+            .take(super::performance::MAX_PROFILES)
+            .map(|profile| Entry {
+                id: profile.profile_id,
+                status: "not_started".into(),
+                snapshot: None,
+            })
+            .collect(),
+        budget,
+    )
 }
 
 /// Clears history after accepted-input invalidation or a fresh run.
@@ -33,30 +91,23 @@ pub(crate) struct Entry {
 /// # Returns
 /// Unit; dropping the last archive releases only its detached observations.
 pub(crate) fn clear(context: &Context) {
-    context.qam.with(|entries| entries.borrow_mut().clear());
+    *context.qam.borrow_mut() = Registry::default();
 }
 /// Registers independently selected source profiles with explicit unstarted states.
 /// # Arguments
 /// * `context` - Exact downstream owner; never inferred from tab selection.
 /// * `profiles` - Source-catalog identities, bounded by the shared application history policy.
 /// # Returns
-/// Unit; no backend query, source or simulation is executed.
-pub(crate) fn begin(context: &Context, profiles: &[SourceProfileFrame]) {
-    clear(context);
-    context.qam.with(|entries| {
-        entries
-            .borrow_mut()
-            .extend(
-                profiles
-                    .iter()
-                    .take(super::performance::MAX_PROFILES)
-                    .map(|profile| Entry {
-                        id: profile.profile_id,
-                        status: "not_started".into(),
-                        snapshot: None,
-                    }),
-            )
-    });
+/// Unit after complete admission; no backend query/source/simulation is executed.
+/// # Errors
+/// Metadata or host failure preserves the old registry and every selected alias.
+#[cfg(test)]
+pub(crate) fn begin(
+    context: &Context,
+    profiles: &[SourceProfileFrame],
+) -> Result<(), RetentionError> {
+    *context.qam.borrow_mut() = prepare(profiles, context.application.budget())?;
+    Ok(())
 }
 /// Retains finite actual history through the public backend without copying whole results.
 /// # Arguments
@@ -83,11 +134,17 @@ pub(crate) fn retain(context: &Context, id: u8, result: &ResultData) -> Result<(
     };
     let status = serde_json::to_value(result.job.status).map_err(|cause| cause.to_string())?;
     context.qam.with(|entries| {
-        if let Some(entry) = entries.borrow_mut().iter_mut().find(|entry| entry.id == id) {
+        let mut current = entries.borrow_mut();
+        let mut candidate = current.entries.clone();
+        if let Some(entry) = candidate.iter_mut().find(|entry| entry.id == id) {
             entry.status = status.as_str().unwrap_or("unavailable").to_owned();
             entry.snapshot = snapshot;
+            let admitted = Registry::admit(candidate, context.application.budget())
+                .map_err(|_| "The session retained-data limit would be exceeded.".to_owned())?;
+            *current = admitted;
         }
-    });
+        Ok::<_, String>(())
+    })?;
     match error {
         Some(error) => Err(error.into_message()),
         None => Ok(()),
@@ -132,6 +189,9 @@ pub(crate) fn catalog(context: &Context) -> Value {
 pub(crate) fn fixture_reserved_resources(context: &Context) -> crate::shell::RetainedResources {
     context.qam.with(|entries| {
         let mut total = crate::shell::RetainedResources::default();
+        if let Some(retained) = &entries.borrow()._retained {
+            total = retained.fixture_reserved_resources();
+        }
         for snapshot in entries
             .borrow()
             .iter()
@@ -183,11 +243,15 @@ mod tests {
         assert!(info.payload_cells <= 8192 && info.ncp_cells <= 1024);
         clear(context);
         context.qam.with(|entries| {
-            entries.borrow_mut().push(Entry {
-                id: 3,
-                status: "complete".into(),
-                snapshot: Some(retention::retain_fixture(3, archive)),
-            })
+            *entries.borrow_mut() = Registry::admit(
+                vec![Entry {
+                    id: 3,
+                    status: "complete".into(),
+                    snapshot: Some(retention::retain_fixture(3, archive)),
+                }],
+                context.application.budget(),
+            )
+            .unwrap();
         });
         assert_eq!(get(context, 3).unwrap().id, 3);
         assert!(get(context, 0).is_err());
@@ -199,3 +263,7 @@ mod tests {
 #[cfg(test)]
 #[path = "qam_history/retention_tests.rs"]
 mod retention_tests;
+
+#[cfg(test)]
+#[path = "qam_history/registry_tests.rs"]
+mod registry_tests;

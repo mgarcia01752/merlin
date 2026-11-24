@@ -579,6 +579,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [retained editor candidate unit](features/unified-qt-workbench/validation.md#uiu-session-01-retained-editor-candidates-and-prepared-transfer) passes 95 unique Rust cases, six installed-native saved-project cases, eight QML behaviors, all-target Clippy, optimized build and six desktop probes. Source/profile/measurement candidates admit before replacement; queued Open/New transfers reuse those guards. New preflights all resets before changing the project or Save path, and untouched measurement defaults borrow unchanged static text. Initial compile and Clippy failures remain recorded. Designer sessions/workers/exports, registry/presentation/infrastructure owners and complete SESSION gates remain open; keep this parent unchecked.
 
+  The [receiver registry unit](features/unified-qt-workbench/validation.md#uiu-session-01-receiver-registry-storage) admits QAM slot/status capacities before replacement and normalizes performance buffers to occupied, already charged slots. Both initial catalogs admit before either replaces old history. Focused evidence preserves the initial fixture-baseline failures and corrected passes; fixed infrastructure, Designer, retained presentation and full SESSION gates remain open. Keep this parent unchecked.
+
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
   Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).

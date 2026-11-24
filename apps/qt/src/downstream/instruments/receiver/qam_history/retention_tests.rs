@@ -245,7 +245,7 @@ fn registry_replacement_clear_and_context_drop_keep_selected_old_aliases_until_f
     let profile = profile();
     let id = profile.profile_id;
     let result = ResultData::new(result());
-    begin(&context, std::slice::from_ref(&profile));
+    begin(&context, std::slice::from_ref(&profile)).unwrap();
     retain(&context, id, &result).unwrap();
     let old = get(&context, i32::from(id)).unwrap();
     let target = retention::resources(
@@ -255,11 +255,23 @@ fn registry_replacement_clear_and_context_drop_keep_selected_old_aliases_until_f
             .unwrap(),
     )
     .unwrap();
-    assert_eq!(budget.usage(), plus(metadata, target));
+    let registry_charge = context
+        .qam
+        .with(|registry| registry_retention::resources(&registry.borrow().entries).unwrap());
+    assert_eq!(
+        budget.usage(),
+        plus(metadata, plus(target, registry_charge))
+    );
     retain(&context, id, &result).unwrap();
     let current = get(&context, i32::from(id)).unwrap();
     assert!(!Arc::ptr_eq(&old, &current));
-    assert_eq!(budget.usage(), plus(metadata, plus(target, target)));
+    let registry_charge = context
+        .qam
+        .with(|registry| registry_retention::resources(&registry.borrow().entries).unwrap());
+    assert_eq!(
+        budget.usage(),
+        plus(metadata, plus(plus(target, target), registry_charge))
+    );
     let old_values = qam(&old.backend);
     clear(&context);
     assert!(get(&context, i32::from(id)).is_err());
@@ -281,7 +293,7 @@ fn host_rejection_keeps_the_same_accepted_entry_status_and_scientific_history() 
     let profile = profile();
     let id = profile.profile_id;
     let result = ResultData::new(result());
-    begin(&context, std::slice::from_ref(&profile));
+    begin(&context, std::slice::from_ref(&profile)).unwrap();
     retain(&context, id, &result).unwrap();
     let old = get(&context, i32::from(id)).unwrap();
     let before = budget.usage();

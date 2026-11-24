@@ -23,7 +23,7 @@ pub(crate) struct Context {
     /// Latest actual public result, independent of other contexts.
     pub(crate) result: Store<Option<Arc<crate::downstream::simulation::closed_loop::ResultData>>>,
     /// Detached bounded QAM history for this owner only.
-    pub(crate) qam: Store<Vec<crate::downstream::instruments::receiver::qam_history::Entry>>,
+    pub(crate) qam: Store<crate::downstream::instruments::receiver::qam_history::Registry>,
     /// Bounded per-profile performance history for this owner only.
     pub(crate) performance:
         Store<Vec<crate::downstream::instruments::receiver::performance::Entry>>,
@@ -444,7 +444,7 @@ mod tests {
             .unwrap()
             .profile
             .clone();
-        qam_history::begin(&left, std::slice::from_ref(&profile));
+        qam_history::begin(&left, std::slice::from_ref(&profile)).unwrap();
         qam_history::retain(&left, profile.profile_id, &outcome).unwrap();
         *left.result.borrow_mut() = Some(outcome.clone());
         assert!(Arc::ptr_eq(&latest(&left).unwrap(), &outcome));

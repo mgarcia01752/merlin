@@ -87,7 +87,8 @@ fn mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance() {
     crate::downstream::instruments::receiver::qam_history::begin(
         context,
         std::slice::from_ref(&profile),
-    );
+    )
+    .unwrap();
     crate::downstream::instruments::receiver::qam_history::retain(
         context,
         profile.profile_id,

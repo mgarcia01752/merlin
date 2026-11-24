@@ -4172,3 +4172,29 @@ handles an admitted-Begin error before replacing controls. Focused rendering/
 interaction tests in `apps/qt/tests/tst_workbench.qml` preserve existing control
 values and exercise both Source Begin and New rejection. This changes failure
 handling through existing banners/dialogs, with no layout or theme change.
+
+### UIU-SESSION-01 receiver registry storage
+
+REQ-UIU-03/06/07 and the open UIU-SESSION-01 also cover retained QAM registry
+slots/status strings and performance spare slots. Reuse the existing immutable
+Snapshot and live Entry guards; no new scientific API or accounting framework.
+Adapt the frozen source-only visitors/tests at
+`546db799a36364369814f0abf288a0c3a823b460`; primary integration owns runtime evidence.
+Its [source-only handoff](agent-handoffs/history-registry-retention.md) preserves
+the original proposal and unexecuted-runtime boundary.
+
+| Owner/file disposition | Current contract, reuse and acceptance |
+| --- | --- |
+| EDIT `apps/qt/src/downstream/instruments/receiver/qam_history.rs`; ADD `qam_history/registry_retention.rs`, its tests and `qam_history/registry_tests.rs` | ADAPT the actual-capacity visitor into a concrete Registry containing entries followed by their guard. Prepare and admit a finite initial/replacement catalog before changing the current one. Copy status/Arc handles only; existing Snapshot guards survive selected aliases. Clear drops slots before releasing their guard. Test actual spare capacity, rejected initial and replacement admission, old aliases and final disposal. |
+| EDIT `apps/qt/src/downstream/instruments/receiver/performance.rs`; ADD `performance/registry_retention.rs` and its tests | REUSE each existing live Entry charge. Normalize the finite completed Vec through boxed-slice storage before retaining it, so capacity equals live length and no spare slot remains uncharged. Clear replaces the Vec rather than retaining empty capacity. Existing replacement does not grow the buffer; insertion normalizes while locked before publication. Test passive spare metadata and every runtime mutation's zero-spare invariant. |
+| EDIT `apps/qt/src/downstream/workbench/session.rs` | Change only the QAM Store payload to its concrete Registry. The fixed Store/Context/Vec-handle graph remains a separate pending infrastructure owner; this unit does not exclude it or claim SESSION closure. |
+| EDIT existing `qam_history/retention_tests.rs`, `performance/retention_tests.rs`, and necessary closed-loop fixtures | Preserve scientific/null/identity assertions. Include actual newly admitted initial registry charges in fixture accounting; no size estimates or weakened limit checks. |
+
+Performance Begin prepares/adopts both complete registries before clearing either
+old history. All remaining operations after admission are infallible data moves.
+Temporary construction is finite under MAX_PROFILES; it is not an aggregate heap
+or preparation-peak guarantee. Existing scientific entry admission, archive bounds,
+query semantics and completed result ownership remain unchanged. Run affected
+receiver/lifecycle tests, Clippy/format/boundary, relevant QML and current executable
+probes; no Python rebuild is needed for unchanged science/API/schema/registration.
+Full SESSION and later task acceptance remain separately pending.

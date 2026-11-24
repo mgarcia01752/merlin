@@ -396,6 +396,78 @@ fn rejected_setup_preserves_the_full_error_and_host_failure_keeps_its_prior_entr
 }
 
 #[test]
+fn retained_catalogs_have_no_spare_slots_after_every_runtime_mutation() {
+    let context = context();
+    let budget = context.application.budget().clone();
+    let baseline = budget.usage();
+
+    // Distinct original source identities exercise growth, replacement and clear.
+    for id in [3, 4, 5] {
+        performance::reject(&context, id, 1, "Original setup diagnostic.".into()).unwrap();
+        let entries = context.performance.borrow();
+        assert_eq!(entries.capacity(), entries.len());
+        assert_eq!(
+            super::super::registry_retention::resources(&entries).unwrap(),
+            RetainedResources::default()
+        );
+    }
+    performance::reject(&context, 4, 1, "Replacement diagnostic.".into()).unwrap();
+    assert_eq!(
+        context.performance.borrow()[1].error.as_deref(),
+        Some("Replacement diagnostic.")
+    );
+    {
+        let entries = context.performance.borrow();
+        assert_eq!(entries.capacity(), entries.len());
+    }
+    performance::clear(&context);
+    assert_eq!(context.performance.borrow().capacity(), 0);
+    assert_eq!(budget.usage(), baseline);
+    drop(context);
+    assert_eq!(budget.usage(), RetainedResources::default());
+}
+
+#[test]
+fn late_qam_catalog_rejection_after_performance_admission_preserves_both_histories() {
+    let context = context();
+    let budget = context.application.budget().clone();
+    let result = result(false);
+    let profile = profile(&result);
+    performance::begin(&context, std::slice::from_ref(&profile)).unwrap();
+    performance::retain(&context, &profile, &result).unwrap();
+    let old =
+        super::super::super::qam_history::get(&context, i32::from(profile.profile_id)).unwrap();
+    let old_fec = performance::fec_view(&context, i32::from(profile.profile_id));
+    let before = budget.usage();
+    let independent = RetentionBudget::with_limits(FIXTURE_LIMIT);
+    let candidate = PreparedEntry::not_started(&profile)
+        .admit(&independent)
+        .unwrap();
+    let performance_charge = independent.usage();
+    drop(candidate);
+    let pressure = budget
+        .reserve_resources(RetainedResources {
+            payload_bytes: FIXTURE_LIMIT.payload_bytes
+                - before.payload_bytes
+                - performance_charge.payload_bytes,
+            ..Default::default()
+        })
+        .unwrap();
+    let pressured = budget.usage();
+    assert!(performance::begin(&context, std::slice::from_ref(&profile)).is_err());
+    assert_eq!(budget.usage(), pressured);
+    assert_eq!(
+        performance::fec_view(&context, i32::from(profile.profile_id)),
+        old_fec
+    );
+    let current =
+        super::super::super::qam_history::get(&context, i32::from(profile.profile_id)).unwrap();
+    assert!(std::sync::Arc::ptr_eq(&old, &current));
+    drop(pressure);
+    assert_eq!(budget.usage(), before);
+}
+
+#[test]
 fn admitted_candidate_overlap_replacement_clear_and_context_drop_release_concrete_storage() {
     let result = result(false);
     let context = context();

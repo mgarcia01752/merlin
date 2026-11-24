@@ -3917,3 +3917,32 @@ MERLIN runtime acceptance. Designer Session/work/export, registry/presentation/
 infrastructure owners and full SESSION Level 2/milestone Level 3 remain pending.
 UIU-SESSION-01 stays unchecked; no unrelated full workspace/CLI/packaging execution
 is claimed and all historical tests, vectors and completed tasks are preserved.
+
+
+## UIU-SESSION-01 receiver registry storage
+
+The [focused design](design.md#uiu-session-01-receiver-registry-storage) now covers
+QAM catalog slot/status buffers with actual-capacity admission before replacement.
+Snapshot aliases keep their original scientific reservations. Performance retains
+only occupied Vec slots already charged by live Entry guards; boxed-slice
+normalization precedes publication and clear releases the complete buffer.
+Initial Begin prepares both admitted catalogs before changing either history.
+Late rejection preserves exact previous status, scientific identity and results.
+
+[Primary execution record](session-registry-storage-evidence.json) records 74
+passing cases/two new fixture failures, then three passing focused cases after
+correcting the omitted existing host-readiness baseline. All 76 selected unique
+Rust cases have passing evidence; the failed initial logs remain. No production
+code changed for that correction. Four QML behaviors/two hooks pass without
+warnings, as do final all-target Clippy, formatting/boundary, optimized build
+and six fresh desktop probes. Read-only QA reviewed mutators, rollback, guard
+lifetimes and lock order separately; source preparation did not establish runtime
+acceptance. Documentation and requirement/checklist checks are recorded in the
+same receipt.
+
+No scientific/public API, binding, schema, dependency or registration changed.
+Existing exact backend/native/export evidence is reused, without claiming new
+Python, full workspace, CLI or packaging runs. Designer Session/work/export,
+retained presentation and fixed infrastructure owners remain pending, together
+with full SESSION Level 2 and applicable milestone/final Level 3. UIU-SESSION-01
+stays unchecked and completed downstream history is preserved.
