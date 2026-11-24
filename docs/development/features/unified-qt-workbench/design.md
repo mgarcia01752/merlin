@@ -3711,3 +3711,25 @@ application-wrapper quantities with checked arithmetic and no guessed multiplier
 list remaining host/control/channel/DTO owners explicitly instead of claiming
 complete aggregate acceptance. Production registration, downstream/preview/archive
 adoption and complete Level 2 acceptance remain later integration gates.
+
+### Downstream Qt retained-target operation adoption
+
+UIU-SESSION-01 / REQ-UIU-03/07 can now reuse the independently accepted
+session-output and archive pairs in the three existing downstream consumers.
+EDIT `simulation/closed_loop/worker.rs::run_one` to obtain the narrowed request's
+result bound and call run_bounded on its existing worker. EDIT
+`instruments/transmitter/preview.rs::Analyzer::generate` to preflight/generate the
+preview inside its existing worker. EDIT `instruments/receiver/qam_history.rs::retain`
+to preflight and use the bounded archive copy before replacing the detached view.
+Reuse all scientific/control/notification/error handling and presentation data;
+introduce no public API, numerical algorithm, QML or registration change.
+
+This enforces backend target capacities in real Qt call paths. The supplied target
+quantities are the backend bound itself; they do not establish a shared aggregate
+host policy. Input/request, old/queued outputs, copied observations/history DTOs,
+controls and transport still require separately admitted application charges.
+Keep the parent unchecked. Existing real closed-loop/preview/history consumer
+cases and changed-path Clippy/format/boundary checks must pass; build the latest
+optimized executable. Native Python/Rust science evidence at 1841d92 is reused:
+this Qt-only dispatch adoption changes none of those linked APIs or algorithms.
+Complete session Level 2 and milestone/final Level 3 remain separate gates.

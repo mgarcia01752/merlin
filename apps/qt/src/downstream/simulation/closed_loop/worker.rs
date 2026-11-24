@@ -41,7 +41,8 @@ fn lock(state: &Mutex<Dispatch>) -> MutexGuard<'_, Dispatch> {
 /// * `runtime_ms` - Remaining sweep budget; may narrow but never widen admission.
 /// * `control` - Fresh public one-shot control for this profile.
 /// # Returns
-/// Actual complete/partial report plus passive instrument copies.
+/// Actual complete/partial report with backend-controlled retained capacities,
+/// plus passive instrument copies. Aggregate application ownership is separate.
 /// # Errors
 /// Preserves public admission or dispatch failure; completed reports are not discarded
 /// when a presentation observation is unavailable.
@@ -52,7 +53,10 @@ pub(super) fn run_one(
 ) -> Result<ResultData, String> {
     request
         .with_runtime_limit(runtime_ms)
-        .and_then(|request| request.run(control))
+        .and_then(|request| {
+            let target = request.result_retained_bound()?;
+            request.run_bounded(control, target)
+        })
         .map(ResultData::new)
         .map_err(|cause| cause.message().to_owned())
 }

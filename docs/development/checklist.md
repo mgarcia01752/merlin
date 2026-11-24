@@ -550,6 +550,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   The [pre-production archive pair](features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds) passes 79 Rust/28 installed native cases and 24 direct reference cases. Exact target capacities and every pre-copy limit are enforced; legacy statistics/queries remain compatible. Additive 617/588 operation tracing passes. Full-run DS/US bounds, host charges/wiring and complete session acceptance remain pending.
   The [session-output pairs](features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-session-output-bounds) accept full-loop, upstream-report and idle-TX target bounds/bounded operations with 115 unique Rust/48 installed-native cases, 18 direct reference cases and additive 623/594 operation tracing. Final capacities and pre-production rejection are verified; actual Qt adoption, application owner charges, shared host/registration and complete Level 2 acceptance remain pending. No parent completion is inferred.
 
+  The [downstream Qt target adoption](features/unified-qt-workbench/validation.md#uiu-session-01-downstream-qt-retained-target-adoption) passes 18 Qt Rust cases, four QML behavior cases/two fixture hooks, Clippy, final boundary, fresh optimized build and six native probes. The actual full-loop/preview/history consumers use bounded operations; shared host reservations and complete session acceptance remain pending.
+
 
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.

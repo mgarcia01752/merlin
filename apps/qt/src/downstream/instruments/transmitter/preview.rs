@@ -113,7 +113,8 @@ impl Analyzer {
             .name("merlin-tx-spectrum".into())
             .spawn(move || {
                 let result = request
-                    .generate(&worker_control)
+                    .preview_retained_bound()
+                    .and_then(|target| request.generate_bounded(&worker_control, target))
                     .map(Box::new)
                     .map_err(|cause| cause.message().to_owned());
                 let _ = sender.send(result);

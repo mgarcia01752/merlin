@@ -67,7 +67,8 @@ pub(crate) fn retain(context: &Context, id: u8, result: &ResultData) -> Result<(
         .map_err(|cause| cause.to_string())?;
     let archived = result
         .backend()
-        .receiver_archive(policy)
+        .receiver_archive_retained_bound(&policy)
+        .and_then(|target| result.backend().receiver_archive_bounded(policy, target))
         .map_err(|cause| cause.to_string());
     let status = serde_json::to_value(result.job.status).map_err(|cause| cause.to_string())?;
     context.qam.with(|entries| {

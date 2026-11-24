@@ -1597,7 +1597,9 @@ public struct literal. The [session-output pairs](development/features/unified-q
 now preflight and enforce final downstream full-loop, upstream report and idle TX
 preview targets before scientific execution. Existing run/generate operations
 remain compatible. Actual Qt consumer charges and aggregate host admission remain
-required before session acceptance.
+required before session acceptance. The [downstream Qt adoption](development/features/unified-qt-workbench/validation.md#uiu-session-01-downstream-qt-retained-target-adoption)
+uses these bounded calls in the existing full-loop/preview workers and detached
+history copy; supplying the backend target bound does not reserve host resources.
 
 The [independent input/idle-preview owner closure](development/features/unified-qt-workbench/design.md#independent-input-and-idle-preview-owner-closure)
 tracks partial input, draft, Designer and preview ownership outside those four

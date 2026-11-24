@@ -3376,3 +3376,28 @@ saved schema, manifests/locks, registration or existing Qt call site changes.
 The last accepted Qt executable remains current for unchanged UI sources.
 Real application charges, bounded-call adoption, canonical host/registration,
 complete session Level 2 and milestone/final Level 3 remain mandatory.
+
+## UIU-SESSION-01 downstream Qt retained-target adoption
+
+Level 1 acceptance adopts the already validated bounded operations in the three
+[existing downstream consumers](design.md#downstream-qt-retained-target-operation-adoption):
+full-loop execution after runtime narrowing, idle TX generation inside its worker,
+and detached receiver history copy. Original callbacks, cancellation/stale results,
+partial science, status/error handling and presentation data are preserved.
+The backend bound itself is the target limit; this proves controlled retained
+target capacities in real Qt paths, without claiming shared aggregate admission.
+
+Executed: **18 actual Qt Rust cases**, Qt all-target Clippy with warnings denied,
+formatting, final API boundary, fresh optimized executable, **four QML behavior
+cases** plus two fixture hooks, and **six native startup/project probes** using
+freshly discovered desktop credentials. No failures/skips. The QML runner emits
+two activeFocusOnTab warnings during existing retained-filter navigation; no
+presentation code changes. The [receipt](session-qt-target-adoption-evidence.json)
+records commands, source/executable identities and exact scope.
+
+Reuse backend/native scientific acceptance at local commit 1841d92: none of its
+API, scientific, native, manifest/lock or persistence sources changes. Another
+wheel, unrelated complete workspace/CLI/project/packaging and full QML suites
+are not required for these three dispatch substitutions. Actual host charges,
+upstream adoption/registration and complete session Level 2 plus final Level 3
+remain mandatory; UIU-SESSION-01 stays unchecked.
