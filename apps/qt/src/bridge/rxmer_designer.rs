@@ -5,6 +5,7 @@
 //! Designer batch lifecycle; the GUI adopts only a complete, current draft.
 mod worker_inputs;
 use super::measurement_input::bridge;
+use super::worker_failure::WorkerFailure;
 use crate::downstream::common::constants::{
     DESIGNER_CAPTURE_QUEUE_CAPACITY, MAX_DESIGNER_PLAYBACK_DOCUMENT_BYTES,
     MAX_DESIGNER_RECIPE_DOCUMENT_BYTES,
@@ -27,7 +28,7 @@ use std::{
     },
 };
 pub(super) struct Work {
-    receiver: mpsc::Receiver<Result<Retained<Vec<Capture>>, AdmissionError>>,
+    receiver: mpsc::Receiver<Result<Retained<Vec<Capture>>, WorkerFailure>>,
     cancel: Arc<AtomicBool>,
     completed: Arc<AtomicUsize>,
     selection: Retained<worker_inputs::SelectionSnapshot>,
@@ -180,15 +181,30 @@ impl bridge::MeasurementInputs {
             return response(Ok(json!({"running":false})));
         };
         let result = match work.receiver.try_recv() {
-            Ok(result) => result,
+            Ok(result) => Some(result),
             Err(mpsc::TryRecvError::Empty) => {
                 return response(Ok(
                     json!({"running":true,"completed":work.completed.load(Ordering::Relaxed)}),
                 ))
             }
-            Err(_) => Err("Designer worker ended unexpectedly.".into()),
+            Err(_) => None,
         };
         let work = self.as_mut().rust_mut().designer_work.take().unwrap();
+        let result = if work.cancel.load(Ordering::Relaxed) {
+            // The original cancellation branch ignores completion contents.
+            Err("Designer cancelled.".into())
+        } else {
+            match result {
+                Some(Ok(captures)) => Ok(captures),
+                Some(Err(failure)) => {
+                    return QString::from(
+                        json!({"error":failure.message(),"diagnostic":failure.diagnostic()})
+                            .to_string(),
+                    );
+                }
+                None => Err("Designer worker ended unexpectedly.".into()),
+            }
+        };
         let inputs = crate::downstream::workbench::session::snapshot(&self.rust().context);
         let profile = inputs.profile.as_ref();
         let result = adopt_to_owner(self.as_mut().rust_mut().get_mut(), work, result, profile);

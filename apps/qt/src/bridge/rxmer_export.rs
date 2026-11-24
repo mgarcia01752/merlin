@@ -7,6 +7,7 @@ mod input;
 mod lifecycle;
 mod retention;
 use super::measurement_input::bridge;
+use super::worker_failure::WorkerFailure;
 use crate::downstream::common::constants::{
     MAX_DESIGNER_EXPORT_SELECTION_BYTES, MAX_DESIGNER_RECIPE_DOCUMENT_BYTES,
 };
@@ -65,7 +66,7 @@ pub(super) enum Outcome {
 }
 pub(super) enum State {
     Working {
-        receiver: mpsc::Receiver<Result<Outcome, String>>,
+        receiver: mpsc::Receiver<Result<Outcome, WorkerFailure>>,
         cancel: Arc<AtomicBool>,
         completed: Arc<AtomicUsize>,
         previous: Option<SharedPrepared>,

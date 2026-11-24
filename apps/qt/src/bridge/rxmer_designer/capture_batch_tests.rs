@@ -75,7 +75,11 @@ fn actual_queued_batch_is_charged_until_cancel_or_stale_completion_disposes_it()
         drop(sender);
         assert_eq!(budget.usage(), expected);
         assert!(original.upgrade().is_some());
-        let result = work.receiver.try_recv().unwrap();
+        let result = work
+            .receiver
+            .try_recv()
+            .unwrap()
+            .map_err(|failure| AdmissionError::from(failure.message()));
         let result = adopt_to_owner(&mut owner, work, result, Some(&session.profile));
         if cancelled {
             assert_eq!(result.unwrap()["cancelled"], true);

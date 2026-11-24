@@ -17,6 +17,51 @@ const TEST_LIMIT: RetainedResources = RetainedResources {
 const RENDEZVOUS_CAPACITY: usize = 0;
 
 #[test]
+fn actual_generation_error_stays_admitted_after_inputs_drop_until_queue_collection() {
+    let budget = RetentionBudget::with_limits(TEST_LIMIT);
+    let (source, _) = super::tests::fixture();
+    let session = source.admit(&budget).unwrap();
+    let request = admit_request(session.value().request.clone(), &budget).unwrap();
+    let expected = session
+        .value()
+        .build(
+            request.value(),
+            &AtomicBool::new(true),
+            &AtomicUsize::new(0),
+        )
+        .err()
+        .expect("Cancelled generation rejects")
+        .message;
+    let profile = Arc::downgrade(&session.value().profile);
+    let worker_budget = budget.clone();
+    let (sender, receiver) = mpsc::sync_channel(DESIGNER_CAPTURE_QUEUE_CAPACITY);
+    std::thread::spawn(move || {
+        let result = worker_inputs::generate(
+            session,
+            request,
+            &AtomicBool::new(true),
+            &AtomicUsize::new(0),
+            &worker_budget,
+        );
+        sender.send(result).unwrap();
+    })
+    .join()
+    .unwrap();
+    assert!(profile.upgrade().is_none());
+    let charge = budget.usage();
+    assert!(charge.payload_bytes > 0);
+    let failure = receiver
+        .recv()
+        .unwrap()
+        .err()
+        .expect("Queued cancellation failure");
+    assert_eq!(failure.message(), expected);
+    assert_eq!(budget.usage(), charge);
+    drop(failure);
+    assert_eq!(budget.usage(), RetainedResources::default());
+}
+
+#[test]
 fn actual_request_and_selection_reject_without_replacing_independent_old_owners() {
     let budget = RetentionBudget::with_limits(TEST_LIMIT);
     let (session, _) = super::tests::fixture();

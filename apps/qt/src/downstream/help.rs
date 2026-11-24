@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Bounded offline help; numerical context comes from validated core timing.
+mod retention;
 use crate::downstream::common::constants::{
     HELP_CATALOG_SCHEMA_VERSION, MAX_DIAGNOSTIC_CODE_BYTES, MAX_HELP_DOCUMENT_BYTES,
     MAX_HELP_ENTRIES,
@@ -93,6 +94,18 @@ impl AdmissionError {
             message: error.message().to_owned(),
             diagnostic: diagnostic.map(Box::new),
         }
+    }
+
+    /// Measures this actual worker failure without changing its message or guidance.
+    ///
+    /// # Returns
+    /// AdmissionError fixed layout once, message capacity, and every owned child
+    /// of its optional boxed Diagnostic. No serialization or admission is performed.
+    ///
+    /// # Errors
+    /// Checked payload arithmetic overflow; existing diagnostic values stay unchanged.
+    pub(crate) fn retained_resources(&self) -> Result<crate::shell::RetainedResources, String> {
+        retention::resources(self)
     }
 }
 impl From<String> for AdmissionError {
@@ -263,6 +276,10 @@ fn faq_document_from_source(code: &str, source: &str) -> Value {
     }
     json!({"title":"FAQ Unavailable", "text":"No bundled FAQ entry is available for this message.", "error":true})
 }
+
+#[cfg(test)]
+#[path = "help/retention_tests.rs"]
+mod retention_tests;
 
 #[cfg(test)]
 mod tests {

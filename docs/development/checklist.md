@@ -589,6 +589,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [worker-input unit](features/unified-qt-workbench/validation.md#uiu-session-01-retained-designer-worker-inputs) independently admits parsed recipe/selection data and persistent generation snapshots before thread publication. Input guards survive detached completion and output admission; later input rejection preserves the prior Ready owner. Source/actual-consumer evidence and remaining terminal/presentation/infrastructure gates are linked there. Keep this parent unchecked.
 
+  The [worker-error unit](features/unified-qt-workbench/validation.md#uiu-session-01-retained-worker-error-completions) admits actual message/private diagnostic storage before generation/export queueing, preserving detailed responses and previous accepted owners. A rejected error publishes only a fixed fallback after dropping unadmitted data. Focused execution and remaining Saved/presentation/fixed-infrastructure acceptance are linked there; keep this parent unchecked.
+
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
   Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).

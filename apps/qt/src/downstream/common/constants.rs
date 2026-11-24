@@ -39,6 +39,11 @@ pub(crate) const IDLE_PREVIEW_COMPLETION_CAPACITY: usize = 1;
 /// Independent of export-product and idle-preview completion queue policies.
 pub(crate) const DESIGNER_CAPTURE_QUEUE_CAPACITY: usize = 1;
 
+/// Shared generation/export fallback when an owned error cannot fit admission.
+/// This static transport message has no retained String or invented help data.
+pub(crate) const DESIGNER_WORKER_ERROR_ADMISSION_MESSAGE: &str =
+    "Designer completion exceeds retained-data limits.";
+
 /// Backpressure permits one completed profile envelope before GUI collection.
 /// Independent of the idle-preview channel, although both capacities are one.
 pub(crate) const PROFILE_COMPLETION_CAPACITY: usize = 1;

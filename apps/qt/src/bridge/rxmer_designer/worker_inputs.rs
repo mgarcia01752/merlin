@@ -98,11 +98,12 @@ pub(super) fn generate(
     cancel: &AtomicBool,
     completed: &AtomicUsize,
     budget: &RetentionBudget,
-) -> Result<Retained<Vec<Capture>>, AdmissionError> {
+) -> Result<Retained<Vec<Capture>>, WorkerFailure> {
     session
         .value()
         .build(request.value(), cancel, completed)
         .and_then(|captures| {
             Model::admit_capture_batch(captures, budget).map_err(AdmissionError::from)
         })
+        .map_err(|error| WorkerFailure::admit(error, budget))
 }

@@ -4297,3 +4297,27 @@ payloads, remaining control/closure/channel/fixed infrastructure and persistent 
 remain distinct pending owners. Execute affected Designer/export/editor Rust/QML,
 Clippy/format/boundary and fresh executable checks; unchanged scientific/native
 APIs need no wheel rebuild. Complete SESSION Level 2/milestone gates stay open.
+
+
+### UIU-SESSION-01 retained worker error completions
+
+REQ-UIU-03/06/07 and the open UIU-SESSION-01 require the actual Designer generation
+and export queues to retain admitted error messages and optional help diagnostics.
+These are concrete existing consumers: generation AdmissionError owns a String
+and optional Box<Diagnostic> with four private Strings; export queues an owned
+String. Existing successful batch/Prepared guards remain unchanged.
+The [source-only error handoff](agent-handoffs/worker-error-metadata.md) records
+private metadata preparation separately from primary queue/runtime acceptance.
+
+| Path/symbol and disposition | Contract and focused acceptance |
+| --- | --- |
+| EDIT `downstream/help.rs`; ADD owner-local `help/retention.rs` and tests | Passively count actual AdmissionError fixed value, message capacity, optional Diagnostic box and all private text capacities. Exhaustively audit fixed diagnostic fields; no JSON reconstruction or scientific operation. |
+| ADD concrete `bridge/worker_failure.rs`; EDIT `bridge/mod.rs` and named common constant | Use existing Retained/admit_model for detailed errors. If this error itself cannot be admitted, drop it before publication and send a payload-free rejection variant with a named static message. This is an actual bounded failure transport, not a new accounting framework. |
+| EDIT `bridge/rxmer_designer.rs`, `rxmer_export.rs`, export lifecycle and affected tests | Admit errors before single-slot queue publication. Keep guards through cancel/stale/disconnect disposal and borrowed response construction, preserving detailed wording/diagnostics whenever admitted. Rejected replacement preserves accepted editor/Ready data. |
+
+Test actual private capacities/passivity, queued/final-drop error lifetimes,
+resource-pressure fallback, preserved original diagnostic rendering and existing
+scientific/cancellation behavior. Fixed transport/control infrastructure, Saved
+completion Value and persistent QML remain separate pending owners. Execute affected
+Rust/QML, Clippy/format/boundary/traceability and fresh executable checks. Reuse
+unchanged scientific/native evidence; complete SESSION gates remain open.

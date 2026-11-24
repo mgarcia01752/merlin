@@ -4063,3 +4063,31 @@ root workspace/unrelated CLI/packaging execution. Terminal error/Saved payloads,
 remaining control/closure/channel/fixed infrastructure and persistent QML still
 require closure. Complete SESSION Level 2 and applicable milestone/final Level 3
 acceptance remain pending, preserving completed downstream history.
+
+
+## UIU-SESSION-01 retained worker error completions
+
+The [focused design](design.md#uiu-session-01-retained-worker-error-completions)
+admits actual error message and optional private diagnostic storage before both
+Designer terminal sends. Detailed original wording/help stays guarded through
+queueing and borrowed response construction. If the error cannot be admitted,
+its owned data drops before a fixed rejection is sent. Existing cancellation and
+disconnection messages remain static; cancellation priority, previous Ready
+restoration and spawn rollback preserve compatibility.
+
+[Primary execution record](session-worker-error-evidence.json) records 69 passing
+Rust cases, 17 QML behaviors/four hooks, all-target Clippy, formatting/final boundary,
+optimized build and six fresh desktop probes. Genuine generation errors remain
+queued after source/request disposal; real export failure preserves original text
+and exact Ready identity. Additional cases cover complete diagnostic rendering,
+final guarded disposal, full-byte pressure fallback and passive private capacities.
+No artificial positive container/root demand is claimed for exclusive error data.
+Source-only preparation and independent read-only review remain distinct from
+primary runtime; documentation/traceability checks join the receipt.
+
+Science/API/bindings, saved schema, dependencies and registration are unchanged;
+exact native scientific evidence is reused without a new wheel or Python/full root
+workspace/unrelated CLI/packaging run. Saved completion Value, fixed transport/
+control infrastructure and retained presentation remain pending. UIU-SESSION-01
+stays unchecked until complete Level 2 and applicable milestone/final Level 3
+acceptance, preserving all completed downstream history.

@@ -62,6 +62,45 @@ fn ready(owner: &MeasurementInputsRust) -> &SharedPrepared {
 }
 
 #[test]
+fn real_queued_export_error_preserves_original_message_and_previous_ready() {
+    let (mut owner, document) = prepared_owner();
+    let budget = owner.context.application.budget().clone();
+    let original = Arc::clone(ready(&owner));
+    let before = budget.usage();
+    let mut request: Request = serde_json::from_str(&document).unwrap();
+    request.source = "unrecognized-source".into();
+    let expected = owner
+        .designer
+        .as_ref()
+        .unwrap()
+        .value()
+        .export_frames(
+            &request,
+            1,
+            1,
+            &AtomicBool::new(false),
+            &AtomicUsize::new(0),
+        )
+        .unwrap_err();
+    let document = serde_json::to_string(&request).unwrap();
+    lifecycle::prepare(&mut owner, &document, SELECTION, |task| {
+        task();
+        Ok(())
+    })
+    .unwrap();
+    assert!(budget.usage().payload_bytes > before.payload_bytes);
+    let reply = lifecycle::poll(&mut owner.designer_export);
+    assert_eq!(reply["error"], expected);
+    assert_eq!(reply["running"], false);
+    assert_eq!(reply["can_export"], false);
+    assert!(Arc::ptr_eq(ready(&owner), &original));
+    assert_eq!(budget.usage(), before);
+    drop(owner);
+    drop(original);
+    assert_eq!(budget.usage(), RetainedResources::default());
+}
+
+#[test]
 fn parsed_export_input_rejection_after_session_copy_preserves_exact_ready_owner() {
     let (mut owner, document) = prepared_owner();
     let budget = owner.context.application.budget().clone();

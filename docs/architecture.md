@@ -1636,6 +1636,15 @@ accounting framework. Terminal error/Saved payloads and outer control/closure/
 channel infrastructure remain pending. See the
 [worker-input design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-designer-worker-inputs).
 
+Designer generation/export terminal errors now carry admitted actual message and
+optional private diagnostic storage. Detailed guards survive queueing and borrowed
+response construction. If metadata or admission rejects that error, its owned
+payload drops before a fixed rejection variant is published; no uncharged dynamic
+error is retained as a fallback. Existing cancellation/disconnection text remains
+static, and admitted original error text/help remains unchanged. Fixed transport/
+control infrastructure, Saved completion Value and persistent QML remain pending.
+See the [error-completion design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-worker-error-completions).
+
 The shared [terminal transport](development/features/unified-qt-workbench/design.md#uiu-session-01-terminal-worker-transport)
 under `shell/worker.rs` keeps genuine run leases outside worker unwinding and
 tags queued callbacks explicitly. Known completion can release admission after

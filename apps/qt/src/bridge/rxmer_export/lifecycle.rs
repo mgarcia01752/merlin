@@ -26,6 +26,7 @@ pub(super) fn launch(task: Task) -> io::Result<()> {
 
 fn spawn(
     previous: Option<SharedPrepared>,
+    budget: RetentionBudget,
     operation: impl FnOnce(Arc<AtomicBool>, Arc<AtomicUsize>) -> Result<Outcome, String>
         + Send
         + 'static,
@@ -37,7 +38,9 @@ fn spawn(
     let worker_cancel = Arc::clone(&cancel);
     let worker_completed = Arc::clone(&completed);
     start(Box::new(move || {
-        let _ = tx.send(operation(worker_cancel, worker_completed));
+        let result = operation(worker_cancel, worker_completed)
+            .map_err(|message| WorkerFailure::admit(message.into(), &budget));
+        let _ = tx.send(result);
     }))
     .map_err(|error| error.to_string())?;
     Ok(State::Working {
@@ -85,6 +88,7 @@ pub(super) fn prepare(
     let input = input::Input { request, selection }.admit(&budget)?;
     let task = spawn(
         previous(&owner.designer_export),
+        budget.clone(),
         move |cancel, completed| {
             let input::Input { request, selection } = input.value();
             let frames = session.value().export_frames(
@@ -162,7 +166,7 @@ pub(super) fn poll(state: &mut Option<State>) -> Value {
         } => match receiver.try_recv() {
             Ok(result) => {
                 if cancel.load(Ordering::Relaxed) {
-                    Err("PNM export cancelled.".into())
+                    Err(WorkerFailure::Static("PNM export cancelled."))
                 } else {
                     result
                 }
@@ -170,7 +174,7 @@ pub(super) fn poll(state: &mut Option<State>) -> Value {
             Err(mpsc::TryRecvError::Empty) => {
                 return json!({"running":true,"completed":completed.load(Ordering::Relaxed)})
             }
-            Err(_) => Err("Export worker ended unexpectedly.".into()),
+            Err(_) => Err(WorkerFailure::Static("Export worker ended unexpectedly.")),
         },
     };
     let previous = match state.take() {
@@ -190,9 +194,9 @@ pub(super) fn poll(state: &mut Option<State>) -> Value {
             *state = Some(State::Ready(prepared));
             value
         }
-        Err(message) => {
+        Err(failure) => {
             *state = previous.map(State::Ready);
-            json!({"running":false,"can_export":false,"error":message})
+            json!({"running":false,"can_export":false,"error":failure.message()})
         }
     }
 }
@@ -222,6 +226,7 @@ pub(super) fn save(
     let prepared = Arc::clone(prepared);
     let task = spawn(
         Some(Arc::clone(&prepared)),
+        owner.context.application.budget().clone(),
         move |cancel, completed| {
             let Some(uri) = crate::platform::native_file_picker::export_rxmer(
                 prepared.value().collection,
