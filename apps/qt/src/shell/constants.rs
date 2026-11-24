@@ -14,6 +14,14 @@ pub(super) const MAX_SESSION_ORDERED_ENTRIES: usize = 1_000_000;
 /// Independent population limit for retained shared allocation owner edges.
 pub(super) const MAX_SESSION_SHARED_ROOTS: usize = 65_536;
 
+/// Simultaneous bounded channel owners, allowing finite retired-worker overlap.
+/// This application population ceiling is independent of scientific execution.
+pub(super) const MAX_SESSION_CHANNELS: usize = 64;
+
+/// Configured slots across live bounded channels, independent of channel count.
+/// Empty slots remain populated policy resources; private std storage is excluded.
+pub(super) const MAX_SESSION_CHANNEL_SLOTS: usize = 256;
+
 /// Existing distinct original-source protection cap, shared by both directions.
 /// This is a host path-inventory policy, separate from configuration/error text limits.
 pub(super) const MAX_ORIGINAL_SOURCE_PATHS: usize = 4096;

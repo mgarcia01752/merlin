@@ -12,6 +12,8 @@ const FIXTURE_LIMIT: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 fn context() -> Context {
@@ -137,6 +139,8 @@ fn same_budget_transfer_reuses_the_exact_guard_under_full_pressure() {
             payload_bytes: usize::MAX - usage.payload_bytes,
             ordered_entries: usize::MAX - usage.ordered_entries,
             shared_roots: usize::MAX - usage.shared_roots,
+            channel_count: usize::MAX - usage.channel_count,
+            slot_count: usize::MAX - usage.slot_count,
         })
         .unwrap();
     model.check_prepared_target(budget).unwrap();

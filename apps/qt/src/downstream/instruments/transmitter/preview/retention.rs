@@ -42,7 +42,9 @@ impl PreviewError {
                 RetentionError::ArithmeticOverflow
                 | RetentionError::LimitExceeded { .. }
                 | RetentionError::OrderedEntriesExceeded { .. }
-                | RetentionError::SharedRootsExceeded { .. },
+                | RetentionError::SharedRootsExceeded { .. }
+                | RetentionError::ChannelsExceeded { .. }
+                | RetentionError::SlotsExceeded { .. },
             ) => "The session retained-data limit would be exceeded.".into(),
             Self::PersistentMetadata(error) => error,
             Self::Unavailable => "No accepted TX configuration.".into(),
@@ -229,6 +231,7 @@ pub(super) fn prepared_resources(
         payload_bytes,
         ordered_entries,
         shared_roots,
+        ..Default::default()
     })
 }
 
@@ -256,6 +259,7 @@ pub(super) fn product_resources(
             .ok_or(RetentionError::ArithmeticOverflow)?,
         ordered_entries: scientific.ordered_entries,
         shared_roots: scientific.shared_roots,
+        ..Default::default()
     })
 }
 
@@ -308,5 +312,6 @@ pub(super) fn control_resources(
             .shared_roots
             .checked_add(1)
             .ok_or(RetentionError::ArithmeticOverflow)?,
+        ..Default::default()
     })
 }

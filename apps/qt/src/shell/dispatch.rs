@@ -100,6 +100,7 @@ impl DispatchGate {
             payload_bytes: size_of::<GateStorage>(),
             ordered_entries: 0,
             shared_roots: APPLICATION_GATE_ROOTS,
+            ..Default::default()
         })?;
         Ok(Self(Arc::new(GateStorage {
             state: Mutex::new(None),

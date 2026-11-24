@@ -10,6 +10,7 @@ mod dispatch;
 mod identity;
 mod input_paths;
 mod retention;
+mod transport;
 mod worker;
 
 pub use application::{ApplicationError, ApplicationSessions};
@@ -24,8 +25,13 @@ pub use retention::{
     Retained, RetainedBytes, RetainedResources, RetentionBudget, RetentionError,
     RetentionReservation,
 };
+pub use transport::{
+    admit_task, bounded_channel, run_task, AdmittedTask, DeliveryPermit, DeliveryReceiver,
+    DeliverySender,
+};
 pub use worker::{
-    spawn_worker, WorkerEvent, WorkerSender, WorkerSpawnError, WorkerStatus, WorkerTerminal,
+    prepare_worker, spawn_worker, PreparedWorker, WorkerEvent, WorkerReceiver, WorkerSender,
+    WorkerSpawnError, WorkerStatus, WorkerTerminal,
 };
 
 use std::sync::Arc;

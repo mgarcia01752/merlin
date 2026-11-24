@@ -227,6 +227,7 @@ impl Model {
     fn adopt_prepared(&mut self, prepared: Prepared) -> Result<(), WorkerFailure> {
         match prepared {
             Prepared::Configuration {
+                delivery: _delivery_guard,
                 expected,
                 candidate,
             } => {
@@ -249,7 +250,11 @@ impl Model {
                 self.key = Some(key);
                 self.report = None;
             }
-            Prepared::Run { controller, target } => {
+            Prepared::Run {
+                delivery: _delivery_guard,
+                controller,
+                target,
+            } => {
                 self.controller = Some(controller);
                 if self.preparation_cancelled {
                     return Ok(());

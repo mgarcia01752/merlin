@@ -16,7 +16,11 @@ use crate::downstream::inputs::measurement_input::{
     designer::{Request, Session},
     model::{Model, Options},
 };
-use crate::shell::{Retained, RetentionReservation};
+use crate::shared::{presentation::constants::WORKER_TRANSPORT_ADMISSION_MESSAGE, worker_controls};
+use crate::shell::{
+    admit_task, bounded_channel, run_task, DeliveryReceiver, Retained, RetainedResources,
+    RetentionReservation,
+};
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 use serde_json::{json, Value};
@@ -28,10 +32,11 @@ use std::{
     },
 };
 pub(super) struct Work {
-    receiver: mpsc::Receiver<Result<Retained<Vec<Capture>>, WorkerFailure>>,
-    cancel: Arc<AtomicBool>,
-    completed: Arc<AtomicUsize>,
-    selection: Retained<worker_inputs::SelectionSnapshot>,
+    receiver: DeliveryReceiver<Result<Box<Retained<Vec<Capture>>>, WorkerFailure>>,
+    cancel: Arc<Retained<AtomicBool>>,
+    completed: Arc<Retained<AtomicUsize>>,
+    selection: Box<Retained<worker_inputs::SelectionSnapshot>>,
+    _fixed_guard: Retained<()>,
 }
 
 // Preserve the source charge until the independently admitted editor owns the data.
@@ -130,9 +135,9 @@ impl bridge::MeasurementInputs {
             if self.rust().designer.is_none() {
                 return Err("Open Designer first.".into());
             }
-            let session = self.rust().designer_copy()?;
+            let session = Box::new(self.rust().designer_copy()?);
             let budget = self.rust().context.application.budget().clone();
-            let request = worker_inputs::admit_request(request, &budget)?;
+            let request = Box::new(worker_inputs::admit_request(request, &budget)?);
             let total = session.value().preview(request.value(), 1)?["capture_count"]
                 .as_u64()
                 .unwrap_or(0);
@@ -142,33 +147,60 @@ impl bridge::MeasurementInputs {
             }
             let options: Options =
                 serde_json::from_str(&text).map_err(|error| error.to_string())?;
-            let cancel = Arc::new(AtomicBool::new(false));
-            let completed = Arc::new(AtomicUsize::new(0));
-            let (sender, receiver) = mpsc::sync_channel(DESIGNER_CAPTURE_QUEUE_CAPACITY);
-            let work = Work {
-                receiver,
-                cancel: cancel.clone(),
-                completed: completed.clone(),
-                selection: worker_inputs::SelectionSnapshot {
+            let cancel = worker_controls::cancellation(&budget)
+                .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+            let completed = worker_controls::completed(&budget)
+                .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+            let (sender, receiver) = bounded_channel(&budget, DESIGNER_CAPTURE_QUEUE_CAPACITY)
+                .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+            let delivery = sender
+                .reserve()
+                .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+            drop(sender);
+            let selection = Box::new(
+                worker_inputs::SelectionSnapshot {
                     hashes: session.value().hashes.clone(),
                     profile_hash: session.value().profile.source.sha256.clone(),
                     options,
                     imported: request.value().source == "imported",
                 }
                 .admit(&budget)?,
+            );
+            let fixed = budget
+                .reserve_resources(RetainedResources {
+                    payload_bytes: std::mem::size_of::<Work>(),
+                    ..Default::default()
+                })
+                .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+            let work = Work {
+                receiver,
+                cancel: cancel.clone(),
+                completed: completed.clone(),
+                selection,
+                _fixed_guard: fixed.retain(()),
             };
+            let task = admit_task(&budget.clone(), move || {
+                let worker_session = session;
+                let worker_request = request;
+                let result = worker_inputs::generate(
+                    *worker_session,
+                    *worker_request,
+                    cancel.value(),
+                    completed.value(),
+                    &budget,
+                )
+                .map(Box::new);
+                let _ = delivery.send(result);
+            })
+            .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+            std::thread::Builder::new()
+                .name("rxmer-designer".into())
+                .spawn(move || run_task(task))
+                .map_err(|error| error.to_string())?;
             log::debug!(
                 "rxmer-designer stage_started captures={total} imported={}",
                 work.selection.value().imported
             );
-            std::thread::Builder::new()
-                .name("rxmer-designer".into())
-                .spawn(move || {
-                    let result =
-                        worker_inputs::generate(session, request, &cancel, &completed, &budget);
-                    let _ = sender.send(result);
-                })
-                .map_err(|error| error.to_string())?;
             self.as_mut().rust_mut().designer_work = Some(work);
             Ok(json!({"running":true}))
         })())
@@ -184,18 +216,31 @@ impl bridge::MeasurementInputs {
             Ok(result) => Some(result),
             Err(mpsc::TryRecvError::Empty) => {
                 return response(Ok(
-                    json!({"running":true,"completed":work.completed.load(Ordering::Relaxed)}),
+                    json!({"running":true,"completed":work.completed.value().load(Ordering::Relaxed)}),
                 ))
             }
             Err(_) => None,
         };
+        // Declare the guard first so a cancelled, unconsumed payload drops first.
+        let _delivery_guard;
+        let result = match result {
+            Some(delivery) => {
+                let (value, guard) = delivery.into_parts();
+                _delivery_guard = Some(guard);
+                Some(value)
+            }
+            None => {
+                _delivery_guard = None;
+                None
+            }
+        };
         let work = self.as_mut().rust_mut().designer_work.take().unwrap();
-        let result = if work.cancel.load(Ordering::Relaxed) {
+        let result = if work.cancel.value().load(Ordering::Relaxed) {
             // The original cancellation branch ignores completion contents.
             Err("Designer cancelled.".into())
         } else {
             match result {
-                Some(Ok(captures)) => Ok(captures),
+                Some(Ok(captures)) => Ok(*captures),
                 Some(Err(failure)) => {
                     return QString::from(
                         json!({"error":failure.message(),"diagnostic":failure.diagnostic()})
@@ -215,7 +260,7 @@ impl bridge::MeasurementInputs {
     /// Unit; polling reaps the worker and discards cancelled completion.
     pub fn designer_cancel(self: Pin<&mut Self>) {
         if let Some(work) = &self.rust().designer_work {
-            work.cancel.store(true, Ordering::Relaxed)
+            work.cancel.value().store(true, Ordering::Relaxed)
         }
     }
 }
@@ -252,10 +297,10 @@ fn adopt(
     model: &mut Model,
     profile: Option<&merlin::downstream::SourceProfileFrame>,
 ) -> Result<StagedBatch, AdmissionError> {
-    if work.cancel.load(Ordering::Relaxed) {
+    if work.cancel.value().load(Ordering::Relaxed) {
         log::debug!(
             "rxmer-designer stage_cancelled completed={}",
-            work.completed.load(Ordering::Relaxed)
+            work.completed.value().load(Ordering::Relaxed)
         );
         return Ok(StagedBatch {
             metadata: json!({"cancelled":true,"running":false}),
@@ -345,26 +390,43 @@ mod tests {
     /// # Returns
     /// A disconnected worker fixture with unchanged progress and baseline fields.
     pub(super) fn work(session: &Session, options: Options) -> Work {
-        let (_, receiver) = mpsc::channel();
-        Work {
-            receiver,
-            cancel: Arc::new(AtomicBool::new(false)),
-            completed: Arc::new(AtomicUsize::new(2)),
-            selection: worker_inputs::SelectionSnapshot {
+        let budget = test_budget();
+        let (_, receiver) = bounded_channel(&budget, DESIGNER_CAPTURE_QUEUE_CAPACITY).unwrap();
+        let cancel = worker_controls::cancellation(&budget).unwrap();
+        let completed = worker_controls::completed(&budget).unwrap();
+        completed.value().store(2, Ordering::Relaxed);
+        let selection = Box::new(
+            worker_inputs::SelectionSnapshot {
                 hashes: session.hashes.clone(),
                 profile_hash: session.profile.source.sha256.clone(),
                 options,
                 imported: true,
             }
-            .admit(&test_budget())
+            .admit(&budget)
             .unwrap(),
+        );
+        let fixed = budget
+            .reserve_resources(RetainedResources {
+                payload_bytes: std::mem::size_of::<Work>(),
+                ..Default::default()
+            })
+            .unwrap();
+        Work {
+            receiver,
+            cancel,
+            completed,
+            selection,
+            _fixed_guard: fixed.retain(()),
         }
     }
+
     fn test_budget() -> crate::shell::RetentionBudget {
         crate::shell::RetentionBudget::with_limits(crate::shell::RetainedResources {
             payload_bytes: usize::MAX,
             ordered_entries: usize::MAX,
             shared_roots: usize::MAX,
+            channel_count: usize::MAX,
+            slot_count: usize::MAX,
         })
     }
     fn batch(captures: Vec<Capture>) -> Retained<Vec<Capture>> {
@@ -372,6 +434,8 @@ mod tests {
             payload_bytes: usize::MAX,
             ordered_entries: usize::MAX,
             shared_roots: usize::MAX,
+            channel_count: usize::MAX,
+            slot_count: usize::MAX,
         });
         Model::admit_capture_batch(captures, &budget).unwrap()
     }
@@ -430,7 +494,7 @@ mod tests {
             )
             .unwrap();
         let work = work(&session, Options::default());
-        work.cancel.store(true, Ordering::Relaxed);
+        work.cancel.value().store(true, Ordering::Relaxed);
         let result = adopt(
             work,
             Ok(batch(captures.clone())),

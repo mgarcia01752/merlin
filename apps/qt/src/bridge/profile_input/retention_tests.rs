@@ -14,6 +14,8 @@ const TEST_MAXIMUM: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 fn new_owner() -> ProfileInputRust {
@@ -115,6 +117,8 @@ fn profile_queue_transfer_needs_no_new_reservation_and_foreign_transfer_preserve
             payload_bytes: usize::MAX - used.payload_bytes,
             ordered_entries: usize::MAX - used.ordered_entries,
             shared_roots: usize::MAX - used.shared_roots,
+            channel_count: usize::MAX - used.channel_count,
+            slot_count: usize::MAX - used.slot_count,
         })
         .unwrap();
     owner.adopt_model(prepared).unwrap();

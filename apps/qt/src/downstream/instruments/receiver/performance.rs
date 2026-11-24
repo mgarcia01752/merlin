@@ -83,6 +83,8 @@ pub(crate) fn fixture_initial_resources<'profile>(
         payload_bytes: usize::MAX,
         ordered_entries: usize::MAX,
         shared_roots: usize::MAX,
+        channel_count: usize::MAX,
+        slot_count: usize::MAX,
     });
     let profiles = profiles.into_iter().collect::<Vec<_>>();
     let registry = super::qam_history::prepare(profiles.iter().copied(), &budget).unwrap();

@@ -19,6 +19,8 @@ const FIXTURE_LIMIT: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 #[derive(Clone, Copy)]
@@ -60,6 +62,7 @@ fn plus(a: RetainedResources, b: RetainedResources) -> RetainedResources {
         payload_bytes: a.payload_bytes.checked_add(b.payload_bytes).unwrap(),
         ordered_entries: a.ordered_entries.checked_add(b.ordered_entries).unwrap(),
         shared_roots: a.shared_roots.checked_add(b.shared_roots).unwrap(),
+        ..Default::default()
     }
 }
 fn one_less(mut resources: RetainedResources, dimension: Dimension) -> RetainedResources {
@@ -103,6 +106,7 @@ fn source_resources(result: &FullLoopResult) -> RetainedResources {
             .unwrap(),
         ordered_entries: metadata.ordered_entries,
         shared_roots: metadata.shared_roots,
+        ..Default::default()
     }
 }
 fn policy() -> FullLoopReceiverArchivePolicy {
@@ -149,6 +153,7 @@ fn snapshot_layout_replaces_the_scientific_handle_once_and_checks_each_overflow(
             payload_bytes: size_of::<Snapshot>(),
             ordered_entries: 0,
             shared_roots: 2, // Backend detached Arc plus the application Snapshot Arc.
+            ..Default::default()
         }
     );
     for footprint in [

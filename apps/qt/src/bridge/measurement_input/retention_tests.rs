@@ -16,6 +16,8 @@ const TEST_MAXIMUM: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 fn new_owner() -> MeasurementInputsRust {
@@ -151,6 +153,8 @@ fn admitted_measurement_transfer_survives_full_pressure_without_copy_or_new_char
             payload_bytes: usize::MAX - used.payload_bytes,
             ordered_entries: usize::MAX - used.ordered_entries,
             shared_roots: usize::MAX - used.shared_roots,
+            channel_count: usize::MAX - used.channel_count,
+            slot_count: usize::MAX - used.slot_count,
         })
         .unwrap();
     owner.adopt_model(prepared).unwrap();

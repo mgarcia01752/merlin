@@ -249,6 +249,18 @@ impl Model {
                 return;
             }
         };
+        let dispatch = match Worker::prepare(
+            settings,
+            plan,
+            control.clone(),
+            self.context.application.budget().clone(),
+        ) {
+            Ok(dispatch) => dispatch,
+            Err(error) => {
+                self.set_message(application_error(ApplicationError::Retention(error)));
+                return;
+            }
+        };
         let lease = match self.context.application.begin(key, control.clone()) {
             Ok(lease) => lease,
             Err(error) => {
@@ -269,14 +281,7 @@ impl Model {
         // Retain accepted science until a new identified Profile replaces it.
         self.token = self.token.wrapping_add(1);
         let timing = RunTiming::new(prepared_timing);
-        match Worker::spawn(
-            settings,
-            plan,
-            timing.clone(),
-            control,
-            lease,
-            self.context.application.budget().clone(),
-        ) {
+        match dispatch.spawn(timing.clone(), lease) {
             Ok(worker) => {
                 self.timing = Some(timing);
                 self.worker = Some(worker);
@@ -318,90 +323,93 @@ impl Model {
             .map(|worker| worker.receiver.try_recv())
         {
             match message {
-                Ok(WorkerEvent::Message {
-                    token,
-                    value: WorkerMessage::Profile(result),
-                }) => {
-                    if self.accepts_callback(token) {
-                        let retention_error = if let Some(playback) = &result.job.settings.playback
-                        {
-                            crate::downstream::instruments::receiver::performance::retain(
-                                &self.context,
-                                &playback.profile,
-                                &result,
-                            )
-                            .err()
-                        } else {
-                            None
-                        };
-                        let message = result
-                            .backend()
-                            .report()
-                            .error
-                            .as_ref()
-                            .map(ToString::to_string)
-                            .unwrap_or_else(|| {
-                                retention_error
-                                    .map(|error| {
-                                        application_error(ApplicationError::Retention(error))
+                Ok(WorkerEvent::Message { token, value }) => {
+                    let _delivery_guard;
+                    let (value, guard) = value.into_parts();
+                    _delivery_guard = guard;
+                    match value {
+                        WorkerMessage::Profile(result) => {
+                            if self.accepts_callback(token) {
+                                let retention_error = if let Some(playback) =
+                                    &result.job.settings.playback
+                                {
+                                    crate::downstream::instruments::receiver::performance::retain(
+                                        &self.context,
+                                        &playback.profile,
+                                        &result,
+                                    )
+                                    .err()
+                                } else {
+                                    None
+                                };
+                                let message = result
+                                    .backend()
+                                    .report()
+                                    .error
+                                    .as_ref()
+                                    .map(ToString::to_string)
+                                    .unwrap_or_else(|| {
+                                        retention_error
+                                            .map(|error| {
+                                                application_error(ApplicationError::Retention(
+                                                    error,
+                                                ))
+                                            })
+                                            .unwrap_or_default()
+                                    });
+                                let diagnostic = result
+                                    .job
+                                    .error
+                                    .as_ref()
+                                    .and_then(|error| {
+                                        crate::downstream::help::catalog_diagnostic(error.code)
                                     })
-                                    .unwrap_or_default()
-                            });
-                        let diagnostic = result
-                            .job
-                            .error
-                            .as_ref()
-                            .and_then(|error| {
-                                crate::downstream::help::catalog_diagnostic(error.code)
-                            })
-                            .map(Box::new);
-                        self.error = if message.is_empty() && diagnostic.is_none() {
-                            WorkerFailure::default()
-                        } else {
-                            WorkerFailure::admit_with_fallback(
-                                AdmissionError {
-                                    message,
-                                    diagnostic,
-                                },
-                                self.context.application.budget(),
-                                WORKER_FAILURE_ADMISSION_MESSAGE,
-                            )
-                        };
-                        publish(&self.context, Some(Arc::new(*result)));
-                        self.token = self.token.wrapping_add(1);
-                    }
-                }
-                Ok(WorkerEvent::Message {
-                    token,
-                    value: WorkerMessage::Rejected(id, channel, error),
-                }) => {
-                    if self.accepts_callback(token) {
-                        if let Err(retention_error) =
-                            crate::downstream::instruments::receiver::performance::reject(
-                                &self.context,
-                                id,
-                                channel,
-                                error.message().to_owned(),
-                            )
-                        {
-                            log::warn!(
-                                "Failed profile display unavailable: {}",
-                                application_error(ApplicationError::Retention(retention_error))
-                            );
+                                    .map(Box::new);
+                                self.error = if message.is_empty() && diagnostic.is_none() {
+                                    WorkerFailure::default()
+                                } else {
+                                    WorkerFailure::admit_with_fallback(
+                                        AdmissionError {
+                                            message,
+                                            diagnostic,
+                                        },
+                                        self.context.application.budget(),
+                                        WORKER_FAILURE_ADMISSION_MESSAGE,
+                                    )
+                                };
+                                publish(&self.context, Some(Arc::new(*result)));
+                                self.token = self.token.wrapping_add(1);
+                            }
                         }
-                        self.set_queued_error(error);
-                        self.token = self.token.wrapping_add(1);
+                        WorkerMessage::Rejected(id, channel, error) => {
+                            if self.accepts_callback(token) {
+                                if let Err(retention_error) =
+                                    crate::downstream::instruments::receiver::performance::reject(
+                                        &self.context,
+                                        id,
+                                        channel,
+                                        error.message().to_owned(),
+                                    )
+                                {
+                                    log::warn!(
+                                        "Failed profile display unavailable: {}",
+                                        application_error(ApplicationError::Retention(
+                                            retention_error
+                                        ))
+                                    );
+                                }
+                                self.set_queued_error(error);
+                                self.token = self.token.wrapping_add(1);
+                            }
+                        }
+                        WorkerMessage::Finished(reason) => {
+                            if self.accepts_callback(token) && !reason.is_empty() {
+                                self.set_static_message(reason);
+                            }
+                            // This is sweep status, not proof that its closure has returned.
+                            self.token = self.token.wrapping_add(1);
+                        }
                     }
-                }
-                Ok(WorkerEvent::Message {
-                    token,
-                    value: WorkerMessage::Finished(reason),
-                }) => {
-                    if self.accepts_callback(token) && !reason.is_empty() {
-                        self.set_static_message(reason);
-                    }
-                    // This is sweep status, not proof that its closure has returned.
-                    self.token = self.token.wrapping_add(1);
                 }
                 Ok(WorkerEvent::Terminal(terminal)) => {
                     if self.accepts_callback(terminal.token()) {
@@ -508,3 +516,6 @@ mod metadata_tests;
 #[cfg(test)]
 #[path = "closed_loop/fixed_retention_tests.rs"]
 mod fixed_retention_tests;
+
+#[cfg(test)]
+mod transport_retention_tests;

@@ -137,6 +137,7 @@ fn full_product_counts_containing_fixed_layout_once_and_preserves_real_frame_nul
             + prepared.json_summary.as_object().unwrap().len()
             + diagnostic.len(),
         shared_roots: 0,
+        ..Default::default()
     };
     let frames = serde_json::to_value(&prepared.frames).unwrap();
     let key = frame.key.clone();

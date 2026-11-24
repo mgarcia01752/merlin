@@ -14,15 +14,19 @@ use crate::{
         presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE, worker_failure::WorkerFailure,
     },
     shell::{
-        spawn_worker, Retained, RetainedResources, RetentionBudget, RetentionError,
-        RunCancellation, RunLease, RunToken, WorkerEvent, WorkerSpawnError,
+        prepare_worker, PreparedWorker, Retained, RetainedResources, RetentionBudget,
+        RetentionError, RetentionReservation, RunCancellation, RunLease, RunToken, WorkerReceiver,
+        WorkerSpawnError,
     },
 };
 use merlin::downstream::{ChannelJobStatus, FullLoopControl, FullLoopRequest, FullLoopState};
 use std::{
     mem::size_of,
-    sync::{mpsc, Arc, Mutex, MutexGuard},
+    sync::{Arc, Mutex, MutexGuard},
 };
+
+// One final borrowed sweep-status event follows the per-profile data inventory.
+const SWEEP_STATUS_EVENTS: usize = 1;
 
 pub(super) enum WorkerMessage {
     Profile(Box<ResultData>),
@@ -51,9 +55,56 @@ pub(super) struct DownstreamControl {
 pub(super) struct Worker {
     control: Arc<DownstreamControl>,
     token: RunToken,
-    pub receiver: mpsc::Receiver<WorkerEvent<WorkerMessage, WorkerFailure>>,
+    pub receiver: WorkerReceiver<WorkerMessage, WorkerFailure>,
     pub profile_count: usize,
     pub stale: bool,
+}
+
+/// One preflighted serial dispatch, before global admission or timing epoch.
+pub(super) struct PreparedDispatch {
+    prepared: PreparedWorker<Arc<RunTiming>, WorkerMessage, WorkerFailure>,
+    control: Arc<DownstreamControl>,
+    profile_count: usize,
+}
+
+struct ProfileIds {
+    ids: Vec<u8>,
+    guard: RetentionReservation,
+}
+
+impl ProfileIds {
+    fn into_parts(self) -> (RetentionReservation, Vec<u8>) {
+        (self.guard, self.ids)
+    }
+}
+
+impl PreparedDispatch {
+    /// Starts the already admitted dispatch at the caller's original timing epoch.
+    ///
+    /// # Arguments
+    /// * `timing` - Clock constructed only after original host readiness mutations.
+    /// * `lease` - Genuine canonical admission acquired after complete preflight.
+    ///
+    /// # Returns
+    /// Same worker/controls and bounded identified completion receiver.
+    ///
+    /// # Errors
+    /// OS rejection returns the original unstarted lease.
+    pub(super) fn spawn(
+        self,
+        timing: Arc<RunTiming>,
+        lease: RunLease,
+    ) -> Result<Worker, WorkerSpawnError> {
+        let token = lease.token();
+        let receiver = self.prepared.spawn(lease, timing)?;
+        Ok(Worker {
+            control: self.control,
+            token,
+            receiver,
+            profile_count: self.profile_count,
+            stale: false,
+        })
+    }
 }
 
 fn lock(state: &Mutex<Dispatch>) -> MutexGuard<'_, Dispatch> {
@@ -220,28 +271,25 @@ impl RunCancellation for DownstreamControl {
 }
 
 impl Worker {
-    /// Starts one serial dispatcher with bounded completion backpressure.
+    /// Preflights the actual task, profile-ID buffer and finite delivery inventory.
+    ///
     /// # Arguments
-    /// * `request` - Admitted immutable owner; no payload clone at worker dispatch.
-    /// * `plan` - Optional admitted sweep owner, shared until the closure returns.
-    /// * `timing` - Shared presentation clock, always locked after dispatch state.
-    /// * `control` - Same cancellation adapter admitted by the canonical gate.
-    /// * `lease` - Genuine exact-session admission retained until common termination.
-    /// * `retention` - Canonical host budget for every actual profile target.
+    /// * `request`, `plan` - Existing admitted immutable scientific owners.
+    /// * `control` - Same admitted cancellation adapter later supplied to the gate.
+    /// * `retention` - Canonical budget for source, candidate and queued owners.
+    ///
     /// # Returns
-    /// Controls and identified data/terminal receiver; the GUI never joins.
-    /// Finished is data only: retain this Worker until its common terminal arrives.
+    /// A prepared dispatch without a lease or clock. Exactly one data event per
+    /// selected profile plus Finished is admitted; terminal is separately guarded.
+    ///
     /// # Errors
-    /// Returns OS thread-start failure with the original unstarted lease. The host
-    /// must acknowledge that failure; dropping a lease alone keeps the gate Busy.
-    pub(super) fn spawn(
+    /// Checked layout or any resource ceiling before status/history/run mutation.
+    pub(super) fn prepare(
         request: SharedRequest,
         plan: Option<SharedPlan>,
-        timing: Arc<RunTiming>,
         control: Arc<DownstreamControl>,
-        lease: RunLease,
         retention: RetentionBudget,
-    ) -> Result<Self, WorkerSpawnError> {
+    ) -> Result<PreparedDispatch, RetentionError> {
         let ids = plan
             .as_ref()
             .map(|plan| {
@@ -263,12 +311,28 @@ impl Worker {
         let profile_count = ids.len();
         let budget = request.value().options().max_runtime_ms;
         let shared = Arc::clone(&control);
-        let token = lease.token();
-        let receiver = spawn_worker(
+        let ids_bytes = ids
+            .capacity()
+            .checked_mul(size_of::<u8>())
+            .ok_or(RetentionError::ArithmeticOverflow)?;
+        let ids_guard = retention.reserve_resources(RetainedResources {
+            payload_bytes: ids_bytes,
+            ..RetainedResources::default()
+        })?;
+        let ids = ProfileIds {
+            ids,
+            guard: ids_guard,
+        };
+        let event_count = profile_count
+            .checked_add(SWEEP_STATUS_EVENTS)
+            .ok_or(RetentionError::ArithmeticOverflow)?;
+        let prepared = prepare_worker(
             "merlin-profile-sweep",
             PROFILE_COMPLETION_CAPACITY,
-            lease,
-            move |sender| {
+            event_count,
+            &retention.clone(),
+            move |timing: Arc<RunTiming>, mut sender| {
+                let (_ids_guard, ids) = ids.into_parts();
                 let mut elapsed = 0_u64;
                 for (index, id) in ids.into_iter().enumerate() {
                     if lock(&shared.state).cancelled || elapsed >= budget {
@@ -374,13 +438,37 @@ impl Worker {
                 Ok(())
             },
         )?;
-        Ok(Self {
+        Ok(PreparedDispatch {
+            prepared,
             control,
-            token,
-            receiver,
             profile_count,
-            stale: false,
         })
+    }
+
+    /// Preserves genuine direct worker fixtures through the same admitted path.
+    ///
+    /// # Arguments
+    /// * `request`, `plan`, `timing`, `control`, `lease`, `retention` - Same actual
+    ///   scientific, clock, canonical admission and budget owners as prepare/spawn.
+    ///
+    /// # Returns
+    /// Identified worker without any uncharged production fallback.
+    ///
+    /// # Errors
+    /// Resource or OS rejection preserves the original unstarted lease.
+    #[cfg(test)]
+    pub(super) fn spawn(
+        request: SharedRequest,
+        plan: Option<SharedPlan>,
+        timing: Arc<RunTiming>,
+        control: Arc<DownstreamControl>,
+        lease: RunLease,
+        retention: RetentionBudget,
+    ) -> Result<Self, WorkerSpawnError> {
+        match Self::prepare(request, plan, control, retention) {
+            Ok(prepared) => prepared.spawn(timing, lease),
+            Err(error) => Err(WorkerSpawnError::admission(error, lease)),
+        }
     }
 
     /// Reads this worker's immutable canonical callback identity.
@@ -443,6 +531,7 @@ fn adapter_resources() -> RetainedResources {
         payload_bytes: size_of::<DownstreamControl>(),
         ordered_entries: 0,
         shared_roots: 1,
+        ..RetainedResources::default()
     }
 }
 
@@ -462,6 +551,7 @@ fn profile_control_resources(
             .shared_roots
             .checked_add(1)
             .ok_or(RetentionError::ArithmeticOverflow)?,
+        ..RetainedResources::default()
     })
 }
 

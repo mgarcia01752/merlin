@@ -4523,3 +4523,49 @@ metadata, C5 persistent QML and C6 current complete SESSION acceptance. Native
 invokable Apply/help under pressure and the applicable milestone/final gates
 remain pending. These owner tests and normal native probes do not establish that
 interaction or Windows runtime acceptance. SESSION stays unchecked.
+
+
+## UIU-SESSION-01 concrete worker transport
+
+[C3](session-closure.md#c3-concrete-transport-integration) closes the existing
+closure/control/delivery and standard-channel population gap. The existing atomic
+counter now includes channels and configured slots, with separate named desktop
+policies. Concrete task/closure bodies use their actual layouts; every DATA and
+terminal has its own pre-admitted frame. The requested finite permit buffer is
+reserved before allocation. Received frames keep their guards independently of
+endpoints. Explicit atomic pointees and lease/controller recovery slots retain
+actual payload/root coverage. Designer/export input Boxes avoid double counting
+separately guarded pointees. Their Work/State and loader Job complements are
+admitted before publication. Downstream preflights before begin/history mutation;
+upstream rejection preserves its original controller/lease. Original timing,
+science, status, partial-result and known-termination behavior remain unchanged.
+
+The [primary receipt](session-worker-transport-evidence.json) separates frozen
+source preparation (`4598929`, fixture seed `67f44b5`, corrections `77d6954`) from
+executed integration. One complete Qt Rust run passed 366 cases and found 26 old
+fixture ledgers/headroom/cleanup assumptions. Corrected affected features pass in
+central targeted runs: 40 upstream/shared/project cases and 54 downstream/worker
+cases. Their union with the complete run gives all 392 distinct cases, including
+14 new C3 cases. Original scientific values, tolerances, accepted-report assertions
+and rejection boundaries remain. Tests preflight real transport or use the actual
+admitted task at a minimal private dispatch seam before applying pressure, so an
+earlier transport refusal cannot satisfy a later scientific gate. Exact guard
+ledgers and actual task joins/disposal replace terminal-receipt assumptions.
+Compile errors and intermediate fixture failures remain in the raw record;
+source-only formatting is not runtime acceptance.
+
+All-target Qt Clippy, formatting, final API boundary, optimized build and six fresh
+native startup/project probes pass; probe stderr is empty. Read-only QA identified
+two bridge corrections (delivery disposal ordering and loader fallback wording)
+and a fixture cleanup race, all resolved before acceptance. No duplicate complete
+regressions were delegated. Five existing CXX invokable modules, global module
+registration and all standalone QML/test inputs are unchanged. Sixteen accepted
+scientific/native source hashes match, so paired Rust/Python, installed-wheel and
+standalone QML evidence is explicitly reused. Fresh scientific workspace, Python
+wheel, unrelated CLI/package or standalone QML execution is not claimed.
+
+C4 project paths/metadata, C5 actual persistent QML admission and C6 current full
+SESSION acceptance remain required. Native invokable Apply/help under pressure,
+the applicable milestone/final gates and Windows runtime acceptance remain
+pending. Normal desktop probes and owner tests do not establish those behaviors.
+SESSION stays unchecked; no new requirement or closure row expands the task.

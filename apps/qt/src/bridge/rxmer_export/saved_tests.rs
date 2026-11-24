@@ -160,12 +160,35 @@ fn rejected_status_after_publication_keeps_the_saved_file_and_truthful_static_re
         .unwrap();
         assert_capture(&path, &original.value().frames[0]);
         let full = budget.usage();
+
+        // The operation already returned: only Working, its two atomic pointees,
+        // channel guard and the queued rejected-status frame remain beyond Ready.
+        let pending = RetainedResources {
+            payload_bytes: std::mem::size_of::<State>()
+                + std::mem::size_of::<Retained<AtomicBool>>()
+                + std::mem::size_of::<Retained<AtomicUsize>>()
+                + std::mem::size_of::<Retained<()>>()
+                + std::mem::size_of::<Retained<Result<Outcome, WorkerFailure>>>(),
+            shared_roots: 3,  // Two actual controls and one channel allocation.
+            channel_count: 1, // One real export completion queue.
+            slot_count: crate::downstream::common::constants::EXPORT_RESULT_QUEUE_CAPACITY,
+            ..Default::default()
+        };
         let reply = lifecycle::poll(&mut owner.designer_export);
         assert_eq!(reply["error"], DESIGNER_SAVED_STATUS_ADMISSION_MESSAGE);
         assert!(reply.get("saved").is_none());
         assert!(reply.get("path").is_none());
         assert!(Arc::ptr_eq(admission_tests::ready(&owner), &original));
-        assert_eq!(budget.usage(), full);
+        assert_eq!(
+            budget.usage(),
+            RetainedResources {
+                payload_bytes: full.payload_bytes - pending.payload_bytes,
+                ordered_entries: full.ordered_entries,
+                shared_roots: full.shared_roots - pending.shared_roots,
+                channel_count: full.channel_count - pending.channel_count,
+                slot_count: full.slot_count - pending.slot_count,
+            }
+        );
         drop(held.lock().unwrap().take());
         assert_eq!(budget.usage(), before);
         drop(owner);

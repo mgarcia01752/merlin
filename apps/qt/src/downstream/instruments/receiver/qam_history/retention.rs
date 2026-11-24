@@ -35,7 +35,9 @@ impl ArchiveError {
                 RetentionError::ArithmeticOverflow
                 | RetentionError::LimitExceeded { .. }
                 | RetentionError::OrderedEntriesExceeded { .. }
-                | RetentionError::SharedRootsExceeded { .. },
+                | RetentionError::SharedRootsExceeded { .. }
+                | RetentionError::ChannelsExceeded { .. }
+                | RetentionError::SlotsExceeded { .. },
             ) => "The session retained-data limit would be exceeded.".into(),
         }
     }
@@ -104,6 +106,7 @@ pub(super) fn resources(
             .shared_roots
             .checked_add(SNAPSHOT_SHARED_ROOTS)
             .ok_or(RetentionError::ArithmeticOverflow)?,
+        ..Default::default()
     })
 }
 

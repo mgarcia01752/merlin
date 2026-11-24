@@ -59,6 +59,7 @@ fn plus(a: RetainedResources, b: RetainedResources) -> RetainedResources {
         payload_bytes: a.payload_bytes.checked_add(b.payload_bytes).unwrap(),
         ordered_entries: a.ordered_entries.checked_add(b.ordered_entries).unwrap(),
         shared_roots: a.shared_roots.checked_add(b.shared_roots).unwrap(),
+        ..Default::default()
     }
 }
 
@@ -86,6 +87,7 @@ fn json_children(value: &Value) -> RetainedResources {
                 payload_bytes: values.len() * size_of::<(String, Value)>(),
                 ordered_entries: values.len(),
                 shared_roots: 0,
+                ..Default::default()
             },
             |sum, (key, value)| {
                 assert_eq!(key.capacity(), key.len());
@@ -130,6 +132,7 @@ pub(super) fn measured(output: &Observations) -> RetainedResources {
             * size_of::<(Stage, crate::transmitter_instruments::capture::Snapshot)>(),
         ordered_entries: snapshots.len(),
         shared_roots: 0,
+        ..Default::default()
     };
     for snapshot in snapshots.values() {
         let crate::transmitter_instruments::capture::Snapshot {
@@ -262,6 +265,7 @@ fn exact_overlap_and_dimension_rejection_preserve_source_ownership() {
                 - size_of::<FullLoopResult>(),
             ordered_entries: before.ordered_entries,
             shared_roots: before.shared_roots,
+            ..Default::default()
         };
         let exact = plus(source_charge, plus(workspace, target));
         let maximum = match rejection {
@@ -307,6 +311,7 @@ fn queued_current_and_old_aliases_keep_dynamic_projection_charge_until_final_dro
         payload_bytes: size_of::<Retained<Observations>>(),
         ordered_entries: 0,
         shared_roots: 1,
+        ..Default::default()
     };
     let reserved = budget.reserve_resources(wrapper).unwrap();
     let output = Observations::from_result_admitted(&result, &budget).unwrap();

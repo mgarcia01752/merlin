@@ -236,6 +236,7 @@ fn resources(profile_capacity: usize) -> Result<RetainedResources, RetentionErro
             .ok_or(RetentionError::ArithmeticOverflow)?,
         ordered_entries: 0,
         shared_roots: 1,
+        ..Default::default()
     })
 }
 

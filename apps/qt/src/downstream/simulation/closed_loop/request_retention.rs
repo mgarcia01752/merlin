@@ -156,6 +156,7 @@ fn resources<Scientific>(
             .shared_roots
             .checked_add(OWNER_SHARED_ROOTS)
             .ok_or(RetentionError::ArithmeticOverflow)?,
+        ..Default::default()
     })
 }
 

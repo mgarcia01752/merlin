@@ -4,6 +4,7 @@
  */
 //! Actual adapter/scientific-control admission and genuine lease disposal.
 use super::*;
+use crate::shell::{spawn_worker, WorkerEvent};
 use crate::shell::{ApplicationSessions, RetainedResources, WorkerStatus};
 use std::time::Duration;
 
@@ -12,6 +13,8 @@ const LIMITS: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 const WATCHDOG: Duration = Duration::from_secs(30);
 
@@ -25,6 +28,7 @@ fn adapter_exact_layout_below_limits_and_final_alias_are_independent() {
         payload_bytes: size_of::<DownstreamControl>(),
         ordered_entries: 0,
         shared_roots: 1,
+        ..Default::default()
     };
     let exact = RetentionBudget::with_limits(expected);
     let owner = DownstreamControl::new(&exact).unwrap();
@@ -62,6 +66,7 @@ fn profile_layout_rejection_and_dispatch_execution_aliases_keep_one_charge() {
             + size_of::<Retained<FullLoopControl>>(),
         ordered_entries: 0,
         shared_roots: 3, // Outer retained owner, backend Shared and common stop.
+        ..Default::default()
     };
     let exact = RetentionBudget::with_limits(expected);
     let execution = admit_profile_control(&exact).unwrap();
@@ -123,32 +128,33 @@ fn actual_worker_control_rejection_keeps_source_idle_and_terminal_owns_lease() {
     let control = DownstreamControl::new(budget).unwrap();
     let key = application.configure_downstream(true).unwrap();
     let timing = RunTiming::new(RunTiming::prepare(budget).unwrap());
+    let prepared = Worker::prepare(
+        Arc::clone(&request),
+        None,
+        Arc::clone(&control),
+        budget.clone(),
+    )
+    .unwrap();
     let lease = application.begin(key, control.clone()).unwrap();
     let token = lease.token();
 
-    // Explicit accounting pressure blocks only a new profile control, before science.
+    // All transport owners already fit. Pressure blocks only a new profile
+    // control at the original scientific boundary, never worker preparation.
     let pressure = budget
         .reserve_resources(RetainedResources {
             shared_roots: LIMITS.shared_roots - budget.usage().shared_roots,
             ..Default::default()
         })
         .unwrap();
-    let worker = Worker::spawn(
-        Arc::clone(&request),
-        None,
-        timing,
-        Arc::clone(&control),
-        lease,
-        budget.clone(),
-    )
-    .unwrap_or_else(|error| {
+    let worker = prepared.spawn(timing, lease).unwrap_or_else(|error| {
         let (cause, lease) = error.into_parts();
         application.finish(lease).unwrap();
         panic!("Actual rejection worker must start: {cause}");
     });
     assert!(matches!(worker.receiver.recv_timeout(WATCHDOG).unwrap(),
-        WorkerEvent::Message { token: actual, value: WorkerMessage::Rejected(_, _, ref error) }
-            if actual == token && error.message().contains("retained-data limit")));
+        WorkerEvent::Message { token: actual, ref value }
+            if actual == token && matches!(value.value(), WorkerMessage::Rejected(_, _, error)
+                if error.message().contains("retained-data limit"))));
     assert!(lock(&control.state).active.is_none());
     assert_eq!(
         serde_json::to_value(request.value().settings()).unwrap(),
@@ -157,9 +163,9 @@ fn actual_worker_control_rejection_keeps_source_idle_and_terminal_owns_lease() {
     assert!(matches!(
         worker.receiver.recv_timeout(WATCHDOG).unwrap(),
         WorkerEvent::Message {
-            value: WorkerMessage::Finished(_),
+            value,
             ..
-        }
+        } if matches!(value.value(), WorkerMessage::Finished(_))
     ));
     let WorkerEvent::Terminal(terminal) = worker.receiver.recv_timeout(WATCHDOG).unwrap() else {
         panic!("Actual worker must publish its sole terminal");
@@ -183,10 +189,17 @@ fn invalid_thread_label_returns_the_original_lease_and_releases_closure_alias() 
     let lease = application.begin(key, control.clone()).unwrap();
     let token = lease.token();
     let alias = Arc::clone(&control);
-    let Err(error) = spawn_worker::<(), String>("control\0fixture", 0, lease, move |_| {
-        drop(alias);
-        Ok(())
-    }) else {
+    let Err(error) = spawn_worker::<(), String>(
+        "control\0fixture",
+        0,
+        0,
+        application.budget(),
+        lease,
+        move |_| {
+            drop(alias);
+            Ok(())
+        },
+    ) else {
         panic!("Static invalid thread label must reject before spawning");
     };
     let (_, lease) = error.into_parts();

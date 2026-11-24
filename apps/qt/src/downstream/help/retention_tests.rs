@@ -44,6 +44,7 @@ fn actual_error_and_box_layout_count_once_while_each_text_capacity_delta_is_pass
             + diagnostic.faq_anchor.capacity(),
         ordered_entries: 0,
         shared_roots: 0,
+        ..Default::default()
     };
     // Serialization is only an independent value snapshot; no byte charge is
     // inferred from it and production metadata never serializes a diagnostic.
@@ -93,6 +94,7 @@ fn missing_diagnostic_charges_only_the_error_root_and_actual_message_buffer() {
         payload_bytes: size_of::<AdmissionError>() + error.message.capacity(),
         ordered_entries: 0,
         shared_roots: 0,
+        ..Default::default()
     };
     assert!(error.diagnostic.is_none());
     assert_eq!(error.retained_resources().unwrap(), expected);
@@ -105,6 +107,7 @@ fn missing_diagnostic_charges_only_the_error_root_and_actual_message_buffer() {
             payload_bytes: size_of::<AdmissionError>(),
             ordered_entries: 0,
             shared_roots: 0,
+            ..Default::default()
         }
     );
     assert!(empty.diagnostic.is_none());

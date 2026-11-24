@@ -15,6 +15,8 @@ const LIMITS: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 const WATCHDOG: Duration = Duration::from_secs(30);
 
@@ -67,6 +69,7 @@ fn optional_common_control_exact_layout_rejections_and_final_alias_are_passive()
                 + size_of::<UpstreamControl>(),
             ordered_entries: 0,
             shared_roots: if common { 3 } else { 2 },
+            ..Default::default()
         };
         let budget = RetentionBudget::with_limits(expected);
         let owner = UpstreamControl::new(backend.clone(), &budget).unwrap();

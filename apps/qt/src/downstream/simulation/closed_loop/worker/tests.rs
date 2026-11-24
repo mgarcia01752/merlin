@@ -4,6 +4,7 @@
  */
 //! Real public downstream behavior; separate terminal fixtures execute no science.
 use super::*;
+use crate::shell::{spawn_worker, WorkerEvent};
 use crate::{
     downstream::simulation::closed_loop::{prepare, Options},
     shell::{
@@ -11,6 +12,7 @@ use crate::{
         RetentionBudget, SessionError, ShellSessions, WorkerSender, WorkerStatus, WorkerTerminal,
     },
 };
+use std::sync::mpsc;
 use std::time::{Duration, Instant};
 
 // Scheduling policies independent of scientific runtime and observation duration.
@@ -29,6 +31,8 @@ const TEST_OWNER_LIMITS: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 type Identities = ShellSessions<(), (), (), ()>;
@@ -97,7 +101,7 @@ fn busy(identities: &mut Identities, worker: &Worker) {
     ));
 }
 
-fn data(worker: &Worker) -> WorkerMessage {
+fn data(worker: &Worker) -> Retained<WorkerMessage> {
     match worker.receiver.recv_timeout(CONTROL_ACK_TIMEOUT).unwrap() {
         WorkerEvent::Message { token, value } => {
             assert_eq!(token, worker.token());
@@ -177,7 +181,8 @@ fn paused_public_worker_cancels_and_retains_its_actual_partial_report() {
     assert_eq!(worker.acknowledged_pause(), None);
     assert_eq!(gate.active().unwrap().phase, DispatchPhase::Cancelling);
     busy(&mut identities, &worker);
-    let WorkerMessage::Profile(result) = data(&worker) else {
+    let delivery = data(&worker);
+    let WorkerMessage::Profile(result) = delivery.value() else {
         panic!("Cancellation must preserve the actual partial public report");
     };
     assert_eq!(result.job.status, ChannelJobStatus::Cancelled);
@@ -186,7 +191,8 @@ fn paused_public_worker_cancels_and_retains_its_actual_partial_report() {
         result.job.summary.comparison.bits_tested
     );
     assert_eq!(control.value().snapshot().state, FullLoopState::Cancelled);
-    let WorkerMessage::Finished(reason) = data(&worker) else {
+    let delivery = data(&worker);
+    let WorkerMessage::Finished(reason) = delivery.value() else {
         panic!("Cancelled single-profile worker must finish without another run");
     };
     assert!(reason.contains("cancelled"));
@@ -217,7 +223,8 @@ fn finished_data_keeps_real_completion_busy_until_terminal_disposal() {
         lease,
         budget.clone(),
     ));
-    let WorkerMessage::Profile(result) = data(&worker) else {
+    let delivery = data(&worker);
+    let WorkerMessage::Profile(result) = delivery.value() else {
         panic!("Genuine completion must retain its public report");
     };
     assert_eq!(result.job.status, ChannelJobStatus::Complete);
@@ -225,7 +232,8 @@ fn finished_data_keeps_real_completion_busy_until_terminal_disposal() {
         result.backend().report().summary.comparison.bits_tested,
         result.job.summary.comparison.bits_tested
     );
-    let WorkerMessage::Finished(reason) = data(&worker) else {
+    let delivery = data(&worker);
+    let WorkerMessage::Finished(reason) = delivery.value() else {
         panic!("Finished remains an ordinary data event");
     };
     assert!(reason.is_empty());
@@ -253,6 +261,8 @@ fn transport_worker(
     let receiver = spawn_worker(
         "downstream-terminal-fixture",
         PROFILE_COMPLETION_CAPACITY,
+        0, // Terminal-only fixture, no scientific profile callback.
+        &budget,
         lease,
         operation,
     )

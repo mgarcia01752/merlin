@@ -59,24 +59,11 @@ pub(crate) fn admit_model<T>(
 /// # Arguments
 /// * `total`, `children` - Audited concrete quantities, including repeated shared payloads.
 /// # Returns
-/// Unit after checked addition of all three dimensions.
+/// Unit after checked addition of every application resource dimension.
 /// # Errors
 /// Checked payload/population overflow; this is passive metadata, not admission.
 pub(crate) fn append(total: &mut Resources, children: Resources) -> Result<(), String> {
-    let value = Resources {
-        payload_bytes: total
-            .payload_bytes
-            .checked_add(children.payload_bytes)
-            .ok_or_else(overflow)?,
-        ordered_entries: total
-            .ordered_entries
-            .checked_add(children.ordered_entries)
-            .ok_or_else(overflow)?,
-        shared_roots: total
-            .shared_roots
-            .checked_add(children.shared_roots)
-            .ok_or_else(overflow)?,
-    };
+    let value = total.checked_add(children).map_err(|_| overflow())?;
     *total = value;
     Ok(())
 }
@@ -123,6 +110,7 @@ pub(crate) fn public_children(
             .ok_or_else(overflow)?,
         ordered_entries: metadata.ordered_entries,
         shared_roots: metadata.shared_roots,
+        ..Default::default()
     })
 }
 

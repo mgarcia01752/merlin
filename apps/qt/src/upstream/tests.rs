@@ -12,7 +12,6 @@ use crate::shell::{
 use merlin::upstream::{ErrorCode, RunStatus};
 use std::{
     panic::{catch_unwind, AssertUnwindSafe},
-    sync::mpsc,
     thread,
     time::{Duration, Instant},
 };
@@ -24,6 +23,8 @@ const TEST_MAXIMUM_RESOURCES: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 // This fixture disables receiver-estimate history; tap observations stay genuine.
 const DISABLED_ESTIMATE_FRAMES: usize = 0;
@@ -36,6 +37,16 @@ const ASYNC_TEST_DEADLINE: Duration = Duration::from_secs(10);
 const CALLBACK_CAPACITY: usize = 2;
 
 type Identities = ShellSessions<(), (), (), ()>;
+
+impl UpstreamController {
+    /// Reads the assigned session guard for fixture disposal checks.
+    ///
+    /// # Returns
+    /// Existing quantities, excluding independently guarded report/worker owners.
+    pub(crate) fn fixture_session_resources(&self) -> RetainedResources {
+        self.session.fixture_reserved_resources()
+    }
+}
 
 fn make_identities(budget: &RetentionBudget, gate: &DispatchGate) -> Identities {
     // Unit payloads issue real shell identities; they are not scientific fixtures.
@@ -119,6 +130,12 @@ fn complete(controller: &mut UpstreamController, identities: &mut Identities) ->
     assert_eq!(terminal.token(), token);
     assert!(matches!(terminal.status(), WorkerStatus::Completed));
     terminal.into_lease().acknowledge_termination().unwrap();
+    let expected = combine([
+        controller.session.fixture_reserved_resources(),
+        controller.report().unwrap().1.fixture_reserved_resources(),
+    ]);
+    // Terminal acknowledgement is earlier than the actual closure's last drop.
+    wait_for(|| controller.budget.usage() == expected);
     token
 }
 
@@ -237,6 +254,7 @@ fn paused_cancel_retains_actual_partial_report_and_old_report_charge() {
     assert_eq!(partial.value().ber, None);
     assert!(!partial.value().not_started_grants.is_empty());
     assert_eq!(old_report.value().status, RunStatus::Completed);
+    wait_for(|| budget.usage() == combine([session_charge, report_charge, report_charge]));
     assert_eq!(
         budget.usage(),
         combine([session_charge, report_charge, report_charge])
@@ -368,7 +386,7 @@ fn changed_generation_and_replaced_session_reject_returning_unstarted_lease() {
 
 #[test]
 fn stale_transport_message_cannot_adopt_actual_prior_report() {
-    let (_budget, gate, mut identities, mut controller) = fixture();
+    let (budget, gate, mut identities, mut controller) = fixture();
     let old_token = complete(&mut controller, &mut identities);
     let (_, actual_report) = controller.report().unwrap();
     let backend = RunControl::new();
@@ -378,16 +396,9 @@ fn stale_transport_message_cannot_adopt_actual_prior_report() {
 
     // Inject only a stale application envelope containing a real prior report.
     // The genuine current worker/receiver are retained and restored below.
-    let (sender, receiver) = mpsc::channel();
+    let receiver = WorkerReceiver::fixture_message(&budget, old_token, actual_report);
     let real_receiver =
         std::mem::replace(&mut controller.active.as_mut().unwrap().events, receiver);
-    sender
-        .send(WorkerEvent::Message {
-            token: old_token,
-            value: actual_report,
-        })
-        .ok()
-        .unwrap();
     assert!(matches!(
         controller.poll(),
         Err(ControllerError::StaleToken)
@@ -413,17 +424,25 @@ fn disconnected_queue_and_controller_drop_release_only_after_actual_termination(
 
     // Rendezvous report delivery keeps the real worker terminal pending.
     wait_for(|| observer.progress().status == RunStatus::Completed);
+    let scientific = combine([
+        configuration_charge,
+        target_charge,
+        wrapped_resources::<UpstreamControl, RunControl>(observer.retained_footprint().unwrap())
+            .unwrap(),
+    ]);
+    let retained = budget.usage();
+    // A rendezvous blocks the actual report publication: both real recovery and
+    // channel roots remain alongside the original scientific owners. Exact
+    // closure/frame layouts are covered by the concrete transport tests.
+    const BLOCKED_WORKER_ROOTS: usize = 2;
+    assert!(retained.payload_bytes > scientific.payload_bytes);
+    assert_eq!(retained.ordered_entries, scientific.ordered_entries);
     assert_eq!(
-        budget.usage(),
-        combine([
-            configuration_charge,
-            target_charge,
-            wrapped_resources::<UpstreamControl, RunControl>(
-                observer.retained_footprint().unwrap()
-            )
-            .unwrap()
-        ])
+        retained.shared_roots,
+        scientific.shared_roots + BLOCKED_WORKER_ROOTS
     );
+    assert_eq!(retained.channel_count, 1); // The one actual rendezvous channel.
+    assert_eq!(retained.slot_count, 0); // Rendezvous has no configured slots.
     assert!(gate.active().is_some());
     drop(controller);
     wait_for(|| gate.active().is_none());
@@ -465,14 +484,7 @@ fn combine<const N: usize>(values: [RetainedResources; N]) -> RetainedResources 
     values
         .into_iter()
         .fold(RetainedResources::default(), |sum, value| {
-            RetainedResources {
-                payload_bytes: sum.payload_bytes.checked_add(value.payload_bytes).unwrap(),
-                ordered_entries: sum
-                    .ordered_entries
-                    .checked_add(value.ordered_entries)
-                    .unwrap(),
-                shared_roots: sum.shared_roots.checked_add(value.shared_roots).unwrap(),
-            }
+            sum.checked_add(value).unwrap()
         })
 }
 
@@ -484,6 +496,8 @@ fn difference(total: RetainedResources, base: RetainedResources) -> RetainedReso
             .checked_sub(base.ordered_entries)
             .unwrap(),
         shared_roots: total.shared_roots.checked_sub(base.shared_roots).unwrap(),
+        channel_count: total.channel_count.checked_sub(base.channel_count).unwrap(),
+        slot_count: total.slot_count.checked_sub(base.slot_count).unwrap(),
     }
 }
 

@@ -34,6 +34,8 @@ const FIXTURE_LIMIT: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 #[derive(Clone, Copy)]
@@ -93,6 +95,7 @@ fn plus(left: RetainedResources, right: RetainedResources) -> RetainedResources 
             .checked_add(right.ordered_entries)
             .unwrap(),
         shared_roots: left.shared_roots.checked_add(right.shared_roots).unwrap(),
+        ..Default::default()
     }
 }
 
@@ -120,6 +123,7 @@ fn generated_batch_counts_fixed_root_once_and_actual_slot_and_original_capacity_
             + origin.payload_bytes,
         ordered_entries: origin.ordered_entries,
         shared_roots: origin.shared_roots + CAPTURE_SHARED_OWNER_EDGES,
+        ..Default::default()
     };
     let original = capture.original.as_ref().clone();
     let hash = capture.hash.clone();

@@ -22,6 +22,7 @@ fn combine(a: RetainedResources, b: RetainedResources) -> Result<RetainedResourc
         payload_bytes: add(a.payload_bytes, b.payload_bytes)?,
         ordered_entries: add(a.ordered_entries, b.ordered_entries)?,
         shared_roots: 0,
+        ..Default::default()
     })
 }
 fn object(keys: &[&str]) -> Result<RetainedResources, PlanError> {
@@ -33,6 +34,7 @@ fn object(keys: &[&str]) -> Result<RetainedResources, PlanError> {
         payload_bytes: bytes,
         ordered_entries: keys.len(),
         shared_roots: 0,
+        ..Default::default()
     })
 }
 fn array(len: usize) -> Result<RetainedResources, PlanError> {
@@ -40,6 +42,7 @@ fn array(len: usize) -> Result<RetainedResources, PlanError> {
         payload_bytes: product(len, size_of::<Value>())?,
         ordered_entries: 0,
         shared_roots: 0,
+        ..Default::default()
     })
 }
 

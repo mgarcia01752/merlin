@@ -135,6 +135,7 @@ impl Plan {
             payload_bytes: bytes,
             ordered_entries: tx.ordered_entries,
             shared_roots: 0,
+            ..Default::default()
         })
     }
 }

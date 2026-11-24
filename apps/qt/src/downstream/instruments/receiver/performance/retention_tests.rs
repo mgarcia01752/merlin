@@ -20,6 +20,8 @@ const FIXTURE_LIMIT: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX / 2,
     ordered_entries: usize::MAX / 2,
     shared_roots: usize::MAX / 2,
+    channel_count: usize::MAX / 2,
+    slot_count: usize::MAX / 2,
 };
 
 fn request() -> FullLoopRequest {
@@ -76,6 +78,7 @@ fn plus(a: RetainedResources, b: RetainedResources) -> RetainedResources {
         payload_bytes: a.payload_bytes.checked_add(b.payload_bytes).unwrap(),
         ordered_entries: a.ordered_entries.checked_add(b.ordered_entries).unwrap(),
         shared_roots: a.shared_roots.checked_add(b.shared_roots).unwrap(),
+        ..Default::default()
     }
 }
 fn normalized(value: &Value) {
@@ -138,6 +141,7 @@ fn final_capacity_and_nested_map_population_replace_the_wrapper_once_with_checke
             + "nested text".len(),
         ordered_entries: 1,
         shared_roots: 0,
+        ..Default::default()
     };
     assert!(before.payload_bytes > expected.payload_bytes);
     let budget = RetentionBudget::with_limits(expected);

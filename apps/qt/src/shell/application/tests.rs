@@ -13,6 +13,8 @@ const TEST_MAXIMUM: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 // Independent application callers racing one captured Open target.
 const RACING_OPEN_COUNT: usize = 2;

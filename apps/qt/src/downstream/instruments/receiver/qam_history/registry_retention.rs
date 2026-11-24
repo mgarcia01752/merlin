@@ -46,6 +46,7 @@ pub(super) fn resources(entries: &Vec<Entry>) -> Result<RetainedResources, Reten
         payload_bytes,
         ordered_entries: 0,
         shared_roots: 0,
+        ..Default::default()
     })
 }
 

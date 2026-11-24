@@ -45,14 +45,7 @@ fn request() -> FullLoopRequest {
 }
 
 fn sum(left: RetainedResources, right: RetainedResources) -> RetainedResources {
-    RetainedResources {
-        payload_bytes: left.payload_bytes.checked_add(right.payload_bytes).unwrap(),
-        ordered_entries: left
-            .ordered_entries
-            .checked_add(right.ordered_entries)
-            .unwrap(),
-        shared_roots: left.shared_roots.checked_add(right.shared_roots).unwrap(),
-    }
+    left.checked_add(right).unwrap()
 }
 
 fn one_less(value: RetainedResources, dimension: Dimension) -> RetainedResources {
@@ -77,6 +70,8 @@ fn limited(value: RetainedResources, dimension: Dimension) -> RetainedResources 
         payload_bytes: usize::MAX,
         ordered_entries: usize::MAX,
         shared_roots: usize::MAX,
+        channel_count: usize::MAX,
+        slot_count: usize::MAX,
     };
     match dimension {
         Dimension::Payload => RetainedResources {
@@ -116,6 +111,72 @@ fn working_allowance(request: &FullLoopRequest) -> RetainedResources {
     actual
 }
 
+// Measure the real preflight without a lease, clock, scientific execution or
+// guessed closure layout. Source owners and the adapter remain independently charged.
+fn transport_allowance(
+    request: &request_retention::SharedRequest,
+    plan: Option<&request_retention::SharedPlan>,
+    budget: &RetentionBudget,
+) -> RetainedResources {
+    let control = worker::DownstreamControl::new(budget).unwrap();
+    let before = budget.usage();
+    let prepared = worker::Worker::prepare(
+        Arc::clone(request),
+        plan.map(Arc::clone),
+        control.clone(),
+        budget.clone(),
+    )
+    .unwrap();
+    let after = budget.usage();
+    let actual = RetainedResources {
+        payload_bytes: after
+            .payload_bytes
+            .checked_sub(before.payload_bytes)
+            .unwrap(),
+        ordered_entries: after
+            .ordered_entries
+            .checked_sub(before.ordered_entries)
+            .unwrap(),
+        shared_roots: after.shared_roots.checked_sub(before.shared_roots).unwrap(),
+        channel_count: after
+            .channel_count
+            .checked_sub(before.channel_count)
+            .unwrap(),
+        slot_count: after.slot_count.checked_sub(before.slot_count).unwrap(),
+    };
+    drop(prepared);
+    assert_eq!(budget.usage(), before);
+    actual
+}
+
+fn channel_allowance() -> RetainedResources {
+    let budget = fixture_budget();
+    let (sender, receiver) = crate::shell::bounded_channel::<()>(
+        &budget,
+        crate::downstream::common::constants::PROFILE_COMPLETION_CAPACITY,
+    )
+    .unwrap();
+    let actual = budget.usage();
+    drop(sender);
+    drop(receiver);
+    assert_eq!(budget.usage(), RetainedResources::default());
+    actual
+}
+
+fn receive_finished_and_terminal(
+    worker: &worker::Worker,
+) -> crate::shell::WorkerTerminal<WorkerFailure> {
+    assert!(matches!(
+        worker.receiver.recv_timeout(WATCHDOG).unwrap(),
+        WorkerEvent::Message { value, .. }
+            if matches!(value.value(), worker::WorkerMessage::Finished(_))
+    ));
+    let WorkerEvent::Terminal(terminal) = worker.receiver.recv_timeout(WATCHDOG).unwrap() else {
+        panic!("Actual worker must publish its sole known terminal");
+    };
+    terminal
+}
+
 fn prepared_model(dimension: Dimension) -> (Box<Model>, RetainedResources, RetainedResources) {
     let (inputs, transmission, sections) = super::super::tests::accepted_inputs();
     let options = Options {
@@ -139,6 +200,7 @@ fn prepared_model(dimension: Dimension) -> (Box<Model>, RetainedResources, Retai
     let request = request_retention::admit_request(request, &source).unwrap();
     let plan = request_retention::admit_plan(plan, &source).unwrap();
     let accepted_charge = source.usage();
+    let transport_charge = transport_allowance(&request, Some(&plan), &source);
     let metadata =
         Context::for_application(ApplicationSessions::new(fixture_budget_limits()).unwrap())
             .unwrap()
@@ -169,7 +231,7 @@ fn prepared_model(dimension: Dimension) -> (Box<Model>, RetainedResources, Retai
                         crate::downstream::simulation::run_timing::fixture_resources();
                     sum(
                         sum(adapter, profile),
-                        sum(previous_timing, candidate_timing),
+                        sum(sum(previous_timing, candidate_timing), transport_charge),
                     )
                 }),
             ),
@@ -201,6 +263,8 @@ fn fixture_budget_limits() -> RetainedResources {
         payload_bytes: usize::MAX,
         ordered_entries: usize::MAX,
         shared_roots: usize::MAX,
+        channel_count: usize::MAX,
+        slot_count: usize::MAX,
     }
 }
 
@@ -354,28 +418,42 @@ fn genuine_worker_queue_and_final_result_alias_keep_the_target_after_terminal_di
         application.finish(lease).unwrap();
         panic!("Real worker thread must start: {cause}");
     });
-    let WorkerEvent::Message {
-        token,
-        value: worker::WorkerMessage::Profile(queued),
-    } = worker.receiver.recv_timeout(WATCHDOG).unwrap()
+    let WorkerEvent::Message { token, value } = worker.receiver.recv_timeout(WATCHDOG).unwrap()
     else {
         panic!("Actual worker must deliver its pre-admitted report");
     };
+    let frame = value.fixture_reserved_resources();
+    let delivery_guard;
+    let (message, guard) = value.into_parts();
+    delivery_guard = guard;
+    let worker::WorkerMessage::Profile(queued) = message else {
+        panic!("Original completed profile must be preserved");
+    };
     application.validate_callback(token).unwrap();
     let expected = sum(expected, queued.observations.fixture_resources());
-    assert_eq!(
-        budget.usage(),
+    let terminal = receive_finished_and_terminal(&worker);
+    let retained_queue = sum(
         sum(
             sum(baseline, expected),
             sum(
                 worker::fixture_control_resources().0,
-                crate::downstream::simulation::run_timing::fixture_resources()
-            )
-        )
+                crate::downstream::simulation::run_timing::fixture_resources(),
+            ),
+        ),
+        sum(
+            channel_allowance(),
+            sum(frame, terminal.fixture_reserved_resources()),
+        ),
     );
+    // Receiving data does not prove task return. Drain the real Finished event
+    // and retain the terminal, then wait for only actual endpoint/frame owners.
+    wait_for(|| budget.usage() == retained_queue);
+    assert_eq!(budget.usage(), retained_queue);
     assert_eq!(queued.job.status, ChannelJobStatus::Complete);
     let current = Arc::new(*queued);
     let old = Arc::clone(&current);
+    drop(delivery_guard);
+    drop(terminal);
     drop(worker);
     wait_for(|| application.active().is_none());
     drop(timing);
@@ -387,6 +465,7 @@ fn genuine_worker_queue_and_final_result_alias_keep_the_target_after_terminal_di
         .unwrap()
         .budget()
         .usage();
+    wait_for(|| budget.usage() == sum(metadata, expected));
     assert_eq!(budget.usage(), sum(metadata, expected));
     drop(current);
     assert_eq!(budget.usage(), sum(metadata, expected));
@@ -412,21 +491,20 @@ fn rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension(
         let key = model.generation;
         // The exact first-report budget may retain the original display error.
         // Keep its real charge alongside unchanged scientific/history owners.
-        assert_eq!(
-            context.application.budget().usage(),
+        let settled = sum(
             sum(
-                sum(
-                    sum(baseline, live_charge),
-                    crate::downstream::instruments::receiver::performance::fixture_reserved_resources(
-                        &context
-                    ),
+                sum(baseline, live_charge),
+                crate::downstream::instruments::receiver::performance::fixture_reserved_resources(
+                    &context,
                 ),
-                match &model.error {
-                    WorkerFailure::Detailed(error) => error.fixture_reserved_resources(),
-                    _ => RetainedResources::default(),
-                },
-            )
+            ),
+            match &model.error {
+                WorkerFailure::Detailed(error) => error.fixture_reserved_resources(),
+                _ => RetainedResources::default(),
+            },
         );
+        wait_for(|| context.application.budget().usage() == settled);
+        assert_eq!(context.application.budget().usage(), settled);
         model.start();
         assert!(
             model.worker.is_some(),
@@ -443,18 +521,20 @@ fn rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension(
             serde_json::to_value(old.backend().report()).unwrap(),
             before
         );
-        assert_eq!(
-            context.application.budget().usage(),
-            sum(sum(
+        let settled = sum(
+            sum(
                 sum(baseline, live_charge),
                 crate::downstream::instruments::receiver::performance::fixture_reserved_resources(
-                    &context
-                )
-            ), match &model.error {
+                    &context,
+                ),
+            ),
+            match &model.error {
                 WorkerFailure::Detailed(error) => error.fixture_reserved_resources(),
                 _ => RetainedResources::default(),
-            })
+            },
         );
+        wait_for(|| context.application.budget().usage() == settled);
+        assert_eq!(context.application.budget().usage(), settled);
         assert!(context.application.active().is_none());
         publish(&context, None);
         crate::downstream::instruments::receiver::performance::clear(&context);

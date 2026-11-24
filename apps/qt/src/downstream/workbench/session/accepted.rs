@@ -285,6 +285,7 @@ pub(super) fn resources(inputs: &Inputs, sections: &Sections) -> Result<Retained
         payload_bytes: size_of::<Retained<State>>(),
         ordered_entries: 0,
         shared_roots: ACCEPTED_SHARED_ROOTS,
+        ..Default::default()
     };
     let Inputs {
         power,
@@ -400,6 +401,7 @@ pub(super) fn resources(inputs: &Inputs, sections: &Sections) -> Result<Retained
             payload_bytes: map_storage,
             ordered_entries: sections.len(),
             shared_roots: 0,
+            ..Default::default()
         },
     )?;
     for (key, value) in sections {

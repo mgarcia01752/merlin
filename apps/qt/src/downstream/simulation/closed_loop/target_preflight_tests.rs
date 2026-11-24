@@ -16,6 +16,8 @@ const FIXTURE_LIMIT: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 // The supported short observation and active execution limit are separate fixtures.
 const OBSERVATION_MS: u64 = 1;

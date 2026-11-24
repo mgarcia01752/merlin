@@ -141,13 +141,15 @@ fn stale_identity_foreign_identity_and_foreign_budget_preserve_target_inputs_and
 #[test]
 fn real_background_loader_rejection_preserves_current_inputs_original_paths_and_releases_candidate()
 {
-    // Accounting-only pressure fills the actual remaining byte policy; finite
-    // scientific/capture preparation remains the unchanged worker implementation.
+    // Accounting-only pressure fills the actual remaining byte policy after
+    // worker admission; the actual project candidate still reaches its old gate.
     let context = Context::for_application(
         crate::shell::ApplicationSessions::new(RetainedResources {
             payload_bytes: usize::MAX,
             ordered_entries: usize::MAX,
             shared_roots: usize::MAX,
+            channel_count: usize::MAX,
+            slot_count: usize::MAX,
         })
         .unwrap(),
     )
@@ -171,19 +173,35 @@ fn real_background_loader_rejection_preserves_current_inputs_original_paths_and_
     .unwrap();
     let budget = context.application.budget();
     let before = budget.usage();
-    let guard = budget
-        .reserve_resources(RetainedResources {
-            payload_bytes: usize::MAX - before.payload_bytes,
-            ..Default::default()
-        })
-        .unwrap();
     let mut loader = Loader::default();
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .join("../../examples/workbench/single/workbench.merlin.json");
-    loader.start_requested(
-        &context,
-        crate::platform::startup::WorkbenchSource::File(path),
-    );
+    let application = context.application.clone();
+    let target = application.snapshot(Direction::Downstream).key;
+    let expected = session::snapshot(&context);
+    let worker_budget = budget.clone();
+    let pressure = Arc::new(std::sync::Mutex::new(None));
+    let worker_pressure = Arc::clone(&pressure);
+    let started = loader.start_with(budget, move |_, cancelled| {
+        let mut reader = std::fs::File::open(&path).map_err(|error| error.to_string())?;
+        let bytes = read_bounded(&mut reader, cancelled, MAX_PROJECT_BYTES)?.unwrap();
+        let project = serde_json::from_slice(&bytes).map_err(|error| error.to_string())?;
+        drop(bytes);
+
+        // Pressure begins after actual transport admission, preserving this
+        // test's original background candidate-rejection boundary.
+        let used = worker_budget.usage();
+        *worker_pressure.lock().unwrap() = Some(
+            worker_budget
+                .reserve_resources(RetainedResources {
+                    payload_bytes: usize::MAX - used.payload_bytes,
+                    ..Default::default()
+                })
+                .unwrap(),
+        );
+        PreparedProject::prepare(project, Some(path), &application, target, expected).map(Some)
+    });
+    assert_eq!(started["loading"], true);
     let (status, prepared) = super::tests::drain(&mut loader);
     assert!(status["error"]
         .as_str()
@@ -195,7 +213,11 @@ fn real_background_loader_rejection_preserves_current_inputs_original_paths_and_
         &context.application,
         &original
     ));
-    drop(guard);
+    assert!(
+        pressure.lock().unwrap().is_some(),
+        "The real worker reached candidate pressure"
+    );
+    drop(pressure.lock().unwrap().take());
     assert_eq!(budget.usage(), before);
 }
 

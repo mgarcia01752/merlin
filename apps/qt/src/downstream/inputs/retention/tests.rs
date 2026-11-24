@@ -52,6 +52,8 @@ fn editor_root_underflow_and_every_dimension_reject_without_counter_changes() {
         payload_bytes: usize::MAX,
         ordered_entries: usize::MAX,
         shared_roots: usize::MAX,
+        channel_count: usize::MAX,
+        slot_count: usize::MAX,
     });
     assert!(admit_model(Vec::<u8>::new(), Resources::default(), &budget).is_err());
     assert_eq!(budget.usage(), Resources::default());
@@ -60,6 +62,7 @@ fn editor_root_underflow_and_every_dimension_reject_without_counter_changes() {
         payload_bytes: size_of::<Vec<u8>>(),
         ordered_entries: 1,
         shared_roots: 1,
+        ..Default::default()
     };
     for pressure in [
         Resources {
@@ -107,6 +110,7 @@ fn actual_json_capacity_map_population_and_all_dimension_arithmetic_are_passive(
             + label.capacity(),
         ordered_entries: 1,
         shared_roots: 0,
+        ..Default::default()
     };
     assert_eq!(json_children(&value).unwrap(), expected);
     assert_eq!(json_children(&value).unwrap(), expected);

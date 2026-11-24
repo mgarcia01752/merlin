@@ -13,7 +13,7 @@ use crate::downstream::common::constants::{
     MAX_DESIGNER_EXPORT_SELECTION_BYTES, MAX_DESIGNER_RECIPE_DOCUMENT_BYTES,
 };
 use crate::downstream::inputs::measurement_input::designer::Request;
-use crate::shell::{Retained, RetentionBudget};
+use crate::shell::{DeliveryReceiver, Retained, RetentionBudget};
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 use merlin::downstream::inputs::rxmer_export::{
@@ -67,10 +67,11 @@ pub(super) enum Outcome {
 }
 pub(super) enum State {
     Working {
-        receiver: mpsc::Receiver<Result<Outcome, WorkerFailure>>,
-        cancel: Arc<AtomicBool>,
-        completed: Arc<AtomicUsize>,
+        receiver: DeliveryReceiver<Result<Outcome, WorkerFailure>>,
+        cancel: Arc<Retained<AtomicBool>>,
+        completed: Arc<Retained<AtomicUsize>>,
         previous: Option<SharedPrepared>,
+        _fixed_guard: Retained<()>,
     },
     Ready(SharedPrepared),
 }
@@ -136,7 +137,7 @@ impl bridge::MeasurementInputs {
     /// Unit; accepted measurements, source files and current recipe stay intact.
     pub fn designer_export_cancel(mut self: Pin<&mut Self>) {
         match self.rust().designer_export.as_ref() {
-            Some(State::Working { cancel, .. }) => cancel.store(true, Ordering::Relaxed),
+            Some(State::Working { cancel, .. }) => cancel.value().store(true, Ordering::Relaxed),
             _ => {
                 self.as_mut().rust_mut().designer_export.take();
             }
@@ -151,3 +152,6 @@ mod admission_tests;
 #[cfg(test)]
 #[path = "rxmer_export/saved_tests.rs"]
 mod saved_tests;
+
+#[cfg(test)]
+mod transport_tests;

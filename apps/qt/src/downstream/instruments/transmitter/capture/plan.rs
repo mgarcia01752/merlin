@@ -129,6 +129,7 @@ impl Plan {
             payload_bytes: bytes,
             ordered_entries: self.snapshot_entries,
             shared_roots: 0,
+            ..Default::default()
         })
     }
 }

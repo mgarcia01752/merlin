@@ -16,6 +16,8 @@ const TEST_MAXIMUM: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 fn populated() -> WorkbenchFileRust {
@@ -121,6 +123,8 @@ fn successful_new_transfers_all_blank_editors_under_full_pressure_and_preserves_
             payload_bytes: usize::MAX - usage.payload_bytes,
             ordered_entries: usize::MAX - usage.ordered_entries,
             shared_roots: usize::MAX - usage.shared_roots,
+            channel_count: usize::MAX - usage.channel_count,
+            slot_count: usize::MAX - usage.slot_count,
         })
         .unwrap();
     let source = project_load::take(&owner.context, |models| {

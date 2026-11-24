@@ -19,6 +19,8 @@ const TEST_LIMIT: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 // Existing one-based single-capture JSON export selection.
 const SELECTION: &str = r#"{"first":1,"last":1,"clamp":true,"collection":false}"#;
@@ -181,6 +183,7 @@ fn detached_export_preparation_retains_parsed_input_after_gui_cancel_and_disposa
         payload_bytes: input_charge.payload_bytes + session_charge.payload_bytes,
         ordered_entries: input_charge.ordered_entries + session_charge.ordered_entries,
         shared_roots: input_charge.shared_roots + session_charge.shared_roots,
+        ..Default::default()
     };
     let held = RefCell::new(None);
     lifecycle::prepare(&mut owner, &document, SELECTION, |task| {
@@ -189,24 +192,37 @@ fn detached_export_preparation_retains_parsed_input_after_gui_cancel_and_disposa
     })
     .unwrap();
     let total = budget.usage();
+    let worker = RetainedResources {
+        payload_bytes: total.payload_bytes - before.payload_bytes,
+        ordered_entries: total.ordered_entries - before.ordered_entries,
+        shared_roots: total.shared_roots - before.shared_roots,
+        channel_count: total.channel_count - before.channel_count,
+        slot_count: total.slot_count - before.slot_count,
+    };
+
+    // The independently measured Session/Input are unchanged. Concrete outer
+    // task/frame/State layouts add bytes, two control roots and one channel root.
+    assert!(worker.payload_bytes > expected.payload_bytes);
+    assert_eq!(worker.ordered_entries, expected.ordered_entries);
+    assert_eq!(worker.shared_roots, expected.shared_roots + 3);
+    assert_eq!(worker.channel_count, 1);
     assert_eq!(
-        total,
-        RetainedResources {
-            payload_bytes: before.payload_bytes + expected.payload_bytes,
-            ordered_entries: before.ordered_entries + expected.ordered_entries,
-            shared_roots: before.shared_roots + expected.shared_roots,
-        }
+        worker.slot_count,
+        crate::downstream::common::constants::EXPORT_RESULT_QUEUE_CAPACITY
     );
     let Some(State::Working { cancel, .. }) = &owner.designer_export else {
         panic!("Actual pending export worker");
     };
-    cancel.store(true, Ordering::Relaxed);
+    cancel.value().store(true, Ordering::Relaxed);
     assert_eq!(budget.usage(), total);
     drop(owner);
     assert_eq!(
         budget.usage(),
         crate::shell::ApplicationSessions::fixture_counter_resources()
-            .checked_add(expected)
+            .checked_add(RetainedResources {
+                payload_bytes: worker.payload_bytes - std::mem::size_of::<State>(),
+                ..worker
+            })
             .unwrap()
     );
     // Execute the genuine cancelled operation on a native thread after its GUI
@@ -365,7 +381,7 @@ fn queued_success_cancel_disconnect_and_final_aliases_keep_actual_product_guards
     let Some(State::Working { cancel, .. }) = &owner.designer_export else {
         panic!("Queued actual product");
     };
-    cancel.store(true, Ordering::Relaxed);
+    cancel.value().store(true, Ordering::Relaxed);
     assert_eq!(
         lifecycle::poll(&mut owner.designer_export)["error"],
         "PNM export cancelled."

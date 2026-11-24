@@ -24,7 +24,7 @@ pub(in crate::bridge) enum Status {
 }
 
 pub(in crate::bridge) enum Saved {
-    Detailed(Retained<Value>),
+    Detailed(Box<Retained<Value>>),
     Rejected(Status),
 }
 
@@ -53,7 +53,7 @@ impl Saved {
             Ok(total)
         });
         match resources.and_then(|resources| count::admit_model(value, resources, budget)) {
-            Ok(value) => Self::Detailed(value),
+            Ok(value) => Self::Detailed(Box::new(value)),
             Err(_) => Self::Rejected(status),
         }
     }

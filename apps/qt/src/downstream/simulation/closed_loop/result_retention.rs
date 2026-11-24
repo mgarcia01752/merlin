@@ -118,6 +118,7 @@ fn resources(scientific: RetainedFootprint) -> Result<RetainedResources, Retenti
             .shared_roots
             .checked_add(FINAL_RESULT_SHARED_ROOTS)
             .ok_or(RetentionError::ArithmeticOverflow)?,
+        ..Default::default()
     })
 }
 
@@ -131,6 +132,8 @@ pub(super) fn fixture_budget() -> RetentionBudget {
         payload_bytes: usize::MAX,
         ordered_entries: usize::MAX,
         shared_roots: usize::MAX,
+        channel_count: usize::MAX,
+        slot_count: usize::MAX,
     })
 }
 

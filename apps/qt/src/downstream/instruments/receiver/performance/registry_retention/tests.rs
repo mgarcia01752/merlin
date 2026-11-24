@@ -24,6 +24,8 @@ const FIXTURE_LIMIT: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 #[test]
@@ -40,6 +42,7 @@ fn spare_slots_exclude_live_layout_and_children_while_the_entry_guard_survives_m
         payload_bytes: (entries.capacity() - entries.len()) * size_of::<Entry>(),
         ordered_entries: 0,
         shared_roots: 0,
+        ..Default::default()
     };
     assert_eq!(resources(&entries).unwrap(), expected);
     assert_eq!(resources(&entries).unwrap(), expected);

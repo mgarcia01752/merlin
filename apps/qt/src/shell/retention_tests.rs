@@ -21,6 +21,7 @@ fn quantities(
         payload_bytes,
         ordered_entries,
         shared_roots,
+        ..Default::default()
     }
 }
 

@@ -50,6 +50,7 @@ pub(super) fn resources(entries: &Vec<Entry>) -> Result<RetainedResources, Reten
             .ok_or(RetentionError::ArithmeticOverflow)?,
         ordered_entries: 0,
         shared_roots: 0,
+        ..Default::default()
     })
 }
 

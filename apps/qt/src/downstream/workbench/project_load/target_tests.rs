@@ -6,6 +6,7 @@
 use super::*;
 use crate::downstream::workbench::session;
 use crate::shell::{ApplicationSessions, Direction, RetainedResources};
+use std::sync::mpsc;
 use std::time::Duration;
 
 const PROJECT: &[u8] =
@@ -18,6 +19,8 @@ const TEST_MAXIMUM: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 const TEST_TRANSFER_CAPACITY: usize = 1;
 
@@ -101,6 +104,7 @@ fn prepared_receiver_and_preview_attach_under_full_counter_pressure_without_anot
             payload_bytes: usize::MAX - usage.payload_bytes,
             ordered_entries: usize::MAX - usage.ordered_entries,
             shared_roots: usize::MAX - usage.shared_roots,
+            ..Default::default()
         })
         .unwrap();
     let before = budget.usage();
@@ -211,7 +215,7 @@ fn fully_prepared_cancelled_load_releases_all_target_owners_only_when_its_worker
     let (ready, wait_ready) = mpsc::sync_channel(TEST_TRANSFER_CAPACITY);
     let (release, wait_release) = mpsc::sync_channel(TEST_TRANSFER_CAPACITY);
     let mut loader = Loader::default();
-    loader.start_with(move |_, _| {
+    loader.start_with(&budget, move |_, _| {
         let prepared = PreparedProject::prepare(project(), None, &application, key, expected)?;
         ready.send(()).unwrap();
         wait_release.recv_timeout(HOST_WATCHDOG).unwrap();

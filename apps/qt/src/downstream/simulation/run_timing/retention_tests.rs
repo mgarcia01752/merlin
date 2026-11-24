@@ -14,6 +14,7 @@ fn expected() -> RetainedResources {
         payload_bytes: size_of::<RunTiming>() + MAX_PROFILE_TIMINGS * size_of::<(u8, u64)>(),
         ordered_entries: 0,
         shared_roots: 1,
+        ..Default::default()
     }
 }
 

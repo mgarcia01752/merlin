@@ -16,6 +16,8 @@ const LIMITS: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 const WATCHDOG: Duration = Duration::from_secs(30);
 
@@ -40,6 +42,7 @@ fn exact_control_layout_below_limits_and_final_execution_alias_are_charged() {
             + size_of::<Retained<TransmitterPreviewControl>>(),
         ordered_entries: 0,
         shared_roots: 3, // Retained owner, backend Shared and common stop.
+        ..Default::default()
     };
     let budget = RetentionBudget::with_limits(expected);
     let job = retention::admit_control(&budget).unwrap();

@@ -13,6 +13,7 @@ fn baseline() -> RetainedResources {
         payload_bytes: size_of::<Mutex<Accounting>>(),
         ordered_entries: 0,
         shared_roots: 1,
+        ..Default::default()
     }
 }
 

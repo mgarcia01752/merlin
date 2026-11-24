@@ -35,6 +35,7 @@ impl<T> Store<T> {
             payload_bytes: size_of::<Retained<Mutex<T>>>(),
             ordered_entries: 0,
             shared_roots: STORE_SHARED_ROOTS,
+            ..Default::default()
         })?;
         Ok(Self(Arc::new(reservation.retain(Mutex::new(value)))))
     }

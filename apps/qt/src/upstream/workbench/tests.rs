@@ -29,11 +29,24 @@ fn wait_for(mut predicate: impl FnMut() -> bool) {
 }
 
 fn configured(application: ApplicationSessions) -> Box<Model> {
-    let mut model = Model::new(application).unwrap();
+    let host = application.budget().usage();
+    let mut model = Model::new(application.clone()).unwrap();
     model.apply(DOCUMENT).unwrap();
     wait_for(|| model.poll()["preparing"] == false);
     assert!(model.current(), "{}", model.state());
     assert_eq!(model.state()["has_result"], false);
+    let accepted = host
+        .checked_add(model._fixed_guard.fixture_reserved_resources())
+        .unwrap()
+        .checked_add(
+            model
+                .controller
+                .as_ref()
+                .unwrap()
+                .fixture_session_resources(),
+        )
+        .unwrap();
+    wait_for(|| application.budget().usage() == accepted);
     model
 }
 
@@ -179,6 +192,7 @@ fn exhausted_input_admission_rejects_before_copy_and_preserves_the_accepted_cont
         payload_bytes: TEST_PAYLOAD_LIMIT,
         ordered_entries: TEST_ORDERED_ENTRY_LIMIT,
         shared_roots: TEST_SHARED_ROOT_LIMIT,
+        ..FAILURE_TEST_LIMITS
     })
     .unwrap();
     let mut model = configured(application.clone());
@@ -205,14 +219,28 @@ const FAILURE_TEST_LIMITS: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 #[test]
 fn stale_configuration_error_keeps_its_charge_until_discard_without_replacing_old_report() {
     let application = ApplicationSessions::new(FAILURE_TEST_LIMITS).unwrap();
     let mut model = configured(application.clone());
+    let idle = application.budget().usage();
     model.start().unwrap();
     wait_for(|| model.poll()["busy"] == false);
+    let completed = idle
+        .checked_add(
+            model
+                .report
+                .as_ref()
+                .unwrap()
+                .1
+                .fixture_reserved_resources(),
+        )
+        .unwrap();
+    wait_for(|| application.budget().usage() == completed);
     let (token, report) = model.report.as_ref().unwrap();
     let token = *token;
     let report = Arc::clone(report);
@@ -226,6 +254,7 @@ fn stale_configuration_error_keeps_its_charge_until_discard_without_replacing_ol
     });
     model.pending = None;
     let Prepared::Configuration {
+        delivery,
         expected,
         candidate: Err(error),
     } = prepared.unwrap()
@@ -237,7 +266,10 @@ fn stale_configuration_error_keeps_its_charge_until_discard_without_replacing_ol
     };
     let charge = retained.fixture_reserved_resources();
     let queued = RetainedResources {
-        payload_bytes: baseline.payload_bytes + charge.payload_bytes,
+        payload_bytes: baseline.payload_bytes
+            + charge.payload_bytes
+            + std::mem::size_of::<Retained<Result<crate::upstream::PreparedSession, WorkerFailure>>>(
+            ),
         ..baseline
     };
 
@@ -247,6 +279,7 @@ fn stale_configuration_error_keeps_its_charge_until_discard_without_replacing_ol
     let result = model.adopt_prepared(Prepared::Configuration {
         expected,
         candidate: Err(error),
+        delivery,
     });
     assert!(result
         .unwrap_err()
@@ -262,8 +295,20 @@ fn stale_configuration_error_keeps_its_charge_until_discard_without_replacing_ol
 fn target_preparation_fallback_restores_controller_and_same_completed_report() {
     let application = ApplicationSessions::new(FAILURE_TEST_LIMITS).unwrap();
     let mut model = configured(application.clone());
+    let idle = application.budget().usage();
     model.start().unwrap();
     wait_for(|| model.poll()["busy"] == false);
+    let completed = idle
+        .checked_add(
+            model
+                .report
+                .as_ref()
+                .unwrap()
+                .1
+                .fixture_reserved_resources(),
+        )
+        .unwrap();
+    wait_for(|| application.budget().usage() == completed);
     let (token, report) = model.report.as_ref().unwrap();
     let token = *token;
     let report = Arc::clone(report);
@@ -271,16 +316,36 @@ fn target_preparation_fallback_restores_controller_and_same_completed_report() {
     let budget = application.budget();
     let before = budget.usage();
 
-    // Actual target preflight runs before shared admission. Synthetic byte pressure
-    // rejects that reservation and then the detailed error, selecting borrowed text.
-    let slot_bytes = std::mem::size_of::<Retained<std::sync::Mutex<Option<UpstreamController>>>>();
-    let pressure = budget
-        .reserve_resources(RetainedResources {
-            payload_bytes: FAILURE_TEST_LIMITS.payload_bytes - before.payload_bytes - slot_bytes,
-            ..Default::default()
-        })
-        .unwrap();
-    model.start().unwrap();
+    // Actual transport is admitted before filling byte capacity. The real
+    // target preflight and detailed error admission must both reject afterward.
+    let mut pressure = None;
+    let controller = model.controller.take().unwrap();
+    let pending = Pending::run_with(controller, budget.clone(), |task| {
+        pressure = Some(
+            budget
+                .reserve_resources(RetainedResources {
+                    payload_bytes: FAILURE_TEST_LIMITS.payload_bytes - budget.usage().payload_bytes,
+                    ..Default::default()
+                })
+                .unwrap()
+                .retain(()),
+        );
+        std::thread::spawn(move || crate::shell::run_task(task));
+        Ok(())
+    })
+    .unwrap_or_else(|(_, error)| panic!("Actual preparation must dispatch: {error}"));
+    assert!(
+        pressure.is_some(),
+        "Original report target gate must execute"
+    );
+    model.pending = Some(pending);
+    let released_worker_bytes = FAILURE_TEST_LIMITS.payload_bytes
+        - before.payload_bytes
+        - pressure
+            .as_ref()
+            .unwrap()
+            .fixture_reserved_resources()
+            .payload_bytes;
     let Some(Pending::Run { owner, .. }) = model.pending.as_ref() else {
         panic!("The original report-target boundary must dispatch");
     };
@@ -297,11 +362,12 @@ fn target_preparation_fallback_restores_controller_and_same_completed_report() {
     assert!(application.active().is_none());
     wait_for(|| {
         slot.upgrade().is_none()
-            && budget.usage().payload_bytes == FAILURE_TEST_LIMITS.payload_bytes - slot_bytes
+            && budget.usage().payload_bytes
+                == FAILURE_TEST_LIMITS.payload_bytes - released_worker_bytes
     });
     assert_eq!(
         budget.usage().payload_bytes,
-        FAILURE_TEST_LIMITS.payload_bytes - slot_bytes
+        FAILURE_TEST_LIMITS.payload_bytes - released_worker_bytes
     );
     drop(pressure);
     assert_eq!(budget.usage(), before);
@@ -321,9 +387,12 @@ fn queued_preparation_error_moves_to_persistent_status_without_recharging_under_
             payload_bytes: FAILURE_TEST_LIMITS.payload_bytes - used.payload_bytes,
             ordered_entries: FAILURE_TEST_LIMITS.ordered_entries - used.ordered_entries,
             shared_roots: FAILURE_TEST_LIMITS.shared_roots - used.shared_roots,
+            channel_count: FAILURE_TEST_LIMITS.channel_count - used.channel_count,
+            slot_count: FAILURE_TEST_LIMITS.slot_count - used.slot_count,
         })
         .unwrap();
     let prepared = Prepared::Configuration {
+        delivery: None,
         expected: application.snapshot(Direction::Upstream).key,
         candidate: Err(failure),
     };

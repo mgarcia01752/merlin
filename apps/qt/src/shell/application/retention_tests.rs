@@ -18,6 +18,8 @@ const PROBE_LIMITS: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 // Preserve the three original accounting/gate/Sessions roots independently.
@@ -40,17 +42,24 @@ fn resources(payload_bytes: usize, shared_roots: usize) -> RetainedResources {
         payload_bytes,
         ordered_entries: 0,
         shared_roots,
+        ..Default::default()
     }
 }
 
 fn add(left: RetainedResources, right: RetainedResources) -> RetainedResources {
+    left.checked_add(right).unwrap()
+}
+
+fn difference(total: RetainedResources, base: RetainedResources) -> RetainedResources {
     RetainedResources {
-        payload_bytes: left.payload_bytes.checked_add(right.payload_bytes).unwrap(),
-        ordered_entries: left
+        payload_bytes: total.payload_bytes.checked_sub(base.payload_bytes).unwrap(),
+        ordered_entries: total
             .ordered_entries
-            .checked_add(right.ordered_entries)
+            .checked_sub(base.ordered_entries)
             .unwrap(),
-        shared_roots: left.shared_roots.checked_add(right.shared_roots).unwrap(),
+        shared_roots: total.shared_roots.checked_sub(base.shared_roots).unwrap(),
+        channel_count: total.channel_count.checked_sub(base.channel_count).unwrap(),
+        slot_count: total.slot_count.checked_sub(base.slot_count).unwrap(),
     }
 }
 
@@ -77,6 +86,7 @@ fn fixed_parts() -> (RetainedResources, RetainedResources, RetainedResources) {
         payload_bytes: with_registry.payload_bytes - accounting_and_gate.payload_bytes,
         ordered_entries: with_registry.ordered_entries - accounting_and_gate.ordered_entries,
         shared_roots: with_registry.shared_roots - accounting_and_gate.shared_roots,
+        ..Default::default()
     };
     assert!(registry_resources.payload_bytes > 0);
     assert_eq!(registry_resources.ordered_entries, 0);
@@ -293,6 +303,8 @@ fn worker_after_host_drop(
     let receiver = spawn_worker(
         WORKER_LABEL,
         CALLBACK_CAPACITY,
+        0, // No DATA callbacks in this terminal-only lifecycle fixture.
+        &budget,
         lease,
         move |_: WorkerSender<(), &'static str>| {
             entered.send(()).unwrap();
@@ -306,6 +318,12 @@ fn worker_after_host_drop(
     )
     .unwrap_or_else(|_| panic!("Fixture thread must start"));
     observed_entry.recv_timeout(WATCHDOG).unwrap();
+    // The blocked actual closure keeps all its C3 owners through this boundary.
+    let worker_storage = difference(budget.usage(), full);
+    assert!(worker_storage.payload_bytes > 0);
+    assert_eq!(worker_storage.channel_count, 1); // This actual terminal channel.
+    assert_eq!(worker_storage.slot_count, CALLBACK_CAPACITY);
+    let blocked_storage = add(accounting_and_gate, worker_storage);
 
     // Acknowledged lifecycle phase only; no backend pause behavior is simulated.
     host.acknowledge_pause(token, true).unwrap();
@@ -316,13 +334,13 @@ fn worker_after_host_drop(
     }
     drop(host);
     assert!(released_sessions.upgrade().is_none());
-    assert_eq!(budget.usage(), accounting_and_gate);
+    assert_eq!(budget.usage(), blocked_storage);
     assert_eq!(cancellations.load(Ordering::SeqCst), 1);
     assert_eq!(gate.active().unwrap().token, token);
     assert_eq!(gate.active().unwrap().phase, DispatchPhase::Cancelling);
     if disconnect {
         drop(receiver);
-        assert_eq!(budget.usage(), accounting_and_gate);
+        assert_eq!(budget.usage(), blocked_storage);
         finish.send(()).unwrap();
     } else {
         finish.send(()).unwrap();
@@ -336,14 +354,26 @@ fn worker_after_host_drop(
             Outcome::Panicked => assert_eq!(terminal.status(), &WorkerStatus::Panicked),
         }
         assert_eq!(gate.active().unwrap().token, token);
-        assert_eq!(budget.usage(), accounting_and_gate);
+        // Dispose the endpoint and wait for actual task cleanup before checking
+        // the sole extracted terminal's independently retained fixed frame.
+        drop(receiver);
+        let held_terminal = add(accounting_and_gate, terminal.fixture_reserved_resources());
+        wait_for_usage(&budget, held_terminal);
+        assert_eq!(budget.usage(), held_terminal);
         drop(terminal);
     }
+    let observed = observed_destruction.recv_timeout(WATCHDOG).unwrap();
+    // On disconnect the destructor runs inside the still-admitted task; on
+    // receipt it runs inside the separately guarded terminal. Both keep the
+    // exact original accounting/gate owners. Final disposal is checked below.
+    assert!(observed.payload_bytes >= accounting_and_gate.payload_bytes);
     assert_eq!(
-        observed_destruction.recv_timeout(WATCHDOG).unwrap(),
-        accounting_and_gate
+        observed.ordered_entries,
+        accounting_and_gate.ordered_entries
     );
+    assert!(observed.shared_roots >= accounting_and_gate.shared_roots);
     assert!(gate.active().is_none());
+    wait_for_usage(&budget, accounting_and_gate);
     assert_eq!(budget.usage(), accounting_and_gate);
     drop(gate);
 
@@ -397,6 +427,8 @@ fn invalid_static_thread_label_returns_the_original_unstarted_host_lease() {
         let result = spawn_worker(
             INVALID_WORKER_LABEL,
             CALLBACK_CAPACITY,
+            0, // No DATA callbacks in this invalid-name fixture.
+            &budget,
             lease,
             |_: WorkerSender<(), &'static str>| panic!("Invalid label cannot start an operation"),
         );

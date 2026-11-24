@@ -4,7 +4,10 @@
  */
 //! Canonical application identities and dispatch over existing direction owners.
 use super::{
-    constants::{MAX_SESSION_ORDERED_ENTRIES, MAX_SESSION_PAYLOAD_BYTES, MAX_SESSION_SHARED_ROOTS},
+    constants::{
+        MAX_SESSION_CHANNELS, MAX_SESSION_CHANNEL_SLOTS, MAX_SESSION_ORDERED_ENTRIES,
+        MAX_SESSION_PAYLOAD_BYTES, MAX_SESSION_SHARED_ROOTS,
+    },
     input_paths::InputPaths,
     ActiveRun, Direction, DispatchError, DispatchGate, ProjectSnapshot, Retained,
     RetainedResources, RetentionBudget, RetentionError, RunCancellation, RunLease, RunToken,
@@ -83,6 +86,7 @@ impl ApplicationSessions {
                 payload_bytes,
                 ordered_entries: 0,
                 shared_roots: APPLICATION_SESSION_ROOTS,
+                ..RetainedResources::default()
             })
             .map_err(ApplicationError::Retention)?;
         let sessions = ShellSessions::new(budget.clone(), gate.clone(), downstream, upstream)
@@ -109,6 +113,8 @@ impl ApplicationSessions {
             payload_bytes: MAX_SESSION_PAYLOAD_BYTES,
             ordered_entries: MAX_SESSION_ORDERED_ENTRIES,
             shared_roots: MAX_SESSION_SHARED_ROOTS,
+            channel_count: MAX_SESSION_CHANNELS,
+            slot_count: MAX_SESSION_CHANNEL_SLOTS,
         })
     }
 
@@ -173,6 +179,7 @@ impl ApplicationSessions {
             payload_bytes: usize::MAX,
             ordered_entries: usize::MAX,
             shared_roots: usize::MAX,
+            ..RetainedResources::default()
         })
         .expect("Application counter baseline probe must fit")
         .usage()

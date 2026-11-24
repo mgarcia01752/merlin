@@ -28,6 +28,8 @@ const FIXTURE_LIMIT: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 #[test]
@@ -78,6 +80,7 @@ fn all_slots_and_status_capacity_are_passive_without_recharging_snapshot_aliases
             + entries[1].status.capacity(),
         ordered_entries: 0,
         shared_roots: 0,
+        ..Default::default()
     };
     let alias_count = Arc::strong_count(&snapshot);
     assert_eq!(resources(&entries).unwrap(), expected);
@@ -118,6 +121,7 @@ fn all_slots_and_status_capacity_are_passive_without_recharging_snapshot_aliases
             payload_bytes: entries.capacity() * size_of::<Entry>(),
             ordered_entries: 0,
             shared_roots: 0,
+            ..Default::default()
         }
     );
     drop(entries);

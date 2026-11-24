@@ -4773,3 +4773,50 @@ now have [primary evidence](session-fixed-runtime-owners-evidence.json) and
 [validation](validation.md#uiu-session-01-fixed-runtime-owners), distinct from the
 [source-only handoff](agent-handoffs/fixed-runtime-owners.md). C3–C6 remain required;
 no new category or scientific API expands the frozen scope.
+
+
+### UIU-SESSION-01 C3 concrete worker transport
+
+[C3's existing REQ-UIU-07 gap](session-closure.md#c3-concrete-transport-integration)
+uses the existing application counter for explicit channel/slot populations,
+actual closure storage and separately admitted message frames. The
+[source handoff](agent-handoffs/worker-transport.md) is source-only preparation;
+[current primary validation](validation.md#uiu-session-01-concrete-worker-transport)
+now closes C3. Both independent PHY APIs and native
+Python contracts retain their existing three scientific footprint quantities.
+
+| Exact inspected owner | Existing contract / gap | Selected change |
+| --- | --- | --- |
+| `apps/qt/src/shell/{retention,worker}.rs` | Existing atomic budget and genuine terminal/lease lifecycle; concrete dispatch/frame populations were missing. | REUSE checked reservations and std bounded queues; ADAPT finite prepared dispatch. `transport.rs` measures the actual closure and admits each actual frame independently, including received/held messages. |
+| DS `closed_loop.rs` / `closed_loop/worker.rs` | Frozen public requests and one profile event per selected profile plus sweep status. | Preflight before begin/history/status changes; keep original timing epoch, errors and partial results. Charge actual private profile-ID capacity. |
+| Preview and upstream session/preparation | Existing guarded products/controllers and stale/cancel semantics. | Preserve their child guards; charge concrete task/control/recovery storage, return original lease/controller after rejection and forward received delivery guards through adoption. |
+| `bridge/rxmer_designer.rs`, `bridge/rxmer_export{,/lifecycle,/saved}.rs` | Existing immutable admitted inputs and actual batch/Ready/save products. | Box-move separately charged inline roots; admit complete Work/Working complements, actual atomic pointees and one terminal before work. Keep old Ready on rejection. |
+| `downstream/workbench/project_load.rs` | Existing captured target, single-flight cancellation and prepared editors. | Pass the canonical budget explicitly; admit the actual loader Job/closure/controls/terminal. Product/path metadata remains C4. |
+
+`shared/worker_controls.rs` centralizes the existing cancellation, completed-count
+and loader-stage atomic pointees. These are actual application data, distinct
+from excluded private std synchronization. Named desktop policies bound 64 live
+channels and 256 configured slots, independently. Per-frame permits avoid a
+capacity-plus-one estimate; finite DS/US event inventories reserve all delivery
+frames before science, and every held terminal retains its own guard. Requested
+permit-buffer storage is admitted before allocation and retained as an exact
+Box slice. Data drops before guards on normal return, rejection, cancellation,
+unwind and never-started disposal. No generic mutable ownership framework or
+scientific implementation is added.
+
+The lead owns bridge/loader/global wiring, five-dimension fixture compatibility,
+source adoption and runtime checks. The isolated source worktree changes only
+its eighteen handoff paths. Source formatting is distinct from primary runtime
+evidence. Complete affected Qt tests, relevant Clippy, fresh native probes and
+API/traceability checks are required before C3 closes; C4–C6 remain required.
+
+
+C3's [executed receipt](session-worker-transport-evidence.json) closes this existing
+condition. Old fixture sums preserve all five application quantities. Pressure is
+applied after actual transport admission through the existing prepared-worker
+operation or minimal preview/upstream starter seams; original scientific target,
+control and error gates still execute. Exact held-frame/endpoint ledgers and
+actual task cleanup replace assumptions that terminal receipt implies closure
+exit. No numerical expectation, tolerance or scientific behavior changes. C4–C6
+remain required; standalone source checks and normal native probes do not complete
+SESSION or its native Apply/help-pressure interaction.

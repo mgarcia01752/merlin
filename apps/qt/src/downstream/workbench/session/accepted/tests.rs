@@ -14,6 +14,8 @@ const TEST_MAXIMUM: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 // Fixture spare capacity and two distinct valid PRBS identities.
 const SPARE_BYTES: usize = 29;
@@ -45,6 +47,7 @@ fn actual_empty_root_and_json_spare_storage_match_independent_layout() {
             payload_bytes: size_of::<Retained<State>>(),
             ordered_entries: 0,
             shared_roots: 1,
+            ..Default::default()
         }
     );
     let mut key = String::with_capacity(SPARE_BYTES);
@@ -65,6 +68,7 @@ fn actual_empty_root_and_json_spare_storage_match_independent_layout() {
             payload_bytes: expected,
             ordered_entries: 1,
             shared_roots: 1,
+            ..Default::default()
         }
     );
     assert_eq!(sections["source"], json!(["original"]));

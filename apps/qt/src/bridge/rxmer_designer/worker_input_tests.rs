@@ -12,6 +12,8 @@ const TEST_LIMIT: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 // Zero capacity synchronizes fixture checkpoints without buffered messages.
 const RENDEZVOUS_CAPACITY: usize = 0;

@@ -76,3 +76,8 @@ pub(crate) const WORKER_FAILURE_ADMISSION_MESSAGE: &str =
 /// Distinct from rejected worker error details: no simulation/configuration starts.
 pub(crate) const RUNTIME_MODEL_ADMISSION_MESSAGE: &str =
     "Session controls are unavailable within the retained-data limit.";
+
+/// Borrowed feedback when retained worker transport cannot be admitted.
+/// No operation starts and no accepted configuration/result is replaced.
+pub(crate) const WORKER_TRANSPORT_ADMISSION_MESSAGE: &str =
+    "Worker storage exceeds the session retained-data limit.";

@@ -6,6 +6,10 @@
 use super::*;
 use crate::bridge::measurement_input::MeasurementInputsRust;
 use crate::downstream::common::constants::EXPORT_RESULT_QUEUE_CAPACITY;
+use crate::{
+    shared::{presentation::constants::WORKER_TRANSPORT_ADMISSION_MESSAGE, worker_controls},
+    shell::{admit_task, bounded_channel, run_task, RetainedResources},
+};
 use std::io;
 
 type Task = Box<dyn FnOnce() + Send>;
@@ -27,27 +31,42 @@ pub(super) fn launch(task: Task) -> io::Result<()> {
 fn spawn(
     previous: Option<SharedPrepared>,
     budget: RetentionBudget,
-    operation: impl FnOnce(Arc<AtomicBool>, Arc<AtomicUsize>) -> Result<Outcome, String>
+    operation: impl FnOnce(Arc<Retained<AtomicBool>>, Arc<Retained<AtomicUsize>>) -> Result<Outcome, String>
         + Send
         + 'static,
     start: impl FnOnce(Task) -> io::Result<()>,
 ) -> Result<State, String> {
-    let cancel = Arc::new(AtomicBool::new(false));
-    let completed = Arc::new(AtomicUsize::new(0));
-    let (tx, receiver) = mpsc::sync_channel(EXPORT_RESULT_QUEUE_CAPACITY);
+    let cancel =
+        worker_controls::cancellation(&budget).map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+    let completed =
+        worker_controls::completed(&budget).map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+    let (tx, receiver) = bounded_channel(&budget, EXPORT_RESULT_QUEUE_CAPACITY)
+        .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+    let delivery = tx
+        .reserve()
+        .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+    drop(tx);
+    let fixed = budget
+        .reserve_resources(RetainedResources {
+            payload_bytes: std::mem::size_of::<State>(),
+            ..Default::default()
+        })
+        .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
     let worker_cancel = Arc::clone(&cancel);
     let worker_completed = Arc::clone(&completed);
-    start(Box::new(move || {
+    let task = admit_task(&budget.clone(), move || {
         let result = operation(worker_cancel, worker_completed)
             .map_err(|message| WorkerFailure::admit(message.into(), &budget));
-        let _ = tx.send(result);
-    }))
-    .map_err(|error| error.to_string())?;
+        let _ = delivery.send(result);
+    })
+    .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+    start(Box::new(move || run_task(task))).map_err(|error| error.to_string())?;
     Ok(State::Working {
         receiver,
         cancel,
         completed,
         previous,
+        _fixed_guard: fixed.retain(()),
     })
 }
 
@@ -83,20 +102,22 @@ pub(super) fn prepare(
     }
     let request: Request = serde_json::from_str(document).map_err(|error| error.to_string())?;
     let selection: Selection = serde_json::from_str(selected).map_err(|error| error.to_string())?;
-    let session = owner.designer_copy()?;
+    let session = Box::new(owner.designer_copy()?);
     let budget = owner.context.application.budget().clone();
-    let input = input::Input { request, selection }.admit(&budget)?;
+    let input = Box::new(input::Input { request, selection }.admit(&budget)?);
     let task = spawn(
         previous(&owner.designer_export),
         budget.clone(),
         move |cancel, completed| {
-            let input::Input { request, selection } = input.value();
-            let frames = session.value().export_frames(
+            let worker_session = session;
+            let worker_input = input;
+            let input::Input { request, selection } = worker_input.value();
+            let frames = worker_session.value().export_frames(
                 request,
                 selection.first,
                 selection.last,
-                &cancel,
-                &completed,
+                cancel.value(),
+                completed.value(),
             )?;
             if !selection.collection && frames.len() != 1 {
                 return Err("Preview export requires exactly one capture.".into());
@@ -122,7 +143,7 @@ pub(super) fn prepare(
             };
             let pnm_error = pnm_check.as_ref().err().map(|error| error.to_string());
             let summary = pnm_check.map_or(Value::Null, |summary| json!(summary));
-            let context = json!({"designer":request,"first_capture":selection.first,"last_capture":selection.last,"baseline_sha256":session.value().hashes,"profile_sha256":session.value().profile.source.sha256});
+            let context = json!({"designer":request,"first_capture":selection.first,"last_capture":selection.last,"baseline_sha256":worker_session.value().hashes,"profile_sha256":worker_session.value().profile.source.sha256});
             let prepared = Prepared {
                 frames,
                 policy,
@@ -156,7 +177,7 @@ pub(super) fn poll(state: &mut Option<State>) -> Value {
     let Some(current) = state.as_ref() else {
         return json!({"running":false});
     };
-    let result = match current {
+    let (result, _delivery_guard) = match current {
         State::Ready(prepared) => return metadata(prepared),
         State::Working {
             receiver,
@@ -164,17 +185,22 @@ pub(super) fn poll(state: &mut Option<State>) -> Value {
             completed,
             ..
         } => match receiver.try_recv() {
-            Ok(result) => {
-                if cancel.load(Ordering::Relaxed) {
+            Ok(delivery) => {
+                let (result, guard) = delivery.into_parts();
+                let result = if cancel.value().load(Ordering::Relaxed) {
                     Err(WorkerFailure::Static("PNM export cancelled."))
                 } else {
                     result
-                }
+                };
+                (result, Some(guard))
             }
             Err(mpsc::TryRecvError::Empty) => {
-                return json!({"running":true,"completed":completed.load(Ordering::Relaxed)})
+                return json!({"running":true,"completed":completed.value().load(Ordering::Relaxed)})
             }
-            Err(_) => Err(WorkerFailure::Static("Export worker ended unexpectedly.")),
+            Err(_) => (
+                Err(WorkerFailure::Static("Export worker ended unexpectedly.")),
+                None,
+            ),
         },
     };
     let previous = match state.take() {
@@ -287,8 +313,8 @@ pub(super) fn save_with_picker(
                 &prepared.value().frames,
                 prepared.value().policy,
                 &prepared.value().context,
-                &cancel,
-                &completed,
+                cancel.value(),
+                completed.value(),
                 format,
             );
             let result = match result {

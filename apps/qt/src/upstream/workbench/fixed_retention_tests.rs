@@ -18,6 +18,8 @@ const LIMITS: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 const WATCHDOG: Duration = Duration::from_secs(30);
 // The concrete controller slot creates one actual Arc pointee.
@@ -84,6 +86,7 @@ fn controller_slot_rejection_returns_original_and_actual_preparation_aliases_kee
         payload_bytes: size_of::<Retained<Mutex<Option<UpstreamController>>>>(),
         ordered_entries: 0,
         shared_roots: SLOT_SHARED_ROOTS,
+        ..Default::default()
     };
     for bytes in [true, false] {
         let pressure = budget
@@ -121,19 +124,27 @@ fn controller_slot_rejection_returns_original_and_actual_preparation_aliases_kee
         assert_eq!(budget.usage(), baseline);
     }
 
-    // Leave exactly this independently measured slot's bytes/root. The real
-    // report preflight then rejects; no invented backend or error-sized slack.
-    let pressure = budget
-        .reserve_resources(RetainedResources {
-            payload_bytes: LIMITS.payload_bytes - baseline.payload_bytes - slot.payload_bytes,
-            shared_roots: LIMITS.shared_roots - baseline.shared_roots - slot.shared_roots,
-            ..Default::default()
-        })
-        .unwrap();
-    let pending = match Pending::run(controller, budget.clone()) {
+    // Admit the actual slot, channel, completion and closure first. Fill the
+    // remaining byte budget in the dispatch seam, then execute the real report
+    // preflight. This reaches the original target boundary without a guessed
+    // closure layout or an earlier transport rejection.
+    let mut pressure = None;
+    let pending = match Pending::run_with(controller, budget.clone(), |task| {
+        pressure = Some(
+            budget
+                .reserve_resources(RetainedResources {
+                    payload_bytes: LIMITS.payload_bytes - budget.usage().payload_bytes,
+                    ..Default::default()
+                })
+                .unwrap(),
+        );
+        std::thread::spawn(move || crate::shell::run_task(task));
+        Ok(())
+    }) {
         Ok(pending) => pending,
-        Err((_, message)) => panic!("Exact slot must admit: {message}"),
+        Err((_, message)) => panic!("Actual preparation must dispatch: {message}"),
     };
+    assert!(pressure.is_some(), "The original target gate must execute");
     let Pending::Run { owner, .. } = &pending else {
         unreachable!()
     };
@@ -151,7 +162,12 @@ fn controller_slot_rejection_returns_original_and_actual_preparation_aliases_kee
         );
         std::thread::yield_now();
     };
-    let Prepared::Run { controller, target } = completed else {
+    let Prepared::Run {
+        delivery: _delivery_guard,
+        controller,
+        target,
+    } = completed
+    else {
         unreachable!()
     };
     assert!(matches!(target, Err(WorkerFailure::AdmissionRejected(_))));
@@ -163,9 +179,14 @@ fn controller_slot_rejection_returns_original_and_actual_preparation_aliases_kee
     );
     assert!(application.active().is_none());
     drop(pending);
+    drop(_delivery_guard);
     drop(pressure);
     let mut expected = baseline;
     crate::downstream::inputs::retention::append(&mut expected, slot).unwrap();
+    while budget.usage() != expected {
+        assert!(Instant::now() < deadline, "Actual task cleanup watchdog");
+        std::thread::yield_now();
+    }
     assert_eq!(budget.usage(), expected);
 
     // This explicit observed alias is not a worker barrier. After dropping it,

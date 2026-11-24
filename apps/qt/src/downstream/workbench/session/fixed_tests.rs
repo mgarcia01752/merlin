@@ -17,6 +17,8 @@ const BASELINE_PROBE_LIMITS: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 fn fixed_resources() -> RetainedResources {
@@ -34,6 +36,7 @@ fn fixed_resources() -> RetainedResources {
             .unwrap(),
         ordered_entries: 0,
         shared_roots: layouts.len(),
+        ..Default::default()
     }
 }
 
@@ -45,6 +48,7 @@ fn add(left: RetainedResources, right: RetainedResources) -> RetainedResources {
             .checked_add(right.ordered_entries)
             .unwrap(),
         shared_roots: left.shared_roots.checked_add(right.shared_roots).unwrap(),
+        ..Default::default()
     }
 }
 

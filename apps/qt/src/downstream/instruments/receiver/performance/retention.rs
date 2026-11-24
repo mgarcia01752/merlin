@@ -193,6 +193,7 @@ impl PreparedEntry {
             payload_bytes: bytes,
             ordered_entries: 0,
             shared_roots: 0,
+            ..Default::default()
         };
         if let Some(value) = fec_details {
             append(&mut resources, json_children(value)?)?;

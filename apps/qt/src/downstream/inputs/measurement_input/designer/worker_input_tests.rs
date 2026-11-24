@@ -36,6 +36,7 @@ fn request_source_and_recipe_spare_capacity_exclude_fixed_root_and_preserve_valu
             + request.recipe.edits.capacity() * size_of::<ValueEdit>(),
         ordered_entries: 0,
         shared_roots: 0,
+        ..Default::default()
     };
     assert_eq!(request_children(&request).unwrap(), expected);
     assert_eq!(request_children(&request).unwrap(), expected);
@@ -88,6 +89,7 @@ fn options_owned_interval_and_selected_storage_are_passive_while_borrowed_text_c
             + selected[0].capacity(),
         ordered_entries: 0,
         shared_roots: 0,
+        ..Default::default()
     };
     let before = serde_json::to_value(&options).unwrap();
     let interval_pointer = interval.as_ptr();

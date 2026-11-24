@@ -113,6 +113,8 @@ fn strict_target_copy_rejection_keeps_original_help_and_normal_replacement_falls
         payload_bytes: usize::MAX,
         ordered_entries: usize::MAX,
         shared_roots: usize::MAX,
+        channel_count: usize::MAX,
+        slot_count: usize::MAX,
     });
     let original = WorkerFailure::try_admit(
         AdmissionError {
@@ -148,6 +150,8 @@ fn message_only_replacement_admits_actual_help_clone_while_original_stays_charge
         payload_bytes: usize::MAX,
         ordered_entries: usize::MAX,
         shared_roots: usize::MAX,
+        channel_count: usize::MAX,
+        slot_count: usize::MAX,
     });
     let original = WorkerFailure::try_admit(
         AdmissionError {

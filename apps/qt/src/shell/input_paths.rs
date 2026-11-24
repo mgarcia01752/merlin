@@ -116,6 +116,7 @@ impl InputPaths {
             payload_bytes: size_of::<Storage>(),
             ordered_entries: 0,
             shared_roots: REGISTRY_SHARED_ROOTS,
+            ..Default::default()
         })?;
         Ok(Self {
             storage: Arc::new(reservation.retain(Mutex::new(BTreeSet::new()))),
@@ -201,6 +202,7 @@ fn record_resources(path: &PathBuf) -> Option<RetainedResources> {
         payload_bytes: size_of::<Record>().checked_add(path.capacity())?,
         ordered_entries: PATH_ORDERED_ENTRIES,
         shared_roots: 0,
+        ..Default::default()
     })
 }
 

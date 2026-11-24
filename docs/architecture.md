@@ -1842,8 +1842,9 @@ has an exact target-host witness, including zero-child options. Strict foreign
 transfer reserves actual copies before mutating the source; same-host queued
 failures move without readmission. Static notices borrow text. The separate
 bridge Apply-help owner remains independently charged. [Primary C1 evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-persistent-direction-model-metadata)
-preserves scientific/status/target-adoption behavior. C2–C6 in the frozen closure
-list remain required; complete SESSION acceptance and persistent QML stay open.
+preserves scientific/status/target-adoption behavior. Subsequent C2/C3 evidence
+below closes those conditions. C4–C6 remain required; complete SESSION acceptance
+and persistent QML stay open.
 
 The [concrete fixed runtime owners](development/features/unified-qt-workbench/session-closure.md#c2-concrete-fixed-layout-implementation)
 admit DS Model, preview Analyzer and upstream workbench Model layouts before their
@@ -1855,8 +1856,24 @@ construction leaves minimal unavailable controls and retries on the same host.
 The preview product keeps its already admitted Box. Upstream preparation admits
 its actual retained Mutex/controller slot and one root before publication; final
 worker aliases retain that guard. [C2 primary evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-fixed-runtime-owners)
-closes this fixed-layout condition. C3–C6 remain required; no new scientific API,
-transport replacement or framework is introduced.
+closes this fixed-layout condition. The subsequent C3 evidence is separate;
+C4–C6 remain required. No new scientific API or framework is introduced.
+
+The [concrete worker transport](development/features/unified-qt-workbench/session-closure.md#c3-concrete-transport-integration)
+uses the same application counter for actual retained task/frame bytes, channel
+owners and configured slots. Named desktop limits are 64 live channels and 256
+configured slots; scientific footprint contracts retain their three quantities.
+Each channel's actual shared witness and each independently held delivery remain
+charged through final disposal. Finite inventories reserve DATA and terminal
+frames before science; requested permit buffers are admitted before allocation.
+Actual closure measurement includes its task wrapper. Separately guarded inputs
+move through Box handles, while concrete atomic/control/recovery pointees and
+Work/State/Job complements retain their own guards. Existing std transport,
+original timing, scientific calls, partial results and lease acknowledgement
+semantics remain. Rejection precedes dispatch/accepted-owner mutation. [C3 primary
+evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-concrete-worker-transport)
+closes this condition. C4 paths/metadata, C5 persistent QML and C6 complete SESSION
+acceptance remain required; the parent task stays unchecked.
 
 The [pre-production archive pair](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds)
 computes exact detached target quantities and checks every limit before copying.

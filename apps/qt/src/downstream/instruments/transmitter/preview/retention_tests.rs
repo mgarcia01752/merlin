@@ -20,6 +20,8 @@ const FIXTURE_LIMIT: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 // Deliberate capacity anchors, unrelated to physical geometry or supported scientific limits.
@@ -66,11 +68,7 @@ fn positive(resources: RetainedResources) -> impl Iterator<Item = Dimension> {
         .filter(move |dimension| quantity(resources, *dimension) > 0)
 }
 fn plus(a: RetainedResources, b: RetainedResources) -> RetainedResources {
-    RetainedResources {
-        payload_bytes: a.payload_bytes.checked_add(b.payload_bytes).unwrap(),
-        ordered_entries: a.ordered_entries.checked_add(b.ordered_entries).unwrap(),
-        shared_roots: a.shared_roots.checked_add(b.shared_roots).unwrap(),
-    }
+    a.checked_add(b).unwrap()
 }
 fn one_less(mut resources: RetainedResources, dimension: Dimension) -> RetainedResources {
     match dimension {
@@ -115,6 +113,30 @@ fn configured() -> Box<Analyzer> {
     assert_eq!(model.status()["status"], "complete");
     model
 }
+fn dispatch_fixture(model: &mut Analyzer) -> std::thread::JoinHandle<()> {
+    let mut execution = None;
+    model.generate_with(|task| {
+        execution = Some(
+            std::thread::Builder::new()
+                .name("preview-retention-fixture".to_owned())
+                .spawn(move || crate::shell::run_task(task))?,
+        );
+        Ok(())
+    });
+    execution.expect("Configured real preview must dispatch")
+}
+
+fn channel_resources() -> RetainedResources {
+    let budget = budget();
+    let (sender, receiver) =
+        crate::shell::bounded_channel::<()>(&budget, IDLE_PREVIEW_COMPLETION_CAPACITY).unwrap();
+    let actual = budget.usage();
+    drop(sender);
+    drop(receiver);
+    assert_eq!(budget.usage(), RetainedResources::default());
+    actual
+}
+
 fn wait_completed(model: &Analyzer) {
     let deadline = Instant::now() + WATCHDOG;
     while model.job.as_ref().unwrap().control.value().snapshot().state
@@ -167,6 +189,7 @@ fn prepared_layout_uses_actual_spare_capacities_and_complete_option_wrapper_stor
                 + size_of::<Retained<Arc<PreparedPreview>>>(),
             ordered_entries: 0,
             shared_roots: 2, // Actual inner preparation and retained outer wrapper.
+            ..Default::default()
         }
     );
     assert!(matches!(
@@ -275,9 +298,10 @@ fn target_rejection_and_precancel_happen_without_replacing_current_science() {
 #[test]
 fn configuration_and_new_product_pressure_keep_the_same_accepted_source_result_and_revision() {
     let mut model = configured();
-    model.generate();
+    let execution = dispatch_fixture(&mut model);
     let finished_control = Arc::downgrade(&model.job.as_ref().unwrap().control);
     tests::wait(&mut model);
+    execution.join().unwrap();
     wait_control_disposed(&finished_control);
     let accepted = Arc::clone(model.prepared.as_ref().unwrap());
     let old_result = model.result.as_ref().unwrap().value() as *const TransmitterPreview;
@@ -332,28 +356,34 @@ fn configuration_and_new_product_pressure_keep_the_same_accepted_source_result_a
             .unwrap(),
     )
     .unwrap();
-    let control = retention::control_resources(
-        TransmitterPreviewControl::new()
-            .retained_footprint()
-            .unwrap(),
-    )
-    .unwrap();
     for dimension in positive(product) {
-        let pressure = budget
-            .reserve_resources(only(
-                dimension,
-                quantity(FIXTURE_LIMIT, dimension)
-                    - quantity(baseline, dimension)
-                    - quantity(control, dimension),
-            ))
-            .unwrap();
-        model.generate();
+        let mut pressure = None;
+        let mut execution = None;
+        model.generate_with(|task| {
+            // Admit the actual control, channel, frame and task first. Synthetic
+            // pressure then reaches the original backend product-target boundary.
+            pressure = Some(
+                budget
+                    .reserve_resources(only(
+                        dimension,
+                        quantity(FIXTURE_LIMIT, dimension) - quantity(budget.usage(), dimension),
+                    ))
+                    .unwrap(),
+            );
+            execution = Some(
+                std::thread::Builder::new()
+                    .name("preview-product-pressure-fixture".to_owned())
+                    .spawn(move || crate::shell::run_task(task))?,
+            );
+            Ok(())
+        });
         assert!(
             model.job.is_some(),
             "Original product rejection must dispatch a real Job"
         );
         let finished_control = Arc::downgrade(&model.job.as_ref().unwrap().control);
         tests::wait(&mut model);
+        execution.take().unwrap().join().unwrap();
         wait_control_disposed(&finished_control);
         assert_eq!(model.result_token, token);
         assert_eq!(
@@ -399,19 +429,26 @@ fn genuine_box_queue_and_stale_discard_release_only_the_final_product_owner() {
     )
     .unwrap();
     let before = budget.usage();
-    model.generate();
-    let queued = model
+    let execution = dispatch_fixture(&mut model);
+    let delivery = model
         .job
         .as_ref()
         .unwrap()
         .receiver
         .recv_timeout(WATCHDOG)
-        .unwrap()
         .unwrap();
+    let delivery_guard;
+    let (product_value, guard) = delivery.into_parts();
+    delivery_guard = guard;
+    let queued = product_value.unwrap();
+    // The product has its independent guard. Consume the outer delivery before
+    // comparing the retained product/control/receiver ledger after actual return.
+    drop(delivery_guard);
+    execution.join().unwrap();
     assert_eq!(
         budget.usage(),
         plus(
-            plus(before, product),
+            plus(plus(before, product), channel_resources()),
             retention::control_resources(
                 model
                     .job
@@ -450,11 +487,12 @@ fn genuine_box_queue_and_stale_discard_release_only_the_final_product_owner() {
     let mut stale = configured();
     let budget = stale.context.application.budget().clone();
     let before = budget.usage();
-    stale.generate();
+    let execution = dispatch_fixture(&mut stale);
     wait_completed(&stale);
     assert!(budget.usage().payload_bytes > before.payload_bytes);
     tests::configure(&mut stale, &settings(), tests::inputs());
     tests::wait(&mut stale);
+    execution.join().unwrap();
     assert!(stale.result.is_none());
     let prepared = retention::prepared_resources(stale.prepared.as_ref().unwrap().value()).unwrap();
     let metadata = context().application.budget().usage();

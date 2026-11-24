@@ -7,7 +7,7 @@ mod failure;
 use crate::shell::{
     spawn_worker, Direction, Retained, RetainedResources, RetentionBudget, RetentionError,
     RetentionReservation, RunCancellation, RunLease, RunToken, SessionKey, WorkerEvent,
-    WorkerTerminal,
+    WorkerReceiver, WorkerTerminal,
 };
 pub use failure::RunFailure;
 use merlin::{
@@ -22,7 +22,7 @@ use std::{
     mem::size_of,
     sync::{
         atomic::{AtomicBool, Ordering},
-        mpsc::{Receiver, TryRecvError},
+        mpsc::TryRecvError,
         Arc, Mutex, MutexGuard, TryLockError,
     },
 };
@@ -34,7 +34,11 @@ use std::{
 pub type RetainedReport = Arc<Retained<merlin::upstream::BatchReport>>;
 
 type SharedSession = Arc<Retained<Mutex<SessionStorage>>>;
-type Events = Receiver<WorkerEvent<RetainedReport, RunFailure>>;
+
+// One real batch report at most; known terminal has its own delivery permit.
+const RUN_REPORT_EVENTS: usize = 1;
+
+type Events = WorkerReceiver<RetainedReport, RunFailure>;
 
 struct SessionStorage {
     simulation: Option<Simulation>,
@@ -151,7 +155,7 @@ impl PreparedSession {
     /// # Arguments
     /// * `document` - Owned source document; admission preserves its exact provenance.
     /// * `observations` - Explicit validated receiver retention policy.
-    /// * `budget` - Shared application policy enforcing all three dimensions.
+    /// * `budget` - Shared application policy enforcing all five dimensions.
     ///
     /// # Returns
     /// An idle session reserved from actual Simulation metadata plus checked
@@ -384,30 +388,37 @@ impl UpstreamController {
         }
         let backend = Arc::clone(&control);
         let budget = self.budget.clone();
-        let events = spawn_worker("merlin-upstream", capacity, lease, move |publisher| {
-            let PreparedRun {
-                key: _,
-                owner,
-                backend_limit,
-                reservation,
-            } = prepared;
-            let mut session =
-                RunningSession::take(owner).map_err(|error| RunFailure::admit(error, &budget))?;
-            let report = session
-                .simulation
-                .as_mut()
-                .expect("Running guard owns its session")
-                .run_with_control_bounded(&backend.backend, backend_limit)
-                .map_err(|error| RunFailure::admit(error, &budget))?;
+        let events = spawn_worker(
+            "merlin-upstream",
+            capacity,
+            RUN_REPORT_EVENTS,
+            &self.budget,
+            lease,
+            move |mut publisher| {
+                let PreparedRun {
+                    key: _,
+                    owner,
+                    backend_limit,
+                    reservation,
+                } = prepared;
+                let mut session = RunningSession::take(owner)
+                    .map_err(|error| RunFailure::admit(error, &budget))?;
+                let report = session
+                    .simulation
+                    .as_mut()
+                    .expect("Running guard owns its session")
+                    .run_with_control_bounded(&backend.backend, backend_limit)
+                    .map_err(|error| RunFailure::admit(error, &budget))?;
 
-            // Restore accepted configuration before publishing independent results.
-            drop(session);
-            let report = Arc::new(reservation.retain(report));
+                // Restore accepted configuration before publishing independent results.
+                drop(session);
+                let report = Arc::new(reservation.retain(report));
 
-            // Receiver destruction discards the actual report with its charge.
-            let _ = publisher.send(report);
-            Ok(())
-        })
+                // Receiver destruction discards the actual report with its charge.
+                let _ = publisher.send(report);
+                Ok(())
+            },
+        )
         .map_err(|failure| {
             let (cause, lease) = failure.into_parts();
             StartError {
@@ -513,6 +524,9 @@ impl UpstreamController {
         };
         match event {
             WorkerEvent::Message { token, value } => {
+                let _delivery_guard;
+                let (value, guard) = value.into_parts();
+                _delivery_guard = guard;
                 self.active_for(token)?;
                 self.report = Some((token, Arc::clone(&value)));
                 Ok(ControllerEvent::Report {
@@ -593,6 +607,7 @@ fn wrapped_resources<Wrapper, Scientific>(
             .shared_roots
             .checked_add(1)
             .ok_or(RetentionError::ArithmeticOverflow)?,
+        ..RetainedResources::default()
     })
 }
 
@@ -619,3 +634,7 @@ mod control_retention_tests;
 #[cfg(test)]
 #[path = "session/failure_tests.rs"]
 mod failure_tests;
+
+#[cfg(test)]
+#[path = "session/transport_retention_tests.rs"]
+mod transport_retention_tests;

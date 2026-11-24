@@ -16,6 +16,7 @@ fn individual_slots_and_same_event_paging_keep_their_separate_reservations() {
             - size_of::<FullLoopResult>(),
         ordered_entries: source.ordered_entries,
         shared_roots: source.shared_roots,
+        ..Default::default()
     };
     let retained = budget
         .reserve_resources(source_charge)

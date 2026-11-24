@@ -10,12 +10,25 @@ use super::{
 use crate::downstream::{
     instruments::transmitter::preview::Analyzer, simulation::closed_loop::Model,
 };
+use crate::{
+    shared::{
+        presentation::constants::{
+            WORKER_FAILURE_ADMISSION_MESSAGE, WORKER_TRANSPORT_ADMISSION_MESSAGE,
+        },
+        worker_controls,
+        worker_failure::WorkerFailure,
+    },
+    shell::{
+        admit_task, bounded_channel, run_task, DeliveryReceiver, Retained, RetainedResources,
+        RetentionBudget,
+    },
+};
 use serde_json::{json, Value};
 use std::{
     path::PathBuf,
     sync::{
         atomic::{AtomicBool, AtomicU8, Ordering},
-        mpsc::{self, Receiver, TryRecvError},
+        mpsc::TryRecvError,
         Arc,
     },
     time::Instant,
@@ -244,11 +257,15 @@ impl PreparedProject {
     }
 }
 
+// One loader completion; independent of scientific progress callback capacity.
+const LOADER_COMPLETION_CAPACITY: usize = 1;
+
 struct Job {
-    receiver: Receiver<Result<Option<PreparedProject>, String>>,
-    cancelled: Arc<AtomicBool>,
-    stage: Arc<AtomicU8>,
+    receiver: DeliveryReceiver<Result<Option<Box<PreparedProject>>, WorkerFailure>>,
+    cancelled: Arc<Retained<AtomicBool>>,
+    stage: Arc<Retained<AtomicU8>>,
     started: Instant,
+    _fixed_guard: Retained<()>,
 }
 
 /// One tracked worker, with nonblocking progress/completion and cancellation.
@@ -305,7 +322,8 @@ impl Loader {
             .snapshot(crate::shell::Direction::Downstream)
             .key;
         let expected = super::session::snapshot(context);
-        self.start_with(move |stage, cancelled| {
+        let budget = application.budget().clone();
+        self.start_with(&budget, move |stage, cancelled| {
             use crate::platform::startup::WorkbenchSource;
             use std::io::IsTerminal;
             let (mut reader, destination): (Box<dyn std::io::Read>, Option<PathBuf>) = match source
@@ -370,6 +388,7 @@ impl Loader {
 
     fn start_with(
         &mut self,
+        budget: &RetentionBudget,
         work: impl FnOnce(&AtomicU8, &AtomicBool) -> Result<Option<PreparedProject>, String>
             + Send
             + 'static,
@@ -377,16 +396,41 @@ impl Loader {
         if self.job.is_some() {
             return json!({"error":"A workbench is already loading."});
         }
-        let (sender, receiver) = mpsc::sync_channel(1);
-        let cancelled = Arc::new(AtomicBool::new(false));
-        let stage = Arc::new(AtomicU8::new(0));
-        let stop = cancelled.clone();
-        let progress = stage.clone();
+        let prepare = || {
+            let (sender, receiver) = bounded_channel(budget, LOADER_COMPLETION_CAPACITY)?;
+            let delivery = sender.reserve()?;
+            drop(sender);
+            let cancelled = worker_controls::cancellation(budget)?;
+            let stage = worker_controls::load_stage(budget)?;
+            let fixed = budget.reserve_resources(RetainedResources {
+                payload_bytes: std::mem::size_of::<Job>(),
+                ..Default::default()
+            })?;
+            let stop = cancelled.clone();
+            let progress = stage.clone();
+            let worker_budget = budget.clone();
+            let task = admit_task(budget, move || {
+                let result = work(progress.value(), stop.value())
+                    .map(|project| project.map(Box::new))
+                    .map_err(|message| {
+                        WorkerFailure::admit_with_fallback(
+                            message.into(),
+                            &worker_budget,
+                            WORKER_FAILURE_ADMISSION_MESSAGE,
+                        )
+                    });
+                let _ = delivery.send(result);
+            })?;
+            Ok::<_, crate::shell::RetentionError>((receiver, cancelled, stage, fixed, task))
+        };
+        let (receiver, cancelled, stage, fixed, task) = match prepare() {
+            Ok(prepared) => prepared,
+            Err(_) => return json!({"error":WORKER_TRANSPORT_ADMISSION_MESSAGE}),
+        };
         match std::thread::Builder::new()
             .name("merlin-workbench-open".into())
-            .spawn(move || {
-                let _ = sender.send(work(&progress, &stop));
-            }) {
+            .spawn(move || run_task(task))
+        {
             Ok(_) => {
                 log::debug!("workbench_open_started");
                 self.job = Some(Job {
@@ -394,6 +438,7 @@ impl Loader {
                     cancelled,
                     stage,
                     started: Instant::now(),
+                    _fixed_guard: fixed.retain(()),
                 });
                 self.status()
             }
@@ -406,7 +451,7 @@ impl Loader {
     /// No result; one-worker guard remains until completion is drained.
     pub(crate) fn cancel(&self) {
         if let Some(job) = &self.job {
-            job.cancelled.store(true, Ordering::Relaxed);
+            job.cancelled.value().store(true, Ordering::Relaxed);
         }
     }
 
@@ -417,18 +462,27 @@ impl Loader {
         let Some(job) = &self.job else {
             return (json!({"loading":false}), None);
         };
+        // A cancelled original message must be destroyed before its frame guard.
+        let _delivery_guard;
         let message = match job.receiver.try_recv() {
             Err(TryRecvError::Empty) => return (self.status(), None),
             Err(TryRecvError::Disconnected) => {
-                Err("Workbench loader ended without a result.".into())
+                _delivery_guard = None;
+                Err(WorkerFailure::Static(
+                    "Workbench loader ended without a result.",
+                ))
             }
-            Ok(result) => result,
+            Ok(delivery) => {
+                let (message, guard) = delivery.into_parts();
+                _delivery_guard = Some(guard);
+                message
+            }
         };
         let job = self
             .job
             .take()
             .expect("Completion requires a tracked loader");
-        if job.cancelled.load(Ordering::Relaxed) {
+        if job.cancelled.value().load(Ordering::Relaxed) {
             log::debug!(
                 "workbench_open_cancelled elapsed_ms={}",
                 job.started.elapsed().as_millis()
@@ -441,7 +495,7 @@ impl Loader {
                     "workbench_open_completed elapsed_ms={}",
                     job.started.elapsed().as_millis()
                 );
-                (json!({"loading":false}), Some(prepared))
+                (json!({"loading":false}), Some(*prepared))
             }
             Ok(None) => (json!({"cancelled":true}), None),
             Err(error) => {
@@ -449,7 +503,7 @@ impl Loader {
                     "workbench_open_failed elapsed_ms={}; see the loading error dialog",
                     job.started.elapsed().as_millis()
                 );
-                (json!({"error":error}), None)
+                (json!({"error":error.message()}), None)
             }
         }
     }
@@ -458,17 +512,17 @@ impl Loader {
         let Some(job) = &self.job else {
             return json!({"loading":false});
         };
-        let phase = if job.cancelled.load(Ordering::Relaxed) {
+        let phase = if job.cancelled.value().load(Ordering::Relaxed) {
             "Cancelling"
         } else {
-            match job.stage.load(Ordering::Relaxed) {
+            match job.stage.value().load(Ordering::Relaxed) {
                 0 => "Choose a workbench",
                 1 => "Reading workbench",
                 2 => "Reading configuration",
                 _ => "Validating captures and preparing workbench",
             }
         };
-        json!({"loading":true,"phase":phase,"elapsed_ms":job.started.elapsed().as_millis() as u64,"debug_ui":crate::platform::startup::debug_ui(),"cancelling":job.cancelled.load(Ordering::Relaxed)})
+        json!({"loading":true,"phase":phase,"elapsed_ms":job.started.elapsed().as_millis() as u64,"debug_ui":crate::platform::startup::debug_ui(),"cancelling":job.cancelled.value().load(Ordering::Relaxed)})
     }
 }
 impl Drop for Loader {
@@ -507,6 +561,7 @@ fn read_bounded(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::mpsc;
 
     // Test-host scheduling bounds, independent of capture and scientific limits.
     const LOAD_TEST_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(60);
@@ -577,8 +632,9 @@ mod tests {
     fn polling_does_not_wait_and_cancel_retains_single_worker_guard() {
         let (release, wait) = mpsc::sync_channel(1);
         let mut loader = Loader::default();
+        let context = Context::isolated();
         assert_eq!(
-            loader.start_with(move |_, _| {
+            loader.start_with(context.application.budget(), move |_, _| {
                 wait.recv().unwrap();
                 Ok(None)
             })["loading"],
@@ -590,7 +646,10 @@ mod tests {
         loader.cancel();
         assert_eq!(loader.poll().0["cancelling"], true);
         assert!(
-            loader.start_with(|_, _| panic!("Must not start another worker"))["error"].is_string()
+            loader.start_with(context.application.budget(), |_, _| panic!(
+                "Must not start another worker"
+            ))["error"]
+                .is_string()
         );
         release.send(()).unwrap();
         assert_eq!(drain(&mut loader).0["cancelled"], true);
@@ -602,10 +661,12 @@ mod tests {
         let context = &crate::downstream::workbench::session::Context::default();
         let previous = super::super::session::saved_sections(context);
         let mut loader = Loader::default();
-        loader.start_with(|_, _| Err("Invalid capture hash".into()));
+        loader.start_with(context.application.budget(), |_, _| {
+            Err("Invalid capture hash".into())
+        });
         assert_eq!(drain(&mut loader).0["error"], "Invalid capture hash");
         let (release, wait) = mpsc::sync_channel(1);
-        loader.start_with(move |_, _| {
+        loader.start_with(context.application.budget(), move |_, _| {
             wait.recv().unwrap();
             let project = Project {
                 schema_version: 2,
@@ -642,7 +703,8 @@ mod tests {
     #[test]
     fn real_multi_capture_workbench_prepares_editors_off_thread() {
         let mut loader = Loader::default();
-        loader.start_with(|_, _| {
+        let context = Context::isolated();
+        loader.start_with(context.application.budget(), |_, _| {
             let project = serde_json::from_slice(include_bytes!(
                 "../../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json"
             ))
@@ -693,3 +755,7 @@ mod target_tests;
 #[cfg(test)]
 #[path = "project_load/metadata_tests.rs"]
 mod metadata_tests;
+
+#[cfg(test)]
+#[path = "project_load/transport_tests.rs"]
+mod transport_tests;

@@ -14,6 +14,7 @@ fn fixed_resources<T>() -> RetainedResources {
         payload_bytes: size_of::<Retained<Mutex<T>>>(),
         ordered_entries: 0,
         shared_roots: 1,
+        ..Default::default()
     }
 }
 

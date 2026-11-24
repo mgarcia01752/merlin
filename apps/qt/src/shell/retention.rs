@@ -24,6 +24,10 @@ pub struct RetainedResources {
     pub ordered_entries: usize,
     /// Shared allocation owner edges whose private refcount headers are excluded.
     pub shared_roots: usize,
+    /// Live bounded channel owners; private std synchronization is excluded.
+    pub channel_count: usize,
+    /// Configured bounded channel slots, independent of buffered message data.
+    pub slot_count: usize,
 }
 
 /// Failure to reserve application memory without changing existing ownership.
@@ -39,6 +43,14 @@ pub enum RetentionError {
         requested: usize,
     },
     SharedRootsExceeded {
+        maximum: usize,
+        requested: usize,
+    },
+    ChannelsExceeded {
+        maximum: usize,
+        requested: usize,
+    },
+    SlotsExceeded {
         maximum: usize,
         requested: usize,
     },
@@ -94,7 +106,7 @@ impl RetentionBudget {
         })
     }
 
-    /// Creates shared accounting with three explicit independent ceilings.
+    /// Creates shared accounting with five explicit independent ceilings.
     ///
     /// # Arguments
     /// * `maximum` - Inclusive application policies; zero admits only zero usage
@@ -127,6 +139,7 @@ impl RetentionBudget {
             payload_bytes: size_of::<Mutex<Accounting>>(),
             ordered_entries: 0,
             shared_roots: APPLICATION_ACCOUNTING_ROOTS,
+            ..RetainedResources::default()
         };
         if baseline.payload_bytes > maximum.payload_bytes {
             return Err(RetentionError::LimitExceeded {
@@ -199,6 +212,18 @@ impl RetentionBudget {
                 requested: requested.shared_roots,
             });
         }
+        if requested.channel_count > accounting.maximum.channel_count {
+            return Err(RetentionError::ChannelsExceeded {
+                maximum: accounting.maximum.channel_count,
+                requested: requested.channel_count,
+            });
+        }
+        if requested.slot_count > accounting.maximum.slot_count {
+            return Err(RetentionError::SlotsExceeded {
+                maximum: accounting.maximum.slot_count,
+                requested: requested.slot_count,
+            });
+        }
         accounting.used = requested;
         Ok(RetentionReservation {
             budget: self.clone(),
@@ -238,6 +263,15 @@ impl RetentionBudget {
 }
 
 impl RetentionReservation {
+    /// Reads this actual reservation for independent fixture ledger assertions.
+    ///
+    /// # Returns
+    /// Exactly the held quantities, without copying a payload or changing charge.
+    #[cfg(test)]
+    pub(crate) fn fixture_reserved_resources(&self) -> RetainedResources {
+        self.resources
+    }
+
     /// Attaches this reservation to an exclusively owned payload.
     ///
     /// # Arguments
@@ -292,6 +326,8 @@ impl Drop for RetentionReservation {
         accounting.used.payload_bytes -= self.resources.payload_bytes;
         accounting.used.ordered_entries -= self.resources.ordered_entries;
         accounting.used.shared_roots -= self.resources.shared_roots;
+        accounting.used.channel_count -= self.resources.channel_count;
+        accounting.used.slot_count -= self.resources.slot_count;
     }
 }
 
@@ -320,6 +356,14 @@ impl RetainedResources {
             shared_roots: self
                 .shared_roots
                 .checked_add(additional.shared_roots)
+                .ok_or(RetentionError::ArithmeticOverflow)?,
+            channel_count: self
+                .channel_count
+                .checked_add(additional.channel_count)
+                .ok_or(RetentionError::ArithmeticOverflow)?,
+            slot_count: self
+                .slot_count
+                .checked_add(additional.slot_count)
                 .ok_or(RetentionError::ArithmeticOverflow)?,
         })
     }

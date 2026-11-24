@@ -15,6 +15,8 @@ const TEST_LIMIT: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 #[derive(Clone, Copy)]
@@ -55,29 +57,31 @@ fn actual_queued_batch_is_charged_until_cancel_or_stale_completion_disposes_it()
     for cancelled in [true, false] {
         let captures = batch(&session, &budget);
         let original = Arc::downgrade(&captures.value()[0].original);
-        let (sender, receiver) = mpsc::sync_channel(DESIGNER_CAPTURE_QUEUE_CAPACITY);
+        let (sender, receiver) = bounded_channel(&budget, DESIGNER_CAPTURE_QUEUE_CAPACITY).unwrap();
         let mut work = super::tests::work(&session, Options::default());
         work.receiver = receiver;
-        work.cancel.store(cancelled, Ordering::Relaxed);
+        work.cancel.value().store(cancelled, Ordering::Relaxed);
         if !cancelled {
-            work.selection = worker_inputs::SelectionSnapshot {
-                hashes: session.hashes.clone(),
-                profile_hash: String::new(),
-                options: Options::default(),
-                imported: true,
-            }
-            .admit(&budget)
-            .unwrap();
+            work.selection = Box::new(
+                worker_inputs::SelectionSnapshot {
+                    hashes: session.hashes.clone(),
+                    profile_hash: String::new(),
+                    options: Options::default(),
+                    imported: true,
+                }
+                .admit(&budget)
+                .unwrap(),
+            );
         }
+        let delivery = sender.reserve().unwrap();
         let expected = budget.usage();
-        sender.send(Ok(captures)).unwrap();
+        assert!(delivery.send(Ok(Box::new(captures))).is_ok());
         drop(sender);
         assert_eq!(budget.usage(), expected);
         assert!(original.upgrade().is_some());
-        let result = work
-            .receiver
-            .try_recv()
-            .unwrap()
+        let (result, delivery_guard) = work.receiver.try_recv().unwrap().into_parts();
+        let result = result
+            .map(|captures| *captures)
             .map_err(|failure| AdmissionError::from(failure.message()));
         let result = adopt_to_owner(&mut owner, work, result, Some(&session.profile));
         if cancelled {
@@ -87,6 +91,7 @@ fn actual_queued_batch_is_charged_until_cancel_or_stale_completion_disposes_it()
         }
         assert_eq!(owner.model.draft_rx[0].hash, session.hashes[0]);
         assert!(original.upgrade().is_none());
+        drop(delivery_guard);
         assert_eq!(budget.usage(), baseline);
     }
     drop(owner);
@@ -177,6 +182,7 @@ fn staged_source_guard_survives_target_admission_and_rejection_in_every_dimensio
             payload_bytes: infrastructure.payload_bytes + required.payload_bytes,
             ordered_entries: infrastructure.ordered_entries + required.ordered_entries,
             shared_roots: infrastructure.shared_roots + required.shared_roots,
+            ..Default::default()
         }
     );
     drop(owner);

@@ -9,13 +9,13 @@ use crate::{
     shared::{
         presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE, worker_failure::WorkerFailure,
     },
-    shell::{Retained, RetainedResources, RetentionBudget, SessionKey},
+    shell::{
+        admit_task, bounded_channel, run_task, AdmittedTask, DeliveryReceiver, Retained,
+        RetainedResources, RetentionBudget, RetentionReservation, SessionKey,
+    },
 };
 use merlin::upstream::{ConfigurationDocument, ReceiverObservationPolicy};
-use std::sync::{
-    mpsc::{self, Receiver, TryRecvError},
-    Arc, Mutex,
-};
+use std::sync::{mpsc::TryRecvError, Arc, Mutex};
 
 // One preparation per model and one completion; unrelated to scientific callbacks.
 const PREPARATION_COMPLETION_CAPACITY: usize = 1;
@@ -28,10 +28,10 @@ type ControllerSlot = Arc<Retained<Mutex<Option<UpstreamController>>>>;
 pub(super) enum Pending {
     Configuration {
         expected: SessionKey,
-        receiver: Receiver<Result<PreparedSession, WorkerFailure>>,
+        receiver: DeliveryReceiver<Result<PreparedSession, WorkerFailure>>,
     },
     Run {
-        receiver: Receiver<Result<PreparedRun, WorkerFailure>>,
+        receiver: DeliveryReceiver<Result<PreparedRun, WorkerFailure>>,
         owner: ControllerSlot,
     },
 }
@@ -40,10 +40,12 @@ pub(super) enum Prepared {
     Configuration {
         expected: SessionKey,
         candidate: Result<PreparedSession, WorkerFailure>,
+        delivery: Option<RetentionReservation>,
     },
     Run {
         controller: UpstreamController,
         target: Result<PreparedRun, WorkerFailure>,
+        delivery: Option<RetentionReservation>,
     },
 }
 
@@ -62,30 +64,38 @@ impl Pending {
         budget: RetentionBudget,
         expected: SessionKey,
     ) -> Result<Self, String> {
-        let (sender, receiver) = mpsc::sync_channel(PREPARATION_COMPLETION_CAPACITY);
+        let (sender, receiver) = bounded_channel(&budget, PREPARATION_COMPLETION_CAPACITY)
+            .map_err(|error| error_text(format!("{error:?}")))?;
+        let delivery = sender
+            .reserve()
+            .map_err(|error| error_text(format!("{error:?}")))?;
+        let bytes = Box::new(bytes);
+        let task_budget = budget.clone();
+        let task = admit_task(&task_budget, move || {
+            let prepared = ConfigurationDocument::from_json(bytes.value())
+                .map_err(|error| error.to_string())
+                .and_then(|document| {
+                    PreparedSession::from_document(
+                        document,
+                        ReceiverObservationPolicy::default(),
+                        &budget,
+                    )
+                    .map_err(|error| format!("{error:?}"))
+                })
+                .map_err(error_text)
+                .map_err(|message| {
+                    WorkerFailure::admit_with_fallback(
+                        message.into(),
+                        &budget,
+                        WORKER_FAILURE_ADMISSION_MESSAGE,
+                    )
+                });
+            let _ = delivery.send(prepared);
+        })
+        .map_err(|error| error_text(format!("{error:?}")))?;
         std::thread::Builder::new()
             .name("merlin-upstream-prepare".into())
-            .spawn(move || {
-                let prepared = ConfigurationDocument::from_json(bytes.value())
-                    .map_err(|error| error.to_string())
-                    .and_then(|document| {
-                        PreparedSession::from_document(
-                            document,
-                            ReceiverObservationPolicy::default(),
-                            &budget,
-                        )
-                        .map_err(|error| format!("{error:?}"))
-                    })
-                    .map_err(error_text)
-                    .map_err(|message| {
-                        WorkerFailure::admit_with_fallback(
-                            message.into(),
-                            &budget,
-                            WORKER_FAILURE_ADMISSION_MESSAGE,
-                        )
-                    });
-                let _ = sender.send(prepared);
-            })
+            .spawn(move || run_task(task))
             .map_err(|error| error_text(error.to_string()))?;
         Ok(Self::Configuration { expected, receiver })
     }
@@ -104,20 +114,46 @@ impl Pending {
         controller: UpstreamController,
         budget: RetentionBudget,
     ) -> Result<Self, (UpstreamController, String)> {
+        Self::run_with(controller, budget, |task| {
+            std::thread::Builder::new()
+                .name("merlin-upstream-target".into())
+                .spawn(move || run_task(task))
+                .map(drop)
+        })
+    }
+
+    /// Dispatches the same admitted task through the selected OS starter.
+    ///
+    /// # Arguments
+    /// * `controller`, `budget` - Original accepted owner and canonical counter.
+    /// * `start` - Called only after actual slot, transport and closure admission.
+    ///
+    /// # Returns
+    /// The ordinary pending target operation without changing its scientific call.
+    ///
+    /// # Errors
+    /// Admission or OS dispatch rejection returns the original idle controller.
+    pub(super) fn run_with(
+        controller: UpstreamController,
+        budget: RetentionBudget,
+        start: impl FnOnce(AdmittedTask) -> std::io::Result<()>,
+    ) -> Result<Self, (UpstreamController, String)> {
         let reservation = match budget.reserve_resources(RetainedResources {
             payload_bytes: std::mem::size_of::<Retained<Mutex<Option<UpstreamController>>>>(),
             ordered_entries: 0,
             shared_roots: CONTROLLER_SLOT_SHARED_ROOTS,
+            ..RetainedResources::default()
         }) {
             Ok(reservation) => reservation,
             Err(error) => return Err((controller, error_text(format!("{error:?}")))),
         };
         let owner = Arc::new(reservation.retain(Mutex::new(Some(controller))));
         let worker_owner = Arc::clone(&owner);
-        let (sender, receiver) = mpsc::sync_channel(PREPARATION_COMPLETION_CAPACITY);
-        let spawned = std::thread::Builder::new()
-            .name("merlin-upstream-target".into())
-            .spawn(move || {
+        let transport = (|| {
+            let (sender, receiver) = bounded_channel(&budget, PREPARATION_COMPLETION_CAPACITY)?;
+            let delivery = sender.reserve()?;
+            let task_budget = budget.clone();
+            let task = admit_task(&task_budget, move || {
                 let target = {
                     let slot = worker_owner
                         .value()
@@ -135,8 +171,15 @@ impl Pending {
                             )
                         })
                 };
-                let _ = sender.send(target);
-            });
+                let _ = delivery.send(target);
+            })?;
+            Ok::<_, crate::shell::RetentionError>((receiver, task))
+        })();
+        let (receiver, task) = match transport {
+            Ok(prepared) => prepared,
+            Err(error) => return Err((take_controller(&owner), error_text(format!("{error:?}")))),
+        };
+        let spawned = start(task);
         if let Err(error) = spawned {
             let controller = take_controller(&owner);
             return Err((controller, error_text(error.to_string())));
@@ -150,26 +193,38 @@ impl Pending {
     pub(super) fn poll(&self) -> Option<Prepared> {
         match self {
             Self::Configuration { expected, receiver } => {
-                receive(receiver).map(|candidate| Prepared::Configuration {
+                receive(receiver).map(|(delivery, candidate)| Prepared::Configuration {
                     expected: *expected,
+                    delivery,
                     candidate,
                 })
             }
-            Self::Run { receiver, owner } => receive(receiver).map(|target| Prepared::Run {
-                controller: take_controller(owner),
-                target,
-            }),
+            Self::Run { receiver, owner } => {
+                receive(receiver).map(|(delivery, target)| Prepared::Run {
+                    controller: take_controller(owner),
+                    delivery,
+                    target,
+                })
+            }
         }
     }
 }
 
-fn receive<T>(receiver: &Receiver<Result<T, WorkerFailure>>) -> Option<Result<T, WorkerFailure>> {
+fn receive<T>(
+    receiver: &DeliveryReceiver<Result<T, WorkerFailure>>,
+) -> Option<(Option<RetentionReservation>, Result<T, WorkerFailure>)> {
     match receiver.try_recv() {
-        Ok(value) => Some(value),
+        Ok(value) => {
+            let (value, guard) = value.into_parts();
+            Some((Some(guard), value))
+        }
         Err(TryRecvError::Empty) => None,
-        Err(TryRecvError::Disconnected) => Some(Err(WorkerFailure::Static(
-            "Upstream preparation stopped unexpectedly.",
-        ))),
+        Err(TryRecvError::Disconnected) => Some((
+            None,
+            Err(WorkerFailure::Static(
+                "Upstream preparation stopped unexpectedly.",
+            )),
+        )),
     }
 }
 
@@ -181,3 +236,6 @@ fn take_controller(owner: &ControllerSlot) -> UpstreamController {
         .take()
         .expect("A preparation completion is consumed exactly once")
 }
+
+#[cfg(test)]
+mod transport_retention_tests;

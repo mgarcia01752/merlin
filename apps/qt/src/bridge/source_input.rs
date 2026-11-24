@@ -222,6 +222,8 @@ mod admission_tests {
         payload_bytes: usize::MAX,
         ordered_entries: usize::MAX,
         shared_roots: usize::MAX,
+        channel_count: usize::MAX,
+        slot_count: usize::MAX,
     };
 
     fn context() -> Context {
@@ -267,6 +269,7 @@ mod admission_tests {
                 payload_bytes: usize::MAX - usage.payload_bytes,
                 ordered_entries: usize::MAX - usage.ordered_entries,
                 shared_roots: usize::MAX - usage.shared_roots,
+                ..Default::default()
             })
             .unwrap();
         editor.replace_model(prepared).unwrap();
@@ -277,6 +280,7 @@ mod admission_tests {
                 payload_bytes: usize::MAX - original_charge.payload_bytes,
                 ordered_entries: usize::MAX - original_charge.ordered_entries,
                 shared_roots: usize::MAX - original_charge.shared_roots,
+                ..Default::default()
             }
         );
         drop(pressure);
@@ -286,6 +290,7 @@ mod admission_tests {
                 payload_bytes: baseline.payload_bytes + prepared_charge.payload_bytes,
                 ordered_entries: baseline.ordered_entries + prepared_charge.ordered_entries,
                 shared_roots: baseline.shared_roots + prepared_charge.shared_roots,
+                ..Default::default()
             }
         );
         drop(editor);

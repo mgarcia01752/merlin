@@ -15,6 +15,8 @@ const TEST_MAXIMUM: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 // A short real observation reaches completed delivery; the long fixture can pause.
 const COMPLETE_OBSERVATION_MS: u64 = 1;
@@ -33,14 +35,7 @@ enum Dimension {
 }
 
 fn sum(left: RetainedResources, right: RetainedResources) -> RetainedResources {
-    RetainedResources {
-        payload_bytes: left.payload_bytes.checked_add(right.payload_bytes).unwrap(),
-        ordered_entries: left
-            .ordered_entries
-            .checked_add(right.ordered_entries)
-            .unwrap(),
-        shared_roots: left.shared_roots.checked_add(right.shared_roots).unwrap(),
-    }
+    left.checked_add(right).unwrap()
 }
 
 fn limited(actual: RetainedResources, dimension: Dimension) -> RetainedResources {
@@ -143,6 +138,44 @@ fn working_allowance(request: &FullLoopRequest) -> RetainedResources {
     actual
 }
 
+// Measure the real preflight without a lease, clock, scientific execution or
+// guessed closure layout. Source owners and the adapter remain independently charged.
+fn transport_allowance(
+    request: &SharedRequest,
+    plan: Option<&SharedPlan>,
+    budget: &RetentionBudget,
+) -> RetainedResources {
+    let control = worker::DownstreamControl::new(budget).unwrap();
+    let before = budget.usage();
+    let prepared = worker::Worker::prepare(
+        Arc::clone(request),
+        plan.map(Arc::clone),
+        control.clone(),
+        budget.clone(),
+    )
+    .unwrap();
+    let after = budget.usage();
+    let actual = RetainedResources {
+        payload_bytes: after
+            .payload_bytes
+            .checked_sub(before.payload_bytes)
+            .unwrap(),
+        ordered_entries: after
+            .ordered_entries
+            .checked_sub(before.ordered_entries)
+            .unwrap(),
+        shared_roots: after.shared_roots.checked_sub(before.shared_roots).unwrap(),
+        channel_count: after
+            .channel_count
+            .checked_sub(before.channel_count)
+            .unwrap(),
+        slot_count: after.slot_count.checked_sub(before.slot_count).unwrap(),
+    };
+    drop(prepared);
+    assert_eq!(budget.usage(), before);
+    actual
+}
+
 fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Box<Model>, String) {
     let (inputs, transmission, sections) = super::super::tests::accepted_inputs();
     let options = Options {
@@ -160,10 +193,11 @@ fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Box<Model>, St
                 .any(|id| id.value() == profile.profile_id)
         }),
     );
-    let actual = sum(
-        resources::<FullLoopRequest>(request.retained_footprint().unwrap()).unwrap(),
-        resources::<FullLoopSweepPlan>(plan.retained_footprint().unwrap()).unwrap(),
-    );
+    let source = super::super::result_retention::fixture_budget();
+    let request = admit_request(request, &source).unwrap();
+    let plan = admit_plan(plan, &source).unwrap();
+    let actual = source.usage();
+    let transport_charge = transport_allowance(&request, Some(&plan), &source);
     assert!(actual.payload_bytes > 0 && actual.ordered_entries > 0 && actual.shared_roots > 0);
     let input_charge =
         crate::downstream::workbench::session::fixture_candidate_resources(&inputs, &sections);
@@ -189,10 +223,16 @@ fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Box<Model>, St
                 sum(
                     actual,
                     sum(
-                        sum(working_allowance(&request), report_allowance(&request)),
+                        sum(
+                            working_allowance(request.value()),
+                            report_allowance(request.value()),
+                        ),
                         sum(
                             sum(adapter, profile),
-                            crate::downstream::simulation::run_timing::fixture_resources(),
+                            sum(
+                                crate::downstream::simulation::run_timing::fixture_resources(),
+                                transport_charge,
+                            ),
                         ),
                     ),
                 ),
@@ -202,11 +242,11 @@ fn prepared_model(duration_ms: u64, tight: Option<Dimension>) -> (Box<Model>, St
     });
     let context = Context::for_application(ApplicationSessions::new(maximum).unwrap()).unwrap();
     crate::downstream::workbench::session::restore(&context, inputs, sections).unwrap();
-    // Admit canonical metadata while the actual prepared scientific candidates
-    // still belong to their finite preparation builders, before final wrappers.
+    // Preserve the exact immutable scientific candidates; independently reserve
+    // the target host before retaining their aliases under that canonical counter.
     let key = context.application.configure_downstream(true).unwrap();
-    let request = admit_request(request, context.application.budget()).unwrap();
-    let plan = admit_plan(plan, context.application.budget()).unwrap();
+    let request = rebind_request(&request, context.application.budget()).unwrap();
+    let plan = rebind_plan(&plan, context.application.budget()).unwrap();
     let mut model = Model::for_context(context).unwrap();
     model.options = Some(options);
     model.verify = true;
@@ -287,10 +327,27 @@ fn every_real_candidate_dimension_preserves_accepted_science_generation_and_repo
     for dimension in [Dimension::Payload, Dimension::Entries, Dimension::Roots] {
         let (mut model, settings) = prepared_model(COMPLETE_OBSERVATION_MS, Some(dimension));
         let context = model.context.clone();
+        assert!(model.error.message().is_empty());
+        let before_run = context.application.budget().usage();
         model.start();
         wait_for(|| model.poll()["busy"] == false);
         let report = latest(&context).expect("Accepted real science must complete");
         assert_eq!(report.job.status, ChannelJobStatus::Complete);
+        let settled = [
+            report.job.0.fixture_reserved_resources(),
+            report.observations.fixture_resources(),
+            crate::downstream::simulation::run_timing::fixture_resources(),
+            crate::downstream::instruments::receiver::performance::fixture_reserved_resources(
+                &context,
+            ),
+            match &model.error {
+                WorkerFailure::Detailed(error) => error.fixture_reserved_resources(),
+                _ => RetainedResources::default(),
+            },
+        ]
+        .into_iter()
+        .fold(before_run, sum);
+        wait_for(|| context.application.budget().usage() == settled);
         let request = Arc::clone(model.request.as_ref().unwrap());
         let plan = Arc::clone(model.plan.as_ref().unwrap());
         let key = model.generation;
@@ -315,6 +372,7 @@ fn every_real_candidate_dimension_preserves_accepted_science_generation_and_repo
                 .shared_roots
                 .checked_sub(previous_status.shared_roots)
                 .unwrap(),
+            ..Default::default()
         };
         let accepted_options = serde_json::to_value(&model.options).unwrap();
         let mut changed = model.options.clone().unwrap();
@@ -366,6 +424,11 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     let old_result_charge = report_allowance(model.request.as_ref().unwrap().value());
     let old_working_charge = working_allowance(model.request.as_ref().unwrap().value());
     let (adapter_charge, profile_control_charge) = worker::fixture_control_resources();
+    let transport_charge = transport_allowance(
+        model.request.as_ref().unwrap(),
+        model.plan.as_ref(),
+        application.budget(),
+    );
     let old_request = Arc::downgrade(model.request.as_ref().unwrap());
     let old_plan = Arc::downgrade(model.plan.as_ref().unwrap());
     model.start();
@@ -391,7 +454,10 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
                 sum(old_charge, sum(old_working_charge, old_result_charge)),
                 sum(
                     sum(adapter_charge, profile_control_charge),
-                    crate::downstream::simulation::run_timing::fixture_resources()
+                    sum(
+                        crate::downstream::simulation::run_timing::fixture_resources(),
+                        transport_charge
+                    )
                 )
             )
         )
@@ -423,13 +489,21 @@ fn actual_worker_retains_old_owners_while_a_new_candidate_is_accepted() {
     assert!(actual.shared_roots >= stable.shared_roots);
     assert!(
         actual.shared_roots
-            <= sum(stable, sum(old_working_charge, profile_control_charge)).shared_roots
+            <= sum(
+                stable,
+                sum(
+                    sum(old_working_charge, profile_control_charge),
+                    transport_charge
+                )
+            )
+            .shared_roots
     );
     assert_eq!(
         application.active().unwrap().phase,
         DispatchPhase::Cancelling
     );
     wait_for(|| model.poll()["busy"] == false);
+    wait_for(|| application.budget().usage() == sum(base, new_charge));
     assert!(old_request.upgrade().is_none() && old_plan.upgrade().is_none());
     assert_eq!(application.budget().usage(), sum(base, new_charge));
     assert!(latest(&model.context).is_none());

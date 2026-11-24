@@ -10,6 +10,8 @@ const LIMITS: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 
 // Deliberate spare requested path storage, independent of path-count policy.
@@ -20,6 +22,7 @@ fn fixed() -> RetainedResources {
         payload_bytes: size_of::<Retained<Mutex<BTreeSet<Record>>>>(),
         ordered_entries: 0,
         shared_roots: 1,
+        ..Default::default()
     }
 }
 fn add(left: RetainedResources, right: RetainedResources) -> RetainedResources {
@@ -30,6 +33,7 @@ fn add(left: RetainedResources, right: RetainedResources) -> RetainedResources {
             .checked_add(right.ordered_entries)
             .unwrap(),
         shared_roots: left.shared_roots.checked_add(right.shared_roots).unwrap(),
+        ..Default::default()
     }
 }
 fn fixture_path() -> PathBuf {
@@ -44,6 +48,7 @@ fn record(path: &PathBuf) -> RetainedResources {
         payload_bytes: size_of::<Record>() + path.capacity(),
         ordered_entries: 1,
         shared_roots: 0,
+        ..Default::default()
     }
 }
 

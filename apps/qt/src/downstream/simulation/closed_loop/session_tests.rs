@@ -55,11 +55,15 @@ fn rejected_host_metadata_preserves_the_accepted_real_report_and_request() {
             payload_bytes: TEST_HOST_PAYLOAD_LIMIT,
             ordered_entries: usize::MAX,
             shared_roots: usize::MAX,
+            channel_count: usize::MAX,
+            slot_count: usize::MAX,
         })
         .unwrap(),
     )
     .unwrap();
     let mut model = prepared_model_with_duration(context.clone(), COMPLETE_SOURCE_DURATION_MS);
+    assert!(model.error.message().is_empty());
+    let before_run = context.application.budget().usage();
     model.start();
     wait_for(|| model.poll()["busy"] == false);
     let report = latest(&context).expect("The accepted real run must complete");
@@ -67,6 +71,21 @@ fn rejected_host_metadata_preserves_the_accepted_real_report_and_request() {
         report.job.status,
         merlin::downstream::ChannelJobStatus::Complete
     );
+    // Terminal acknowledgement may precede the task guard's final drop. Base
+    // pressure on actual settled owners, including the preserved completed report.
+    let settled = [
+        report.job.0.fixture_reserved_resources(),
+        report.observations.fixture_resources(),
+        crate::downstream::simulation::run_timing::fixture_resources(),
+        crate::downstream::instruments::receiver::performance::fixture_reserved_resources(&context),
+        match &model.error {
+            WorkerFailure::Detailed(error) => error.fixture_reserved_resources(),
+            _ => RetainedResources::default(),
+        },
+    ]
+    .into_iter()
+    .fold(before_run, |left, right| left.checked_add(right).unwrap());
+    wait_for(|| context.application.budget().usage() == settled);
     let key = model.generation;
     let request = serde_json::to_value(model.request.as_ref().unwrap().value().settings()).unwrap();
     let accepted_options = serde_json::to_value(&model.options).unwrap();
@@ -318,6 +337,8 @@ fn rejected_initial_performance_admission_returns_the_lease_without_dispatch_or_
         payload_bytes: usize::MAX,
         ordered_entries: usize::MAX,
         shared_roots: usize::MAX,
+        channel_count: usize::MAX,
+        slot_count: usize::MAX,
     };
     const OBSERVATION_MS: u64 = 1;
     let context =

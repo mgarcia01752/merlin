@@ -44,6 +44,7 @@ fn measured(value: &Value) -> RetainedResources {
                 payload_bytes: values.len() * size_of::<(String, Value)>(),
                 ordered_entries: values.len(),
                 shared_roots: 0,
+                ..Default::default()
             };
             for (key, value) in values {
                 assert_eq!(key.len(), key.capacity());

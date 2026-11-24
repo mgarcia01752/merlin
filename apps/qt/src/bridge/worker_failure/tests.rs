@@ -19,6 +19,8 @@ const TEST_LIMIT: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
     shared_roots: usize::MAX,
+    channel_count: usize::MAX,
+    slot_count: usize::MAX,
 };
 // Exactly one terminal fixture message, matching either real Designer queue.
 const TERMINAL_CAPACITY: usize = 1;

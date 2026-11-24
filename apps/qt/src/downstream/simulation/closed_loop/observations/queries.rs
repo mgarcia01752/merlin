@@ -204,6 +204,7 @@ fn inventory_resources(source: usize) -> Result<RetainedResources, ObservationEr
             ))?,
         ordered_entries: 0,
         shared_roots: 0,
+        ..Default::default()
     })
 }
 
@@ -214,6 +215,7 @@ fn snapshot_resources(source: usize) -> Result<RetainedResources, ObservationErr
         )?,
         ordered_entries: 0,
         shared_roots: 0,
+        ..Default::default()
     })
 }
 

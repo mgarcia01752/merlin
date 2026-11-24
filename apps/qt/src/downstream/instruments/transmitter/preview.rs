@@ -11,7 +11,10 @@ use crate::shared::{
     presentation::constants::{MIN_SPECTRUM_DISPLAY_BINS, WORKER_FAILURE_ADMISSION_MESSAGE},
     worker_failure::WorkerFailure,
 };
-use crate::shell::{Retained, RetainedResources, RetentionBudget, RetentionError};
+use crate::shell::{
+    admit_task, bounded_channel, run_task, AdmittedTask, DeliveryReceiver, Retained,
+    RetainedResources, RetentionBudget, RetentionError,
+};
 use merlin::downstream::{
     ChannelConfiguration, ChannelConfigurationInput, PhysicalLayoutView, TransmissionConfiguration,
     TransmitterPreview, TransmitterPreviewControl, TransmitterPreviewRequest,
@@ -20,10 +23,7 @@ use merlin::downstream::{
 pub(crate) use retention::PreviewError;
 use retention::SharedPrepared;
 use serde_json::{json, Value};
-use std::sync::{
-    mpsc::{self, Receiver, TryRecvError},
-    Arc,
-};
+use std::sync::{mpsc::TryRecvError, Arc};
 
 struct PreviewInput {
     request: TransmitterPreviewRequest,
@@ -38,7 +38,7 @@ struct PreparedPreview {
 struct Job {
     revision: u64,
     control: Arc<Retained<TransmitterPreviewControl>>,
-    receiver: Receiver<Result<Box<Retained<TransmitterPreview>>, WorkerFailure>>,
+    receiver: DeliveryReceiver<Result<Box<Retained<TransmitterPreview>>, WorkerFailure>>,
 }
 
 pub(crate) struct Analyzer {
@@ -227,6 +227,18 @@ impl Analyzer {
     /// # Returns
     /// Status reflects progress, unavailable inputs or thread-spawn diagnostics.
     pub(crate) fn generate(&mut self) {
+        self.generate_with(|task| {
+            std::thread::Builder::new()
+                .name("merlin-tx-spectrum".into())
+                .spawn(move || run_task(task))
+                .map(drop)
+        });
+    }
+
+    // The selected starter receives the actual admitted closure, after all C3
+    // preflight. Fixtures can pressure the original product gate at this exact
+    // dispatch boundary without guessing captures or changing scientific calls.
+    fn generate_with(&mut self, start: impl FnOnce(AdmittedTask) -> std::io::Result<()>) {
         self.poll();
         if self.job.is_some() {
             return;
@@ -247,24 +259,35 @@ impl Analyzer {
                 return;
             }
         };
-        self.error = WorkerFailure::default();
-        self.notice = "";
-        let worker_control = Arc::clone(&control);
-        let (sender, receiver) = mpsc::sync_channel(IDLE_PREVIEW_COMPLETION_CAPACITY);
-        let spawn = std::thread::Builder::new()
-            .name("merlin-tx-spectrum".into())
-            .spawn(move || {
-                let result = retention::generate(prepared, worker_control.value(), &budget)
+        let transport = (|| {
+            let (sender, receiver) = bounded_channel(&budget, IDLE_PREVIEW_COMPLETION_CAPACITY)?;
+            let delivery = sender.reserve()?;
+            let worker_control = Arc::clone(&control);
+            let worker_budget = budget.clone();
+            let task = admit_task(&budget, move || {
+                let result = retention::generate(prepared, worker_control.value(), &worker_budget)
                     .map(Box::new)
                     .map_err(|error| {
                         WorkerFailure::admit_with_fallback(
                             error.into_message().into(),
-                            &budget,
+                            &worker_budget,
                             WORKER_FAILURE_ADMISSION_MESSAGE,
                         )
                     });
-                let _ = sender.send(result);
-            });
+                let _ = delivery.send(result);
+            })?;
+            Ok::<_, RetentionError>((receiver, task))
+        })();
+        let (receiver, task) = match transport {
+            Ok(prepared) => prepared,
+            Err(error) => {
+                self.set_error(PreviewError::Retention(error).into_message());
+                return;
+            }
+        };
+        self.error = WorkerFailure::default();
+        self.notice = "";
+        let spawn = start(task);
         match spawn {
             Ok(_handle) => {
                 self.job = Some(Job {
@@ -293,7 +316,10 @@ impl Analyzer {
         let message = self.job.as_ref().map(|job| job.receiver.try_recv());
         if let Some(message) = message {
             match message {
-                Ok(result) => {
+                Ok(delivery) => {
+                    let _delivery_guard;
+                    let (result, guard) = delivery.into_parts();
+                    _delivery_guard = guard;
                     let job = self
                         .job
                         .take()
@@ -774,3 +800,6 @@ mod failure_retention_tests;
 #[cfg(test)]
 #[path = "preview/fixed_retention_tests.rs"]
 mod fixed_retention_tests;
+
+#[cfg(test)]
+mod transport_retention_tests;
