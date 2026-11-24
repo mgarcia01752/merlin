@@ -4,8 +4,11 @@
  */
 //! Direction-specific Qt ownership over the existing public upstream controller.
 mod acquisition;
+mod configuration_view;
+mod drafts;
 mod preparation;
 mod presentation;
+pub(crate) use drafts::{MAX_DRAFT_CHANGE_BYTES, MAX_DRAFT_ID_CHARACTERS};
 
 use crate::shared::{
     presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE, worker_failure::WorkerFailure,
@@ -36,6 +39,8 @@ pub(crate) struct Model {
     key: Option<SessionKey>,
     report: Option<(RunToken, RetainedReport)>,
     error: WorkerFailure,
+    draft: Option<drafts::SharedDraft>,
+    draft_outcome: drafts::Outcome,
 
     // Drop controllers, pending slots and data aliases before this containing charge.
     _fixed_guard: Retained<()>,
@@ -66,6 +71,8 @@ impl Model {
             key: None,
             report: None,
             error: WorkerFailure::default(),
+            draft: None,
+            draft_outcome: drafts::Outcome::default(),
             _fixed_guard: fixed_guard,
         }))
     }
@@ -227,6 +234,59 @@ impl Model {
 
     fn adopt_prepared(&mut self, prepared: Prepared) -> Result<(), WorkerFailure> {
         match prepared {
+            Prepared::Edit {
+                delivery: _delivery_guard,
+                controller,
+                draft,
+                candidate,
+            } => {
+                // Restore the unchanged old owner before handling every terminal path.
+                self.controller = Some(controller);
+                if !self
+                    .draft
+                    .as_ref()
+                    .is_some_and(|current| std::sync::Arc::ptr_eq(current, &draft))
+                {
+                    return Ok(());
+                }
+                if self.preparation_cancelled {
+                    self.draft_outcome = drafts::Outcome::Cancelled;
+                    return Ok(());
+                }
+                if self.application.snapshot(Direction::Upstream).key != draft.value().base {
+                    self.draft_outcome = drafts::Outcome::Stale;
+                    return Err(WorkerFailure::Static(
+                        "Upstream configuration changed during draft preparation.",
+                    ));
+                }
+                let candidate = match candidate {
+                    Ok(candidate) => candidate,
+                    Err(error) => {
+                        self.draft_outcome = drafts::Outcome::Rejected;
+                        return Err(error);
+                    }
+                };
+                let key = match self
+                    .application
+                    .configure_upstream_if(draft.value().base, true)
+                {
+                    Ok(key) => key,
+                    Err(error) => {
+                        self.draft_outcome = drafts::Outcome::Rejected;
+                        return Err(self.admit_error(format!("{error:?}")));
+                    }
+                };
+                // This key is issued by the upstream host; the sole constructor
+                // error is a downstream direction, which cannot occur here.
+                self.controller = Some(
+                    UpstreamController::new(key, candidate)
+                        .expect("Canonical upstream configuration supplies an upstream key"),
+                );
+                self.key = Some(key);
+                self.report = None;
+                self.error = WorkerFailure::default();
+                self.draft_outcome = drafts::Outcome::Accepted;
+            }
             Prepared::Configuration {
                 delivery: _delivery_guard,
                 expected,
@@ -250,6 +310,9 @@ impl Model {
                 self.controller = Some(controller);
                 self.key = Some(key);
                 self.report = None;
+                if self.draft.is_some() {
+                    self.draft_outcome = drafts::Outcome::Stale;
+                }
             }
             Prepared::Run {
                 delivery: _delivery_guard,

@@ -632,13 +632,12 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Evidence: [SHELL acceptance](features/unified-qt-workbench/validation.md#uiu-shell-01-persistent-tabs-and-scoped-actions) passes all 421 Qt Rust cases, fourteen QML suites (198 pass records including init/cleanup), Clippy/format/final boundary, optimized build, six native startup/project probes, actual idle/run/pause/menu/control routing and receiver Apply/Help pressure/recovery. Twenty-five packaging resource contracts pass. Unchanged backend/native milestone evidence is explicitly reused; US editing/instruments, unified File/recovery and installed-platform acceptance remain separate. Continue UIU-US-01.
 
 <a id="task-uiu-us-01"></a>
-- [ ] **UIU-US-01** Implement approved upstream startup layout and configuration drill-ins.
+- [x] **UIU-US-01** Implement approved upstream startup layout and configuration drill-ins.
   Requirements: [REQ-UIU-10](../requirements.md#req-uiu-10), [REQ-UIU-11](../requirements.md#req-uiu-11), [REQ-UIU-27](../requirements.md#req-uiu-27).
   Dependencies: [UIU-SHELL-01](#task-uiu-shell-01).
   Architecture/files: [upstream owner](../architecture.md#unified-qt-upstream-scientific-presentation), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Implement the [approved startup layout](features/unified-qt-workbench/upstream-startup-layout.md), then verify Qt rendering, block/drill-in interactions, connector roles, keyboard/focus and resize behavior. Visual-input approval is satisfied; keep CM→channel→CMTS samples separate from controls, H/C/C×H/RxMER labels, typed Apply/Cancel and supported-mode admission; no inferred wider support.
-  Evidence: [upstream acceptance plan](features/unified-qt-workbench/validation.md#upstream); pending implementation/acceptance.
-  Current work: [native configuration design](features/unified-qt-workbench/design.md#uiu-us-01-native-configuration-integration) bounds the remaining work to real input acquisition, correlated typed drafts and primary lifecycle acceptance. Preserve imported provenance, accepted state and existing measurement/execution task boundaries.
+  Evidence: [integrated configuration acceptance](features/unified-qt-workbench/validation.md#uiu-us-01-integrated-configuration-acceptance): all 446 Qt Rust cases, fifteen relevant QML suites (247 pass records), affected-suite reruns and the new actual-host pressure suite (13 pass records), Clippy/format/final boundary, optimized build, six native startup/project probes and actual seven-editor/native chooser acceptance pass. Existing downstream native idle/run/pause/menu/control regression and 25 packaging resource cases pass. Exact imported provenance and all previous checklist states remain preserved; unchanged backend/Python milestone evidence is explicitly reused. Continue UIU-US-02; measured input, instruments and upstream project persistence retain their existing tasks.
 
 <a id="task-uiu-us-02"></a>
 - [ ] **UIU-US-02** Connect upstream execution and direction lifecycle.

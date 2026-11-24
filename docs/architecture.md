@@ -1971,8 +1971,13 @@ reuses the current UpstreamSession model. Its native acquisition action selects
 a real local public configuration document, protects the original source path,
 and queues existing bounded background parsing/admission. Picker cancellation
 does not create a default document or alter either direction. Configuration
-drafts and visible dialog lifecycle acceptance remain in progress; native input
-loading alone does not complete UIU-US-01.
+drafts now use immutable opaque field destinations and exact token/base identities.
+Typed changed-only candidates are prepared through the existing public API and
+adopted under the canonical configuration lock. Cancel targets only its original
+draft, preserving source provenance, accepted configuration and the other
+direction. Seven native configuration editors and the approved startup layout
+have [UIU-US-01 acceptance](development/features/unified-qt-workbench/validation.md#uiu-us-01-integrated-configuration-acceptance).
+Execution, measured-input import and scientific instruments retain separate gates.
 
 The shared shell uses `qml/shell/directions/PersistentDirectionTabs.qml` with
 two persistent Loaders. Main polls both real adapters regardless of selected tab.
@@ -2041,8 +2046,15 @@ Stop, Pause and status controls. Remove the large internal MERLIN header.
 Keep plots, resource grids and FEC tables in separate drill-in windows, with new
 upstream windows under `apps/qt/qml/upstream/`. Direction-specific thin Rust
 adapters call `merlin::upstream`; Qt never uses Python or reconstructs science.
-The approval supplies visual placement authorization; UIU-US-01 remains subject
-to its shell dependencies and actual Qt rendering/interaction acceptance.
+The approved layout and seven configuration editors now have primary Qt/native
+[rendering and lifecycle acceptance](development/features/unified-qt-workbench/validation.md#uiu-us-01-integrated-configuration-acceptance).
+`upstream/workbench/drafts/{fields,constants}.rs` owns typed projection, immutable
+field bindings and independent transport policies; `preparation/edit.rs` reuses
+the current controller slot and bounded completion path. QML only renders exact
+strings/choices and requests native Apply/Cancel. The existing public validator
+owns supported numerology, IUC, grant, receiver, channel and Pre-Eq semantics.
+Absent explicit correction remains native unity; measured capture/full-bank
+selection and resource-grid instruments remain their existing delivery tasks.
 
 The OFDMA resource-grid viewer has symbol index on X and physical subcarrier
 index on Y. The accepted bounded idle upstream API observation exposes authoritative

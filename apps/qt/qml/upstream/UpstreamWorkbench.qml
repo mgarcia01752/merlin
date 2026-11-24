@@ -10,13 +10,17 @@ import QtQuick.Layouts
 import "../shared/components"
 import "../shared/presentation"
 
-// Independent preparation for UIU-US-01. Host data is presentation-only;
-// the future Rust direction adapter owns readiness and scientific admission.
+// Host data is presentation-only; the native Rust direction adapter owns
+// accepted configuration, readiness and all scientific admission.
 Item {
     id: workbench
     required property var theme
     required property var host
     signal sectionRequested(string sectionId)
+    signal draftRequested(string sectionId)
+    signal draftApplyRequested(string sectionId, string token, var values)
+    signal draftCancelled(string token)
+    signal configurationLoadRequested()
     readonly property var incomingPresentation: host && host.presentation ? host.presentation : ({})
     readonly property var presentation: presentationOwner.value || ({})
     readonly property bool presentationRejected: presentationOwner.rejected
@@ -674,22 +678,37 @@ Item {
         id: ucdDialog
         objectName: "upstreamUcdDialog"
         theme: workbench.theme
+        host: workbench.host
         presentation: workbench.detailPresentation("ucd")
         onClosed: ucdBlock.forceActiveFocus()
+        onDraftRequested: function(sectionId) { workbench.draftRequested(sectionId); }
+        onDraftApplyRequested: function(sectionId, token, values) { workbench.draftApplyRequested(sectionId, token, values); }
+        onDraftCancelled: function(token) { workbench.draftCancelled(token); }
+        onConfigurationLoadRequested: workbench.configurationLoadRequested()
     }
     BurstProfilesDialog {
         id: profilesDialog
         objectName: "upstreamProfilesDialog"
         theme: workbench.theme
+        host: workbench.host
         presentation: workbench.detailPresentation("profiles")
         onClosed: profilesBlock.forceActiveFocus()
+        onDraftRequested: function(sectionId) { workbench.draftRequested(sectionId); }
+        onDraftApplyRequested: function(sectionId, token, values) { workbench.draftApplyRequested(sectionId, token, values); }
+        onDraftCancelled: function(token) { workbench.draftCancelled(token); }
+        onConfigurationLoadRequested: workbench.configurationLoadRequested()
     }
     GrantsDialog {
         id: grantsDialog
         objectName: "upstreamGrantsDialog"
         theme: workbench.theme
+        host: workbench.host
         presentation: workbench.detailPresentation("grants")
         onClosed: grantsBlock.forceActiveFocus()
+        onDraftRequested: function(sectionId) { workbench.draftRequested(sectionId); }
+        onDraftApplyRequested: function(sectionId, token, values) { workbench.draftApplyRequested(sectionId, token, values); }
+        onDraftCancelled: function(token) { workbench.draftCancelled(token); }
+        onConfigurationLoadRequested: workbench.configurationLoadRequested()
     }
     TransmitterDialog {
         id: transmitterDialog
@@ -697,34 +716,58 @@ Item {
         theme: workbench.theme
         presentation: workbench.detailPresentation("transmitter")
         onClosed: transmitterBlock.forceActiveFocus()
+        onSourceConfigurationRequested: {
+            transmitterDialog.close();
+            workbench.openSection("source");
+        }
     }
     ChannelDialog {
         id: channelDialog
         objectName: "upstreamChannelDialog"
         theme: workbench.theme
+        host: workbench.host
         presentation: workbench.detailPresentation("channel")
         onClosed: channelBlock.forceActiveFocus()
+        onDraftRequested: function(sectionId) { workbench.draftRequested(sectionId); }
+        onDraftApplyRequested: function(sectionId, token, values) { workbench.draftApplyRequested(sectionId, token, values); }
+        onDraftCancelled: function(token) { workbench.draftCancelled(token); }
+        onConfigurationLoadRequested: workbench.configurationLoadRequested()
     }
     ReceiverDialog {
         id: receiverDialog
         objectName: "upstreamReceiverDialog"
         theme: workbench.theme
+        host: workbench.host
         presentation: workbench.detailPresentation("receiver")
         onClosed: receiverBlock.forceActiveFocus()
+        onDraftRequested: function(sectionId) { workbench.draftRequested(sectionId); }
+        onDraftApplyRequested: function(sectionId, token, values) { workbench.draftApplyRequested(sectionId, token, values); }
+        onDraftCancelled: function(token) { workbench.draftCancelled(token); }
+        onConfigurationLoadRequested: workbench.configurationLoadRequested()
     }
     SourceDialog {
         id: sourceDialog
         objectName: "upstreamSourceDialog"
         theme: workbench.theme
+        host: workbench.host
         presentation: workbench.detailPresentation("source")
         onClosed: sourceBlock.forceActiveFocus()
+        onDraftRequested: function(sectionId) { workbench.draftRequested(sectionId); }
+        onDraftApplyRequested: function(sectionId, token, values) { workbench.draftApplyRequested(sectionId, token, values); }
+        onDraftCancelled: function(token) { workbench.draftCancelled(token); }
+        onConfigurationLoadRequested: workbench.configurationLoadRequested()
     }
     PreEqualizationDialog {
         id: preEqualizationDialog
         objectName: "upstreamPreEqualizationDialog"
         theme: workbench.theme
+        host: workbench.host
         presentation: workbench.detailPresentation("preEqualization")
         onClosed: preEqualizationBlock.forceActiveFocus()
+        onDraftRequested: function(sectionId) { workbench.draftRequested(sectionId); }
+        onDraftApplyRequested: function(sectionId, token, values) { workbench.draftApplyRequested(sectionId, token, values); }
+        onDraftCancelled: function(token) { workbench.draftCancelled(token); }
+        onConfigurationLoadRequested: workbench.configurationLoadRequested()
     }
     RxmerDialog {
         id: rxmerDialog

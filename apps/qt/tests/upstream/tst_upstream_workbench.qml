@@ -90,7 +90,7 @@ Pane {
 
         /* Exercise the shared popup close control and focus restoration. */
         function closeWithX(popup) {
-            mouseClick(findChild(popup, "popupCloseButton"));
+            mouseClick(findChild(popup.header, "popupCloseButton"));
             tryCompare(popup, "opened", false);
         }
 

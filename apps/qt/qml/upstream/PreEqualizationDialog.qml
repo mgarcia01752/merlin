@@ -4,7 +4,9 @@
  */
 import QtQuick
 
-UpstreamDetailDialog {
+UpstreamConfigurationDraftDialog {
+    sectionId: "preEqualization"
+    approvedFields: ["initial_id"]
     title: "CM Pre-Eq"
     purpose: "Inspect measured cable-modem pre-equalization coefficients and their admitted use."
     referencePlane: "Transmit correction C precedes physical channel H. These coefficients are not a CMTS channel-estimation capture."

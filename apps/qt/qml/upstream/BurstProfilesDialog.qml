@@ -4,9 +4,10 @@
  */
 import QtQuick
 
-UpstreamDetailDialog {
+UpstreamConfigurationDraftDialog {
+    sectionId: "profiles"
+    approvedFields: ["selected_iuc", "modulation_index", "pilot_pattern", "additional_minislots"]
     title: "IUC / Burst Profiles"
-    purpose: "Inspect the accepted upstream modulation, coding and burst-profile selection supplied by CMTS configuration."
+    purpose: "Edit the supplied scheduled-data IUC selection and existing burst-profile groups. Other burst attributes remain unchanged."
     referencePlane: "Only modes admitted by the upstream configuration owner may be applied."
-    stages: []
 }

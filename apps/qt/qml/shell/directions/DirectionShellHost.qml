@@ -16,6 +16,10 @@ QtObject {
     property var upstreamView: null
     readonly property var presentation: coverage.value || ({})
     readonly property var upstreamState: presentation.upstreamState || ({})
+    readonly property var draftState: upstreamState.draft || ({})
+    // One scalar cursor over compiled section tags, never retained source text.
+    readonly property int noRequestedSection: -1
+    property int reopenConfigurationIndex: noRequestedSection
     readonly property bool presentationRejected: coverage.rejected
     property PresentationOwner presentationCoverage: PresentationOwner {
         id: coverage
@@ -31,6 +35,8 @@ QtObject {
             : upstream.has_result ? "Upstream simulation " + upstream.result.status
             : upstream.configured ? "Upstream configuration ready" : "No accepted upstream configuration")
         return Object.assign({}, metadata, {upstreamState: upstream,
+            blocks: upstream.configuration_view ? upstream.configuration_view.blocks : ({}),
+            details: upstream.configuration_view ? upstream.configuration_view.details : ({}),
             feedbackMessage: message, feedbackIsError: isError,
             display: {executionStatus: metadata.executionStatus, feedback: message,
                 upstreamStatus: status}})
@@ -63,8 +69,79 @@ QtObject {
     /** Poll the upstream owner even when its persistent tab is hidden. */
     function poll() {
         const upstream = JSON.parse(upstreamBackend.poll())
-        return adopt(candidate(JSON.parse(backend.state()), upstream,
+        // Consume exact-identity controls transiently before optional text admission.
+        // A held old presentation must never strand a native terminal operation.
+        if (upstreamView && upstreamView.sectionDialogs && upstream.draft) {
+            const popup = upstreamView.sectionDialogs[upstream.draft.section]
+            if (popup && typeof popup.receiveControl === "function") {
+                popup.receiveControl(upstream.draft)
+            }
+        }
+        const accepted = adopt(candidate(JSON.parse(backend.state()), upstream,
             presentation.feedbackMessage || "", !!presentation.feedbackIsError))
+        if (accepted && reopenConfigurationIndex !== noRequestedSection && !upstream.preparing) {
+            const section = configurationSections()[reopenConfigurationIndex]
+            reopenConfigurationIndex = noRequestedSection
+            if (!upstream.error && upstream.configured && upstreamView
+                    && presentation.selectedDirection === "upstream") {
+                Qt.callLater(function() { upstreamView.openSection(section) })
+            }
+        }
+        return accepted
+    }
+
+    /** Request a native read-only draft of the exact accepted upstream configuration. */
+    function beginDraft(section) {
+        if (!accepts("upstream", presentation.upstreamIdentity)) {
+            return false
+        }
+        const error = upstreamBackend.begin_draft(section) || ""
+        poll()
+        feedback(error)
+        return !error
+    }
+
+    /** Submit exact changed strings; only a later native adoption is acceptance. */
+    function applyDraft(section, token, values) {
+        if (!accepts("upstream", presentation.upstreamIdentity)) {
+            return false
+        }
+        const error = upstreamBackend.apply_draft(section, token, JSON.stringify(values)) || ""
+        poll()
+        feedback(error)
+        return !error
+    }
+
+    /** Target the original draft even after a tab change; never call run Stop. */
+    function cancelDraft(token) {
+        const error = upstreamBackend.cancel_draft(token) || ""
+        poll()
+        return !error
+    }
+
+    /** Keep picker Cancel intact; close/reopen only after a real queued import. */
+    function loadConfiguration() {
+        if (!accepts("upstream", presentation.upstreamIdentity)) {
+            return false
+        }
+        const section = draftState.section || "ucd"
+        const error = upstreamBackend.choose_configuration() || ""
+        const state = JSON.parse(upstreamBackend.state())
+        if (!error && state.preparing && upstreamView) {
+            reopenConfigurationIndex = configurationSections().indexOf(section)
+            const popup = upstreamView.sectionDialogs[section]
+            if (popup) {
+                popup.close()
+            }
+        }
+        poll()
+        feedback(error)
+        return !error
+    }
+
+    /** Return transient compiled navigation tags without retaining a source array. */
+    function configurationSections() {
+        return ["ucd", "profiles", "grants", "source", "receiver", "channel", "preEqualization"]
     }
 
     /**

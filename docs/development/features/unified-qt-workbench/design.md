@@ -5112,3 +5112,45 @@ passes its focused implementation checks. `workbench/acquisition.rs` owns bounde
 file admission and idle guards; `acquisition/tests.rs` exercises actual inputs
 without replacing the production file adapter. The existing bridge adds only
 the chooser invokable. Visible dialog/draft acceptance remains pending.
+
+The integrated native draft owner uses the existing controller slot and bounded
+completion channel. Immutable descriptors bind to original preset/burst/group
+positions and remain admitted while a preparation shares them. Changed-value
+JSON has a separate existing-counter witness. Typed construction/validation stays
+inside the finite worker builder; the old controller and final admitted candidate
+overlap until the original key guard passes. A narrow `configure_upstream_if`
+operation applies that existing guard and commit under the existing coordinator
+lock, matching the downstream operation. This closes REQ-UIU-11's atomic-adoption
+consumer gap; it creates no session framework, API namespace or accounting category.
+
+When document `channel` is absent, its documented native unity/default settings
+are read from the actual accepted `Simulation::configuration().channel`.
+Only a changed channel field materializes `ChannelConfig::default` in the typed
+candidate. Untouched absence, all original source bytes, unselected presets and
+Pre-Eq banks/events/probes remain unchanged. No complete configuration document
+or measured input is invented. Absent explicit Pre-Eq remains honest unity
+inspection; actual capture/full-bank selection stays with UIU-US-03.
+
+The [prepared draft handoff](agent-handoffs/upstream-configuration-drafts.md)
+records the isolated source scope. Primary QML adoption comes from
+`aa90a179719ea3f2d64b39e13641f305ed890f5a`
+with the existing UpstreamVerificationDialog rename preserved. Field preparation
+is limited to two new source files in the isolated session-shell worktree;
+primary compilation, tests, native registration and acceptance remain lead-owned.
+Native transport policies are named by their independent purposes in
+`workbench/drafts/constants.rs`; equal choice/field and decimal/identity ceilings
+are distinct definitions. Scientific domains are validated by the public owner.
+
+An exact-token/base terminal control callback is consumed transiently by the
+visible editor before optional whole-host presentation admission. It stores no
+new diagnostic/field strings and cannot close a foreign draft. This keeps
+accepted/cancelled acknowledgements live under held presentation pressure while
+optional diagnostics remain separately admitted. Failed input preparation does
+not auto-reopen a fresh draft and erase the original native load error; only a
+configured, error-free import reopens its section.
+
+[Primary integrated acceptance](validation.md#uiu-us-01-integrated-configuration-acceptance)
+now closes UIU-US-01. Source-only preparation remains distinct from execution.
+The user guide is [Upstream workbench](../../../user/upstream-workbench.md).
+Continue UIU-US-02 using the existing actual public worker/report owner; no
+backend contract, accounting framework or unrelated task is reopened.

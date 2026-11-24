@@ -99,3 +99,24 @@ images; process exit alone is insufficient evidence. The overall and phase
 watchdogs are finite. Failed runs request cancellation only after this probe
 started its own worker. Target-specific native execution, rather than source
 parsing or fixture tests, establishes this acceptance evidence.
+
+## Upstream configuration probe
+
+`--upstream-configuration-probe --upstream-configuration-image
+/absolute/fresh/receiver.png` runs the fixed bundled Main configuration probe.
+Supply the existing single downstream workbench with `--workbench`. An external
+native-input runner must respond to `MERLIN_UPSTREAM_PICKER cancel` and then
+`MERLIN_UPSTREAM_PICKER load` using the application's real file chooser and a
+valid upstream configuration document. The probe checks all seven editors'
+Cancel, accepted Apply, rejected Apply and reopening, exact draft identities,
+independent downstream state and tab switching. It does not start a simulation.
+
+The fixture must use the existing 50 kHz upstream example with an explicit
+synthetic unity Pre-Eq plan; it is not a measured capture. The probe captures the
+accepted receiver's QML content to the requested fresh path. At
+`MERLIN_UPSTREAM_CAPTURE ready`, the external runner can also capture the actual
+Main window during the finite capture grace period. Label these two image scopes
+separately. Require a successful `MERLIN_UPSTREAM_CONFIGURATION_PROBE` JSON
+record, both native chooser responses and a fresh image; process exit alone is
+insufficient. Phase and overall watchdogs are finite. Normal startup creates no
+probe owner; automatic update lookup is suppressed for this offline check.

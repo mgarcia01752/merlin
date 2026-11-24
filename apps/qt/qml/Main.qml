@@ -74,8 +74,36 @@ ApplicationWindow {
     Theme { id: applicationTheme; presentationBackendFactory: window.createPresentationBackend; onDarkChanged: branding.update_icon(dark) }
     readonly property bool presentationProbeRequested: Qt.application.arguments.indexOf("--session-presentation-probe") >= 0
     readonly property bool directionProbeRequested: Qt.application.arguments.indexOf("--direction-shell-probe") >= 0
+    readonly property bool upstreamConfigurationProbeRequested: Qt.application.arguments.indexOf("--upstream-configuration-probe") >= 0
     property QtObject presentationProbe: null
     property QtObject directionProbe: null
+    property QtObject upstreamConfigurationProbe: null
+    property Component upstreamConfigurationProbeComponent: Component {
+        UpstreamConfigurationProbe {
+            onFinished: function(success, message) {
+                console.log("MERLIN_UPSTREAM_CONFIGURATION_PROBE " + message)
+                Qt.exit(success ? 0 : 1)
+            }
+        }
+    }
+    /** Run the fixed native configuration check with a fresh evidence path. */
+    function startUpstreamConfigurationProbe() {
+        const args = Qt.application.arguments
+        const imageArgument = args.indexOf("--upstream-configuration-image")
+        if (imageArgument < 0 || imageArgument + 1 >= args.length) {
+            console.error("Upstream configuration probe requires a fresh screenshot path.")
+            Qt.exit(1)
+            return
+        }
+        upstreamConfigurationProbe = upstreamConfigurationProbeComponent.createObject(window, {
+            rootWindow: window, workbench: workbench, tabs: directionTabs,
+            host: directionHost, controls: sharedControls, captureItem: unifiedFrame,
+            screenshotPath: args[imageArgument + 1]
+        })
+        if (!upstreamConfigurationProbe) {
+            Qt.exit(1)
+        }
+    }
     property Component directionProbeComponent: Component {
         DirectionShellProbe {
             onFinished: function(success, message) {
@@ -140,6 +168,8 @@ ApplicationWindow {
             Qt.callLater(startPresentationProbe)
         } else if (directionProbeRequested) {
             Qt.callLater(startDirectionProbe)
+        } else if (upstreamConfigurationProbeRequested) {
+            Qt.callLater(startUpstreamConfigurationProbe)
         } else if (Qt.application.arguments.indexOf("--smoke-test") >= 0) {
             smokeTimer.start()
         } else if (Qt.application.arguments.indexOf("--check-updates") >= 0) {
@@ -182,7 +212,7 @@ ApplicationWindow {
                     && !directionHost.upstreamState.busy && !directionHost.upstreamState.configured
                     && !window.workbench.loadingProject
                 prepareUpdate: function() { return workbench.saveUpdateRecovery() }
-                startupCheck: !window.presentationProbeRequested && !window.directionProbeRequested && Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
+                startupCheck: !window.presentationProbeRequested && !window.directionProbeRequested && !window.upstreamConfigurationProbeRequested && Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
             }
         }
     }
@@ -222,6 +252,10 @@ ApplicationWindow {
                 UpstreamWorkbench {
                     theme: applicationTheme
                     host: directionHost
+                    onDraftRequested: function(section) { directionHost.beginDraft(section) }
+                    onDraftApplyRequested: function(section, token, values) { directionHost.applyDraft(section, token, values) }
+                    onDraftCancelled: function(token) { directionHost.cancelDraft(token) }
+                    onConfigurationLoadRequested: directionHost.loadConfiguration()
                 }
             }
             onDirectionRequested: function(direction) { directionHost.selectDirection(direction) }

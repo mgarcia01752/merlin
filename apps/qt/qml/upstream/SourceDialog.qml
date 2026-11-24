@@ -4,7 +4,9 @@
  */
 import QtQuick
 
-UpstreamDetailDialog {
+UpstreamConfigurationDraftDialog {
+    sectionId: "source"
+    approvedFields: ["source_seed"]
     title: "PRBS-TX"
     purpose: "Inspect the accepted source supplied to the CM transmitter."
     referencePlane: "PRBS-TX is a separate source block. Source identity and generation belong to the direction session."

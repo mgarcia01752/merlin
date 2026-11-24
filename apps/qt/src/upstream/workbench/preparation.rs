@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Finite off-GUI preparation; these threads never hold a simulation run lease.
+mod edit;
+use super::drafts::SharedDraft;
 use super::{error_text, UpstreamController};
 use crate::upstream::{PreparedRun, PreparedSession};
 use crate::{
@@ -26,6 +28,11 @@ const CONTROLLER_SLOT_SHARED_ROOTS: usize = 1;
 type ControllerSlot = Arc<Retained<Mutex<Option<UpstreamController>>>>;
 
 pub(super) enum Pending {
+    Edit {
+        draft: SharedDraft,
+        receiver: DeliveryReceiver<Result<PreparedSession, WorkerFailure>>,
+        owner: ControllerSlot,
+    },
     Configuration {
         expected: SessionKey,
         receiver: DeliveryReceiver<Result<PreparedSession, WorkerFailure>>,
@@ -37,6 +44,12 @@ pub(super) enum Pending {
 }
 
 pub(super) enum Prepared {
+    Edit {
+        draft: SharedDraft,
+        controller: UpstreamController,
+        candidate: Result<PreparedSession, WorkerFailure>,
+        delivery: Option<RetentionReservation>,
+    },
     Configuration {
         expected: SessionKey,
         candidate: Result<PreparedSession, WorkerFailure>,
@@ -192,6 +205,16 @@ impl Pending {
     /// None while pending; original owner and an explicit error after disconnection.
     pub(super) fn poll(&self) -> Option<Prepared> {
         match self {
+            Self::Edit {
+                draft,
+                receiver,
+                owner,
+            } => receive(receiver).map(|(delivery, candidate)| Prepared::Edit {
+                draft: Arc::clone(draft),
+                controller: take_controller(owner),
+                candidate,
+                delivery,
+            }),
             Self::Configuration { expected, receiver } => {
                 receive(receiver).map(|(delivery, candidate)| Prepared::Configuration {
                     expected: *expected,

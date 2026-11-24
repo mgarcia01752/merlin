@@ -2,7 +2,7 @@
  * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: GPL-3.0-only
  */
-//! Scalar projection of authoritative upstream lifecycle and recovery outcomes.
+//! Bounded projections of authoritative upstream lifecycle, configuration and outcomes.
 use super::Model;
 use crate::shell::Direction;
 use serde_json::{json, Value};
@@ -10,7 +10,9 @@ use serde_json::{json, Value};
 impl Model {
     /// Reads current accepted state without copying source or observation buffers.
     /// # Returns
-    /// Scalars only; missing BER remains null and application identities are strings.
+    /// Lifecycle scalars and configuration draft/view DTOs; missing BER remains
+    /// null and application identities are lossless strings. Source/sample
+    /// buffers are never copied into this transient presentation.
     pub(crate) fn state(&self) -> Value {
         let active = self.application.active();
         let progress = self
@@ -34,6 +36,7 @@ impl Model {
             "progress":progress.map(|(token,snapshot)|json!({"run":token.run.to_string(),"status":snapshot.status,
                 "completed_grants":snapshot.completed_grants,"emitted_samples":snapshot.emitted_samples,
                 "compared_bits":snapshot.compared_bits,"elapsed_ms":snapshot.elapsed_ms})),
-            "has_result":self.report.is_some(),"result":result,"error":self.error.message()})
+            "has_result":self.report.is_some(),"result":result,"error":self.error.message(),
+            "draft":self.draft_state(),"configuration_view":self.configuration_presentation()})
     }
 }

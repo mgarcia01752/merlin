@@ -4,6 +4,7 @@
  */
 //! Thin QObject adapter; the direction model owns asynchronous public API calls.
 use crate::upstream::workbench::{Model, MAX_CONFIGURATION_BYTES};
+use crate::upstream::workbench::{MAX_DRAFT_CHANGE_BYTES, MAX_DRAFT_ID_CHARACTERS};
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 
@@ -24,6 +25,36 @@ pub mod bridge {
         /// Poll alone establishes eventual acceptance. No simulation is started.
         #[qinvokable]
         fn choose_configuration(self: Pin<&mut UpstreamSession>) -> QString;
+
+        /// Opens one isolated native configuration draft with exact current values.
+        /// # Arguments
+        /// * `section` - Existing upstream configuration section tag.
+        /// # Returns
+        /// Empty after staging the draft; Poll supplies its opaque token and base.
+        #[qinvokable]
+        fn begin_draft(self: Pin<&mut UpstreamSession>, section: &QString) -> QString;
+
+        /// Queues changed fields for an exact existing native draft.
+        /// # Arguments
+        /// * `section`, `token` - Original unchanged identifiers.
+        /// * `changes` - Bounded JSON object containing changed strings/selections only.
+        /// # Returns
+        /// Empty means queued; accepted is reported only after validated adoption.
+        #[qinvokable]
+        fn apply_draft(
+            self: Pin<&mut UpstreamSession>,
+            section: &QString,
+            token: &QString,
+            changes: &QString,
+        ) -> QString;
+
+        /// Discards only the exact configuration draft identified by its token.
+        /// # Arguments
+        /// * `token` - Original native draft token; foreign tokens reject.
+        /// # Returns
+        /// Empty after cancellation request; this never stops an active simulation.
+        #[qinvokable]
+        fn cancel_draft(self: Pin<&mut UpstreamSession>, token: &QString) -> QString;
 
         /// Starts off-GUI validation of an existing public configuration document.
         /// # Arguments
@@ -119,6 +150,90 @@ impl UpstreamSessionRust {
 }
 
 impl bridge::UpstreamSession {
+    /// Loads actual accepted values into an independent configuration draft.
+    /// # Arguments
+    /// * `section` - A bounded native section identifier; unknown values reject.
+    /// # Returns
+    /// Empty on success; accepted source, results and downstream remain unchanged.
+    pub fn begin_draft(mut self: core::pin::Pin<&mut Self>, section: &QString) -> QString {
+        if section.len() > MAX_DRAFT_ID_CHARACTERS {
+            return QString::from("Unknown upstream configuration section.");
+        }
+        let mut owner = self.as_mut().rust_mut();
+        let Some(model) = owner.ensure_model() else {
+            return QString::from(
+                crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+            );
+        };
+        QString::from(
+            model
+                .begin_draft(&section.to_string())
+                .err()
+                .unwrap_or_default(),
+        )
+    }
+
+    /// Queues only changed values against their original captured draft identity.
+    /// # Arguments
+    /// * `section`, `token` - Opaque native identifiers, checked before merge.
+    /// * `changes` - JSON limited before UTF-8 copy and again by exact byte count.
+    /// # Returns
+    /// Empty means queued; Poll returns its eventual accepted/rejected outcome.
+    pub fn apply_draft(
+        mut self: core::pin::Pin<&mut Self>,
+        section: &QString,
+        token: &QString,
+        changes: &QString,
+    ) -> QString {
+        if section.len() > MAX_DRAFT_ID_CHARACTERS || token.len() > MAX_DRAFT_ID_CHARACTERS {
+            return QString::from("Upstream draft request exceeds its transport limit.");
+        }
+        let mut owner = self.as_mut().rust_mut();
+        let Some(model) = owner.ensure_model() else {
+            return QString::from(
+                crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+            );
+        };
+        if changes.len() > MAX_DRAFT_CHANGE_BYTES as isize {
+            const MESSAGE: &str = "Upstream draft changes exceed the input byte limit.";
+            model.reject_draft_request(&section.to_string(), &token.to_string(), MESSAGE);
+            return QString::from(MESSAGE);
+        }
+        QString::from(
+            model
+                .apply_draft(
+                    &section.to_string(),
+                    &token.to_string(),
+                    &changes.to_string(),
+                )
+                .err()
+                .unwrap_or_default(),
+        )
+    }
+
+    /// Cancels this configuration draft without dispatching any simulation control.
+    /// # Arguments
+    /// * `token` - Bounded original token, compared unchanged.
+    /// # Returns
+    /// Empty after targeted cancellation; foreign tokens leave all owners unchanged.
+    pub fn cancel_draft(mut self: core::pin::Pin<&mut Self>, token: &QString) -> QString {
+        if token.len() > MAX_DRAFT_ID_CHARACTERS {
+            return QString::from("Unknown upstream configuration draft.");
+        }
+        let mut owner = self.as_mut().rust_mut();
+        let Some(model) = owner.ensure_model() else {
+            return QString::from(
+                crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+            );
+        };
+        QString::from(
+            model
+                .cancel_draft(&token.to_string())
+                .err()
+                .unwrap_or_default(),
+        )
+    }
+
     /// Acquires exact source bytes through the existing native file adapter.
     ///
     /// # Returns

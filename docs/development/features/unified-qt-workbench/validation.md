@@ -4778,3 +4778,66 @@ This is Level 1 prerequisite evidence. UIU-US-01 remains unchecked until the
 approved configuration forms, exact draft/base identities, typed atomic Apply,
 targeted Cancel and complete Qt/native configuration lifecycle pass. No existing
 scientific contract, execution task, schema or memory category is expanded.
+
+## UIU-US-01 integrated configuration acceptance
+
+The [acceptance receipt](upstream-configuration-evidence.json) closes
+[UIU-US-01](../../checklist.md#task-uiu-us-01), following accepted SHELL. The
+approved startup diagram and seven editors now use actual accepted public Rust
+configuration. Immutable field destinations, exact token/base checks, typed
+background candidates and canonical atomic adoption preserve unmodified source
+fields and original input bytes/hashes. No scientific implementation, public API,
+Python binding, project schema or memory category changed. Native input
+acquisition's earlier pending state above is historical.
+
+Executed Level 2 evidence in the primary MERLIN checkout:
+
+- All **446 Qt Rust tests** pass, including the new field/lifecycle/atomic-guard
+  cases. These cover complete public admission, exact decimal overflow and wide
+  IDs, stale bases, targeted cancellation, rejection rollback, provenance and
+  independent downstream owners. Runtime was 349.88 seconds.
+- Fifteen complete relevant QML suites pass with **247 pass records**, no failures
+  or skips. After the audit fixes, the three affected suites pass again (72
+  records). The new actual DirectionShellHost + configuration-dialog pressure
+  suite passes **13 records**: held optional host data cannot strand accepted or
+  cancelled native work; foreign identities cannot close another draft; failed
+  Load preserves its native diagnostic, and successful Load reopens fresh values.
+  Setup/cleanup records are included in these counts. Two pre-existing downstream
+  focus warnings remain recorded; the new host suite has no warnings.
+- Qt all-target Clippy with warnings denied, formatting and final API dependency
+  boundary pass with zero scientific exceptions. The current optimized native
+  executable is built. Six fresh native startup/project probes pass.
+- The actual native Main probe uses real OS chooser Cancel and Load, then opens,
+  edits, Cancels, reopens, Applies, reopens accepted values, rejects invalid
+  values and preserves the original diagnostic across **all seven sections**.
+  It observes genuine adoption and exact generation changes, including grant ID
+  `9007199254740993`, and preserves downstream identity/options across tab switches.
+  The fixture is the existing 50 kHz example plus an explicit **synthetic unity**
+  Pre-Eq plan; this is not measured-input evidence. All checks pass in 7.66 seconds.
+- The downstream native shell probe passes idle/running/paused switching,
+  Settings/About, direction-scoped Configure/files/controls, paused lease retention
+  and actual terminal acknowledgement. Twenty-five desktop packaging resource
+  cases pass. Fresh configuration images were inspected; the
+  [user guide](../../../user/upstream-workbench.md) contains actual dark Main pixels.
+  The separate receiver-content grab is labelled by its narrower scope.
+
+Independent read-only review found two concrete defects before acceptance:
+whole-host presentation rejection could conceal a terminal draft response, and
+failed-import auto-reopen could erase its diagnostic. The fixes use a transient
+exact-identity control callback and a success-only reopen guard, with the new
+actual-host tests above. They add no retained owner or generalized framework.
+
+Earlier failed Clippy and external native-input/capture runner attempts remain
+preserved. The external runner initially focused a not-yet-viewable chooser and
+then used legacy X11 title retrieval that missed the Unicode Main title. It now
+waits for a viewable, process-owned chooser and reads UTF-8 window names; production
+probe assertions were preserved. These failures are not reported as passes.
+
+All **852** tracked backend/binding/root-manifest/lock files are byte-identical
+to accepted SESSION C6, with no new files in that scope. Reuse its full workspace,
+analysis, doctest/example, installed native Python, CLI and project compatibility
+evidence; no unrelated suite or wheel was rerun. This configuration work does not
+change a saved-workbench writer. Architecture/requirements/checklist links,
+feature navigation and previous task IDs/states are checked separately in the
+receipt. US02 execution, US03 measured inputs, US04 instruments, File/recovery,
+final numerical review and final/installed/hosted acceptance remain open.

@@ -4,9 +4,10 @@
  */
 import QtQuick
 
-UpstreamDetailDialog {
+UpstreamConfigurationDraftDialog {
+    sectionId: "grants"
+    approvedFields: ["grant_id", "epoch_sample", "first_frame", "frames", "minislots"]
     title: "MAP / Grants"
-    purpose: "Inspect accepted CMTS scheduling, timing and resource grants for upstream transmission."
+    purpose: "Edit the explicit synthetic grant using supplied timing and minislot choices. Represented MAP and probe controls are inspection only."
     referencePlane: "Control path to the CM transmitter and matching receiver/session configuration."
-    stages: []
 }

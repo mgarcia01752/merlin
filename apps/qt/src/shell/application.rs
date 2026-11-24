@@ -289,6 +289,36 @@ impl ApplicationSessions {
         Ok(sessions.open_target(Direction::Upstream).key)
     }
 
+    /// Adopts an upstream candidate only if its original configuration is current.
+    ///
+    /// # Arguments
+    /// * `expected` - Exact key captured before configuration editing/preparation.
+    /// * `ready` - Actual public candidate readiness; no readiness is inferred here.
+    ///
+    /// # Returns
+    /// A new key after the original guard and commit pass under one existing lock.
+    ///
+    /// # Errors
+    /// Stale/foreign key, metadata admission, shutdown or revision exhaustion,
+    /// before changing accepted configuration or requesting cancellation.
+    pub(crate) fn configure_upstream_if(
+        &self,
+        expected: SessionKey,
+        ready: bool,
+    ) -> Result<SessionKey, ApplicationError> {
+        let candidate = metadata(&self.budget, UpstreamReadiness(ready))?;
+        let mut sessions = lock(self.sessions.value());
+        if expected.direction != Direction::Upstream
+            || sessions.open_target(Direction::Upstream).key != expected
+        {
+            return Err(ApplicationError::Session(SessionError::StaleGuard));
+        }
+        sessions
+            .configure_upstream_cancelling(candidate)
+            .map_err(ApplicationError::Session)?;
+        Ok(sessions.open_target(Direction::Upstream).key)
+    }
+
     /// Acquires the one global run lease for an exact already prepared owner.
     ///
     /// # Arguments

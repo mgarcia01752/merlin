@@ -80,8 +80,9 @@ remain above the tabs. PRBS-RX opens a structured
 ![Downstream tab with its original simulation paused](../images/workbench/unified-downstream-dark.png)
 
 The Upstream tab shows the approved CM transmitter → channel → CMTS receiver
-layout. Its current drill-ins are read-only; upstream configuration, scientific
-instrument bindings and project actions remain under integration. Missing data
+layout. Its [configuration editors](upstream-workbench.md) load a native upstream
+JSON document and apply supported settings through Rust validation. Scientific
+instrument bindings and upstream project actions remain under integration. Missing data
 is shown as unavailable. File actions are currently enabled on Downstream only;
 selecting Upstream cannot save or replace the downstream project. Settings and
 About remain available from either tab.
