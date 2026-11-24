@@ -185,6 +185,22 @@ impl FileVerifier {
     }
 }
 
+impl RecoveredFile {
+    /// Moves the actual recovered prefix into its exact final byte capacity.
+    /// # Returns
+    /// Unit; no bits, partial outcomes or comparison metadata change.
+    #[cfg(any(feature = "pnm-input", test))]
+    pub(crate) fn normalize_result_storage(&mut self) {
+        let Self {
+            bytes,
+            original_bytes: _,
+            recovered_bits: _,
+            complete: _,
+        } = self;
+        *bytes = std::mem::take(bytes).into_boxed_slice().into_vec();
+    }
+}
+
 impl RetainedPayload for RecoveredFile {
     /// Counts every owned child beyond the enclosing fixed value.
     ///
@@ -240,3 +256,7 @@ impl RetainedPayload for FileSourceSummary {
         ])
     }
 }
+
+#[cfg(test)]
+#[path = "result_retention_tests.rs"]
+mod result_retention_tests;

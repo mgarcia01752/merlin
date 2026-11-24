@@ -11,6 +11,39 @@ use std::{
 };
 const UPSTREAM: &[u8] = include_bytes!("../../../examples/cli/upstream/us-50khz.json");
 
+#[cfg(feature = "native-input")]
+#[test]
+fn bounded_session_outputs_preserve_legacy_direction_types_and_common_limits() {
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopRequest,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::FullLoopRequest::result_retained_bound;
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopRequest,
+        &docsis_ofdm_fec::api::FullLoopControl,
+        common::RetainedFootprint,
+    ) -> downstream::ApiResult<docsis_ofdm_fec::api::FullLoopResult> =
+        downstream::FullLoopRequest::run_bounded;
+    let _: fn(
+        &docsis_ofdm_fec::api::TransmitterPreviewRequest,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::TransmitterPreviewRequest::preview_retained_bound;
+    let _: fn(
+        &docsis_ofdm_fec::api::TransmitterPreviewRequest,
+        &docsis_ofdm_fec::api::TransmitterPreviewControl,
+        common::RetainedFootprint,
+    ) -> downstream::ApiResult<docsis_ofdm_fec::api::TransmitterPreview> =
+        downstream::TransmitterPreviewRequest::generate_bounded;
+    let _: fn(&docsis_ofdma::api::Simulation) -> upstream::ApiResult<common::RetainedFootprint> =
+        upstream::Simulation::batch_report_retained_bound;
+    let _: fn(
+        &mut docsis_ofdma::api::Simulation,
+        &docsis_ofdma::api::RunControl,
+        common::RetainedFootprint,
+    ) -> upstream::ApiResult<docsis_ofdma::api::BatchReport> =
+        upstream::Simulation::run_with_control_bounded;
+}
+
 #[test]
 fn retained_metadata_keeps_shared_contract_and_independent_upstream_ownership() {
     assert_eq!(

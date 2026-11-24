@@ -378,6 +378,27 @@ impl SourceInput {
     }
 }
 
+impl SourceInput {
+    /// Freezes exact result identity strings without touching the source cursor.
+    /// # Returns
+    /// Unit; original file bytes remain in their immutable shared allocation.
+    pub(in crate::api) fn normalize_result_storage(&mut self) {
+        use super::full_loop::result_retention::normalize::text;
+        let Self {
+            configuration: _,
+            seed: _,
+            name,
+            sha256,
+        } = self;
+        if let Some(value) = name {
+            text(value);
+        }
+        if let Some(value) = sha256 {
+            text(value);
+        }
+    }
+}
+
 impl RetainedPayload for TransmissionConfiguration {
     /// Counts every owned child beyond the enclosing fixed value.
     ///

@@ -197,6 +197,26 @@ impl RetainedPayload for PreEqBank {
     }
 }
 
+impl PreEqBank {
+    /// Normalizes only owned report-snapshot capacities without changing values.
+    ///
+    /// # Returns
+    /// Unit; exact boxed-slice conversion preserves order and every scientific value.
+    pub(crate) fn compact_report_payload(&mut self) {
+        let Self {
+            waveform: _,
+            excluded,
+            raw,
+            coefficients,
+            generation: _,
+            unity: _,
+        } = self;
+        *excluded = std::mem::take(excluded).into_boxed_slice().into_vec();
+        *raw = std::mem::take(raw).into_boxed_slice().into_vec();
+        *coefficients = std::mem::take(coefficients).into_boxed_slice().into_vec();
+    }
+}
+
 #[cfg(test)]
 mod retained_footprint_tests {
     use super::*;

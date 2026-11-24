@@ -492,6 +492,78 @@ impl RetainedPayload for ReceiverEstimateStore {
     }
 }
 
+impl ReceiverEstimateStore {
+    /// Bounds complete immutable estimate records and the independent soft scopes.
+    ///
+    /// # Returns
+    /// Checked extra payload/Arc edges beyond the prebuilt empty store, accounting
+    /// for full optional-bin slots even when the actual estimate is unavailable.
+    pub(crate) fn report_retained_extra(
+        policy: ReceiverObservationPolicy,
+        mode: Numerology,
+        planned_frames: usize,
+        planned_words: usize,
+        planned_word_llrs: usize,
+    ) -> Option<RetainedFootprint> {
+        let frames = policy
+            .maximum_frames
+            .min(planned_frames)
+            .min(policy.maximum_scalar_slots / scalar_cost(mode));
+        let slots = frames.checked_mul(mode.fft_len())?;
+        sum([
+            merlin_api::retention_support::capacity_bytes::<Arc<EstimateFrame>>(frames),
+            merlin_api::retention_support::capacity_bytes::<EstimateFrame>(frames),
+            merlin_api::retention_support::capacity_bytes::<Option<Iq>>(slots),
+            Some(RetainedFootprint {
+                shared_roots: frames,
+                ..RetainedFootprint::default()
+            }),
+            match policy.soft_metrics {
+                Some(soft) => super::soft::store::SoftStore::report_retained_extra(
+                    soft,
+                    planned_words,
+                    planned_word_llrs,
+                ),
+                None => Some(RetainedFootprint::default()),
+            },
+        ])
+    }
+
+    /// Normalizes owned completed records without mutating any shared alias.
+    ///
+    /// # Returns
+    /// Unit; a surviving shared owner is copied before its buffers are normalized.
+    pub(crate) fn compact_report_payload(&mut self) {
+        let Self {
+            policy: _,
+            completed_frames: _,
+            used_scalar_slots: _,
+            frames,
+            soft,
+        } = self;
+        let normalized = std::mem::take(frames)
+            .into_iter()
+            .map(|frame| {
+                let mut frame =
+                    Arc::try_unwrap(frame).unwrap_or_else(|shared| shared.as_ref().clone());
+                let EstimateFrame {
+                    identity: _,
+                    frame: _,
+                    estimator: _,
+                    mode: _,
+                    estimates,
+                } = &mut frame;
+                *estimates = std::mem::take(estimates).into_boxed_slice().into_vec();
+                Arc::new(frame)
+            })
+            .collect::<Vec<_>>();
+        *frames = normalized.into_boxed_slice().into_vec();
+        if let Some(store) = soft {
+            store.compact_report_payload();
+        }
+    }
+}
+
 #[cfg(test)]
 mod retained_footprint_tests {
     use super::*;
@@ -539,5 +611,43 @@ mod retained_footprint_tests {
         );
         assert_eq!(footprint.shared_roots, 2);
         assert_eq!(footprint.ordered_entries, 0);
+    }
+    #[test]
+    fn report_estimate_normalization_copies_surviving_alias_without_altering_observation() {
+        const SPARE_ESTIMATE_SLOTS: usize = 29;
+        const RETAINED_TEST_FRAMES: usize = 2;
+        let document = crate::api::ConfigurationDocument::from_json(include_bytes!(
+            "../../../../examples/cli/upstream/us-50khz.json"
+        ))
+        .unwrap();
+        let (_, options) = document.prepare().unwrap();
+        let mut session = crate::api::Simulation::new(options).unwrap();
+        session.configure_document(document).unwrap();
+        session
+            .set_receiver_observation_policy(
+                ReceiverObservationPolicy::new(
+                    RETAINED_TEST_FRAMES,
+                    MAX_RECEIVER_OBSERVATION_SCALARS,
+                )
+                .unwrap(),
+            )
+            .unwrap();
+        let mut report = session.run().unwrap();
+        let store = report.observations.receiver_estimates.as_mut().unwrap();
+        let frame = Arc::make_mut(&mut store.frames[0]);
+        frame.estimates.reserve_exact(SPARE_ESTIMATE_SLOTS);
+        let alias = Arc::clone(&store.frames[0]);
+        let alias_capacity = alias.estimates.capacity();
+        let json = serde_json::to_vec(&store).unwrap();
+        store.compact_report_payload();
+        assert_eq!(serde_json::to_vec(&store).unwrap(), json);
+        assert_eq!(alias.estimates.capacity(), alias_capacity);
+        assert!(!Arc::ptr_eq(&alias, &store.frames[0]));
+        assert_eq!(store.frames.capacity(), store.frames.len());
+        assert_eq!(
+            store.frames[0].estimates.capacity(),
+            store.frames[0].estimates.len()
+        );
+        assert_eq!(alias.estimates, store.frames[0].estimates);
     }
 }

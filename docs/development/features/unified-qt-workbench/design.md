@@ -3621,7 +3621,7 @@ charges and real Qt registration/wiring remain separate mandatory tasks.
 
 For these bounded operations, native Python needs to construct immutable common
 resource quantities, analogous to Rust's existing public struct literal. The lead
-will add RetainedFootprint(payload_bytes, ordered_entries=0, shared_roots=0) on the
+has added RetainedFootprint(payload_bytes, ordered_entries=0, shared_roots=0) on the
 existing native class, preserving its three read-only fields and target-usize
 nonnegative conversion. This is caller policy/metadata, not a reservation or a
 scientific storage estimate. No extra Rust type or constructor is required.
@@ -3664,3 +3664,50 @@ before control/source advance, unchanged legacy queries/statistics and direct
 Rust/native parity. A final invariant assertion is diagnostic, never admission or
 an expected failure that discards completed science. Actual application charges
 and complete Qt/session acceptance remain separate gates.
+
+
+### Pre-production idle transmitter preview bounds
+
+The demonstrated consumer is
+`apps/qt/src/downstream/instruments/transmitter/preview.rs`: PreparedPreview/Job
+can retain a queued or accepted TransmitterPreview independently of a full-loop
+result. Its existing current-root footprint cannot admit the future worker target.
+UIU-SESSION-01 / REQ-UIU-03/07 therefore also requires the following small pair.
+
+| Disposition / owner | Contract and reuse |
+| --- | --- |
+| ADD `crates/ofdm/src/api/transmitter/bounded.rs`; EDIT transmitter.rs registration/control-only dispatch | TransmitterPreviewRequest.preview_retained_bound(&self) -> ApiResult<RetainedFootprint>, generate_bounded(&self, control: &TransmitterPreviewControl, limit: RetainedFootprint) -> ApiResult<TransmitterPreview>. Shared private engine dispatch preserves legacy generation/cancellation/progress/source behavior. |
+| EDIT existing `simulation/transmitter_preview.rs` private snapshot helper only | Read the original frozen settings/layout, without source advance; no API or Qt dependency in the engine. Existing generator/scientific bodies remain unchanged. |
+| REUSE result-retention private normalization and existing spectrum constants | Normalize cloned input/provenance/layout buffers before measuring the frozen target. Bound actual maximum sample population from the existing Welch-window budget/FFT geometry, plus full PSD density and fixed engine/root storage. Exact final Vec capacities and frozen snapshots enforce the admitted target before publication. |
+| LEAD native/facade/tests/reference | Pair the two methods on the existing native request, use common immutable quantities, release the interpreter and preserve structured errors. Exact/insufficient dimensions, checked arithmetic, unchanged fresh control on rejection, cancellation, PRBS/file/FFT modes, legacy sample/PSD/provenance and direct Rust/native references are acceptance gates. |
+
+The caller reserves source/request, old and queued preview targets independently.
+Temporary waveform/PSD/output builders keep their existing finite geometry,
+window/source and cancellation limits. No aggregate scratch/RSS claim, scientific
+algorithm, changed profile support or altered legacy sample query is introduced.
+Root owns only transmitter API/engine/PSD files; the downstream preparation agent
+owns other full-loop/input normalization helpers. No concurrent file editing is
+permitted. Final output bounds for full-loop, upstream and idle preview may share
+one scoped native build after all owner sources and wrappers are ready.
+
+### Next application consumer: proven upstream controller admission
+
+Under UIU-SESSION-01 / REQ-UIU-03/06/07, the next focused application unit replaces
+caller-asserted quantities in the prepared upstream controller with actual public
+Simulation metadata and BatchReport preflight bounds. Prepare/configure through
+the existing finite backend builders off-GUI, then reserve final accepted ownership
+before adoption. Temporary builders use the approved separate execution policies;
+remove the former preparation-peak aggregate claim. Report preparation must stay
+off-GUI and bind its admitted target to the exact immutable controller/session.
+Start validates that prepared target and uses run_with_control_bounded; the shared
+transport, genuine global lease, partial results and final-alias charge survive.
+
+The isolated controller preparation scope is only `apps/qt/src/upstream/session.rs`,
+its existing `tests.rs` and one unique controller-admission handoff. The lead owns
+all shared retention/coordinator modules, registration, manifests, canonical
+documents, root adoption and executed acceptance. Private backend structures and
+new public scientific operations are excluded. Include typed scientific and
+application-wrapper quantities with checked arithmetic and no guessed multipliers;
+list remaining host/control/channel/DTO owners explicitly instead of claiming
+complete aggregate acceptance. Production registration, downstream/preview/archive
+adoption and complete Level 2 acceptance remain later integration gates.

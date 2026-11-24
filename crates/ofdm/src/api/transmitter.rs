@@ -4,6 +4,7 @@
  */
 //! Typed idle TX snapshots; scientific generation stays with the existing transmitter owner.
 use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
+mod bounded;
 mod calibrated;
 mod control;
 mod result;
@@ -107,20 +108,7 @@ impl TransmitterPreviewRequest {
     /// Busy for a reused/executing control; existing engine errors otherwise. Cancelled
     /// generation returns no new snapshot and reports Cancelled through the control.
     pub fn generate(&self, control: &TransmitterPreviewControl) -> ApiResult<TransmitterPreview> {
-        control.begin()?;
-        let result = self
-            .request
-            .generate_with_cancellation(&control.stop(), |done, total| {
-                control.progress(done, total)
-            });
-        control.finish(result.is_ok());
-        let result = result?;
-        if control.snapshot().state == TransmitterPreviewState::Cancelled {
-            return Err(ApiError::new(
-                ErrorCode::InvalidInput,
-                "TX preview cancelled",
-            ));
-        }
+        let result = self.generate_owned(control)?;
         Ok(TransmitterPreview {
             inner: Arc::new(result),
             key: self.key.clone(),
@@ -146,6 +134,27 @@ impl TransmitterPreviewRequest {
     pub fn retained_footprint(&self) -> ApiResult<merlin_api::RetainedFootprint> {
         merlin_api::retention_support::retained_footprint(self)
             .ok_or_else(|| ApiError::new(ErrorCode::ResourceLimit, "retained_footprint overflow"))
+    }
+
+    fn generate_owned(
+        &self,
+        control: &TransmitterPreviewControl,
+    ) -> ApiResult<engine::TransmitterPreview> {
+        control.begin()?;
+        let result = self
+            .request
+            .generate_with_cancellation(&control.stop(), |done, total| {
+                control.progress(done, total)
+            });
+        control.finish(result.is_ok());
+        let result = result?;
+        if control.snapshot().state == TransmitterPreviewState::Cancelled {
+            return Err(ApiError::new(
+                ErrorCode::InvalidInput,
+                "TX preview cancelled",
+            ));
+        }
+        Ok(result)
     }
 }
 

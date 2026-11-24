@@ -731,6 +731,59 @@ impl Dpd {
     }
 }
 
+impl Dpd {
+    /// Freezes exact owned storage for the bounded result snapshot.
+    /// # Returns
+    /// Unit; capture values, source bytes and shared identities are unchanged.
+    pub(in crate::api) fn normalize_result_storage(&mut self) {
+        use super::full_loop::result_retention::normalize::{profile, vector};
+        let Self {
+            profile: captured,
+            profile_ids,
+            origin: _,
+            sources,
+            bandwidth: _,
+        } = self;
+        profile(captured);
+        vector(profile_ids);
+        for value in sources.iter_mut() {
+            value.normalize_result_storage();
+        }
+        vector(sources);
+    }
+}
+
+impl CaptureProvenance {
+    /// Freezes exact owned identity storage while keeping original byte Arcs.
+    /// # Returns
+    /// Unit; no bytes, hash, epoch or decoder declaration changes.
+    pub(in crate::api) fn normalize_result_storage(&mut self) {
+        use super::full_loop::result_retention::normalize::text;
+        let Self {
+            original_name,
+            original_sha256,
+            original_kind: _,
+            original_epoch: _,
+            decoded_sha256,
+            decoder_contract,
+            original: _,
+            decoded: _,
+        } = self;
+        text(original_name);
+        text(original_sha256);
+        text(decoded_sha256);
+        if let Some(DecoderContract {
+            revision: _,
+            producer,
+            producer_version,
+        }) = decoder_contract
+        {
+            text(producer);
+            text(producer_version);
+        }
+    }
+}
+
 impl RetainedPayload for Dpd {
     /// Counts every owned child beyond the enclosing fixed value.
     ///

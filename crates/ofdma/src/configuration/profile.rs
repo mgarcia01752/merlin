@@ -124,3 +124,19 @@ impl RetainedPayload for Profile {
         ])
     }
 }
+
+impl Profile {
+    /// Normalizes only owned report-snapshot capacities without changing values.
+    ///
+    /// # Returns
+    /// Unit; exact boxed-slice conversion preserves order and every scientific value.
+    pub(crate) fn compact_report_payload(&mut self) {
+        let Self {
+            id: _,
+            iuc: _,
+            seed: _,
+            minislots,
+        } = self;
+        *minislots = std::mem::take(minislots).into_boxed_slice().into_vec();
+    }
+}

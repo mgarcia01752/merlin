@@ -218,6 +218,37 @@ impl ProtectedConstellation {
     }
 }
 
+impl ProtectedConstellation {
+    /// Moves the existing final observations into exact retained capacities.
+    /// # Returns
+    /// Unit preserving all scientific values and the lazily retained pilot cache.
+    #[cfg(any(feature = "pnm-input", test))]
+    pub(crate) fn normalize_result_storage(&mut self) {
+        let Self {
+            pilot_sequence,
+            schema_version: _,
+            selection: _,
+            receiver_mode: _,
+            continuous_pilots,
+            scattered_pilots,
+            plc_data,
+            plc_preamble,
+        } = self;
+        if let Some(values) = pilot_sequence {
+            *values = std::mem::take(values).into_boxed_slice().into_vec();
+        }
+        for stream in [continuous_pilots, scattered_pilots, plc_data, plc_preamble] {
+            let ProtectedStream {
+                modulation: _,
+                status: _,
+                collected_pairs: _,
+                pairs,
+            } = stream;
+            *pairs = std::mem::take(pairs).into_boxed_slice().into_vec();
+        }
+    }
+}
+
 impl RetainedPayload for ProtectedCaptureSelection {
     /// Counts every owned child beyond the enclosing fixed value.
     ///
@@ -320,6 +351,9 @@ impl RetainedPayload for ProtectedConstellation {
         ])
     }
 }
+
+#[cfg(test)]
+mod result_retention_tests;
 
 #[cfg(test)]
 mod retained_footprint_tests {

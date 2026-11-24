@@ -424,3 +424,13 @@ Ten new Rust and four native cases cover exact capacities, before-copy rejection
 legacy scientific compatibility and detached lifetimes. Complete scoped acceptance
 passes 79 Rust/28 native cases and 24 independent reference cases. Future full-run
 bounds and actual aggregate session admission remain pending.
+
+
+The [session-output preflight unit](../unified-qt-workbench/validation.md#uiu-session-01-pre-production-session-output-bounds)
+adds six paired operations for full-loop results, upstream reports and idle TX
+previews, preserving all preceding 617/588 rows and type/class/member contracts.
+Scoped acceptance passes 115 unique Rust/48 installed native cases, including
+45/6 new, with 18 direct process references and additive 623/594 operation rows.
+The native methods reuse existing worker/GIL/cancellation/session-lease behavior.
+US synthetic Failed/TimeLimit tests establish owner representation only; real Qt
+charges/adoption, complete session and final acceptance remain pending.

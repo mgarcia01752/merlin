@@ -298,6 +298,54 @@ impl RetainedPayload for PreEqOperation {
     }
 }
 
+impl PreEqPlayback {
+    /// Normalizes only owned report-snapshot capacities without changing values.
+    ///
+    /// # Returns
+    /// Unit; exact boxed-slice conversion preserves order and every scientific value.
+    pub(crate) fn compact_report_payload(&mut self) {
+        let Self {
+            grid,
+            initial_id: _,
+            initial,
+            events,
+            probes,
+            effective,
+            symbols: _,
+        } = self;
+        grid.compact_report_payload();
+        initial.compact_report_payload();
+        for event in events.iter_mut() {
+            let PreEqEvent {
+                id: _,
+                symbol: _,
+                operation,
+            } = event;
+            match operation {
+                PreEqOperation::Snapshot(bank) => bank.compact_report_payload(),
+                PreEqOperation::Initialize {
+                    base_bank: _,
+                    probe: _,
+                    values,
+                }
+                | PreEqOperation::Adjust {
+                    base_bank: _,
+                    probe: _,
+                    values,
+                } => {
+                    *values = std::mem::take(values).into_boxed_slice().into_vec();
+                }
+            }
+        }
+        for bank in effective.iter_mut() {
+            bank.compact_report_payload();
+        }
+        *events = std::mem::take(events).into_boxed_slice().into_vec();
+        *probes = std::mem::take(probes).into_boxed_slice().into_vec();
+        *effective = std::mem::take(effective).into_boxed_slice().into_vec();
+    }
+}
+
 #[cfg(test)]
 mod retained_footprint_tests {
     use super::*;

@@ -5,6 +5,7 @@
 //! Optional PyO3 conversions only; the high-level Rust API owns all science.
 mod admission;
 mod channel;
+mod constants;
 mod controller;
 mod designer;
 mod full_loop;

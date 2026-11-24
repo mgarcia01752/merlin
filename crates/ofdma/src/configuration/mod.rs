@@ -252,3 +252,32 @@ impl RetainedPayload for UsConfiguration {
         ])
     }
 }
+
+impl UsConfiguration {
+    /// Normalizes only owned report-snapshot capacities without changing values.
+    ///
+    /// # Returns
+    /// Unit; exact boxed-slice conversion preserves order and every scientific value.
+    pub(crate) fn compact_report_payload(&mut self) {
+        let Self {
+            waveform: _,
+            profiles,
+            grant,
+            excluded,
+        } = self;
+        for profile in profiles.iter_mut() {
+            profile.compact_report_payload();
+        }
+        *profiles = std::mem::take(profiles).into_boxed_slice().into_vec();
+        *excluded = std::mem::take(excluded).into_boxed_slice().into_vec();
+        let SyntheticGrant {
+            id: _,
+            profile_id: _,
+            epoch_sample: _,
+            first_frame: _,
+            frames: _,
+            minislots,
+        } = grant;
+        *minislots = std::mem::take(minislots).into_boxed_slice().into_vec();
+    }
+}

@@ -342,3 +342,39 @@ impl RetainedPayload for ExperimentPreview {
         ])
     }
 }
+
+impl ExperimentConfig {
+    /// Normalizes only owned report-snapshot capacities without changing values.
+    ///
+    /// # Returns
+    /// Unit; exact boxed-slice conversion preserves order and every scientific value.
+    pub(crate) fn compact_report_payload(&mut self) {
+        let Self {
+            us_configuration,
+            source_seed: _,
+            pre_eq,
+            pre_eq_updates,
+            rxmer,
+            receiver: _,
+            channel,
+            guards: _,
+        } = self;
+        us_configuration.compact_report_payload();
+        pre_eq.compact_report_payload();
+        if let Some(playback) = pre_eq_updates {
+            playback.compact_report_payload();
+        }
+        if let Some(playback) = rxmer {
+            playback.compact_report_payload();
+        }
+        let crate::channel::ChannelConfig {
+            taps,
+            noise_variance: _,
+            noise_seed: _,
+            delay_samples: _,
+            phase_radians: _,
+            frequency_offset_hz: _,
+        } = channel;
+        *taps = std::mem::take(taps).into_boxed_slice().into_vec();
+    }
+}

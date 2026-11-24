@@ -131,6 +131,17 @@ impl TransmitterPreviewRequest {
         })
     }
 
+    /// Copies the existing frozen output settings/layout for capacity preflight.
+    ///
+    /// # Returns
+    /// Independent finite metadata snapshots; no source, waveform or PSD runs.
+    /// Layout storage retains its actual cloned capacity until its API owner
+    /// normalizes the final destination. The engine has no API/adapter dependency.
+    #[cfg(feature = "pnm-input")]
+    pub(crate) fn retained_output_snapshot(&self) -> (TransmissionSettings, CarrierLayoutSettings) {
+        (self.settings.clone(), self.layout.clone())
+    }
+
     /// Generates actual post-window/overlap samples and their bounded averaged FFT.
     /// # Arguments
     /// * `cancel` - Cooperative cancellation flag checked between symbol/analysis steps.

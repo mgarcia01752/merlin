@@ -313,6 +313,53 @@ impl RetainedPayload for Tap {
     }
 }
 
+impl ObservationStore {
+    /// Bounds future trace payload under the already admitted aggregate point policy.
+    ///
+    /// # Returns
+    /// Checked extra storage beyond the prebuilt empty map; each tap conservatively
+    /// allows samples, cells and private gains without assuming vector growth.
+    pub(crate) fn report_retained_extra(limit: usize, taps: &[Tap]) -> Option<RetainedFootprint> {
+        let slots = if taps.is_empty() {
+            0
+        } else {
+            (limit / taps.len()).checked_mul(taps.len())?
+        };
+        sum([
+            merlin_api::retention_support::capacity_bytes::<Iq>(slots),
+            merlin_api::retention_support::capacity_bytes::<QamPoint>(slots),
+            merlin_api::retention_support::capacity_bytes::<f64>(slots),
+        ])
+    }
+
+    /// Moves every actual trace and private cache into exact final capacities.
+    ///
+    /// # Returns
+    /// Unit; values, missing history, keys and recording order remain unchanged.
+    pub(crate) fn compact_report_payload(&mut self) {
+        let Self {
+            limit: _,
+            traces,
+            receiver_estimates,
+        } = self;
+        for trace in traces.values_mut() {
+            let Trace {
+                origin: _,
+                identity: _,
+                samples,
+                points,
+                role_gains,
+            } = trace;
+            *samples = std::mem::take(samples).into_boxed_slice().into_vec();
+            *points = std::mem::take(points).into_boxed_slice().into_vec();
+            *role_gains = std::mem::take(role_gains).into_boxed_slice().into_vec();
+        }
+        if let Some(store) = receiver_estimates {
+            store.compact_report_payload();
+        }
+    }
+}
+
 #[cfg(test)]
 mod retained_footprint_tests {
     use super::*;
@@ -338,5 +385,24 @@ mod retained_footprint_tests {
             requested
         );
         assert_eq!(serde_json::to_vec(&store).unwrap(), json);
+    }
+    #[test]
+    fn report_normalization_preserves_json_and_removes_private_gain_spare_capacity() {
+        const SPARE_GAIN_SLOTS: usize = 29;
+        let mut store = ObservationStore::new(0, &[Tap::RxEqualized]).unwrap();
+        store
+            .traces
+            .get_mut(&Tap::RxEqualized)
+            .unwrap()
+            .role_gains
+            .reserve_exact(SPARE_GAIN_SLOTS);
+        let before = retained_footprint(&store).unwrap();
+        let json = serde_json::to_vec(&store).unwrap();
+        store.compact_report_payload();
+        let after = retained_footprint(&store).unwrap();
+        assert!(before.payload_bytes > after.payload_bytes);
+        assert_eq!(before.ordered_entries, after.ordered_entries);
+        assert_eq!(serde_json::to_vec(&store).unwrap(), json);
+        assert_eq!(store.traces[&Tap::RxEqualized].role_gains.capacity(), 0);
     }
 }

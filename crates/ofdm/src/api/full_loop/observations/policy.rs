@@ -195,6 +195,23 @@ impl FullLoopObservationPolicy {
     }
 }
 
+impl FullLoopObservationPolicy {
+    /// Freezes exact final selection storage without changing accepted budgets.
+    /// # Returns
+    /// Unit; event/stage/phase selection and every finite limit remain unchanged.
+    pub(in crate::api::full_loop) fn normalize_result_storage(&mut self) {
+        let Self { input } = self;
+        let FullLoopObservationInput {
+            stages,
+            max_events: _,
+            max_elements_per_event: _,
+            max_total_elements: _,
+            max_retained_bytes: _,
+        } = input;
+        super::super::result_retention::normalize::vector(stages);
+    }
+}
+
 impl RetainedPayload for FullLoopStageRetention {
     /// Counts every owned child beyond the enclosing fixed value.
     ///

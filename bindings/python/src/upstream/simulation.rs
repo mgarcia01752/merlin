@@ -132,7 +132,12 @@ impl PySimulation {
         let session = slot.as_mut().ok_or_else(|| error(busy()))?;
         py.detach(|| operation(session)).map_err(error)
     }
-    fn execute(&self, py: Python<'_>, control: api::RunControl) -> PyResult<PyBatchReport> {
+    fn execute(
+        &self,
+        py: Python<'_>,
+        control: api::RunControl,
+        limit: Option<merlin::common::RetainedFootprint>,
+    ) -> PyResult<PyBatchReport> {
         let session = {
             self.state
                 .try_lock()
@@ -149,7 +154,10 @@ impl PySimulation {
         let worker_control = control.clone();
         let worker = std::thread::spawn(move || {
             let result = match lease.session.as_mut() {
-                Some(session) => session.run_with_control(&worker_control),
+                Some(session) => match limit {
+                    Some(limit) => session.run_with_control_bounded(&worker_control, limit),
+                    None => session.run_with_control(&worker_control),
+                },
                 None => Err(api::ApiError::AdapterFailure("native session unavailable")),
             };
             drop(lease);
@@ -160,7 +168,9 @@ impl PySimulation {
                 receiver
                     .lock()
                     .unwrap_or_else(|poison| poison.into_inner())
-                    .recv_timeout(Duration::from_millis(20))
+                    .recv_timeout(Duration::from_millis(
+                        crate::constants::WORKER_SIGNAL_POLL_MS,
+                    ))
             }) {
                 Ok(result) => {
                     let joined = py.detach(|| worker.join());
@@ -278,7 +288,7 @@ impl PySimulation {
     /// Returns BatchReport. SIGINT requests cooperative stop and returns its partial
     /// report; session ownership is restored before this operation returns.
     fn run(&self, py: Python<'_>) -> PyResult<PyBatchReport> {
-        self.execute(py, api::RunControl::new())
+        self.execute(py, api::RunControl::new(), None)
     }
     /// Runs using independently shareable `control`, releasing the interpreter.
     ///
@@ -289,7 +299,45 @@ impl PySimulation {
         py: Python<'_>,
         control: PyRef<'_, PyControl>,
     ) -> PyResult<PyBatchReport> {
-        self.execute(py, control.0.clone())
+        self.execute(py, control.0.clone(), None)
+    }
+
+    /// Bounds the future report without claiming a run ID or advancing science.
+    ///
+    /// # Returns
+    /// Immutable Rust payload/entry/root reservation. Accepted session, old and
+    /// queued owners remain separate; temporary builders/scratch have finite policies.
+    ///
+    /// # Errors
+    /// Preserves Busy, configuration and checked ResourceLimit categories.
+    fn batch_report_retained_bound(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        self.access_long(py, |session| session.batch_report_retained_bound())
+            .map(crate::retention::PyRetainedFootprint)
+    }
+
+    /// Admits retained target dimensions before the original upstream execution.
+    ///
+    /// # Arguments
+    /// * `control` - Existing shareable direction-specific lifecycle token.
+    /// * `limit` - Caller-reserved payload bytes, ordered entries and shared roots.
+    ///
+    /// # Returns
+    /// Actual complete/partial report with capacity-controlled final storage;
+    /// existing session lease, GIL release and interpreter cancellation are reused.
+    ///
+    /// # Errors
+    /// Rust ResourceLimit before run-ID/control claim for insufficient quantities;
+    /// preserves Busy, configuration and native transport errors.
+    fn run_with_control_bounded(
+        &self,
+        py: Python<'_>,
+        control: PyRef<'_, PyControl>,
+        limit: &crate::retention::PyRetainedFootprint,
+    ) -> PyResult<PyBatchReport> {
+        self.execute(py, control.0.clone(), Some(limit.0))
     }
 }
 

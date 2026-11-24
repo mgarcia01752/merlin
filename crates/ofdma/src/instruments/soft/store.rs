@@ -199,6 +199,114 @@ impl RetainedPayload for SoftStore {
     }
 }
 
+/// Existing admitted maximum loading (4096-QAM), not a new scientific limit.
+const REPORT_SOFT_BITS_PER_CELL: usize = 12;
+/// Both actual receiver cell stages are independently retained.
+const REPORT_SOFT_CELL_STAGE_COUNT: usize = 2;
+
+impl SoftStore {
+    /// Bounds every future shared cell/word record and all private metric buffers.
+    ///
+    /// # Returns
+    /// Checked extra quantities beyond the prebuilt empty store, preserving
+    /// the existing independent cell, word and aggregate word-LLR ceilings.
+    pub(crate) fn report_retained_extra(
+        policy: SoftObservationPolicy,
+        planned_words: usize,
+        planned_word_llrs: usize,
+    ) -> Option<RetainedFootprint> {
+        let info = policy.info();
+        let cells = info.maximum_cells;
+        let words = info.maximum_words.min(planned_words);
+        let cell_llrs = cells
+            .checked_mul(REPORT_SOFT_CELL_STAGE_COUNT)?
+            .checked_mul(REPORT_SOFT_BITS_PER_CELL)?;
+        let word_llrs = info.maximum_word_llrs.min(planned_word_llrs);
+        sum([
+            merlin_api::retention_support::capacity_bytes::<Arc<SoftCellSnapshot>>(cells),
+            merlin_api::retention_support::capacity_bytes::<SoftCellSnapshot>(cells),
+            merlin_api::retention_support::capacity_bytes::<f64>(cell_llrs),
+            merlin_api::retention_support::capacity_bytes::<Arc<SoftWordSnapshot>>(words),
+            merlin_api::retention_support::capacity_bytes::<SoftWordSnapshot>(words),
+            merlin_api::retention_support::capacity_bytes::<f64>(word_llrs),
+            Some(RetainedFootprint {
+                shared_roots: cells.checked_add(words)?,
+                ..RetainedFootprint::default()
+            }),
+        ])
+    }
+
+    /// Moves final metric records to exact capacities, copying surviving aliases first.
+    ///
+    /// # Returns
+    /// Unit without changing metrics, identities, omitted counts or codec outcomes.
+    pub(crate) fn compact_report_payload(&mut self) {
+        let Self {
+            policy: _,
+            computed_cells: _,
+            completed_words: _,
+            retained_word_llrs: _,
+            cells,
+            words,
+        } = self;
+        let normalized = std::mem::take(cells)
+            .into_iter()
+            .map(|cell| {
+                let mut cell =
+                    Arc::try_unwrap(cell).unwrap_or_else(|shared| shared.as_ref().clone());
+                let SoftCellSnapshot {
+                    retained_index: _,
+                    identity: _,
+                    frame: _,
+                    symbol: _,
+                    physical_carrier: _,
+                    role: _,
+                    loading: _,
+                    coded_offset: _,
+                    corrected: _,
+                    reference_variance: _,
+                    demapper_llrs,
+                    descrambled_llrs,
+                } = &mut cell;
+                *demapper_llrs = std::mem::take(demapper_llrs).into_boxed_slice().into_vec();
+                *descrambled_llrs = std::mem::take(descrambled_llrs)
+                    .into_boxed_slice()
+                    .into_vec();
+                Arc::new(cell)
+            })
+            .collect::<Vec<_>>();
+        *cells = normalized.into_boxed_slice().into_vec();
+        let normalized = std::mem::take(words)
+            .into_iter()
+            .map(|word| {
+                let mut word =
+                    Arc::try_unwrap(word).unwrap_or_else(|shared| shared.as_ref().clone());
+                let SoftWordSnapshot {
+                    word: _,
+                    code_family: _,
+                    mother_information_bits: _,
+                    mother_codeword_bits: _,
+                    retained_information_bits: _,
+                    transmitted_bits: _,
+                    shortened_bits: _,
+                    reference_variance: _,
+                    llr_convention: _,
+                    input_llrs,
+                    iterations: _,
+                    converged: _,
+                    parity_valid: _,
+                    shortened_zeros_valid: _,
+                    information_fill_valid: _,
+                    hard_decision_changes: _,
+                } = &mut word;
+                *input_llrs = std::mem::take(input_llrs).into_boxed_slice().into_vec();
+                Arc::new(word)
+            })
+            .collect::<Vec<_>>();
+        *words = normalized.into_boxed_slice().into_vec();
+    }
+}
+
 #[cfg(test)]
 mod retained_footprint_tests {
     use super::*;
@@ -284,5 +392,75 @@ mod retained_footprint_tests {
         );
         assert_eq!(footprint.shared_roots, 3);
         assert_eq!(footprint.ordered_entries, 0);
+    }
+    #[test]
+    fn report_soft_normalization_preserves_actual_metrics_and_surviving_shared_records() {
+        const SPARE_LLR_SLOTS: usize = 29;
+        const RETAINED_TEST_CELLS: usize = 8;
+        const RETAINED_TEST_WORDS: usize = 2;
+        let document = crate::api::ConfigurationDocument::from_json(include_bytes!(
+            "../../../../../examples/cli/upstream/us-50khz.json"
+        ))
+        .unwrap();
+        let (_, options) = document.prepare().unwrap();
+        let mut session = crate::api::Simulation::new(options).unwrap();
+        session.configure_document(document).unwrap();
+        let policy = crate::instruments::ReceiverObservationPolicy::default().with_soft_metrics(
+            SoftObservationPolicy::new(
+                RETAINED_TEST_CELLS,
+                RETAINED_TEST_WORDS,
+                crate::instruments::MAX_RECEIVER_SOFT_WORD_LLRS,
+            )
+            .unwrap(),
+        );
+        session.set_receiver_observation_policy(policy).unwrap();
+        let mut report = session.run().unwrap();
+        let store = report
+            .observations
+            .receiver_estimates
+            .as_mut()
+            .unwrap()
+            .soft
+            .as_mut()
+            .unwrap();
+        Arc::make_mut(&mut store.cells[0])
+            .demapper_llrs
+            .reserve_exact(SPARE_LLR_SLOTS);
+        Arc::make_mut(&mut store.cells[0])
+            .descrambled_llrs
+            .reserve_exact(SPARE_LLR_SLOTS);
+        Arc::make_mut(&mut store.words[0])
+            .input_llrs
+            .reserve_exact(SPARE_LLR_SLOTS);
+        let cell_alias = Arc::clone(&store.cells[0]);
+        let word_alias = Arc::clone(&store.words[0]);
+        let capacities = (
+            cell_alias.demapper_llrs.capacity(),
+            word_alias.input_llrs.capacity(),
+        );
+        let json = serde_json::to_vec(&store).unwrap();
+        store.compact_report_payload();
+        assert_eq!(serde_json::to_vec(&store).unwrap(), json);
+        assert_eq!(
+            capacities,
+            (
+                cell_alias.demapper_llrs.capacity(),
+                word_alias.input_llrs.capacity()
+            )
+        );
+        assert!(!Arc::ptr_eq(&cell_alias, &store.cells[0]));
+        assert!(!Arc::ptr_eq(&word_alias, &store.words[0]));
+        assert_eq!(store.cells.capacity(), store.cells.len());
+        assert_eq!(store.words.capacity(), store.words.len());
+        for cell in &store.cells {
+            assert_eq!(cell.demapper_llrs.capacity(), cell.demapper_llrs.len());
+            assert_eq!(
+                cell.descrambled_llrs.capacity(),
+                cell.descrambled_llrs.len()
+            );
+        }
+        for word in &store.words {
+            assert_eq!(word.input_llrs.capacity(), word.input_llrs.len());
+        }
     }
 }

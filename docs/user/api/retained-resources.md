@@ -87,7 +87,37 @@ Native Python's immutable constructor mirrors the existing Rust struct literal.
 Negative or oversized target-usize constructor arguments reject during native
 conversion; constructing a value performs no measurement or reservation.
 
-Future full-run result/report bounds and actual aggregate host admission remain
-integration work. See the [API guide](README.md),
+## Admit future simulation outputs
+
+An existing-owner footprint cannot reserve an output that has not been produced.
+The paired operations below freeze finite destination snapshots, compute checked
+bounds and check all three caller limits before control admission or source/RNG
+progress. They retain the existing scientific execution, cancellation and partial
+results. Final retained buffers have enforced capacities; completed science is
+not discarded by a late oversized-result error.
+
+| Owner | Rust preflight / bounded operation | Native Python |
+| --- | --- | --- |
+| Downstream `FullLoopRequest` | `result_retained_bound()` / `run_bounded(&control, limit)` | `result_retained_bound()` / `run_bounded(limit, control=None)` |
+| Upstream `Simulation` | `batch_report_retained_bound()` / `run_with_control_bounded(&control, limit)` | `batch_report_retained_bound()` / `run_with_control_bounded(control, limit)` |
+| Downstream `TransmitterPreviewRequest` | `preview_retained_bound()` / `generate_bounded(&control, limit)` | `preview_retained_bound()` / `generate_bounded(limit, control=None)` |
+
+For example, after the application reserves the quantities returned by the
+request, Rust calls `request.run_bounded(&control, required)?`; Python calls
+`request.run_bounded(required, control)`. Insufficient limits return structured
+`ResourceLimit` before the token starts. Rejection preserves accepted settings,
+original bytes and old results. Upstream native calls retain the existing
+short-held session lease and Busy behavior; long work releases the interpreter.
+Legacy `run`, `run_with_control` and `generate` retain their behavior.
+
+The preflight itself may allocate bounded preparation snapshots and source
+exports. Those builders and numerical scratch use separate finite execution
+policies. A bound is target-layout metadata, not an application reservation.
+Charge accepted inputs/requests, old outputs, queued results and simultaneous
+copy source/target owners independently until their final release. Consumer
+JSON, dictionaries and view copies are separate owners as well. Recompute the
+bound if an upstream session's accepted configuration/options change.
+
+Actual aggregate Qt host admission remains integration work. See the [API guide](README.md),
 [upstream sessions](../upstream/session.md) and
 [approved retention contract](../../development/features/unified-qt-workbench/retention-contract-decision.md).

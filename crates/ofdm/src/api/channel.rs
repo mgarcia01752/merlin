@@ -135,6 +135,21 @@ impl ChannelConfiguration {
     }
 }
 
+impl ChannelConfiguration {
+    /// Freezes exact configured filter storage for a bounded result snapshot.
+    /// # Returns
+    /// Unit; no channel calculation or accepted value changes.
+    pub(in crate::api) fn normalize_result_storage(&mut self) {
+        let Self { settings } = self;
+        let ChannelConfigurationInput {
+            additional_loss: _,
+            power: _,
+            filter,
+        } = settings;
+        super::full_loop::result_retention::normalize::filter(filter);
+    }
+}
+
 impl RetainedPayload for ChannelConfiguration {
     /// Counts every owned child beyond the enclosing fixed value.
     ///

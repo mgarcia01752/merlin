@@ -136,6 +136,94 @@ impl RetainedStages {
         })
     }
 }
+
+impl RetainedStages {
+    /// Bounds final stage payloads using the existing length-accounted byte policy.
+    /// # Arguments
+    /// * `policy` - Validated selections; None retains no events.
+    /// # Returns
+    /// Children beyond this store's fixed size, or None on arithmetic overflow.
+    /// The legacy event accounting includes every exact data/context allocation
+    /// plus snapshot fixed size. Map key/value slots are counted separately.
+    pub(in crate::api::full_loop) fn result_retained_children(
+        policy: Option<&FullLoopObservationPolicy>,
+    ) -> Option<RetainedFootprint> {
+        use merlin_api::retention_support::{capacity_bytes, payload_bytes, sum};
+        let Some(policy) = policy else {
+            return Some(RetainedFootprint::default());
+        };
+        let input = policy.settings();
+        let entries = input.stages.len().min(input.max_events);
+        let mut total = sum([
+            Some(payload_bytes(input.max_retained_bytes)),
+            capacity_bytes::<(FullLoopStage, Vec<FullLoopStageSnapshot>)>(entries),
+        ])?;
+        total.ordered_entries = entries;
+        Some(total)
+    }
+
+    /// Moves unchanged retained snapshots into exact final owned capacities.
+    /// # Returns
+    /// Unit; original budget, statistics, context and all actual values survive.
+    pub(in crate::api::full_loop) fn normalize_result_storage(&mut self) {
+        use super::super::result_retention::normalize::{text, vector};
+        let Self {
+            events,
+            stats: _,
+            budget: _,
+        } = self;
+        for snapshots in events.values_mut() {
+            for snapshot in snapshots.iter_mut() {
+                let FullLoopStageSnapshot {
+                    stage: _,
+                    retained_index: _,
+                    direction: _,
+                    context,
+                    domain: _,
+                    units: _,
+                    element_start: _,
+                    total_elements: _,
+                    data,
+                } = snapshot;
+                let FullLoopStageContext {
+                    run_id,
+                    configuration_id,
+                    phase: _,
+                    source_symbol_index: _,
+                    channel_symbol_index: _,
+                    sample_start_index: _,
+                    codeword_index: _,
+                    profile_id: _,
+                    plc_phase: _,
+                    reference: _,
+                    plc_grid: _,
+                    physical_grid: _,
+                    waveform_grid: _,
+                    cell_grid: _,
+                    transmit_cell_roles,
+                } = context;
+                text(run_id);
+                text(configuration_id);
+                if let Some(roles) = transmit_cell_roles {
+                    vector(roles);
+                }
+                match data {
+                    FullLoopStageData::Bits(values) | FullLoopStageData::Bytes(values) => {
+                        vector(values)
+                    }
+                    FullLoopStageData::Iq(values) => vector(values),
+                    FullLoopStageData::OptionalIq(values) => vector(values),
+                    FullLoopStageData::QamLabels(values) => vector(values),
+                    FullLoopStageData::TransportCells(values) => vector(values),
+                    FullLoopStageData::Pilots(values) => vector(values),
+                    FullLoopStageData::Llrs(values) => vector(values),
+                }
+            }
+            vector(snapshots);
+        }
+    }
+}
+
 impl ProbeObserver for RetainedStages {
     /// Copies one already validated selected event only if owner-accounted bytes fit.
     /// # Arguments
@@ -197,6 +285,10 @@ impl ProbeObserver for RetainedStages {
         Ok(())
     }
 }
+
+#[cfg(test)]
+#[path = "result_retention_tests.rs"]
+mod result_retention_tests;
 
 #[cfg(test)]
 mod tests {

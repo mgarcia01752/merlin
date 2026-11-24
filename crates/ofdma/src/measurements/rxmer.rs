@@ -276,6 +276,40 @@ impl RetainedPayload for RxmerPolicy {
     }
 }
 
+impl RxmerPlayback {
+    /// Normalizes only owned report-snapshot capacities without changing values.
+    ///
+    /// # Returns
+    /// Unit; exact boxed-slice conversion preserves order and every scientific value.
+    pub(crate) fn compact_report_payload(&mut self) {
+        let Self {
+            grid,
+            sources,
+            policy,
+            symbols: _,
+        } = self;
+        grid.compact_report_payload();
+        for source in sources.iter_mut() {
+            let SyntheticRxmer {
+                id: _,
+                grid,
+                mer_db,
+                powers,
+            } = source;
+            grid.compact_report_payload();
+            *mer_db = std::mem::take(mer_db).into_boxed_slice().into_vec();
+            *powers = std::mem::take(powers).into_boxed_slice().into_vec();
+        }
+        match policy {
+            RxmerPolicy::Single | RxmerPolicy::Average => {}
+            RxmerPolicy::Hold { offsets } | RxmerPolicy::Interpolate { offsets } => {
+                *offsets = std::mem::take(offsets).into_boxed_slice().into_vec();
+            }
+        }
+        *sources = std::mem::take(sources).into_boxed_slice().into_vec();
+    }
+}
+
 #[cfg(test)]
 mod retained_footprint_tests {
     use merlin_api::retention_support::retained_footprint;

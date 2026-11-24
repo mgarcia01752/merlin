@@ -3301,3 +3301,78 @@ scratch/heap/RSS guarantee is claimed. Full-run DS/US bounds, actual host charge
 workers and complete session Level2 remain pending. Unchanged UI/registration
 needs no executable rebuild; unrelated full workspace/CLI/packaging regressions
 remain at their applicable Level2/3 gates. UIU-SESSION-01 stays unchecked.
+
+## UIU-SESSION-01 pre-production session output bounds
+
+Primary Level 1 acceptance adds three paired operations through the existing
+independent PHY APIs and re-export-only facade: downstream FullLoopRequest
+result preflight/bounded run, upstream Simulation report preflight/bounded run,
+and downstream TransmitterPreviewRequest preview preflight/bounded generation.
+They trace REQ-UIU-03/07 and the selected
+[owner designs](design.md#pre-production-downstream-result-bounds),
+[upstream design](design.md#pre-production-upstream-report-bounds) and
+[idle preview design](design.md#pre-production-idle-transmitter-preview-bounds).
+The actual session task remains unchecked.
+
+All three dimensions reject before control/source/RNG progress. Finite preparation
+snapshots and source exports use the approved separate construction policies;
+final output buffers have enforced capacities before publication. Original
+scientific execution, partial outcomes, source bytes/provenance, cached/hidden
+observations and old owner lifetimes remain intact. Accepted inputs/requests,
+old/queued outputs, copy source/target and application projections still need
+separate host charges. No aggregate scratch, heap or RSS guarantee is claimed.
+
+Primary executed evidence: **115 unique Rust cases**, including **45 new**
+owner/API/facade cases; **48 installed-native cases**, including **six new**, with
+zero skips. The fresh local wheel's extension hash/import origin is verified in
+an existing isolated developer venv. Native direction workers preserve GIL
+release, Busy, pause/cancel, session restoration, original science and aliases.
+Separate current Rust processes provide **18 bounded-output reference cases**
+(two downstream projects, both upstream numerologies, observed/unobserved and
+complete/pre-cancelled modes, plus PRBS/file idle previews). Receiver-estimate and
+soft-view references are also refreshed for the affected native consumers.
+
+Both PHY standalone feature checks, owner/facade/native Clippy with warnings
+denied, format and fresh rustdoc/native inventories pass. Strict operation tracing
+retains every prior **617 Rust/588 native** row and all type/class/member
+contracts, adding exactly six operations in each language for **623/594** rows.
+The two deliberately doc-hidden generic Serde helpers retain their existing
+source/signature checks. Named passed-case execution records accompany the rows.
+
+Initial synthetic TX fixture failures are preserved: the source capture supplied
+no exclusion template; the next fixture revision also exposed the mandatory FFT
+edge exclusion condition. An explicit decoded exclusion assignment and a named
+whole-MHz active offset correct the fixture. Only the failed six-case TX target
+was rerun. The new six-case downstream result contract also received a separate
+exit-zero invocation for strict execution tracing; duplicate executions are not
+included in the 115 unique count. No numerical assertion or production admission
+was relaxed.
+
+Source review preserves legacy DS run/scientific bodies. TX's original control
+statements move verbatim into shared dispatch; the public generate body is
+refactored. US report identity strings/version are centralized through exactly
+three unchanged-value substitutions, with a reversal proof; scientific/report
+bodies otherwise remain unchanged. A US cancellation seam exists only under
+cfg(test), defaults unset and releases the progress guard before cancellation.
+Synthetic US Failed/TimeLimit owner fixtures preserve real completed science,
+but do not claim actual engine failure/timeout execution. New DS bound cases do
+not directly execute failure/timeout, pilot/MCE or alternate imported-response/
+playback modes; complete relevant acceptance remains Level 2. Active bounded TX
+cancellation lacks a dedicated runtime case; source-reviewed shared dispatch and
+legacy cross-thread cancellation are the scoped evidence.
+
+Source-only [downstream preparation](agent-handoffs/result-retention.md) and
+[upstream preparation](agent-handoffs/report-retention.md) retain isolated review
+provenance; the primary executions above establish this unit's local acceptance.
+
+The machine-readable [receipt](session-output-bound-evidence.json) and
+[executed operation cases](session-output-bound-operation-test-results.json)
+record exact commands, source/artifact hashes, omissions and unresolved gates.
+Ignored logs/references live under
+`docs/development/local/unified-qt-workbench/session-01-output-bound{,-native}`.
+Unrelated complete workspace/Qt/QML/CLI/project/packaging regressions and a Qt
+rebuild are not required for this additive API-only unit: no scientific algorithm,
+saved schema, manifests/locks, registration or existing Qt call site changes.
+The last accepted Qt executable remains current for unchanged UI sources.
+Real application charges, bounded-call adoption, canonical host/registration,
+complete session Level 2 and milestone/final Level 3 remain mandatory.

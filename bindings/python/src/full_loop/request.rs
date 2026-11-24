@@ -172,6 +172,47 @@ impl PyFullLoopRequest {
         control: Option<&PyFullLoopControl>,
     ) -> PyResult<PyFullLoopResult> {
         let control = control.map_or_else(api::FullLoopControl::new, |value| value.0.clone());
-        worker::execute(py, self.0.clone(), control).map(PyFullLoopResult)
+        worker::execute(py, self.0.clone(), control, None).map(PyFullLoopResult)
+    }
+
+    /// Bounds the future Rust result without running source, RNG or decoder stages.
+    ///
+    /// # Returns
+    /// Immutable payload/entry/root metadata; source and simultaneous old/queued
+    /// owners need separate reservations. Temporary builders/scratch have separate limits.
+    ///
+    /// # Errors
+    /// Preserves checked Rust ResourceLimit; releases the interpreter.
+    fn result_retained_bound(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        py.detach(|| self.0.result_retained_bound())
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
+    /// Admits the retained target before executing the original scientific path.
+    ///
+    /// # Arguments
+    /// * `limit` - Caller-reserved maximum payload bytes, ordered entries and shared roots.
+    /// * `control` - Optional fresh one-shot control; None creates one.
+    ///
+    /// # Returns
+    /// Owned actual complete/partial result with capacity-controlled final storage.
+    /// Uses the existing worker, GIL release and cooperative interpreter cancellation.
+    ///
+    /// # Errors
+    /// ResourceLimit before control admission for insufficient quantities; original
+    /// Busy/construction/transport failures otherwise. Completed science is preserved.
+    #[pyo3(signature=(limit,control=None))]
+    fn run_bounded(
+        &self,
+        py: Python<'_>,
+        limit: &crate::retention::PyRetainedFootprint,
+        control: Option<&PyFullLoopControl>,
+    ) -> PyResult<PyFullLoopResult> {
+        let control = control.map_or_else(api::FullLoopControl::new, |value| value.0.clone());
+        worker::execute(py, self.0.clone(), control, Some(limit.0)).map(PyFullLoopResult)
     }
 }

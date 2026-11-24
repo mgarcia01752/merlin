@@ -58,3 +58,18 @@ impl RetainedPayload for SyntheticGrid {
         sum([waveform.retained_children(), excluded.retained_children()])
     }
 }
+
+impl SyntheticGrid {
+    /// Normalizes only owned report-snapshot capacities without changing values.
+    ///
+    /// # Returns
+    /// Unit; exact boxed-slice conversion preserves order and every scientific value.
+    pub(crate) fn compact_report_payload(&mut self) {
+        let Self {
+            waveform: _,
+            excluded,
+            provenance: _,
+        } = self;
+        *excluded = std::mem::take(excluded).into_boxed_slice().into_vec();
+    }
+}

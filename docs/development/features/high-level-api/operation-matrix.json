@@ -5,10 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "713ec87 plus bounded archive candidate",
-    "inventory_command": "Exact installed wheel; session-01-archive-bound-native/results.json",
-    "native_sha256": "ed21158af0f21b85102d82616595efbed3e5bf9c64e7da0d784369271c2543e6",
-    "scope": "Bounded/legacy archive/full-loop, both retained-root metadata and namespaces;24 independent Rust/native cases. Native literal constructibility added; all preceding methods/properties unchanged."
+    "revision": "3825388 plus bounded session outputs candidate",
+    "inventory_command": "Exact installed wheel; session-01-output-bound-native/results.json",
+    "native_sha256": "bca3a29c525a525f37d6d0fdd61f7819277a03c21652f02a5d40b0fda8a65850",
+    "scope": "Six additive paired bounded-output operations; all earlier types/members preserved.48 native tests/no skips,18 direct process cases; full session/host acceptance pending."
   },
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
@@ -171,7 +171,12 @@
     "units.session.archive.bound": "Target-usize retained payload bytes including fixed root and exact nested capacity, ordered entries and shared roots. Archive has zero ordered entries/one shared edge. Excludes allocator/private bookkeeping, query copies and temporary builders/scratch under separate finite execution limits; not heap/RSS.",
     "errors.session.archive.bound": "Preserve existing byte/selector/decoder errors, checked overflow ResourceLimit and pre-copy dimension exhaustion. Native literal conversion rejects negative/usize-overflow values. Legacy operation/statistic unchanged; no late-only oversized-product rejection.",
     "evidence.session.archive.bound": "../unified-qt-workbench/session-archive-bound-evidence.json, session-archive-bound-operation-test-results.json and validation.md#uiu-session-01-pre-production-detached-archive-bounds: exact capacities, independent final footprint, legacy science and24 direct Rust/native cases.",
-    "status.session.archive.bound": "Locally accepted archive target preflight/bounded copy and native common literal. Future full-run DS/US bounds and actual host/session Level2 acceptance remain pending."
+    "status.session.archive.bound": "Locally accepted archive target preflight/bounded copy and native common literal. Future full-run DS/US bounds and actual host/session Level2 acceptance remain pending.",
+    "ownership.session.outputs.bound": "Finite frozen target snapshots are prepared before control/source/RNG execution; all dimensions are checked before production and final capacities enforced before publication. Request/session, old/queued output and independent view/copy owners need separate caller reservations. No late-only oversized-result rejection.",
+    "units.session.outputs.bound": "Target-layout retained payload bytes including fixed values/requested capacity/private caches/repeated shared payload, ordered entries and shared allocation edges. Excludes allocator/private bookkeeping and temporary construction/numerical scratch under separate finite execution limits; not total heap or RSS.",
+    "errors.session.outputs.bound": "Checked overflow or any insufficient target quantity yields ResourceLimit before control/run claim. Preserve original Busy/admission/cancellation and partial-report semantics; interpreter signals remain cooperative cancellation through existing native workers.",
+    "evidence.session.outputs.bound": "../unified-qt-workbench/session-output-bound-evidence.json, session-output-bound-operation-test-results.json and validation.md#uiu-session-01-pre-production-session-output-bounds:115 unique Rust/48 native cases,18 independent process cases and strict additive export tracing.",
+    "status.session.outputs.bound": "Locally accepted paired full-loop/upstream-report/idle-preview bounds and bounded operations. Real Qt consumer charges, host wiring, Level2 session and finalLevel3 acceptance remain pending."
   },
   "type_exports": {
     "downstream": [
@@ -35206,6 +35211,374 @@
       },
       "evidence": "evidence.session.archive.bound",
       "status": "status.session.archive.bound"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopRequest::result_retained_bound",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn result_retained_bound(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/full_loop/result_retention/mod.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopRequest.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "FullLoopRequest.result_retained_bound",
+        "native_operation": "merlin.downstream.FullLoopRequest.result_retained_bound"
+      },
+      "input_ownership": "ownership.session.outputs.bound",
+      "units": "units.session.outputs.bound",
+      "error_behavior": "errors.session.outputs.bound",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Target preflight or capacity-controlled actual scientific output; no application reservation or temporary-scratch/RSS guarantee."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/result_retention/bound.rs::checked_cell_and_histogram_quantities_reject_overflow",
+          "crates/ofdm/src/api/full_loop/result_retention/tests.rs::exact_dimensions_and_one_extra_unit_admit_but_each_missing_unit_rejects",
+          "crates/ofdm/src/api/full_loop/observations/result_retention_tests.rs::exact_stage_storage_keeps_roles_text_nested_data_and_legacy_statistics",
+          "crates/ofdm/src/api/full_loop/result_retention/tests.rs::exact_vector_and_text_storage_preserves_initialized_values",
+          "crates/ofdm/src/simulation/channel/protected_constellation/result_retention_tests.rs::exact_protected_storage_keeps_original_private_pilot_bits",
+          "crates/ofdm/src/simulation/source/file/result_retention_tests.rs::exact_recovered_prefix_storage_preserves_complete_and_partial_bytes",
+          "crates/ofdm/tests/api_result_retained_bound.rs::precancelled_observed_and_unobserved_results_preserve_honest_partial_reports",
+          "crates/ofdm/tests/api_result_retained_bound.rs::every_insufficient_dimension_rejects_before_control_or_source_progress",
+          "crates/ofdm/tests/api_result_retained_bound.rs::one_extra_unit_in_each_dimension_admits_the_actual_file_result",
+          "crates/ofdm/tests/api_result_retained_bound.rs::cancellation_after_completed_trials_preserves_observed_and_unobserved_partial_results",
+          "crates/ofdm/tests/api_result_retained_bound.rs::complete_all_selected_stages_fit_and_preserve_original_context_and_statistics",
+          "crates/ofdm/tests/api_result_retained_bound.rs::complete_unobserved_result_fits_exact_reservation_and_preserves_legacy_queries",
+          "crates/merlin/tests/namespaces.rs::bounded_session_outputs_preserve_legacy_direction_types_and_common_limits"
+        ],
+        "python": {
+          "status": "exact installed native wheel and independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_all_bounded_products_match_separate_rust_process",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_downstream_bounded_worker_keeps_gil_busy_and_cancel_contracts",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_downstream_dimensions_reject_before_control_and_preserve_complete_science"
+          ]
+        }
+      },
+      "evidence": "evidence.session.outputs.bound",
+      "status": "status.session.outputs.bound"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopRequest::run_bounded",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn run_bounded( &self, control: &FullLoopControl, limit: RetainedFootprint, ) -> ApiResult<FullLoopResult>",
+        "source_file": "crates/ofdm/src/api/full_loop/result_retention/mod.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopRequest.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "FullLoopRequest.run_bounded",
+        "native_operation": "merlin.downstream.FullLoopRequest.run_bounded"
+      },
+      "input_ownership": "ownership.session.outputs.bound",
+      "units": "units.session.outputs.bound",
+      "error_behavior": "errors.session.outputs.bound",
+      "lifecycle_behavior": "lifecycle.run",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopResult>",
+        "scope": "Target preflight or capacity-controlled actual scientific output; no application reservation or temporary-scratch/RSS guarantee."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/result_retention/bound.rs::checked_cell_and_histogram_quantities_reject_overflow",
+          "crates/ofdm/src/api/full_loop/result_retention/tests.rs::exact_dimensions_and_one_extra_unit_admit_but_each_missing_unit_rejects",
+          "crates/ofdm/src/api/full_loop/observations/result_retention_tests.rs::exact_stage_storage_keeps_roles_text_nested_data_and_legacy_statistics",
+          "crates/ofdm/src/api/full_loop/result_retention/tests.rs::exact_vector_and_text_storage_preserves_initialized_values",
+          "crates/ofdm/src/simulation/channel/protected_constellation/result_retention_tests.rs::exact_protected_storage_keeps_original_private_pilot_bits",
+          "crates/ofdm/src/simulation/source/file/result_retention_tests.rs::exact_recovered_prefix_storage_preserves_complete_and_partial_bytes",
+          "crates/ofdm/tests/api_result_retained_bound.rs::precancelled_observed_and_unobserved_results_preserve_honest_partial_reports",
+          "crates/ofdm/tests/api_result_retained_bound.rs::every_insufficient_dimension_rejects_before_control_or_source_progress",
+          "crates/ofdm/tests/api_result_retained_bound.rs::one_extra_unit_in_each_dimension_admits_the_actual_file_result",
+          "crates/ofdm/tests/api_result_retained_bound.rs::cancellation_after_completed_trials_preserves_observed_and_unobserved_partial_results",
+          "crates/ofdm/tests/api_result_retained_bound.rs::complete_all_selected_stages_fit_and_preserve_original_context_and_statistics",
+          "crates/ofdm/tests/api_result_retained_bound.rs::complete_unobserved_result_fits_exact_reservation_and_preserves_legacy_queries",
+          "crates/merlin/tests/namespaces.rs::bounded_session_outputs_preserve_legacy_direction_types_and_common_limits"
+        ],
+        "python": {
+          "status": "exact installed native wheel and independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_all_bounded_products_match_separate_rust_process",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_downstream_bounded_worker_keeps_gil_busy_and_cancel_contracts",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_downstream_dimensions_reject_before_control_and_preserve_complete_science"
+          ]
+        }
+      },
+      "evidence": "evidence.session.outputs.bound",
+      "status": "status.session.outputs.bound"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::TransmitterPreviewRequest::preview_retained_bound",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn preview_retained_bound(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/transmitter/bounded.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.TransmitterPreviewRequest.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "TransmitterPreviewRequest.preview_retained_bound",
+        "native_operation": "merlin.downstream.TransmitterPreviewRequest.preview_retained_bound"
+      },
+      "input_ownership": "ownership.session.outputs.bound",
+      "units": "units.session.outputs.bound",
+      "error_behavior": "errors.session.outputs.bound",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Target preflight or capacity-controlled actual scientific output; no application reservation or temporary-scratch/RSS guarantee."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/transmitter/bounded.rs::exact_three_dimensions_and_each_insufficient_unit_are_checked",
+          "crates/ofdm/src/api/transmitter/bounded.rs::welch_count_uses_checked_arithmetic_and_existing_hop_policy",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::insufficient_dimensions_reject_before_control_admission_and_keep_old_preview",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::file_50khz_preview_fits_exact_bound_and_preserves_original_source",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::cancelled_and_reused_controls_preserve_legacy_errors_without_replacement",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::file_25khz_preview_fits_exact_bound_and_preserves_original_source",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::prbs_50khz_preview_fits_exact_bound_and_preserves_every_sample",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::prbs_25khz_preview_fits_exact_bound_and_preserves_every_sample",
+          "crates/merlin/tests/namespaces.rs::bounded_session_outputs_preserve_legacy_direction_types_and_common_limits"
+        ],
+        "python": {
+          "status": "exact installed native wheel and independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_all_bounded_products_match_separate_rust_process",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_preview_exact_bound_rejection_precancel_and_original_source"
+          ]
+        }
+      },
+      "evidence": "evidence.session.outputs.bound",
+      "status": "status.session.outputs.bound"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::TransmitterPreviewRequest::generate_bounded",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn generate_bounded( &self, control: &TransmitterPreviewControl, limit: RetainedFootprint, ) -> ApiResult<TransmitterPreview>",
+        "source_file": "crates/ofdm/src/api/transmitter/bounded.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.TransmitterPreviewRequest.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "TransmitterPreviewRequest.generate_bounded",
+        "native_operation": "merlin.downstream.TransmitterPreviewRequest.generate_bounded"
+      },
+      "input_ownership": "ownership.session.outputs.bound",
+      "units": "units.session.outputs.bound",
+      "error_behavior": "errors.session.outputs.bound",
+      "lifecycle_behavior": "lifecycle.run",
+      "report_contract": {
+        "rust_return": "ApiResult<TransmitterPreview>",
+        "scope": "Target preflight or capacity-controlled actual scientific output; no application reservation or temporary-scratch/RSS guarantee."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/transmitter/bounded.rs::exact_three_dimensions_and_each_insufficient_unit_are_checked",
+          "crates/ofdm/src/api/transmitter/bounded.rs::welch_count_uses_checked_arithmetic_and_existing_hop_policy",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::insufficient_dimensions_reject_before_control_admission_and_keep_old_preview",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::file_50khz_preview_fits_exact_bound_and_preserves_original_source",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::cancelled_and_reused_controls_preserve_legacy_errors_without_replacement",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::file_25khz_preview_fits_exact_bound_and_preserves_original_source",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::prbs_50khz_preview_fits_exact_bound_and_preserves_every_sample",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::prbs_25khz_preview_fits_exact_bound_and_preserves_every_sample",
+          "crates/merlin/tests/namespaces.rs::bounded_session_outputs_preserve_legacy_direction_types_and_common_limits"
+        ],
+        "python": {
+          "status": "exact installed native wheel and independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_all_bounded_products_match_separate_rust_process",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_preview_exact_bound_rejection_precancel_and_original_source"
+          ]
+        }
+      },
+      "evidence": "evidence.session.outputs.bound",
+      "status": "status.session.outputs.bound"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::Simulation::batch_report_retained_bound",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn batch_report_retained_bound(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdma/src/api/session/report_retention.rs",
+        "rustdoc": "docsis_ofdma/api/struct.Simulation.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "Simulation.batch_report_retained_bound",
+        "native_operation": "merlin.upstream.Simulation.batch_report_retained_bound"
+      },
+      "input_ownership": "ownership.session.outputs.bound",
+      "units": "units.session.outputs.bound",
+      "error_behavior": "errors.session.outputs.bound",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Target preflight or capacity-controlled actual scientific output; no application reservation or temporary-scratch/RSS guarantee."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/src/api/session/report_retention.rs::source_text_ceiling_accepts_exact_and_rejects_one_extra_byte",
+          "crates/ofdma/src/simulation/report_retention.rs::closed_codec_error_variants_and_full_usize_text_fit_diagnostic_policy",
+          "crates/ofdma/src/simulation/report_retention.rs::exact_slice_conversion_removes_spare_slots_preserving_every_value",
+          "crates/ofdma/src/simulation/report_retention.rs::plan_decision_and_capacity_products_reject_checked_overflow",
+          "crates/ofdma/src/api/session/report_retention.rs::source_export_rejection_leaves_accepted_state_and_control_untouched",
+          "crates/ofdma/src/api/session/report_retention.rs::synthetic_time_limit_terminal_fixture_normalizes_without_losing_completed_science",
+          "crates/ofdma/src/api/session/report_retention.rs::synthetic_failed_terminal_fixture_normalizes_without_losing_completed_science",
+          "crates/ofdma/src/api/session/report_retention.rs::pilot_linear_observed_cancel_preserves_completed_estimate_soft_and_decoder_records",
+          "crates/ofdma/src/instruments/observer.rs::report_normalization_preserves_json_and_removes_private_gain_spare_capacity",
+          "crates/ofdma/src/instruments/soft/store.rs::report_soft_normalization_preserves_actual_metrics_and_surviving_shared_records",
+          "crates/ofdma/src/instruments/receiver.rs::report_estimate_normalization_copies_surviving_alias_without_altering_observation",
+          "crates/ofdma/tests/report_retention.rs::missing_configuration_rejects_without_claiming_control",
+          "crates/ofdma/tests/report_retention.rs::pre_cancelled_bounded_report_preserves_all_unstarted_grants_and_source",
+          "crates/ofdma/tests/report_retention.rs::no_transmission_grants_preserve_legacy_source_and_unavailable_observations",
+          "crates/ofdma/tests/report_retention.rs::runtime_cancel_keeps_completed_prefix_within_pre_admitted_bound",
+          "crates/ofdma/tests/report_retention.rs::one_shared_root_over_policy_rejects_before_source_and_control_claim",
+          "crates/ofdma/tests/report_retention.rs::one_byte_over_policy_rejects_before_source_and_control_claim",
+          "crates/ofdma/tests/report_retention.rs::one_ordered_entry_over_policy_rejects_before_source_and_control_claim",
+          "crates/ofdma/tests/report_retention.rs::document_observed_exact_bound_preserves_source_bytes_hashes_and_actual_metrics",
+          "crates/ofdma/tests/report_retention.rs::pilot_linear_observed_complete_report_preserves_legacy_science_and_bound",
+          "crates/ofdma/tests/report_retention.rs::typed_unobserved_exact_bound_preserves_legacy_recovery_and_removes_spare_capacity",
+          "crates/ofdma/tests/report_retention.rs::measured_observed_context_and_provenance_match_legacy_without_source_changes",
+          "crates/ofdma/tests/report_retention.rs::second_numerology_observed_complete_report_fits_same_public_contract",
+          "crates/ofdma/tests/report_retention.rs::synthetic_playback_nested_banks_targets_caches_and_missing_values_match_legacy",
+          "crates/merlin/tests/namespaces.rs::bounded_session_outputs_preserve_legacy_direction_types_and_common_limits"
+        ],
+        "python": {
+          "status": "exact installed native wheel and independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_all_bounded_products_match_separate_rust_process",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_upstream_bounded_worker_keeps_gil_busy_cancel_and_reusable_session",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_upstream_dimensions_reject_and_restore_idle_session_lease"
+          ]
+        }
+      },
+      "evidence": "evidence.session.outputs.bound",
+      "status": "status.session.outputs.bound"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::Simulation::run_with_control_bounded",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn run_with_control_bounded( &mut self, control: &RunControl, limit: RetainedFootprint, ) -> ApiResult<BatchReport>",
+        "source_file": "crates/ofdma/src/api/session/report_retention.rs",
+        "rustdoc": "docsis_ofdma/api/struct.Simulation.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "Simulation.run_with_control_bounded",
+        "native_operation": "merlin.upstream.Simulation.run_with_control_bounded"
+      },
+      "input_ownership": "ownership.session.outputs.bound",
+      "units": "units.session.outputs.bound",
+      "error_behavior": "errors.session.outputs.bound",
+      "lifecycle_behavior": "lifecycle.run",
+      "report_contract": {
+        "rust_return": "ApiResult<BatchReport>",
+        "scope": "Target preflight or capacity-controlled actual scientific output; no application reservation or temporary-scratch/RSS guarantee."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/src/api/session/report_retention.rs::source_text_ceiling_accepts_exact_and_rejects_one_extra_byte",
+          "crates/ofdma/src/simulation/report_retention.rs::closed_codec_error_variants_and_full_usize_text_fit_diagnostic_policy",
+          "crates/ofdma/src/simulation/report_retention.rs::exact_slice_conversion_removes_spare_slots_preserving_every_value",
+          "crates/ofdma/src/simulation/report_retention.rs::plan_decision_and_capacity_products_reject_checked_overflow",
+          "crates/ofdma/src/api/session/report_retention.rs::source_export_rejection_leaves_accepted_state_and_control_untouched",
+          "crates/ofdma/src/api/session/report_retention.rs::synthetic_time_limit_terminal_fixture_normalizes_without_losing_completed_science",
+          "crates/ofdma/src/api/session/report_retention.rs::synthetic_failed_terminal_fixture_normalizes_without_losing_completed_science",
+          "crates/ofdma/src/api/session/report_retention.rs::pilot_linear_observed_cancel_preserves_completed_estimate_soft_and_decoder_records",
+          "crates/ofdma/src/instruments/observer.rs::report_normalization_preserves_json_and_removes_private_gain_spare_capacity",
+          "crates/ofdma/src/instruments/soft/store.rs::report_soft_normalization_preserves_actual_metrics_and_surviving_shared_records",
+          "crates/ofdma/src/instruments/receiver.rs::report_estimate_normalization_copies_surviving_alias_without_altering_observation",
+          "crates/ofdma/tests/report_retention.rs::missing_configuration_rejects_without_claiming_control",
+          "crates/ofdma/tests/report_retention.rs::pre_cancelled_bounded_report_preserves_all_unstarted_grants_and_source",
+          "crates/ofdma/tests/report_retention.rs::no_transmission_grants_preserve_legacy_source_and_unavailable_observations",
+          "crates/ofdma/tests/report_retention.rs::runtime_cancel_keeps_completed_prefix_within_pre_admitted_bound",
+          "crates/ofdma/tests/report_retention.rs::one_shared_root_over_policy_rejects_before_source_and_control_claim",
+          "crates/ofdma/tests/report_retention.rs::one_byte_over_policy_rejects_before_source_and_control_claim",
+          "crates/ofdma/tests/report_retention.rs::one_ordered_entry_over_policy_rejects_before_source_and_control_claim",
+          "crates/ofdma/tests/report_retention.rs::document_observed_exact_bound_preserves_source_bytes_hashes_and_actual_metrics",
+          "crates/ofdma/tests/report_retention.rs::pilot_linear_observed_complete_report_preserves_legacy_science_and_bound",
+          "crates/ofdma/tests/report_retention.rs::typed_unobserved_exact_bound_preserves_legacy_recovery_and_removes_spare_capacity",
+          "crates/ofdma/tests/report_retention.rs::measured_observed_context_and_provenance_match_legacy_without_source_changes",
+          "crates/ofdma/tests/report_retention.rs::second_numerology_observed_complete_report_fits_same_public_contract",
+          "crates/ofdma/tests/report_retention.rs::synthetic_playback_nested_banks_targets_caches_and_missing_values_match_legacy",
+          "crates/merlin/tests/namespaces.rs::bounded_session_outputs_preserve_legacy_direction_types_and_common_limits"
+        ],
+        "python": {
+          "status": "exact installed native wheel and independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_all_bounded_products_match_separate_rust_process",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_upstream_bounded_worker_keeps_gil_busy_cancel_and_reusable_session",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_upstream_dimensions_reject_and_restore_idle_session_lease"
+          ]
+        }
+      },
+      "evidence": "evidence.session.outputs.bound",
+      "status": "status.session.outputs.bound"
     }
   ],
   "executed_records": [
@@ -35254,7 +35627,8 @@
     "docs/development/features/unified-qt-workbench/session-resource-metadata-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/session-downstream-metadata-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/session-input-metadata-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/session-archive-bound-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/session-archive-bound-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/session-output-bound-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -73363,6 +73737,410 @@
       },
       "evidence": "evidence.session.archive.bound",
       "status": "status.session.archive.bound"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopRequest.result_retained_bound",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopRequest",
+        "source_file": "bindings/python/src/full_loop/request.rs",
+        "symbol": "PyFullLoopRequest",
+        "signature": "pub fn result_retained_bound(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Thin directional public Rust dispatch with GIL release. Python downstream limit precedes optional control; upstream keeps required control then limit. Existing native worker/session lease and interpreter cancellation are reused.",
+        "delegated_operations": [],
+        "delegated_operation": "merlin::downstream::FullLoopRequest::result_retained_bound"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "result_retained_bound",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "merlin.downstream.FullLoopRequest.result_retained_bound"
+      },
+      "input_ownership": "ownership.session.outputs.bound",
+      "units": "units.session.outputs.bound",
+      "error_behavior": "errors.session.outputs.bound",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "ApiResult<RetainedFootprint>",
+        "scope": "Original scientific ownership with admitted final capacities; all source/old/queued wrappers stay separately charged."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/result_retention/bound.rs::checked_cell_and_histogram_quantities_reject_overflow",
+          "crates/ofdm/src/api/full_loop/result_retention/tests.rs::exact_dimensions_and_one_extra_unit_admit_but_each_missing_unit_rejects",
+          "crates/ofdm/src/api/full_loop/observations/result_retention_tests.rs::exact_stage_storage_keeps_roles_text_nested_data_and_legacy_statistics",
+          "crates/ofdm/src/api/full_loop/result_retention/tests.rs::exact_vector_and_text_storage_preserves_initialized_values",
+          "crates/ofdm/src/simulation/channel/protected_constellation/result_retention_tests.rs::exact_protected_storage_keeps_original_private_pilot_bits",
+          "crates/ofdm/src/simulation/source/file/result_retention_tests.rs::exact_recovered_prefix_storage_preserves_complete_and_partial_bytes",
+          "crates/ofdm/tests/api_result_retained_bound.rs::precancelled_observed_and_unobserved_results_preserve_honest_partial_reports",
+          "crates/ofdm/tests/api_result_retained_bound.rs::every_insufficient_dimension_rejects_before_control_or_source_progress",
+          "crates/ofdm/tests/api_result_retained_bound.rs::one_extra_unit_in_each_dimension_admits_the_actual_file_result",
+          "crates/ofdm/tests/api_result_retained_bound.rs::cancellation_after_completed_trials_preserves_observed_and_unobserved_partial_results",
+          "crates/ofdm/tests/api_result_retained_bound.rs::complete_all_selected_stages_fit_and_preserve_original_context_and_statistics",
+          "crates/ofdm/tests/api_result_retained_bound.rs::complete_unobserved_result_fits_exact_reservation_and_preserves_legacy_queries",
+          "crates/merlin/tests/namespaces.rs::bounded_session_outputs_preserve_legacy_direction_types_and_common_limits"
+        ],
+        "python": {
+          "status": "exact installed wheel;18 independent process cases; lifecycle/boundary/alias coverage",
+          "cases": [
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_all_bounded_products_match_separate_rust_process",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_downstream_bounded_worker_keeps_gil_busy_and_cancel_contracts",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_downstream_dimensions_reject_before_control_and_preserve_complete_science"
+          ]
+        }
+      },
+      "evidence": "evidence.session.outputs.bound",
+      "status": "status.session.outputs.bound"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopRequest.run_bounded",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopRequest",
+        "source_file": "bindings/python/src/full_loop/request.rs",
+        "symbol": "PyFullLoopRequest",
+        "signature": "pub fn run_bounded( &self, control: &FullLoopControl, limit: RetainedFootprint, ) -> ApiResult<FullLoopResult>",
+        "mapping": "Thin directional public Rust dispatch with GIL release. Python downstream limit precedes optional control; upstream keeps required control then limit. Existing native worker/session lease and interpreter cancellation are reused.",
+        "delegated_operations": [],
+        "delegated_operation": "merlin::downstream::FullLoopRequest::run_bounded"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "run_bounded",
+        "kind": "method",
+        "signature": "(self, /, limit, control=None)",
+        "declaration": "merlin.downstream.FullLoopRequest.run_bounded"
+      },
+      "input_ownership": "ownership.session.outputs.bound",
+      "units": "units.session.outputs.bound",
+      "error_behavior": "errors.session.outputs.bound",
+      "lifecycle_behavior": "lifecycle.run",
+      "report_contract": {
+        "rust_type": "ApiResult<FullLoopResult>",
+        "scope": "Original scientific ownership with admitted final capacities; all source/old/queued wrappers stay separately charged."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/result_retention/bound.rs::checked_cell_and_histogram_quantities_reject_overflow",
+          "crates/ofdm/src/api/full_loop/result_retention/tests.rs::exact_dimensions_and_one_extra_unit_admit_but_each_missing_unit_rejects",
+          "crates/ofdm/src/api/full_loop/observations/result_retention_tests.rs::exact_stage_storage_keeps_roles_text_nested_data_and_legacy_statistics",
+          "crates/ofdm/src/api/full_loop/result_retention/tests.rs::exact_vector_and_text_storage_preserves_initialized_values",
+          "crates/ofdm/src/simulation/channel/protected_constellation/result_retention_tests.rs::exact_protected_storage_keeps_original_private_pilot_bits",
+          "crates/ofdm/src/simulation/source/file/result_retention_tests.rs::exact_recovered_prefix_storage_preserves_complete_and_partial_bytes",
+          "crates/ofdm/tests/api_result_retained_bound.rs::precancelled_observed_and_unobserved_results_preserve_honest_partial_reports",
+          "crates/ofdm/tests/api_result_retained_bound.rs::every_insufficient_dimension_rejects_before_control_or_source_progress",
+          "crates/ofdm/tests/api_result_retained_bound.rs::one_extra_unit_in_each_dimension_admits_the_actual_file_result",
+          "crates/ofdm/tests/api_result_retained_bound.rs::cancellation_after_completed_trials_preserves_observed_and_unobserved_partial_results",
+          "crates/ofdm/tests/api_result_retained_bound.rs::complete_all_selected_stages_fit_and_preserve_original_context_and_statistics",
+          "crates/ofdm/tests/api_result_retained_bound.rs::complete_unobserved_result_fits_exact_reservation_and_preserves_legacy_queries",
+          "crates/merlin/tests/namespaces.rs::bounded_session_outputs_preserve_legacy_direction_types_and_common_limits"
+        ],
+        "python": {
+          "status": "exact installed wheel;18 independent process cases; lifecycle/boundary/alias coverage",
+          "cases": [
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_all_bounded_products_match_separate_rust_process",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_downstream_bounded_worker_keeps_gil_busy_and_cancel_contracts",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_downstream_dimensions_reject_before_control_and_preserve_complete_science"
+          ]
+        }
+      },
+      "evidence": "evidence.session.outputs.bound",
+      "status": "status.session.outputs.bound"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.TransmitterPreviewRequest.preview_retained_bound",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::TransmitterPreviewRequest",
+        "source_file": "bindings/python/src/transmitter.rs",
+        "symbol": "PyTransmitterRequest",
+        "signature": "pub fn preview_retained_bound(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Thin directional public Rust dispatch with GIL release. Python downstream limit precedes optional control; upstream keeps required control then limit. Existing native worker/session lease and interpreter cancellation are reused.",
+        "delegated_operations": [],
+        "delegated_operation": "merlin::downstream::TransmitterPreviewRequest::preview_retained_bound"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "preview_retained_bound",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "merlin.downstream.TransmitterPreviewRequest.preview_retained_bound"
+      },
+      "input_ownership": "ownership.session.outputs.bound",
+      "units": "units.session.outputs.bound",
+      "error_behavior": "errors.session.outputs.bound",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "ApiResult<RetainedFootprint>",
+        "scope": "Original scientific ownership with admitted final capacities; all source/old/queued wrappers stay separately charged."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/transmitter/bounded.rs::exact_three_dimensions_and_each_insufficient_unit_are_checked",
+          "crates/ofdm/src/api/transmitter/bounded.rs::welch_count_uses_checked_arithmetic_and_existing_hop_policy",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::insufficient_dimensions_reject_before_control_admission_and_keep_old_preview",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::file_50khz_preview_fits_exact_bound_and_preserves_original_source",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::cancelled_and_reused_controls_preserve_legacy_errors_without_replacement",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::file_25khz_preview_fits_exact_bound_and_preserves_original_source",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::prbs_50khz_preview_fits_exact_bound_and_preserves_every_sample",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::prbs_25khz_preview_fits_exact_bound_and_preserves_every_sample",
+          "crates/merlin/tests/namespaces.rs::bounded_session_outputs_preserve_legacy_direction_types_and_common_limits"
+        ],
+        "python": {
+          "status": "exact installed wheel;18 independent process cases; lifecycle/boundary/alias coverage",
+          "cases": [
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_all_bounded_products_match_separate_rust_process",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_preview_exact_bound_rejection_precancel_and_original_source"
+          ]
+        }
+      },
+      "evidence": "evidence.session.outputs.bound",
+      "status": "status.session.outputs.bound"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.TransmitterPreviewRequest.generate_bounded",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::TransmitterPreviewRequest",
+        "source_file": "bindings/python/src/transmitter.rs",
+        "symbol": "PyTransmitterRequest",
+        "signature": "pub fn generate_bounded( &self, control: &TransmitterPreviewControl, limit: RetainedFootprint, ) -> ApiResult<TransmitterPreview>",
+        "mapping": "Thin directional public Rust dispatch with GIL release. Python downstream limit precedes optional control; upstream keeps required control then limit. Existing native worker/session lease and interpreter cancellation are reused.",
+        "delegated_operations": [],
+        "delegated_operation": "merlin::downstream::TransmitterPreviewRequest::generate_bounded"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "generate_bounded",
+        "kind": "method",
+        "signature": "(self, /, limit, control=None)",
+        "declaration": "merlin.downstream.TransmitterPreviewRequest.generate_bounded"
+      },
+      "input_ownership": "ownership.session.outputs.bound",
+      "units": "units.session.outputs.bound",
+      "error_behavior": "errors.session.outputs.bound",
+      "lifecycle_behavior": "lifecycle.run",
+      "report_contract": {
+        "rust_type": "ApiResult<TransmitterPreview>",
+        "scope": "Original scientific ownership with admitted final capacities; all source/old/queued wrappers stay separately charged."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/transmitter/bounded.rs::exact_three_dimensions_and_each_insufficient_unit_are_checked",
+          "crates/ofdm/src/api/transmitter/bounded.rs::welch_count_uses_checked_arithmetic_and_existing_hop_policy",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::insufficient_dimensions_reject_before_control_admission_and_keep_old_preview",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::file_50khz_preview_fits_exact_bound_and_preserves_original_source",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::cancelled_and_reused_controls_preserve_legacy_errors_without_replacement",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::file_25khz_preview_fits_exact_bound_and_preserves_original_source",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::prbs_50khz_preview_fits_exact_bound_and_preserves_every_sample",
+          "crates/ofdm/tests/api_transmitter_preview_bounded.rs::prbs_25khz_preview_fits_exact_bound_and_preserves_every_sample",
+          "crates/merlin/tests/namespaces.rs::bounded_session_outputs_preserve_legacy_direction_types_and_common_limits"
+        ],
+        "python": {
+          "status": "exact installed wheel;18 independent process cases; lifecycle/boundary/alias coverage",
+          "cases": [
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_all_bounded_products_match_separate_rust_process",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_preview_exact_bound_rejection_precancel_and_original_source"
+          ]
+        }
+      },
+      "evidence": "evidence.session.outputs.bound",
+      "status": "status.session.outputs.bound"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.Simulation.batch_report_retained_bound",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::Simulation",
+        "source_file": "bindings/python/src/upstream/simulation.rs",
+        "symbol": "PySimulation",
+        "signature": "pub fn batch_report_retained_bound(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Thin directional public Rust dispatch with GIL release. Python downstream limit precedes optional control; upstream keeps required control then limit. Existing native worker/session lease and interpreter cancellation are reused.",
+        "delegated_operations": [],
+        "delegated_operation": "merlin::upstream::Simulation::batch_report_retained_bound"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "batch_report_retained_bound",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "merlin.upstream.Simulation.batch_report_retained_bound"
+      },
+      "input_ownership": "ownership.session.outputs.bound",
+      "units": "units.session.outputs.bound",
+      "error_behavior": "errors.session.outputs.bound",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "ApiResult<RetainedFootprint>",
+        "scope": "Original scientific ownership with admitted final capacities; all source/old/queued wrappers stay separately charged."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/src/api/session/report_retention.rs::source_text_ceiling_accepts_exact_and_rejects_one_extra_byte",
+          "crates/ofdma/src/simulation/report_retention.rs::closed_codec_error_variants_and_full_usize_text_fit_diagnostic_policy",
+          "crates/ofdma/src/simulation/report_retention.rs::exact_slice_conversion_removes_spare_slots_preserving_every_value",
+          "crates/ofdma/src/simulation/report_retention.rs::plan_decision_and_capacity_products_reject_checked_overflow",
+          "crates/ofdma/src/api/session/report_retention.rs::source_export_rejection_leaves_accepted_state_and_control_untouched",
+          "crates/ofdma/src/api/session/report_retention.rs::synthetic_time_limit_terminal_fixture_normalizes_without_losing_completed_science",
+          "crates/ofdma/src/api/session/report_retention.rs::synthetic_failed_terminal_fixture_normalizes_without_losing_completed_science",
+          "crates/ofdma/src/api/session/report_retention.rs::pilot_linear_observed_cancel_preserves_completed_estimate_soft_and_decoder_records",
+          "crates/ofdma/src/instruments/observer.rs::report_normalization_preserves_json_and_removes_private_gain_spare_capacity",
+          "crates/ofdma/src/instruments/soft/store.rs::report_soft_normalization_preserves_actual_metrics_and_surviving_shared_records",
+          "crates/ofdma/src/instruments/receiver.rs::report_estimate_normalization_copies_surviving_alias_without_altering_observation",
+          "crates/ofdma/tests/report_retention.rs::missing_configuration_rejects_without_claiming_control",
+          "crates/ofdma/tests/report_retention.rs::pre_cancelled_bounded_report_preserves_all_unstarted_grants_and_source",
+          "crates/ofdma/tests/report_retention.rs::no_transmission_grants_preserve_legacy_source_and_unavailable_observations",
+          "crates/ofdma/tests/report_retention.rs::runtime_cancel_keeps_completed_prefix_within_pre_admitted_bound",
+          "crates/ofdma/tests/report_retention.rs::one_shared_root_over_policy_rejects_before_source_and_control_claim",
+          "crates/ofdma/tests/report_retention.rs::one_byte_over_policy_rejects_before_source_and_control_claim",
+          "crates/ofdma/tests/report_retention.rs::one_ordered_entry_over_policy_rejects_before_source_and_control_claim",
+          "crates/ofdma/tests/report_retention.rs::document_observed_exact_bound_preserves_source_bytes_hashes_and_actual_metrics",
+          "crates/ofdma/tests/report_retention.rs::pilot_linear_observed_complete_report_preserves_legacy_science_and_bound",
+          "crates/ofdma/tests/report_retention.rs::typed_unobserved_exact_bound_preserves_legacy_recovery_and_removes_spare_capacity",
+          "crates/ofdma/tests/report_retention.rs::measured_observed_context_and_provenance_match_legacy_without_source_changes",
+          "crates/ofdma/tests/report_retention.rs::second_numerology_observed_complete_report_fits_same_public_contract",
+          "crates/ofdma/tests/report_retention.rs::synthetic_playback_nested_banks_targets_caches_and_missing_values_match_legacy",
+          "crates/merlin/tests/namespaces.rs::bounded_session_outputs_preserve_legacy_direction_types_and_common_limits"
+        ],
+        "python": {
+          "status": "exact installed wheel;18 independent process cases; lifecycle/boundary/alias coverage",
+          "cases": [
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_all_bounded_products_match_separate_rust_process",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_upstream_bounded_worker_keeps_gil_busy_cancel_and_reusable_session",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_upstream_dimensions_reject_and_restore_idle_session_lease"
+          ]
+        }
+      },
+      "evidence": "evidence.session.outputs.bound",
+      "status": "status.session.outputs.bound"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.Simulation.run_with_control_bounded",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::Simulation",
+        "source_file": "bindings/python/src/upstream/simulation.rs",
+        "symbol": "PySimulation",
+        "signature": "pub fn run_with_control_bounded( &mut self, control: &RunControl, limit: RetainedFootprint, ) -> ApiResult<BatchReport>",
+        "mapping": "Thin directional public Rust dispatch with GIL release. Python downstream limit precedes optional control; upstream keeps required control then limit. Existing native worker/session lease and interpreter cancellation are reused.",
+        "delegated_operations": [],
+        "delegated_operation": "merlin::upstream::Simulation::run_with_control_bounded"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "run_with_control_bounded",
+        "kind": "method",
+        "signature": "(self, /, control, limit)",
+        "declaration": "merlin.upstream.Simulation.run_with_control_bounded"
+      },
+      "input_ownership": "ownership.session.outputs.bound",
+      "units": "units.session.outputs.bound",
+      "error_behavior": "errors.session.outputs.bound",
+      "lifecycle_behavior": "lifecycle.run",
+      "report_contract": {
+        "rust_type": "ApiResult<BatchReport>",
+        "scope": "Original scientific ownership with admitted final capacities; all source/old/queued wrappers stay separately charged."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/src/api/session/report_retention.rs::source_text_ceiling_accepts_exact_and_rejects_one_extra_byte",
+          "crates/ofdma/src/simulation/report_retention.rs::closed_codec_error_variants_and_full_usize_text_fit_diagnostic_policy",
+          "crates/ofdma/src/simulation/report_retention.rs::exact_slice_conversion_removes_spare_slots_preserving_every_value",
+          "crates/ofdma/src/simulation/report_retention.rs::plan_decision_and_capacity_products_reject_checked_overflow",
+          "crates/ofdma/src/api/session/report_retention.rs::source_export_rejection_leaves_accepted_state_and_control_untouched",
+          "crates/ofdma/src/api/session/report_retention.rs::synthetic_time_limit_terminal_fixture_normalizes_without_losing_completed_science",
+          "crates/ofdma/src/api/session/report_retention.rs::synthetic_failed_terminal_fixture_normalizes_without_losing_completed_science",
+          "crates/ofdma/src/api/session/report_retention.rs::pilot_linear_observed_cancel_preserves_completed_estimate_soft_and_decoder_records",
+          "crates/ofdma/src/instruments/observer.rs::report_normalization_preserves_json_and_removes_private_gain_spare_capacity",
+          "crates/ofdma/src/instruments/soft/store.rs::report_soft_normalization_preserves_actual_metrics_and_surviving_shared_records",
+          "crates/ofdma/src/instruments/receiver.rs::report_estimate_normalization_copies_surviving_alias_without_altering_observation",
+          "crates/ofdma/tests/report_retention.rs::missing_configuration_rejects_without_claiming_control",
+          "crates/ofdma/tests/report_retention.rs::pre_cancelled_bounded_report_preserves_all_unstarted_grants_and_source",
+          "crates/ofdma/tests/report_retention.rs::no_transmission_grants_preserve_legacy_source_and_unavailable_observations",
+          "crates/ofdma/tests/report_retention.rs::runtime_cancel_keeps_completed_prefix_within_pre_admitted_bound",
+          "crates/ofdma/tests/report_retention.rs::one_shared_root_over_policy_rejects_before_source_and_control_claim",
+          "crates/ofdma/tests/report_retention.rs::one_byte_over_policy_rejects_before_source_and_control_claim",
+          "crates/ofdma/tests/report_retention.rs::one_ordered_entry_over_policy_rejects_before_source_and_control_claim",
+          "crates/ofdma/tests/report_retention.rs::document_observed_exact_bound_preserves_source_bytes_hashes_and_actual_metrics",
+          "crates/ofdma/tests/report_retention.rs::pilot_linear_observed_complete_report_preserves_legacy_science_and_bound",
+          "crates/ofdma/tests/report_retention.rs::typed_unobserved_exact_bound_preserves_legacy_recovery_and_removes_spare_capacity",
+          "crates/ofdma/tests/report_retention.rs::measured_observed_context_and_provenance_match_legacy_without_source_changes",
+          "crates/ofdma/tests/report_retention.rs::second_numerology_observed_complete_report_fits_same_public_contract",
+          "crates/ofdma/tests/report_retention.rs::synthetic_playback_nested_banks_targets_caches_and_missing_values_match_legacy",
+          "crates/merlin/tests/namespaces.rs::bounded_session_outputs_preserve_legacy_direction_types_and_common_limits"
+        ],
+        "python": {
+          "status": "exact installed wheel;18 independent process cases; lifecycle/boundary/alias coverage",
+          "cases": [
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_all_bounded_products_match_separate_rust_process",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_upstream_bounded_worker_keeps_gil_busy_cancel_and_reusable_session",
+            "bindings/python/tests/test_bounded_session_outputs.py::BoundedSessionOutputTests.test_upstream_dimensions_reject_and_restore_idle_session_lease"
+          ]
+        }
+      },
+      "evidence": "evidence.session.outputs.bound",
+      "status": "status.session.outputs.bound"
     }
   ],
   "native_type_exports": {
@@ -74626,6 +75404,13 @@
       "inventory_command": "Exact installed wheel; session-01-input-metadata-native/results.json",
       "native_sha256": "db5d2ddc82052beab930f8db0e5305762c1bf1ac0e110546cd63dc1e53a689c7",
       "scope": "Scoped input/admission/catalog/measurement/Designer/TX, both metadata roots and namespace consumers; independent Rust process reference. No full-suite claim."
+    },
+    {
+      "version": "0.4.0",
+      "revision": "713ec87 plus bounded archive candidate",
+      "inventory_command": "Exact installed wheel; session-01-archive-bound-native/results.json",
+      "native_sha256": "ed21158af0f21b85102d82616595efbed3e5bf9c64e7da0d784369271c2543e6",
+      "scope": "Bounded/legacy archive/full-loop, both retained-root metadata and namespaces;24 independent Rust/native cases. Native literal constructibility added; all preceding methods/properties unchanged."
     }
   ],
   "historical_rust_export_corrections": [

@@ -13,6 +13,10 @@ use super::{
 };
 use crate::{
     channel::{Channel, RxmerChannel},
+    common::constants::{
+        UPSTREAM_BATCH_REPORT_FORMAT, UPSTREAM_BATCH_REPORT_NOISE_GENERATOR,
+        UPSTREAM_BATCH_REPORT_SCHEMA_VERSION,
+    },
     error::limit,
     instruments::{
         receiver::ReceiverEstimateStore, ObservationStore, ReceiverObservationPolicy, Tap,
@@ -82,14 +86,13 @@ pub(crate) fn run_observed(
     let mut source = Prbs15::new(config.source_seed)?;
     let mut verifier = PrbsVerifier::new(config.source_seed)?;
     let mut report = BatchReport {
-        format: "merlin.upstream.experiment",
-        schema_version: 1,
+        format: UPSTREAM_BATCH_REPORT_FORMAT,
+        schema_version: UPSTREAM_BATCH_REPORT_SCHEMA_VERSION,
         source_configuration_json: None,
         source_configuration_original: None,
         source_configuration_sha256: None,
         measurement_provenance_json: None,
-        noise_generator:
-            "chacha8-standardnormal-v1; rand=0.9.5; rand_chacha=0.9.0; rand_distr=0.5.1",
+        noise_generator: UPSTREAM_BATCH_REPORT_NOISE_GENERATOR,
         configuration: config.clone(),
         options: options.clone(),
         planned,

@@ -7,6 +7,7 @@
  * Changes: local ownership; explicit MERLIN schema identities.
  */
 //! Exclusive Rust session; validation and execution remain in the shared core.
+mod report_retention;
 use super::{
     ApiError, ApiResult, BatchReport, ExperimentConfig, ExperimentOptions, ExperimentPreview,
     RunControl,

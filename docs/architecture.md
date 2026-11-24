@@ -1593,8 +1593,11 @@ The [pre-production archive pair](development/features/unified-qt-workbench/vali
 computes exact detached target quantities and checks every limit before copying.
 It preserves the legacy archive operation/statistic and scientific queries.
 Native Python can construct immutable common quantities, matching Rust's existing
-public struct literal. Future full-run result/report bounds and actual Qt
-aggregate admission remain required before session acceptance.
+public struct literal. The [session-output pairs](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-session-output-bounds)
+now preflight and enforce final downstream full-loop, upstream report and idle TX
+preview targets before scientific execution. Existing run/generate operations
+remain compatible. Actual Qt consumer charges and aggregate host admission remain
+required before session acceptance.
 
 The [independent input/idle-preview owner closure](development/features/unified-qt-workbench/design.md#independent-input-and-idle-preview-owner-closure)
 tracks partial input, draft, Designer and preview ownership outside those four

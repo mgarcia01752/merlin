@@ -155,6 +155,49 @@ impl PyTransmitterRequest {
             .map(PyTransmitterPreview)
             .map_err(error)
     }
+
+    /// Prepares the exact finite idle preview target without generating samples.
+    ///
+    /// # Returns
+    /// Immutable Rust payload/entry/root bound; request/old outputs are separate.
+    /// Temporary preparation and numerical scratch use separate finite limits.
+    ///
+    /// # Errors
+    /// Preserves Rust checked ResourceLimit; releases the interpreter.
+    fn preview_retained_bound(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        py.detach(|| self.0.preview_retained_bound())
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
+    /// Admits the retained output before running the original idle TX generator.
+    ///
+    /// # Arguments
+    /// * `limit` - Caller-reserved maximum payload bytes, ordered entries and shared roots.
+    /// * `control` - Optional fresh one-shot token; None creates one.
+    ///
+    /// # Returns
+    /// Original owned waveform/PSD/source provenance with exact final capacities.
+    /// The interpreter is released; cancellation produces no replacement output.
+    ///
+    /// # Errors
+    /// Rust ResourceLimit before control admission, or existing Busy/engine/cancel errors.
+    #[pyo3(signature=(limit,control=None))]
+    fn generate_bounded(
+        &self,
+        py: Python<'_>,
+        limit: &crate::retention::PyRetainedFootprint,
+        control: Option<&PyTransmitterControl>,
+    ) -> PyResult<PyTransmitterPreview> {
+        let control =
+            control.map_or_else(api::TransmitterPreviewControl::new, |value| value.0.clone());
+        py.detach(|| self.0.generate_bounded(&control, limit.0))
+            .map(PyTransmitterPreview)
+            .map_err(error)
+    }
 }
 
 /// Registers immutable requests/controls/results in the existing single extension.

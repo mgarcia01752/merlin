@@ -15,6 +15,7 @@ mod physical;
 mod receiver_archive;
 mod request;
 mod result;
+pub(super) mod result_retention;
 mod sweep;
 mod transmit_cells;
 use super::*;
