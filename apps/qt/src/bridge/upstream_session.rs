@@ -18,6 +18,13 @@ pub mod bridge {
         #[qml_element]
         type UpstreamSession = super::UpstreamSessionRust;
 
+        /// Selects a real local upstream configuration using the OS-native picker.
+        /// # Returns
+        /// Empty on Cancel or queued preparation; the original error otherwise.
+        /// Poll alone establishes eventual acceptance. No simulation is started.
+        #[qinvokable]
+        fn choose_configuration(self: Pin<&mut UpstreamSession>) -> QString;
+
         /// Starts off-GUI validation of an existing public configuration document.
         /// # Arguments
         /// * `document` - Original bounded upstream configuration JSON.
@@ -112,6 +119,32 @@ impl UpstreamSessionRust {
 }
 
 impl bridge::UpstreamSession {
+    /// Acquires exact source bytes through the existing native file adapter.
+    ///
+    /// # Returns
+    /// Empty for cancellation or queued validation; an actionable error otherwise.
+    /// The modal chooser is separate from the finite off-GUI scientific preparation.
+    /// Accepted configuration and results are unchanged until native adoption.
+    pub fn choose_configuration(mut self: core::pin::Pin<&mut Self>) -> QString {
+        let result = (|| {
+            {
+                let mut owner = self.as_mut().rust_mut();
+                let model = owner.ensure_model().ok_or(
+                    crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+                )?;
+                model.ensure_configuration_idle()?;
+            }
+            let uri = crate::platform::native_file_picker::choose("Load Upstream Configuration")?;
+            let mut owner = self.as_mut().rust_mut();
+            let model = owner
+                .ensure_model()
+                .ok_or(crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE)?;
+            model.load_configuration_uri(uri.as_deref())?;
+            Ok::<_, String>(())
+        })();
+        QString::from(result.err().unwrap_or_default())
+    }
+
     /// Stages existing public JSON for background scientific validation.
     /// # Arguments
     /// * `document` - Input limited before UTF-8 copy and again by exact byte count.

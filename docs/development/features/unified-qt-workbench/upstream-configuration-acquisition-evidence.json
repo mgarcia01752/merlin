@@ -1,0 +1,257 @@
+{
+  "task": "UIU-US-01",
+  "unit": "Native configuration source acquisition",
+  "status": "Focused prerequisite accepted; official task remains incomplete",
+  "base_commit": "45695b67b1120a392700071688bbfca2caa35ee3",
+  "requirements": [
+    "REQ-UIU-10",
+    "REQ-UIU-11",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-upstream-scientific-presentation",
+  "design": "docs/development/features/unified-qt-workbench/design.md#uiu-us-01-native-configuration-integration",
+  "source_sha256": {
+    "apps/qt/src/bridge/upstream_session.rs": "dfb7915e9dd1842e4ea6501991dc315de807d45453caa8c2b81e7cab86e2d179",
+    "apps/qt/src/upstream/workbench/mod.rs": "9f0abaedcf79e64a950565032b141f32a2aa9a75249d74e81d9469ea35112b91",
+    "apps/qt/src/upstream/workbench/acquisition.rs": "03bef76603279417a2d5f0e3bd2b3221eccae158371ea0dc3ecf56178150f5a6",
+    "apps/qt/src/upstream/workbench/acquisition/tests.rs": "fcfaac03d14052a65f517ad5007493de807cfd807a5a117e863698a7ec70e11d"
+  },
+  "validation": {
+    "level": 1,
+    "risk": "Added CXX-Qt invokable; expand affected upstream model/adapter, native registration/build/launch and original source protection. Scientific/public APIs/Python/schema unchanged.",
+    "focused": [
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.6890746099961689
+      },
+      {
+        "label": "upstream-rust",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "--",
+          "upstream::workbench",
+          "bridge::upstream_session",
+          "shell::application::tests",
+          "--test-threads=2"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 87.29421687500144
+      }
+    ],
+    "qt_rust": {
+      "passed": 21,
+      "failed": 0,
+      "ignored": 0,
+      "filtered_out": 404,
+      "new_real_input_cases": 4
+    },
+    "checks": [
+      {
+        "label": "clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 82.12715439101157
+      },
+      {
+        "label": "format-check",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.6519593389966758
+      },
+      {
+        "label": "boundary",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.3603814060043078
+      }
+    ],
+    "build": [
+      {
+        "label": "build",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/qt-desktop.sh",
+          "build"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 104.2941985429934
+      }
+    ],
+    "native": {
+      "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+      "sha256": "f6cd7105859230ba0951a8b37bce2160cbb9aefa3f989435ee7634b653e4d013",
+      "display": ":0",
+      "display_dimensions": [
+        "dimensions:    1280x800 pixels (338x211 millimeters)"
+      ],
+      "qt_sdk_version": "6.8.3",
+      "commands": [
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.06312849700043444,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.1160989300115034,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.6847945350018563,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.03411928100103978,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.6721956039982615,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test",
+            "--workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.8532002520078095,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        }
+      ]
+    },
+    "documentation": [
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 12.538379814010113
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 8.405122687996482
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.032399513002019376
+      },
+      {
+        "label": "guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03368196400697343
+      }
+    ]
+  },
+  "preservation": [
+    "Exact original bytes/hash; protected source path is explicitly upstream-owned.",
+    "No fabricated default source, scientific run, cancellation of another direction or accepted-state mutation before final adoption.",
+    "Existing public parsing/validation/background Pending owns scientific acceptance.",
+    "Picker Cancel preserves unconfigured and accepted state; invalid local URI/document preserves accepted controller."
+  ],
+  "not_required": [
+    {
+      "suite": "New Python wheel/full core suites/CLI/project parity",
+      "reason": "No backend, public/native binding, serializer, schema, CLI or dependency change."
+    },
+    {
+      "suite": "Repeat complete standalone QML suites",
+      "reason": "QML sources/tests and registration list unchanged. Existing SHELL record remains historical evidence; final visible configuration lifecycle still requires fresh native/QML acceptance."
+    }
+  ],
+  "pending": [
+    "Correlated typed configuration drafts and actual QML hookup.",
+    "Real native chooser/dialog editing Apply/Cancel/reopen/failure/tab interactions.",
+    "Complete relevant Level 2 UIU-US-01 acceptance before checklist completion."
+  ],
+  "raw_evidence": "Ignored docs/development/local/unified-qt-workbench/us-01/ and us-01-acquisition-native-results.json; no OS-picker interaction claim from file-adapter tests."
+}

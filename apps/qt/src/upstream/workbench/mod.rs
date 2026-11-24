@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Direction-specific Qt ownership over the existing public upstream controller.
+mod acquisition;
 mod preparation;
 mod presentation;
 

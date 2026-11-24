@@ -4753,3 +4753,28 @@ is rebuilt for this presentation-only integration. The prepared resource-grid
 files remain preserved in the isolated source commit for UIU-US-04 and are not
 included in SHELL acceptance. Official history changes only UIU-SHELL-01;
 UIU-US-01 is the next eligible task.
+
+
+## UIU-US-01 native configuration acquisition
+
+The [focused receipt](upstream-configuration-acquisition-evidence.json) validates
+the existing upstream model's native input acquisition prerequisite. The new
+UpstreamSession action reuses the OS-native picker and bounded local-file adapter,
+protects exact source paths and queues the existing background public API
+validation. Empty return means Cancel or queued preparation, never acceptance.
+No complete source document is fabricated for an unconfigured session.
+
+All 21 selected upstream model/adapter cases pass, including four new real-input
+cases for Cancel before/after configuration, exact original bytes/hash and path
+protection, invalid-input rollback, and active-downstream isolation. All-target
+Qt Clippy, formatting, final API boundary, optimized build and six fresh native
+startup/project probes pass. The existing QML inputs and scientific/native
+Python/project schemas are unchanged; their earlier evidence is reused rather
+than claiming another execution or wheel build. The native chooser was compiled
+and startup-tested; automated picker interaction and complete visible dialog
+Apply/Cancel acceptance remain pending with UIU-US-01.
+
+This is Level 1 prerequisite evidence. UIU-US-01 remains unchecked until the
+approved configuration forms, exact draft/base identities, typed atomic Apply,
+targeted Cancel and complete Qt/native configuration lifecycle pass. No existing
+scientific contract, execution task, schema or memory category is expanded.

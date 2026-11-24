@@ -1966,6 +1966,14 @@ fixed desktop host. The initial outer-owner/aggregate frontier above is historic
 [C6](development/features/unified-qt-workbench/validation.md#uiu-session-01-integrated-acceptance)
 now accepts complete SESSION. Upstream controls/layout retain their separate gates.
 
+The [US01 configuration integration](development/features/unified-qt-workbench/design.md#uiu-us-01-native-configuration-integration)
+reuses the current UpstreamSession model. Its native acquisition action selects
+a real local public configuration document, protects the original source path,
+and queues existing bounded background parsing/admission. Picker cancellation
+does not create a default document or alter either direction. Configuration
+drafts and visible dialog lifecycle acceptance remain in progress; native input
+loading alone does not complete UIU-US-01.
+
 The shared shell uses `qml/shell/directions/PersistentDirectionTabs.qml` with
 two persistent Loaders. Main polls both real adapters regardless of selected tab.
 The thin `bridge/direction_shell.rs` projects canonical scalar keys, dirty flags,

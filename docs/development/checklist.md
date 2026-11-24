@@ -638,6 +638,7 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Architecture/files: [upstream owner](../architecture.md#unified-qt-upstream-scientific-presentation), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Implement the [approved startup layout](features/unified-qt-workbench/upstream-startup-layout.md), then verify Qt rendering, block/drill-in interactions, connector roles, keyboard/focus and resize behavior. Visual-input approval is satisfied; keep CM→channel→CMTS samples separate from controls, H/C/C×H/RxMER labels, typed Apply/Cancel and supported-mode admission; no inferred wider support.
   Evidence: [upstream acceptance plan](features/unified-qt-workbench/validation.md#upstream); pending implementation/acceptance.
+  Current work: [native configuration design](features/unified-qt-workbench/design.md#uiu-us-01-native-configuration-integration) bounds the remaining work to real input acquisition, correlated typed drafts and primary lifecycle acceptance. Preserve imported provenance, accepted state and existing measurement/execution task boundaries.
 
 <a id="task-uiu-us-02"></a>
 - [ ] **UIU-US-02** Connect upstream execution and direction lifecycle.

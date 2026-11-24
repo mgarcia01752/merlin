@@ -5071,3 +5071,44 @@ milestone evidence is explicitly reused after all 852 relevant source files
 match the accepted SESSION commit. No new wheel or installed-platform claim is
 made. Continue UIU-US-01 with the existing approved layout and configuration
 contract, without reopening SESSION or backend planning.
+
+### UIU-US-01 native configuration integration
+
+SHELL is accepted at `45695b67b1120a392700071688bbfca2caa35ee3`.
+The finite remaining scope is native document acquisition, correlated typed
+configuration drafts, and primary Qt/native lifecycle acceptance. Existing
+[REQ-UIU-10/11/27](../../../requirements.md#req-uiu-11) and
+[UIU-US-01](../../checklist.md#task-uiu-us-01) own this work. Preserve the
+[approved layout](upstream-startup-layout.md), accepted sessions and shared shell.
+
+| Existing contract | Consumer gap | Decision and exact owner |
+| --- | --- | --- |
+| `platform/native_file_picker.rs::choose`; `platform/input_file.rs::read_local` | An initially unconfigured upstream view has no actual input acquisition action. | Reuse from `bridge/upstream_session.rs` through `upstream/workbench`; preserve original bytes and protected source paths. Cancel preserves state. No fabricated complete document or desktop dependency on CLI examples. |
+| `UpstreamController::inspect`, public `Simulation::document` and `ConfigurationDocument` | Dialogs need exact accepted values, inventory-derived choices and field destinations. | Add private `upstream/workbench/drafts.rs` and its focused helper/test modules. Bind opaque field keys to the original preset/burst/group indices. Wide integers and identities cross QML as strings. |
+| `PreparedSession::from_document` and existing background `Pending` | Apply must validate complete changed-only candidates without modifying accepted owners or original provenance. | Adapt `workbench/preparation.rs` and `mod.rs`; prepare typed clones through the existing public operation. Do not serialize/reparse edited documents: `original_bytes` remains the immutable imported input. |
+| Existing canonical key, pending worker and error admission | Submission-time identity alone cannot reject edits opened against an older base; Cancel must not stop a simulation. | Carry the exact draft token/base through preparation and final adoption. Empty Apply return means queued only. Report accepted/rejected/cancelled/stale for the original envelope; cancel only its matching preparation. |
+| Prepared isolated QML drafts | Source fixtures do not establish native acceptance. | Selectively adopt configuration dialogs, Workbench forwarding, dedicated tests and unique handoff; edit root-owned `DirectionShellHost.qml`, build registration and fixed native probe. Reuse PresentationOwner and ApplyCancelFooter. |
+
+Opening is read-only. Unconfigured fields remain unavailable until a real source
+document supplies them; the public document owns all explicit defaults. UCD,
+existing profile groups and synthetic grants support typed edits. Source seed,
+receiver policies and the supported physical-channel scalar fields also need
+native Apply/Cancel. Pre-Eq exposes its actual configured identity and bank/lineage;
+measured capture admission stays UIU-US-03 and observation
+instruments stay their existing tasks. Represented MAP/probe modes remain honest
+inspection-only controls. No science, project schema or execution task is added.
+
+The existing retention contract covers concrete draft DTO/binding storage and
+simultaneous accepted/candidate source owners using current counters. Reuse
+existing passive JSON capacity inspection; no new category or framework. Tests
+must cover exact decimal overflow, unchanged fields/provenance, invalid public
+cross-field admission, queued versus accepted, stale bases/tokens, targeted
+Cancel, rejection rollback and independent downstream state. Level 2 adds complete
+affected Qt/QML, native open/edit/Cancel/Apply/reopen/failure/tab checks, current
+desktop build, API boundary and traceability. Keep US01 unchecked until these pass.
+
+The [native acquisition prerequisite](validation.md#uiu-us-01-native-configuration-acquisition)
+passes its focused implementation checks. `workbench/acquisition.rs` owns bounded
+file admission and idle guards; `acquisition/tests.rs` exercises actual inputs
+without replacing the production file adapter. The existing bridge adds only
+the chooser invokable. Visible dialog/draft acceptance remains pending.
