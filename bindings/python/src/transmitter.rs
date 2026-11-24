@@ -118,6 +118,24 @@ impl PyTransmitterRequest {
         .map_err(error)
     }
 
+    /// Measures this existing Rust owner without copying or advancing its data.
+    ///
+    /// # Returns
+    /// Immutable target-layout payload, ordered-entry and shared-root quantities,
+    /// including private caches and spare capacity; excludes Python projections
+    /// and temporary execution storage. This is not a future-product bound.
+    ///
+    /// # Errors
+    /// Preserves Rust ResourceLimit on checked overflow; releases the interpreter.
+    fn retained_footprint(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        py.detach(|| self.0.retained_footprint())
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
     /// Generates actual bounded idle TX samples/PSD while releasing the interpreter lock.
     /// # Arguments
     /// * `control` - Optional fresh one-shot progress/cancel token; None creates a fresh token.

@@ -5,10 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "82faa2f plus additive downstream current-root metadata candidate",
-    "inventory_command": "Exact installed wheel; session-01-downstream-metadata-native/results.json",
-    "native_sha256": "1dcf74e44d404725606aa1f44c9b58d46d7b0614550c34f30dce6b4539b956c1",
-    "scope": "Scoped DS full-loop/observation/saved-project/archive, namespace and US metadata consumers with independent Rust references. No full-suite claim."
+    "revision": "71505d9 plus independent input/preview/Designer metadata candidate",
+    "inventory_command": "Exact installed wheel; session-01-input-metadata-native/results.json",
+    "native_sha256": "db5d2ddc82052beab930f8db0e5305762c1bf1ac0e110546cd63dc1e53a689c7",
+    "scope": "Scoped input/admission/catalog/measurement/Designer/TX, both metadata roots and namespace consumers; independent Rust process reference. No full-suite claim."
   },
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
@@ -161,7 +161,12 @@
     "units.session.downstream.resources": "Target-layout payload bytes plus ordered entries and shared roots; excludes allocator/private tree/refcount bookkeeping, temporary execution and consumer projections. Not total heap/RSS or a future result/copy bound.",
     "errors.session.downstream.resources": "Preserve shared ResourceLimit on checked metadata arithmetic overflow; no underestimated successful result. Existing native structured error mapping remains authoritative.",
     "evidence.session.downstream.resources": "../unified-qt-workbench/session-downstream-metadata-evidence.json, session-downstream-metadata-operation-test-results.json and validation.md#uiu-session-01-downstream-retained-root-metadata: primary owner/private-cache tests and exact installed-wheel independent Rust/native complete/partial references.",
-    "status.session.downstream.resources": "Locally accepted downstream current-root metadata in Rust/native Python. Future output/copy bounds, construction-boundary clarification and real host aggregate/Level2 acceptance remain pending."
+    "status.session.downstream.resources": "Locally accepted downstream current-root metadata in Rust/native Python. Future output/copy bounds, construction-boundary clarification and real host aggregate/Level2 acceptance remain pending.",
+    "ownership.session.input.resources": "Passive original independent input/idle-preview/Designer owner including requested capacities, private PSD/recipe/cached observations and repeated Arc payloads/edges. Native immutable metadata is copied; no Python sizing or scientific execution.",
+    "units.session.input.resources": "Target-layout retained payload bytes, ordered entries and shared owner edges. Excludes allocator/private tree/refcount bookkeeping, temporary builders/numerical scratch and separately retained consumer projections. Not total heap/RSS or future-product admission.",
+    "errors.session.input.resources": "Checked owner arithmetic preserves shared ResourceLimit; no underestimated successful footprint. Native GIL release and existing structured errors remain authoritative.",
+    "evidence.session.input.resources": "../unified-qt-workbench/session-input-metadata-evidence.json, session-input-metadata-operation-test-results.json and validation.md#uiu-session-01-independent-input-and-preview-metadata: primary owner/capacity tests and exact installed-wheel direct Rust-process parity.",
+    "status.session.input.resources": "Locally accepted passive independent owner metadata and Rust/native compatibility. Enforced pre-production output/copy bounds, application charges and real host/session Level2 acceptance remain pending."
   },
   "type_exports": {
     "downstream": [
@@ -34505,6 +34510,583 @@
       },
       "evidence": "evidence.session.downstream.resources",
       "status": "status.session.downstream.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::CaptureProvenance::retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/inputs.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.CaptureProvenance.html"
+      },
+      "python_namespace": "none",
+      "python_type_method": {
+        "availability": "Rust-only existing owner",
+        "declaration": "No independent native owner",
+        "note": "NamedCapture is name/bytes arguments; CaptureProvenance is a copied dictionary. No extra Python class required."
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Actual independent current-root metadata; no future-output reservation or algorithm change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "not applicable",
+          "reason": "Python uses name/bytes arguments and copied provenance dictionaries rather than retaining these Rust owner classes; paired constructor/owner regressions remain covered."
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::ChannelEstimate::retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/inputs.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.ChannelEstimate.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "ChannelEstimate.retained_footprint(self, /)",
+        "native_operation": "merlin.downstream.ChannelEstimate.retained_footprint"
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Actual independent current-root metadata; no future-output reservation or algorithm change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "exact installed-wheel independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_installed_owners_and_original_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_native_metadata_legacy_identity_passivity_and_detached_values",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_rejected_design_and_precancelled_preview_preserve_accepted_owners"
+          ]
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::NamedCapture::retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/inputs.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.NamedCapture.html"
+      },
+      "python_namespace": "none",
+      "python_type_method": {
+        "availability": "Rust-only existing owner",
+        "declaration": "No independent native owner",
+        "note": "NamedCapture is name/bytes arguments; CaptureProvenance is a copied dictionary. No extra Python class required."
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Actual independent current-root metadata; no future-output reservation or algorithm change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "not applicable",
+          "reason": "Python uses name/bytes arguments and copied provenance dictionaries rather than retaining these Rust owner classes; paired constructor/owner regressions remain covered."
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::ProfileCapture::retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/inputs/profile_capture.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.ProfileCapture.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "ProfileCapture.retained_footprint(self, /)",
+        "native_operation": "merlin.downstream.ProfileCapture.retained_footprint"
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Actual independent current-root metadata; no future-output reservation or algorithm change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "exact installed-wheel independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_installed_owners_and_original_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_native_metadata_legacy_identity_passivity_and_detached_values",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_rejected_design_and_precancelled_preview_preserve_accepted_owners"
+          ]
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::SourceInput::retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/admission.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.SourceInput.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "SourceInput.retained_footprint(self, /)",
+        "native_operation": "merlin.downstream.SourceInput.retained_footprint"
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Actual independent current-root metadata; no future-output reservation or algorithm change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "exact installed-wheel independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_installed_owners_and_original_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_native_metadata_legacy_identity_passivity_and_detached_values",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_rejected_design_and_precancelled_preview_preserve_accepted_owners"
+          ]
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::TransmitterPreview::retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/transmitter/result.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.TransmitterPreview.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "TransmitterPreview.retained_footprint(self, /)",
+        "native_operation": "merlin.downstream.TransmitterPreview.retained_footprint"
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Actual independent current-root metadata; no future-output reservation or algorithm change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "exact installed-wheel independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_installed_owners_and_original_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_native_metadata_legacy_identity_passivity_and_detached_values",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_rejected_design_and_precancelled_preview_preserve_accepted_owners"
+          ]
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::TransmitterPreviewRequest::retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/transmitter.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.TransmitterPreviewRequest.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "TransmitterPreviewRequest.retained_footprint(self, /)",
+        "native_operation": "merlin.downstream.TransmitterPreviewRequest.retained_footprint"
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Actual independent current-root metadata; no future-output reservation or algorithm change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "exact installed-wheel independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_installed_owners_and_original_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_native_metadata_legacy_identity_passivity_and_detached_values",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_rejected_design_and_precancelled_preview_preserve_accepted_owners"
+          ]
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "pnm_input::RxMerDesign::retained_footprint",
+      "rust_namespace": "pnm_input",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/pnm-input/src/workbench/designer/admission.rs",
+        "rustdoc": "pnm_input/workbench/struct.RxMerDesign.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "RxMerDesign.retained_footprint(self, /)",
+        "native_operation": "merlin.downstream.RxMerDesign.retained_footprint"
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Actual independent current-root metadata; no future-output reservation or algorithm change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "exact installed-wheel independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_installed_owners_and_original_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_native_metadata_legacy_identity_passivity_and_detached_values",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_rejected_design_and_precancelled_preview_preserve_accepted_owners"
+          ]
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "pnm_input::workbench::RxMerDesign::retained_footprint",
+      "rust_namespace": "pnm_input::workbench",
+      "rust_type_method": {
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/pnm-input/src/workbench/designer/admission.rs",
+        "rustdoc": "pnm_input/workbench/struct.RxMerDesign.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "RxMerDesign.retained_footprint(self, /)",
+        "native_operation": "merlin.downstream.RxMerDesign.retained_footprint"
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Actual independent current-root metadata; no future-output reservation or algorithm change."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "exact installed-wheel independent Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_installed_owners_and_original_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_native_metadata_legacy_identity_passivity_and_detached_values",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_rejected_design_and_precancelled_preview_preserve_accepted_owners"
+          ]
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
     }
   ],
   "executed_records": [
@@ -34551,7 +35133,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/session-resource-metadata-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/session-downstream-metadata-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/session-downstream-metadata-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/session-input-metadata-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -72046,6 +72629,432 @@
       },
       "evidence": "evidence.session.downstream.resources",
       "status": "status.session.downstream.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.ChannelEstimate.retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::ChannelEstimate",
+        "source_file": "bindings/python/src/inputs.rs",
+        "symbol": "PyChannelEstimate",
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Thin Rust-owned immutable metadata with interpreter release and existing errors; no Python sizing. Legacy class aliases preserved.",
+        "delegated_operation": "merlin::downstream::ChannelEstimate::retained_footprint",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "ChannelEstimate.retained_footprint"
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Passive actual independent current owner; native metadata survives original owner release."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "exact installed wheel with direct Rust-process references",
+          "cases": [
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_installed_owners_and_original_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_native_metadata_legacy_identity_passivity_and_detached_values",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_rejected_design_and_precancelled_preview_preserve_accepted_owners"
+          ]
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.ProfileCapture.retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::ProfileCapture",
+        "source_file": "bindings/python/src/profile_capture.rs",
+        "symbol": "PyProfileCapture",
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Thin Rust-owned immutable metadata with interpreter release and existing errors; no Python sizing. Legacy class aliases preserved.",
+        "delegated_operation": "merlin::downstream::ProfileCapture::retained_footprint",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "ProfileCapture.retained_footprint"
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Passive actual independent current owner; native metadata survives original owner release."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "exact installed wheel with direct Rust-process references",
+          "cases": [
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_installed_owners_and_original_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_native_metadata_legacy_identity_passivity_and_detached_values",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_rejected_design_and_precancelled_preview_preserve_accepted_owners"
+          ]
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.RxMerDesign.retained_footprint",
+      "rust_namespace": "pnm_input",
+      "rust_type_method": {
+        "export": "pnm_input::RxMerDesign",
+        "source_file": "bindings/python/src/designer.rs",
+        "symbol": "PyDesign",
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Thin Rust-owned immutable metadata with interpreter release and existing errors; no Python sizing. Legacy class aliases preserved.",
+        "delegated_operation": "pnm_input::RxMerDesign::retained_footprint",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "RxMerDesign.retained_footprint"
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Passive actual independent current owner; native metadata survives original owner release."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "exact installed wheel with direct Rust-process references",
+          "cases": [
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_installed_owners_and_original_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_native_metadata_legacy_identity_passivity_and_detached_values",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_rejected_design_and_precancelled_preview_preserve_accepted_owners"
+          ]
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.SourceInput.retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::SourceInput",
+        "source_file": "bindings/python/src/admission.rs",
+        "symbol": "PySourceInput",
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Thin Rust-owned immutable metadata with interpreter release and existing errors; no Python sizing. Legacy class aliases preserved.",
+        "delegated_operation": "merlin::downstream::SourceInput::retained_footprint",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "SourceInput.retained_footprint"
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Passive actual independent current owner; native metadata survives original owner release."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "exact installed wheel with direct Rust-process references",
+          "cases": [
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_installed_owners_and_original_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_native_metadata_legacy_identity_passivity_and_detached_values",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_rejected_design_and_precancelled_preview_preserve_accepted_owners"
+          ]
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.TransmitterPreview.retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::TransmitterPreview",
+        "source_file": "bindings/python/src/transmitter/result.rs",
+        "symbol": "PyTransmitterPreview",
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Thin Rust-owned immutable metadata with interpreter release and existing errors; no Python sizing. Legacy class aliases preserved.",
+        "delegated_operation": "merlin::downstream::TransmitterPreview::retained_footprint",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "TransmitterPreview.retained_footprint"
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Passive actual independent current owner; native metadata survives original owner release."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "exact installed wheel with direct Rust-process references",
+          "cases": [
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_installed_owners_and_original_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_native_metadata_legacy_identity_passivity_and_detached_values",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_rejected_design_and_precancelled_preview_preserve_accepted_owners"
+          ]
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.TransmitterPreviewRequest.retained_footprint",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::TransmitterPreviewRequest",
+        "source_file": "bindings/python/src/transmitter.rs",
+        "symbol": "PyTransmitterRequest",
+        "signature": "pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint>",
+        "mapping": "Thin Rust-owned immutable metadata with interpreter release and existing errors; no Python sizing. Legacy class aliases preserved.",
+        "delegated_operation": "merlin::downstream::TransmitterPreviewRequest::retained_footprint",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "retained_footprint",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "TransmitterPreviewRequest.retained_footprint"
+      },
+      "input_ownership": "ownership.session.input.resources",
+      "units": "units.session.input.resources",
+      "error_behavior": "errors.session.input.resources",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Passive actual independent current owner; native metadata survives original owner release."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/signal_processing/rxmer_designer.rs::recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::frozen_tx_request_counts_private_loading_layout_and_original_file",
+          "crates/ofdm/src/simulation/transmitter_preview.rs::retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::admitted_idle_request_metadata_is_stable_without_generating_a_preview",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::independent_source_catalog_response_and_provenance_metadata_preserve_originals",
+          "crates/ofdm/tests/api_input_retained_footprint.rs::actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime",
+          "crates/pnm-input/src/workbench/designer/retention.rs::flat_valid_mask_requested_spare_capacity_is_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::recipe_edit_spare_slots_beyond_initialized_values_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_materialized_rxmer_counts_sample_spare_capacity",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_named_capture_name_capacity_is_counted_without_getter_reconstruction",
+          "crates/pnm-input/src/workbench/designer/retention.rs::cached_source_provenance_string_capacities_are_retained",
+          "crates/pnm-input/src/workbench/designer/retention.rs::original_record_cache_and_nested_provenance_edges_are_counted_on_aliases",
+          "crates/pnm-input/src/workbench/designer/retention.rs::imported_stored_strings_count_all_requested_capacities",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::exact_original_whitespace_is_charged_on_each_retained_original_arc_edge",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes",
+          "crates/pnm-input/tests/designer_retained_footprint.rs::imported_metadata_preserves_embedded_baseline_and_original_source_provenance",
+          "crates/merlin/tests/namespaces.rs::independent_input_and_preview_metadata_preserve_owner_types"
+        ],
+        "python": {
+          "status": "exact installed wheel with direct Rust-process references",
+          "cases": [
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_installed_owners_and_original_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_native_metadata_legacy_identity_passivity_and_detached_values",
+            "bindings/python/tests/test_input_retained_footprint.py::InputRetainedFootprintTests.test_rejected_design_and_precancelled_preview_preserve_accepted_owners"
+          ]
+        }
+      },
+      "evidence": "evidence.session.input.resources",
+      "status": "status.session.input.resources"
     }
   ],
   "native_type_exports": {
@@ -73295,6 +74304,13 @@
       "inventory_command": "Exact current installed wheel; session-01-resource-metadata-native/results.json",
       "native_sha256": "99dcb05d38f3638fb27f5618fd9e5d56c495ae7dd127cce912b6cd0bd72481a8",
       "scope": "Scoped metadata/namespace/upstream/recovery/downstream archive consumer tests, actual independent Rust references; all prior exports/signatures preserved. No full-suite claim."
+    },
+    {
+      "version": "0.4.0",
+      "revision": "82faa2f plus additive downstream current-root metadata candidate",
+      "inventory_command": "Exact installed wheel; session-01-downstream-metadata-native/results.json",
+      "native_sha256": "1dcf74e44d404725606aa1f44c9b58d46d7b0614550c34f30dce6b4539b956c1",
+      "scope": "Scoped DS full-loop/observation/saved-project/archive, namespace and US metadata consumers with independent Rust references. No full-suite claim."
     }
   ],
   "historical_rust_export_corrections": [

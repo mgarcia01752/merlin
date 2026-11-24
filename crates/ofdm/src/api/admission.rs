@@ -339,6 +339,24 @@ impl SourceInput {
         }
     }
 
+    /// Measures this complete immutable root and all reachable retained payloads.
+    ///
+    /// Includes requested spare buffer capacity, private caches and each owned
+    /// Arc pointee/edge, conservatively repeating aliases. Ordered entries and
+    /// shared roots are separate from payload bytes; allocator, tree-node and
+    /// refcount bookkeeping are excluded. No source or numerical state advances.
+    ///
+    /// # Returns
+    /// Passive current-root metadata including its fixed value exactly once.
+    /// This does not reserve future output, construction scratch or copied views.
+    ///
+    /// # Errors
+    /// Returns ResourceLimit if retained_footprint arithmetic overflows.
+    pub fn retained_footprint(&self) -> ApiResult<merlin_api::RetainedFootprint> {
+        merlin_api::retention_support::retained_footprint(self)
+            .ok_or_else(|| ApiError::new(ErrorCode::ResourceLimit, "retained_footprint overflow"))
+    }
+
     fn file_with_label(
         name: String,
         bytes: &[u8],

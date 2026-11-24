@@ -491,3 +491,74 @@ and complete the affected API/native and feature gates. No input-root public
 operation is added. Future-output reservation and archive pre-copy capacity
 bounds remain mandatory prerequisites; passive current-root metadata cannot
 supply either bound or establish aggregate admission. No push/release/install.
+
+## UIU-SESSION-01 independent input and idle-preview preparation
+
+Prepared from `71505d97c0c2bf430942d0a8b3a5e20b2709fe61` on
+`feature/qt-retention-inputs`; the downstream `20f4342` and original session
+`665d758` branches remain intact. The lead owns the
+[consumer/design map](../design.md#independent-input-and-idle-preview-owner-closure),
+[UIU-SESSION-01](../../../checklist.md#task-uiu-session-01),
+[REQ-UIU-03](../../../../requirements.md#req-uiu-03) and
+[REQ-UIU-07](../../../../requirements.md#req-uiu-07). No official or aggregate
+runtime acceptance follows from this source-only preparation.
+
+Seven existing roots gain only
+`retained_footprint(&self) -> ApiResult<merlin_api::RetainedFootprint>`:
+SourceInput, NamedCapture, CaptureProvenance, ChannelEstimate, ProfileCapture,
+TransmitterPreviewRequest and TransmitterPreview. The common helper counts the
+fixed root once, capacities and initialized owned children, repeating Arc payloads
+conservatively and reporting ordered entries/shared roots separately. Overflow
+preserves ResourceLimit with `retained_footprint` context. Existing SourceInput,
+CaptureProvenance, ChannelEstimate and ProfileCapture visitors are reused;
+NamedCapture now visits its actual name capacity and immutable byte Arc.
+
+The new owner closure adds thirteen exhaustive struct visitors and two exhaustive
+enum visitors. API TX owners visit the engine request/result, key, original
+provenance and accepted source. Engine owners include layout/loading, fixed
+DescriptorIdentity, source bytes, every sample and the complete stored PSD density.
+The two additional approved child files are
+`signal_processing/waveform/spectrum.rs` and `transmission/plc/descriptors.rs`.
+No temporary generation buffers or independently copied query DTO is claimed.
+
+The PNM agent receives the complete RxmerRecipe trait contract: optional
+RandomVariation/Tilt/Ripple/Notch and the edits Vec are visited locally, including
+CaptureScope/RippleSpacing variants and every component field. Only edits owns a
+dynamic buffer today; its requested capacity is counted, with no ordered entries
+or shared roots. PNM can call recipe and NamedCapture retained_children through
+the common trait; no private getter or extra public recipe operation is added.
+
+Seven new cases are prepared, **UNEXECUTED**, including compilation/Clippy:
+
+1. Private engine request loading/layout spares and original finite-file Arc.
+2. Private sample/full-PSD/layout spares repeated through genuine Arc aliases.
+3. Recipe edit capacity and passive original JSON without numerical work.
+4. Public NamedCapture spare label capacity and exact original byte ownership.
+5. Actual source/catalog/response/provenance metadata preserving bytes/hashes.
+6. Actual admitted idle preview request, without generating a new preview.
+7. Real generated preview: samples, full PSD, original provenance, per-root stable
+   metadata and retained alias lifetime after dropping the original owners.
+
+The first three cases are clearly labelled storage fixtures, not scientific
+acceptance. Integration cases live in
+`crates/ofdm/tests/api_input_retained_footprint.rs` and reuse supported original
+capture and TX fixtures. Clones are measured independently because Vec/String
+capacity may change on clone; Arc pointees remain shared.
+
+Executed: pinned rustfmt parse/format checks, whitespace/allowlist review,
+exhaustive field/variant audit, constructor/banner/import/comment/numeric review,
+and Python-guide currency. Every new production impl precedes inline test
+modules. Production changes are additions only; science, state, defaults,
+serializers and schemas remain unchanged. No Cargo/shared-target/wheel/test or
+Clippy build was run. Disk remains 80% used, 25 GiB free, inodes 13%; no cleanup.
+
+Exact source hashes, owner map and source-only receipt are in ignored
+`docs/development/local/session-shell/input-retention/` (`source-sha256.txt`,
+`owner-fields.json`, `review.txt`, `receipt.json`). Lead adoption must combine the
+PNM visitors/dependency, compile/run affected owner tests/Clippy, expose only
+necessary paired native methods and reconcile inventories/acceptance. Python has
+no independent NamedCapture/CaptureProvenance wrapper; do not introduce unused
+classes for argument bytes or copied provenance dictionaries. Construction-peak
+policy, future-output bounds and actual aggregate host bookkeeping remain pending.
+Canonical documentation/checklist reconciliation belongs to the lead. No push,
+release, installation or Qt registration occurs here.

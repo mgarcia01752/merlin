@@ -3220,3 +3220,43 @@ The accepted executable is still current. Pre-production bounds, the
 [construction boundary](retention-contract-decision.md#output-construction-boundary-requiring-clarification),
 independent input/presentation charges and real host wiring remain open.
 UIU-SESSION-01 stays unchecked; historical acceptance states remain unchanged.
+
+
+## UIU-SESSION-01 independent input and preview metadata
+
+[Owner design](design.md#independent-input-and-idle-preview-owner-closure),
+[exact source/command receipt](session-input-metadata-evidence.json) and
+[executed API cases](session-input-metadata-operation-test-results.json) trace
+REQ-UIU-03/07. Adopted DS preparation `91d1e9b` and Designer preparation `c9ae6662`
+are independently source-reviewed, then validated together in the primary checkout.
+All original scientific statements, source bytes, archive statistics, constructors
+and public behavior are preserved. The primary removes one unused import and
+names distinct fixture identities/positions; no warning suppression is added.
+
+Executed: **84 unique Rust cases** (nine private DS, 29 complete relevant DS API,
+seven private Designer, 12 relevant PNM API and 27 facade) and **47 installed
+native cases**, with no failures or skips in final counted results. Nineteen Rust
+owner/facade and three native cases are new. Eight independent native owner cases
+match a separate Rust process on all three quantities, original byte/provenance
+and actual preview data. Rust-only NamedCapture/CaptureProvenance roots have no
+separate Python class. The exact locally built wheel is installed only in the
+existing isolated developer venv; its extension hash matches the wheel member.
+
+Warnings-denied owner/native Clippy, formatting, independent no-default DS build,
+fresh Rust/native inventories and locked resolution for all three Cargo manifests
+pass. PNM adds only the existing common-contract leaf; all versions/pins stay
+unchanged. The resulting matrix is **615 Rust / 585 native** rows, preserving all
+previous 606/579 rows, types, class identities and signatures byte for byte.
+
+The evidence recorder caught three old reference-dependent cases initially
+skipped in admission/TX modules. Both modules were rerun with retained independently
+generated references; only their no-skip results are counted. The initial Clippy
+failure and native reference setup logs are retained as corrections, not passes.
+
+The user also approved retained-owner aggregate accounting with separate finite
+construction/numerical execution limits. Simultaneous source/target and candidate
+owners remain charged. This unit does not claim pre-production output bounds or
+host aggregate admission. Visible application DTO/JSON/queue/copy charges and real
+session wiring remain pending. Unchanged UI registration/presentation needs no
+Qt executable rebuild; unrelated full workspace/CLI/packaging regressions remain
+at Level 2/3. UIU-SESSION-01 remains unchecked; completed history is preserved.

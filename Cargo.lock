@@ -636,6 +636,7 @@ dependencies = [
  "base64",
  "docsis-ofdm-fec",
  "docsis-ofdma",
+ "merlin-api",
  "pnm",
  "rustix",
  "serde",

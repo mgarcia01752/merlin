@@ -53,6 +53,41 @@ fn downstream_retained_operations_keep_legacy_types_and_common_result_contract()
 
 #[cfg(feature = "native-input")]
 #[test]
+fn independent_input_and_preview_metadata_preserve_owner_types() {
+    let _: fn(
+        &docsis_ofdm_fec::api::SourceInput,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::SourceInput::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::NamedCapture,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::NamedCapture::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::CaptureProvenance,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::CaptureProvenance::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::ProfileCapture,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::ProfileCapture::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::ChannelEstimate,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::ChannelEstimate::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::TransmitterPreviewRequest,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::TransmitterPreviewRequest::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::TransmitterPreview,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::TransmitterPreview::retained_footprint;
+    let _: fn(&pnm_input::RxMerDesign) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::inputs::RxMerDesign::retained_footprint;
+}
+
+#[cfg(feature = "native-input")]
+#[test]
 fn facade_common_projects_return_the_exact_directional_public_types() {
     let project = common::Project::from_bytes(include_bytes!(
         "../../../examples/workbench/single/workbench.merlin.json"

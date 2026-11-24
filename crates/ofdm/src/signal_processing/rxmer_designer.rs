@@ -10,6 +10,7 @@ use crate::common::constants::{
     SPEED_OF_LIGHT_METRES_PER_SECOND,
 };
 use crate::{scenario::FrequencyGrid, types::FrequencyHz, SimulationError};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -345,5 +346,192 @@ impl RxmerRecipe {
             result.push(Some(value));
         }
         Ok(result)
+    }
+}
+
+impl RetainedPayload for RxmerRecipe {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            random_variation,
+            tilt,
+            ripple,
+            notch,
+            edits,
+        } = self;
+        merlin_api::retention_support::sum([
+            random_variation.retained_children(),
+            tilt.retained_children(),
+            ripple.retained_children(),
+            notch.retained_children(),
+            edits.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for RandomVariation {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            standard_deviation_db,
+            seed,
+        } = self;
+        merlin_api::retention_support::sum([
+            standard_deviation_db.retained_children(),
+            seed.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for Tilt {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { scope, tilt_db } = self;
+        merlin_api::retention_support::sum([scope.retained_children(), tilt_db.retained_children()])
+    }
+}
+
+impl RetainedPayload for Ripple {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            scope,
+            peak_to_peak_db,
+            spacing,
+        } = self;
+        merlin_api::retention_support::sum([
+            scope.retained_children(),
+            peak_to_peak_db.retained_children(),
+            spacing.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for Notch {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            scope,
+            center_hz,
+            bandwidth_hz,
+            depth_db,
+            edge_hz,
+        } = self;
+        merlin_api::retention_support::sum([
+            scope.retained_children(),
+            center_hz.retained_children(),
+            bandwidth_hz.retained_children(),
+            depth_db.retained_children(),
+            edge_hz.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ValueEdit {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            scope,
+            first_hz,
+            last_hz,
+            value_db,
+        } = self;
+        merlin_api::retention_support::sum([
+            scope.retained_children(),
+            first_hz.retained_children(),
+            last_hz.retained_children(),
+            value_db.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for CaptureScope {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::All => Some(RetainedFootprint::default()),
+            Self::Range { first, last } => merlin_api::retention_support::sum([
+                first.retained_children(),
+                last.retained_children(),
+            ]),
+        }
+    }
+}
+
+impl RetainedPayload for RippleSpacing {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Frequency { spacing_hz } => {
+                merlin_api::retention_support::sum([spacing_hz.retained_children()])
+            }
+            Self::EchoDistance {
+                distance_metres,
+                velocity_factor,
+            } => merlin_api::retention_support::sum([
+                distance_metres.retained_children(),
+                velocity_factor.retained_children(),
+            ]),
+        }
+    }
+}
+
+#[cfg(test)]
+mod input_retained_footprint_tests {
+    use super::{CaptureScope, RxmerRecipe, ValueEdit};
+    use merlin_api::retention_support::retained_footprint;
+    use std::mem::size_of;
+
+    #[test]
+    fn recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children() {
+        const EDIT_SLOTS: usize = 7; // Requested storage distinct from one initialized edit.
+        let mut edits = Vec::with_capacity(EDIT_SLOTS);
+        edits.push(ValueEdit {
+            scope: CaptureScope::Range { first: 1, last: 1 },
+
+            // Storage-only coordinates/value; no grid validation or numerical work.
+            first_hz: 0,
+            last_hz: 0,
+            value_db: 0.0,
+        });
+        let capacity_bytes = edits.capacity() * size_of::<ValueEdit>();
+        let recipe = RxmerRecipe {
+            edits,
+            ..Default::default()
+        };
+        let serialized = serde_json::to_value(&recipe).unwrap();
+        let footprint = retained_footprint(&recipe).unwrap();
+        assert_eq!(
+            footprint.payload_bytes,
+            size_of::<RxmerRecipe>() + capacity_bytes
+        );
+        assert_eq!(footprint.shared_roots, 0);
+        assert_eq!(footprint.ordered_entries, 0);
+        assert_eq!(retained_footprint(&recipe).unwrap(), footprint);
+        assert_eq!(serde_json::to_value(&recipe).unwrap(), serialized);
     }
 }

@@ -35,6 +35,7 @@ use crate::{
     SimulationError,
 };
 use merlin_api::Cancellation;
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use std::sync::atomic::AtomicBool;
 
 /// Frozen supported inputs, independent of Qt, filenames and active simulation jobs.
@@ -248,5 +249,174 @@ impl TransmitterPreviewRequest {
             source_exhausted: exhausted,
             spectrum,
         })
+    }
+}
+
+impl RetainedPayload for TransmitterPreviewRequest {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            settings,
+            layout,
+            loading,
+            identity,
+            source,
+            seed,
+        } = self;
+        merlin_api::retention_support::sum([
+            settings.retained_children(),
+            layout.retained_children(),
+            loading.retained_children(),
+            identity.retained_children(),
+            source.retained_children(),
+            seed.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for TransmitterPreview {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            settings,
+            layout,
+            samples,
+            first_sample,
+            generated_source_bits,
+            warmup_symbols,
+            source_exhausted,
+            spectrum,
+        } = self;
+        merlin_api::retention_support::sum([
+            settings.retained_children(),
+            layout.retained_children(),
+            samples.retained_children(),
+            first_sample.retained_children(),
+            generated_source_bits.retained_children(),
+            warmup_symbols.retained_children(),
+            source_exhausted.retained_children(),
+            spectrum.retained_children(),
+        ])
+    }
+}
+
+#[cfg(test)]
+mod input_retained_footprint_tests {
+    use super::{DescriptorIdentity, PowerSpectrum, TransmitterPreview, TransmitterPreviewRequest};
+    use crate::{
+        simulation::source::{file::FilePayload, PayloadSourceConfig},
+        transmission::{layout::CarrierLayoutSettings, TransmissionSettings},
+    };
+    use merlin_api::retention_support::retained_footprint;
+    use std::{
+        mem::{size_of, size_of_val},
+        sync::Arc,
+    };
+
+    fn storage_layout() -> CarrierLayoutSettings {
+        // Storage-only fixture; zero coordinates are never scientifically admitted.
+        const EXCLUDED_SLOTS: usize = 3;
+        const PILOT_SLOTS: usize = 5;
+        CarrierLayoutSettings {
+            zero_frequency_hz: 0,
+            first_active_bin: 0,
+            active_end_exclusive: 0,
+            plc_first_bin: 0,
+            excluded_bins: Vec::with_capacity(EXCLUDED_SLOTS),
+            additional_continuous_pilots: Vec::with_capacity(PILOT_SLOTS),
+        }
+    }
+
+    #[test]
+    fn frozen_tx_request_counts_private_loading_layout_and_original_file() {
+        const LOADING_SLOTS: usize = 7; // Distinct private loading spare capacity.
+        const FILE_BYTES: &[u8] = b"exact private request source";
+        let layout = storage_layout();
+        let loading = Vec::with_capacity(LOADING_SLOTS);
+        let expected = size_of::<TransmitterPreviewRequest>()
+            + (layout.excluded_bins.capacity() + layout.additional_continuous_pilots.capacity())
+                * size_of::<u16>()
+            + loading.capacity()
+            + FILE_BYTES.len();
+        let request = TransmitterPreviewRequest {
+            settings: TransmissionSettings::default(),
+            layout,
+            loading,
+
+            // All-zero fixed identity is an accounting fixture, never used for TX.
+            identity: DescriptorIdentity {
+                channel_id: 0,
+                change_count: 0,
+                source_mac: [0; 6],
+                primary_capable: false,
+                ncp_bits: 0,
+            },
+            source: PayloadSourceConfig::File {
+                payload: FilePayload::new(FILE_BYTES, None).unwrap(),
+            },
+            seed: crate::common::constants::PRBS15_MAX_SEED,
+        };
+        let settings = serde_json::to_value(&request.settings).unwrap();
+        let footprint = retained_footprint(&request).unwrap();
+        assert_eq!(footprint.payload_bytes, expected);
+        assert_eq!(footprint.shared_roots, 1); // Original immutable file payload.
+        assert_eq!(footprint.ordered_entries, 0);
+        assert_eq!(retained_footprint(&request).unwrap(), footprint);
+        assert!(request.loading.is_empty());
+        assert_eq!(serde_json::to_value(&request.settings).unwrap(), settings);
+        let PayloadSourceConfig::File { payload } = &request.source else {
+            panic!("Storage fixture must retain its actual file source");
+        };
+        assert_eq!(payload.bytes(), FILE_BYTES);
+    }
+
+    #[test]
+    fn retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges() {
+        // This storage-only fixture runs no FFT, source or scientific preview.
+        const SAMPLE_SLOTS: usize = 7;
+        const PSD_SLOTS: usize = 11;
+        let layout = storage_layout();
+        let samples = Vec::with_capacity(SAMPLE_SLOTS);
+        let density = Vec::with_capacity(PSD_SLOTS);
+        let owner_bytes = size_of::<TransmitterPreview>()
+            + (layout.excluded_bins.capacity() + layout.additional_continuous_pilots.capacity())
+                * size_of::<u16>()
+            + samples.capacity() * size_of::<[f64; 2]>()
+            + density.capacity() * size_of::<f64>();
+        let result = Arc::new(TransmitterPreview {
+            settings: TransmissionSettings::default(),
+            layout,
+            samples,
+            first_sample: 0,
+            generated_source_bits: 0,
+            warmup_symbols: 0,
+            source_exhausted: false,
+            spectrum: PowerSpectrum {
+                zero_frequency_hz: 0,
+                spacing_hz: 0,
+                fft_samples: 0,
+                averages: 0,
+                equivalent_noise_bandwidth_hz: 0.0,
+                density,
+            },
+        });
+        let aliases = [Arc::clone(&result), Arc::clone(&result)];
+        let owners = Arc::strong_count(&result);
+        let footprint = retained_footprint(&aliases).unwrap();
+        assert_eq!(
+            footprint.payload_bytes,
+            size_of_val(&aliases) + owner_bytes * aliases.len()
+        );
+        assert_eq!(footprint.shared_roots, aliases.len());
+        assert_eq!(footprint.ordered_entries, 0);
+        assert_eq!(Arc::strong_count(&result), owners);
+        assert!(Arc::ptr_eq(&aliases[0], &aliases[1]));
+        assert!(result.samples.is_empty() && result.spectrum.density.is_empty());
     }
 }

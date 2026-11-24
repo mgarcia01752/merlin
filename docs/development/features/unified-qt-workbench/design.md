@@ -3503,3 +3503,87 @@ native cases. Original source statements, complete older operation rows and
 historical archive statistics are preserved. This accepts passive metadata only;
 [output construction accounting](retention-contract-decision.md#output-construction-boundary-requiring-clarification),
 pre-production bounds and actual session admission remain open.
+
+### Independent input and idle-preview owner closure
+
+This is remaining UIU-SESSION-01 work under REQ-UIU-03/07, separate from
+pre-production output bounds. The user has approved retained-owner aggregate
+accounting with separate finite temporary-construction/numerical execution limits;
+see the [construction boundary](retention-contract-decision.md#output-construction-boundary-requiring-clarification).
+A read-only audit of actual Qt retention finds the following additional opaque
+owners. Their private data cannot be charged solely through a future request or
+last result: partial accepted inputs, drafts, independent previews and queued
+Designer edits can remain alive before a full-loop request exists.
+
+| Concrete retained consumer | Scientific owner / disposition |
+| --- | --- |
+| `apps/qt/src/downstream/workbench/session.rs`, partial Inputs; `inputs/source_input/model.rs`, draft/accepted SourceFile | ADD passive method on existing `SourceInput` in `crates/ofdm/src/api/admission.rs`; reuse its complete audited visitor. |
+| `inputs/profile_input/{mod.rs,document.rs}`, original input/catalog/decoded presentation document | ADD passive methods on existing `NamedCapture`, `ProfileCapture` and `CaptureProvenance` in existing API input owners. The decoded presentation JSON remains separately charged application storage. |
+| `inputs/measurement_input/{model.rs,document.rs}`, accepted response and captured originals | ADD passive method on existing `ChannelEstimate`; ordinary RxMER frame DTOs/original application byte Arcs remain public application bookkeeping. |
+| `instruments/transmitter/preview.rs`, PreparedPreview/Job/Analyzer | ADD passive methods on existing `TransmitterPreviewRequest` and `TransmitterPreview`. Complete their owner-local engine request/result visitors in existing transmitter_preview.rs, waveform/spectrum.rs and plc/descriptors.rs, including full private PSD and retained original provenance/source. ConfiguredPhysicalLayout is public except nested CaptureProvenance, handled by that owner's method. |
+| `inputs/measurement_input/designer.rs`, `bridge/{measurement_input.rs,rxmer_designer.rs}`, live/cloned/queued designs | ADD passive method on existing `pnm_input::RxMerDesign`; visit exact original input, typed record/baseline/recipe and cached materialized RxMer. Add owner visitors to existing DS RxmerRecipe and PNM Stored; no scientific recalculation. |
+
+All eight methods use `retained_footprint(&self) -> ApiResult<RetainedFootprint>`
+and the existing checked ResourceLimit category. Retain constructors first,
+exhaustive owner field/variant audits and all original scientific statements,
+schemas/defaults/copy policies. No additional public types or operations beyond
+this demonstrated consumer set are authorized by this unit.
+
+Lead-owned paired work adapts existing native SourceInput, ProfileCapture,
+ChannelEstimate, TransmitterPreviewRequest/TransmitterPreview and RxMerDesign
+wrappers, root stubs, facade tests and independent Rust/native references. Python
+has no independently retained NamedCapture or CaptureProvenance wrapper: inputs
+are bytes/name arguments and copied provenance dictionaries. Record that language
+difference explicitly rather than introducing unused native classes. Shared
+metadata remains `merlin.common.RetainedFootprint`; Python performs no sizing.
+
+Add the direct `merlin-api` common-leaf dependency to `pnm-input` solely to reuse
+the contract/walkers across crate boundaries; the lead owns manifests and all
+locks. This introduces no facade/PHY cycle, scientific dependency or source pin
+change. The DS preparation agent owns only its named API/input/TX/recipe child
+owners and new `api_input_retained_footprint.rs`. A second isolated preparation
+agent owns only the PNM Designer/Stored visitors and its new integration test.
+Neither edits shared contracts, manifests, bindings, registration or canonical
+documents. The [Designer handoff](agent-handoffs/designer-retention.md) records
+its source-only scope. Preparation commits explicitly leave tests unexecuted; the lead adopts
+and validates the combined owner graph before native exposure/acceptance.
+
+Remaining visible application owners still need host bookkeeping: saved JSON,
+project-load candidates, original application byte Arcs, Designer recipes/session
+DTOs, independently copied result/instrument arrays, queued previews/exports and
+history status wrappers. Context handles alias stores and must not recursively
+expand the complete Context again. Standalone metadata does not charge any owner
+automatically or accept the aggregate runtime gate.
+
+
+The [primary metadata evidence](validation.md#uiu-session-01-independent-input-and-preview-metadata)
+accepts these eight actual owners with 84 Rust/47 installed native cases and
+additive 615/585 operation tracing. This completes the scientific current-input
+metadata closure only; application charges and output pre-production bounds
+remain separate acceptance work.
+
+### Pre-production detached archive bounds
+
+This next UIU-SESSION-01 prerequisite traces REQ-UIU-03/07 and the
+[approved construction boundary](retention-contract-decision.md#output-construction-boundary-requiring-clarification).
+The real QAM history consumer must reserve its detached target while its live
+source and old archives remain charged. Preserve the existing receiver_archive
+operation and historical info.retained_bytes statistic without behavioral changes.
+
+| Disposition / owner | Selected public contract and acceptance |
+| --- | --- |
+| ADD `crates/ofdm/src/api/full_loop/receiver_archive/bounded.rs`; EDIT existing `receiver_archive/mod.rs` registration only | Add FullLoopResult.receiver_archive_retained_bound(&self, policy: &FullLoopReceiverArchivePolicy) -> ApiResult<RetainedFootprint>, and receiver_archive_bounded(&self, policy: FullLoopReceiverArchivePolicy, limit: RetainedFootprint) -> ApiResult<FullLoopReceiverArchive>. Both preserve original decoder-event/selector/error semantics. |
+| REUSE legacy `receiver_archive/copy.rs` | Keep legacy operations and statistics unchanged. Shared selection/accounting helpers may become visible only to the new sibling, without body changes. The new path preflights every dimension before copying, then normalizes only detached storage to exact final capacities. Never mutate the source or retain live result ownership. |
+| ADD owner/private and API regression cases | Exact bound equals actual metadata for omitted/complete/partial observations, payload/NCP LLRs, protected streams and decoder context; each dimension exact/+1 exhaustion; checked overflow; unchanged observations/status/coordinates, legacy statistic, aliases/lifetime and accepted source after rejection. Boxed final buffers enforce final capacities; temporary builders use separate finite count/byte limits. |
+| LEAD subsequent native/facade/reference pairing | Mirror the two operations on the existing native FullLoopResult with the same typed common metadata, GIL release and structured errors. Independently compare actual Rust/native observations, preflight, bounded copy and old statistics using installed-wheel tests. |
+
+The archive target has no ordered entries and one shared allocation edge. Count
+its fixed root and actual retained payload once, including requested nested LLR,
+role-vector and context-string storage. Recreate protected reports through their
+existing constructor so the live private pilot cache remains absent, matching the
+legacy archive. No scientific recomputation, new QAM filtering, view restriction,
+standard-library growth assumptions or late-only oversized-product rejection.
+The lead owns canonical documents, shared contracts, native bindings and primary
+acceptance. An isolated source preparation may edit only the archive owner and
+new tests/handoff. Future full-run result/report bounds and host admission remain
+separate gates; this public copy operation cannot complete UIU-SESSION-01.

@@ -123,7 +123,7 @@ Delivery gates: [INT-LICENSE-01](development/checklist.md#int-license-01).
 | Component | Current owner | Integration design and compatibility |
 | --- | --- | --- |
 | Unified Rust root | `crates/merlin`, Cargo/library `merlin` | Implemented thin facade; only re-export direction APIs and common contracts. No scientific implementation or core dependency back to this facade. |
-| Common API contracts | `crates/phy-api`, Cargo `merlin-api` / library `merlin_api` | Implemented leaf; shared cancellation query/control and existing error categories only. Directional limits/reports/errors remain directional. |
+| Common API contracts | `crates/phy-api`, Cargo `merlin-api` / library `merlin_api` | Implemented leaf; shared cancellation query/control, existing error categories and retained-resource quantities. Directional limits/reports/errors remain directional; ownership walker support stays outside the facade. |
 | Downstream PHY | `crates/ofdm`, Cargo `docsis-ofdm-fec` | Retain package, public imports, control channels, interleavers, waveform, received configuration and report schemas. |
 | Common FEC | `crates/fec-codec` | `src/upstream_ldpc/` now owns upstream definitions/codec and independent source tests; existing BCH, downstream LDPC, shortening, NCP and PLC remain. |
 | Generic DSP | `crates/dsp`, Cargo `merlin-dsp`; existing directional numerical owners retained | Shared centered unitary 2K/4K/8K FFT and one-step PRBS15 recurrence; downstream wrappers preserve geometry/errors/state. Independent/frozen equivalence and hot-path measurements precede consumer rewiring; INT-DSP-01 now has passing consumer acceptance. No generic channel/QAM/measurement state extraction. |
@@ -139,7 +139,7 @@ its direct downstream dependency for existing handlers. Base facade defaults and
 independent direction features are unchanged. Native input enables both PHY
 adapters and re-exports existing contracts without scientific implementation.
 Both independent PHYs → common API/DSP/FEC leaves;
-`pnm-input` → downstream/upstream APIs and exact pinned `pnm`.
+`pnm-input` → downstream/upstream APIs, common API contracts and exact pinned `pnm`.
 The independent Qt adapter retains its current dependencies.
 The downstream `pnm-input` Cargo feature is not a dependency back to the adapter.
 
@@ -159,6 +159,7 @@ flowchart TD
     CLI --> INPUT
     INPUT --> DS
     INPUT --> US
+    INPUT --> API
     INPUT --> PNM[Exact pinned PNM decoder]
     DS --> FEC[Common FEC mechanisms and separate code definitions]
     US --> FEC
@@ -1574,6 +1575,11 @@ uses checked aggregate admission before allocation/copy, and reservations surviv
 queued, replaced and aliased ownership until final drop. Scientific roots must
 provide typed footprint metadata and pre-production bounds through public APIs;
 Qt must not inspect private storage or infer bounds from serialized JSON.
+The approved output-construction boundary includes simultaneously retained copy
+source/target and candidate owners. Temporary backend builders and numerical
+scratch use separate finite execution limits; no aggregate scratch-byte or RSS
+guarantee is claimed. Final retained capacities still require pre-production
+enforcement and admission.
 
 The [retained-root metadata prerequisite](development/features/unified-qt-workbench/design.md#uiu-session-01-public-retained-root-metadata-prerequisite)
 uses a typed `RetainedFootprint` in the independent `merlin-api` leaf, re-exported
@@ -1585,6 +1591,13 @@ support is excluded from the facade. This does not change scientific algorithms,
 project schemas, historical archive statistics or existing downstream exports.
 Future-result/copy bounds and actual Qt admission remain
 required before session acceptance.
+
+The [independent input/idle-preview owner closure](development/features/unified-qt-workbench/design.md#independent-input-and-idle-preview-owner-closure)
+tracks partial input, draft, Designer and preview ownership outside those four
+downstream roots. Its standalone metadata operations and paired native consumers have
+[focused acceptance](development/features/unified-qt-workbench/validation.md#uiu-session-01-independent-input-and-preview-metadata);
+public DTO/JSON/presentation copies still require separate application charges. The native-input adapter directly reuses the common
+leaf for Designer ownership metadata, without a dependency on the facade.
 
 The [upstream application controller](development/features/unified-qt-workbench/design.md#uiu-session-01-actual-upstream-controller-preparation)
 under `apps/qt/src/upstream/` owns a real public `Simulation` and actual retained

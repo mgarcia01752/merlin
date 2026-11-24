@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Immutable typed Designer admission over the existing saved-recipe evaluator.
+#[path = "retention.rs"]
+mod retention;
 use super::{is_designer, load, Baseline, RecipeInput, Stored};
 use base64::{engine::general_purpose::STANDARD, Engine};
 use docsis_ofdm_fec::{
@@ -238,6 +240,25 @@ impl RxMerDesign {
         })?;
         design.check_key(key)?;
         Ok(design)
+    }
+
+    /// Reports the complete payload currently retained by this immutable design.
+    ///
+    /// Includes the fixed root, exact original input, typed baseline/recipe and
+    /// cached materialized RxMER with requested spare capacities. Shared Arc
+    /// payloads and owner edges are counted conservatively on every occurrence;
+    /// allocator, tree-node and reference-count headers are excluded.
+    /// This passive read does not copy inputs, evaluate a recipe or run science.
+    ///
+    /// # Returns
+    /// Current-root metadata, separate from future-output reservations, temporary
+    /// construction peaks, process memory and independently retained caller copies.
+    ///
+    /// # Errors
+    /// Returns ResourceLimit if checked retained-payload arithmetic overflows.
+    pub fn retained_footprint(&self) -> ApiResult<merlin_api::RetainedFootprint> {
+        merlin_api::retention_support::retained_footprint(self)
+            .ok_or_else(|| ApiError::new(ErrorCode::ResourceLimit, "retained_footprint overflow"))
     }
 
     /// Checks exact spatial identity before an independently loaded design is adopted.

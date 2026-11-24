@@ -48,6 +48,27 @@ struct Stored {
     sha256: String,
     base64: String,
 }
+impl merlin_api::retention_support::RetainedPayload for Stored {
+    /// Counts the original saved-input strings beyond their fixed inline fields.
+    ///
+    /// # Returns
+    /// Requested name, digest and base64 capacities, or None on checked overflow.
+    fn retained_children(&self) -> Option<merlin_api::RetainedFootprint> {
+        use merlin_api::retention_support::sum;
+        let Self {
+            name,
+            byte_length,
+            sha256,
+            base64,
+        } = self;
+        sum([
+            name.retained_children(),
+            byte_length.retained_children(),
+            sha256.retained_children(),
+            base64.retained_children(),
+        ])
+    }
+}
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Profile {

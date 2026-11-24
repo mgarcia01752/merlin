@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Typed idle TX snapshots; scientific generation stays with the existing transmitter owner.
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 mod calibrated;
 mod control;
 mod result;
@@ -127,5 +128,46 @@ impl TransmitterPreviewRequest {
             sources: self.sources.clone(),
             source: self.source.clone(),
         })
+    }
+
+    /// Measures this complete immutable root and all reachable retained payloads.
+    ///
+    /// Includes requested spare buffer capacity, private caches and each owned
+    /// Arc pointee/edge, conservatively repeating aliases. Ordered entries and
+    /// shared roots are separate from payload bytes; allocator, tree-node and
+    /// refcount bookkeeping are excluded. No source or numerical state advances.
+    ///
+    /// # Returns
+    /// Passive current-root metadata including its fixed value exactly once.
+    /// This does not reserve future output, construction scratch or copied views.
+    ///
+    /// # Errors
+    /// Returns ResourceLimit if retained_footprint arithmetic overflows.
+    pub fn retained_footprint(&self) -> ApiResult<merlin_api::RetainedFootprint> {
+        merlin_api::retention_support::retained_footprint(self)
+            .ok_or_else(|| ApiError::new(ErrorCode::ResourceLimit, "retained_footprint overflow"))
+    }
+}
+
+impl RetainedPayload for TransmitterPreviewRequest {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            request,
+            key,
+            profile_id,
+            sources,
+            source,
+        } = self;
+        merlin_api::retention_support::sum([
+            request.retained_children(),
+            key.retained_children(),
+            profile_id.retained_children(),
+            sources.retained_children(),
+            source.retained_children(),
+        ])
     }
 }

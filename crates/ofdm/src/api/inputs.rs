@@ -67,6 +67,24 @@ impl NamedCapture {
     pub fn name(&self) -> &str {
         &self.name
     }
+
+    /// Measures this complete immutable root and all reachable retained payloads.
+    ///
+    /// Includes requested spare buffer capacity, private caches and each owned
+    /// Arc pointee/edge, conservatively repeating aliases. Ordered entries and
+    /// shared roots are separate from payload bytes; allocator, tree-node and
+    /// refcount bookkeeping are excluded. No source or numerical state advances.
+    ///
+    /// # Returns
+    /// Passive current-root metadata including its fixed value exactly once.
+    /// This does not reserve future output, construction scratch or copied views.
+    ///
+    /// # Errors
+    /// Returns ResourceLimit if retained_footprint arithmetic overflows.
+    pub fn retained_footprint(&self) -> ApiResult<merlin_api::RetainedFootprint> {
+        merlin_api::retention_support::retained_footprint(self)
+            .ok_or_else(|| ApiError::new(ErrorCode::ResourceLimit, "retained_footprint overflow"))
+    }
 }
 /// Original representation, distinct from decoded intermediate JSON.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
@@ -118,6 +136,24 @@ impl CaptureProvenance {
     /// Lowercase SHA-256 hex digest.
     pub fn decoded_sha256(&self) -> &str {
         &self.decoded_sha256
+    }
+
+    /// Measures this complete immutable root and all reachable retained payloads.
+    ///
+    /// Includes requested spare buffer capacity, private caches and each owned
+    /// Arc pointee/edge, conservatively repeating aliases. Ordered entries and
+    /// shared roots are separate from payload bytes; allocator, tree-node and
+    /// refcount bookkeeping are excluded. No source or numerical state advances.
+    ///
+    /// # Returns
+    /// Passive current-root metadata including its fixed value exactly once.
+    /// This does not reserve future output, construction scratch or copied views.
+    ///
+    /// # Errors
+    /// Returns ResourceLimit if retained_footprint arithmetic overflows.
+    pub fn retained_footprint(&self) -> ApiResult<merlin_api::RetainedFootprint> {
+        merlin_api::retention_support::retained_footprint(self)
+            .ok_or_else(|| ApiError::new(ErrorCode::ResourceLimit, "retained_footprint overflow"))
     }
 }
 /// Profile source classification; created/edited profiles are hypotheses.
@@ -667,6 +703,24 @@ impl ChannelEstimate {
             })
             .collect()
     }
+
+    /// Measures this complete immutable root and all reachable retained payloads.
+    ///
+    /// Includes requested spare buffer capacity, private caches and each owned
+    /// Arc pointee/edge, conservatively repeating aliases. Ordered entries and
+    /// shared roots are separate from payload bytes; allocator, tree-node and
+    /// refcount bookkeeping are excluded. No source or numerical state advances.
+    ///
+    /// # Returns
+    /// Passive current-root metadata including its fixed value exactly once.
+    /// This does not reserve future output, construction scratch or copied views.
+    ///
+    /// # Errors
+    /// Returns ResourceLimit if retained_footprint arithmetic overflows.
+    pub fn retained_footprint(&self) -> ApiResult<merlin_api::RetainedFootprint> {
+        merlin_api::retention_support::retained_footprint(self)
+            .ok_or_else(|| ApiError::new(ErrorCode::ResourceLimit, "retained_footprint overflow"))
+    }
 }
 impl Dpd {
     /// Borrows exact captured or explicitly edited assignments in source-grid order.
@@ -781,6 +835,17 @@ impl RetainedPayload for ProfileOrigin {
             Self::Created => Some(RetainedFootprint::default()),
             Self::Edited => Some(RetainedFootprint::default()),
         }
+    }
+}
+
+impl RetainedPayload for NamedCapture {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { name, bytes } = self;
+        merlin_api::retention_support::sum([name.retained_children(), bytes.retained_children()])
     }
 }
 

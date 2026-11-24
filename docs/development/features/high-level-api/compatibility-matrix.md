@@ -4,7 +4,7 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-606 explicit public Rust operations and 579 installed native Python entries with
+615 explicit public Rust operations and 585 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
 is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/session-downstream-metadata-evidence.json)
@@ -403,3 +403,14 @@ and detached lifetimes. The shared fixed-Copy leaf helper has a passing
 compile-fail doctest. The complete scoped gate passes 103 Rust and 34 installed
 native cases; existing historical archive statistics keep their meaning. Future
 bounds, output-construction accounting and actual aggregate acceptance remain open.
+
+
+The [independent input/preview metadata unit](../unified-qt-workbench/validation.md#uiu-session-01-independent-input-and-preview-metadata)
+adds eight actual owner operations (nine Rust export paths) and six native methods.
+All preceding 606/579 rows and class/type identities are preserved. NamedCapture
+and CaptureProvenance are Rust owners represented by Python arguments/dictionaries,
+so no unused native classes are added. Nineteen new Rust and three native cases
+cover private capacities, original inputs/recipes/PSD, aliases, rejection and
+independent Rust-process parity. The complete scoped gate passes 84 Rust and
+47 installed native cases. Future result/copy bounds and real session admission
+remain implementation gates.

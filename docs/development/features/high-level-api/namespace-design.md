@@ -34,7 +34,7 @@ current exports; complete Rust operation coverage is recorded in the matrix acce
 | `merlin-api` (implemented) | `merlin_api`, `crates/phy-api` | Small dependency leaf for genuinely common cancellation/error categories. Safe Rust plus existing pinned serde only; no DSP, engine, FEC, input, adapter or facade dependencies. |
 | `merlin-dsp` (INT-DSP-01 delivery) | `merlin_dsp`, `crates/dsp` | Bounded shared numerical primitives; no API/PHY/adapter dependency. This is separate from the public namespace facade. |
 | `fec-codec` (existing) | `fec_codec`, `crates/fec-codec` | Existing shared mechanisms and separate normative code families. No new facade/API dependency. |
-| `pnm-input` (existing) | `pnm_input`, `crates/pnm-input` | Native file/capture adapter; existing downstream and pinned parser, implemented upstream; neither PHY points back here. |
+| `pnm-input` (existing) | `pnm_input`, `crates/pnm-input` | Native file/capture adapter; downstream/upstream APIs, common API contracts and pinned parser; neither PHY points back here. |
 | `ofdm-fec-cli` (existing) | Existing `ofdm-fec` binary, `crates/cli` | Adapter uses public direction APIs/facade and native input; retains syntax/output/exit statuses. |
 | `merlin-python` (existing) | Implemented private extension `_native`, `bindings/python` | One PyO3 extension, depends on facade plus native input. Distribution metadata remains `merlin-ofdm`; public Python import root remains `merlin`. Internal library/module rename is tested as a packaging change, not a second extension/distribution. |
 
@@ -103,6 +103,7 @@ flowchart TD
     US --> API
     INPUT --> DS
     INPUT --> US
+    INPUT --> API
     INPUT --> PNM[Pinned pnm decoder]
     DS --> DSP[merlin-dsp]
     US --> DSP

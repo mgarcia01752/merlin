@@ -571,6 +571,24 @@ impl PyComplexResponse {
 }
 #[pymethods]
 impl PyChannelEstimate {
+    /// Measures this existing Rust owner without copying or advancing its data.
+    ///
+    /// # Returns
+    /// Immutable target-layout payload, ordered-entry and shared-root quantities,
+    /// including private caches and spare capacity; excludes Python projections
+    /// and temporary execution storage. This is not a future-product bound.
+    ///
+    /// # Errors
+    /// Preserves Rust ResourceLimit on checked overflow; releases the interpreter.
+    fn retained_footprint(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        py.detach(|| self.0.retained_footprint())
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
     /// Copies the admitted original-grid channel frame through the public Rust operation.
     /// # Returns
     /// Owned bounded key/epoch/decoded-source/I/Q dictionary. Native edits cannot

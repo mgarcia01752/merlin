@@ -1,0 +1,615 @@
+{
+  "scope": "Nineteen new owner/facade Rust cases and all selected exact-wheel native cases executed in primary. Complete selected Rust commands pass84 unique cases. No complete session/full-workspace acceptance claim.",
+  "runs": [
+    {
+      "label": "downstream-private",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--lib",
+        "--locked",
+        "retained_footprint_tests"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 9.784382057994662,
+      "language": "rust",
+      "passed": 3,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/src/signal_processing/rxmer_designer.rs",
+          "qualified_test_case": "recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children"
+        },
+        {
+          "test_file": "crates/ofdm/src/simulation/transmitter_preview.rs",
+          "qualified_test_case": "frozen_tx_request_counts_private_loading_layout_and_original_file"
+        },
+        {
+          "test_file": "crates/ofdm/src/simulation/transmitter_preview.rs",
+          "qualified_test_case": "retained_tx_owner_layout_samples_and_full_psd_spares_repeat_across_arc_edges"
+        }
+      ],
+      "scope": "New owner/facade cases within complete selected command; other passing cases counted in evidence."
+    },
+    {
+      "label": "downstream-api",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--locked",
+        "--test",
+        "api_input_retained_footprint",
+        "--test",
+        "api_admission",
+        "--test",
+        "api_profile_capture",
+        "--test",
+        "api_measurement_preview",
+        "--test",
+        "transmitter_preview"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 16.260823545002495,
+      "language": "rust",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_input_retained_footprint.rs",
+          "qualified_test_case": "named_capture_counts_actual_label_spare_capacity_and_immutable_original_bytes"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_input_retained_footprint.rs",
+          "qualified_test_case": "admitted_idle_request_metadata_is_stable_without_generating_a_preview"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_input_retained_footprint.rs",
+          "qualified_test_case": "independent_source_catalog_response_and_provenance_metadata_preserve_originals"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_input_retained_footprint.rs",
+          "qualified_test_case": "actual_preview_metadata_preserves_samples_full_psd_provenance_and_alias_lifetime"
+        }
+      ],
+      "scope": "New owner/facade cases within complete selected command; other passing cases counted in evidence."
+    },
+    {
+      "label": "pnm-private",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "pnm-input",
+        "--lib",
+        "--locked",
+        "workbench::designer::admission::retention::tests"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.758173493995855,
+      "language": "rust",
+      "passed": 7,
+      "cases": [
+        {
+          "test_file": "crates/pnm-input/src/workbench/designer/retention.rs",
+          "qualified_test_case": "flat_valid_mask_requested_spare_capacity_is_retained"
+        },
+        {
+          "test_file": "crates/pnm-input/src/workbench/designer/retention.rs",
+          "qualified_test_case": "recipe_edit_spare_slots_beyond_initialized_values_are_retained"
+        },
+        {
+          "test_file": "crates/pnm-input/src/workbench/designer/retention.rs",
+          "qualified_test_case": "cached_materialized_rxmer_counts_sample_spare_capacity"
+        },
+        {
+          "test_file": "crates/pnm-input/src/workbench/designer/retention.rs",
+          "qualified_test_case": "original_named_capture_name_capacity_is_counted_without_getter_reconstruction"
+        },
+        {
+          "test_file": "crates/pnm-input/src/workbench/designer/retention.rs",
+          "qualified_test_case": "cached_source_provenance_string_capacities_are_retained"
+        },
+        {
+          "test_file": "crates/pnm-input/src/workbench/designer/retention.rs",
+          "qualified_test_case": "original_record_cache_and_nested_provenance_edges_are_counted_on_aliases"
+        },
+        {
+          "test_file": "crates/pnm-input/src/workbench/designer/retention.rs",
+          "qualified_test_case": "imported_stored_strings_count_all_requested_capacities"
+        }
+      ],
+      "scope": "New owner/facade cases within complete selected command; other passing cases counted in evidence."
+    },
+    {
+      "label": "pnm-api",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "pnm-input",
+        "--locked",
+        "--test",
+        "designer_retained_footprint",
+        "--test",
+        "designer_admission",
+        "--test",
+        "designer_workbench"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 41.68378409699653,
+      "language": "rust",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "crates/pnm-input/tests/designer_retained_footprint.rs",
+          "qualified_test_case": "exact_original_whitespace_is_charged_on_each_retained_original_arc_edge"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/designer_retained_footprint.rs",
+          "qualified_test_case": "cloned_design_metadata_survives_original_release_and_keeps_cached_result_independent"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/designer_retained_footprint.rs",
+          "qualified_test_case": "flat_metadata_includes_typed_record_original_and_cached_rxmer_without_changes"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/designer_retained_footprint.rs",
+          "qualified_test_case": "imported_metadata_preserves_embedded_baseline_and_original_source_provenance"
+        }
+      ],
+      "scope": "New owner/facade cases within complete selected command; other passing cases counted in evidence."
+    },
+    {
+      "label": "facade",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "merlin",
+        "--features",
+        "native-input",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.7351044500028365,
+      "language": "rust",
+      "passed": 1,
+      "cases": [
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "independent_input_and_preview_metadata_preserve_owner_types"
+        }
+      ],
+      "scope": "New owner/facade cases within complete selected command; other passing cases counted in evidence."
+    },
+    {
+      "label": "input_retained_footprint",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_input_retained_footprint.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-input-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.4372045620038989,
+      "language": "python",
+      "passed": 3,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_input_retained_footprint.py",
+          "qualified_test_case": "InputRetainedFootprintTests.test_installed_owners_and_original_scientific_views_match_direct_rust"
+        },
+        {
+          "test_file": "bindings/python/tests/test_input_retained_footprint.py",
+          "qualified_test_case": "InputRetainedFootprintTests.test_native_metadata_legacy_identity_passivity_and_detached_values"
+        },
+        {
+          "test_file": "bindings/python/tests/test_input_retained_footprint.py",
+          "qualified_test_case": "InputRetainedFootprintTests.test_rejected_design_and_precancelled_preview_preserve_accepted_owners"
+        }
+      ]
+    },
+    {
+      "label": "admission",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_admission.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-input-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.07442818499839632,
+      "reference_environment": {
+        "MERLIN_SOURCE_FILE_INFO_REFERENCE": {
+          "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-final-contract-reference.stdout",
+          "sha256": "f311202193af6e53c2b19c67076af7c17157ce59b06068377bca81957f093e76"
+        },
+        "MERLIN_SPECTRUM_BUDGET_REFERENCE": {
+          "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-reference.json",
+          "sha256": "280a0982fe4a39e12a263a8e9bc63ea33d1f629dde4503f2bf591ad9e8ef93d9"
+        },
+        "MERLIN_TRANSMITTER_PARITY": {
+          "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-current-transmitter.stdout",
+          "sha256": "08ca0f3aaa3863a9f034262f92ab432d13fda67e2a879fa1e531b9b971ab8dd1"
+        }
+      },
+      "language": "python",
+      "passed": 12,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_empty_eof_and_continuous_seed_remain_distinct"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_engine_code_is_structured_optional_and_preserves_existing_error_fields"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_exact_byte_file_source_fill_bounds_and_lifetime"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_minimum_observation_has_exact_period_rounding_and_wide_thresholds"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_source_file_info_limits_partial_targets_and_owned_snapshots"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_source_file_info_matches_the_direct_rust_process"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_source_fill_replacement_preserves_original_and_rejects_atomic_changes"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_spectrum_average_capacity_is_bounded_idle_and_immutable"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_spectrum_average_capacity_matches_the_direct_rust_process"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_transmission_literal_timing_and_owned_settings"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_transmission_rejection_and_original_profile_compatibility"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_unnamed_file_preserves_original_bytes_fill_and_named_rejection"
+        }
+      ]
+    },
+    {
+      "label": "profile_capture",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_profile_capture.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-input-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.1490480549982749,
+      "language": "python",
+      "passed": 6,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_profile_capture.py",
+          "qualified_test_case": "ProfileCaptureTests.test_binary_json_inventory_schemes_science_and_original_hashes_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_profile_capture.py",
+          "qualified_test_case": "ProfileCaptureTests.test_complete_source_ids_and_literal_role_capacity_shannon_and_coordinates"
+        },
+        {
+          "test_file": "bindings/python/tests/test_profile_capture.py",
+          "qualified_test_case": "ProfileCaptureTests.test_existing_dpd_view_and_summary_share_the_same_scientific_owner"
+        },
+        {
+          "test_file": "bindings/python/tests/test_profile_capture.py",
+          "qualified_test_case": "ProfileCaptureTests.test_request_page_identity_and_output_bounds_reject_without_mutation"
+        },
+        {
+          "test_file": "bindings/python/tests/test_profile_capture.py",
+          "qualified_test_case": "ProfileCaptureTests.test_source_catalog_ocd_geometry_preserves_byte_ids_and_run_id_limits"
+        },
+        {
+          "test_file": "bindings/python/tests/test_profile_capture.py",
+          "qualified_test_case": "ProfileCaptureTests.test_source_frame_is_owned_preserves_raw_identity_and_roles"
+        }
+      ]
+    },
+    {
+      "label": "measurement_preview",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_measurement_preview.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-input-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.12035346999618923,
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_measurement_preview.py",
+          "qualified_test_case": "MeasurementPreviewTests.test_missing_values_viewport_bounds_and_atomic_rejection"
+        },
+        {
+          "test_file": "bindings/python/tests/test_measurement_preview.py",
+          "qualified_test_case": "MeasurementPreviewTests.test_original_channel_frame_preserves_values_lineage_and_owned_copies"
+        },
+        {
+          "test_file": "bindings/python/tests/test_measurement_preview.py",
+          "qualified_test_case": "MeasurementPreviewTests.test_original_h_literal_projections_zero_gaps_and_invalid_metric"
+        },
+        {
+          "test_file": "bindings/python/tests/test_measurement_preview.py",
+          "qualified_test_case": "MeasurementPreviewTests.test_original_rxmer_literal_frequency_units_and_owned_view"
+        }
+      ]
+    },
+    {
+      "label": "designer_admission",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_designer_admission.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-input-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.128084650998062,
+      "language": "python",
+      "passed": 5,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_designer_admission.py",
+          "qualified_test_case": "DesignerAdmissionTests.test_rejections_preserve_original_design_and_frozen_positions"
+        },
+        {
+          "test_file": "bindings/python/tests/test_designer_admission.py",
+          "qualified_test_case": "DesignerAdmissionTests.test_replacement_uses_original_imported_baseline_without_compounding"
+        },
+        {
+          "test_file": "bindings/python/tests/test_designer_admission.py",
+          "qualified_test_case": "DesignerAdmissionTests.test_saved_envelope_preserves_exact_bytes_mask_epochs_and_owned_result"
+        },
+        {
+          "test_file": "bindings/python/tests/test_designer_admission.py",
+          "qualified_test_case": "DesignerAdmissionTests.test_source_catalog_designs_preserve_raw_ids_masks_and_original_baselines"
+        },
+        {
+          "test_file": "bindings/python/tests/test_designer_admission.py",
+          "qualified_test_case": "DesignerAdmissionTests.test_typed_flat_creation_keeps_profile_identity_and_source_kinds"
+        }
+      ]
+    },
+    {
+      "label": "transmitter_preview",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_transmitter_preview.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-input-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.4807631330040749,
+      "reference_environment": {
+        "MERLIN_SOURCE_FILE_INFO_REFERENCE": {
+          "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-final-contract-reference.stdout",
+          "sha256": "f311202193af6e53c2b19c67076af7c17157ce59b06068377bca81957f093e76"
+        },
+        "MERLIN_SPECTRUM_BUDGET_REFERENCE": {
+          "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-reference.json",
+          "sha256": "280a0982fe4a39e12a263a8e9bc63ea33d1f629dde4503f2bf591ad9e8ef93d9"
+        },
+        "MERLIN_TRANSMITTER_PARITY": {
+          "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-current-transmitter.stdout",
+          "sha256": "08ca0f3aaa3863a9f034262f92ab432d13fda67e2a879fa1e531b9b971ab8dd1"
+        }
+      },
+      "language": "python",
+      "passed": 5,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_transmitter_preview.py",
+          "qualified_test_case": "TransmitterPreviewTests.test_actual_generation_progress_count_normalization_and_owned_queries"
+        },
+        {
+          "test_file": "bindings/python/tests/test_transmitter_preview.py",
+          "qualified_test_case": "TransmitterPreviewTests.test_direct_rust_process_samples_psd_timing_and_progress_parity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_transmitter_preview.py",
+          "qualified_test_case": "TransmitterPreviewTests.test_finite_source_eof_hash_queries_and_input_retention"
+        },
+        {
+          "test_file": "bindings/python/tests/test_transmitter_preview.py",
+          "qualified_test_case": "TransmitterPreviewTests.test_idle_timing_weights_and_raw_identity_preserve_existing_support"
+        },
+        {
+          "test_file": "bindings/python/tests/test_transmitter_preview.py",
+          "qualified_test_case": "TransmitterPreviewTests.test_native_worker_releases_gil_for_busy_progress_and_cancellation"
+        }
+      ]
+    },
+    {
+      "label": "downstream_retained_footprint",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_downstream_retained_footprint.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-input-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 11.705176692004898,
+      "language": "python",
+      "passed": 3,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_downstream_retained_footprint.py",
+          "qualified_test_case": "DownstreamRetainedFootprintTests.test_complete_partial_private_cache_and_archive_rust_parity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_downstream_retained_footprint.py",
+          "qualified_test_case": "DownstreamRetainedFootprintTests.test_legacy_aliases_metadata_and_detached_archive_lifetime"
+        },
+        {
+          "test_file": "bindings/python/tests/test_downstream_retained_footprint.py",
+          "qualified_test_case": "DownstreamRetainedFootprintTests.test_rejected_candidate_preserves_plan_and_original_request"
+        }
+      ]
+    },
+    {
+      "label": "namespaces",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_namespaces.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-input-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.11905114699766273,
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ]
+    },
+    {
+      "label": "retained_footprint",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_retained_footprint.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-input-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.1670914820060716,
+      "language": "python",
+      "passed": 5,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_retained_footprint.py",
+          "qualified_test_case": "RetainedFootprintTests.test_common_model_is_native_immutable_and_preserves_downstream_alias"
+        },
+        {
+          "test_file": "bindings/python/tests/test_retained_footprint.py",
+          "qualified_test_case": "RetainedFootprintTests.test_installed_native_complete_partial_and_private_store_parity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_retained_footprint.py",
+          "qualified_test_case": "RetainedFootprintTests.test_paused_running_session_returns_busy_and_cancel_restores_metadata"
+        },
+        {
+          "test_file": "bindings/python/tests/test_retained_footprint.py",
+          "qualified_test_case": "RetainedFootprintTests.test_queries_preserve_science_provenance_and_detached_metadata_lifetime"
+        },
+        {
+          "test_file": "bindings/python/tests/test_retained_footprint.py",
+          "qualified_test_case": "RetainedFootprintTests.test_rejected_configuration_preserves_accepted_footprint"
+        }
+      ]
+    }
+  ]
+}

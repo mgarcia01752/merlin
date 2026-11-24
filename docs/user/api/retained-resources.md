@@ -45,6 +45,19 @@ input/provenance ownership, cached measurement powers, retained stage contexts
 and the private protected pilot cache. Complete and cancelled results retain
 their actual quantities; an absent observation is not fabricated.
 
+Independent downstream `SourceInput`, `NamedCapture`, `CaptureProvenance`,
+`ProfileCapture`, `ChannelEstimate`, `TransmitterPreviewRequest` and
+`TransmitterPreview` owners also expose the operation. The native-input adapter's
+`pnm_input::RxMerDesign` includes its original envelope, typed baseline/recipe and
+cached materialized observation. These quantities cover independently retained
+inputs and idle previews before a full-loop request exists.
+
+Python exposes the method on its existing source, profile, response, preview and
+Designer classes. Rust's `NamedCapture` is represented by name/bytes arguments in
+Python; `CaptureProvenance` becomes a copied dictionary. There are no separate
+Python owner classes for those two Rust types. Charge application dictionaries,
+JSON documents, source bytes and view copies separately.
+
 Receiver archive metadata is separate from the existing
 `archive.info().retained_bytes` statistic (Python `archive.info['retained_bytes']`).
 That historical statistic and its copy policy retain their length-based scope.
@@ -62,6 +75,9 @@ after its source session/report is released.
 
 Existing downstream exports, root Python `merlin.Simulation`, saved project bytes,
 scientific limits and historical archive statistics retain their meaning.
+Aggregate retention includes simultaneous copy source/target and candidate
+owners. Temporary backend builders and numerical scratch have separate finite
+execution limits, without an aggregate scratch-byte/RSS guarantee.
 Pre-production result/copy bounds and actual aggregate admission remain
 integration work. See the [API guide](README.md),
 [upstream sessions](../upstream/session.md) and

@@ -10,6 +10,7 @@ use crate::{
     types::IqPair,
     SimulationError,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use std::f64::consts::TAU;
 
 /// Maximum overlapping analysis windows retained in one bounded estimate.
@@ -173,5 +174,30 @@ impl PowerSpectrum {
                 }
             })
             .collect())
+    }
+}
+
+impl RetainedPayload for PowerSpectrum {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            zero_frequency_hz,
+            spacing_hz,
+            fft_samples,
+            averages,
+            equivalent_noise_bandwidth_hz,
+            density,
+        } = self;
+        merlin_api::retention_support::sum([
+            zero_frequency_hz.retained_children(),
+            spacing_hz.retained_children(),
+            fft_samples.retained_children(),
+            averages.retained_children(),
+            equivalent_noise_bandwidth_hz.retained_children(),
+            density.retained_children(),
+        ])
     }
 }

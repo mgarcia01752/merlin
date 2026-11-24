@@ -73,7 +73,8 @@ Public scientific root metadata, pre-production bounds and actual direction-host
 admission remain implementation gates. Neither the decision nor reservation
 primitive tests establish aggregate resource acceptance.
 
-## Output construction boundary requiring clarification
+<a id="output-construction-boundary-requiring-clarification"></a>
+## Approved output construction boundary
 
 The approved three quantities above remain unchanged. A separate source audit
 finds that existing final-product length ceilings do not establish requested
@@ -95,22 +96,29 @@ No bound/copy operation is implemented or accepted by this proposal.
 | `crates/ofdm/src/simulation/channel/job.rs`, `api/full_loop/observations/store.rs` | Future results retain word/constellation/event buffers, cloned settings/inputs and failure text; complete typed accounting and capacity enforcement are still needed. |
 | `crates/ofdma/src/simulation/run.rs`, `instruments/{observer.rs,receiver.rs,soft/store.rs}`, `configuration/document.rs` | Future reports retain grant/decision/observation buffers, cloned snapshots, canonical JSON and diagnostics; all capacities and private caches need owner enforcement. |
 
-The earlier ownership design includes preparation-peak ownership. Current-root
-metadata explicitly excludes temporary execution storage. The boundary between
-temporary output builders and retained owners therefore needs an explicit
-decision before complete session admission can be claimed:
+The user selected **Retained owners; separate execution limits** on 2026-11-23.
+This clarifies the earlier preparation-peak wording without accepting runtime
+admission. The selected boundary is:
 
-1. **Retained-root accounting with separate execution policies:** the aggregate
+1. **Approved: retained-root accounting with separate execution policies:** the aggregate
    byte/entry/root budget covers all accepted, candidate, worker, queued and old
    retained roots and simultaneous copy source/target owners. Temporary backend
    construction and numerical scratch remain subject to separate finite input,
    element/count, worker and runtime policies; no aggregate scratch-byte/RSS
    guarantee is claimed. Final retained capacities still require enforcement.
-2. **One aggregate budget includes construction peaks:** additionally prove and
+2. **Unselected: one aggregate budget includes construction peaks:** additionally prove and
    reserve every temporary builder's requested-capacity peak before allocation.
    Existing length checks and boxed final-storage normalization do not establish
    this stronger claim; further backend storage/admission work is required.
 
-This is a pending clarification, not acceptance or permission to weaken existing
-claims. Public root metadata and independent implementation work may continue;
-dependent aggregate acceptance must wait for the decision and its tests.
+Prepared accepted/candidate objects, cloned inputs, queued products and simultaneous
+copy source/target owners remain aggregate retained ownership, even while a worker
+is preparing them. Temporary backend output builders and numerical scratch have
+separate finite execution policies; they are not an aggregate scratch-byte/RSS
+guarantee. Enforce final retained capacities before publishing an owner. Never
+use this distinction to admit an oversized final result and reject it afterward.
+
+Public root metadata and bounded-owner implementation may proceed. Actual host
+admission and its complete compatibility/lifecycle tests remain acceptance gates.
+Keep existing scientific limits and tests; establish explicit finite construction
+limits where the owning backend does not already enforce them.
