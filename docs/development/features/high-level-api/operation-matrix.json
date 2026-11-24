@@ -5,10 +5,10 @@
   "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-backend/rust-api-integration/rust-exports.json",
   "native_metadata_origin": {
     "version": "0.4.0",
-    "revision": "71505d9 plus independent input/preview/Designer metadata candidate",
-    "inventory_command": "Exact installed wheel; session-01-input-metadata-native/results.json",
-    "native_sha256": "db5d2ddc82052beab930f8db0e5305762c1bf1ac0e110546cd63dc1e53a689c7",
-    "scope": "Scoped input/admission/catalog/measurement/Designer/TX, both metadata roots and namespace consumers; independent Rust process reference. No full-suite claim."
+    "revision": "713ec87 plus bounded archive candidate",
+    "inventory_command": "Exact installed wheel; session-01-archive-bound-native/results.json",
+    "native_sha256": "ed21158af0f21b85102d82616595efbed3e5bf9c64e7da0d784369271c2543e6",
+    "scope": "Bounded/legacy archive/full-loop, both retained-root metadata and namespaces;24 independent Rust/native cases. Native literal constructibility added; all preceding methods/properties unchanged."
   },
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
@@ -166,7 +166,12 @@
     "units.session.input.resources": "Target-layout retained payload bytes, ordered entries and shared owner edges. Excludes allocator/private tree/refcount bookkeeping, temporary builders/numerical scratch and separately retained consumer projections. Not total heap/RSS or future-product admission.",
     "errors.session.input.resources": "Checked owner arithmetic preserves shared ResourceLimit; no underestimated successful footprint. Native GIL release and existing structured errors remain authoritative.",
     "evidence.session.input.resources": "../unified-qt-workbench/session-input-metadata-evidence.json, session-input-metadata-operation-test-results.json and validation.md#uiu-session-01-independent-input-and-preview-metadata: primary owner/capacity tests and exact installed-wheel direct Rust-process parity.",
-    "status.session.input.resources": "Locally accepted passive independent owner metadata and Rust/native compatibility. Enforced pre-production output/copy bounds, application charges and real host/session Level2 acceptance remain pending."
+    "status.session.input.resources": "Locally accepted passive independent owner metadata and Rust/native compatibility. Enforced pre-production output/copy bounds, application charges and real host/session Level2 acceptance remain pending.",
+    "ownership.session.archive.bound": "Borrow immutable live result and validated policy; preflight without copying payload. Bounded copy checks every dimension before exact-capacity detached target construction. Source/old/target reservations are independent caller responsibilities. Common native literal is immutable caller-supplied quantities, not measurement or reservation.",
+    "units.session.archive.bound": "Target-usize retained payload bytes including fixed root and exact nested capacity, ordered entries and shared roots. Archive has zero ordered entries/one shared edge. Excludes allocator/private bookkeeping, query copies and temporary builders/scratch under separate finite execution limits; not heap/RSS.",
+    "errors.session.archive.bound": "Preserve existing byte/selector/decoder errors, checked overflow ResourceLimit and pre-copy dimension exhaustion. Native literal conversion rejects negative/usize-overflow values. Legacy operation/statistic unchanged; no late-only oversized-product rejection.",
+    "evidence.session.archive.bound": "../unified-qt-workbench/session-archive-bound-evidence.json, session-archive-bound-operation-test-results.json and validation.md#uiu-session-01-pre-production-detached-archive-bounds: exact capacities, independent final footprint, legacy science and24 direct Rust/native cases.",
+    "status.session.archive.bound": "Locally accepted archive target preflight/bounded copy and native common literal. Future full-run DS/US bounds and actual host/session Level2 acceptance remain pending."
   },
   "type_exports": {
     "downstream": [
@@ -35087,6 +35092,120 @@
       },
       "evidence": "evidence.session.input.resources",
       "status": "status.session.input.resources"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::receiver_archive_bounded",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn receiver_archive_bounded( &self, policy: FullLoopReceiverArchivePolicy, limit: RetainedFootprint, ) -> ApiResult<FullLoopReceiverArchive>",
+        "source_file": "crates/ofdm/src/api/full_loop/receiver_archive/bounded.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "FullLoopResult.receiver_archive_bounded",
+        "native_operation": "merlin.downstream.FullLoopResult.receiver_archive_bounded"
+      },
+      "input_ownership": "ownership.session.archive.bound",
+      "units": "units.session.archive.bound",
+      "error_behavior": "errors.session.archive.bound",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<FullLoopReceiverArchive>",
+        "scope": "Pre-production exact final detached target; no source mutation, scientific recomputation, total preparation-peak or reservation claim."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::decoder_selection_skips_empty_and_non_llr_events_without_relabeling_original",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::omitted_roles_and_decoder_preserve_some_headers_with_zero_buffer_capacity",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::empty_archive_still_requires_one_root_and_rejection_preserves_source_and_aliases",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::preflight_preserves_protected_and_decoder_representation_errors",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::retained_handle_addition_overflow_is_a_resource_limit_before_copy",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::every_dimension_admits_exact_and_rejects_one_extra_required_unit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::exact_target_matches_all_nested_capacities_and_historical_selection_statistic",
+          "crates/ofdm/tests/api_receiver_archive_bounded.rs::actual_precancelled_result_and_omitted_policy_admit_exact_zero_entry_target",
+          "crates/ofdm/tests/api_receiver_archive_bounded.rs::actual_complete_bound_matches_archive_and_preserves_all_legacy_query_planes_and_source",
+          "crates/merlin/tests/namespaces.rs::bounded_receiver_history_preserves_legacy_types_and_common_limit_contract"
+        ],
+        "python": {
+          "status": "exact installed wheel and separate Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_common_limit_literal_is_immutable_and_checks_native_integer_domain",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_exact_bound_dimension_rejection_and_legacy_science_are_preserved",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_installed_preflight_copies_and_six_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_legacy_policy_rejection_and_unobserved_cancelled_outputs_remain_explicit"
+          ]
+        }
+      },
+      "evidence": "evidence.session.archive.bound",
+      "status": "status.session.archive.bound"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin::downstream::FullLoopResult::receiver_archive_retained_bound",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "signature": "pub fn receiver_archive_retained_bound( &self, policy: &FullLoopReceiverArchivePolicy, ) -> ApiResult<RetainedFootprint>",
+        "source_file": "crates/ofdm/src/api/full_loop/receiver_archive/bounded.rs",
+        "rustdoc": "docsis_ofdm_fec/api/struct.FullLoopResult.html"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "declaration": "FullLoopResult.receiver_archive_retained_bound",
+        "native_operation": "merlin.downstream.FullLoopResult.receiver_archive_retained_bound"
+      },
+      "input_ownership": "ownership.session.archive.bound",
+      "units": "units.session.archive.bound",
+      "error_behavior": "errors.session.archive.bound",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "ApiResult<RetainedFootprint>",
+        "scope": "Pre-production exact final detached target; no source mutation, scientific recomputation, total preparation-peak or reservation claim."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::decoder_selection_skips_empty_and_non_llr_events_without_relabeling_original",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::omitted_roles_and_decoder_preserve_some_headers_with_zero_buffer_capacity",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::empty_archive_still_requires_one_root_and_rejection_preserves_source_and_aliases",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::preflight_preserves_protected_and_decoder_representation_errors",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::retained_handle_addition_overflow_is_a_resource_limit_before_copy",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::every_dimension_admits_exact_and_rejects_one_extra_required_unit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::exact_target_matches_all_nested_capacities_and_historical_selection_statistic",
+          "crates/ofdm/tests/api_receiver_archive_bounded.rs::actual_precancelled_result_and_omitted_policy_admit_exact_zero_entry_target",
+          "crates/ofdm/tests/api_receiver_archive_bounded.rs::actual_complete_bound_matches_archive_and_preserves_all_legacy_query_planes_and_source",
+          "crates/merlin/tests/namespaces.rs::bounded_receiver_history_preserves_legacy_types_and_common_limit_contract"
+        ],
+        "python": {
+          "status": "exact installed wheel and separate Rust-process parity",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_common_limit_literal_is_immutable_and_checks_native_integer_domain",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_exact_bound_dimension_rejection_and_legacy_science_are_preserved",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_installed_preflight_copies_and_six_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_legacy_policy_rejection_and_unobserved_cancelled_outputs_remain_explicit"
+          ]
+        }
+      },
+      "evidence": "evidence.session.archive.bound",
+      "status": "status.session.archive.bound"
     }
   ],
   "executed_records": [
@@ -35134,7 +35253,8 @@
     "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/session-resource-metadata-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/session-downstream-metadata-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/session-input-metadata-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/session-input-metadata-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/session-archive-bound-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -73055,6 +73175,194 @@
       },
       "evidence": "evidence.session.input.resources",
       "status": "status.session.input.resources"
+    },
+    {
+      "direction": "common",
+      "operation": "merlin.common.RetainedFootprint.__init__",
+      "rust_namespace": "merlin::common",
+      "rust_type_method": {
+        "export": "merlin::common::RetainedFootprint",
+        "source_file": "bindings/python/src/retention.rs",
+        "symbol": "PyRetainedFootprint",
+        "signature": "RetainedFootprint { payload_bytes, ordered_entries, shared_roots }",
+        "mapping": "Native immutable constructor mirrors Rust public struct literal; target-usize conversion only, no sizing/reservation.",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.common",
+      "python_type_method": {
+        "availability": "installed native constructor",
+        "name": "__init__",
+        "kind": "constructor",
+        "signature": "(payload_bytes, ordered_entries=0, shared_roots=0)",
+        "declaration": "merlin.common.RetainedFootprint.__init__"
+      },
+      "input_ownership": "ownership.session.archive.bound",
+      "units": "units.session.archive.bound",
+      "error_behavior": "errors.session.archive.bound",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::common::RetainedFootprint",
+        "scope": "Immutable caller quantities matching Rust literal."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::decoder_selection_skips_empty_and_non_llr_events_without_relabeling_original",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::omitted_roles_and_decoder_preserve_some_headers_with_zero_buffer_capacity",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::empty_archive_still_requires_one_root_and_rejection_preserves_source_and_aliases",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::preflight_preserves_protected_and_decoder_representation_errors",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::retained_handle_addition_overflow_is_a_resource_limit_before_copy",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::every_dimension_admits_exact_and_rejects_one_extra_required_unit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::exact_target_matches_all_nested_capacities_and_historical_selection_statistic",
+          "crates/ofdm/tests/api_receiver_archive_bounded.rs::actual_precancelled_result_and_omitted_policy_admit_exact_zero_entry_target",
+          "crates/ofdm/tests/api_receiver_archive_bounded.rs::actual_complete_bound_matches_archive_and_preserves_all_legacy_query_planes_and_source",
+          "crates/merlin/tests/namespaces.rs::bounded_receiver_history_preserves_legacy_types_and_common_limit_contract"
+        ],
+        "python": {
+          "status": "exact installed native wheel; scientific copies match independent Rust process",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_common_limit_literal_is_immutable_and_checks_native_integer_domain",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_exact_bound_dimension_rejection_and_legacy_science_are_preserved",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_installed_preflight_copies_and_six_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_legacy_policy_rejection_and_unobserved_cancelled_outputs_remain_explicit"
+          ]
+        }
+      },
+      "evidence": "evidence.session.archive.bound",
+      "status": "status.session.archive.bound"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.receiver_archive_bounded",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/receiver_archive.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn receiver_archive_bounded( &self, policy: FullLoopReceiverArchivePolicy, limit: RetainedFootprint, ) -> ApiResult<FullLoopReceiverArchive>",
+        "mapping": "Thin public Rust preflight/copy with interpreter release. Python copy takes limit first and optional policy second; Rust takes policy then limit. No Python sizing/science.",
+        "delegated_operations": [],
+        "delegated_operation": "merlin::downstream::FullLoopResult::receiver_archive_bounded"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "receiver_archive_bounded",
+        "kind": "method",
+        "signature": "(self, /, limit, policy=None)",
+        "declaration": "merlin.downstream.FullLoopResult.receiver_archive_bounded"
+      },
+      "input_ownership": "ownership.session.archive.bound",
+      "units": "units.session.archive.bound",
+      "error_behavior": "errors.session.archive.bound",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "ApiResult<FullLoopReceiverArchive>",
+        "scope": "Preflight/exact-capacity detached target, preserving legacy statistics/queries."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::decoder_selection_skips_empty_and_non_llr_events_without_relabeling_original",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::omitted_roles_and_decoder_preserve_some_headers_with_zero_buffer_capacity",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::empty_archive_still_requires_one_root_and_rejection_preserves_source_and_aliases",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::preflight_preserves_protected_and_decoder_representation_errors",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::retained_handle_addition_overflow_is_a_resource_limit_before_copy",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::every_dimension_admits_exact_and_rejects_one_extra_required_unit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::exact_target_matches_all_nested_capacities_and_historical_selection_statistic",
+          "crates/ofdm/tests/api_receiver_archive_bounded.rs::actual_precancelled_result_and_omitted_policy_admit_exact_zero_entry_target",
+          "crates/ofdm/tests/api_receiver_archive_bounded.rs::actual_complete_bound_matches_archive_and_preserves_all_legacy_query_planes_and_source",
+          "crates/merlin/tests/namespaces.rs::bounded_receiver_history_preserves_legacy_types_and_common_limit_contract"
+        ],
+        "python": {
+          "status": "exact installed native wheel; scientific copies match independent Rust process",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_common_limit_literal_is_immutable_and_checks_native_integer_domain",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_exact_bound_dimension_rejection_and_legacy_science_are_preserved",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_installed_preflight_copies_and_six_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_legacy_policy_rejection_and_unobserved_cancelled_outputs_remain_explicit"
+          ]
+        }
+      },
+      "evidence": "evidence.session.archive.bound",
+      "status": "status.session.archive.bound"
+    },
+    {
+      "direction": "downstream",
+      "operation": "merlin.downstream.FullLoopResult.receiver_archive_retained_bound",
+      "rust_namespace": "merlin::downstream",
+      "rust_type_method": {
+        "export": "merlin::downstream::FullLoopResult",
+        "source_file": "bindings/python/src/full_loop/receiver_archive.rs",
+        "symbol": "PyFullLoopResult",
+        "signature": "pub fn receiver_archive_retained_bound( &self, policy: &FullLoopReceiverArchivePolicy, ) -> ApiResult<RetainedFootprint>",
+        "mapping": "Thin public Rust preflight/copy with interpreter release. Python copy takes limit first and optional policy second; Rust takes policy then limit. No Python sizing/science.",
+        "delegated_operations": [],
+        "delegated_operation": "merlin::downstream::FullLoopResult::receiver_archive_retained_bound"
+      },
+      "python_namespace": "merlin.downstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "receiver_archive_retained_bound",
+        "kind": "method",
+        "signature": "(self, /, policy=None)",
+        "declaration": "merlin.downstream.FullLoopResult.receiver_archive_retained_bound"
+      },
+      "input_ownership": "ownership.session.archive.bound",
+      "units": "units.session.archive.bound",
+      "error_behavior": "errors.session.archive.bound",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "ApiResult<RetainedFootprint>",
+        "scope": "Preflight/exact-capacity detached target, preserving legacy statistics/queries."
+      },
+      "compatibility": "compatibility.ds",
+      "requirement": [
+        "REQ-UIU-03",
+        "REQ-UIU-07"
+      ],
+      "checklist": [
+        "UIU-SESSION-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::decoder_selection_skips_empty_and_non_llr_events_without_relabeling_original",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::omitted_roles_and_decoder_preserve_some_headers_with_zero_buffer_capacity",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::empty_archive_still_requires_one_root_and_rejection_preserves_source_and_aliases",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::preflight_preserves_protected_and_decoder_representation_errors",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::retained_handle_addition_overflow_is_a_resource_limit_before_copy",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::every_dimension_admits_exact_and_rejects_one_extra_required_unit",
+          "crates/ofdm/src/api/full_loop/receiver_archive/bounded/tests.rs::exact_target_matches_all_nested_capacities_and_historical_selection_statistic",
+          "crates/ofdm/tests/api_receiver_archive_bounded.rs::actual_precancelled_result_and_omitted_policy_admit_exact_zero_entry_target",
+          "crates/ofdm/tests/api_receiver_archive_bounded.rs::actual_complete_bound_matches_archive_and_preserves_all_legacy_query_planes_and_source",
+          "crates/merlin/tests/namespaces.rs::bounded_receiver_history_preserves_legacy_types_and_common_limit_contract"
+        ],
+        "python": {
+          "status": "exact installed native wheel; scientific copies match independent Rust process",
+          "cases": [
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_common_limit_literal_is_immutable_and_checks_native_integer_domain",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_exact_bound_dimension_rejection_and_legacy_science_are_preserved",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_installed_preflight_copies_and_six_scientific_views_match_direct_rust",
+            "bindings/python/tests/test_receiver_archive_bounded.py::BoundedReceiverArchiveTests.test_legacy_policy_rejection_and_unobserved_cancelled_outputs_remain_explicit"
+          ]
+        }
+      },
+      "evidence": "evidence.session.archive.bound",
+      "status": "status.session.archive.bound"
     }
   ],
   "native_type_exports": {
@@ -73858,8 +74166,8 @@
         "name": "RetainedFootprint",
         "canonical_name": "RetainedFootprint",
         "module": "merlin.common",
-        "signature": "()",
-        "constructible": false
+        "signature": "(payload_bytes, ordered_entries=0, shared_roots=0)",
+        "constructible": true
       },
       {
         "name": "RunControl",
@@ -74311,6 +74619,13 @@
       "inventory_command": "Exact installed wheel; session-01-downstream-metadata-native/results.json",
       "native_sha256": "1dcf74e44d404725606aa1f44c9b58d46d7b0614550c34f30dce6b4539b956c1",
       "scope": "Scoped DS full-loop/observation/saved-project/archive, namespace and US metadata consumers with independent Rust references. No full-suite claim."
+    },
+    {
+      "version": "0.4.0",
+      "revision": "71505d9 plus independent input/preview/Designer metadata candidate",
+      "inventory_command": "Exact installed wheel; session-01-input-metadata-native/results.json",
+      "native_sha256": "db5d2ddc82052beab930f8db0e5305762c1bf1ac0e110546cd63dc1e53a689c7",
+      "scope": "Scoped input/admission/catalog/measurement/Designer/TX, both metadata roots and namespace consumers; independent Rust process reference. No full-suite claim."
     }
   ],
   "historical_rust_export_corrections": [

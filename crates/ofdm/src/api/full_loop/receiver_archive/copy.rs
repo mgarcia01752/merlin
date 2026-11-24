@@ -5,7 +5,16 @@
 //! Checked preflight before finite copies; reduction preserves original cells without synthesis.
 use super::*;
 
-fn selected<T>(values: &[T], limit: usize) -> impl ExactSizeIterator<Item = &T> {
+/// Selects the existing uniformly reduced original indices without allocating.
+///
+/// # Arguments
+/// * `T` - Existing observation element type, borrowed without cloning.
+/// * `values` - Original immutable typed cells; no numerical values are changed.
+/// * `limit` - Maximum retained count for this role; zero selects nothing.
+///
+/// # Returns
+/// Exact-size borrowed iteration using the historical floor(k*N/count) policy.
+pub(super) fn selected<T>(values: &[T], limit: usize) -> impl ExactSizeIterator<Item = &T> {
     let count = values.len().min(limit);
     (0..count).map(move |index| {
         // Wider integer arithmetic preserves floor(k*N/count) on both supported usize widths.
@@ -20,7 +29,18 @@ fn add(bytes: &mut usize, count: usize, element_size: usize) -> ApiResult<()> {
         .ok_or_else(|| limit("Receiver archive byte accounting overflow"))?;
     Ok(())
 }
-fn bytes(
+/// Computes the historical length-based archive statistic and policy admission.
+///
+/// # Arguments
+/// * `data`, `protected`, `decoder` - Original optional observations selected by the caller.
+/// * `policy` - Existing per-role, decoder-prefix and logical-byte ceilings.
+///
+/// # Returns
+/// Original retained_bytes statistic; no payload is copied or allocated.
+///
+/// # Errors
+/// Preserves checked arithmetic and historical logical-byte policy failures.
+pub(super) fn bytes(
     data: Option<&ConstellationResult>,
     protected: Option<&ProtectedConstellation>,
     decoder: Option<&FullLoopStageSnapshot>,

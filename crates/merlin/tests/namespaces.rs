@@ -53,6 +53,22 @@ fn downstream_retained_operations_keep_legacy_types_and_common_result_contract()
 
 #[cfg(feature = "native-input")]
 #[test]
+fn bounded_receiver_history_preserves_legacy_types_and_common_limit_contract() {
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopResult,
+        &docsis_ofdm_fec::api::FullLoopReceiverArchivePolicy,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::FullLoopResult::receiver_archive_retained_bound;
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopResult,
+        docsis_ofdm_fec::api::FullLoopReceiverArchivePolicy,
+        common::RetainedFootprint,
+    ) -> downstream::ApiResult<docsis_ofdm_fec::api::FullLoopReceiverArchive> =
+        downstream::FullLoopResult::receiver_archive_bounded;
+}
+
+#[cfg(feature = "native-input")]
+#[test]
 fn independent_input_and_preview_metadata_preserve_owner_types() {
     let _: fn(
         &docsis_ofdm_fec::api::SourceInput,

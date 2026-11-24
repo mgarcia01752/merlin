@@ -144,3 +144,34 @@ These views are diagnostics and do not rerun or modify decoding.
 Traceability: [archive design](../../development/features/unified-qt-workbench/design.md#uiu-ds-01-bounded-receiver-archive-prerequisite),
 [public boundary](../../architecture.md#unified-qt-public-api-boundary) and
 [downstream migration](../../development/checklist.md#task-uiu-ds-01).
+
+
+For aggregate retention admission, use the additive preflight/copy pair:
+
+```rust
+let required = result.receiver_archive_retained_bound(&policy)?;
+// Reserve required against the application's aggregate budget before copying.
+let history = result.receiver_archive_bounded(policy, required)?;
+```
+
+```python
+required = result.receiver_archive_retained_bound(policy)
+# Reserve these quantities against the application's budget before copying.
+history = result.receiver_archive_bounded(required, policy)
+```
+
+The bound includes fixed archive storage and exact final nested buffer capacities,
+with zero ordered entries and one detached shared root. Each insufficient caller
+limit rejects with ResourceLimit before observation copying. The original result,
+old histories and simultaneous source/target copies remain separately charged;
+passing the returned value does not itself make a reservation. Temporary copy
+builders have separate existing finite role/event/byte limits, without an aggregate
+scratch-byte or process-memory guarantee. Scientific queries, selection, missing
+coverage, coordinates and the old info.retained_bytes statistic keep their meaning.
+
+Native Python can construct immutable `merlin.common.RetainedFootprint` limits
+from nonnegative target-usize quantities, mirroring Rust's public struct literal.
+Omitted ordered-entry/shared-root counts are zero. Quantities are caller policy;
+Python does not calculate scientific storage. See
+[retained resources](retained-resources.md) and the
+[pre-production archive design](../../development/features/unified-qt-workbench/design.md#pre-production-detached-archive-bounds).

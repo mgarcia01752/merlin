@@ -78,7 +78,16 @@ scientific limits and historical archive statistics retain their meaning.
 Aggregate retention includes simultaneous copy source/target and candidate
 owners. Temporary backend builders and numerical scratch have separate finite
 execution limits, without an aggregate scratch-byte/RSS guarantee.
-Pre-production result/copy bounds and actual aggregate admission remain
+The downstream archive has a paired preflight and capacity-controlled copy:
+`result.receiver_archive_retained_bound(policy)` and
+`result.receiver_archive_bounded(...)`. They use the same common quantities;
+see [detached histories](full-loop-cells.md#detached-independent-histories) for
+Rust/Python argument order and the caller's independent reservation obligation.
+Native Python's immutable constructor mirrors the existing Rust struct literal.
+Negative or oversized target-usize constructor arguments reject during native
+conversion; constructing a value performs no measurement or reservation.
+
+Future full-run result/report bounds and actual aggregate host admission remain
 integration work. See the [API guide](README.md),
 [upstream sessions](../upstream/session.md) and
 [approved retention contract](../../development/features/unified-qt-workbench/retention-contract-decision.md).

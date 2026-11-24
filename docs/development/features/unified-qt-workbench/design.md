@@ -3188,7 +3188,7 @@ the complete original selected population from public report/query data, rather
 than silently limiting their oracle to the new display page. Retain their equations,
 tolerances and truth-plane separation.
 
-Level1 checks cover changed Qt Rust/QML consumers and relevant backend oracles,
+Level 1 checks cover changed Qt Rust/QML consumers and relevant backend oracles,
 formatting/Clippy, optimized UI and native probes, zero-exception boundary and
 traceability. Because this closes the downstream dependency frontier, complete
 relevant Qt/feature compatibility and the existing downstream Level2/Level3 gate
@@ -3584,6 +3584,83 @@ existing constructor so the live private pilot cache remains absent, matching th
 legacy archive. No scientific recomputation, new QAM filtering, view restriction,
 standard-library growth assumptions or late-only oversized-product rejection.
 The lead owns canonical documents, shared contracts, native bindings and primary
-acceptance. An isolated source preparation may edit only the archive owner and
-new tests/handoff. Future full-run result/report bounds and host admission remain
+acceptance. The [isolated archive handoff](agent-handoffs/archive-retention.md)
+records its owner-only source preparation and unexecuted acceptance tests. Future full-run result/report bounds and host admission remain
 separate gates; this public copy operation cannot complete UIU-SESSION-01.
+
+
+The [primary archive acceptance](validation.md#uiu-session-01-pre-production-detached-archive-bounds)
+passes 79 Rust/28 installed native cases and 24 independent reference cases, with
+617 Rust/588 native operation rows. Native common quantities gain an immutable
+constructor matching the existing Rust struct literal; all earlier operations
+remain unchanged. This accepts exact target preflight/copy, not aggregate host
+admission or future full-run bounds.
+
+### Pre-production upstream report bounds
+
+The actual upstream controller currently receives an externally asserted result
+reservation, then calls legacy run_with_control. UIU-SESSION-01 / REQ-UIU-03/07
+requires backend proof before that consumer can accept aggregate retention.
+An independent audit identifies all destinations in the existing BatchReport
+ownership walk: configuration/options/plan, grants and decoded word buffers,
+observation maps/traces/private gains, estimate/soft Arc records, source/canonical
+configuration/provenance and failure text. Existing logical limits remain intact.
+
+| Disposition / owner | Selected operation and enforcement |
+| --- | --- |
+| ADD focused private owner modules under `crates/ofdma/src/api` and `simulation`; EDIT existing `api/session.rs` registration | Simulation.batch_report_retained_bound(&self) -> ApiResult<RetainedFootprint> and Simulation.run_with_control_bounded(&mut self, control: &RunControl, limit: RetainedFootprint) -> ApiResult<BatchReport>. Freeze the current accepted options/configuration/observation policy; preflight checked quantities and all retained source exports before control claim or source progress. |
+| REUSE existing engine, profile/schedule and current-root visitors | Preserve legacy run/run_with_control and scientific execution. Use exact final-capacity destinations for the opt-in retained product, including nested and shared caches. Temporary builders use existing finite execution limits; no Vec growth-factor assumption. All complete/cancelled/failed reports fit the pre-admitted bound. A final footprint assertion verifies an invariant, never replaces pre-production admission or discards completed science. |
+| EDIT private owner-local configuration/observation/receiver/soft normalization helpers only where needed | Preserve source bytes/hashes, values, missing observations, ordering, identities and independent RX truth. Exhaustive fields/variants, checked arithmetic, explicit finite diagnostic policy. Introduce no new public scientific operation beyond the two demonstrated session methods. |
+| ADD focused Rust tests and LEAD native pairing | Exercise typed/document/measured configurations, observations disabled/enabled, exact/each-dimension exhaustion, overflow, complete/pre-cancelled/runtime partial results, unchanged accepted sessions and reusable controls after preflight rejection. Compare science with legacy execution and independent Rust/native processes; elapsed time is not an equality oracle. |
+
+The isolated upstream agent owns only `crates/ofdma` owner/test sources plus a
+unique report-retention handoff. Lead owns shared contracts, all manifests/locks,
+facade/native/Qt consumers, canonical documents, adoption and acceptance commits.
+No shared-shell or archive edits are delegated. Host simultaneous input/old/new
+charges and real Qt registration/wiring remain separate mandatory tasks.
+
+For these bounded operations, native Python needs to construct immutable common
+resource quantities, analogous to Rust's existing public struct literal. The lead
+will add RetainedFootprint(payload_bytes, ordered_entries=0, shared_roots=0) on the
+existing native class, preserving its three read-only fields and target-usize
+nonnegative conversion. This is caller policy/metadata, not a reservation or a
+scientific storage estimate. No extra Rust type or constructor is required.
+
+
+### Pre-production downstream result bounds
+
+The downstream worker must reserve its future public FullLoopResult alongside
+accepted inputs, requests, old results and queued presentation/archive copies.
+Current-root metadata cannot prove that future product. This is the remaining
+UIU-SESSION-01 / REQ-UIU-03/07 downstream backend prerequisite, independent of the
+archive and upstream report implementations.
+
+ADD FullLoopRequest.result_retained_bound(&self) -> ApiResult<RetainedFootprint>
+and FullLoopRequest.run_bounded(&self, control: &FullLoopControl,
+limit: RetainedFootprint) -> ApiResult<FullLoopResult> in focused private full-loop
+owner modules. Preserve legacy run and every scientific algorithm/limit. Preflight
+checked complete product quantities and freeze final input/settings/policy ownership
+before control.begin. Reuse existing engine orchestration, then enforce exact
+final retained capacities without changing science, missing observations, source
+provenance or completed partial outcomes. Temporary bounded engine/output builders
+use separate execution limits; final products are admitted before production.
+Do not assume Vec/String growth factors or reject only after a result exists.
+
+The bound covers the complete audited result graph: job/settings/inputs, detailed
+words, recovered file prefix, carrier metrics, receiver estimates, payload/NCP/
+protected constellations including private pilot cache, retained stage maps/events/
+contexts/roles and failure text. Bounds use accepted scientific geometry and
+existing finite word/cell/observation/source policies, plus fixed values and
+independent ordered-entry/shared-root quantities. Exhaustive field/variant audits
+and owner-local private helpers preserve module ownership. No public getter or
+new scientific API beyond these two demonstrated consumer operations is added.
+
+The isolated downstream agent may edit only `crates/ofdm` owners/tests excluding
+all receiver_archive files, plus a unique result-retention handoff. Shared contracts,
+manifest/lock, facade/native/Qt, registration, canonical documents and acceptance
+belong to the lead. Validate exact and insufficient dimensions, arithmetic
+overflow, observed/unobserved complete/pre-cancelled/source-file results, rejection
+before control/source advance, unchanged legacy queries/statistics and direct
+Rust/native parity. A final invariant assertion is diagnostic, never admission or
+an expected failure that discards completed science. Actual application charges
+and complete Qt/session acceptance remain separate gates.

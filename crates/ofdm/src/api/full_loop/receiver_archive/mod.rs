@@ -4,6 +4,7 @@
  */
 //! Detached actual receiver observations; no job, waveform, capture or stage-store ownership.
 use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
+mod bounded;
 mod copy;
 mod policy;
 use super::*;

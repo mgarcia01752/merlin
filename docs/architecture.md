@@ -1589,8 +1589,12 @@ FullLoopReceiverArchive, and upstream Simulation and BatchReport expose passive
 metadata through their existing public API and native Python wrappers; walker implementation
 support is excluded from the facade. This does not change scientific algorithms,
 project schemas, historical archive statistics or existing downstream exports.
-Future-result/copy bounds and actual Qt admission remain
-required before session acceptance.
+The [pre-production archive pair](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds)
+computes exact detached target quantities and checks every limit before copying.
+It preserves the legacy archive operation/statistic and scientific queries.
+Native Python can construct immutable common quantities, matching Rust's existing
+public struct literal. Future full-run result/report bounds and actual Qt
+aggregate admission remain required before session acceptance.
 
 The [independent input/idle-preview owner closure](development/features/unified-qt-workbench/design.md#independent-input-and-idle-preview-owner-closure)
 tracks partial input, draft, Designer and preview ownership outside those four

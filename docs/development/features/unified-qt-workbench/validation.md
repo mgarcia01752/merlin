@@ -3260,3 +3260,44 @@ host aggregate admission. Visible application DTO/JSON/queue/copy charges and re
 session wiring remain pending. Unchanged UI registration/presentation needs no
 Qt executable rebuild; unrelated full workspace/CLI/packaging regressions remain
 at Level 2/3. UIU-SESSION-01 remains unchecked; completed history is preserved.
+
+
+## UIU-SESSION-01 pre-production detached archive bounds
+
+[Design](design.md#pre-production-detached-archive-bounds),
+[exact source/command evidence](session-archive-bound-evidence.json) and
+[executed API cases](session-archive-bound-operation-test-results.json) trace
+REQ-UIU-03/07. Agent preparation `99351a2` was independently source-reviewed,
+then adopted exactly into the primary checkout. All legacy copy/helper bodies,
+selector/error ordering, scientific queries and info.retained_bytes are preserved.
+The protected constructor leaves its private live pilot cache absent, matching
+the legacy detached archive. New final nested Vec/String capacities are exact.
+
+Executed: **79 Rust cases** (14 private archive, 37 complete relevant full-loop/
+observation/archive/metadata/protected API and 28 facade) and **28 installed
+native cases**, with no failures or skips. Ten Rust and four native cases are new.
+All **24 independent Rust/native reference cases** cover both original saved
+projects, observed/unobserved and complete/pre-cancelled runs, each with default,
+reduced and omitted copy policies. Preflight equals actual complete metadata;
+historical info and all six role/QAM/decision/soft/decoder views match.
+
+Exact/insufficient byte/root dimensions, generic entry admission, arithmetic
+overflow, original source preservation and detached alias lifetime pass. Warnings-
+denied owner/native Clippy, independent no-default downstream check, formatting
+and fresh compiler/installed inventories pass. The local wheel's installed native
+extension hash matches its archive; installation is developer-venv-only.
+The resulting matrix is **617 Rust / 588 native** rows; all earlier 615/585 rows,
+types, aliases and methods/properties are preserved. The strict matrix validates
+all 46 retained successful named execution records against the fresh inventories;
+historical tests are not rerun to recreate evidence. The existing native common
+RetainedFootprint class additionally accepts a required payload argument and
+optional zero entry/root counts, mirroring Rust's public struct literal. Its
+properties stay immutable, and negative/overflow integer conversions reject.
+
+This Level 1 unit accepts target preflight and capacity-controlled copying.
+Applications still reserve its source/target and old aliases independently.
+Temporary builders have separate finite role/event/byte/input limits; no aggregate
+scratch/heap/RSS guarantee is claimed. Full-run DS/US bounds, actual host charges/
+workers and complete session Level2 remain pending. Unchanged UI/registration
+needs no executable rebuild; unrelated full workspace/CLI/packaging regressions
+remain at their applicable Level2/3 gates. UIU-SESSION-01 stays unchecked.

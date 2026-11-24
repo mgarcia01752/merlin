@@ -12,8 +12,11 @@ pub mod support;
 /// Includes the fixed root, requested storage capacity and nested/cached payloads.
 /// Shared payloads/edges may be conservatively repeated. Excludes allocator,
 /// private ordered-container node and reference-count bookkeeping from bytes;
-/// this is not total heap allocation or process RSS. It does not bound future
-/// results, temporary execution storage or independently retained consumer copies.
+/// this is not total heap allocation or process RSS. A value alone reserves
+/// nothing and does not establish a future-product bound. A documented bounded
+/// operation may supply preflight quantities or accept these as caller limits.
+/// Temporary execution storage and independently retained consumer copies remain
+/// outside the described owner and require their own policies/accounting.
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, Serialize)]
 pub struct RetainedFootprint {
     /// Fixed owned values plus requested payload storage capacity, in bytes.

@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-615 explicit public Rust operations and 585 installed native Python entries with
+617 explicit public Rust operations and 588 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/session-downstream-metadata-evidence.json)
+is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/session-archive-bound-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 115 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -414,3 +414,13 @@ cover private capacities, original inputs/recipes/PSD, aliases, rejection and
 independent Rust-process parity. The complete scoped gate passes 84 Rust and
 47 installed native cases. Future result/copy bounds and real session admission
 remain implementation gates.
+
+
+The [archive preflight/copy unit](../unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds)
+adds two paired public operations and a native immutable common-quantity literal
+constructor. All preceding 615/585 rows and existing types/aliases/member signatures
+are preserved; only the existing footprint class gains constructor availability.
+Ten new Rust and four native cases cover exact capacities, before-copy rejection,
+legacy scientific compatibility and detached lifetimes. Complete scoped acceptance
+passes 79 Rust/28 native cases and 24 independent reference cases. Future full-run
+bounds and actual aggregate session admission remain pending.

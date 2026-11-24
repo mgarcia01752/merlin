@@ -74,8 +74,72 @@ impl PyReceiverArchivePolicy {
 )]
 #[derive(Clone)]
 pub(super) struct PyReceiverArchive(api::FullLoopReceiverArchive);
+
+fn archive_policy(
+    policy: Option<&PyReceiverArchivePolicy>,
+) -> PyResult<api::FullLoopReceiverArchivePolicy> {
+    match policy {
+        Some(policy) => Ok(policy.0.clone()),
+        None => {
+            api::FullLoopReceiverArchivePolicy::new(api::FullLoopReceiverArchiveInput::default())
+                .map_err(error)
+        }
+    }
+}
+
 #[pymethods]
 impl PyFullLoopResult {
+    /// Preflights the complete detached target without copying observations.
+    ///
+    /// # Arguments
+    /// * `policy` - Optional validated history policy; None uses Rust defaults.
+    ///
+    /// # Returns
+    /// Immutable exact final payload/entry/root quantities for the paired bounded
+    /// copy. Source and old owners remain separately charged by the caller.
+    /// Temporary construction follows separate finite backend execution limits.
+    ///
+    /// # Errors
+    /// Preserves Rust policy/observation/overflow errors; releases the interpreter.
+    #[pyo3(signature=(policy=None))]
+    fn receiver_archive_retained_bound(
+        &self,
+        py: Python<'_>,
+        policy: Option<&PyReceiverArchivePolicy>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        let policy = archive_policy(policy)?;
+        py.detach(|| self.0.receiver_archive_retained_bound(&policy))
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
+    /// Copies actual receiver observations after checking every target limit.
+    ///
+    /// # Arguments
+    /// * `limit` - Caller-supplied immutable common payload/entry/root limits.
+    /// * `policy` - Optional finite history policy; None uses Rust defaults.
+    ///
+    /// # Returns
+    /// Detached immutable archive with enforced final capacities and unchanged
+    /// scientific queries, identities and historical info.retained_bytes.
+    ///
+    /// # Errors
+    /// ResourceLimit before copying if any dimension is insufficient; preserves
+    /// backend policy/observation errors. Rust work releases the interpreter.
+    #[pyo3(signature=(limit, policy=None))]
+    fn receiver_archive_bounded(
+        &self,
+        py: Python<'_>,
+        limit: &crate::retention::PyRetainedFootprint,
+        policy: Option<&PyReceiverArchivePolicy>,
+    ) -> PyResult<PyReceiverArchive> {
+        let policy = archive_policy(policy)?;
+        let limit = limit.0;
+        py.detach(|| self.0.receiver_archive_bounded(policy, limit))
+            .map(PyReceiverArchive)
+            .map_err(error)
+    }
+
     /// Detaches bounded actual receiver history through the authoritative Rust API.
     /// # Arguments
     /// * `policy` - Optional immutable history policy; None uses the public Rust defaults.

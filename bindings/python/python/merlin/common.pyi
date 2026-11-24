@@ -11,6 +11,7 @@ __version__: str
 
 class RetainedFootprint:
     """Rust payload quantities; excludes bookkeeping and Python copies, not RSS."""
+    def __init__(self, payload_bytes: int, ordered_entries: int = 0, shared_roots: int = 0) -> None: ...
     @property
     def payload_bytes(self) -> int: ...
     @property
