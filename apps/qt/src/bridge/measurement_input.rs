@@ -233,7 +233,9 @@ pub struct MeasurementInputsRust {
     pub(super) model: Model,
     // Release independently retained model data before its covering reservation.
     pub(super) model_guard: Option<crate::shell::RetentionReservation>,
-    pub(super) designer: Option<crate::downstream::inputs::measurement_input::designer::Session>,
+    pub(super) designer: Option<
+        crate::shell::Retained<crate::downstream::inputs::measurement_input::designer::Session>,
+    >,
     pub(super) designer_work: Option<super::rxmer_designer::Work>,
     pub(super) designer_export: Option<super::rxmer_export::State>,
 }
@@ -252,6 +254,41 @@ fn parse_selection<T: serde::de::DeserializeOwned>(document: &str) -> Result<T, 
     serde_json::from_str(document).map_err(|error| error.to_string())
 }
 impl MeasurementInputsRust {
+    /// Admits an actual Designer candidate before replacing the previous GUI owner.
+    /// # Arguments
+    /// * `session` - Complete finite original/profile/recipe editing snapshot.
+    /// # Returns
+    /// Unit after one data-and-guard replacement on this exact canonical host.
+    /// # Errors
+    /// Metadata or host rejection leaves the old session and all aliases unchanged.
+    pub(super) fn replace_designer(
+        &mut self,
+        session: crate::downstream::inputs::measurement_input::designer::Session,
+    ) -> Result<(), String> {
+        let admitted = session.admit(self.context.application.budget())?;
+        self.designer = Some(admitted);
+        Ok(())
+    }
+
+    /// Prepares one independently admitted Session input for generation or export.
+    /// # Returns
+    /// Actual finite clone carrying its own guard through worker completion/drop.
+    /// The GUI source remains charged separately; clone capacities are measured.
+    /// # Errors
+    /// Missing session, metadata or host rejection preserves the current GUI owner.
+    pub(super) fn designer_copy(
+        &self,
+    ) -> Result<
+        crate::shell::Retained<crate::downstream::inputs::measurement_input::designer::Session>,
+        String,
+    > {
+        self.designer
+            .as_ref()
+            .ok_or("Open RxMER Designer first.")?
+            .value()
+            .clone_admitted(self.context.application.budget())
+    }
+
     fn apply_measurement(
         &mut self,
         rxmer: bool,

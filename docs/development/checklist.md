@@ -581,6 +581,8 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 
   The [receiver registry unit](features/unified-qt-workbench/validation.md#uiu-session-01-receiver-registry-storage) admits QAM slot/status capacities before replacement and normalizes performance buffers to occupied, already charged slots. Both initial catalogs admit before either replaces old history. Focused evidence preserves the initial fixture-baseline failures and corrected passes; fixed infrastructure, Designer, retained presentation and full SESSION gates remain open. Keep this parent unchecked.
 
+  The [Designer Session input unit](features/unified-qt-workbench/validation.md#uiu-session-01-retained-designer-session-copies) admits actual GUI sessions and both independent generation/export Session copies, preserving guards through worker completion and rejected replacement. Existing document ceilings have separate named purposes. Focused runtime evidence and the remaining direct prior-Ready export regression gap are linked there. Worker envelopes/output queues, export products, retained presentation/fixed infrastructure and full SESSION gates remain pending; keep this parent unchecked.
+
 <a id="task-uiu-shell-01"></a>
 - [ ] **UIU-SHELL-01** Build persistent direction tabs and scoped shell actions.
   Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-25](../requirements.md#req-uiu-25).

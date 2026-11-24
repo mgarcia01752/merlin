@@ -4,6 +4,9 @@
  */
 //! Export worker snapshots; encoding and filesystem publication belong to pnm-input.
 use super::measurement_input::bridge;
+use crate::downstream::common::constants::{
+    MAX_DESIGNER_EXPORT_SELECTION_BYTES, MAX_DESIGNER_RECIPE_DOCUMENT_BYTES,
+};
 use crate::downstream::inputs::measurement_input::designer::Request;
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
@@ -94,23 +97,20 @@ impl bridge::MeasurementInputs {
             if matches!(self.rust().designer_export, Some(State::Working { .. })) {
                 return Err("Wait for the previous export operation.".into());
             }
-            self.as_mut().rust_mut().designer_export.take();
             let text = document.to_string();
             let selected = selection.to_string();
-            if text.len() > 24 * 1024 || selected.len() > 1024 {
+            if text.len() > MAX_DESIGNER_RECIPE_DOCUMENT_BYTES
+                || selected.len() > MAX_DESIGNER_EXPORT_SELECTION_BYTES
+            {
                 return Err("Export request exceeds the input limit.".into());
             }
             let request: Request =
                 serde_json::from_str(&text).map_err(|error| error.to_string())?;
             let selection: Selection =
                 serde_json::from_str(&selected).map_err(|error| error.to_string())?;
-            let session = self
-                .rust()
-                .designer
-                .clone()
-                .ok_or("Open RxMER Designer first.")?;
+            let session = self.rust().designer_copy()?;
             let task = spawn(move |cancel, completed| {
-                let frames = session.export_frames(
+                let frames = session.value().export_frames(
                     &request,
                     selection.first,
                     selection.last,
@@ -142,7 +142,7 @@ impl bridge::MeasurementInputs {
                 };
                 let pnm_error = pnm_check.as_ref().err().map(|error| error.to_string());
                 let summary = pnm_check.map_or(Value::Null, |summary| json!(summary));
-                let context = json!({"designer":request,"first_capture":selection.first,"last_capture":selection.last,"baseline_sha256":session.hashes,"profile_sha256":session.profile.source.sha256});
+                let context = json!({"designer":request,"first_capture":selection.first,"last_capture":selection.last,"baseline_sha256":session.value().hashes,"profile_sha256":session.value().profile.source.sha256});
                 Ok(Outcome::Ready(Prepared {
                     frames,
                     policy,

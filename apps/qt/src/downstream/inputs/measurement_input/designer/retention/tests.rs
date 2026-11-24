@@ -102,3 +102,83 @@ fn flat_private_mask_and_imported_session_recipe_storage_are_passive_actual_owne
     drop(session);
     assert!(profile_lifetime.upgrade().is_none());
 }
+
+#[test]
+fn independent_session_buffers_preserve_values_and_shared_public_metadata() {
+    // Independent spare storage anchors; each expected delta uses actual
+    // requested capacity after a move or reserve, never Clone capacity equality.
+    const EXTRA_HASH_SLOTS: usize = 13;
+    const EXTRA_ORIGIN_SLOTS: usize = 7;
+    const EXTRA_TEXT_BYTES: usize = 41;
+    let mut session = super::super::admission_tests::fixture();
+    let original = session.origins[0].design.original_bytes().to_vec();
+    let profile = count::profile_children(&session.profile).unwrap();
+    let catalog = session.catalog.retained_footprint().unwrap();
+    let request = serde_json::to_value(&session.request).unwrap();
+    let record = serde_json::to_value(&session.origins[0].record).unwrap();
+
+    let mut expected = session.retained_resources().unwrap();
+    let old = session.hashes.capacity();
+    let mut hashes = Vec::with_capacity(old + EXTRA_HASH_SLOTS);
+    hashes.append(&mut session.hashes);
+    expected.payload_bytes += (hashes.capacity() - old) * size_of::<String>();
+    session.hashes = hashes;
+    assert_eq!(session.retained_resources().unwrap(), expected);
+
+    let text = &mut session.hashes[0];
+    let old = text.capacity();
+    text.reserve_exact(old + EXTRA_TEXT_BYTES);
+    expected.payload_bytes += text.capacity() - old;
+    assert_eq!(session.retained_resources().unwrap(), expected);
+
+    let old = session.origins.capacity();
+    let mut origins = Vec::with_capacity(old + EXTRA_ORIGIN_SLOTS);
+    origins.append(&mut session.origins);
+    expected.payload_bytes += (origins.capacity() - old) * size_of::<Origin>();
+    session.origins = origins;
+    assert_eq!(session.retained_resources().unwrap(), expected);
+
+    let text = &mut session.request.source;
+    let old = text.capacity();
+    text.reserve_exact(old + EXTRA_TEXT_BYTES);
+    expected.payload_bytes += text.capacity() - old;
+    assert_eq!(session.retained_resources().unwrap(), expected);
+
+    // The Request recipe and original Record recipe are independent owners.
+    for request_recipe in [true, false] {
+        let recipe = if request_recipe {
+            &mut session.request.recipe
+        } else {
+            &mut session.origins[0].record.recipe
+        };
+        let old = recipe.edits.capacity();
+        let mut edits = Vec::with_capacity(old + EXTRA_EDIT_SLOTS);
+        edits.append(&mut recipe.edits);
+        expected.payload_bytes +=
+            (edits.capacity() - old) * size_of::<merlin::downstream::inputs::ValueEdit>();
+        recipe.edits = edits;
+        assert_eq!(session.retained_resources().unwrap(), expected);
+    }
+
+    // Imported originals retain their own JSON bytes in addition to the public
+    // design's separately owned original/cache. Capacity changes preserve text.
+    let Baseline::Imported { original: stored } = &mut session.origins[0].record.baseline else {
+        panic!("Actual imported fixture");
+    };
+    let serde_json::Value::String(text) = &mut stored["base64"] else {
+        panic!("Actual original capture encoding");
+    };
+    let old = text.capacity();
+    text.reserve_exact(old + EXTRA_TEXT_BYTES);
+    expected.payload_bytes += text.capacity() - old;
+    assert_eq!(session.retained_resources().unwrap(), expected);
+    assert_eq!(session.retained_resources().unwrap(), expected);
+    assert_eq!(serde_json::to_value(&session.request).unwrap(), request);
+    assert_eq!(
+        serde_json::to_value(&session.origins[0].record).unwrap(),
+        record
+    );
+    assert_eq!(session.origins[0].design.original_bytes(), original);
+    assert_eq!(count::profile_children(&session.profile).unwrap(), profile);
+    assert_eq!(session.catalog.retained_footprint().unwrap(), catalog);
+}

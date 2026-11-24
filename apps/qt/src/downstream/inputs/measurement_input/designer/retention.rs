@@ -4,12 +4,9 @@
  */
 
 //! Owner-local Designer record/design/session metadata; private fields stay private.
-use super::{Baseline, Origin, Record};
-#[cfg(test)]
-use super::{Request, Session};
+use super::{Baseline, Origin, Record, Request, Session};
 use crate::{downstream::inputs::retention as count, shell::RetainedResources};
 use merlin::downstream::inputs::RxMerDesign;
-#[cfg(test)]
 use merlin::downstream::{ProfileCapture, SourceProfileFrame};
 use std::mem::size_of;
 
@@ -87,7 +84,6 @@ pub(super) fn origin_resources(origin: &Origin) -> Result<RetainedResources, Str
 /// profile pointee/root, and complete public catalog/design quantities repeated per owner.
 /// # Errors
 /// Public metadata or checked resource overflow, with unchanged source/recipe/selection.
-#[cfg(test)]
 pub(super) fn session_resources(session: &Session) -> Result<RetainedResources, String> {
     let Session {
         hashes,

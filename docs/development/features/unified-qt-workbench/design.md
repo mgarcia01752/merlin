@@ -4198,3 +4198,30 @@ query semantics and completed result ownership remain unchanged. Run affected
 receiver/lifecycle tests, Clippy/format/boundary, relevant QML and current executable
 probes; no Python rebuild is needed for unchanged science/API/schema/registration.
 Full SESSION and later task acceptance remain separately pending.
+
+### UIU-SESSION-01 retained Designer session copies
+
+The existing GUI Designer Session and the independent copies sent to generation
+and export workers are concrete retained input owners under REQ-UIU-03/06/07 and
+UIU-SESSION-01. Reuse existing Retained/admit_model and the owner-local Session
+visitor, including actual hash/origin/request capacities, original profile/catalog
+and design children. No new public scientific API or memory framework is needed.
+The [source-only handoff](agent-handoffs/designer-session-admission.md) records
+preparation separately from primary consumer validation.
+
+| Path/symbol and disposition | Current contract and focused acceptance |
+| --- | --- |
+| EDIT `apps/qt/src/downstream/inputs/measurement_input/designer.rs`, `designer/retention.rs`, its tests; ADD `designer/admission_tests.rs` | ADAPT frozen source proposal `06582379172bf2b708723c4f8ee49bc062a2505e`: enable complete passive Session metadata and actual candidate/clone admission. Source-only checks do not establish runtime acceptance. Preserve existing scientific bodies and independent numerical assertions. |
+| EDIT `apps/qt/src/bridge/measurement_input.rs` | Store the actual GUI Session as Retained<Session>; replace it only after candidate admission. Reuse one typed admitted-copy helper for both actual worker consumers, measuring the finite clone rather than predicting its capacities. |
+| EDIT `apps/qt/src/bridge/rxmer_designer.rs`, `rxmer_export.rs`; ADD `rxmer_designer/retention_tests.rs` | Begin admits before replacing the previous session. Preview borrows the same owner. Generation/export workers retain independently admitted Session inputs through their actual completion/destruction. Test rejected replacement/copy in each positive dimension, unchanged previous controls/profile/original metadata, live worker plus replaced GUI overlap, cancellation and final disposal. |
+| EDIT `apps/qt/src/downstream/common/constants.rs` | Name the existing recipe, playback-selection and export-scope document ceilings with their separate UTF-8 byte purposes. Recipe and playback currently share a value but remain independent contracts. Values, boundary comparisons and existing diagnostics remain unchanged. |
+
+Request/control/worker-envelope data, generated capture queues, export Prepared
+products and retained QML copies remain separate pending owners. This unit covers
+Session input copies only and does not claim complete worker or SESSION closure.
+Export preparation keeps its old ready snapshot until the admitted copy and worker
+are successfully prepared; a new input-admission failure must not discard it.
+Keep existing error/metadata/invokable signatures and numerical/export behavior.
+Run relevant Designer/editor/export consumers, Clippy/format/boundary, affected
+QML and fresh executable probes. Reuse unchanged science/native compatibility;
+full task/milestone acceptance remains pending.

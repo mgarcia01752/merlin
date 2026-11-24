@@ -4,6 +4,9 @@
  */
 //! Designer batch lifecycle; the GUI adopts only a complete, current draft.
 use super::measurement_input::bridge;
+use crate::downstream::common::constants::{
+    MAX_DESIGNER_PLAYBACK_DOCUMENT_BYTES, MAX_DESIGNER_RECIPE_DOCUMENT_BYTES,
+};
 use crate::downstream::help::AdmissionError;
 use crate::downstream::inputs::measurement_input::{
     designer::{Request, Session},
@@ -31,7 +34,7 @@ pub(super) struct Work {
 }
 fn request(document: &QString) -> Result<Request, String> {
     let text = document.to_string();
-    if text.len() > 24 * 1024 {
+    if text.len() > MAX_DESIGNER_RECIPE_DOCUMENT_BYTES {
         return Err("Designer recipe exceeds 24 KiB.".into());
     }
     serde_json::from_str(&text).map_err(|error| error.to_string())
@@ -68,7 +71,7 @@ impl bridge::MeasurementInputs {
             )?;
             let grid = &session.profile.key.grid;
             let value = json!({"request":session.request,"imported_count":session.hashes.len(),"first_hz":grid.frequency(0).map_err(|error|error.to_string())?,"last_hz":grid.frequency(grid.sample_count-1).map_err(|error|error.to_string())?,"spacing_hz":grid.spacing_hz,"limits":merlin::downstream::inputs::RxMerDesign::limits()});
-            self.as_mut().rust_mut().designer = Some(session);
+            self.as_mut().rust_mut().replace_designer(session)?;
             Ok(value)
         })();
         response(result)
@@ -92,6 +95,7 @@ impl bridge::MeasurementInputs {
                 .designer
                 .as_ref()
                 .ok_or("Open Designer first.")?
+                .value()
                 .preview_window(
                     &request(document)?,
                     usize::try_from(position).map_err(|_| "Invalid capture position.")?,
@@ -116,12 +120,15 @@ impl bridge::MeasurementInputs {
                 return Err("Designer is already running.".into());
             }
             let request = request(document)?;
-            let session = self.rust().designer.clone().ok_or("Open Designer first.")?;
-            let total = session.preview(&request, 1)?["capture_count"]
+            if self.rust().designer.is_none() {
+                return Err("Open Designer first.".into());
+            }
+            let session = self.rust().designer_copy()?;
+            let total = session.value().preview(&request, 1)?["capture_count"]
                 .as_u64()
                 .unwrap_or(0);
             let text = options.to_string();
-            if text.len() > 24 * 1024 {
+            if text.len() > MAX_DESIGNER_PLAYBACK_DOCUMENT_BYTES {
                 return Err("Selection exceeds 24 KiB.".into());
             }
             let options: Options =
@@ -133,8 +140,8 @@ impl bridge::MeasurementInputs {
                 receiver,
                 cancel: cancel.clone(),
                 completed: completed.clone(),
-                hashes: session.hashes.clone(),
-                profile_hash: session.profile.source.sha256.clone(),
+                hashes: session.value().hashes.clone(),
+                profile_hash: session.value().profile.source.sha256.clone(),
                 options,
                 imported: request.source == "imported",
             };
@@ -145,7 +152,7 @@ impl bridge::MeasurementInputs {
             std::thread::Builder::new()
                 .name("rxmer-designer".into())
                 .spawn(move || {
-                    let result = session.build(&request, &cancel, &completed);
+                    let result = session.value().build(&request, &cancel, &completed);
                     let _ = sender.send(result);
                 })
                 .map_err(|error| error.to_string())?;
@@ -190,6 +197,10 @@ impl bridge::MeasurementInputs {
         }
     }
 }
+
+#[cfg(test)]
+#[path = "rxmer_designer/retention_tests.rs"]
+mod retention_tests;
 
 fn adopt(
     work: Work,
@@ -251,7 +262,13 @@ fn adopt(
 #[cfg(test)]
 mod tests {
     use super::*;
-    fn fixture() -> (Session, Model) {
+
+    /// Reuses the original bounded two-capture Designer/editor fixture.
+    /// # Returns
+    /// A validated Session and the existing model with untouched accepted captures.
+    /// # Panics
+    /// Panics if the checked sample workbench or original association no longer loads.
+    pub(super) fn fixture() -> (Session, Model) {
         let project: crate::downstream::workbench::project_file::Project = serde_json::from_slice(
             include_bytes!("../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json"),
         )

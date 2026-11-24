@@ -1601,6 +1601,14 @@ catalog preparation admits both registries before replacing either old history.
 The fixed Store/Context graph remains separately pending. See the
 [registry storage design](development/features/unified-qt-workbench/design.md#uiu-session-01-receiver-registry-storage).
 
+The GUI RxMER Designer Session and independently cloned generation/export Session
+inputs use the same actual-capacity admission. Begin preserves its previous owner
+on rejection; workers keep their input guard through actual completion even after
+GUI replacement or destruction. Existing preview/build/export operations borrow
+these owners. Request/control envelopes, generated capture queues and export
+Prepared products remain distinct pending owners. See the
+[Designer input design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-designer-session-copies).
+
 The shared [terminal transport](development/features/unified-qt-workbench/design.md#uiu-session-01-terminal-worker-transport)
 under `shell/worker.rs` keeps genuine run leases outside worker unwinding and
 tags queued callbacks explicitly. Known completion can release admission after

@@ -246,6 +246,14 @@ pub(crate) const DESIGNER_MIN_AXIS_PADDING_DB: f64 = 1.0;
 /// Vertical drawing tick intervals; independent of capture count and recipe scope.
 pub(crate) const DESIGNER_METRIC_TICK_INTERVALS: u32 = 4;
 
+/// Existing serialized Designer recipe/source-control input ceiling in UTF-8 bytes.
+pub(crate) const MAX_DESIGNER_RECIPE_DOCUMENT_BYTES: usize = 24 * 1024;
+/// Existing serialized parent playback/selection input ceiling in UTF-8 bytes.
+/// Equal to the recipe ceiling today, with an independent protocol purpose.
+pub(crate) const MAX_DESIGNER_PLAYBACK_DOCUMENT_BYTES: usize = 24 * 1024;
+/// Existing export capture-range/clamping/collection input ceiling in UTF-8 bytes.
+pub(crate) const MAX_DESIGNER_EXPORT_SELECTION_BYTES: usize = 1024;
+
 /// Existing receiver selector message ceiling; independent of response/editor documents.
 pub(crate) const MAX_RECEIVER_SELECTION_DOCUMENT_BYTES: usize = 4096;
 /// Existing UI run selector sentinel; not an open physical-bin or source-profile filter.

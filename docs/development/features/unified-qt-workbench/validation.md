@@ -3946,3 +3946,33 @@ Python, full workspace, CLI or packaging runs. Designer Session/work/export,
 retained presentation and fixed infrastructure owners remain pending, together
 with full SESSION Level 2 and applicable milestone/final Level 3. UIU-SESSION-01
 stays unchecked and completed downstream history is preserved.
+
+
+## UIU-SESSION-01 retained Designer session copies
+
+The [focused design](design.md#uiu-session-01-retained-designer-session-copies)
+now admits the actual GUI Designer Session and independently prepared Session
+inputs for both generation and export workers. Preview borrows the same charged
+owner; actual copies retain their guards through closure completion even after
+GUI replacement/destruction. Metadata includes private original/profile/catalog/
+design/request children and actual cloned capacities, preserving existing science.
+Rejected replacement/copy leaves prior controls/profile/original metadata intact.
+Export preparation no longer discards its old Ready snapshot before successful
+input admission and worker creation. Existing document ceilings are named by
+their independent recipe/playback/export purposes, with unchanged values/errors.
+
+[Primary execution record](session-designer-input-evidence.json) contains 41
+passing unique Rust cases and a final five-case bridge pass after naming the
+unchanged limits. Seventeen QML behaviors/four hooks pass without warnings;
+all-target Clippy, formatting/boundary, optimized build and six fresh desktop
+probes pass. Read-only QA confirms Session ownership/lifetimes/rollback and no
+Context cycle. The direct prior-Ready export rejection/spawn-failure runtime case
+remains a documented gap for the next export Prepared/State acceptance; source
+inspection alone is not reported as executed coverage. Source-agent preparation
+and exact unchanged scientific/native/export evidence are separately identified.
+No new Python, full workspace, CLI or packaging execution is claimed.
+
+Request/control/worker envelopes, capture queues, export products, retained QML
+and fixed infrastructure owners remain pending. This unit accepts Session input
+copies only. Full SESSION Level 2 and applicable milestone/final Level 3 still
+precede the parent checkbox; all completed downstream history remains preserved.

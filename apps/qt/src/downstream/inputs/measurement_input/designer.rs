@@ -13,6 +13,7 @@ use crate::downstream::{
     },
     workbench::session::profile_source,
 };
+use crate::shell::{Retained, RetainedResources, RetentionBudget};
 use merlin::downstream::{
     inputs::{RxMerDesign, RxMerDesignPosition, RxmerRecipe},
     CaptureTime, MeasurementViewport, MerDb, NamedCapture, ProfileCapture, RxMerFrame, ScenarioKey,
@@ -243,6 +244,55 @@ impl Session {
             request,
         })
     }
+
+    /// Admits this actual immutable Designer session before storing or dispatching it.
+    ///
+    /// # Arguments
+    /// * `budget` - Exact target counter also covering old, candidate and worker owners.
+    ///
+    /// # Returns
+    /// Existing Retained ownership of all Session children and concrete storage layouts.
+    /// Keep the returned guard with its data through queues, adoption and final disposal.
+    ///
+    /// # Errors
+    /// Public metadata, checked layout arithmetic or any aggregate dimension rejection.
+    pub(crate) fn admit(self, budget: &RetentionBudget) -> Result<Retained<Self>, String> {
+        let resources = self.retained_resources()?;
+        crate::downstream::inputs::retention::admit_model(self, resources, budget)
+    }
+
+    /// Measures this actual Designer session without materializing or exporting captures.
+    ///
+    /// # Returns
+    /// Session fixed layout once, owned capacities and conservative complete shared
+    /// profile/catalog/design payloads and roots. No source, recipe or cache is mutated.
+    ///
+    /// # Errors
+    /// Existing public metadata or checked payload/population overflow.
+    pub(crate) fn retained_resources(&self) -> Result<RetainedResources, String> {
+        retention::session_resources(self)
+    }
+
+    /// Prepares and admits one actual immutable session copy for a worker or old owner.
+    ///
+    /// # Arguments
+    /// * `budget` - Canonical target counter; the borrowed source stays independently charged.
+    ///
+    /// # Returns
+    /// A separately charged copy, measured after its finite clone preparation. Clone
+    /// capacities need not equal the source's capacities. Immutable shared payloads are
+    /// conservatively covered by each owner; this does not bound temporary preparation peaks.
+    ///
+    /// # Errors
+    /// Metadata, checked arithmetic or target rejection drops the candidate and leaves
+    /// this source, its original bytes and all existing reservations unchanged.
+    pub(crate) fn clone_admitted(
+        &self,
+        budget: &RetentionBudget,
+    ) -> Result<Retained<Self>, String> {
+        self.clone().admit(budget)
+    }
+
     fn count(&self, request: &Request) -> Result<usize, AdmissionError> {
         if request.source == "imported" && request.recipe.random_variation.is_some() {
             return Err("Random variation requires a new flat sequence.".into());
@@ -489,6 +539,9 @@ impl Session {
         Ok(captures)
     }
 }
+
+#[cfg(test)]
+mod admission_tests;
 
 #[cfg(test)]
 mod tests {
