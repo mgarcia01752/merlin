@@ -4,6 +4,8 @@
  */
 //! Actual upstream sessions and reports, without another scientific interface.
 mod failure;
+mod project;
+mod source;
 use crate::shell::{
     spawn_worker, Direction, Retained, RetainedResources, RetentionBudget, RetentionError,
     RetentionReservation, RunCancellation, RunLease, RunToken, SessionKey, WorkerEvent,
@@ -17,6 +19,7 @@ use merlin::{
         ReceiverObservationPolicy, RunControl, Simulation,
     },
 };
+use source::retain_measured_source;
 use std::{
     io,
     mem::size_of,
@@ -42,6 +45,7 @@ type Events = WorkerReceiver<RetainedReport, RunFailure>;
 
 struct SessionStorage {
     simulation: Option<Simulation>,
+    measured_source: Option<Retained<Box<[u8]>>>,
 }
 
 /// Immutable source inventory from the successfully admitted measured plan.
@@ -197,7 +201,7 @@ impl PreparedSession {
         simulation
             .set_receiver_observation_policy(observations)
             .map_err(AdmissionError::Backend)?;
-        Self::retain_simulation(simulation, budget, None)
+        Self::retain_simulation(simulation, budget, None, None)
     }
 
     /// Admits a complete measured plan through the existing public native owners.
@@ -220,6 +224,7 @@ impl PreparedSession {
         budget: &RetentionBudget,
     ) -> Result<Self, AdmissionError> {
         let measured = plan.admit().map_err(AdmissionError::Backend)?;
+        let measured_source = retain_measured_source(&plan, budget)?;
         let inventory = MeasuredInputInfo {
             ucd_fragments: plan.ucd_fragments.len(),
             rxmer_captures: plan.rxmer.len(),
@@ -236,13 +241,14 @@ impl PreparedSession {
         simulation
             .set_receiver_observation_policy(observations)
             .map_err(AdmissionError::Backend)?;
-        Self::retain_simulation(simulation, budget, Some(inventory))
+        Self::retain_simulation(simulation, budget, Some(inventory), Some(measured_source))
     }
 
     fn retain_simulation(
         simulation: Simulation,
         budget: &RetentionBudget,
         measured_input: Option<MeasuredInputInfo>,
+        measured_source: Option<Retained<Box<[u8]>>>,
     ) -> Result<Self, AdmissionError> {
         let scientific = simulation
             .retained_footprint()
@@ -253,6 +259,7 @@ impl PreparedSession {
             .map_err(AdmissionError::Retention)?;
         let session = Arc::new(reservation.retain(Mutex::new(SessionStorage {
             simulation: Some(simulation),
+            measured_source,
         })));
         Ok(Self {
             session,

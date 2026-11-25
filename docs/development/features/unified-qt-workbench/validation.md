@@ -5249,3 +5249,35 @@ this backend prerequisite was validated independently. Restore and adapt those
 files after the prerequisite commit, then require the original native Apply/export/
 reload/run regression to pass before accepting the source/write consumer unit.
 FILE01 remains unchecked until direction file/dirty routing and all task gates pass.
+
+## UIU-FILE-01 native source and safe-write unit
+
+The [focused receipt](file-source-evidence.json) covers retained input/export
+and shared atomic writing, with FILE01 still unchecked. The actual native draft
+Apply regression first failed because Save restored the old source seed. After
+the independent public-input prerequisite and native export adaptation, the same
+regression passes: accepted fields, original bytes/hash and real FEC/source
+outcomes survive project reload. A separate signed-zero transport case passes.
+
+Exact configuration and measured-plan exports preserve both numerologies,
+accepted runtime overrides and receiver/soft-observation policy. Five actual
+Qt-exported projects, including the native-edited source, load and run through
+the existing isolated installed wheel and match separately executed Rust results.
+The driver verifies the installed native artifact hash and legacy Python alias;
+Python supplies no scientific calculations. No new wheel is necessary for this
+Qt-only unit; it reuses the prerequisite's freshly built native artifact.
+
+Complete affected upstream, legacy file/loader and original-input protection
+checks pass, along with bounded serializer, actual-filesystem writer, formatting,
+Qt Clippy and the optimized executable build. Measured-source retention covers
+rollback and final-alias disposal under the existing application counter. The
+writer rejects nonregular/dangling destinations and preserves pre-existing
+sibling files after create-new collisions. Parent-directory fsync is not added;
+Windows filesystem runtime behavior remains unverified.
+
+This unit changes no QML presentation or bridge registration, so native visual
+acceptance remains with the upcoming file interaction rather than being inferred
+from Rust tests. Open/Save routing, captured-revision acknowledgement, both-tab
+dirty/close prompts and actual picker/menu interactions remain pending. Full
+workspace/native/Qt/QML/CLI/packaging regressions remain at their applicable task
+and final gates; no unexecuted suite is reported passed.

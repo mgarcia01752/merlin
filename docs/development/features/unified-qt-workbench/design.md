@@ -5548,7 +5548,13 @@ native routing consumes it through the already approved controller-slot worker.
 Acceptance here covers exact both-mode source/provenance and policy/options,
 actual public load/run parity, retention rollback/alias disposal, Busy preservation,
 legacy downstream writes/original protection, formatting, Qt Clippy/build and
-boundary checks. Installed-wheel UI-produced parity remains the full FILE01 gate.
+boundary checks. The [scoped source/write evidence](validation.md#uiu-file-01-native-source-and-safe-write-unit)
+also runs five actual Qt-exported projects through the existing freshly installed
+wheel. Native chooser/menu/dirty routing remains the full FILE01 gate. Edited
+configurations use accepted `document` plus exact `original_document` only when
+their canonical JSON strings differ; this retains signed-zero representations
+that ordinary numeric equality would hide. The original native Apply regression
+now verifies actual independent run results and source/hash ownership.
 
 #### UIU-FILE-01 edited-configuration provenance prerequisite
 

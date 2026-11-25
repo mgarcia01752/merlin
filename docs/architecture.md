@@ -2027,6 +2027,14 @@ prerequisite](development/features/unified-qt-workbench/design.md#uiu-file-01-ed
 keeps current accepted configuration JSON separate from optional exact original
 source text through configuration input `original_document`; public admission
 validates both and preserves source hashes without restoring pre-edit values.
+The native source/export unit now lives in `upstream/session/source.rs` and
+`session/project.rs`: exact measured-plan bytes share the existing session
+budget, while current configuration fields and original provenance remain
+separate. Canonical string comparison preserves signed-zero edits. The shared
+`shared/project_file.rs` owns bounded sibling writing only; directional callers
+retain public validation and host-wide original-input protection. Its
+[focused evidence](development/features/unified-qt-workbench/validation.md#uiu-file-01-native-source-and-safe-write-unit)
+does not establish native file routing or dirty-prompt acceptance.
 Update recovery privately bundles both
 independently valid projects plus active-tab state. All file/capture, viewport,
 worker, retained-result and aggregate-memory budgets remain bounded; errors or

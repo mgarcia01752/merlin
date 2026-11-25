@@ -3,12 +3,12 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Self-contained bounded project format; all reads/validation stay in Rust.
+pub(crate) use crate::shared::project_file::MAX_PROJECT_BYTES;
 use base64::{engine::general_purpose::STANDARD, Engine};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
-use std::{borrow::Borrow, collections::BTreeMap, io::Write, path::Path};
-pub(crate) const MAX_PROJECT_BYTES: usize = 144 * 1024 * 1024;
+use std::{borrow::Borrow, collections::BTreeMap, path::Path};
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct Project<Sections = BTreeMap<String, Value>> {
@@ -185,42 +185,8 @@ impl<Sections: Borrow<BTreeMap<String, Value>> + Serialize> Project<Sections> {
         if crate::platform::input_file::is_original(application, path) {
             return Err("Project Save cannot overwrite an imported original input.".into());
         }
-        if path.exists()
-            && !std::fs::symlink_metadata(path)
-                .map_err(|e| e.to_string())?
-                .file_type()
-                .is_file()
-        {
-            return Err("Choose a regular project destination.".into());
-        }
         let bytes = serde_json::to_vec_pretty(self).map_err(|e| e.to_string())?;
-        if bytes.len() > MAX_PROJECT_BYTES {
-            return Err("Workbench exceeds 144 MiB.".into());
-        }
-        let temporary = path.with_file_name(format!(
-            ".merlin-save-{}-{}",
-            std::process::id(),
-            std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .map_err(|e| e.to_string())?
-                .as_nanos()
-        ));
-        let write = || -> Result<(), String> {
-            let mut file = std::fs::OpenOptions::new()
-                .write(true)
-                .create_new(true)
-                .open(&temporary)
-                .map_err(|e| e.to_string())?;
-            file.write_all(&bytes).map_err(|e| e.to_string())?;
-            file.sync_all().map_err(|e| e.to_string())?;
-            std::fs::rename(&temporary, path).map_err(|e| e.to_string())?;
-            Ok(())
-        };
-        let result = write();
-        if result.is_err() {
-            let _ = std::fs::remove_file(&temporary);
-        }
-        result
+        crate::shared::project_file::write_bytes(path, &bytes)
     }
 }
 

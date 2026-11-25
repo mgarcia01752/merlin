@@ -5,7 +5,7 @@
 //! Configuration transactions exercise the actual public preparation and host.
 use super::*;
 use crate::shell::{ApplicationSessions, RetainedResources, RunCancellation};
-use merlin::upstream::ConfigurationDocument;
+use merlin::upstream::{ConfigurationDocument, ReportJson};
 use std::time::{Duration, Instant};
 
 const DOCUMENT: &[u8] = include_bytes!("../../../../../../examples/cli/upstream/us-50khz.json");
@@ -14,6 +14,9 @@ const POLL_INTERVAL: Duration = Duration::from_millis(2);
 
 // Independent exact-integer transport anchor, beyond IEEE-754's contiguous range.
 const WIDE_GRANT_ID: &str = "9007199254740993";
+
+// Independent valid PRBS seed edit, distinct from the loaded source seed.
+const PROJECT_EDIT_SOURCE_SEED: &str = "2";
 
 fn drain(model: &mut Model) {
     let deadline = Instant::now() + COMPLETION_DEADLINE;
@@ -157,6 +160,81 @@ fn changed_source_apply_is_queued_then_atomically_accepted_and_reopened() {
     assert_eq!(model.draft_state()["values"][&key], "2");
     assert_ne!(model.draft_state()["token"], token);
     assert_eq!(application.snapshot(Direction::Downstream), downstream);
+    assert!(application.active().is_none());
+}
+
+#[test]
+fn native_apply_project_export_preserves_accepted_fields_and_exact_original_provenance() {
+    let (application, mut model) = configured();
+    let original = source(&model);
+    model.begin_draft("source").unwrap();
+    let (token, key) = field(&model, "source_seed");
+    model
+        .apply_draft("source", &token, &changes(&key, PROJECT_EDIT_SOURCE_SEED))
+        .unwrap();
+    drain(&mut model);
+    assert_eq!(model.draft_state()["outcome"], "accepted");
+    let accepted = source(&model);
+    let bytes = model
+        .controller
+        .as_ref()
+        .unwrap()
+        .project_document()
+        .unwrap();
+    let project = merlin::common::Project::from_bytes(&bytes).unwrap();
+    let mut restored = project.upstream_simulation().unwrap();
+    let document = restored.document().unwrap();
+    assert_eq!(
+        document.simulation.source_seed,
+        accepted.simulation.source_seed
+    );
+    assert_eq!(document.original_bytes(), original.original_bytes());
+    assert_eq!(document.original_sha256(), original.original_sha256());
+    let actual = restored.run().unwrap();
+    model.start().unwrap();
+    let deadline = Instant::now() + COMPLETION_DEADLINE;
+    while model.poll()["busy"] == true {
+        assert!(Instant::now() < deadline, "{}", model.state());
+        std::thread::sleep(POLL_INTERVAL);
+    }
+    let expected = model.report.as_ref().unwrap().1.value();
+    assert_eq!(actual.configuration, expected.configuration);
+    assert_eq!(actual.options, expected.options);
+    assert_eq!(actual.generated_source_bits, expected.generated_source_bits);
+    assert_eq!(actual.compared_source_bits, expected.compared_source_bits);
+    assert_eq!(actual.bit_errors, expected.bit_errors);
+    assert_eq!(
+        actual.source_configuration_original,
+        expected.source_configuration_original
+    );
+    assert_eq!(
+        actual.source_configuration_sha256,
+        expected.source_configuration_sha256
+    );
+    assert_eq!(
+        actual
+            .grants
+            .iter()
+            .map(|grant| &grant.words)
+            .collect::<Vec<_>>(),
+        expected
+            .grants
+            .iter()
+            .map(|grant| &grant.words)
+            .collect::<Vec<_>>()
+    );
+    // Optional acceptance receipt for the installed native consumer. The reference
+    // is this actual native Apply/run, independently of the saved-project loader.
+    if let Some(directory) = std::env::var_os("MERLIN_QT_PROJECT_REFERENCE_DIRECTORY") {
+        let destination = std::path::PathBuf::from(directory).join("native-edited-source.json");
+        let value = serde_json::json!({
+            "project": std::str::from_utf8(&bytes).unwrap(),
+            "reference": serde_json::from_str::<serde_json::Value>(
+                &expected.to_json().unwrap()
+            ).unwrap()
+        });
+        std::fs::write(destination, serde_json::to_vec(&value).unwrap()).unwrap();
+    }
     assert!(application.active().is_none());
 }
 
