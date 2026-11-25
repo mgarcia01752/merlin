@@ -5197,3 +5197,28 @@ existing installed binding. Full applicable final regression, numeric audit and
 final correspondence remain UIU-QA-01. Native GUI evidence is this Linux VM;
 no Windows installed lifecycle, field measurement or external interoperability
 claim follows. Continue UIU-FILE-01, then UIU-RECOVERY-01 and final UIU-QA-01.
+
+## UIU-FILE-01 accepted runtime options API prerequisite
+
+The [focused receipt](file-options-evidence.json) records the demonstrated Save
+gap and its additive Rust/native getter. Actual accepted options can differ from
+the unchanged retained source document. Rust borrows them passively; Python owns
+an immutable copy for constructor/`set_options` reuse, using the existing Busy
+guard. Both-mode independent Rust/native runs, rejection preservation, source and
+retention passivity, owned reuse and acknowledged-pause/Busy/cancel restoration
+pass with [exact operation cases](file-options-operation-test-results.json).
+All earlier Rust signatures/source owners and installed native classes/members
+remain unchanged; only one method per language is added. Fresh installed-wheel
+project and namespace compatibility pass, along with scientific session/facade
+tests, core/native Clippy, CLI and Qt compilation and boundary audit.
+
+The initial full-native-runner audit exposed five older optional parity
+reference variables absent from its reference list. The original failure log is
+retained. The same existing Rust examples now supply them; all five affected
+installed test modules pass with fresh separate-process references, and the strict
+runner audit passes after its package/source mapping correction. The new options
+reference is also supplied to full native acceptance. No complete native or final
+regression pass is claimed. No scientific algorithms, settings schema or Qt behavior changed in
+this unit. FILE01 stays unchecked until native project/dirty routing and all
+relevant persistence acceptance pass. Complete workspace/Qt/QML/packaging suites
+are deferred to their applicable task and final gates.

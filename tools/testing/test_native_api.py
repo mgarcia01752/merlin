@@ -24,7 +24,7 @@ class NativeApiRunnerTests(unittest.TestCase):
             required.update(re.findall(r"os\.environ\.get\(['\"](MERLIN_\w+_REFERENCE)['\"]\)", path.read_text()))
         self.assertEqual(required, {row[0] for row in DOWNSTREAM_REFERENCES})
         for _, package, example in DOWNSTREAM_REFERENCES:
-            crate = 'ofdm' if package == 'docsis-ofdm-fec' else package
+            crate = {'docsis-ofdm-fec': 'ofdm', 'docsis-ofdma': 'ofdma'}.get(package, package)
             self.assertTrue((root / 'crates' / crate / 'examples' / (example + '.rs')).is_file())
 
     def test_complete_named_passes_exclude_failed_skipped_and_duplicate_runs(self):

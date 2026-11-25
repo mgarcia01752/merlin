@@ -5434,3 +5434,88 @@ cleanup, resource dimension and observed/expected state. No downstream productio
 owner or retained-data contract changes. Preserve the initial failed attempt and
 the unchanged isolated/group passes, then run complete acceptance without
 overlapping compiler or GUI work under the existing testing strategy.
+
+### UIU-FILE-01 direction projects and guarded native file operations
+
+REQ-UIU-22/24 follows accepted API-05, SHELL-01 and US-03. The canonical
+session/file architecture and existing three-level validation remain unchanged.
+The audit finds sufficient public scientific project APIs; the missing owners
+are native file routing, complete measured-source retention and revision guards.
+This is the next delivery task, not a restart of accepted session/API planning.
+
+| Inspected owner | Contract and gap | Decision / exact owner |
+| --- | --- | --- |
+| `bridge/workbench_file.rs`, `downstream/workbench/project_file.rs`, `project_load` | Existing partial/legacy DS editor admission, protected original paths, bounded preparation and atomic sibling writes. DS-only destination/routing. | REUSE legacy admission; SHARE only compatible byte-write protections in new `shared/project_file.rs`. Preserve old imports and every legacy readiness/partial-state behavior. |
+| `upstream/session.rs::PreparedSession::from_measured`, `workbench/preparation.rs` | Actual measured scientific session retains provenance, but the projected generic document is not the complete replay/association input for idle Save. | ADAPT existing session storage to retain the exact accepted measured-plan document under the existing budget. Keep typed captures/original bytes and public admission authoritative; never reconstruct the plan from results. New `upstream/session/project.rs` owns original-document/project export, not scientific behavior. |
+| `merlin::common::Project`, `crates/pnm-input/src/project` | Accepted strict direction-tagged schema 3, exact embedded input, public Rust/Python prepare/run and observation/settings parity. Legacy public executable admission is stricter than idle Qt editor loading. | REUSE for runnable directional projects and validation. Preserve the existing partial DS loader; never force incomplete editors through runnable admission or silently drop saved options/observations. Any demonstrable interface gap needs its own tested prerequisite before consumer adoption. |
+| `shell/application.rs`, `shell/mod.rs` | Canonical keys/revisions and generic Save/replace guards already exist, but the application host/bridge do not wire the complete file transaction. | ADAPT thin application wrappers and existing native direction owners; same-revision Save acknowledgement, direction-detected target guards, stale rejection and both-tab close. No additional session or memory framework. |
+| `upstream/workbench`, `workbench/preparation/query.rs` | Existing admitted worker/controller slot restores the exact owner on errors/cancellation. | REUSE for off-GUI project serialization/preparation/write; new `workbench/project.rs` and `preparation/project.rs` retain separately admitted destination/outcome owners. No large document copies through QML. |
+| `Main.qml`, `shell/WorkbenchMenuBar.qml`, `directions/DirectionShellHost.qml` | Persistent independent tabs and captured action origins; file actions currently DS-only. | ADAPT selected-direction Save/New, direction-detected Open and sequenced dirty prompts, preserving native chooser/menu/shortcut conventions. Registration stays root-owned in `build.rs`. |
+| `shell/ProjectDirtyDialog.qml` (new) | A compiled-label prompt is required; it must not capture scientific documents or native revisions. | SEPARATE presentation-only Save/Discard/Cancel component and `tests/shell/tst_project_dirty_dialog.qml`; exact isolated-agent contract/evidence in [dialog design](file-dialog-design.md). Root owns its later native integration. |
+
+Each direction keeps an independent admitted destination and dirty state. Save
+serializes only accepted values, uses the actual captured native revision and
+marks clean only after a successful atomic write and same-revision acknowledgement.
+Cancel, rejection, stale completion and write failure preserve old destinations,
+accepted science and dirty state. Source paths in either direction stay protected.
+Normal Save never becomes a two-project workspace file. Partial downstream
+editor projects retain their compatible schema-2 format; runnable downstream
+and configured upstream projects use the public schema-3 envelope. An empty
+upstream New state is valid, but Save remains unavailable until real configuration
+exists. Close waits for both dirty decisions before irreversible shell shutdown.
+
+Open first reads a bounded regular input/CLI stream and detects its actual
+schema/direction, then guards that target's current revision rather than the
+selected tab. Preparation/adoption remain separate; no partial mutation of either
+direction is permitted. New and close guard their actual affected directions;
+Save/Discard/Cancel decisions never authorize replacement of a newer revision.
+Recovery/updater bundling remains UIU-RECOVERY-01.
+
+Implementation proceeds through focused units for retained source/export and safe
+writes, native direction routing/dirty transactions, then complete acceptance.
+These are units of this existing task, not additional official task IDs. Partial
+units leave UIU-FILE-01 unchecked. Root alone integrates and commits primary files;
+the isolated UI agent owns only the three new dialog/design/test files above.
+
+Acceptance requires existing legacy/partial DS preservation, new direction project
+round trips, actual UI-produced runnable files admitted/run by Rust and installed
+native Python, complete measured original/provenance preservation, invalid/bounded
+and stale/failed/cancelled transactions, native menus/shortcuts/pickers, both-tab
+close behavior, relevant complete feature/Qt tests and traceability. Public backend
+sources remain unchanged unless a concrete acceptance failure proves a missing
+operation; Qt cannot use a private scientific structure as a workaround.
+
+#### UIU-FILE-01 accepted-runtime-options API prerequisite
+
+The unchanged installed API demonstrates the concrete export gap: load the 50 kHz
+source with one grant, call `set_options` with two grants and distinct finite
+chunk/time/history choices, then run. Its original document stays unchanged while
+the actual report has the accepted overrides. There is no current-options query.
+Saving source values would silently lose accepted settings; a hidden run or Qt
+shadow configuration is not an acceptable substitute. The ignored demonstration
+is `docs/development/local/unified-qt-workbench/file-01-options/existing-api-gap.json`.
+This narrows the earlier project-API audit: admission is sufficient, but idle
+accepted-runtime inspection needs this additive getter before Qt adoption.
+
+| Owner / disposition | Proposed contract | Acceptance |
+| --- | --- | --- |
+| Edit `crates/ofdma/src/api/session.rs` | `Simulation::options(&self) -> &ExperimentOptions`: borrow actual validated options, including before configure and explicit post-document overrides; no allocation, mutation, source advance or additional validation. | New `crates/ofdma/tests/api_options.rs`: defaults, both numerologies, differing source/runtime values, failed replacement preservation and actual report options/recovery. |
+| Edit `bindings/python/src/upstream/simulation.rs` and `bindings/python/python/merlin/upstream.pyi` | `Simulation.options(self) -> ExperimentOptions`: existing owned immutable native options wrapper; pass to the constructor/`set_options`. The existing native slot returns structured Busy during execution. No new Python scientific logic. | New `bindings/python/tests/test_upstream_options.py`: native defaults/overrides, owned reuse after mutation/disposal, actual both-mode report values and Busy/restore. |
+| Edit operation/compatibility matrix, `docs/user/upstream/session.md` and
+`tools/testing/native_api.py` | Same public namespaces, existing independent PHY and root Python aliases, explicit Rust-borrow/Python-copy semantics. | Actual Rust export and installed-wheel inventory, targeted namespace/project compatibility, format/Clippy and exact executed evidence. Wire the separate Rust options reference into complete native acceptance. |
+
+REQ-UIU-22/24 and UIU-FILE-01 own this prerequisite; completed API/FEC tasks stay
+accepted. Commit the independently validated API extension before using it in Qt.
+The parent file task remains unchecked until all native persistence gates pass.
+
+The [focused options receipt](file-options-evidence.json) and
+[exact cases](file-options-operation-test-results.json) record this additive
+prerequisite independently of still-pending native FILE01 adoption.
+
+The focused native-runner audit also exposed five existing optional retained-owner
+reference examples missing from its complete-gate list. Wire those exact existing
+Rust exporters into the same loop and preserve all mandatory native parity
+assertions; the runner source-path test must recognize `docsis-ofdma` as `ofdma`.
+This repairs an observed compatibility-gate failure without changing scientific
+code, reference calculations or skipping any case. Validate the five affected
+installed test modules with fresh references and retain the initial failure.

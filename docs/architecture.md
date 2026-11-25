@@ -2019,7 +2019,10 @@ upstream session types. `ProjectError` preserves directional causes and the shar
 error category. The neutral `merlin-api` leaf remains independent of either PHY.
 The [direction-project evidence](development/features/unified-qt-workbench/validation.md#uiu-api-05-direction-project-unit)
 records scoped Rust/native acceptance and the passing full backend gate;
-UIU-FILE-01/UIU-RECOVERY-01 own Qt adoption. Update recovery privately bundles both
+UIU-FILE-01/UIU-RECOVERY-01 own Qt adoption. The [native file task design](development/features/unified-qt-workbench/design.md#uiu-file-01-direction-projects-and-guarded-native-file-operations)
+retains complete measured inputs, independent destinations and captured native
+revisions; it preserves the stricter distinction between executable public
+project admission and incomplete legacy editor loading. Update recovery privately bundles both
 independently valid projects plus active-tab state. All file/capture, viewport,
 worker, retained-result and aggregate-memory budgets remain bounded; errors or
 cancellation preserve accepted inputs/completed trials. See the

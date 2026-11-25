@@ -284,6 +284,13 @@ impl PySimulation {
     fn set_options(&self, options: PyRef<'_, PyOptions>) -> PyResult<()> {
         self.access(|session| session.set_options(options.0.clone()))
     }
+    /// Returns an owned immutable snapshot of the actual accepted runtime options.
+    ///
+    /// The snapshot can configure another session and survives later changes or
+    /// disposal. No source is advanced; competing native runs report Busy.
+    fn options(&self) -> PyResult<PyOptions> {
+        self.access(|session| Ok(PyOptions(session.options().clone())))
+    }
     /// Returns an owned accepted configuration or None while unconfigured.
     ///
     /// Competing runs return Busy; the immutable snapshot survives later calls.

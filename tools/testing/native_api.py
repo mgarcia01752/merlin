@@ -45,6 +45,11 @@ DOWNSTREAM_REFERENCES = (
     ('MERLIN_CALIBRATED_SEQUENCE_REFERENCE', 'docsis-ofdm-fec', 'api_calibrated_sequence'),
     ('MERLIN_PROFILE_PERFORMANCE_REFERENCE', 'pnm-input', 'profile_performance'),
     ('MERLIN_MEASURED_INPUT_VIEW_REFERENCE', 'pnm-input', 'measured_input_views'),
+    ('MERLIN_RETAINED_FOOTPRINT_REFERENCE', 'docsis-ofdma', 'upstream_retained_footprint'),
+    ('MERLIN_BOUNDED_SESSION_REFERENCE', 'pnm-input', 'bounded_session_outputs'),
+    ('MERLIN_INPUT_RETAINED_REFERENCE', 'pnm-input', 'input_retained_footprint'),
+    ('MERLIN_BOUNDED_ARCHIVE_REFERENCE', 'pnm-input', 'bounded_receiver_archive'),
+    ('MERLIN_DOWNSTREAM_RETAINED_REFERENCE', 'pnm-input', 'downstream_retained_footprint'),
 )
 
 
@@ -183,6 +188,11 @@ def main():
             output, environment, 'designer', report['commands'])
         environment.pop('MERLIN_DESIGNER_PARITY_OUT')
         environment['MERLIN_DESIGNER_PARITY'] = str(designer)
+        options = output / 'accepted-options.json'
+        environment['MERLIN_OPTIONS_RUST_REFERENCE_JSON'] = str(options)
+        run([*cargo, 'test', '-p', 'docsis-ofdma', '--test', 'api_options', '--locked'],
+            output, environment, 'accepted-options', report['commands'])
+        json.loads(options.read_text())
         venv.EnvBuilder(with_pip=True).create(output / 'installed')
         executable = output / ('installed/Scripts/python.exe' if sys.platform == 'win32' else 'installed/bin/python')
         run([str(executable), '-I', '-B', '-m', 'pip', 'install', '--no-index', '--no-deps', str(wheel)],
@@ -198,7 +208,7 @@ def main():
             'native-inventory', report['commands'], cwd=output)
         report['reference_environment'] = {key: value for key, value in environment.items()
             if key.startswith('MERLIN_UPSTREAM_RUST_') or key in {row[0] for row in DOWNSTREAM_REFERENCES} or key in
-            ('MERLIN_API_PARITY', 'MERLIN_WB_PARITY', 'MERLIN_DESIGNER_PARITY', 'MERLIN_TRANSMITTER_PARITY', 'MERLIN_FULL_LOOP_PARITY')}
+            ('MERLIN_API_PARITY', 'MERLIN_WB_PARITY', 'MERLIN_DESIGNER_PARITY', 'MERLIN_TRANSMITTER_PARITY', 'MERLIN_FULL_LOOP_PARITY', 'MERLIN_OPTIONS_RUST_REFERENCE_JSON')}
         report['status'] = 'passed'
         print(f"Installed native API: {report['passed']} cases pass", flush=True)
     finally:

@@ -2,14 +2,8 @@
   "schema_version": 1,
   "authority": "This is the complete per-operation row data for compatibility-matrix.md; docs/development/checklist.md alone owns delivery completion.",
   "scope": "Complete per-operation Rust and installed native Python rows, including aliases, macro-expanded methods, language-specific constructors, fields and constants. Named regressions establish their declared owner scope; metadata alone is not scientific execution.",
-  "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-qt-workbench/session-01-control-metadata/rust-exports.json",
-  "native_metadata_origin": {
-    "version": "0.4.0",
-    "revision": "00d0ef4 plus exact capture-source candidate manifest",
-    "inventory_command": "Installed current candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/us-03-source-json/native/native-exports.json",
-    "native_sha256": "50c5a4b4b84b8b9cb87fdaa31c6fa95d94944263d55040164efbb9eddc2c3d1d",
-    "scope": "Six additive capture-source methods; installed source, legacy capture, measured admission, namespace and downstream import regressions."
-  },
+  "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-qt-workbench/file-01-options/rust-exports.json",
+  "native_metadata_origin": "docs/development/local/unified-qt-workbench/file-01-options/native/native-exports.json",
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
     "ownership.mutable": "Exclusive mutable Rust session; accepted values are owned snapshots. Invalid replacement preserves prior accepted state; configuration does not start work.",
@@ -183,7 +177,9 @@
     "evidence.session.control.resources": "docs/development/features/unified-qt-workbench/session-control-metadata-evidence.json and session-control-metadata-operation-test-results.json: actual Rust owner/legacy/facade and exact archive-matched installed native parity, plus affected Qt/CLI compatibility. Source commits alone establish no runtime evidence.",
     "status.session.control.resources": "Scoped paired operation accepted in the unified workspace. Qt wrapper/worker/transport/presentation admission and complete UIU-SESSION-01 acceptance remain open; completed tasks are not reopened.",
     "evidence.uiu-us-03-source-json": "../unified-qt-workbench/upstream-capture-source-json-evidence.json and us-03-source-json-operation-test-results.json: actual scoped Rust/native source-envelope validation, unchanged inspection and independent literal binary fixtures. Qt adoption remains separate.",
-    "status.uiu-us-03-source-json": "Implemented additive Rust and installed native Linux CPython source transport; original binary science and inspection remain unchanged. UIU-US-03 remains open for native input/viewer acceptance."
+    "status.uiu-us-03-source-json": "Implemented additive Rust and installed native Linux CPython source transport; original binary science and inspection remain unchanged. UIU-US-03 remains open for native input/viewer acceptance.",
+    "evidence.uiu-file-01-options": "docs/development/features/unified-qt-workbench/file-options-evidence.json",
+    "status.uiu-file-01-options": "Additive getter accepted after exact Rust and installed native tests; parent UIU-FILE-01 remains incomplete."
   },
   "type_exports": {
     "downstream": [
@@ -36025,6 +36021,53 @@
       },
       "evidence": "evidence.uiu-us-03-source-json",
       "status": "status.uiu-us-03-source-json"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin::upstream::Simulation::options",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "signature": "pub fn options(&self) -> &ExperimentOptions",
+        "source_file": "crates/ofdma/src/api/session.rs",
+        "rustdoc": "docsis_ofdma/api/struct.Simulation.html"
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native operation",
+        "native_operation": "merlin.upstream.Simulation.options",
+        "declaration": "merlin.upstream.Simulation.options"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.configuration",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_return": "&ExperimentOptions",
+        "scope": "Actual accepted finite runtime options, including pre-configuration defaults and explicit overrides distinct from the unchanged source document. Rust borrows; Python clones the existing immutable options wrapper for reuse. No source advance or scientific change."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-22",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-FILE-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_options.rs::accepted_options_borrow_is_passive_and_preserves_overrides_and_failed_replacements"
+        ],
+        "python": {
+          "status": "Targeted installed native ownership/Busy and separate Rust-process parity; no skips.",
+          "cases": [
+            "bindings/python/tests/test_upstream_options.py::UpstreamOptions.test_passive_owned_snapshot_atomic_rejection_and_independent_rust_parity",
+            "bindings/python/tests/test_upstream_options.py::UpstreamOptions.test_busy_during_acknowledged_pause_and_restored_after_cancel"
+          ],
+          "scope": "Actual accepted finite runtime options, including pre-configuration defaults and explicit overrides distinct from the unchanged source document. Rust borrows; Python clones the existing immutable options wrapper for reuse. No source advance or scientific change."
+        }
+      },
+      "evidence": "evidence.uiu-file-01-options",
+      "status": "status.uiu-file-01-options"
     }
   ],
   "executed_records": [
@@ -36077,7 +36120,8 @@
     "docs/development/features/unified-qt-workbench/session-output-bound-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/session-query-envelope-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/session-control-metadata-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/us-03-source-json-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/us-03-source-json-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/file-options-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -75131,6 +75175,59 @@
       },
       "evidence": "evidence.uiu-us-03-source-json",
       "status": "status.uiu-us-03-source-json"
+    },
+    {
+      "direction": "upstream",
+      "operation": "merlin.upstream.Simulation.options",
+      "rust_namespace": "merlin::upstream",
+      "rust_type_method": {
+        "export": "merlin::upstream::Simulation",
+        "source_file": "bindings/python/src/upstream/simulation.rs",
+        "symbol": "PySimulation",
+        "signature": "pub fn options(&self) -> &ExperimentOptions",
+        "mapping": "Existing guarded slot directly clones the accepted public Rust getter into the immutable owned PyOptions. No Python science or new conversion semantics.",
+        "delegated_operation": "merlin::upstream::Simulation::options",
+        "delegated_operations": []
+      },
+      "python_namespace": "merlin.upstream",
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "options",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "Simulation.options"
+      },
+      "input_ownership": "ownership.borrowed",
+      "units": "units.configuration",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "report_contract": {
+        "rust_type": "merlin::upstream::Simulation",
+        "scope": "Actual accepted finite runtime options, including pre-configuration defaults and explicit overrides distinct from the unchanged source document. Rust borrows; Python clones the existing immutable options wrapper for reuse. No source advance or scientific change."
+      },
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-UIU-22",
+        "REQ-UIU-24"
+      ],
+      "checklist": [
+        "UIU-FILE-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/ofdma/tests/api_options.rs::accepted_options_borrow_is_passive_and_preserves_overrides_and_failed_replacements"
+        ],
+        "python": {
+          "status": "Targeted installed native ownership/Busy and separate Rust-process parity; no skips.",
+          "cases": [
+            "bindings/python/tests/test_upstream_options.py::UpstreamOptions.test_passive_owned_snapshot_atomic_rejection_and_independent_rust_parity",
+            "bindings/python/tests/test_upstream_options.py::UpstreamOptions.test_busy_during_acknowledged_pause_and_restored_after_cancel"
+          ],
+          "scope": "Actual accepted finite runtime options, including pre-configuration defaults and explicit overrides distinct from the unchanged source document. Rust borrows; Python clones the existing immutable options wrapper for reuse. No source advance or scientific change."
+        }
+      },
+      "evidence": "evidence.uiu-file-01-options",
+      "status": "status.uiu-file-01-options"
     }
   ],
   "native_type_exports": {
@@ -76415,6 +76512,13 @@
       "inventory_command": "Archive-matched installed native_api_inventory.py; session-01-control-metadata-native/results.json",
       "native_sha256": "5fafd17cc3e722829fb402ecd786d2a011c99b37841672d8f09dcefc998a2356",
       "scope": "Three additive control metadata methods, twenty selected native cases/no skips. All prior native classes/members/signatures and Rust inventory exactly preserved after removing the three additions. Complete SESSION acceptance remains open."
+    },
+    {
+      "version": "0.4.0",
+      "revision": "00d0ef4 plus exact capture-source candidate manifest",
+      "inventory_command": "Installed current candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/us-03-source-json/native/native-exports.json",
+      "native_sha256": "50c5a4b4b84b8b9cb87fdaa31c6fa95d94944263d55040164efbb9eddc2c3d1d",
+      "scope": "Six additive capture-source methods; installed source, legacy capture, measured admission, namespace and downstream import regressions."
     }
   ],
   "historical_rust_export_corrections": [

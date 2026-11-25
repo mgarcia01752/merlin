@@ -139,6 +139,20 @@ impl Simulation {
     pub fn document(&self) -> Option<&super::ConfigurationDocument> {
         self.document.as_ref()
     }
+
+    /// Borrows the current validated runtime options without advancing the source.
+    ///
+    /// This includes construction options before configuration and overrides
+    /// accepted by `set_options`, which may differ from the original document.
+    /// No allocation, validation, configuration or execution occurs.
+    ///
+    /// # Returns
+    /// The actual immutable options, valid for this session borrow. Clone them
+    /// when an owned snapshot must survive later mutation or session disposal.
+    pub fn options(&self) -> &ExperimentOptions {
+        &self.options
+    }
+
     /// Atomically replaces runtime `options`, retaining accepted scientific input.
     ///
     /// Returns unit; invalid budgets or incompatible aggregate work preserve state.

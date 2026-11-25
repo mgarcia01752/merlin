@@ -1,0 +1,19 @@
+{
+  "exit_code": 0,
+  "passed": 3,
+  "cases": [
+    {
+      "test_file": "crates/ofdma/tests/api_options.rs",
+      "qualified_test_case": "accepted_options_borrow_is_passive_and_preserves_overrides_and_failed_replacements"
+    },
+    {
+      "test_file": "bindings/python/tests/test_upstream_options.py",
+      "qualified_test_case": "UpstreamOptions.test_busy_during_acknowledged_pause_and_restored_after_cancel"
+    },
+    {
+      "test_file": "bindings/python/tests/test_upstream_options.py",
+      "qualified_test_case": "UpstreamOptions.test_passive_owned_snapshot_atomic_rejection_and_independent_rust_parity"
+    }
+  ],
+  "scope": "Actual Rust test both numerologies and installed native ownership/Busy/separate Rust report parity. Native FILE01 remains incomplete."
+}

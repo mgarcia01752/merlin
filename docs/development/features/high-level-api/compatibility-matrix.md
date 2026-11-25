@@ -4,10 +4,10 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-632 explicit public Rust operations and 603 installed native Python entries with
+633 explicit public Rust operations and 604 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current metadata and scoped acceptance](../unified-qt-workbench/upstream-capture-source-json-evidence.json)
+is a readable subset of this one matrix. [Current getter metadata and scoped acceptance](../unified-qt-workbench/file-options-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 115 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -450,3 +450,16 @@ Scoped acceptance passes 115 unique Rust/48 installed native cases, including
 The native methods reuse existing worker/GIL/cancellation/session-lease behavior.
 US synthetic Failed/TimeLimit tests establish owner representation only; real Qt
 charges/adoption, complete session and final acceptance remain pending.
+
+## Accepted runtime options for direction project Save
+
+The [FILE01 getter evidence](../unified-qt-workbench/file-options-evidence.json)
+adds only `merlin::upstream::Simulation::options(&self) -> &ExperimentOptions`
+and native `merlin.upstream.Simulation.options(self) -> ExperimentOptions`.
+Rust returns a passive borrow; Python returns the existing immutable owned wrapper
+for reuse through construction or `set_options`, with the existing native Busy
+guard. Actual overrides remain distinct from unchanged source documents.
+Both-mode owned reuse, rejection preservation, pause/Busy restoration and separate
+Rust-process report parity pass with [exact cases](../unified-qt-workbench/file-options-operation-test-results.json).
+Every earlier exported type, method signature and owner remains unchanged. This
+focused prerequisite does not accept native FILE01 persistence or final QA.

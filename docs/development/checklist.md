@@ -683,7 +683,7 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
 - [ ] **UIU-FILE-01** Wire per-direction project Save/Open and dirty guards.
   Requirements: [REQ-UIU-22](../requirements.md#req-uiu-22), [REQ-UIU-24](../requirements.md#req-uiu-24).
   Dependencies: [UIU-API-05](#task-uiu-api-05), [UIU-SHELL-01](#task-uiu-shell-01), [UIU-US-03](#task-uiu-us-03).
-  Architecture/files: [persistence owner](../architecture.md#unified-qt-session-and-file-lifecycle), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
+  Architecture/files: [native file design](features/unified-qt-workbench/design.md#uiu-file-01-direction-projects-and-guarded-native-file-operations), [persistence owner](../architecture.md#unified-qt-session-and-file-lifecycle), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Legacy DS plus new DS/US round trips and Rust/Python load/run, direction routing and target-tab dirty guard, cancel/failure preservation, safe writes and both-tab close behavior.
   Evidence: [persistence acceptance plan](features/unified-qt-workbench/validation.md#persistence); pending implementation/acceptance.
 
