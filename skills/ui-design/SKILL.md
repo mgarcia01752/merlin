@@ -46,6 +46,19 @@ chips use the shared style rather than the stage decoration. Verify dark/light,
 keyboard and disabled states, narrow layouts and native screenshots after a
 migration; update the relevant user guides.
 
+## Folder-style page tabs
+
+Page navigation, including **Downstream (OFDM)** and **Upstream (OFDMA)**, uses
+folder-style tabs. Give each tab rounded upper corners and a shared baseline
+at the top of its content panel. The selected tab must visually join the panel,
+with a continuous surface and no separating bottom border; inactive tabs recede
+behind that edge. Do not render page tabs as detached action buttons, pills or
+segmented buttons, or apply `WorkbenchActionButton` styling to them.
+
+Preserve tab selection, keyboard navigation, visible focus and independent page
+state. Use shared theme colors and sizing; verify the connected-tab appearance
+in both themes and narrow layouts when implementing or changing these controls.
+
 ## Technical terms and definitions
 
 When adding or changing technical UI/status wording, update the existing
