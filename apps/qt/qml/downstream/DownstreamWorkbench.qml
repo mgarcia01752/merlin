@@ -32,6 +32,7 @@ Item {
     // Standalone defaults preserve existing downstream consumers and tests.
     property bool showHeader: true
     property bool showRunControls: true
+    readonly property int canvasSectionSpacing: 16
     property bool pollInView: true
     readonly property string progressText: states.value ? states.value.display.progress : ""
     readonly property string elapsedText: states.value ? states.value.display.elapsed : ""
@@ -347,8 +348,12 @@ Item {
         }
     }
     ColumnLayout {
-        anchors.fill: parent; anchors.leftMargin: 24; anchors.rightMargin: 24
-        anchors.topMargin: 24; anchors.bottomMargin: 20; spacing: 16
+        anchors.fill: parent
+        anchors.leftMargin: workbench.theme.workbenchCanvasSideMargin
+        anchors.rightMargin: workbench.theme.workbenchCanvasSideMargin
+        anchors.topMargin: workbench.theme.workbenchCanvasTopMargin
+        anchors.bottomMargin: workbench.theme.workbenchCanvasBottomMargin
+        spacing: workbench.canvasSectionSpacing
         Item {
             id: workbenchHeader
             visible: workbench.showHeader

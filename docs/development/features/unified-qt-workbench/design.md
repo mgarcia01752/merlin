@@ -5882,3 +5882,46 @@ Full root Rust, Python wheels, CLI, Qt Rust runtime and packaging suites were no
 rerun: their implementations, APIs, dependencies, registration and saved-data
 contracts are unchanged. Earlier UIU acceptance remains historical evidence for
 its recorded candidate; installed/hosted platform gates remain separate.
+
+### UI-US-LAYOUT-01 shared canvas framing and implicit CMTS control
+
+The user requested Downstream's canvas framing for Upstream and removal of the
+explicit CMTS Configuration → CMTS Receiver control connector. The
+[official task](../../checklist.md#task-ui-us-layout-01) links
+[REQ-UIU-08](../../../requirements.md#req-uiu-08),
+[REQ-UIU-10](../../../requirements.md#req-uiu-10) and
+[REQ-UIU-25](../../../requirements.md#req-uiu-25). The
+[approved layout refinement](upstream-startup-layout.md#subsequent-presentation-refinement)
+preserves matching native TX/RX configuration without a redundant visual wire.
+
+| Owner | Inspected contract | Decision |
+| --- | --- | --- |
+| `apps/qt/qml/shared/theme/Theme.qml` and `apps/qt/qml/downstream/DownstreamWorkbench.qml` | Downstream's side/top/bottom canvas margins are 24/24/20 pixels. | SHARE named canvas geometry in Theme with both directions, preserving downstream values. Equal-valued side/top policies retain separate names. |
+| `apps/qt/qml/upstream/UpstreamWorkbench.qml` | Independent canvas, explicit receiver branch and 1200-pixel scrolling minimum. | ADAPT frame margins, retain a compact transmitter-only control route and lower the presentation minimum to 1100 pixels so normal native framing fits without clipping. Keep stage order, widths and scientific labels. |
+| `apps/qt/tests/upstream/tst_upstream_workbench.qml` | Tests route roles/reference planes, popup navigation and narrow scrolling. | REUSE and update the existing route assertion to transmitter-only control; retain every unrelated assertion. |
+| Native Main and maintained guides | Real direction switching and existing diagrams. | REUSE unchanged native adapters; capture both final canvases and update the upstream guide/README image. |
+
+The receiver continues to use backend-validated matching configuration. This
+changes presentation only, with no new public API, serialization, registration
+or scientific algorithms. Relevant validation is the complete upstream QML
+feature and affected shell/downstream presentation checks, optimized native build,
+actual VM pointer navigation and canonical documentation/boundary checks.
+
+Executed validation (2026-11-25): complete upstream QML tests pass 179 records,
+downstream workbench 55 and shell 60, with no failures or skips. After naming the
+unchanged downstream section spacing, its existing controls/theme case also
+passes (three records including setup/cleanup). Reference-plane, equal-gap,
+drill-in, keyboard/focus, actual narrow scrollbar dragging and both-theme checks
+are preserved. Qt formatting and the final zero-exception API boundary pass.
+The optimized native build passes; actual VM pointer switching and unaltered
+window captures verify both canvases and the shortened transmitter-only route.
+The downstream image is byte-identical to the preceding tab unit's native
+capture. The dark guide and README images reflect the new upstream frame.
+
+Current documentation/traceability and diff checks pass. Logs and exact
+source/executable/image identities remain under ignored
+`docs/development/local/unified-qt-workbench/upstream-layout/`. Native startup
+captures include the standard presentation-limit notice; this unit does not
+establish its cause or any new scientific acceptance. Rust runtime/Clippy,
+backend, Python wheels, CLI and packaging regressions were not repeated because
+their implementations and contracts are unchanged. No installed-platform claim.

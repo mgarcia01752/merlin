@@ -51,7 +51,9 @@ Item {
             presentationOwner.clear()
         }
     }
-    readonly property real minimumDiagramWidth: 1200
+
+    // Keep the three stages and control group separate within the shared frame.
+    readonly property real minimumDiagramWidth: 1100
     readonly property real minimumDiagramHeight: 700
     readonly property real edgeMargin: 32
     readonly property real blockWidth: 200
@@ -68,7 +70,9 @@ Item {
     readonly property real mainTop: 286
     readonly property real upperInputTop: 116
     readonly property real correctionTop: 470
-    readonly property real controlBaseline: 610
+
+    // Place the transmitter control route between its output block and CM Pre-Eq.
+    readonly property real controlBaseline: (mainTop + mainBlockHeight + correctionTop) / 2
     readonly property real legendBottomMargin: 24
     readonly property real legendGap: 24
     readonly property real legendLineWidth: 48
@@ -174,7 +178,13 @@ Item {
     }
 
     Rectangle {
+        id: canvasFrame
+        objectName: "upstreamCanvasFrame"
         anchors.fill: parent
+        anchors.leftMargin: workbench.theme.workbenchCanvasSideMargin
+        anchors.rightMargin: workbench.theme.workbenchCanvasSideMargin
+        anchors.topMargin: workbench.theme.workbenchCanvasTopMargin
+        anchors.bottomMargin: workbench.theme.workbenchCanvasBottomMargin
         color: workbench.theme.background
         border.color: workbench.theme.line
         radius: workbench.panelRadius
@@ -182,7 +192,7 @@ Item {
     Flickable {
         id: viewport
         objectName: "upstreamViewport"
-        anchors.fill: parent
+        anchors.fill: canvasFrame
         clip: true
         boundsBehavior: Flickable.StopAtBounds
         contentWidth: Math.max(width, workbench.minimumDiagramWidth)
@@ -339,7 +349,7 @@ Item {
                 role: "control"
                 fromX: diagram.controlX
                 fromY: workbench.controlBaseline
-                toX: receiverBlock.x + receiverBlock.width / 2
+                toX: transmitterBlock.x + transmitterBlock.width / 2
                 toY: workbench.controlBaseline
                 arrowHead: false
                 showMarker: false
@@ -353,18 +363,6 @@ Item {
                 fromY: workbench.controlBaseline
                 toX: transmitterBlock.x + transmitterBlock.width / 2
                 toY: transmitterBlock.y + transmitterBlock.height
-                arrowHead: true
-                showMarker: true
-            }
-            UpstreamConnection {
-                objectName: "receiverControl"
-                anchors.fill: parent
-                theme: workbench.theme
-                role: "control"
-                fromX: receiverBlock.x + receiverBlock.width / 2
-                fromY: workbench.controlBaseline
-                toX: receiverBlock.x + receiverBlock.width / 2
-                toY: receiverBlock.y + receiverBlock.height
                 arrowHead: true
                 showMarker: true
             }
@@ -646,8 +644,8 @@ Item {
             Label {
                 x: diagram.controlX
                 y: workbench.controlBaseline + workbench.captionGap
-                width: receiverBlock.x + receiverBlock.width / 2 - x
-                text: "CMTS control → transmitter and receiver/session configuration"
+                width: transmitterBlock.x + transmitterBlock.width / 2 - x
+                text: "Configuration / grants"
                 horizontalAlignment: Text.AlignHCenter
                 color: workbench.theme.txPlc
                 font.pixelSize: workbench.captionFontSize

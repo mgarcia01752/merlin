@@ -81,15 +81,17 @@ remain above the tabs. PRBS-RX opens a structured
 ![Downstream workbench with its selected folder tab](../images/workbench/unified-downstream-dark.png)
 
 The Upstream tab shows the approved CM transmitter → channel → CMTS receiver
-layout. Its [configuration editors](upstream-workbench.md) load a native upstream
+layout with the same canvas framing as Downstream. Its CMTS control connector
+ends at CM Transmitter; receiver-side configuration is implicit in the CMTS
+group. Its [configuration editors](upstream-workbench.md) load a native upstream
 JSON document and apply supported settings through Rust validation. The shared
 controls run upstream simulation; PRBS-RX shows its actual independent recovery
 and partial-report coverage. See [upstream execution](upstream-workbench.md#run-and-inspect-results)
 and the [QAM, spectrum, response and original RxMER instruments](upstream/instruments.md).
-Upstream project actions remain under integration. Missing data
-is shown as unavailable. File actions are currently enabled on Downstream only;
-selecting Upstream cannot save or replace the downstream project. Settings and
-About remain available from either tab.
+Missing data is shown as unavailable. File Save and Save As use the active
+direction's project. Open detects the file's direction and guards that tab's
+unsaved changes; each direction retains its own destination. Settings and About
+remain available from either tab.
 
 ![Upstream workbench with its selected folder tab](../images/workbench/unified-upstream-dark.png)
 

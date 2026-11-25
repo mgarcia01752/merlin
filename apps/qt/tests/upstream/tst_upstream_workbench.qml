@@ -202,7 +202,7 @@ Pane {
             verify(channel.x + channel.width < receiver.x);
             compare(channel.x - tx.x - tx.width, receiver.x - channel.x - channel.width);
             const data = findChild(workbench, "txChannelData");
-            const control = findChild(workbench, "receiverControl");
+            const control = findChild(workbench, "transmitterControl");
             const measurement = findChild(workbench, "preEqualizationMeasurement");
             const verification = findChild(workbench, "receiverVerification");
             compare(data.role, "data");
@@ -210,6 +210,9 @@ Pane {
             compare(data.fromX, tx.x + tx.width);
             compare(data.toX, channel.x);
             compare(control.markerShape, "square");
+            compare(control.toX, tx.x + tx.width / 2);
+            compare(control.toY, tx.y + tx.height);
+            compare(findChild(workbench, "configurationControl").toX, control.toX);
             compare(measurement.markerShape, "circle");
             compare(verification.markerShape, "diamond");
             compare(measurement.toY, data.fromY);

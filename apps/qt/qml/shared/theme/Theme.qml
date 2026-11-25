@@ -10,6 +10,11 @@ QtObject {
     readonly property int tooltipDelayMs: 1000
     // Shared native-session presentation polling cadence; independent of hover timing.
     readonly property int sessionPollIntervalMs: 100
+
+    // Shared canvas framing. Equal side/top values are independent layout policies.
+    readonly property int workbenchCanvasSideMargin: 24
+    readonly property int workbenchCanvasTopMargin: 24
+    readonly property int workbenchCanvasBottomMargin: 20
     // Injected by the native application; tests supply an explicit fixture.
     property var presentationBackendFactory: null
     property bool presentationAdmissionRejected: false

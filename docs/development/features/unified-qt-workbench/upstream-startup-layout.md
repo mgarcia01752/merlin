@@ -12,6 +12,17 @@ The [canonical upstream UI architecture](../../../architecture.md#unified-qt-ups
 owns scientific reference planes and the public API boundary. This record
 preserves the approved presentation and connector semantics.
 
+## Subsequent presentation refinement
+
+On 2026-11-25 the user requested the same canvas framing as Downstream and
+omission of the explicit CMTS Configuration → CMTS Receiver connector. The
+visible control route still reaches CM Transmitter; corresponding receiver
+configuration remains implicit within the CMTS group. This visual refinement
+supersedes the receiver-wire placement below without changing native session
+configuration or scientific reference planes. See
+[UI-US-LAYOUT-01](../../checklist.md#task-ui-us-layout-01) and its
+[design](design.md#ui-us-layout-01-shared-canvas-framing-and-implicit-cmts-control).
+
 ## Canvas and blocks
 
 Use the existing downstream Workbench as the visual reference: dark MERLIN

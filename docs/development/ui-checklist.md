@@ -21,6 +21,8 @@ retain their original status owners and evidence.
 The folder-style direction-tab refinement is tracked by
 [UI-TABS-01](checklist.md#task-ui-tabs-01), with the existing shell/session
 behavior preserved; its official completion mark remains in that checklist.
+The matching upstream canvas framing and simplified CMTS control route follow
+[UI-US-LAYOUT-01](checklist.md#task-ui-us-layout-01) under the same status owner.
 
 The [downstream contract register](../requirements.md#detailed-downstream-contract-register)
 adds requirement/task/evidence navigation without changing these detail marks.

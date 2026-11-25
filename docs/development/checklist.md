@@ -717,6 +717,14 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Acceptance: Content-sized tabs, rounded top corners, shared baseline and selected-page connection in both themes and narrow layouts; preserve pointer/keyboard switching, focus and persistent children. Run affected QML tests, native build/visual checks and documentation traceability; update the dark user-guide image.
   Evidence: [executed validation](features/unified-qt-workbench/design.md#ui-tabs-01-folder-style-direction-tabs) records 60 passing shell QML checks, Qt formatting/Clippy, final API boundary and documentation checks, optimized native build and real VM pointer switching. Updated dark guides/README show the simple Downstream/Upstream labels. Historical UIU task states remain unchanged.
 
+<a id="task-ui-us-layout-01"></a>
+- [x] **UI-US-LAYOUT-01** Match canvas framing and simplify upstream CMTS control routing.
+  Requirements: [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-10](../requirements.md#req-uiu-10), [REQ-UIU-25](../requirements.md#req-uiu-25).
+  Dependencies: [UIU-US-01](#task-uiu-us-01), [UIU-SHELL-01](#task-uiu-shell-01).
+  Architecture/files: [upstream presentation](../architecture.md#unified-qt-upstream-scientific-presentation); [design and owners](features/unified-qt-workbench/design.md#ui-us-layout-01-shared-canvas-framing-and-implicit-cmts-control).
+  Acceptance: Share the unchanged downstream canvas margins; omit the explicit receiver control branch while preserving the transmitter/configuration route, scientific reference planes, separate drill-ins, focus, resize and scrolling. Pass affected QML checks, native optimized build/rendering and documentation traceability; refresh actual dark images.
+  Evidence: [executed validation](features/unified-qt-workbench/design.md#ui-us-layout-01-shared-canvas-framing-and-implicit-cmts-control) records 179 upstream, 55 downstream and 60 shell passing QML records plus the three-record spacing follow-up, formatting, final boundary and traceability checks, optimized build and native VM captures. The downstream capture remains byte-identical; updated upstream images show no receiver control branch.
+
 ## Architecture and module rules
 
 <a id="task-arch-01"></a>

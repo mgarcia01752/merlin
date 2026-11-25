@@ -2,7 +2,10 @@
 
 Select **Upstream** to use the CM transmitter → Channel Simulator →
 CMTS receiver diagram. The separate CMTS Configuration group supplies control
-information; it is not the source of upstream payload samples. Click a block,
+information; it is not the source of upstream payload samples. Its visible
+control route ends at CM Transmitter; the corresponding CMTS Receiver
+configuration is implicit in that group. The canvas uses the same outer spacing
+as Downstream. Click a block,
 or focus it and press Enter or Space, to open its window. Escape, Cancel and X
 close an editor without applying its changes.
 

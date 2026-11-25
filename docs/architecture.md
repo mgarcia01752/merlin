@@ -2084,9 +2084,13 @@ models and authoritative stage observations. The user approved the
 on 2026-11-22 for REQ-UIU-10 and UIU-US-01. Its three main rounded blocks run
 horizontally: **CM Transmitter → Channel Simulator → CMTS Receiver**. A visually
 separate CMTS Configuration group on the left contains clickable UCD / OFDMA
-Configuration, IUC / Burst Profiles and MAP / Grants blocks. Its control
-connections supply TX and receiver/session configuration without entering the
-sample-data path. Separate PRBS-TX, RxMER, CM Pre-Eq and PRBS-RX blocks attach to
+Configuration, IUC / Burst Profiles and MAP / Grants blocks. The visible control
+route ends at CM Transmitter; corresponding receiver/session configuration is
+implicit within the CMTS group. Both directions reuse named canvas margins from
+the shared Theme. [UI-US-LAYOUT-01](development/checklist.md#task-ui-us-layout-01)
+records this [presentation refinement](development/features/unified-qt-workbench/design.md#ui-us-layout-01-shared-canvas-framing-and-implicit-cmts-control).
+Control configuration never enters the sample-data path. Separate PRBS-TX,
+RxMER, CM Pre-Eq and PRBS-RX blocks attach to
 their actual source, impairment, transmit-correction and recovered-output planes.
 Use solid arrows for waveform/data, distinct control and measurement connectors,
 and a verification connector to PRBS-RX, with balanced, noncrossing routing.
