@@ -19,8 +19,16 @@ flowchart LR
 Schema 1 and 2 retain downstream interpretation and their original bytes.
 Schema 3 has `schema_version`, `application`, `direction` and `contents` fields.
 Downstream contents retain the complete original workbench string and an optional
-public observation policy. Upstream contents retain an original configuration or
-measured-plan string, explicit run options and receiver/soft observation budgets.
+public observation policy. Upstream contents retain accepted configuration or
+measured-plan text, explicit run options and receiver/soft observation budgets.
+For upstream configuration inputs, `document` holds current accepted values.
+Optional `original_document` preserves the exact prior source text when editing
+changes those values. Loading validates both and restores current fields while
+retaining the original bytes/hash for provenance. The field is omitted from old
+single-document projects and is unavailable for measured inputs. Both Rust and
+the Basic Python API use this same contract. Neither original text nor an original
+hash can replace accepted edited settings.
+
 Unknown fields, duplicate fields, unsupported versions and wrong-direction
 contents fail before an accepted project is returned.
 
@@ -82,7 +90,9 @@ simulation results are not saved into a project.
 
 The complete document limit is 144 MiB. Downstream embedded originals are limited
 to 16 MiB each and 96 MiB together; the upstream configuration/measured input has
-its own 16 MiB admission limit. `Project.collection_info` checks at most two
+its own 16 MiB admission limit. A configuration’s optional original document
+separately obeys that same input-owner limit; original-input totals count the
+actual original text, while the outer serialized limit covers both strings. `Project.collection_info` checks at most two
 distinct directions, 288 MiB of original serialized project bytes and 96 MiB of
 combined original input storage. Downstream accounting includes dormant and
 unselected originals. Upstream accounting includes its original input document

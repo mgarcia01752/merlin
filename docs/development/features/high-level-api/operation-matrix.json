@@ -2,8 +2,8 @@
   "schema_version": 1,
   "authority": "This is the complete per-operation row data for compatibility-matrix.md; docs/development/checklist.md alone owns delivery completion.",
   "scope": "Complete per-operation Rust and installed native Python rows, including aliases, macro-expanded methods, language-specific constructors, fields and constants. Named regressions establish their declared owner scope; metadata alone is not scientific execution.",
-  "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-qt-workbench/file-01-options/rust-exports.json",
-  "native_metadata_origin": "docs/development/local/unified-qt-workbench/file-01-options/native/native-exports.json",
+  "compiler_inventory_command": "python3 -B tools/validation/rust_api_inventory.py --output docs/development/local/unified-qt-workbench/file-01-edited-configuration/rust-exports.json",
+  "native_metadata_origin": "docs/development/local/unified-qt-workbench/file-01-edited-configuration/native/native-exports.json",
   "contracts": {
     "ownership.borrowed": "Rust borrows input/self for the declared lifetime. Returned references remain tied to the owner; native counterparts return owned copies. No zero-copy Python claim.",
     "ownership.mutable": "Exclusive mutable Rust session; accepted values are owned snapshots. Invalid replacement preserves prior accepted state; configuration does not start work.",
@@ -179,7 +179,9 @@
     "evidence.uiu-us-03-source-json": "../unified-qt-workbench/upstream-capture-source-json-evidence.json and us-03-source-json-operation-test-results.json: actual scoped Rust/native source-envelope validation, unchanged inspection and independent literal binary fixtures. Qt adoption remains separate.",
     "status.uiu-us-03-source-json": "Implemented additive Rust and installed native Linux CPython source transport; original binary science and inspection remain unchanged. UIU-US-03 remains open for native input/viewer acceptance.",
     "evidence.uiu-file-01-options": "docs/development/features/unified-qt-workbench/file-options-evidence.json",
-    "status.uiu-file-01-options": "Additive getter accepted after exact Rust and installed native tests; parent UIU-FILE-01 remains incomplete."
+    "status.uiu-file-01-options": "Additive getter accepted after exact Rust and installed native tests; parent UIU-FILE-01 remains incomplete.",
+    "evidence.uiu-file-01-configuration-edits": "docs/development/features/unified-qt-workbench/project-configuration-edits-evidence.json",
+    "status.uiu-file-01-configuration-edits": "Optional configuration provenance input accepted in existing Rust/native operations; Qt adoption and parent UIU-FILE-01 remain incomplete."
   },
   "type_exports": {
     "downstream": [
@@ -30732,7 +30734,7 @@
       "lifecycle_behavior": "lifecycle.configure",
       "report_contract": {
         "rust_return": "Result<Project, ProjectError>",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -30743,7 +30745,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -30764,10 +30767,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -30783,13 +30790,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "common",
@@ -30812,7 +30821,7 @@
       "lifecycle_behavior": "lifecycle.configure",
       "report_contract": {
         "rust_return": "Result<Project, ProjectError>",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -30823,7 +30832,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -30844,10 +30854,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -30863,13 +30877,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "common",
@@ -31052,7 +31068,7 @@
       "lifecycle_behavior": "lifecycle.inspect",
       "report_contract": {
         "rust_return": "Result<String, ProjectError>",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -31063,7 +31079,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -31084,10 +31101,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -31103,13 +31124,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "common",
@@ -31212,7 +31235,7 @@
       "lifecycle_behavior": "lifecycle.configure",
       "report_contract": {
         "rust_return": "Result<Simulation, ProjectError>",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -31223,7 +31246,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -31244,10 +31268,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -31263,13 +31291,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "common",
@@ -31292,7 +31322,7 @@
       "lifecycle_behavior": "lifecycle.inspect",
       "report_contract": {
         "rust_return": "Result<ProjectCollectionInfo, ProjectError>",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -31303,7 +31333,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -31324,10 +31355,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -31343,13 +31378,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "common",
@@ -31451,7 +31488,7 @@
       "lifecycle_behavior": "lifecycle.configure",
       "report_contract": {
         "rust_return": "Result<Self, ProjectError>",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -31462,7 +31499,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -31483,10 +31521,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -31502,13 +31544,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "common",
@@ -31531,7 +31575,7 @@
       "lifecycle_behavior": "lifecycle.configure",
       "report_contract": {
         "rust_return": "Result<Self, ProjectError>",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -31542,7 +31586,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -31563,10 +31608,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -31582,13 +31631,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "common",
@@ -31771,7 +31822,7 @@
       "lifecycle_behavior": "lifecycle.inspect",
       "report_contract": {
         "rust_return": "Result<String, ProjectError>",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -31782,7 +31833,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -31803,10 +31855,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -31822,13 +31878,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "common",
@@ -31931,7 +31989,7 @@
       "lifecycle_behavior": "lifecycle.configure",
       "report_contract": {
         "rust_return": "Result<Simulation, ProjectError>",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -31942,7 +32000,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -31963,10 +32022,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -31982,13 +32045,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "common",
@@ -32011,7 +32076,7 @@
       "lifecycle_behavior": "lifecycle.inspect",
       "report_contract": {
         "rust_return": "Result<ProjectCollectionInfo, ProjectError>",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -32022,7 +32087,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -32043,10 +32109,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -32062,13 +32132,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "common",
@@ -36121,7 +36193,8 @@
     "docs/development/features/unified-qt-workbench/session-query-envelope-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/session-control-metadata-operation-test-results.json",
     "docs/development/features/unified-qt-workbench/us-03-source-json-operation-test-results.json",
-    "docs/development/features/unified-qt-workbench/file-options-operation-test-results.json"
+    "docs/development/features/unified-qt-workbench/file-options-operation-test-results.json",
+    "docs/development/features/unified-qt-workbench/project-configuration-edits-operation-test-results.json"
   ],
   "python_operations": [
     {
@@ -70253,7 +70326,7 @@
       "lifecycle_behavior": "lifecycle.inspect",
       "report_contract": {
         "rust_type": "merlin::common::Project",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -70264,7 +70337,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -70285,10 +70359,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -70304,13 +70382,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "common",
@@ -70511,7 +70591,7 @@
       "lifecycle_behavior": "lifecycle.configure",
       "report_contract": {
         "rust_type": "merlin::common::Project",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -70522,7 +70602,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -70543,10 +70624,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -70562,13 +70647,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "common",
@@ -70597,7 +70684,7 @@
       "lifecycle_behavior": "lifecycle.configure",
       "report_contract": {
         "rust_type": "merlin::common::Project",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -70608,7 +70695,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -70629,10 +70717,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -70648,13 +70740,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "common",
@@ -70769,7 +70863,7 @@
       "lifecycle_behavior": "lifecycle.inspect",
       "report_contract": {
         "rust_type": "merlin::common::Project",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -70780,7 +70874,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -70801,10 +70896,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -70820,13 +70919,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "common",
@@ -70855,7 +70956,7 @@
       "lifecycle_behavior": "lifecycle.configure",
       "report_contract": {
         "rust_type": "merlin::common::Project",
-        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export."
+        "scope": "Independent original-preserving direction project. Returned existing public request/session types preserve directional ownership, settings, errors and lifecycle. No execution on load/export. Optional configuration original_document keeps exact source bytes/hash separate from current accepted document values, with independent input bounds; existing omitted shapes and measured inputs remain unchanged."
       },
       "compatibility": "compatibility.uiu-api-05-project",
       "requirement": [
@@ -70866,7 +70967,8 @@
         "REQ-UIU-24"
       ],
       "checklist": [
-        "UIU-API-05"
+        "UIU-API-05",
+        "UIU-FILE-01"
       ],
       "tests": {
         "rust": [
@@ -70887,10 +70989,14 @@
           "crates/merlin/tests/namespaces.rs::upstream_error_categories_keep_offsets_and_original_domain_causes",
           "crates/merlin/tests/namespaces.rs::upstream_facade_retains_actual_receiver_estimates_through_independent_owner",
           "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention",
-          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs"
+          "crates/merlin/tests/namespaces.rs::upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs",
+          "crates/pnm-input/tests/project_configuration_edits.rs::absent_original_retains_old_wire_shape_and_admission_behavior",
+          "crates/pnm-input/tests/project_configuration_edits.rs::invalid_original_current_or_wrong_family_reject_without_changing_accepted_project",
+          "crates/pnm-input/tests/project_configuration_edits.rs::original_configuration_keeps_the_existing_independent_document_byte_ceiling"
         ],
         "python": {
-          "status": "15 scoped installed native project/saved-plan/namespace cases passed without skips",
+          "status": "Historical baseline cases plus targeted current installed edit/provenance parity; complete native gate remains final acceptance.",
           "cases": [
             "bindings/python/tests/test_project.py::ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip",
             "bindings/python/tests/test_project.py::ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic",
@@ -70906,13 +71012,15 @@
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_common_control_bridge",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_discovery_and_typing_payload",
             "bindings/python/tests/test_namespaces.py::NamespaceImports.test_installed_imports_and_legacy_identity",
-            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias"
+            "bindings/python/tests/test_namespaces.py::NamespaceImports.test_stub_signatures_and_root_alias",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity",
+            "bindings/python/tests/test_project_configuration_edits.py::ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
           ],
           "scope": "Actual schema3 downstream FEC/observations, both upstream numerologies, original measured sources, separate Rust-process parity, legacy compatibility, invalid/duplicate fields, input bounds, owned sessions and aggregate input storage."
         }
       },
-      "evidence": "evidence.uiu-api-05-project",
-      "status": "status.uiu-api-05-project"
+      "evidence": "evidence.uiu-file-01-configuration-edits",
+      "status": "status.uiu-file-01-configuration-edits"
     },
     {
       "direction": "downstream",
@@ -76519,7 +76627,8 @@
       "inventory_command": "Installed current candidate python -I -B tools/validation/native_api_inventory.py --output docs/development/local/unified-qt-workbench/us-03-source-json/native/native-exports.json",
       "native_sha256": "50c5a4b4b84b8b9cb87fdaa31c6fa95d94944263d55040164efbb9eddc2c3d1d",
       "scope": "Six additive capture-source methods; installed source, legacy capture, measured admission, namespace and downstream import regressions."
-    }
+    },
+    "docs/development/local/unified-qt-workbench/file-01-options/native/native-exports.json"
   ],
   "historical_rust_export_corrections": [
     {

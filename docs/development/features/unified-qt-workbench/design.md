@@ -5519,3 +5519,70 @@ assertions; the runner source-path test must recognize `docsis-ofdma` as `ofdma`
 This repairs an observed compatibility-gate failure without changing scientific
 code, reference calculations or skipping any case. Validate the five affected
 installed test modules with fresh references and retain the initial failure.
+
+#### UIU-FILE-01 project-source and byte-write unit
+
+The first native unit shares only byte writing, not scientific admission. Add
+`shared/project_file.rs` and its focused filesystem tests; keep the old downstream
+`MAX_PROJECT_BYTES` import through a re-export. Existing downstream validation
+and host-wide original-path protection run before the shared writer. Preserve
+create-new sibling, sync and rename semantics; reject dangling/nonregular links
+and never remove an existing sibling after a create-new collision.
+
+Add `upstream/session/source.rs` and focused tests, and the transport-only
+`session/project.rs` serializer/tests. `SessionStorage` retains exact measured-plan
+bytes in one inline `Retained<Box<[u8]>>` under the existing budget. Its containing
+fixed wrapper counts the inline guard once; boxed bytes have a separate charge.
+Scientific provenance remains backend-owned and unchanged. Typed plans without
+original JSON use their public validated exporter. Guards survive controller
+aliases and run ownership and release only with their actual data. No new memory
+framework or scientific API is introduced.
+
+The idle controller's off-GUI `project_document` adapter serializes original
+configuration/measured input, accepted public runtime options and the current
+observation policy, then admits the schema-3 bytes through `merlin::common::Project`.
+Queued/persistent output needs its existing caller reservation; temporary bounded
+serialization is execution construction. This unit does not itself expose Save
+in QML, change destinations, mark a revision clean or accept FILE01. Subsequent
+native routing consumes it through the already approved controller-slot worker.
+Acceptance here covers exact both-mode source/provenance and policy/options,
+actual public load/run parity, retention rollback/alias disposal, Busy preservation,
+legacy downstream writes/original protection, formatting, Qt Clippy/build and
+boundary checks. Installed-wheel UI-produced parity remains the full FILE01 gate.
+
+#### UIU-FILE-01 edited-configuration provenance prerequisite
+
+The source/write unit's read-only audit found a concrete data-loss case before
+acceptance: native draft Apply changes typed `ConfigurationDocument` fields while
+retaining the original source Arc. Exporting `original_bytes()` alone discards
+accepted source/channel/grant/profile edits; exporting only `to_json()` loses the
+separate original bytes/hash. The native Apply/export/public reload regression
+owns this gap. No completed task or scientific algorithm is reopened.
+
+Extend only schema 3's configuration input with optional `original_document`.
+`document` remains the complete accepted configuration JSON; when an edit makes
+it differ, `original_document` retains exact prior source text as provenance.
+Old inputs omit this field and keep their exact previous behavior/output. Measured
+input is unchanged and rejects this configuration-only field. The upstream
+source owner validates both bounded documents, starts from the original public
+`ConfigurationDocument`, copies its five public accepted fields from the current
+document and configures through the existing authoritative API. Its private
+original Arc remains untouched. This is input transport, with no new public Rust
+operation, Python operation, scientific calculation or Qt private-backend access.
+
+| Disposition / owner | Contract / acceptance |
+| --- | --- |
+| Edit `crates/pnm-input/src/project/upstream.rs` | Optional omitted-by-default original string; existing `Project` loading/export/run operations preserve accepted typed values and exact source provenance independently. Count original input bytes from actual original text, with serialized-size and both per-document bounds intact. |
+| Add `crates/pnm-input/tests/project_configuration_edits.rs` | Both modes, actual edited inventory/selection/seed/wide grant, explicit runtime overrides, original hashes, real independent public execution, old shape unchanged, invalid/oversized original and wrong-family rejection. |
+| Add `bindings/python/tests/test_project_configuration_edits.py` | Fresh installed wheel, original/resolved strings and ownership, identical public-run settings/FEC/source outcomes against separately executed Rust fixtures, structured errors and old aliases. No Python calculations. |
+| Edit `docs/user/api/projects.md`, operation matrix/evidence | Exact optional wire field, compatible old inputs and original-vs-current semantics for both languages. Existing operation identifiers/signatures stay fixed. |
+| Adapt pending Qt `session/source.rs`, `session/project.rs` and tests only after independent prerequisite commit | Untouched configurations keep their exact single source string; edited values use the current exported document plus exact original. Real native Apply/export/reload/run must pass before this unit is accepted. |
+
+The backend extension is a focused prerequisite commit before Qt consumes it.
+Temporarily retain unfinished native files in a verified local stash so the
+all-files Git helper cannot include them in that API commit. Restore exact bytes
+without discarding the stash after the prerequisite; keep FILE01 unchecked.
+
+The [edited-source prerequisite receipt](project-configuration-edits-evidence.json)
+and [exact operation cases](project-configuration-edits-operation-test-results.json)
+record independent backend/native acceptance before pending Qt consumption.

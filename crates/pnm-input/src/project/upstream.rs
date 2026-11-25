@@ -18,8 +18,14 @@ pub(super) struct UpstreamContents {
 #[derive(Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
 enum Input {
-    Configuration { document: String },
-    Measured { document: String },
+    Configuration {
+        document: String,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        original_document: Option<String>,
+    },
+    Measured {
+        document: String,
+    },
 }
 #[derive(Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -63,10 +69,13 @@ impl UpstreamContents {
         };
         let mut simulation = api::Simulation::new(options.clone())?;
         let original_bytes = match &self.input {
-            Input::Configuration { document } => {
-                // The original input owner enforces its independently named document limit.
-                simulation.configure_json(document.as_bytes())?;
-                document.len()
+            Input::Configuration {
+                document,
+                original_document,
+            } => {
+                let accepted = configuration(document, original_document.as_deref())?;
+                simulation.configure_document(accepted)?;
+                original_document.as_ref().unwrap_or(document).len()
             }
             Input::Measured { document } => {
                 if document.len() > MAX_MEASURED_EXPERIMENT_BYTES {
@@ -112,4 +121,37 @@ impl UpstreamContents {
         }
         Ok((simulation, original_bytes))
     }
+}
+
+/// Restores accepted public fields without changing their independent source provenance.
+///
+/// # Arguments
+/// * `document` - Complete current configuration JSON; the public owner validates it.
+/// * `original` - Optional exact earlier configuration source, independently bounded
+///   and validated. Absent preserves the original single-document contract.
+///
+/// # Returns
+/// Current public fields attached to the original owner's private byte/hash identity.
+/// This copies the public transport model only; `configure_document` still owns
+/// scientific preparation, execution compatibility and observation validation.
+///
+/// # Errors
+/// Preserves either document's public format, domain and byte-limit errors.
+fn configuration(
+    document: &str,
+    original: Option<&str>,
+) -> Result<api::ConfigurationDocument, ProjectError> {
+    let current = api::ConfigurationDocument::from_json(document.as_bytes())?;
+    let Some(original) = original else {
+        return Ok(current);
+    };
+    let mut source = api::ConfigurationDocument::from_json(original.as_bytes())?;
+
+    // Keep the source owner's private original Arc; assign every public field.
+    source.format = current.format;
+    source.schema_version = current.schema_version;
+    source.presets = current.presets;
+    source.selected_preset = current.selected_preset;
+    source.simulation = current.simulation;
+    Ok(source)
 }

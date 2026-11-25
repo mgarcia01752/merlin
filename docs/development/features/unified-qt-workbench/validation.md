@@ -5222,3 +5222,30 @@ regression pass is claimed. No scientific algorithms, settings schema or Qt beha
 this unit. FILE01 stays unchecked until native project/dirty routing and all
 relevant persistence acceptance pass. Complete workspace/Qt/QML/packaging suites
 are deferred to their applicable task and final gates.
+
+## UIU-FILE-01 edited-configuration provenance prerequisite
+
+The [scoped receipt](project-configuration-edits-evidence.json) retains the exact
+pre-fix native failure: Apply accepts source seed2, but project reload returns1.
+The public project-input owner now supports optional configuration
+`original_document`, preserving exact earlier source bytes/hash independently
+from accepted current `document` fields. Its private adapter transfers all five
+public document fields into the original owner and reuses authoritative scientific
+admission. Old omitted shapes and measured input behavior stay unchanged.
+No public operation, signature, dependency or scientific algorithm changes.
+
+Four new and six existing project Rust cases pass, with complete facade tests,
+core/native Clippy, CLI compilation and fresh compiler/installed metadata. A
+newly built wheel passes both-mode edited-source/direct Rust parity and old
+project, namespace and options compatibility. [Exact new cases](project-configuration-edits-operation-test-results.json)
+cover inventory/selection, seeds/wide integers, overrides, source ownership,
+original counts, malformed/wrong-family input and existing independent limits.
+The complete native runner supplies the fresh Rust edited-project reference.
+Full workspace/native/Qt/QML/package gates remain at their applicable acceptance
+levels; no unexecuted full suite is claimed.
+
+All unfinished native files were preserved in a hash-recorded local stash while
+this backend prerequisite was validated independently. Restore and adapt those
+files after the prerequisite commit, then require the original native Apply/export/
+reload/run regression to pass before accepting the source/write consumer unit.
+FILE01 remains unchecked until direction file/dirty routing and all task gates pass.

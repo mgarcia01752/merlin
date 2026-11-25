@@ -1,0 +1,31 @@
+{
+  "exit_code": 0,
+  "passed": 6,
+  "cases": [
+    {
+      "test_file": "crates/pnm-input/tests/project_configuration_edits.rs",
+      "qualified_test_case": "edited_public_fields_runtime_overrides_and_exact_originals_survive_both_mode_runs"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/project_configuration_edits.rs",
+      "qualified_test_case": "absent_original_retains_old_wire_shape_and_admission_behavior"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/project_configuration_edits.rs",
+      "qualified_test_case": "invalid_original_current_or_wrong_family_reject_without_changing_accepted_project"
+    },
+    {
+      "test_file": "crates/pnm-input/tests/project_configuration_edits.rs",
+      "qualified_test_case": "original_configuration_keeps_the_existing_independent_document_byte_ceiling"
+    },
+    {
+      "test_file": "bindings/python/tests/test_project_configuration_edits.py",
+      "qualified_test_case": "ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity"
+    },
+    {
+      "test_file": "bindings/python/tests/test_project_configuration_edits.py",
+      "qualified_test_case": "ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
+    }
+  ],
+  "scope": "Four real Rust cases and two installed native cases, parameterized over both numerologies for edited inventory/selection/seed/wide identities, saved runtime overrides and original provenance; existing imports/wire shapes unchanged."
+}

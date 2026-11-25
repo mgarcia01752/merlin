@@ -7,7 +7,7 @@ matrix required by master §7. The [full row data](operation-matrix.json) now re
 633 explicit public Rust operations and 604 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
-is a readable subset of this one matrix. [Current getter metadata and scoped acceptance](../unified-qt-workbench/file-options-evidence.json)
+is a readable subset of this one matrix. [Current project-input metadata and scoped acceptance](../unified-qt-workbench/project-configuration-edits-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
 115 directional/common class exports and preserved legacy root exports. The
 [prior full native gate](../unified-qt-workbench/project-evidence.json) retains its
@@ -463,3 +463,16 @@ Both-mode owned reuse, rejection preservation, pause/Busy restoration and separa
 Rust-process report parity pass with [exact cases](../unified-qt-workbench/file-options-operation-test-results.json).
 Every earlier exported type, method signature and owner remains unchanged. This
 focused prerequisite does not accept native FILE01 persistence or final QA.
+
+## Edited configuration and exact original project provenance
+
+The [focused project-input prerequisite](../unified-qt-workbench/project-configuration-edits-evidence.json)
+extends existing schema-3 configuration inputs with optional `original_document`.
+Current fields and exact earlier source bytes/hash survive independently; omitted
+old inputs keep their previous shape and behavior. Measured input is unchanged.
+All 633 Rust/604 native operations, signatures, owners and native members remain
+exact; no operation is added. Existing project rows retain historical acceptance
+and add [four Rust/two installed native cases](../unified-qt-workbench/project-configuration-edits-operation-test-results.json),
+covering both-mode actual execution, typed inventory/selection/seed/wide identity
+edits, saved overrides, ownership, invalid source and independent byte bounds.
+Qt Apply/export consumption and complete FILE01 acceptance remain separate.

@@ -193,6 +193,11 @@ def main():
         run([*cargo, 'test', '-p', 'docsis-ofdma', '--test', 'api_options', '--locked'],
             output, environment, 'accepted-options', report['commands'])
         json.loads(options.read_text())
+        edited_project = output / 'edited-configuration-projects.json'
+        environment['MERLIN_PROJECT_EDITS_RUST_REFERENCE_JSON'] = str(edited_project)
+        run([*cargo, 'test', '-p', 'pnm-input', '--test', 'project_configuration_edits', '--locked'],
+            output, environment, 'edited-configuration-projects', report['commands'])
+        json.loads(edited_project.read_text())
         venv.EnvBuilder(with_pip=True).create(output / 'installed')
         executable = output / ('installed/Scripts/python.exe' if sys.platform == 'win32' else 'installed/bin/python')
         run([str(executable), '-I', '-B', '-m', 'pip', 'install', '--no-index', '--no-deps', str(wheel)],
@@ -208,7 +213,7 @@ def main():
             'native-inventory', report['commands'], cwd=output)
         report['reference_environment'] = {key: value for key, value in environment.items()
             if key.startswith('MERLIN_UPSTREAM_RUST_') or key in {row[0] for row in DOWNSTREAM_REFERENCES} or key in
-            ('MERLIN_API_PARITY', 'MERLIN_WB_PARITY', 'MERLIN_DESIGNER_PARITY', 'MERLIN_TRANSMITTER_PARITY', 'MERLIN_FULL_LOOP_PARITY', 'MERLIN_OPTIONS_RUST_REFERENCE_JSON')}
+            ('MERLIN_API_PARITY', 'MERLIN_WB_PARITY', 'MERLIN_DESIGNER_PARITY', 'MERLIN_TRANSMITTER_PARITY', 'MERLIN_FULL_LOOP_PARITY', 'MERLIN_OPTIONS_RUST_REFERENCE_JSON', 'MERLIN_PROJECT_EDITS_RUST_REFERENCE_JSON')}
         report['status'] = 'passed'
         print(f"Installed native API: {report['passed']} cases pass", flush=True)
     finally:

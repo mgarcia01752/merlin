@@ -685,7 +685,7 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Dependencies: [UIU-API-05](#task-uiu-api-05), [UIU-SHELL-01](#task-uiu-shell-01), [UIU-US-03](#task-uiu-us-03).
   Architecture/files: [native file design](features/unified-qt-workbench/design.md#uiu-file-01-direction-projects-and-guarded-native-file-operations), [persistence owner](../architecture.md#unified-qt-session-and-file-lifecycle), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Legacy DS plus new DS/US round trips and Rust/Python load/run, direction routing and target-tab dirty guard, cancel/failure preservation, safe writes and both-tab close behavior.
-  Evidence: [persistence acceptance plan](features/unified-qt-workbench/validation.md#persistence); pending implementation/acceptance.
+  Evidence: [persistence acceptance plan](features/unified-qt-workbench/validation.md#persistence), [edited-configuration prerequisite](features/unified-qt-workbench/design.md#uiu-file-01-edited-configuration-provenance-prerequisite); pending native implementation/acceptance.
 
 <a id="task-uiu-recovery-01"></a>
 - [ ] **UIU-RECOVERY-01** Preserve both direction projects across application restart/update.
