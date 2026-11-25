@@ -2103,8 +2103,11 @@ Control configuration never enters the sample-data path. Separate PRBS-TX,
 RxMER, CM Pre-Eq and PRBS-RX blocks attach to
 their actual source, impairment, transmit-correction and recovered-output planes.
 All startup connectors use the shared solid-arrow renderer. Configuration-group
-placement, source/destination labels and C/H/C×H captions distinguish control,
-measurement and verification meanings, with balanced, noncrossing routing.
+placement and block labels distinguish control, measurement and verification
+meanings, with balanced, noncrossing routing. Scientific C/H/C×H details remain
+in the stage windows and technical documentation; the startup canvas omits the
+three inline reference-plane notes under
+[UI-US-LAYOUT-04](development/checklist.md#task-ui-us-layout-04).
 
 Reuse the downstream dark theme, dotted canvas, WorkbenchBlock, Connection,
 status/focus/hover behavior, WorkbenchDialog and shared run controls. Preserve

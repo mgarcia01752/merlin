@@ -8,7 +8,9 @@ control route connects to CMTS Receiver. Matching transmitter and receiver
 settings are validated in Rust. The canvas uses the same outer spacing
 and block, group and solid-arrow style as Downstream. Configuration connects
 directly from the junction inside its group to the receiver; the line does not
-loop underneath it. Narrow windows retain a scrollable diagram. Click a block,
+loop underneath it. Scientific reference-plane notes appear in the stage windows
+rather than on the startup canvas. Narrow windows retain a scrollable diagram.
+Click a block,
 or focus it and press Enter or Space, to open its window. Escape, Cancel and X
 close an editor without applying its changes.
 

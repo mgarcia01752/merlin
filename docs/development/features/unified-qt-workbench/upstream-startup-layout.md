@@ -14,7 +14,13 @@ preserves the approved presentation and connector semantics.
 
 ## Subsequent presentation refinement
 
-The final 2026-11-25 consistency request keeps leftward sample flow and CMTS
+The later note-removal request omits the three inline C/H/C×H canvas captions.
+Reference-plane details remain in stage windows and technical documentation;
+blocks and connectors are unchanged. See
+[UI-US-LAYOUT-04](../../checklist.md#task-ui-us-layout-04) and its
+[design](design.md#ui-us-layout-04-remove-inline-canvas-notes).
+
+The preceding 2026-11-25 consistency request keeps leftward sample flow and CMTS
 receiver-side control, but replaces the dashed/marked connections with
 Downstream's plain solid arrows. The CMTS junction stays inside its group and
 connects directly to the adjacent receiver at the main row; there is no lower

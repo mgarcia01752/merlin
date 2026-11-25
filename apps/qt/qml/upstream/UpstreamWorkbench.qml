@@ -69,9 +69,7 @@ Item {
     readonly property real upperInputTop: theme.workbenchInputRowTop
     readonly property real correctionTop: theme.workbenchLowerRowTop
     readonly property real panelRadius: 12
-    readonly property real captionFontSize: 12
     readonly property real groupHeadingFontSize: theme.workbenchConfigurationHeadingSize
-    readonly property real captionGap: 14
     readonly property var sectionDialogs: ({
             ucd: ucdDialog,
             profiles: profilesDialog,
@@ -583,36 +581,6 @@ Item {
                     }
                 }
             }
-            Label {
-                objectName: "upstreamCorrectionLabel"
-                x: diagram.correctionX + workbench.captionGap
-                y: (diagram.dataAxis + preEqualizationBlock.y) / 2 - implicitHeight / 2
-                text: "C before H"
-                color: workbench.theme.muted
-                font.pixelSize: workbench.captionFontSize
-            }
-            Label {
-                objectName: "upstreamChannelLabel"
-                x: channelBlock.x
-                y: channelBlock.y + channelBlock.height + workbench.captionGap
-                width: channelBlock.width
-                text: "Physical channel H"
-                horizontalAlignment: Text.AlignHCenter
-                color: workbench.theme.muted
-                font.pixelSize: workbench.captionFontSize
-            }
-            Label {
-                objectName: "upstreamReceiverLabel"
-                x: receiverBlock.x + receiverBlock.width
-                y: diagram.dataAxis + workbench.captionGap
-                width: diagram.mainGap
-                text: "Received observations: C×H"
-                wrapMode: Text.WordWrap
-                horizontalAlignment: Text.AlignHCenter
-                color: workbench.theme.muted
-                font.pixelSize: workbench.captionFontSize
-            }
-
         }
     }
     Label {

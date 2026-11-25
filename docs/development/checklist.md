@@ -741,6 +741,14 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Acceptance: Reuse solid muted arrows, common block/grid/group styling and row geometry. Connect the internal CMTS junction directly to the adjacent receiver without a lower detour; preserve leftward upstream samples, distinct scientific planes, all drill-ins, keyboard access, themes and narrow scrolling. Pass affected direction/shell QML, formatting, API boundary and documentation checks, optimized native build and actual VM comparison; refresh dark screenshots.
   Evidence: [executed validation](features/unified-qt-workbench/design.md#ui-us-layout-03-consistent-direction-diagrams) records 13 upstream startup, 55 downstream and 60 shell QML passes, formatting, final API boundary/documentation checks, optimized build and actual VM comparison. Dark guide/README screenshots show the consistent layout and direct receiver connection; downstream pixels remain unchanged. Historical refinement states are preserved.
 
+<a id="task-ui-us-layout-04"></a>
+- [x] **UI-US-LAYOUT-04** Remove upstream inline scientific notes.
+  Requirements: [REQ-UIU-10](../requirements.md#req-uiu-10), [REQ-UIU-25](../requirements.md#req-uiu-25).
+  Dependencies: [UI-US-LAYOUT-03](#task-ui-us-layout-03).
+  Architecture/files: [upstream presentation](../architecture.md#unified-qt-upstream-scientific-presentation); [design and validation](features/unified-qt-workbench/design.md#ui-us-layout-04-remove-inline-canvas-notes).
+  Acceptance: Remove only the three inline C/H/C×H notes and unused caption constants; preserve stage blocks, routes, drill-ins and scientific reference planes. Pass the complete changed startup QML file, formatting/boundary and documentation checks, optimized native build and actual VM review; refresh affected dark images.
+  Evidence: [executed validation](features/unified-qt-workbench/design.md#ui-us-layout-04-remove-inline-canvas-notes) records 13 passing startup-view QML checks, formatting, final API boundary/documentation checks, optimized native build and actual VM confirmation. Updated dark guide/README images omit the notes; blocks/routes and downstream pixels are unchanged. Earlier task history is preserved.
+
 ## Architecture and module rules
 
 <a id="task-arch-01"></a>

@@ -6042,3 +6042,38 @@ Executed/not-required checks, exact source/binary/image identities, fixture
 renders and native captures remain under ignored
 `docs/development/local/unified-qt-workbench/consistent-diagrams/`. Installed,
 Windows and hosted checks were not executed. Historical task states are preserved.
+
+### UI-US-LAYOUT-04 remove inline canvas notes
+
+The user requested removal of the three upstream canvas notes: "Received
+observations: C×H", "Physical channel H" and "C before H". The
+[official task](../../checklist.md#task-ui-us-layout-04) links
+[REQ-UIU-10](../../../requirements.md#req-uiu-10) and
+[REQ-UIU-25](../../../requirements.md#req-uiu-25) to the
+[upstream architecture](../../../architecture.md#unified-qt-upstream-scientific-presentation).
+Edit only `apps/qt/qml/upstream/UpstreamWorkbench.qml` to remove these labels and
+their unused caption constants. Reuse all blocks, endpoints and stage windows;
+scientific reference planes remain documented and available in drill-ins.
+Update the existing label assertions to check absence in
+`apps/qt/tests/upstream/tst_upstream_workbench.qml` while retaining its routing,
+reference-plane, keyboard, theme and scrolling coverage.
+
+Host data, native adapters, lifecycle, registration, public APIs and science are
+unchanged. Acceptance uses the complete changed startup-view test file,
+formatting/API-boundary and documentation checks, optimized Qt build and actual
+VM capture. Downstream/shell, Rust/Clippy, Python, CLI and packaging suites are
+not required for deleting passive labels.
+
+Executed validation (2026-11-25): the complete upstream startup-view file passes
+13 QML records, with no failures or skips, including label absence, routing,
+drill-ins, themes, keyboard/focus and narrow scrolling. Qt formatting and the
+final API boundary pass with zero scientific dependencies/legacy files. The
+optimized build passes in 3m 01s; actual VM pointer selection and unaltered window
+capture confirm that the three notes are absent and the diagram is unchanged.
+Downstream pixels match the preceding candidate. Dark guide/README images are
+refreshed. The existing startup presentation-limit notice remains uninvestigated;
+there is no new scientific acceptance claim. Logs, source/binary/image hashes
+and the validation receipt remain under ignored
+`docs/development/local/unified-qt-workbench/canvas-notes/`. Installed/Windows/
+hosted checks were not executed. Current feature-documentation, integration
+traceability, Python-guide consistency and diff checks pass.

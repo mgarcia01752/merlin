@@ -236,10 +236,9 @@ Pane {
             verify(measurement.toX > data.toX && measurement.toX < data.fromX);
             compare(verification.fromY, receiver.y);
             verify(verification.toY < verification.fromY);
-            compare(findChild(workbench, "upstreamCorrectionLabel").text, "C before H");
-            compare(findChild(workbench, "upstreamChannelLabel").text, "Physical channel H");
-            verify(findChild(workbench, "upstreamReceiverLabel").text.indexOf("C×H") >= 0);
-            compare(findChild(workbench, "upstreamReceiverLabel").x, received.toX);
+            compare(findChild(workbench, "upstreamCorrectionLabel"), null);
+            compare(findChild(workbench, "upstreamChannelLabel"), null);
+            compare(findChild(workbench, "upstreamReceiverLabel"), null);
             verify(workbench.sectionDialogs.receiver.referencePlane.indexOf("received observations") >= 0);
             verify(workbench.sectionDialogs.preEqualization.referencePlane.indexOf("not a CMTS") >= 0);
         }
