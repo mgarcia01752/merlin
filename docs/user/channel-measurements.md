@@ -112,8 +112,7 @@ carrier-value collection limits also remain.
 
 ## Animate the selected captures
 
-Use **Play** under the chart to view the checked originals in sequence, as in
-PNM Viewer. **Pause**, **Previous**, **Next** and the position slider let you
+Use **Play** under MERLIN’s chart to view the checked originals in sequence. **Pause**, **Previous**, **Next** and the position slider let you
 inspect a particular capture. Select 1, 2, 4 or 8 **Frames/s**; the counter shows
 the current selected frame and total, and the capture UTC is displayed below.
 Playback stops at the last capture; Play at the end starts again from the first.

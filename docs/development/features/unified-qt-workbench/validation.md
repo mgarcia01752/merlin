@@ -5386,3 +5386,74 @@ repeated here. Native Windows GUI/filesystem, UAC/MSI and installed Linux
 polkit/DEB lifecycle remain unexecuted; source-checkout no-install guards stay
 intact. No install, push, release or external interoperability claim follows.
 Continue UIU-QA-01.
+
+## UIU-QA-01 final unified acceptance
+
+All 21 authorized UIU tasks are accepted. Runtime and preliminary documentation
+gates pass; the final state audit is recorded with the exact evidence.
+The [exact final evidence](final-acceptance-evidence.json) records commands,
+named native cases, source/artifact hashes, failed attempts and their resolution.
+The [completion report](completion-report.md) maps all 21 tasks to acceptance
+commits and executed validation; earlier checkpoint statements above remain
+historical. The [final source inventory](final-source-inventory.json) reconciles
+all 178 original Qt destinations, owner dispositions, dependencies and legal
+assets without replacing the planning inventory. The [numeric review](final-numeric-review.json)
+covers all 737 numeric-bearing source files and 15,095 lexical candidates in
+the integration diff, including comments/type/identifier matches. Every candidate
+was reviewed with its owner context; enumeration alone establishes no acceptance.
+
+The final implementation preserves existing values, errors, public imports,
+scientific vectors and project schemas. Shared definitions reuse existing
+common/domain owners; equal values with different meanings remain independent.
+Qt editor limits are presentation hints and Rust admission stays authoritative.
+The new headless checker dispatches current downstream/upstream projects through
+the public project API, retaining complete legacy receiver checks and diagnostics.
+The native runner now supplies its required control-footprint reference using
+the existing Rust CLI example; no scientific API was added.
+
+Executed Level 3 coverage includes 922 workspace cases, 140 analysis cases,
+four preparation-example tests, one doctest, 14 executable API examples, 212
+tooling cases including 25 packaging cases, 647 complete Qt cases, 441 QML
+records and 217 installed-native cases. The ordinary ignored GUI artifact
+case is run explicitly on the fresh native recovery documents; three exact
+Rust/Python project parity cases pass. The runner correction also passes all
+15 testing-tool cases. Full root and Qt Clippy pass with warnings denied,
+formatting passes, the optimized executable is current, and the actual public
+operation matrix passes 633 Rust and 604 native rows. Existing explicitly
+ignored host benchmarks are not correctness passes.
+
+Fresh real native consumers complete downstream and 50/25 kHz upstream science,
+QAM/spectrum/response/decoder/verification interactions and separate-process
+recovery. Both original files remain unchanged; independent paths/dirty flags,
+selected direction, theme and subsequent upstream execution survive restart,
+including a changed working directory. The final checker accepts the same legacy
+and current direction inputs rejected by the previous executable, while malformed
+and incomplete legacy inputs still reject. Actual X11 captures were visually
+inspected. The README now displays the current dual-tab upstream workbench,
+replacing its obsolete downstream-only header screenshot.
+
+Preserved failure history matters: initial formatting/selector typing failures
+were corrected before acceptance. Seven Qt scientific-completion watchdogs expired
+under overlapping full-suite/compiler load; the representative unchanged case
+passes independently and the complete controlled run passes all 647 tests with
+two threads, unchanged assertions and unchanged watchdogs. Native reference
+compilation was held during that run; no scientific worker timer was suspended.
+The first native run exposed one missing required reference (216 passes and one
+KeyError). Its corrected complete 217-case run uses the accepted installed wheel
+and unchanged hashed Rust outputs plus the missing reference. Rebuilding after
+private feature guards produced byte-identical archive members; exact package
+contents and native binary identity were verified, and the final wheel was
+independently installed. No old failed run is reported as passed.
+
+Source-only review confirms unchanged external dependency identities/checksums
+(root 119, Python 121, Qt 202) and unchanged required legal files. All 818 changed
+source headers retain their proper GPL Qt or Apache reusable designation.
+Current guide/status/skill owner claims are reconciled; legal/provenance
+attributions and historical technical documentation remain preserved. Twelve
+canonical skills and 24 discovery links resolve. The final record retains the
+existing analysis-only unused timing-helper warning; no new warning suppression
+was introduced.
+
+These are Linux checkout results. Windows/hosted runtime, MSI/UAC and installed
+Ubuntu updater lifecycles remain separate platform gates; macOS is deferred.
+No push, master merge, release or system-wide installation is claimed.

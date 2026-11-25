@@ -5,6 +5,7 @@
 //! Public preview assembly delegates layout, H admission and actual composition to scientific owners.
 use super::*;
 use crate::{
+    common::constants::MAX_CHANNEL_PREVIEW_RESPONSE_POINTS,
     profile::candidate::CapturedProfile,
     scenario::measurement_view::{measurement_view, response_value, ResponseMetric},
     signal_processing::channel::{composition::prepare_channel, impairments::ChannelImpairments},
@@ -68,7 +69,7 @@ pub(super) fn prepare(
     let low_hz = grid.frequency(low)?;
     let high_hz = grid.frequency(high)?;
     let loss = &configuration.settings.additional_loss;
-    let count = active.len().min(128);
+    let count = active.len().min(MAX_CHANNEL_PREVIEW_RESPONSE_POINTS);
     let additional_points = (0..count)
         .map(|index| {
             let offset = active[index * (active.len() - 1) / (count - 1)];

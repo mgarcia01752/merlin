@@ -9,6 +9,15 @@ use crate::{
 };
 use serde::Serialize;
 
+/// Maximum copied original constellation labels in one passive reference page.
+const MAX_REFERENCE_VIEW_POINTS: usize = 4096;
+/// Finite decision viewport half extent in nearest-neighbor spacings, not a slicing threshold.
+const DECISION_VIEWPORT_NEIGHBOR_SPACINGS: f64 = 2.5;
+/// Independent safety ceiling for vertices produced by half-plane clipping.
+const MAX_DECISION_REGION_VERTICES: usize = 64;
+/// Maximum nearest labelled references shown beside the selected decision region.
+const MAX_NEARBY_REFERENCE_POINTS: usize = 49;
+
 /// One original label and its known-amplitude reference I/Q; no received sample is fitted.
 #[derive(Serialize)]
 #[non_exhaustive]
@@ -87,12 +96,16 @@ pub(crate) fn reference_view(
     validate_amplitude(amplitude)?;
     let reference = reference_for_order(usize::from(order))
         .ok_or_else(|| invalid("Unsupported constellation reference"))?;
-    if start >= reference.iq.len() || count > 4096 {
+    if start >= reference.iq.len() || count > MAX_REFERENCE_VIEW_POINTS {
         return Err(invalid(
             "Reference viewport is outside original labels or exceeds 4096 points",
         ));
     }
-    let count = (reference.iq.len() - start).min(if count == 0 { 4096 } else { count });
+    let count = (reference.iq.len() - start).min(if count == 0 {
+        MAX_REFERENCE_VIEW_POINTS
+    } else {
+        count
+    });
     let points = reference.iq[start..start + count]
         .iter()
         .enumerate()
@@ -188,7 +201,7 @@ pub(crate) fn decision_region(
         .ok_or_else(|| invalid("Reference has no distinct neighbor"))?
         .2
         .sqrt();
-    let radius = 2.5 * spacing;
+    let radius = DECISION_VIEWPORT_NEIGHBOR_SPACINGS * spacing;
     let mut polygon = vec![
         [-radius, -radius],
         [radius, -radius],
@@ -197,7 +210,7 @@ pub(crate) fn decision_region(
     ];
     for (_, offset, squared_distance) in neighbors.iter().filter(|item| item.0 != label) {
         polygon = half_plane(&polygon, *offset, squared_distance / 2.0);
-        if polygon.len() > 64 {
+        if polygon.len() > MAX_DECISION_REGION_VERTICES {
             return Err(invalid("Decision region exceeds 64 vertices"));
         }
     }
@@ -207,7 +220,7 @@ pub(crate) fn decision_region(
         .collect::<Result<Vec<_>, _>>()?;
     let nearby_references = neighbors
         .iter()
-        .take(49)
+        .take(MAX_NEARBY_REFERENCE_POINTS)
         .map(|(label, offset, _)| {
             Ok(RelativeReference {
                 label: *label,

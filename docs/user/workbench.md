@@ -292,7 +292,7 @@ contents, not the extension.
 Expand File information, Channel information and Profiles. Choose a profile from
 the dropdown or its tree row; inspect numbered **Range** entries and select rows
 for details. Input provenance is separately expandable. Values are read-only.
-**View Profile…** opens the PNM Viewer layout with profile overlays, dB/bit-loading
+**View Profile…** opens MERLIN’s profile viewer with profile overlays, dB/bit-loading
 selection, carrier filters/lanes, gross Profile BW, mouse zoom and **Full Span**.
 Profile toggles only change the viewed traces;
 it does not apply a profile or run the simulation. Filenames are hidden here;
@@ -394,8 +394,8 @@ and failed exports have distinct messages. Existing destinations remain protecte
 from overwrite. This change does not alter the recipe, measured source data or
 export formats. Simulation and transmitter-preview
 workers also admit queued failure details. If details cannot fit, a fixed message
-is used; previous accepted results remain protected. Full unified-session
-acceptance remains pending.
+is used; previous accepted results remain protected. The unified sessions preserve independent direction state under one active-run
+slot; retained-data and presentation limits remain separate.
 
 Receiver Apply help also retains admitted error details. If those details cannot
 fit, the existing fixed limit message appears without generated help; accepted
@@ -453,7 +453,9 @@ unchanged and shows an error; opening never starts a simulation. Do not combine
 `--workbench` with automatic update recovery (`--restore-update`).
 
 Add `--debug-ui` for loading timing. Use `--help` for startup usage or
-`--check-workbench FILE` to validate without a desktop.
+`--check-workbench FILE` to validate a current downstream or upstream project
+without a desktop or simulation run. Legacy downstream files retain their
+existing complete-receiver check and diagnostics.
 
 The [receiver-mode guide](receiver-estimation/modes.md) compares all three
 Receiver Configuration choices and their channel/noise sources.

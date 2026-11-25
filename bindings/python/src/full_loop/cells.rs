@@ -4,6 +4,7 @@
  */
 //! Frozen selection ownership and owned native receiver observations through public Rust only.
 use super::*;
+use crate::constants::MAX_CELL_STREAM_IDENTIFIER_BYTES;
 
 #[pyclass(from_py_object, frozen, module = "merlin", name = "FullLoopCellQuery")]
 #[derive(Clone)]
@@ -20,7 +21,7 @@ impl PyCellQuery {
     #[new]
     #[pyo3(signature=(stream="payload"))]
     fn new(stream: &str) -> PyResult<Self> {
-        if stream.len() > 128 {
+        if stream.len() > MAX_CELL_STREAM_IDENTIFIER_BYTES {
             return Err(error(api::ApiError::new(
                 api::ErrorCode::ResourceLimit,
                 "Cell stream exceeds 128 bytes",

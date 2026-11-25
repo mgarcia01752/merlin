@@ -165,6 +165,7 @@ fn main() {
                     "qml/shell/WorkbenchLoadingDialog.qml",
                     "qml/downstream/instruments/qam/ReceiverQamDialog.qml",
                     "qml/downstream/instruments/qam/ReceiverCellControls.qml",
+                    "qml/downstream/instruments/qam/ReceiverSelectionLimits.js",
                     "qml/downstream/instruments/response/ReceiverResponseDialog.qml",
                     "qml/downstream/instruments/slicer/ReceiverSlicerDialog.qml",
                     "qml/downstream/instruments/slicer/SoftDiagnosticPlot.qml",

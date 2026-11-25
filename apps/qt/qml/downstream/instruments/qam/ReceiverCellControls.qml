@@ -7,6 +7,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import "../../../shared/components"
 import "../../../shared/presentation"
+import "ReceiverSelectionLimits.js" as ReceiverSelectionLimits
 ColumnLayout {
     id: controls
     required property var theme
@@ -43,16 +44,16 @@ ColumnLayout {
     property int runProfile: -1
     property int profile: -1
     property int order: 0
-    property int firstBin: -1
-    property int lastBin: -1
-    property int firstSymbol: -1
-    property int lastSymbol: -1
+    property int firstBin: ReceiverSelectionLimits.ALL_PHYSICAL_BINS
+    property int lastBin: ReceiverSelectionLimits.ALL_PHYSICAL_BINS
+    property int firstSymbol: ReceiverSelectionLimits.ALL_RECEIVER_SYMBOLS
+    property int lastSymbol: ReceiverSelectionLimits.ALL_RECEIVER_SYMBOLS
     property bool showView: true
     property bool resetting: false
     signal selectionChanged()
     function query() { return {run_profile:runProfile,signal:signalIndex,view:viewIndex,part:plcPartIndex,profile:profile,order:order,first_bin:firstBin,last_bin:lastBin,first_symbol:firstSymbol,last_symbol:lastSymbol} }
     function resetFilters(resetRun) {
-        resetting=true;if(resetRun!==false){runProfile=-1};profile=-1;order=0;firstBin=-1;lastBin=-1;firstSymbol=-1;lastSymbol=-1;resetting=false
+        resetting=true;if(resetRun!==false){runProfile=-1};profile=-1;order=0;firstBin=ReceiverSelectionLimits.ALL_PHYSICAL_BINS;lastBin=ReceiverSelectionLimits.ALL_PHYSICAL_BINS;firstSymbol=ReceiverSelectionLimits.ALL_RECEIVER_SYMBOLS;lastSymbol=ReceiverSelectionLimits.ALL_RECEIVER_SYMBOLS;resetting=false
         selectionChanged()
     }
     onRunProfileChanged: if(!resetting) resetFilters(false)
@@ -107,13 +108,13 @@ ColumnLayout {
     GridLayout {
         columns:8;columnSpacing:8;rowSpacing:4;Layout.fillWidth:true
         Label { text:"First Bin";color:controls.theme.muted }
-        SpinBox { id:firstBinField;objectName:"receiverFirstBin";from:-1;to:8191;enabled:presentation.textAdmitted && controls.contextCurrent;editable:presentation.textAdmitted;value:controls.firstBin;textFromValue:presentation.textAdmitted ? function(v){return v<0 ? "All" : v.toString()} : function(v){return ""};valueFromText:function(t){return t==="All" ? -1 : Number(t)};Layout.preferredWidth:105;onValueModified:{controls.firstBin=value;controls.selectionChanged()} }
+        SpinBox { id:firstBinField;objectName:"receiverFirstBin";from:ReceiverSelectionLimits.ALL_PHYSICAL_BINS;to:ReceiverSelectionLimits.MAXIMUM_PHYSICAL_BIN_HINT;enabled:presentation.textAdmitted && controls.contextCurrent;editable:presentation.textAdmitted;value:controls.firstBin;textFromValue:presentation.textAdmitted ? function(v){return v<0 ? "All" : v.toString()} : function(v){return ""};valueFromText:function(t){return t==="All" ? ReceiverSelectionLimits.ALL_PHYSICAL_BINS : Number(t)};Layout.preferredWidth:105;onValueModified:{controls.firstBin=value;controls.selectionChanged()} }
         Label { text:"Last Bin";color:controls.theme.muted }
-        SpinBox { id:lastBinField;objectName:"receiverLastBin";from:-1;to:8191;enabled:presentation.textAdmitted && controls.contextCurrent;editable:presentation.textAdmitted;value:controls.lastBin;textFromValue:presentation.textAdmitted ? function(v){return v<0 ? "All" : v.toString()} : function(v){return ""};valueFromText:function(t){return t==="All" ? -1 : Number(t)};Layout.preferredWidth:105;onValueModified:{controls.lastBin=value;controls.selectionChanged()} }
+        SpinBox { id:lastBinField;objectName:"receiverLastBin";from:ReceiverSelectionLimits.ALL_PHYSICAL_BINS;to:ReceiverSelectionLimits.MAXIMUM_PHYSICAL_BIN_HINT;enabled:presentation.textAdmitted && controls.contextCurrent;editable:presentation.textAdmitted;value:controls.lastBin;textFromValue:presentation.textAdmitted ? function(v){return v<0 ? "All" : v.toString()} : function(v){return ""};valueFromText:function(t){return t==="All" ? ReceiverSelectionLimits.ALL_PHYSICAL_BINS : Number(t)};Layout.preferredWidth:105;onValueModified:{controls.lastBin=value;controls.selectionChanged()} }
         Label { text:"First RX Symbol";color:controls.theme.muted }
-        SpinBox { id:firstSymbolField;objectName:"receiverFirstSymbol";from:-1;to:1000000;enabled:presentation.textAdmitted && controls.contextCurrent;editable:presentation.textAdmitted;value:controls.firstSymbol;textFromValue:presentation.textAdmitted ? function(v){return v<0 ? "All" : v.toString()} : function(v){return ""};valueFromText:function(t){return t==="All" ? -1 : Number(t)};Layout.preferredWidth:115;onValueModified:{controls.firstSymbol=value;controls.selectionChanged()} }
+        SpinBox { id:firstSymbolField;objectName:"receiverFirstSymbol";from:ReceiverSelectionLimits.ALL_RECEIVER_SYMBOLS;to:ReceiverSelectionLimits.MAXIMUM_RX_SYMBOL_HINT;enabled:presentation.textAdmitted && controls.contextCurrent;editable:presentation.textAdmitted;value:controls.firstSymbol;textFromValue:presentation.textAdmitted ? function(v){return v<0 ? "All" : v.toString()} : function(v){return ""};valueFromText:function(t){return t==="All" ? ReceiverSelectionLimits.ALL_RECEIVER_SYMBOLS : Number(t)};Layout.preferredWidth:115;onValueModified:{controls.firstSymbol=value;controls.selectionChanged()} }
         Label { text:"Last RX Symbol";color:controls.theme.muted }
-        SpinBox { id:lastSymbolField;objectName:"receiverLastSymbol";from:-1;to:1000000;enabled:presentation.textAdmitted && controls.contextCurrent;editable:presentation.textAdmitted;value:controls.lastSymbol;textFromValue:presentation.textAdmitted ? function(v){return v<0 ? "All" : v.toString()} : function(v){return ""};valueFromText:function(t){return t==="All" ? -1 : Number(t)};Layout.preferredWidth:115;onValueModified:{controls.lastSymbol=value;controls.selectionChanged()} }
+        SpinBox { id:lastSymbolField;objectName:"receiverLastSymbol";from:ReceiverSelectionLimits.ALL_RECEIVER_SYMBOLS;to:ReceiverSelectionLimits.MAXIMUM_RX_SYMBOL_HINT;enabled:presentation.textAdmitted && controls.contextCurrent;editable:presentation.textAdmitted;value:controls.lastSymbol;textFromValue:presentation.textAdmitted ? function(v){return v<0 ? "All" : v.toString()} : function(v){return ""};valueFromText:function(t){return t==="All" ? ReceiverSelectionLimits.ALL_RECEIVER_SYMBOLS : Number(t)};Layout.preferredWidth:115;onValueModified:{controls.lastSymbol=value;controls.selectionChanged()} }
     }
     Label { text:controls.selectorLabels.summary || "";color:controls.theme.muted;font.pixelSize:11;Layout.fillWidth:true;wrapMode:Text.WordWrap }
 }

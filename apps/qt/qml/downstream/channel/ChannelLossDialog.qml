@@ -13,6 +13,14 @@ WorkbenchDialog {
     required property var settingsBackend
     property bool busy: false
     property bool loading: false
+
+    // Existing input hints; Rust validates the selected loss model and units.
+    readonly property real minimumManualTiltDb: -30
+    readonly property real maximumManualTiltDb: 30
+    readonly property real initialManualTiltDb: 0
+    readonly property real minimumCableLength: 0
+    readonly property real maximumCableLength: 1000
+    readonly property real initialCableLength: 0
     readonly property var preview: presentation.value ? presentation.value.preview : ({error:"",points:[]})
     readonly property string error: presentation.value ? presentation.value.error : ""
     property PresentationOwner presentationCoverage: PresentationOwner {
@@ -60,7 +68,7 @@ WorkbenchDialog {
         }
         const accepted=JSON.parse(backend.loss_current())
         const nextMode=accepted.mode==="manual" ? 1 : accepted.mode==="cable" ? 2 : 0
-        const nextSlope=String(accepted.tilt_db || 0), nextLength=String(accepted.length || 0)
+        const nextSlope=String(accepted.tilt_db || initialManualTiltDb), nextLength=String(accepted.length || initialCableLength)
         const nextUnits=accepted.unit==="metres" ? 1 : 0
         const nextPreview=JSON.parse(backend.loss_preview(JSON.stringify(documentFor(nextMode,nextSlope,nextLength,nextUnits)),settingsBackend.current()))
         if (!replacePreview(nextPreview,nextPreview.error || "")) {
@@ -102,13 +110,13 @@ WorkbenchDialog {
             Label { text:"Additional Response";color:dialog.theme.text }
             ComboBox { id:mode;objectName:"channelLossMode";model:presentation.value ? presentation.value.modes : [];enabled:presentation.textAdmitted;Layout.fillWidth:true;onActivated:dialog.refresh() }
             Label { visible:mode.currentIndex===1;text:"High − Low Gain (dB)";color:dialog.theme.text }
-            TextField { id:slope;objectName:"channelManualTilt";visible:mode.currentIndex===1;text:presentation.textAdmitted ? "0" : "";enabled:presentation.textAdmitted;validator:DoubleValidator {bottom:-30;top:30;locale:"C"} onTextChanged:dialog.refresh() }
+            TextField { id:slope;objectName:"channelManualTilt";visible:mode.currentIndex===1;text:presentation.textAdmitted ? String(dialog.initialManualTiltDb) : "";enabled:presentation.textAdmitted;validator:DoubleValidator {bottom:dialog.minimumManualTiltDb;top:dialog.maximumManualTiltDb;locale:"C"} onTextChanged:dialog.refresh() }
             Label { visible:mode.currentIndex===2;text:"Cable Type";color:dialog.theme.text }
             ComboBox { visible:mode.currentIndex===2;model:presentation.value ? presentation.value.cables : [];Layout.fillWidth:true }
             Label { visible:mode.currentIndex===2;text:"Additional Cable Length";color:dialog.theme.text }
             RowLayout {
                 visible:mode.currentIndex===2
-                TextField { id:length;objectName:"channelCableLength";text:presentation.textAdmitted ? "0" : "";enabled:presentation.textAdmitted;validator:DoubleValidator {bottom:0;top:1000;locale:"C"} Layout.fillWidth:true;onTextChanged:dialog.refresh() }
+                TextField { id:length;objectName:"channelCableLength";text:presentation.textAdmitted ? String(dialog.initialCableLength) : "";enabled:presentation.textAdmitted;validator:DoubleValidator {bottom:dialog.minimumCableLength;top:dialog.maximumCableLength;locale:"C"} Layout.fillWidth:true;onTextChanged:dialog.refresh() }
                 ComboBox { id:units;objectName:"channelCableUnits";model:presentation.value ? presentation.value.units : [];enabled:presentation.textAdmitted;onActivated:dialog.refresh() }
             }
             Label { text:"Channel Band";color:dialog.theme.muted }

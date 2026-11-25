@@ -10,7 +10,6 @@ mod tests;
 use super::common;
 use crate::shared::presentation::constants::{
     HERTZ_PER_MEGAHERTZ, MICROSECONDS_PER_SECOND, NORMALIZED_AXIS_CENTER,
-    SPECTRUM_FREQUENCY_TICK_INTERVALS, SPECTRUM_POWER_TICK_INTERVALS,
 };
 use merlin::upstream::{
     ConfiguredResponseSnapshot, ConfiguredResponseSource, ReceiverEstimateIdentity,
@@ -22,6 +21,10 @@ use serde_json::{json, Value};
 
 // Display padding in the selected axis units for an exactly constant finite line.
 const FLAT_RESPONSE_AXIS_PADDING: f64 = 1.0;
+// Independent response-axis policies: the coordinate may be carrier or delay,
+// and its value may be amplitude, phase or impulse rather than spectrum power.
+const RESPONSE_COORDINATE_TICK_INTERVALS: usize = 4;
+const RESPONSE_VALUE_TICK_INTERVALS: u32 = 5;
 
 /// Explicit configured transfers and the separately retained actual receiver plane.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize, Serialize)]
@@ -500,7 +503,7 @@ fn viewport(
             position as f64 / (count - 1) as f64
         }
     };
-    let intervals = (count - 1).min(SPECTRUM_FREQUENCY_TICK_INTERVALS);
+    let intervals = (count - 1).min(RESPONSE_COORDINATE_TICK_INTERVALS);
     let x_ticks: Vec<_> = (0..=intervals)
         .map(|tick| {
             let position = if intervals == 0 {
@@ -512,9 +515,9 @@ fn viewport(
         })
         .collect();
     let y_ticks = if finite {
-        (0..=SPECTRUM_POWER_TICK_INTERVALS)
+        (0..=RESPONSE_VALUE_TICK_INTERVALS)
             .map(|tick| {
-                let y = f64::from(tick) / f64::from(SPECTRUM_POWER_TICK_INTERVALS);
+                let y = f64::from(tick) / f64::from(RESPONSE_VALUE_TICK_INTERVALS);
                 json!({"y":y,"label":format!("{:.3}",high-y*span)})
             })
             .collect::<Vec<_>>()

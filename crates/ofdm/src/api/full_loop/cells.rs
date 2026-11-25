@@ -8,7 +8,9 @@ pub(super) mod queries;
 mod selection;
 pub(super) mod soft;
 use super::*;
-use crate::common::constants::{MAX_RECEIVER_CELL_VIEW_ROWS, MAX_RECEIVER_DECISION_VIEW_ROWS};
+use crate::common::constants::{
+    MAX_RECEIVER_CELL_QUERY_BYTES, MAX_RECEIVER_CELL_VIEW_ROWS, MAX_RECEIVER_DECISION_VIEW_ROWS,
+};
 pub use crate::signal_processing::{
     modulation::{
         mer::MerResult as FullLoopCellMer, slicing::HardDecision as FullLoopHardDecision,
@@ -28,7 +30,7 @@ impl FullLoopCellQuery {
     /// # Errors
     /// Rejects malformed/unknown fields, unsupported orders, ranges and common query limits.
     pub fn from_json(bytes: &[u8]) -> ApiResult<Self> {
-        if bytes.len() > 4096 {
+        if bytes.len() > MAX_RECEIVER_CELL_QUERY_BYTES {
             return Err(ApiError::new(
                 ErrorCode::ResourceLimit,
                 "Cell query exceeds 4096 bytes",
@@ -47,8 +49,12 @@ impl FullLoopCellQuery {
                 "Cell view exceeds 2048 rows",
             ));
         }
-        if self.first_bin.is_some_and(|value| value > 8191)
-            || self.last_bin.is_some_and(|value| value > 8191)
+        if self
+            .first_bin
+            .is_some_and(|value| SubcarrierIndex::new(value).is_err())
+            || self
+                .last_bin
+                .is_some_and(|value| SubcarrierIndex::new(value).is_err())
             || self
                 .first_bin
                 .zip(self.last_bin)

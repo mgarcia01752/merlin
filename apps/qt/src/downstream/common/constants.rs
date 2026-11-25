@@ -322,3 +322,14 @@ pub(crate) const RECEIVER_LLR_BIN_CENTRE_FRACTION: f64 = 0.5;
 
 /// Legacy modulation-order sentinel selecting the first backend-reported available order.
 pub(crate) const AUTO_RECEIVER_ORDER_SELECTOR: u16 = 0;
+
+/// Legacy channel-widget selectors; these identify presentation reference planes.
+pub(crate) const CHANNEL_BEFORE_AMPLIFIER_TAP: i32 = 0;
+pub(crate) const CHANNEL_AFTER_AMPLIFIER_TAP: i32 = 1;
+pub(crate) const CHANNEL_RECEIVER_INPUT_TAP: i32 = 2;
+/// Independent response/soft-curve drawing policies; unrelated to FFT view limits.
+pub(crate) const DIAGNOSTIC_CURVE_BUCKETS: usize = 1024;
+pub(crate) const DIAGNOSTIC_CURVE_TICK_INTERVALS: u32 = 4;
+/// Fractional span headroom and absolute minimum padding have distinct meanings.
+pub(crate) const DIAGNOSTIC_AXIS_PADDING_FRACTION: f64 = 0.1;
+pub(crate) const DIAGNOSTIC_MIN_AXIS_PADDING: f64 = 0.1;

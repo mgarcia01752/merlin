@@ -4,6 +4,9 @@
  */
 //! Actual retained TX message inspection; generated construction data is not an emission claim.
 use super::*;
+use crate::common::constants::{
+    MAX_PLC_MESSAGE_INSPECTION_FRAMES, MAX_PLC_MESSAGE_INSPECTION_PACKETS,
+};
 pub use crate::transmission::plc::descriptors::inspection::{
     DescriptorField as FullLoopDescriptorField, DescriptorInspection as FullLoopDescriptor,
     DescriptorMeaning as FullLoopDescriptorMeaning,
@@ -82,12 +85,16 @@ fn inspect_frames(
         processed_frames: 0,
         pending_bytes: 0,
         packet_limit_reached: false,
-        frame_limit_reached: frames.len() > 64,
+        frame_limit_reached: frames.len() > MAX_PLC_MESSAGE_INSPECTION_FRAMES,
         messages: Vec::new(),
         issue: None,
     };
     let mut expected_symbol = None;
-    for (index, event) in frames.iter().take(64).enumerate() {
+    for (index, event) in frames
+        .iter()
+        .take(MAX_PLC_MESSAGE_INSPECTION_FRAMES)
+        .enumerate()
+    {
         let parsed = (|| -> ApiResult<_> {
             let symbol = event.context.channel_symbol_index.ok_or_else(|| {
                 super::super::error::invalid("PLC frame has no original channel-symbol origin")
@@ -130,7 +137,7 @@ fn inspect_frames(
         };
         report.processed_frames += 1;
         for packet in packets {
-            if report.messages.len() == 32 {
+            if report.messages.len() == MAX_PLC_MESSAGE_INSPECTION_PACKETS {
                 report.packet_limit_reached = true;
                 break;
             }
@@ -154,7 +161,7 @@ fn inspect_frames(
                 completely_transmitted: total_transmitted_samples >= end_sample,
             });
         }
-        if report.messages.len() == 32 {
+        if report.messages.len() == MAX_PLC_MESSAGE_INSPECTION_PACKETS {
             report.packet_limit_reached = true;
         }
         if report.issue.is_some() || report.packet_limit_reached {

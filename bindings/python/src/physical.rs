@@ -4,13 +4,10 @@
  */
 //! Owned Python conversion of public physical layout queries; no placement or power math.
 use crate::{
-    admission::PyTransmission, api, error, inputs::PyDpd, object_from_json,
-    profile_capture::PyProfileCapture,
+    admission::PyTransmission, api, constants::MAX_STAGE_IDENTIFIER_BYTES, error, inputs::PyDpd,
+    object_from_json, profile_capture::PyProfileCapture,
 };
 use pyo3::prelude::*;
-
-/// Native transport byte ceiling, separate from stage geometry and scientific budgets.
-const MAX_STAGE_IDENTIFIER_BYTES: usize = 128;
 
 #[pymethods]
 impl PyTransmission {

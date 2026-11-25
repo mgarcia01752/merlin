@@ -5,6 +5,7 @@
 //! Explicit bounded execution policies; scientific parameter types retain existing owners.
 use super::*;
 pub use crate::signal_processing::receiver::channel_estimation::MceSettings;
+use crate::simulation::channel::config::MAX_CHANNEL_DECODER_ITERATIONS;
 pub use crate::simulation::channel::{
     constellation::ConstellationSelection, protected_constellation::ProtectedCaptureSelection,
 };
@@ -15,6 +16,21 @@ use serde::{Deserialize, Serialize};
 pub const MAX_FULL_LOOP_OPTIONS_BYTES: usize = 65536;
 /// Application full-loop observation bound matching the accepted downstream workbench.
 pub const MAX_FULL_LOOP_DURATION_MS: u64 = 1000;
+
+/// Existing default source observation interval in milliseconds, excluding acquisition/drain.
+const DEFAULT_FULL_LOOP_DURATION_MS: u64 = 3;
+/// Existing per-decode iteration default; validation uses the scientific owner's ceiling.
+const DEFAULT_FULL_LOOP_ITERATIONS: usize = 50;
+/// Existing active host-runtime default in milliseconds; separate from source observation time.
+const DEFAULT_FULL_LOOP_RUNTIME_MS: u64 = 300_000;
+/// Existing default number of detailed completed words retained by a full-loop run.
+const DEFAULT_FULL_LOOP_RETAINED_WORDS: usize = 64;
+/// Existing reproducible impairment RNG seed; independent of the source's PRBS state.
+const DEFAULT_FULL_LOOP_NOISE_SEED: u64 = 41;
+/// Existing default paired payload/NCP constellation detail request.
+const DEFAULT_FULL_LOOP_CONSTELLATION_PAIRS: usize = 65_536;
+/// Existing independent per-stream protected-role constellation detail default.
+const DEFAULT_FULL_LOOP_PROTECTED_PAIRS: usize = 8192;
 
 /// Typed editable execution/detail policy; a request freezes an independently validated copy.
 #[derive(Clone, Serialize, Deserialize)]
@@ -36,20 +52,20 @@ impl Default for FullLoopOptions {
     /// 3 ms, 50 iterations, five-minute active host budget and finite observation details.
     fn default() -> Self {
         Self {
-            duration_ms: 3,
-            max_iterations: 50,
-            max_runtime_ms: 300000,
-            max_retained_words: 64,
-            noise_seed: 41,
+            duration_ms: DEFAULT_FULL_LOOP_DURATION_MS,
+            max_iterations: DEFAULT_FULL_LOOP_ITERATIONS,
+            max_runtime_ms: DEFAULT_FULL_LOOP_RUNTIME_MS,
+            max_retained_words: DEFAULT_FULL_LOOP_RETAINED_WORDS,
+            noise_seed: DEFAULT_FULL_LOOP_NOISE_SEED,
             receiver_mode: ReceiverMode::SuppliedChannel,
             mce: MceSettings::default(),
             constellation: Some(ConstellationSelection {
-                requested_pairs: 65536,
+                requested_pairs: DEFAULT_FULL_LOOP_CONSTELLATION_PAIRS,
                 capture_ncp: true,
                 ..Default::default()
             }),
             protected_constellation: Some(ProtectedCaptureSelection {
-                pairs_per_stream: 8192,
+                pairs_per_stream: DEFAULT_FULL_LOOP_PROTECTED_PAIRS,
                 ..Default::default()
             }),
         }
@@ -63,7 +79,7 @@ impl FullLoopOptions {
     /// Rejects duration/iteration/runtime/detail limits and existing MCE/protected policy errors.
     pub fn validate(&self) -> ApiResult<()> {
         if !(1..=MAX_FULL_LOOP_DURATION_MS).contains(&self.duration_ms)
-            || !(1..=100).contains(&self.max_iterations)
+            || !(1..=MAX_CHANNEL_DECODER_ITERATIONS).contains(&self.max_iterations)
         {
             return Err(ApiError::new(
                 ErrorCode::ResourceLimit,

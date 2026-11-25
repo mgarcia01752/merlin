@@ -34,7 +34,9 @@ with typed configuration, CM TX, channel, received-only CMTS RX and measured
 UCD/RxMER/Pre-Eq admission. Rust exposes `merlin::{downstream,upstream,common}`;
 one native Python distribution mirrors those namespaces and preserves
 `merlin.Simulation`. The [upstream CLI](docs/user/upstream/cli.md) uses the existing
-executable. The Qt workbench continues to present downstream OFDM only.
+executable. The [native Qt workbench](docs/user/workbench.md) presents both
+directions with independent projects, validated configuration, real Rust
+simulation and shared instruments. One simulation runs at a time.
 
 Install the desktop workbench: [Ubuntu DEB](docs/user/install/ubuntu-desktop.md) ·
 [Windows MSI](docs/user/install/windows.md). Windows native validation is pending;
@@ -46,10 +48,10 @@ Example inputs: [CLI requests and use cases](examples/cli/README.md) ·
 ## Workbench overview
 
 <p align="center">
-  <a href="docs/user/workbench.md"><img src="docs/images/workbench/readme-workbench-dark.png" alt="Current MERLIN workbench with transmitter, channel, receiver and measurement inputs" width="1100"></a>
+  <a href="docs/user/workbench.md"><img src="docs/images/workbench/readme-workbench-dark.png" alt="Native MERLIN upstream OFDMA workbench with persistent Downstream and Upstream tabs" width="1100"></a>
 </p>
 
-Actual native workbench. See the [workbench guide](docs/user/workbench.md)
+Actual native upstream workbench after simulation completion. See the [workbench guide](docs/user/workbench.md)
 for configuration and test-point instruments.
 
 ## Signal analyzers and RxMER Designer

@@ -56,3 +56,21 @@ pub const MAX_RECEIVER_ARCHIVE_POLICY_BYTES: usize = 4096;
 pub const MAX_RECEIVER_CELL_VIEW_ROWS: usize = 2048;
 /// Independent live/archive physical decision row ceiling; not a likelihood count.
 pub const MAX_RECEIVER_DECISION_VIEW_ROWS: usize = 128;
+
+/// Strict receiver-cell query JSON byte ceiling; independent of returned row counts.
+#[cfg(feature = "high-level-api")]
+pub(crate) const MAX_RECEIVER_CELL_QUERY_BYTES: usize = 4096;
+
+/// Maximum consecutive retained PLC frames inspected by one passive message query.
+/// This bounds reassembly work independently of the observation retention policy.
+#[cfg(feature = "high-level-api")]
+pub(crate) const MAX_PLC_MESSAGE_INSPECTION_FRAMES: usize = 64;
+/// Maximum complete packets copied by one passive PLC message query.
+/// This is a backend inspection policy, separate from any application's display limit.
+#[cfg(feature = "high-level-api")]
+pub(crate) const MAX_PLC_MESSAGE_INSPECTION_PACKETS: usize = 32;
+
+/// Maximum actual active-carrier samples in the additional-response preview.
+/// Uniform index selection includes both active-band endpoints without changing the full response.
+#[cfg(feature = "high-level-api")]
+pub(crate) const MAX_CHANNEL_PREVIEW_RESPONSE_POINTS: usize = 128;

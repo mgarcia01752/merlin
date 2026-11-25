@@ -7,6 +7,19 @@ use super::{llr_statistics, LlrStatistics};
 use crate::{error::invalid, SimulationError};
 use serde::Serialize;
 
+/// Equal-width intervals across each symmetric likelihood display, with open outer endpoints.
+const SOFT_HISTOGRAM_BIN_COUNT: usize = 40;
+/// Each half of the symmetric display has the same number of intervals.
+const SOFT_HISTOGRAM_BINS_PER_HALF: usize = SOFT_HISTOGRAM_BIN_COUNT / 2;
+/// Full display half width in producer LLR units; endpoint values are counted separately.
+const FULL_SOFT_HISTOGRAM_HALF_WIDTH: f64 = 100.0;
+/// Independent near-zero detail half width in the same unchanged producer units.
+const NEAR_ZERO_SOFT_HISTOGRAM_HALF_WIDTH: f64 = 10.0;
+/// Maximum contiguous extrema groups; this bounds display copies without sampling input values.
+const MAX_SOFT_ENVELOPE_GROUPS: usize = 1024;
+/// Nonzero symmetric display extent for empty or sub-unit sequences, not an LLR floor.
+const MIN_SOFT_SEQUENCE_ABS_LIMIT: f64 = 1.0;
+
 /// Equal-width histogram with explicit open outer endpoints and original total count.
 #[derive(Serialize)]
 #[non_exhaustive]
@@ -48,18 +61,18 @@ pub struct SoftValueView {
 }
 
 fn histogram(values: &[f64], half_width: f64) -> SoftHistogram {
-    let interval = half_width / 20.0;
-    let edges: Vec<_> = (0..40)
+    let interval = half_width / SOFT_HISTOGRAM_BINS_PER_HALF as f64;
+    let edges: Vec<_> = (0..SOFT_HISTOGRAM_BIN_COUNT)
         .map(|index| -half_width + index as f64 * interval)
         .collect();
-    let mut counts = [0usize; 40];
+    let mut counts = [0usize; SOFT_HISTOGRAM_BIN_COUNT];
     for value in values
         .iter()
         .copied()
         .filter(|value| *value > -half_width && *value < half_width)
     {
         let upper = edges.partition_point(|edge| *edge <= value);
-        counts[upper.saturating_sub(1).min(39)] += 1;
+        counts[upper.saturating_sub(1).min(SOFT_HISTOGRAM_BIN_COUNT - 1)] += 1;
     }
     let shown_values = counts.iter().sum();
     let bins = counts
@@ -99,7 +112,7 @@ pub(crate) fn prepare(
     first_element
         .checked_add(values.len())
         .ok_or_else(|| invalid("Soft-value original index overflows"))?;
-    let group_size = values.len().div_ceil(1024).max(1);
+    let group_size = values.len().div_ceil(MAX_SOFT_ENVELOPE_GROUPS).max(1);
     let sequence = values
         .chunks(group_size)
         .enumerate()
@@ -116,13 +129,21 @@ pub(crate) fn prepare(
     Ok(SoftValueView {
         sign_convention: "log_p_zero_over_p_one",
         statistics,
-        full: histogram(values, 100.0),
-        near_zero: histogram(values, 10.0),
-        negative_limit_count: values.iter().filter(|value| **value <= -100.0).count(),
-        positive_limit_count: values.iter().filter(|value| **value >= 100.0).count(),
+        full: histogram(values, FULL_SOFT_HISTOGRAM_HALF_WIDTH),
+        near_zero: histogram(values, NEAR_ZERO_SOFT_HISTOGRAM_HALF_WIDTH),
+        negative_limit_count: values
+            .iter()
+            .filter(|value| **value <= -FULL_SOFT_HISTOGRAM_HALF_WIDTH)
+            .count(),
+        positive_limit_count: values
+            .iter()
+            .filter(|value| **value >= FULL_SOFT_HISTOGRAM_HALF_WIDTH)
+            .count(),
         sequence_abs_limit: values
             .iter()
-            .fold(1.0f64, |maximum, value| maximum.max(value.abs())),
+            .fold(MIN_SOFT_SEQUENCE_ABS_LIMIT, |maximum, value| {
+                maximum.max(value.abs())
+            }),
         sequence,
     })
 }

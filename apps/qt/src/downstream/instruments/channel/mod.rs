@@ -4,8 +4,10 @@
  */
 //! One channel instrument provider with frozen, explicitly identified reference planes.
 use crate::downstream::common::constants::{
+    CHANNEL_AFTER_AMPLIFIER_TAP, CHANNEL_BEFORE_AMPLIFIER_TAP,
     CHANNEL_LEVEL_TARGET_MAX_DBMV_PER_6MHZ, CHANNEL_LEVEL_TARGET_MIN_DBMV_PER_6MHZ,
-    CHANNEL_SCATTER_MIN_EXTENT, MAX_INSTRUMENT_TIME_SAMPLES,
+    CHANNEL_RECEIVER_INPUT_TAP, CHANNEL_SCATTER_MIN_EXTENT, MAX_INSTRUMENT_TIME_SAMPLES,
+    RECEIVER_NCP_SIGNAL, RECEIVER_PAYLOAD_SIGNAL, RECEIVER_PLC_SIGNAL,
 };
 use crate::downstream::simulation::closed_loop::latest;
 use crate::downstream::workbench::session::Context;
@@ -29,12 +31,14 @@ const NAMES: [&str; 3] = [
 /// # Returns
 /// Instrument state bound to the immutable completed run.
 pub(crate) fn state(context: &Context, tap: i32) -> Value {
-    let index = usize::try_from(tap).ok().filter(|i| *i < 3);
+    let index = usize::try_from(tap).ok().filter(|i| *i < NAMES.len());
     let result = latest(context);
     let available = index.zip(result.as_ref()).is_some_and(|(tap, r)| {
-        if tap == 2 {
+        if tap == CHANNEL_RECEIVER_INPUT_TAP as usize {
             !r.observations.taps[0].values.is_empty()
         } else {
+            // Fourth retained TX boundary is overlap-add output; this is an
+            // established presentation array position, not a new engine tap.
             !r.observations.tx.waves[3].is_empty()
         }
     });
@@ -60,16 +64,18 @@ pub(crate) fn spectrum(
     capture_axis: bool,
 ) -> Value {
     let get = || -> Result<Value, String> {
-        if !(0..=2).contains(&tap) {
+        if !(CHANNEL_BEFORE_AMPLIFIER_TAP..=CHANNEL_RECEIVER_INPUT_TAP).contains(&tap) {
             return Err("Invalid TapPoint.".into());
         }
         let result = latest(context).ok_or("Run the simulation to retain this TapPoint.")?;
         let (boundary, stage) = match tap {
-            0 => (
+            CHANNEL_BEFORE_AMPLIFIER_TAP => (
                 FullLoopChannelTap::BeforeAmplifier,
                 FullLoopStage::TxOverlap,
             ),
-            1 => (FullLoopChannelTap::AfterAmplifier, FullLoopStage::TxOverlap),
+            CHANNEL_AFTER_AMPLIFIER_TAP => {
+                (FullLoopChannelTap::AfterAmplifier, FullLoopStage::TxOverlap)
+            }
             _ => (
                 FullLoopChannelTap::ReceiverInput,
                 FullLoopStage::ChannelOutput,
@@ -84,7 +90,7 @@ pub(crate) fn spectrum(
             capture_axis,
             NAMES[tap as usize],
         )?;
-        if tap == 2 {
+        if tap == CHANNEL_RECEIVER_INPUT_TAP {
             if let Some(level) = view["channel_power"]["equivalent_dbmv_per_6mhz"].as_f64() {
                 view["level_warning"] = json!(if !(CHANNEL_LEVEL_TARGET_MIN_DBMV_PER_6MHZ
                     ..=CHANNEL_LEVEL_TARGET_MAX_DBMV_PER_6MHZ)
@@ -110,17 +116,17 @@ pub(crate) fn spectrum(
 pub(crate) fn qam(context: &Context, tap: i32, document: &str) -> Value {
     let get = || -> Result<Value, String> {
         let query = crate::downstream::instruments::receiver::selection::Query::parse(document)?;
-        if !(0..=2).contains(&tap) {
+        if !(CHANNEL_BEFORE_AMPLIFIER_TAP..=CHANNEL_RECEIVER_INPUT_TAP).contains(&tap) {
             return Err("Invalid TapPoint.".into());
         }
         let result = latest(context).ok_or("Run the simulation to retain this TapPoint.")?;
-        if tap < 2 {
+        if tap < CHANNEL_RECEIVER_INPUT_TAP {
             return Ok(
                 crate::downstream::instruments::transmitter::channel_input::qam_at_boundary(
                     context,
                     query.first_bin,
                     query.last_bin,
-                    if tap == 1 {
+                    if tap == CHANNEL_AFTER_AMPLIFIER_TAP {
                         AmplifierBoundary::After
                     } else {
                         AmplifierBoundary::Before
@@ -147,7 +153,7 @@ pub(crate) fn qam(context: &Context, tap: i32, document: &str) -> Value {
             .map(|v| v.abs())
             .fold(CHANNEL_SCATTER_MIN_EXTENT, f64::max)
             * SCATTER_HEADROOM_RATIO;
-        let samples:Vec<_>=points.iter().map(|p|json!({"i":p.before_equalization[0],"q":p.before_equalization[1],"x":SCATTER_AXIS_CENTER+p.before_equalization[0]/(extent+extent),"y":SCATTER_AXIS_CENTER-p.before_equalization[1]/(extent+extent),"index":p.physical_bin,"symbol":p.channel_symbol_index,"role":match query.signal {0=>"data",1=>"ncp",2=>"plc",_=>"pilot"}})).collect();
+        let samples:Vec<_>=points.iter().map(|p|json!({"i":p.before_equalization[0],"q":p.before_equalization[1],"x":SCATTER_AXIS_CENTER+p.before_equalization[0]/(extent+extent),"y":SCATTER_AXIS_CENTER-p.before_equalization[1]/(extent+extent),"index":p.physical_bin,"symbol":p.channel_symbol_index,"role":match query.signal {RECEIVER_PAYLOAD_SIGNAL=>"data",RECEIVER_NCP_SIGNAL=>"ncp",RECEIVER_PLC_SIGNAL=>"plc",_=>"pilot"}})).collect();
         let mer = crate::downstream::instruments::receiver::selection::mer(&selected, true);
         let reference_mer =
             crate::downstream::instruments::receiver::selection::reference_mer(&selected, true);
@@ -160,7 +166,7 @@ pub(crate) fn qam(context: &Context, tap: i32, document: &str) -> Value {
         view["extent"] = json!(extent);
         Ok(view)
     };
-    get().unwrap_or_else(|reason| json!({"available":false,"points":[],"runs":crate::downstream::instruments::receiver::qam_history::catalog(context),"reason":reason,"diagnostic":if tap==2 && crate::downstream::instruments::receiver::selection::Query::parse(document).is_ok_and(|query|query.run_profile>=0) {crate::downstream::help::static_diagnostic("QamRunUnavailable")} else {Value::Null}}))
+    get().unwrap_or_else(|reason| json!({"available":false,"points":[],"runs":crate::downstream::instruments::receiver::qam_history::catalog(context),"reason":reason,"diagnostic":if tap==CHANNEL_RECEIVER_INPUT_TAP && crate::downstream::instruments::receiver::selection::Query::parse(document).is_ok_and(|query|query.run_profile>=0) {crate::downstream::help::static_diagnostic("QamRunUnavailable")} else {Value::Null}}))
 }
 
 /// Formats an authoritative public time-domain PSD using the existing retention policy.

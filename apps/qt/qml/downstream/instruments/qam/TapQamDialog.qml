@@ -7,6 +7,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 import "../../../shared/components"
 import "../../../shared/presentation"
+import "ReceiverSelectionLimits.js" as ReceiverSelectionLimits
 WorkbenchDialog {
     id:dialog
     required property var backend
@@ -106,9 +107,9 @@ WorkbenchDialog {
         RowLayout {
             visible:dialog.displayedTap<2;Layout.fillWidth:true
             Label {text:"First Bin";color:dialog.theme.muted}
-            SpinBox {id:firstSpin;objectName:"tapQamFirstBin";from:-1;to:8191;value:selection.firstBin;enabled:presentation.textAdmitted;editable:presentation.textAdmitted;textFromValue:presentation.textAdmitted ? function(v){return v<0 ? "All" : v.toString()} : function(v){return ""};valueFromText:function(t){return t==="All" ? -1 : Number(t)};onValueModified:{selection.firstBin=value;dialog.refresh()}}
+            SpinBox {id:firstSpin;objectName:"tapQamFirstBin";from:ReceiverSelectionLimits.ALL_PHYSICAL_BINS;to:ReceiverSelectionLimits.MAXIMUM_PHYSICAL_BIN_HINT;value:selection.firstBin;enabled:presentation.textAdmitted;editable:presentation.textAdmitted;textFromValue:presentation.textAdmitted ? function(v){return v<0 ? "All" : v.toString()} : function(v){return ""};valueFromText:function(t){return t==="All" ? ReceiverSelectionLimits.ALL_PHYSICAL_BINS : Number(t)};onValueModified:{selection.firstBin=value;dialog.refresh()}}
             Label {text:"Last Bin";color:dialog.theme.muted}
-            SpinBox {id:lastSpin;objectName:"tapQamLastBin";from:-1;to:8191;value:selection.lastBin;enabled:presentation.textAdmitted;editable:presentation.textAdmitted;textFromValue:presentation.textAdmitted ? function(v){return v<0 ? "All" : v.toString()} : function(v){return ""};valueFromText:function(t){return t==="All" ? -1 : Number(t)};onValueModified:{selection.lastBin=value;dialog.refresh()}}
+            SpinBox {id:lastSpin;objectName:"tapQamLastBin";from:ReceiverSelectionLimits.ALL_PHYSICAL_BINS;to:ReceiverSelectionLimits.MAXIMUM_PHYSICAL_BIN_HINT;value:selection.lastBin;enabled:presentation.textAdmitted;editable:presentation.textAdmitted;textFromValue:presentation.textAdmitted ? function(v){return v<0 ? "All" : v.toString()} : function(v){return ""};valueFromText:function(t){return t==="All" ? ReceiverSelectionLimits.ALL_PHYSICAL_BINS : Number(t)};onValueModified:{selection.lastBin=value;dialog.refresh()}}
             Item {Layout.fillWidth:true}
         }
         Label {objectName:"tapQamRetention";visible:presentation.rejected;text:presentation.message;color:dialog.theme.statusAttention;Layout.fillWidth:true;wrapMode:Text.WordWrap}

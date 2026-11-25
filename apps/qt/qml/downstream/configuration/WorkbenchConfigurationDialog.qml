@@ -12,6 +12,18 @@ WorkbenchDialog {
     required property var backend
     required property var settingsBackend
     required property var runState
+
+    // Existing SpinBox hints/defaults, not authoritative Rust admission limits.
+    readonly property int minimumProfileDurationMs: 1
+    readonly property int maximumProfileDurationMs: 1000
+    readonly property int initialProfileDurationMs: 3
+    readonly property int minimumActiveRunBudgetMs: 1000
+    readonly property int maximumActiveRunBudgetMs: 300000
+    readonly property int activeRunBudgetStepMs: 1000
+    readonly property int initialActiveRunBudgetMs: 300000
+    readonly property int minimumNoiseSeed: 0
+    readonly property int maximumNoiseSeed: 2147483647
+    readonly property int initialNoiseSeed: 41
     readonly property var draft: coverage.value ? coverage.value.draft : ({})
     readonly property var profileIds: coverage.value ? coverage.value.profileIds : []
     readonly property var selectedIds: coverage.value ? coverage.value.selectedIds : []
@@ -131,9 +143,9 @@ WorkbenchDialog {
             GridLayout {
                 columns:2;columnSpacing:24;rowSpacing:14
                 Label { text:"Duration per Profile (ms)";color:dialog.theme.text }
-                SpinBox { id:durationSpin;objectName:"wbRunDuration";from:1;to:1000;enabled:dialog.contextCurrent && coverage.textAdmitted;editable:coverage.textAdmitted;textFromValue:coverage.textAdmitted ? function(v,locale){return Number(v).toLocaleString(locale,"f",0)} : function(v,locale){return ""};value:dialog.draft.duration_ms || 3;onValueModified:dialog.numberChanged("duration_ms",value) }
+                SpinBox { id:durationSpin;objectName:"wbRunDuration";from:dialog.minimumProfileDurationMs;to:dialog.maximumProfileDurationMs;enabled:dialog.contextCurrent && coverage.textAdmitted;editable:coverage.textAdmitted;textFromValue:coverage.textAdmitted ? function(v,locale){return Number(v).toLocaleString(locale,"f",0)} : function(v,locale){return ""};value:dialog.draft.duration_ms || dialog.initialProfileDurationMs;onValueModified:dialog.numberChanged("duration_ms",value) }
                 Label { text:"Total Active Run Budget (ms)";color:dialog.theme.text }
-                SpinBox { id:runtimeSpin;from:1000;to:300000;stepSize:1000;enabled:dialog.contextCurrent && coverage.textAdmitted;editable:coverage.textAdmitted;textFromValue:coverage.textAdmitted ? function(v,locale){return Number(v).toLocaleString(locale,"f",0)} : function(v,locale){return ""};value:dialog.draft.max_runtime_ms || 300000;onValueModified:dialog.numberChanged("max_runtime_ms",value) }
+                SpinBox { id:runtimeSpin;from:dialog.minimumActiveRunBudgetMs;to:dialog.maximumActiveRunBudgetMs;stepSize:dialog.activeRunBudgetStepMs;enabled:dialog.contextCurrent && coverage.textAdmitted;editable:coverage.textAdmitted;textFromValue:coverage.textAdmitted ? function(v,locale){return Number(v).toLocaleString(locale,"f",0)} : function(v,locale){return ""};value:dialog.draft.max_runtime_ms || dialog.initialActiveRunBudgetMs;onValueModified:dialog.numberChanged("max_runtime_ms",value) }
                 Label {
                     text:"Noise Seed";color:dialog.theme.text
                     HoverHandler { id:noiseSeedLabelHover }
@@ -142,9 +154,9 @@ WorkbenchDialog {
                 }
                 SpinBox {
                     id:noiseSpin;objectName:"wbNoiseSeed"
-                    from:0;to:2147483647;enabled:dialog.contextCurrent && coverage.textAdmitted;editable:coverage.textAdmitted
+                    from:dialog.minimumNoiseSeed;to:dialog.maximumNoiseSeed;enabled:dialog.contextCurrent && coverage.textAdmitted;editable:coverage.textAdmitted
                     textFromValue:coverage.textAdmitted ? function(v,locale){return Number(v).toLocaleString(locale,"f",0)} : function(v,locale){return ""}
-                    value:dialog.draft.noise_seed===undefined ? 41:dialog.draft.noise_seed
+                    value:dialog.draft.noise_seed===undefined ? dialog.initialNoiseSeed:dialog.draft.noise_seed
                     onValueModified:dialog.numberChanged("noise_seed",value)
                     ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered || visualFocus
                     ToolTip.text: dialog.noiseSeedHelp

@@ -5742,3 +5742,87 @@ repository directory, then runs the restored upstream project. The existing
 worker round trip also covers a relative destination without changing process
 cwd inside concurrent tests. Startup-update delay and update-status polling keep
 distinct named policies; only recovery completion shares session polling.
+
+## UIU-QA-01 final compatibility and numeric reconciliation
+
+Scope: the existing [final task](../../checklist.md#task-uiu-qa-01),
+[REQ-UIU-24](../../../requirements.md#req-uiu-24),
+[REQ-UIU-26](../../../requirements.md#req-uiu-26) and
+[REQ-UIU-27](../../../requirements.md#req-uiu-27). All twenty prerequisites are
+accepted. Preserve the approved design, downstream behavior, source vectors and
+historical checklist states; final acceptance remains unchecked until its gates
+pass.
+
+The read-only audit demonstrated two necessary compatibility/style corrections:
+
+- The native `--check-workbench` path still directly parses legacy downstream
+  editor JSON. Extend its current bounded file owner to dispatch current
+  direction-tagged projects through `merlin::common::Project` admission, keeping
+  the existing complete legacy downstream preparation and diagnostics. Cover
+  actual downstream/upstream schema-3 files, malformed/partial cases and input
+  limits; no simulation starts during checking.
+- Integration-added downstream cell queries, PLC inspection, channel preview,
+  slicing views, soft diagnostics, observation policies, run defaults and native
+  binding text guards contain unnamed safety/view policies.
+  Name them at the existing common/domain owners, derive related dimensions,
+  and reuse `SubcarrierIndex` for the identical physical-bin domain. Preserve
+  all values, ordering, errors, public imports and independent literal vectors.
+  These are representation/ownership corrections, not scientific behavior changes.
+
+The final review also includes inherited numeric values in materially adapted
+Qt owners. Keep channel selectors, receiver drawing policies, legacy editor
+ranges/defaults and Designer display conversions explicitly named/documented;
+share equal values only for the same purpose. UI validators remain presentation
+hints and Rust validation stays authoritative. The isolated editor-policy agent
+may edit only assigned existing QML dialogs and a minimal shared selector-constant
+file; root alone registers resources. Fixed Designer presets remain independent
+example scenarios with their meaning documented rather than converted into
+backend limits. No accepted domain is widened and no new scientific API is needed.
+
+The exact numeric-bearing integration additions are enumerated against accepted
+backend `23f63c9558ef659830338f6a61080705ce3d55f1`, including rename destinations,
+inline tests, defaults, examples and untracked candidate files. Review every
+listed line with its consumer context, preserve independent numerical anchors,
+and distinguish inherited values from new policies. Record final file hashes,
+review dispositions and genuinely shared constants; do not equate enumeration
+with semantic review. The integration lead owns Qt Rust, bridge registration,
+checker, Cargo manifests, canonical documentation and acceptance. Read-only
+agents own disjoint QML and core/tool audit partitions. An isolated numeric
+implementation worktree may edit only the specifically assigned existing core
+owners; root reviews/adopts those diffs and performs all builds/commits.
+
+Level 3 uses cached full workspace/doctest/example/analysis checks, complete
+Qt Rust/QML, installed native Python and CLI/project/package regressions. The
+existing native direction/instrument/persistence/recovery probes establish
+actual consumers; run fresh affected native launch/check/restart cases for the
+final candidate. No duplicate full builds in agent worktrees, new public API,
+Qt science, platform installation, push or publication is authorized. Reconcile
+current guides/agent scope and preserve explicitly historical planning records.
+
+The reviewed [final source inventory](final-source-inventory.json) reconciles all
+178 original Qt destinations without changing the historical planning inventory.
+The [final numeric review](final-numeric-review.json) records frozen review scope,
+final source hashes and reviewed candidate line positions. Lexical candidates
+include comments and type/identifier matches; they are not a count of literals.
+The final constant-only patches preserve wire values and independent numerical
+oracles. An initial Qt compile found signed stage-selector constants had been
+typed as `usize`; retaining the established `i32` API type corrects that mismatch.
+Failed formatting/compile attempts remain separate from the subsequent gates.
+
+The final native suite exposed one demonstrated runner gap: the control-footprint
+consumer requires a direct Rust reference, while the runner supplied only its
+optional-reference list. Add the existing CLI `control_footprints` example to
+that list and extend the existing consumer-derived wiring test to include
+required environment lookups. Reuse completed unchanged reference outputs;
+rerun the complete native suite on the accepted installed artifact. This is
+REQ-UIU-24/26 acceptance plumbing, not a new API or scientific capability.
+
+Final correspondence is recorded in the [executed acceptance evidence](final-acceptance-evidence.json),
+[validation summary](validation.md#uiu-qa-01-final-unified-acceptance) and
+[all-task commit/validation report](completion-report.md). The original inventory,
+source documents, independent vectors and completed historical task states remain
+preserved. Native/hosted/installed platform limitations remain explicit.
+
+The [final acceptance](validation.md#uiu-qa-01-final-unified-acceptance) closes
+UIU-QA-01 after all runtime gates and source reviews pass. No scientific scope,
+public behavior, task dependency or historical completion state is changed.

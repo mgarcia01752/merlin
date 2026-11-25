@@ -37,6 +37,14 @@ use std::{
     time::Instant,
 };
 
+// Existing atomic progress tags; values are private UI transport, not PHY stages.
+const PROJECT_CHOOSER_PHASE: u8 = 0;
+const PROJECT_FILE_READ_PHASE: u8 = 1;
+const PROJECT_CONFIGURATION_PHASE: u8 = 2;
+const PROJECT_PREPARATION_PHASE: u8 = 3;
+// Independent streaming chunk policy: 64 KiB, separate from total input ceilings.
+const PROJECT_READ_CHUNK_BYTES: usize = 64 * 1024;
+
 /// Owned editor/request transfer consumed synchronously during GUI adoption.
 #[derive(Default)]
 pub(crate) struct PreparedModels {
@@ -574,7 +582,7 @@ impl Loader {
                         if std::io::stdin().is_terminal() {
                             return Err("Redirect workbench JSON with --workbench - < FILE.".into());
                         }
-                        stage.store(1, Ordering::Relaxed);
+                        stage.store(PROJECT_FILE_READ_PHASE, Ordering::Relaxed);
                         (Box::new(std::io::stdin()), None)
                     }
                     other => {
@@ -596,7 +604,7 @@ impl Loader {
                         if cancelled.load(Ordering::Relaxed) {
                             return Ok(None);
                         }
-                        stage.store(1, Ordering::Relaxed);
+                        stage.store(PROJECT_FILE_READ_PHASE, Ordering::Relaxed);
                         if !std::fs::metadata(path.value())
                             .map_err(|error| error.to_string())?
                             .is_file()
@@ -617,7 +625,7 @@ impl Loader {
             let Some(bytes) = read_bounded(&mut reader, cancelled, MAX_PROJECT_BYTES)? else {
                 return Ok(None);
             };
-            stage.store(2, Ordering::Relaxed);
+            stage.store(PROJECT_CONFIGURATION_PHASE, Ordering::Relaxed);
             #[derive(serde::Deserialize)]
             struct DirectionHeader {
                 direction: Option<merlin::common::ProjectDirection>,
@@ -657,7 +665,7 @@ impl Loader {
             if cancelled.load(Ordering::Relaxed) {
                 return Ok(None);
             }
-            stage.store(3, Ordering::Relaxed);
+            stage.store(PROJECT_PREPARATION_PHASE, Ordering::Relaxed);
             PreparedProject::prepare_with_plan(
                 decoded.project,
                 destination,
@@ -828,9 +836,9 @@ impl Loader {
             "Cancelling"
         } else {
             match job.stage.value().load(Ordering::Relaxed) {
-                0 => "Choose a workbench",
-                1 => "Reading workbench",
-                2 => "Reading configuration",
+                PROJECT_CHOOSER_PHASE => "Choose a workbench",
+                PROJECT_FILE_READ_PHASE => "Reading workbench",
+                PROJECT_CONFIGURATION_PHASE => "Reading configuration",
                 _ => "Validating captures and preparing workbench",
             }
         };
@@ -849,7 +857,7 @@ fn read_bounded(
     limit: usize,
 ) -> Result<Option<Vec<u8>>, String> {
     let mut bytes = Vec::new();
-    let mut chunk = [0u8; 64 * 1024];
+    let mut chunk = [0u8; PROJECT_READ_CHUNK_BYTES];
     loop {
         if cancelled.load(Ordering::Relaxed) {
             return Ok(None);

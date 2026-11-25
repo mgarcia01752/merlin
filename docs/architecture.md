@@ -2197,6 +2197,11 @@ Delivery: [UIU-SHARED-01](development/checklist.md#task-uiu-shared-01), [UIU-SHA
 
 ### Unified Qt acceptance
 
+The [final local acceptance](development/features/unified-qt-workbench/validation.md#uiu-qa-01-final-unified-acceptance)
+closes all 21 authorized UIU tasks. The [commit/validation report](development/features/unified-qt-workbench/completion-report.md)
+retains each task’s evidence and historical checkpoint context. Platform gates
+below remain separately scoped.
+
 All new delivery tasks remain unchecked until matching tests pass in MERLIN.
 The accepted backend evidence is historical context, not a new UI baseline run.
 Establish fresh Qt baseline evidence before code moves. Validate each API extension
@@ -2216,6 +2221,18 @@ cross-direction lifecycle changes expand to every affected consumer at each
 level. Record executed, not-required and deferred checks with their reasons;
 cache reuse preserves stable build inputs and never implies an unexecuted pass.
 This changes validation scheduling, not architecture, task IDs or acceptance gates.
+
+The existing native `--check-workbench` file owner dispatches current direction
+projects through `merlin::common::Project` admission without starting a simulation.
+Legacy downstream editor documents retain complete receiver preparation and their
+established diagnostics. Bounded regular-file input and public schema validation
+remain authoritative; Qt-specific presentation limits are separate.
+
+The [final compatibility/numeric reconciliation](development/features/unified-qt-workbench/design.md#uiu-qa-01-final-compatibility-and-numeric-reconciliation)
+records final ownership and review method. Its [source destinations](development/features/unified-qt-workbench/final-source-inventory.json)
+retain the original planning inventory, and its [numeric review](development/features/unified-qt-workbench/final-numeric-review.json)
+names shared policies at existing domain owners while preserving independent
+policies, mathematical identities, representation anchors and test vectors.
 
 Requirements: [REQ-UIU-26](requirements.md#req-uiu-26), [REQ-UIU-27](requirements.md#req-uiu-27).
 Delivery: [UIU-QA-01](development/checklist.md#task-uiu-qa-01).

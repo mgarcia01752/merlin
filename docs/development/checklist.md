@@ -415,6 +415,10 @@ architecture owner identifies concrete implementation/test paths and disposition
 
 ## Unified Qt Workbench delivery
 
+All 21 UIU tasks are accepted in this checkout. The [completion report](features/unified-qt-workbench/completion-report.md)
+records task commits and executed validation. Earlier per-unit pending/next-step
+statements below preserve their historical checkpoints.
+
 New UI scope; completion is recorded per task. [Canonical requirements](../requirements.md#unified-qt-workbench-requirements)
 and [architecture](../architecture.md#unified-qt-workbench) own behavior/design.
 The [full inventory and migration plan](features/unified-qt-workbench/migration-plan.md)
@@ -424,8 +428,8 @@ FEC and UI-ORG acceptance/history are unchanged. The user accepted initial seria
 execution and per-active-direction Save. [Continuous execution](features/unified-qt-workbench/execution-authorization.md)
 now authorizes local task commits and continuation without routine approval pauses.
 The [user-approved upstream layout](features/unified-qt-workbench/upstream-startup-layout.md)
-satisfies UIU-US-01's visual-input prerequisite (2026-11-22). Its shell dependency
-and implementation/acceptance remain pending; earlier eligible tasks continue.
+satisfies UIU-US-01's visual-input prerequisite (2026-11-22). Its implemented shell/configuration acceptance is recorded under UIU-SHELL-01
+and UIU-US-01 below; the original planning checkpoint remains historical.
 
 Apply the [three-level testing strategy](features/unified-qt-workbench/testing-strategy.md)
 to subsequent focused commits and acceptance gates. Before checking an official
@@ -696,12 +700,12 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Evidence: [dual-project native restart acceptance](features/unified-qt-workbench/validation.md#uiu-recovery-01-dual-project-restart-acceptance): complete 642-case Qt run plus final affected error/recovery cases, 187 QML records, Clippy/format/boundary and optimized build pass. Actual independent processes preserve both edited projects, normal paths, dirty flags, selected tab and theme, then complete a restored upstream run. Relative CLI paths survive changed restart cwd; originals remain unchanged. Exact nested documents pass the explicit Rust artifact gate and three installed-native Python parity cases. Atomic rejection, private-path collision, prior-format migration and queued-install failure guards pass. Installed platform lifecycles remain unverified. Continue UIU-QA-01.
 
 <a id="task-uiu-qa-01"></a>
-- [ ] **UIU-QA-01** Accept unified Qt functionality and reconcile final correspondence.
+- [x] **UIU-QA-01** Accept unified Qt functionality and reconcile final correspondence.
   Requirements: [REQ-UIU-01](../requirements.md#req-uiu-01), [REQ-UIU-02](../requirements.md#req-uiu-02), [REQ-UIU-03](../requirements.md#req-uiu-03), [REQ-UIU-04](../requirements.md#req-uiu-04), [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-06](../requirements.md#req-uiu-06), [REQ-UIU-07](../requirements.md#req-uiu-07), [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-09](../requirements.md#req-uiu-09), [REQ-UIU-10](../requirements.md#req-uiu-10), [REQ-UIU-11](../requirements.md#req-uiu-11), [REQ-UIU-12](../requirements.md#req-uiu-12), [REQ-UIU-13](../requirements.md#req-uiu-13), [REQ-UIU-14](../requirements.md#req-uiu-14), [REQ-UIU-15](../requirements.md#req-uiu-15), [REQ-UIU-16](../requirements.md#req-uiu-16), [REQ-UIU-17](../requirements.md#req-uiu-17), [REQ-UIU-18](../requirements.md#req-uiu-18), [REQ-UIU-19](../requirements.md#req-uiu-19), [REQ-UIU-20](../requirements.md#req-uiu-20), [REQ-UIU-21](../requirements.md#req-uiu-21), [REQ-UIU-22](../requirements.md#req-uiu-22), [REQ-UIU-23](../requirements.md#req-uiu-23), [REQ-UIU-24](../requirements.md#req-uiu-24), [REQ-UIU-25](../requirements.md#req-uiu-25), [REQ-UIU-26](../requirements.md#req-uiu-26), [REQ-UIU-27](../requirements.md#req-uiu-27).
   Dependencies: [UIU-US-04](#task-uiu-us-04), [UIU-SHARED-02](#task-uiu-shared-02), [UIU-RECOVERY-01](#task-uiu-recovery-01).
   Architecture/files: [acceptance owner](../architecture.md#unified-qt-acceptance), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Both actual direction runs, independent API/wheel/CLI regressions as affected, zero scientific boundary entries, complete inventory disposition/licensing, Qt/native build/launch, scientific presentation and persistence checks, final guides/skills/links/evidence and focused commit report. Record every remaining platform/mode limitation. Complete a line-by-line numeric audit of the integration changes across production code, defaults, examples and tests; centralize genuinely shared definitions in common constants owners, name independent policies separately and document retained mathematical/specification/test anchors. Link the reviewed file inventory and acceptance evidence before checking this task.
-  Evidence: [acceptance acceptance plan](features/unified-qt-workbench/validation.md#acceptance); pending implementation/acceptance.
+  Evidence: [final runtime and correspondence record](features/unified-qt-workbench/validation.md#uiu-qa-01-final-unified-acceptance), [all-task commit/validation report](features/unified-qt-workbench/completion-report.md), [reviewed numeric scope](features/unified-qt-workbench/final-numeric-review.json) and [final source destinations](features/unified-qt-workbench/final-source-inventory.json). Level 3 runtime, source/constant/licensing review and preliminary documentation checks pass; the final state audit records the 21-task closeout. Native/hosted/installed platform limitations remain explicit.
 
 ## Architecture and module rules
 

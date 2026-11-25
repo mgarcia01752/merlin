@@ -11,6 +11,11 @@ import "../../../shared/presentation"
 WorkbenchDialog {
     id:dialog
     required property var backend
+
+    // Preserve existing PLC-frame grouping in display labels. The native message
+    // DTO supplies channel-symbol indices, not a frame index. This display period
+    // matches the existing PLC_FRAME_SYMBOLS value; it does not validate timing.
+    readonly property int messageFrameDisplayPeriodSymbols: 128
     readonly property var document: presentation.value ? presentation.value.document : ({})
     property int selectedIndex:0
     property bool showBytes:false
@@ -30,7 +35,7 @@ WorkbenchDialog {
     function messageCandidate(value) {
         const messages = value.messages || []
         return {document:value,
-            labels:messages.map(function(p){return p.name+" · frame "+Math.floor(p.symbol/128)}),
+            labels:messages.map(function(p){return p.name+" · frame "+Math.floor(p.symbol/dialog.messageFrameDisplayPeriodSymbols)}),
             packets:messages.map(function(p){return {
                 status:(p.status || "")+" · "+(p.integrity || ""),
                 bytes:(p.hex_rows || []).map(function(row){return row.offset+"   "+row.hex})

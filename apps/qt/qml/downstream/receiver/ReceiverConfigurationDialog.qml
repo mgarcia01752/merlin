@@ -12,6 +12,15 @@ WorkbenchDialog {
     required property var backend
     required property var settingsBackend
     required property var runState
+
+    // Existing editor hints/defaults; Rust receiver admission remains authoritative.
+    readonly property real initialMceMinimumVariance: 1e-8
+    readonly property int initialMceAveragingSymbols: 16
+    readonly property int minimumMceAveragingSymbols: 1
+    readonly property int maximumMceAveragingSymbols: 128
+    readonly property int minimumDecoderIterations: 1
+    readonly property int maximumDecoderIterations: 100
+    readonly property int initialDecoderIterations: 50
     readonly property var draft: presentation.value ? presentation.value.draft : ({})
     readonly property string errorMessage: presentation.value ? presentation.value.error : ""
     readonly property var diagnostic: presentation.value ? presentation.value.diagnostic : null
@@ -34,7 +43,7 @@ WorkbenchDialog {
     onOpened: {
         if (prepareText()) {
             const value=Object.assign({},runState.options)
-            value.mce=Object.assign({minimum_variance:1e-8,averaging_symbols:16},value.mce || {})
+            value.mce=Object.assign({minimum_variance:initialMceMinimumVariance,averaging_symbols:initialMceAveragingSymbols},value.mce || {})
             adoptDraft(value,"",null)
         }
     }
@@ -75,15 +84,15 @@ WorkbenchDialog {
                 id:averaging
                 objectName: "receiverMceAveraging"
                 visible: dialog.draft.receiver_mode === "merlin_estimated"
-                from: 1; to: 128; enabled:presentation.textAdmitted;editable:presentation.textAdmitted
+                from: dialog.minimumMceAveragingSymbols; to: dialog.maximumMceAveragingSymbols; enabled:presentation.textAdmitted;editable:presentation.textAdmitted
                 textFromValue:presentation.textAdmitted ? function(value,locale){return Number(value).toLocaleString(locale,"f",0)} : function(value,locale){return ""}
-                value: dialog.draft.mce ? dialog.draft.mce.averaging_symbols : 16
+                value: dialog.draft.mce ? dialog.draft.mce.averaging_symbols : dialog.initialMceAveragingSymbols
                 onValueModified: dialog.adoptDraft(Object.assign({},dialog.draft,{mce:Object.assign({},dialog.draft.mce,{averaging_symbols:value})}),dialog.errorMessage,dialog.diagnostic)
                 ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible: hovered || visualFocus
                 ToolTip.text: "Smooth the pilot-derived noise estimate over this many symbols. This does not change the 128-symbol full pilot-history span."
             }
             Label { text: "Decoder iteration limit"; color: theme.text }
-            SpinBox {id:iterations;from:1;to:100;enabled:presentation.textAdmitted;editable:presentation.textAdmitted;value:dialog.draft.max_iterations || 50
+            SpinBox {id:iterations;from:dialog.minimumDecoderIterations;to:dialog.maximumDecoderIterations;enabled:presentation.textAdmitted;editable:presentation.textAdmitted;value:dialog.draft.max_iterations || dialog.initialDecoderIterations
                 textFromValue:presentation.textAdmitted ? function(value,locale){return Number(value).toLocaleString(locale,"f",0)} : function(value,locale){return ""}
                 onValueModified:dialog.adoptDraft(Object.assign({},dialog.draft,{max_iterations:value}),dialog.errorMessage,dialog.diagnostic)
             }

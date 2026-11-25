@@ -5,10 +5,12 @@
 //! Presentation queries over shared immutable response, likelihood and decoder results.
 use super::selection::{archive, Query};
 use crate::downstream::common::constants::{
-    INITIAL_RESPONSE_VELOCITY_PERCENT, MAX_RESPONSE_SELECTOR_BYTES, MAX_RESPONSE_VELOCITY_PERCENT,
-    MIN_RESPONSE_VELOCITY_PERCENT, RECEIVER_LLR_BIN_CENTRE_FRACTION, RESPONSE_COMPARISON_SOURCE,
-    RESPONSE_CONFIGURED_SOURCE, RESPONSE_ESTIMATED_SOURCE, RESPONSE_GAIN_VIEW,
-    RESPONSE_IMPULSE_VIEW, RESPONSE_MAX_SNAPSHOT_INDEX, RESPONSE_PHASE_VIEW, RESPONSE_REAL_VIEW,
+    DIAGNOSTIC_AXIS_PADDING_FRACTION, DIAGNOSTIC_CURVE_BUCKETS, DIAGNOSTIC_CURVE_TICK_INTERVALS,
+    DIAGNOSTIC_MIN_AXIS_PADDING, INITIAL_RESPONSE_VELOCITY_PERCENT, MAX_RESPONSE_SELECTOR_BYTES,
+    MAX_RESPONSE_VELOCITY_PERCENT, MIN_RESPONSE_VELOCITY_PERCENT, RECEIVER_LLR_BIN_CENTRE_FRACTION,
+    RESPONSE_COMPARISON_SOURCE, RESPONSE_CONFIGURED_SOURCE, RESPONSE_ESTIMATED_SOURCE,
+    RESPONSE_GAIN_VIEW, RESPONSE_IMPULSE_VIEW, RESPONSE_MAX_SNAPSHOT_INDEX, RESPONSE_PHASE_VIEW,
+    RESPONSE_REAL_VIEW,
 };
 use crate::downstream::simulation::closed_loop::latest;
 use crate::downstream::workbench::session::Context;
@@ -41,7 +43,8 @@ pub(crate) fn curve(x: &[f64], values: &[Option<f64>], axis: &str, coordinate: &
         .copied()
         .reduce(f64::max)
         .unwrap_or(1.0);
-    let pad = ((maximum - minimum) * 0.1).max(0.1);
+    let pad =
+        ((maximum - minimum) * DIAGNOSTIC_AXIS_PADDING_FRACTION).max(DIAGNOSTIC_MIN_AXIS_PADDING);
     let lower = if axis.contains("count") {
         (minimum - pad).max(0.0)
     } else {
@@ -55,7 +58,7 @@ pub(crate) fn curve(x: &[f64], values: &[Option<f64>], axis: &str, coordinate: &
     let first = x.first().copied().unwrap_or(0.0);
     let span = (x.last().copied().unwrap_or(1.0) - first).max(f64::EPSILON);
     let mut points = Vec::new();
-    let chunk = values.len().div_ceil(1024).max(1);
+    let chunk = values.len().div_ceil(DIAGNOSTIC_CURVE_BUCKETS).max(1);
     let mut gap = true;
     for (i, group) in values.chunks(chunk).enumerate() {
         if group.iter().any(Option::is_none) {
@@ -78,12 +81,12 @@ pub(crate) fn curve(x: &[f64], values: &[Option<f64>], axis: &str, coordinate: &
         points.push(json!({"x":(x[index]-first)/span,"y":(upper-high)/(upper-lower),"minimum_y":(upper-low)/(upper-lower),"gap":gap,"readout":format!("{:.4} {coordinate} · {:.4}…{:.4} {axis}",x[index],low,high)}));
         gap = false;
     }
-    let x_ticks: Vec<_> = (0..=4)
-        .map(|i| json!({"x":i as f64/4.0,"label":format!("{:.3}",first+span*i as f64/4.0)}))
+    let x_ticks: Vec<_> = (0..=DIAGNOSTIC_CURVE_TICK_INTERVALS)
+        .map(|i| json!({"x":f64::from(i)/f64::from(DIAGNOSTIC_CURVE_TICK_INTERVALS),"label":format!("{:.3}",first+span*f64::from(i)/f64::from(DIAGNOSTIC_CURVE_TICK_INTERVALS))}))
         .collect();
-    let y_ticks: Vec<_> = (0..=4)
+    let y_ticks: Vec<_> = (0..=DIAGNOSTIC_CURVE_TICK_INTERVALS)
         .map(
-            |i| json!({"y":i as f64/4.0,"label":format!("{:.2}",upper-(upper-lower)*i as f64/4.0)}),
+            |i| json!({"y":f64::from(i)/f64::from(DIAGNOSTIC_CURVE_TICK_INTERVALS),"label":format!("{:.2}",upper-(upper-lower)*f64::from(i)/f64::from(DIAGNOSTIC_CURVE_TICK_INTERVALS))}),
         )
         .collect();
     json!({"available":!points.is_empty(),"points":points,"x_ticks":x_ticks,"y_ticks":y_ticks,"axis_label":axis,"frequency_label":coordinate})

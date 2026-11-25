@@ -31,6 +31,32 @@ WorkbenchDialog {
 
     // Existing UI increment, independent of the backend standard-deviation domain.
     readonly property real randomDeviationStepDb: 0.5
+    readonly property real tiltStepDb: 1
+    readonly property real rippleDepthStepDb: 1
+    readonly property real rippleSpacingStepMhz: 1
+    readonly property real notchCenterStepMhz: 1
+    readonly property real notchWidthStepMhz: 1
+    readonly property real notchDepthStepDb: 1
+    readonly property real notchEdgeStepMhz: 1
+
+    // Presentation unit conversion only; Rust still admits every frequency edit.
+    readonly property int hertzPerMegahertz: 1000000
+
+    // Independent existing example scenarios for a new flat sequence/effect.
+    // They populate editable presets, not backend defaults or scientific limits.
+    readonly property int exampleFlatCaptureCount: 50
+    readonly property real exampleFlatBaselineDb: 48
+    readonly property real exampleRandomStandardDeviationDb: 1.5
+    readonly property int exampleRandomSeed: 41
+    readonly property real exampleTiltDb: -4
+    readonly property real exampleRippleDepthDb: 2
+    readonly property int exampleRippleSpacingHz: 20000000
+    readonly property real exampleEchoDistanceMetres: 6.37
+    readonly property real exampleVelocityFactor: 0.85
+    readonly property int exampleNotchBandwidthHz: 10000000
+    readonly property real exampleNotchDepthDb: 18
+    readonly property int exampleNotchEdgeHz: 1000000
+    readonly property real exampleEditValueDb: 30
     readonly property var viewport: presentation.value ? presentation.value.viewport : ({})
     property int viewStart: 0
     property int viewCount: 0
@@ -74,8 +100,8 @@ WorkbenchDialog {
     height:Math.min(820,parent ? parent.height-30:820)
     function recipe() {
         return {random_variation:source.currentIndex === 1 && randomVariation.checked ? {standard_deviation_db:randomDeviation.text.trim().length ? Number(randomDeviation.text):NaN,seed:randomSeed.text.trim().length ? Number(randomSeed.text):NaN} : null,tilt:tilt.checked ? {scope:tiltScope.value(),tilt_db:Number(tiltDb.text)} : null,
-            ripple:ripple.checked ? {scope:rippleScope.value(),peak_to_peak_db:Number(rippleDb.text),spacing:distanceMode.checked ? {mode:"echo_distance",distance_metres:Number(distance.text),velocity_factor:Number(vf.text)} : {mode:"frequency",spacing_hz:Math.round(Number(spacing.text)*1e6)}} : null,
-            notch:notch.checked ? {scope:notchScope.value(),center_hz:Math.round(Number(center.text)*1e6),bandwidth_hz:Math.round(Number(bandwidth.text)*1e6),depth_db:Number(depth.text),edge_hz:Math.round(Number(edge.text)*1e6)} : null,edits:valueEdits.map(editValue)}
+            ripple:ripple.checked ? {scope:rippleScope.value(),peak_to_peak_db:Number(rippleDb.text),spacing:distanceMode.checked ? {mode:"echo_distance",distance_metres:Number(distance.text),velocity_factor:Number(vf.text)} : {mode:"frequency",spacing_hz:Math.round(Number(spacing.text)*dialog.hertzPerMegahertz)}} : null,
+            notch:notch.checked ? {scope:notchScope.value(),center_hz:Math.round(Number(center.text)*dialog.hertzPerMegahertz),bandwidth_hz:Math.round(Number(bandwidth.text)*dialog.hertzPerMegahertz),depth_db:Number(depth.text),edge_hz:Math.round(Number(edge.text)*dialog.hertzPerMegahertz)} : null,edits:valueEdits.map(editValue)}
     }
     function canStepTilt(delta) {
         const value=Number(tiltDb.text)
@@ -90,8 +116,8 @@ WorkbenchDialog {
         const value=Number(field.text), next=value+delta
         if (!limitsAvailable || !ripple.checked || field.text.trim().length===0 || !Number.isFinite(value) || !Number.isFinite(next)) {return false}
         if (field===rippleDb) {return value>=0 && value<=domainLimits.maximum_ripple_peak_to_peak_db && next>=0 && next<=domainLimits.maximum_ripple_peak_to_peak_db}
-        return !distanceMode.checked && Math.round(value*1e6)>=1 && Math.round(value*1e6)<=maximumFrequencyHz
-            && Math.round(next*1e6)>=1 && Math.round(next*1e6)<=maximumFrequencyHz
+        return !distanceMode.checked && Math.round(value*dialog.hertzPerMegahertz)>=1 && Math.round(value*dialog.hertzPerMegahertz)<=maximumFrequencyHz
+            && Math.round(next*dialog.hertzPerMegahertz)>=1 && Math.round(next*dialog.hertzPerMegahertz)<=maximumFrequencyHz
     }
     function stepRipple(field,delta) {
         if (canStepRipple(field,delta)) {field.text=String(Number(field.text)+delta);refresh()}
@@ -100,7 +126,7 @@ WorkbenchDialog {
         const value=Number(field.text), next=value+delta
         if (!limitsAvailable || !notch.checked || field.text.trim().length===0 || !Number.isFinite(value) || !Number.isFinite(next)) {return false}
         if (field===depth) {return value>=0 && value<=domainLimits.maximum_notch_depth_db && next>=0 && next<=domainLimits.maximum_notch_depth_db}
-        const centerHz=Math.round(Number(center.text)*1e6), widthHz=Math.round(Number(bandwidth.text)*1e6), edgeHz=Math.round(Number(edge.text)*1e6)
+        const centerHz=Math.round(Number(center.text)*dialog.hertzPerMegahertz), widthHz=Math.round(Number(bandwidth.text)*dialog.hertzPerMegahertz), edgeHz=Math.round(Number(edge.text)*dialog.hertzPerMegahertz)
         function valid(centerValue,widthValue,edgeValue) {
             return Number.isFinite(centerValue) && Number.isFinite(widthValue) && Number.isFinite(edgeValue)
                 && centerValue>=0 && centerValue<=maximumFrequencyHz && widthValue>=1 && widthValue<=maximumFrequencyHz
@@ -108,8 +134,8 @@ WorkbenchDialog {
                 && centerValue-widthValue/2>=information.first_hz && centerValue+widthValue/2<=information.last_hz
         }
         if (center.text.trim().length===0 || bandwidth.text.trim().length===0 || edge.text.trim().length===0 || !valid(centerHz,widthHz,edgeHz)) {return false}
-        return valid(field===center ? Math.round(next*1e6):centerHz,
-            field===bandwidth ? Math.round(next*1e6):widthHz,field===edge ? Math.round(next*1e6):edgeHz)
+        return valid(field===center ? Math.round(next*dialog.hertzPerMegahertz):centerHz,
+            field===bandwidth ? Math.round(next*dialog.hertzPerMegahertz):widthHz,field===edge ? Math.round(next*dialog.hertzPerMegahertz):edgeHz)
     }
     function stepNotch(field,delta) {
         if (canStepNotch(field,delta)) {field.text=String(Number(field.text)+delta);refresh()}
@@ -167,7 +193,7 @@ WorkbenchDialog {
         return presentation.replace({information: nextInformation, viewport: nextViewport,
             valueEdits: nextEdits, errorMessage: nextError, diagnostic: nextDiagnostic,display:{
                 sources:["Imported captures","New flat sequence"],captures:(nextInformation.imported_count || 0)+" captures",
-                edits:nextEdits.map(function(edit){return (edit.first_hz/1e6)+"–"+(edit.last_hz/1e6)+" MHz: "+edit.value_db+" dB"})}})
+                edits:nextEdits.map(function(edit){return (edit.first_hz/dialog.hertzPerMegahertz)+"–"+(edit.last_hz/dialog.hertzPerMegahertz)+" MHz: "+edit.value_db+" dB"})}})
     }
     function document() { return JSON.stringify({source:source.currentIndex === 0 ? "imported":"flat",capture_count:captureCount,baseline_db:Number(baseline.text),recipe:recipe()}) }
     function refresh() {
@@ -210,16 +236,16 @@ WorkbenchDialog {
                     return false
                 }
                 randomVariation.checked=!!rules.random_variation
-                randomDeviation.text=String(rules.random_variation ? rules.random_variation.standard_deviation_db:1.5)
-                randomSeed.text=String(rules.random_variation ? rules.random_variation.seed:41)
-                tilt.checked=!!rules.tilt;tiltDb.text=String(rules.tilt ? rules.tilt.tilt_db:-4)
-                ripple.checked=!!rules.ripple;rippleDb.text=String(rules.ripple ? rules.ripple.peak_to_peak_db:2)
-                const period=rules.ripple ? rules.ripple.spacing:{mode:"frequency",spacing_hz:20000000}
-                distanceMode.checked=period.mode === "echo_distance";spacing.text=String((period.spacing_hz || 20000000)/1e6);distance.text=String(period.distance_metres || 6.37);vf.text=String(period.velocity_factor || 0.85)
+                randomDeviation.text=String(rules.random_variation ? rules.random_variation.standard_deviation_db:exampleRandomStandardDeviationDb)
+                randomSeed.text=String(rules.random_variation ? rules.random_variation.seed:exampleRandomSeed)
+                tilt.checked=!!rules.tilt;tiltDb.text=String(rules.tilt ? rules.tilt.tilt_db:exampleTiltDb)
+                ripple.checked=!!rules.ripple;rippleDb.text=String(rules.ripple ? rules.ripple.peak_to_peak_db:exampleRippleDepthDb)
+                const period=rules.ripple ? rules.ripple.spacing:{mode:"frequency",spacing_hz:exampleRippleSpacingHz}
+                distanceMode.checked=period.mode === "echo_distance";spacing.text=String((period.spacing_hz || exampleRippleSpacingHz)/dialog.hertzPerMegahertz);distance.text=String(period.distance_metres || exampleEchoDistanceMetres);vf.text=String(period.velocity_factor || exampleVelocityFactor)
                 notch.checked=!!rules.notch
-                center.text=String((rules.notch ? rules.notch.center_hz:(information.first_hz+information.last_hz)/2)/1e6)
-                bandwidth.text=String((rules.notch ? rules.notch.bandwidth_hz:10000000)/1e6);depth.text=String(rules.notch ? rules.notch.depth_db:18);edge.text=String((rules.notch ? rules.notch.edge_hz:1000000)/1e6)
-                editFirst.text=String(information.first_hz/1e6);editLast.text=editFirst.text;preview.value=firstPreviewCapture
+                center.text=String((rules.notch ? rules.notch.center_hz:(information.first_hz+information.last_hz)/2)/dialog.hertzPerMegahertz)
+                bandwidth.text=String((rules.notch ? rules.notch.bandwidth_hz:exampleNotchBandwidthHz)/dialog.hertzPerMegahertz);depth.text=String(rules.notch ? rules.notch.depth_db:exampleNotchDepthDb);edge.text=String((rules.notch ? rules.notch.edge_hz:exampleNotchEdgeHz)/dialog.hertzPerMegahertz)
+                editFirst.text=String(information.first_hz/dialog.hertzPerMegahertz);editLast.text=editFirst.text;preview.value=firstPreviewCapture
             }
             stagedAdoptionRejected = false
             exportOpenRejected = false
@@ -232,7 +258,7 @@ WorkbenchDialog {
         if (!editorTextAdmitted) {
             return false
         }
-        const next = valueEdits.concat([editText({scope:editScope.value(),first_hz:Math.round(Number(editFirst.text)*1e6),last_hz:Math.round(Number(editLast.text)*1e6),value_db:Number(editDb.text)})])
+        const next = valueEdits.concat([editText({scope:editScope.value(),first_hz:Math.round(Number(editFirst.text)*dialog.hertzPerMegahertz),last_hz:Math.round(Number(editLast.text)*dialog.hertzPerMegahertz),value_db:Number(editDb.text)})])
         if (replaceState(information, viewport, next, errorMessage, diagnostic)) {
             refresh()
         }
@@ -296,10 +322,10 @@ WorkbenchDialog {
             Label {text:"Baseline";color:theme.text}
             ComboBox {id:source;objectName:"designerSource";model:presentation.value ? presentation.value.display.sources : [];Layout.preferredWidth:200;onActivated:dialog.refresh()}
             Label {text:source.currentIndex === 0 && presentation.value ? presentation.value.display.captures : "Captures";color:theme.muted}
-            TextField {id:count;objectName:"designerCount";visible:source.currentIndex === 1;text:presentation.textAdmitted ? "50" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65;validator:IntValidator {bottom:1;top:dialog.maximumCaptures}
+            TextField {id:count;objectName:"designerCount";visible:source.currentIndex === 1;text:presentation.textAdmitted ? String(dialog.exampleFlatCaptureCount) : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65;validator:IntValidator {bottom:1;top:dialog.maximumCaptures}
  onEditingFinished:dialog.refresh()}
             Label {visible:source.currentIndex === 1;text:"Flat RxMER (dB)";color:theme.text}
-            TextField {id:baseline;visible:source.currentIndex === 1;text:presentation.textAdmitted ? "48" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65;onEditingFinished:dialog.refresh()}
+            TextField {id:baseline;visible:source.currentIndex === 1;text:presentation.textAdmitted ? String(dialog.exampleFlatBaselineDb) : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65;onEditingFinished:dialog.refresh()}
             Item {Layout.fillWidth:true}
         }
         RowLayout {
@@ -320,7 +346,7 @@ WorkbenchDialog {
                     RowLayout {
                         enabled:source.currentIndex === 1 && randomVariation.checked;opacity:enabled ? 1:0.5
                         Label {text:"Std deviation (dB)";color:theme.text}
-                        TextField {id:randomDeviation;objectName:"designerRandomDeviation";text:presentation.textAdmitted ? "1.5" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65;onEditingFinished:dialog.refresh();Accessible.name:"Random variation standard deviation in dB"}
+                        TextField {id:randomDeviation;objectName:"designerRandomDeviation";text:presentation.textAdmitted ? String(dialog.exampleRandomStandardDeviationDb) : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65;onEditingFinished:dialog.refresh();Accessible.name:"Random variation standard deviation in dB"}
                         StepButtons {
                             theme:dialog.theme;namePrefix:"designerRandomDeviation"
                             canIncrease:dialog.limitsAvailable && randomDeviation.text.trim().length>0 && Number.isFinite(Number(randomDeviation.text)) && Number(randomDeviation.text)>=0 && Number(randomDeviation.text)<=dialog.domainLimits.maximum_random_standard_deviation_db-dialog.randomDeviationStepDb
@@ -333,7 +359,7 @@ WorkbenchDialog {
                     RowLayout {
                         enabled:source.currentIndex === 1 && randomVariation.checked;opacity:enabled ? 1:0.5
                         Label {text:"Random seed";color:theme.text}
-                        TextField {id:randomSeed;objectName:"designerRandomSeed";text:presentation.textAdmitted ? "41" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:110;onEditingFinished:dialog.refresh();Accessible.name:"Designer random seed"
+                        TextField {id:randomSeed;objectName:"designerRandomSeed";text:presentation.textAdmitted ? String(dialog.exampleRandomSeed) : "";enabled:presentation.textAdmitted;Layout.preferredWidth:110;onEditingFinished:dialog.refresh();Accessible.name:"Designer random seed"
                             ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || (activeFocus && (focusReason === Qt.TabFocusReason || focusReason === Qt.BacktabFocusReason || focusReason === Qt.ShortcutFocusReason));ToolTip.text:"Use the same seed to reproduce the same pattern. Each capture has a different pattern. This is separate from simulation Noise Seed."}
                     }
                     Label {text:source.currentIndex === 1 ? "Same variation across the channel; no frequency weighting." : "Imported captures keep their existing starting values.";color:theme.muted;wrapMode:Text.WordWrap;Layout.fillWidth:true;font.pixelSize:11}
@@ -351,20 +377,20 @@ WorkbenchDialog {
                             Accessible.description:ToolTip.text
                         }
                         TextField {
-                            id:tiltDb;objectName:"designerTiltDb";text:presentation.textAdmitted ? "-4" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:80
+                            id:tiltDb;objectName:"designerTiltDb";text:presentation.textAdmitted ? String(dialog.exampleTiltDb) : "";enabled:presentation.textAdmitted;Layout.preferredWidth:80
                             Accessible.name:"High minus low edge tilt in dB"
                             onEditingFinished:dialog.refresh()
-                            Keys.onUpPressed:dialog.stepTilt(1)
-                            Keys.onDownPressed:dialog.stepTilt(-1)
+                            Keys.onUpPressed:dialog.stepTilt(dialog.tiltStepDb)
+                            Keys.onDownPressed:dialog.stepTilt(-dialog.tiltStepDb)
                         }
                         Label {text:"dB";color:theme.text}
                         StepButtons {
                             theme:dialog.theme;namePrefix:"designerTilt"
-                            canIncrease:dialog.canStepTilt(1);canDecrease:dialog.canStepTilt(-1)
+                            canIncrease:dialog.canStepTilt(dialog.tiltStepDb);canDecrease:dialog.canStepTilt(-dialog.tiltStepDb)
                             increaseDescription:"Increase RxMER tilt by 1 dB"
                             decreaseDescription:"Decrease RxMER tilt by 1 dB"
-                            onIncreaseRequested:dialog.stepTilt(1)
-                            onDecreaseRequested:dialog.stepTilt(-1)
+                            onIncreaseRequested:dialog.stepTilt(dialog.tiltStepDb)
+                            onDecreaseRequested:dialog.stepTilt(-dialog.tiltStepDb)
                         }
 
                     }
@@ -374,19 +400,19 @@ WorkbenchDialog {
                     RowLayout {
                         Label {text:"Peak-to-peak (dB)";color:theme.text}
                         TextField {
-                            id:rippleDb;objectName:"designerRippleDb";text:presentation.textAdmitted ? "2" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:80
+                            id:rippleDb;objectName:"designerRippleDb";text:presentation.textAdmitted ? String(dialog.exampleRippleDepthDb) : "";enabled:presentation.textAdmitted;Layout.preferredWidth:80
                             Accessible.name:"Ripple peak-to-peak depth in dB"
                             onEditingFinished:dialog.refresh()
-                            Keys.onUpPressed:dialog.stepRipple(rippleDb,1)
-                            Keys.onDownPressed:dialog.stepRipple(rippleDb,-1)
+                            Keys.onUpPressed:dialog.stepRipple(rippleDb,dialog.rippleDepthStepDb)
+                            Keys.onDownPressed:dialog.stepRipple(rippleDb,-dialog.rippleDepthStepDb)
                         }
                         StepButtons {
                             theme:dialog.theme;namePrefix:"designerRippleDepth"
-                            canIncrease:dialog.canStepRipple(rippleDb,1);canDecrease:dialog.canStepRipple(rippleDb,-1)
+                            canIncrease:dialog.canStepRipple(rippleDb,dialog.rippleDepthStepDb);canDecrease:dialog.canStepRipple(rippleDb,-dialog.rippleDepthStepDb)
                             increaseDescription:"Increase ripple peak-to-peak by 1 dB"
                             decreaseDescription:"Decrease ripple peak-to-peak by 1 dB"
-                            onIncreaseRequested:dialog.stepRipple(rippleDb,1)
-                            onDecreaseRequested:dialog.stepRipple(rippleDb,-1)
+                            onIncreaseRequested:dialog.stepRipple(rippleDb,dialog.rippleDepthStepDb)
+                            onDecreaseRequested:dialog.stepRipple(rippleDb,-dialog.rippleDepthStepDb)
                         }
                     }
                     CheckBox {id:distanceMode;objectName:"designerRippleDistanceMode";text:"Use echo-distance spacing helper";onToggled:dialog.refresh();ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus;ToolTip.text:"Assumes a round-trip cable cavity: crest spacing = c × velocity factor / (2 × distance). Depth is an independent MER edit; no RF phase is modeled."}
@@ -394,25 +420,25 @@ WorkbenchDialog {
                         visible:!distanceMode.checked
                         Label {text:"Crest spacing (MHz)";color:theme.text}
                         TextField {
-                            id:spacing;objectName:"designerRippleSpacing";text:presentation.textAdmitted ? "20" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:80
+                            id:spacing;objectName:"designerRippleSpacing";text:presentation.textAdmitted ? String(dialog.exampleRippleSpacingHz/dialog.hertzPerMegahertz) : "";enabled:presentation.textAdmitted;Layout.preferredWidth:80
                             Accessible.name:"Ripple crest spacing in MHz"
                             onEditingFinished:dialog.refresh()
-                            Keys.onUpPressed:dialog.stepRipple(spacing,1)
-                            Keys.onDownPressed:dialog.stepRipple(spacing,-1)
+                            Keys.onUpPressed:dialog.stepRipple(spacing,dialog.rippleSpacingStepMhz)
+                            Keys.onDownPressed:dialog.stepRipple(spacing,-dialog.rippleSpacingStepMhz)
                         }
                         StepButtons {
                             theme:dialog.theme;namePrefix:"designerRippleSpacing"
-                            canIncrease:dialog.canStepRipple(spacing,1);canDecrease:dialog.canStepRipple(spacing,-1)
+                            canIncrease:dialog.canStepRipple(spacing,dialog.rippleSpacingStepMhz);canDecrease:dialog.canStepRipple(spacing,-dialog.rippleSpacingStepMhz)
                             increaseDescription:"Increase ripple crest spacing by 1 MHz"
                             decreaseDescription:"Decrease ripple crest spacing by 1 MHz"
-                            onIncreaseRequested:dialog.stepRipple(spacing,1)
-                            onDecreaseRequested:dialog.stepRipple(spacing,-1)
+                            onIncreaseRequested:dialog.stepRipple(spacing,dialog.rippleSpacingStepMhz)
+                            onDecreaseRequested:dialog.stepRipple(spacing,-dialog.rippleSpacingStepMhz)
                         }
                     }
                     RowLayout {visible:distanceMode.checked;Label {text:"Distance (m)";color:theme.text}
-TextField {id:distance;text:presentation.textAdmitted ? "6.37" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:70;onEditingFinished:dialog.refresh()}
+TextField {id:distance;text:presentation.textAdmitted ? String(dialog.exampleEchoDistanceMetres) : "";enabled:presentation.textAdmitted;Layout.preferredWidth:70;onEditingFinished:dialog.refresh()}
 Label {text:"VF";color:theme.text}
-TextField {id:vf;text:presentation.textAdmitted ? "0.85" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65;onEditingFinished:dialog.refresh()} }
+TextField {id:vf;text:presentation.textAdmitted ? String(dialog.exampleVelocityFactor) : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65;onEditingFinished:dialog.refresh()} }
                     RxmerDesignScope {id:rippleScope;theme:dialog.theme;captureCount:dialog.captureCount;maximumCaptures:dialog.maximumCaptures;onEdited:dialog.refresh()}
                     Rectangle {Layout.fillWidth:true;height:1;color:theme.line}
                     CheckBox {id:notch;objectName:"designerNotch";text:"LTE / 5G-style notch";onToggled:dialog.refresh();ToolTip.delay: theme.tooltipDelayMs; ToolTip.visible:hovered || visualFocus;ToolTip.text:"Synthetic reduction in MER over a frequency band, not an LTE or 5G waveform simulation."}
@@ -431,64 +457,64 @@ TextField {id:vf;text:presentation.textAdmitted ? "0.85" : "";enabled:presentati
                             id:center;objectName:"designerNotchCenter";text:"";enabled:presentation.textAdmitted;Layout.preferredWidth:75
                             Accessible.name:"Notch center in MHz"
                             onEditingFinished:dialog.refresh()
-                            Keys.onUpPressed:dialog.stepNotch(center,1)
-                            Keys.onDownPressed:dialog.stepNotch(center,-1)
+                            Keys.onUpPressed:dialog.stepNotch(center,dialog.notchCenterStepMhz)
+                            Keys.onDownPressed:dialog.stepNotch(center,-dialog.notchCenterStepMhz)
                         }
                         StepButtons {
                             id:notchCenterSteps;theme:dialog.theme;namePrefix:"designerNotchCenter"
-                            canIncrease:dialog.canStepNotch(center,1);canDecrease:dialog.canStepNotch(center,-1)
+                            canIncrease:dialog.canStepNotch(center,dialog.notchCenterStepMhz);canDecrease:dialog.canStepNotch(center,-dialog.notchCenterStepMhz)
                             increaseDescription:"Increase notch center by 1 MHz"
                             decreaseDescription:"Decrease notch center by 1 MHz"
-                            onIncreaseRequested:dialog.stepNotch(center,1)
-                            onDecreaseRequested:dialog.stepNotch(center,-1)
+                            onIncreaseRequested:dialog.stepNotch(center,dialog.notchCenterStepMhz)
+                            onDecreaseRequested:dialog.stepNotch(center,-dialog.notchCenterStepMhz)
                         }
                         Label {id:notchWidthLabel;text:"Width MHz";color:theme.text}
                         TextField {
-                            id:bandwidth;objectName:"designerNotchWidth";text:presentation.textAdmitted ? "10" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65
+                            id:bandwidth;objectName:"designerNotchWidth";text:presentation.textAdmitted ? String(dialog.exampleNotchBandwidthHz/dialog.hertzPerMegahertz) : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65
                             Accessible.name:"Notch width in MHz"
                             onEditingFinished:dialog.refresh()
-                            Keys.onUpPressed:dialog.stepNotch(bandwidth,1)
-                            Keys.onDownPressed:dialog.stepNotch(bandwidth,-1)
+                            Keys.onUpPressed:dialog.stepNotch(bandwidth,dialog.notchWidthStepMhz)
+                            Keys.onDownPressed:dialog.stepNotch(bandwidth,-dialog.notchWidthStepMhz)
                         }
                         StepButtons {
                             id:notchWidthSteps;theme:dialog.theme;namePrefix:"designerNotchWidth"
-                            canIncrease:dialog.canStepNotch(bandwidth,1);canDecrease:dialog.canStepNotch(bandwidth,-1)
+                            canIncrease:dialog.canStepNotch(bandwidth,dialog.notchWidthStepMhz);canDecrease:dialog.canStepNotch(bandwidth,-dialog.notchWidthStepMhz)
                             increaseDescription:"Increase notch width by 1 MHz"
                             decreaseDescription:"Decrease notch width by 1 MHz"
-                            onIncreaseRequested:dialog.stepNotch(bandwidth,1)
-                            onDecreaseRequested:dialog.stepNotch(bandwidth,-1)
+                            onIncreaseRequested:dialog.stepNotch(bandwidth,dialog.notchWidthStepMhz)
+                            onDecreaseRequested:dialog.stepNotch(bandwidth,-dialog.notchWidthStepMhz)
                         }
                         Label {id:notchDepthLabel;text:"Depth dB";color:theme.text}
                         TextField {
-                            id:depth;objectName:"designerNotchDepth";text:presentation.textAdmitted ? "18" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:75
+                            id:depth;objectName:"designerNotchDepth";text:presentation.textAdmitted ? String(dialog.exampleNotchDepthDb) : "";enabled:presentation.textAdmitted;Layout.preferredWidth:75
                             Accessible.name:"Notch depth in dB"
                             onEditingFinished:dialog.refresh()
-                            Keys.onUpPressed:dialog.stepNotch(depth,1)
-                            Keys.onDownPressed:dialog.stepNotch(depth,-1)
+                            Keys.onUpPressed:dialog.stepNotch(depth,dialog.notchDepthStepDb)
+                            Keys.onDownPressed:dialog.stepNotch(depth,-dialog.notchDepthStepDb)
                         }
                         StepButtons {
                             theme:dialog.theme;namePrefix:"designerNotchDepth"
-                            canIncrease:dialog.canStepNotch(depth,1);canDecrease:dialog.canStepNotch(depth,-1)
+                            canIncrease:dialog.canStepNotch(depth,dialog.notchDepthStepDb);canDecrease:dialog.canStepNotch(depth,-dialog.notchDepthStepDb)
                             increaseDescription:"Increase notch depth by 1 dB"
                             decreaseDescription:"Decrease notch depth by 1 dB"
-                            onIncreaseRequested:dialog.stepNotch(depth,1)
-                            onDecreaseRequested:dialog.stepNotch(depth,-1)
+                            onIncreaseRequested:dialog.stepNotch(depth,dialog.notchDepthStepDb)
+                            onDecreaseRequested:dialog.stepNotch(depth,-dialog.notchDepthStepDb)
                         }
                         Label {id:notchEdgeLabel;text:"Edge MHz";color:theme.text}
                         TextField {
-                            id:edge;objectName:"designerNotchEdge";text:presentation.textAdmitted ? "1" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65
+                            id:edge;objectName:"designerNotchEdge";text:presentation.textAdmitted ? String(dialog.exampleNotchEdgeHz/dialog.hertzPerMegahertz) : "";enabled:presentation.textAdmitted;Layout.preferredWidth:65
                             Accessible.name:"Notch edge in MHz"
                             onEditingFinished:dialog.refresh()
-                            Keys.onUpPressed:dialog.stepNotch(edge,1)
-                            Keys.onDownPressed:dialog.stepNotch(edge,-1)
+                            Keys.onUpPressed:dialog.stepNotch(edge,dialog.notchEdgeStepMhz)
+                            Keys.onDownPressed:dialog.stepNotch(edge,-dialog.notchEdgeStepMhz)
                         }
                         StepButtons {
                             theme:dialog.theme;namePrefix:"designerNotchEdge"
-                            canIncrease:dialog.canStepNotch(edge,1);canDecrease:dialog.canStepNotch(edge,-1)
+                            canIncrease:dialog.canStepNotch(edge,dialog.notchEdgeStepMhz);canDecrease:dialog.canStepNotch(edge,-dialog.notchEdgeStepMhz)
                             increaseDescription:"Increase notch edge by 1 MHz"
                             decreaseDescription:"Decrease notch edge by 1 MHz"
-                            onIncreaseRequested:dialog.stepNotch(edge,1)
-                            onDecreaseRequested:dialog.stepNotch(edge,-1)
+                            onIncreaseRequested:dialog.stepNotch(edge,dialog.notchEdgeStepMhz)
+                            onDecreaseRequested:dialog.stepNotch(edge,-dialog.notchEdgeStepMhz)
                         }
                     }
                     RxmerDesignScope {id:notchScope;objectName:"designerNotchScope";theme:dialog.theme;captureCount:dialog.captureCount;maximumCaptures:dialog.maximumCaptures;onEdited:dialog.refresh()}
@@ -499,7 +525,7 @@ TextField {id:vf;text:presentation.textAdmitted ? "0.85" : "";enabled:presentati
 TextField {id:editFirst;enabled:presentation.textAdmitted;Layout.preferredWidth:85}
 TextField {id:editLast;enabled:presentation.textAdmitted;Layout.preferredWidth:85} }
                     RowLayout {Label {text:"RxMER dB";color:theme.text}
-TextField {id:editDb;text:presentation.textAdmitted ? "30" : "";enabled:presentation.textAdmitted;Layout.preferredWidth:75} }
+TextField {id:editDb;text:presentation.textAdmitted ? String(dialog.exampleEditValueDb) : "";enabled:presentation.textAdmitted;Layout.preferredWidth:75} }
                     RxmerDesignScope {id:editScope;theme:dialog.theme;captureCount:dialog.captureCount;maximumCaptures:dialog.maximumCaptures}
                     WorkbenchActionButton {theme:dialog.theme;objectName:"designerAddValueEdit";text:"Add Value Edit";enabled:dialog.limitsAvailable && dialog.valueEdits.length<dialog.domainLimits.maximum_value_edits;onClicked:dialog.addValueEdit() }
                     Repeater {model:dialog.valueEdits;delegate:RowLayout {required property var modelData;required property int index

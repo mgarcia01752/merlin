@@ -26,6 +26,8 @@ pub(crate) fn spectrum(
     capture_axis: bool,
 ) -> Result<Value, String> {
     let result = latest(context).ok_or("Run the closed loop to retain RX samples.")?;
+    // Stable widget protocol: channel output, framing, CP removal, then FFT.
+    // These ordinals select existing public observations; they are not PHY limits.
     let stage = match tap {
         0 => FullLoopStage::ChannelOutput,
         1 => FullLoopStage::RxFramed,

@@ -17,6 +17,12 @@ use merlin::downstream::{
 };
 use serde_json::{json, Value};
 
+// Stable inspector positions in STAGE_IDS; label fallback is distinct from bits.
+const INTERLEAVED_BITS_CARD: i32 = 2;
+const CELL_LABELS_CARD: i32 = 3;
+// Source, coded bits, interleaved bits, mapped/interleaved cells and physical bins.
+const STARTUP_STAGE_CARDS: [i32; 6] = [0, 1, INTERLEAVED_BITS_CARD, 4, 5, 6];
+
 const STAGE_IDS: [TestPointId; 9] = [
     TestPointId::SourcePayload,
     TestPointId::PayloadCoded,
@@ -126,14 +132,14 @@ pub(crate) fn stage(context: &Context, index: i32, offset: i32) -> Value {
 /// Bit/label alternatives retain their actual boundary index; absence is explicit.
 pub(crate) fn stage_previews(context: &Context) -> Value {
     let mut cards = Vec::new();
-    for index in [0, 1, 2, 4, 5, 6] {
+    for index in STARTUP_STAGE_CARDS {
         let mut selected = index;
         let mut observation = stage(context, index, 0);
-        if index == 2 && observation["available"] != true {
-            let labels = stage(context, 3, 0);
+        if index == INTERLEAVED_BITS_CARD && observation["available"] != true {
+            let labels = stage(context, CELL_LABELS_CARD, 0);
             if labels["available"] == true {
                 observation = labels;
-                selected = 3;
+                selected = CELL_LABELS_CARD;
             }
         }
         observation

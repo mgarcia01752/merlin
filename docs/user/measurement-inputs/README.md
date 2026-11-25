@@ -20,8 +20,11 @@ flowchart LR
 CLI scenario inputs use this repository's own schema. The
 [import-pnm command](../impairments/pnm-import.md) converts decoded captures;
 [impaired channel requests](../impairments/experiments.md) select an imported
-frame/profile/response explicitly. Temporal/profile expansion remains MODEL-06.
-Formal upstream schema/version compatibility is deferred in INPUT-02.
+frame/profile/response explicitly. The supported measurement-driven path uses
+the applied profile, temporal frames and actual FEC outcomes; see the
+[MODEL-06 record](../../development/features/pilot-channel-estimation/implementation.md).
+The [input boundary](../../development/checklist.md#task-input-02) records supported
+parser versions and provenance; it does not imply support for arbitrary formats.
 
 The [single-channel demo](../../../examples/measurements/single-channel/README.md)
 provides all three decoder outputs and reproducible synthetic RxMER variants,

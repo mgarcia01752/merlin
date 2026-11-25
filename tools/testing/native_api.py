@@ -38,7 +38,7 @@ REFERENCES = (
     ('CAPTURES25', 'pnm-input', 'upstream_captures', ('25',)),
 )
 
-# These optional focused-test references are mandatory in complete native acceptance.
+# Focused optional and required control references are mandatory in complete acceptance.
 DOWNSTREAM_REFERENCES = (
     ('MERLIN_SOURCE_FILE_INFO_REFERENCE', 'docsis-ofdm-fec', 'api_source_file_info'),
     ('MERLIN_SPECTRUM_BUDGET_REFERENCE', 'docsis-ofdm-fec', 'api_spectrum_average_capacity'),
@@ -50,6 +50,7 @@ DOWNSTREAM_REFERENCES = (
     ('MERLIN_INPUT_RETAINED_REFERENCE', 'pnm-input', 'input_retained_footprint'),
     ('MERLIN_BOUNDED_ARCHIVE_REFERENCE', 'pnm-input', 'bounded_receiver_archive'),
     ('MERLIN_DOWNSTREAM_RETAINED_REFERENCE', 'pnm-input', 'downstream_retained_footprint'),
+    ('MERLIN_CONTROL_FOOTPRINT_REFERENCE', 'ofdm-fec-cli', 'control_footprints'),
 )
 
 

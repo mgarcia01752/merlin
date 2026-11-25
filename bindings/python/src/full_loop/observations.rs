@@ -4,6 +4,7 @@
  */
 //! Native stage policy and owned query conversion; no numerical preparation in the binding.
 use super::*;
+use crate::constants::MAX_STAGE_IDENTIFIER_BYTES;
 #[pyclass(
     from_py_object,
     frozen,
@@ -139,7 +140,7 @@ impl PyFullLoopResult {
         start: usize,
         count: usize,
     ) -> PyResult<Py<PyAny>> {
-        if stage.len() > 128 {
+        if stage.len() > MAX_STAGE_IDENTIFIER_BYTES {
             return Err(error(api::ApiError::new(
                 api::ErrorCode::ResourceLimit,
                 "Stage ID exceeds 128 bytes",

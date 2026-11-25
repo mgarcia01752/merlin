@@ -415,11 +415,12 @@ their native controls; menus and dropdown lists are not popup dialogs.
 ## Qt feature and instrument folders
 
 Keep `apps/qt/qml/Main.qml` as bootstrap; place other QML under responsibility
-folders: `shell`, `theme`, `components`, `about`, `inputs`, `workbenches` and
-`instruments`. Group inputs by their Rust owner names and instruments by spectrum,
-QAM, response, slicer, FEC, messages or stage inspection. Keep each window in its
-own file, with its dedicated charts/controls nearby. Use `components` for controls
-shared across features; do not accumulate a new flat catch-all folder.
+folders: `shell`, `shared`, `downstream` and `upstream`. Shared theme, components,
+about and reusable instruments belong under `shared`; direction-specific inputs,
+configuration and instruments remain under their direction. Group instruments by
+spectrum, QAM, response, slicer, FEC, messages or stage inspection. Keep each window
+in its own file, with its dedicated charts/controls nearby. Use `shared/components`
+for controls shared across features; do not accumulate a new flat catch-all folder.
 
 Keep Qt-facing instrument adapters under `apps/qt/src/downstream/instruments/`, with cohesive
 TX/RX providers, channel TP routing and shared spectrum formatting. Align QML and Rust by feature and
@@ -431,9 +432,10 @@ Pinned CXX-Qt0.7.3 requires all QObject bridge files for the same QML module to
 share one directory: keep all QObject bridges together under `src/bridge/` and
 import the relevant input models, simulation worker and instrument providers.
 Do not move individual bridges into feature folders. Keep `main.rs` focused on
-startup and module wiring. Group input models/restoration under `src/inputs/`,
-accepted state/project persistence under `src/workbench/`, run admission and worker
-lifecycle under `src/simulation/`, and local file/desktop integration under
+startup and module wiring. Group direction-specific input models, accepted state,
+persistence and workers under `src/downstream/` or `src/upstream/`; shared retention,
+presentation and recovery contracts under `src/shared/`; cross-direction actions
+and routing under `src/shell/`; and local file/desktop integration under
 `src/platform/`. Keep native interop headers with their platform implementation.
 Persistence validates saved inputs through their Rust models, never through
 QObject bridges. These folders organize the Qt adapter; core DSP stays separate.

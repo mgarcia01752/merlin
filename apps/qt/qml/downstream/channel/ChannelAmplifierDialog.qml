@@ -11,6 +11,15 @@ WorkbenchDialog {
     id: dialog
     required property var backend
     property bool busy: false
+
+    // Existing editor hints/defaults; Rust power admission remains authoritative.
+    readonly property real minimumGainDb: 0
+    readonly property real maximumGainDb: 60
+    readonly property real initialGainDb: 0
+    readonly property real minimumElectricalLevelDbmvPer6Mhz: -120
+    readonly property real maximumElectricalLevelDbmvPer6Mhz: 60
+    readonly property real initialElectricalReferenceDbmvPer6Mhz: 0
+    readonly property real initialOutputTargetDbmvPer6Mhz: 0
     readonly property var accepted: presentation.value ? presentation.value.accepted : ({})
     readonly property string error: presentation.value ? presentation.value.error : ""
     property PresentationOwner presentationCoverage: PresentationOwner {
@@ -48,11 +57,11 @@ WorkbenchDialog {
         if (!presentation.replace({accepted: nextAccepted, error: ""})) {
             return false
         }
-        gain.text=String(accepted.amplifier_gain_db || 0)
+        gain.text=String(accepted.amplifier_gain_db || initialGainDb)
         calibrated.checked=accepted.input_data_level_dbmv_per_6mhz!==null && accepted.input_data_level_dbmv_per_6mhz!==undefined
-        reference.text=String(accepted.input_data_level_dbmv_per_6mhz ?? 0)
+        reference.text=String(accepted.input_data_level_dbmv_per_6mhz ?? initialElectricalReferenceDbmvPer6Mhz)
         targetMode.checked=accepted.amplifier_target_dbmv_per_6mhz!==null && accepted.amplifier_target_dbmv_per_6mhz!==undefined
-        target.text=String(accepted.amplifier_target_dbmv_per_6mhz ?? 0)
+        target.text=String(accepted.amplifier_target_dbmv_per_6mhz ?? initialOutputTargetDbmvPer6Mhz)
         return true
     }
     onOpened: restore()
@@ -69,13 +78,13 @@ WorkbenchDialog {
         GridLayout {
             columns:2;columnSpacing:16;rowSpacing:12;Layout.fillWidth:true
             Label {text:"Gain (dB)";color:dialog.theme.text}
-            TextField {id:gain;objectName:"channelAmplifierGain";text:presentation.textAdmitted ? "0" : "";enabled:presentation.textAdmitted && !targetMode.checked;validator:DoubleValidator {bottom:0;top:60;locale:"C"} Layout.fillWidth:true}
+            TextField {id:gain;objectName:"channelAmplifierGain";text:presentation.textAdmitted ? String(dialog.initialGainDb) : "";enabled:presentation.textAdmitted && !targetMode.checked;validator:DoubleValidator {bottom:dialog.minimumGainDb;top:dialog.maximumGainDb;locale:"C"} Layout.fillWidth:true}
             CheckBox {id:calibrated;objectName:"channelPowerCalibrated";text:"TX Electrical Reference";enabled:presentation.textAdmitted;Layout.columnSpan:2;onToggled:if(!checked){targetMode.checked=false}}
             Label {text:"Input Data Level (dBmV / 6 MHz)";color:dialog.theme.text;enabled:calibrated.checked}
-            TextField {id:reference;objectName:"channelInputLevel";text:presentation.textAdmitted ? "0" : "";enabled:presentation.textAdmitted && calibrated.checked;validator:DoubleValidator {bottom:-120;top:60;locale:"C"} Layout.fillWidth:true}
+            TextField {id:reference;objectName:"channelInputLevel";text:presentation.textAdmitted ? String(dialog.initialElectricalReferenceDbmvPer6Mhz) : "";enabled:presentation.textAdmitted && calibrated.checked;validator:DoubleValidator {bottom:dialog.minimumElectricalLevelDbmvPer6Mhz;top:dialog.maximumElectricalLevelDbmvPer6Mhz;locale:"C"} Layout.fillWidth:true}
             CheckBox {id:targetMode;objectName:"channelAmplifierTargetMode";text:"Set Output Data Level";enabled:presentation.textAdmitted && calibrated.checked;Layout.columnSpan:2}
             Label {text:"Output Target (dBmV / 6 MHz)";color:dialog.theme.text;enabled:targetMode.checked}
-            TextField {id:target;objectName:"channelAmplifierTarget";text:presentation.textAdmitted ? "0" : "";enabled:presentation.textAdmitted && targetMode.checked;validator:DoubleValidator {bottom:-120;top:60;locale:"C"} Layout.fillWidth:true}
+            TextField {id:target;objectName:"channelAmplifierTarget";text:presentation.textAdmitted ? String(dialog.initialOutputTargetDbmvPer6Mhz) : "";enabled:presentation.textAdmitted && targetMode.checked;validator:DoubleValidator {bottom:dialog.minimumElectricalLevelDbmvPer6Mhz;top:dialog.maximumElectricalLevelDbmvPer6Mhz;locale:"C"} Layout.fillWidth:true}
         }
         Label {text:"The reference calibrates nominal data density. Channel Power includes the actual pilots and occupied band. Imported channel response remains a relative multiplier.";color:dialog.theme.muted;wrapMode:Text.WordWrap;Layout.fillWidth:true}
         Label {visible:presentation.rejected || !!dialog.error;text:presentation.rejected ? presentation.message : dialog.error;color:dialog.theme.statusError;wrapMode:Text.WordWrap;Layout.fillWidth:true}

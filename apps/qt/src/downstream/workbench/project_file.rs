@@ -26,6 +26,19 @@ pub(crate) struct Editors {
     pub profile: crate::downstream::inputs::profile_input::ProfileModel,
     pub measurements: crate::downstream::inputs::measurement_input::model::Model,
 }
+/// Existing saved editor sections; membership and population share this owner.
+const SAVED_EDITOR_SECTIONS: [&str; 5] = [
+    "source",
+    "profile",
+    "measurements",
+    "channel_model",
+    "channel_power",
+];
+/// Minimal version dispatch; the selected existing owner validates the contents.
+#[derive(Deserialize)]
+struct CheckHeader {
+    schema_version: u32,
+}
 /// Encodes original file bytes and their digest without storing a path dependency.
 /// # Arguments
 /// * `name` - Display basename.
@@ -97,19 +110,12 @@ impl<Sections: Borrow<BTreeMap<String, Value>> + Serialize> Project<Sections> {
         context: crate::downstream::workbench::session::Context,
     ) -> Result<(crate::downstream::workbench::session::Inputs, Editors), String> {
         let sections = self.sections.borrow();
-        if ![1, 2].contains(&self.schema_version)
+        if !super::project_envelope::LEGACY_EDITOR_SCHEMAS.contains(&self.schema_version)
             || self.application != "MERLIN"
-            || sections.len() > 5
-            || sections.keys().any(|k| {
-                ![
-                    "source",
-                    "profile",
-                    "measurements",
-                    "channel_model",
-                    "channel_power",
-                ]
-                .contains(&k.as_str())
-            })
+            || sections.len() > SAVED_EDITOR_SECTIONS.len()
+            || sections
+                .keys()
+                .any(|k| !SAVED_EDITOR_SECTIONS.contains(&k.as_str()))
         {
             return Err("Unsupported workbench format/sections.".into());
         }
@@ -191,11 +197,13 @@ impl<Sections: Borrow<BTreeMap<String, Value>> + Serialize> Project<Sections> {
     }
 }
 
-/// Validates a package-check WB through the same import and request APIs as Open.
+/// Validates an idle legacy workbench or current direction project without Qt.
 /// # Arguments
 /// * `path` - Local JSON document; input is bounded to the normal project limit.
 /// # Returns
-/// Unit when all imported inputs and full simulation request are admissible.
+/// Unit when all imported inputs and scientific configuration are admissible.
+/// Current projects use shared public admission for either PHY. Legacy editors
+/// retain the complete downstream request check; incomplete editors still reject.
 /// # Errors
 /// Reports nonregular/oversized files, invalid JSON or invalid configuration.
 pub(crate) fn check_file(path: &Path) -> Result<(), String> {
@@ -215,7 +223,18 @@ pub(crate) fn check_file(path: &Path) -> Result<(), String> {
     if bytes.len() > MAX_PROJECT_BYTES {
         return Err("Workbench exceeds input limits.".into());
     }
-    let project: Project = serde_json::from_slice(&bytes).map_err(|error| error.to_string())?;
+    check_bytes(&bytes)
+}
+
+fn check_bytes(bytes: &[u8]) -> Result<(), String> {
+    let header: CheckHeader = serde_json::from_slice(bytes).map_err(|error| error.to_string())?;
+    if !super::project_envelope::LEGACY_EDITOR_SCHEMAS.contains(&header.schema_version) {
+        // Public admission prepares and validates both current direction types
+        // while idle. GUI observation/view policies remain separate UI limits.
+        merlin::common::Project::from_bytes(bytes).map_err(|error| error.to_string())?;
+        return Ok(());
+    }
+    let project: Project = serde_json::from_slice(bytes).map_err(|error| error.to_string())?;
     let inputs = project.validate()?;
     let options = project
         .receiver
@@ -231,6 +250,10 @@ pub(crate) fn check_file(path: &Path) -> Result<(), String> {
     let _ = request; // Public preparation already performs complete scientific admission.
     Ok(())
 }
+
+#[cfg(test)]
+#[path = "project_check_tests.rs"]
+mod check_tests;
 
 #[cfg(test)]
 mod tests {

@@ -16,15 +16,18 @@ from native_api import DOWNSTREAM_REFERENCES, passed_cases, run
 
 
 class NativeApiRunnerTests(unittest.TestCase):
-    def test_complete_runner_supplies_every_optional_downstream_reference(self):
+    def test_complete_runner_supplies_every_optional_and_required_reference(self):
         """New scientific parity cases must have real Rust sources wired into the full gate."""
         root = Path(__file__).resolve().parents[2]
         required = set()
         for path in (root / 'bindings/python/tests').glob('test_*.py'):
-            required.update(re.findall(r"os\.environ\.get\(['\"](MERLIN_\w+_REFERENCE)['\"]\)", path.read_text()))
+            required.update(re.findall(
+                r"os\.environ(?:\.get\(|\[)['\"](MERLIN_\w+_REFERENCE)['\"]",
+                path.read_text()))
         self.assertEqual(required, {row[0] for row in DOWNSTREAM_REFERENCES})
         for _, package, example in DOWNSTREAM_REFERENCES:
-            crate = {'docsis-ofdm-fec': 'ofdm', 'docsis-ofdma': 'ofdma'}.get(package, package)
+            crate = {'docsis-ofdm-fec': 'ofdm', 'docsis-ofdma': 'ofdma',
+                     'ofdm-fec-cli': 'cli'}.get(package, package)
             self.assertTrue((root / 'crates' / crate / 'examples' / (example + '.rs')).is_file())
 
     def test_complete_named_passes_exclude_failed_skipped_and_duplicate_runs(self):

@@ -11,6 +11,14 @@ WorkbenchDialog {
     id:dialog
     required property var backend
     property bool busy:false
+
+    // Existing editor hints/defaults; Rust power admission remains authoritative.
+    readonly property real minimumAttenuationDb: 0
+    readonly property real maximumAttenuationDb: 60
+    readonly property real initialAttenuationDb: 0
+    readonly property real minimumNoiseDensityDbmvHz: -200
+    readonly property real maximumNoiseDensityDbmvHz: -30
+    readonly property real initialNoiseDensityDbmvHz: -120
     readonly property var accepted: presentation.value ? presentation.value.accepted : ({})
     readonly property string error: presentation.value ? presentation.value.error : ""
     property PresentationOwner presentationCoverage: PresentationOwner {
@@ -36,9 +44,9 @@ WorkbenchDialog {
         if (!presentation.replace({accepted: nextAccepted, error: ""})) {
             return false
         }
-        attenuation.text=String(accepted.attenuation_db || 0)
+        attenuation.text=String(accepted.attenuation_db || initialAttenuationDb)
         noise.checked=accepted.receiver_noise_dbmv_hz!==null && accepted.receiver_noise_dbmv_hz!==undefined
-        density.text=String(accepted.receiver_noise_dbmv_hz ?? -120)
+        density.text=String(accepted.receiver_noise_dbmv_hz ?? initialNoiseDensityDbmvHz)
         return true
     }
     onOpened: restore()
@@ -66,10 +74,10 @@ WorkbenchDialog {
         GridLayout {
             columns:2;columnSpacing:16;rowSpacing:12;Layout.fillWidth:true
             Label {text:"Attenuation (dB)";color:dialog.theme.text}
-            TextField {id:attenuation;objectName:"channelAttenuation";text:presentation.textAdmitted ? "0" : "";enabled:presentation.textAdmitted;validator:DoubleValidator {bottom:0;top:60;locale:"C"} Layout.fillWidth:true}
+            TextField {id:attenuation;objectName:"channelAttenuation";text:presentation.textAdmitted ? String(dialog.initialAttenuationDb) : "";enabled:presentation.textAdmitted;validator:DoubleValidator {bottom:dialog.minimumAttenuationDb;top:dialog.maximumAttenuationDb;locale:"C"} Layout.fillWidth:true}
             CheckBox {id:noise;objectName:"channelReceiverNoise";text:"Add Independent Receiver Noise";enabled:presentation.textAdmitted;Layout.columnSpan:2}
             Label {text:"Receiver Noise Density (dBmV/Hz)";color:dialog.theme.text;enabled:noise.checked}
-            TextField {id:density;objectName:"channelNoiseDensity";text:presentation.textAdmitted ? "-120" : "";enabled:presentation.textAdmitted && noise.checked;validator:DoubleValidator {bottom:-200;top:-30;locale:"C"} Layout.fillWidth:true}
+            TextField {id:density;objectName:"channelNoiseDensity";text:presentation.textAdmitted ? String(dialog.initialNoiseDensityDbmvHz) : "";enabled:presentation.textAdmitted && noise.checked;validator:DoubleValidator {bottom:dialog.minimumNoiseDensityDbmvHz;top:dialog.maximumNoiseDensityDbmvHz;locale:"C"} Layout.fillWidth:true}
         }
         Label {text:"Independent noise is added after attenuation, in addition to RxMER residuals. It requires a TX electrical reference. Leave it off when RxMER already represents the complete receiver noise budget.";color:dialog.theme.muted;wrapMode:Text.WordWrap;Layout.fillWidth:true}
         Label {visible:presentation.rejected || !!dialog.error;text:presentation.rejected ? presentation.message : dialog.error;color:dialog.theme.statusError;wrapMode:Text.WordWrap;Layout.fillWidth:true}

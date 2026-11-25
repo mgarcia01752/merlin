@@ -56,7 +56,10 @@ impl PyProfileView {
     /// # Errors
     /// Shared resource failures raise ApiError; primitive conversion failures stay Python errors.
     #[new]
-    #[pyo3(signature=(profiles=None, roles=None, metric="bits", start=0, count=0, max_buckets=2048))]
+    #[pyo3(
+        text_signature = "(profiles=None, roles=None, metric='bits', start=0, count=0, max_buckets=2048)"
+    )]
+    #[pyo3(signature=(profiles=None, roles=None, metric="bits", start=0, count=0, max_buckets=api::MAX_PROFILE_VIEW_BUCKETS))]
     fn new(
         profiles: Option<&Bound<'_, PySequence>>,
         roles: Option<&Bound<'_, PySequence>>,
@@ -292,7 +295,8 @@ impl PyProfileCapture {
     /// Owned page with source codes, roles, loadings, constellation and ideal references.
     /// # Errors
     /// Shared identity/window/resource failures raise ApiError.
-    #[pyo3(signature=(profile_id, start=0, limit=256))]
+    #[pyo3(text_signature = "($self, profile_id, start=0, limit=256)")]
+    #[pyo3(signature=(profile_id, start=0, limit=api::MAX_PROFILE_SCHEME_ROWS))]
     fn schemes(
         &self,
         py: Python<'_>,

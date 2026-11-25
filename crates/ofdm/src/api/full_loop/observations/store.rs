@@ -9,6 +9,11 @@ use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 use std::collections::BTreeMap;
 
+/// Preserved per-event allowance in the legacy observation byte-budget estimate.
+/// It is not allocator overhead or exact retained-payload metadata; retained_footprint()
+/// independently visits actual requested storage for aggregate application admission.
+const LEGACY_EVENT_ESTIMATE_ALLOWANCE_BYTES: usize = 256;
+
 /// Actual retained event, or an owned bounded contiguous window of that event.
 #[derive(Clone, Serialize)]
 #[non_exhaustive]
@@ -211,7 +216,7 @@ impl ProbeObserver for RetainedStages {
             .saturating_add(role_bytes)
             .saturating_add(event.context.run_id.len())
             .saturating_add(event.context.configuration_id.len())
-            .saturating_add(256);
+            .saturating_add(LEGACY_EVENT_ESTIMATE_ALLOWANCE_BYTES);
         if self
             .stats
             .retained_bytes

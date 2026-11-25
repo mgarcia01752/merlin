@@ -40,6 +40,8 @@ BUILD_INFRASTRUCTURE_PACKAGES = {
     'cc': 'compile the Qt branding initializer as a retained build object',
     'qt-build-utils': 'generate Qt branding resources with explicit file watches',
 }
+# Cargo metadata subprocess watchdog, independent of simulation/runtime and test limits.
+CARGO_METADATA_TIMEOUT_SECONDS = 90
 
 
 def digest(data):
@@ -67,7 +69,8 @@ def cargo_metadata(root):
                '--no-deps', '--format-version', '1', '--manifest-path',
                str(root / 'apps/qt/Cargo.toml')]
     return json.loads(subprocess.run(command, cwd=root, check=True,
-                                    capture_output=True, timeout=90).stdout)
+                                    capture_output=True,
+                                    timeout=CARGO_METADATA_TIMEOUT_SECONDS).stdout)
 
 
 def dependency_records(root, metadata):

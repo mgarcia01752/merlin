@@ -14,6 +14,25 @@ pub const MAX_STAGE_EVENT_ELEMENTS: usize = 16384;
 /// Maximum payload/context retention accounted by this owner, excluding engine/allocator overhead.
 pub const MAX_STAGE_RETENTION_BYTES: usize = 96 * 1024 * 1024;
 
+/// Maximum configured stage selections, independently of the current supported inventory.
+const MAX_STAGE_POLICY_SELECTIONS: usize = 32;
+/// Global event ceiling; the default deliberately admits the full existing policy budget.
+const MAX_STAGE_POLICY_EVENTS: usize = 10_000;
+/// Global original-element ceiling, shared deliberately by validation and the default.
+const MAX_STAGE_TOTAL_ELEMENTS: usize = 1_048_576;
+/// Independent per-stage event ceiling, not a default selection for every stage.
+const MAX_EVENTS_PER_STAGE: usize = 64;
+/// Strict policy JSON transport ceiling; not a retained data or query-element limit.
+const MAX_STAGE_POLICY_BYTES: usize = 64 * 1024;
+/// Existing PLC-message retention default, independent of the general per-stage ceiling.
+const DEFAULT_PLC_MESSAGE_EVENTS: usize = 64;
+/// Existing channel-output history default for passive observation.
+const DEFAULT_CHANNEL_OUTPUT_EVENTS: usize = 12;
+/// Existing multi-frame default for joined TX/RX sequence and estimate queries.
+const DEFAULT_SEQUENCE_EVENTS: usize = 4;
+/// Existing default for stages needing only their first selected event.
+const DEFAULT_SINGLE_EVENT: usize = 1;
+
 /// One finite stage and actual-phase selection; no source or reconstructed values are requested.
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -70,12 +89,12 @@ impl Default for FullLoopObservationInput {
                 .map(|stage| FullLoopStageRetention {
                     stage,
                     max_events: match stage {
-                        FullLoopStage::PlcMessage => 64,
-                        FullLoopStage::ChannelOutput => 12,
+                        FullLoopStage::PlcMessage => DEFAULT_PLC_MESSAGE_EVENTS,
+                        FullLoopStage::ChannelOutput => DEFAULT_CHANNEL_OUTPUT_EVENTS,
                         FullLoopStage::TxOverlap
                         | FullLoopStage::RxFramed
-                        | FullLoopStage::RxChannelEstimate => 4,
-                        _ => 1,
+                        | FullLoopStage::RxChannelEstimate => DEFAULT_SEQUENCE_EVENTS,
+                        _ => DEFAULT_SINGLE_EVENT,
                     },
                     observation_only: !matches!(
                         stage,
@@ -85,9 +104,9 @@ impl Default for FullLoopObservationInput {
                     ),
                 })
                 .collect(),
-            max_events: 10000,
-            max_elements_per_event: 16384,
-            max_total_elements: 1048576,
+            max_events: MAX_STAGE_POLICY_EVENTS,
+            max_elements_per_event: MAX_STAGE_EVENT_ELEMENTS,
+            max_total_elements: MAX_STAGE_TOTAL_ELEMENTS,
             max_retained_bytes: MAX_STAGE_RETENTION_BYTES,
         }
     }
@@ -108,10 +127,10 @@ impl FullLoopObservationPolicy {
     /// Rejects empty/duplicate/unsupported stage IDs or finite work/byte budget violations.
     pub fn new(input: FullLoopObservationInput) -> ApiResult<Self> {
         if input.stages.is_empty()
-            || input.stages.len() > 32
-            || !(1..=10000).contains(&input.max_events)
+            || input.stages.len() > MAX_STAGE_POLICY_SELECTIONS
+            || !(1..=MAX_STAGE_POLICY_EVENTS).contains(&input.max_events)
             || !(1..=MAX_STAGE_EVENT_ELEMENTS).contains(&input.max_elements_per_event)
-            || !(1..=1048576).contains(&input.max_total_elements)
+            || !(1..=MAX_STAGE_TOTAL_ELEMENTS).contains(&input.max_total_elements)
             || !(1..=MAX_STAGE_RETENTION_BYTES).contains(&input.max_retained_bytes)
         {
             return Err(ApiError::new(
@@ -127,7 +146,9 @@ impl FullLoopObservationPolicy {
                     "Stage is outside supported full-loop retention",
                 ));
             }
-            if !seen.insert(selection.stage) || !(1..=64).contains(&selection.max_events) {
+            if !seen.insert(selection.stage)
+                || !(1..=MAX_EVENTS_PER_STAGE).contains(&selection.max_events)
+            {
                 return Err(ApiError::new(
                     ErrorCode::InvalidInput,
                     "Duplicate stage or invalid per-stage event limit",
@@ -144,7 +165,7 @@ impl FullLoopObservationPolicy {
     /// # Errors
     /// Rejects malformed/unknown fields and transport/domain/resource violations.
     pub fn from_json(bytes: &[u8]) -> ApiResult<Self> {
-        if bytes.len() > 65536 {
+        if bytes.len() > MAX_STAGE_POLICY_BYTES {
             return Err(ApiError::new(
                 ErrorCode::ResourceLimit,
                 "Stage policy exceeds 64 KiB",

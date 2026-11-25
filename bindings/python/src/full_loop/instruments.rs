@@ -4,6 +4,7 @@
  */
 //! Owned native conversions; all numerical preparation stays in the public Rust API.
 use super::*;
+use crate::constants::MAX_STAGE_IDENTIFIER_BYTES;
 
 #[pymethods]
 impl PyFullLoopResult {
@@ -18,7 +19,10 @@ impl PyFullLoopResult {
     /// Owned metadata/extrema dictionary with actual sample accounting; GIL released for work.
     /// # Errors
     /// Shared missing-stage, invalid-domain/work/viewport or numerical failures raise ApiError.
-    #[pyo3(signature=(stage="tx.overlap_add.samples",snapshot=0,max_averages=32,start=0,count=0))]
+    #[pyo3(
+        text_signature = "($self, stage='tx.overlap_add.samples', snapshot=0, max_averages=32, start=0, count=0)"
+    )]
+    #[pyo3(signature=(stage="tx.overlap_add.samples",snapshot=0,max_averages=api::FullLoopSpectrumQuery::default().max_averages,start=0,count=0))]
     fn spectrum(
         &self,
         py: Python<'_>,
@@ -28,7 +32,7 @@ impl PyFullLoopResult {
         start: usize,
         count: usize,
     ) -> PyResult<Py<PyAny>> {
-        if stage.len() > 128 {
+        if stage.len() > MAX_STAGE_IDENTIFIER_BYTES {
             return Err(error(api::ApiError::new(
                 api::ErrorCode::ResourceLimit,
                 "Stage ID exceeds 128 bytes",

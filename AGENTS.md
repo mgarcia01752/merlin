@@ -36,7 +36,9 @@ For Qt framework reuse, read-only inspection of PNM-Viewer-Toolkit is authorized
 all modifications remain in MERLIN. Follow coding-style for reuse and licensing.
 
 Preserve the implemented downstream OFDM and upstream OFDMA backend scopes in
-`docs/architecture.md`. Upstream Qt remains deferred. Downstream simulation modes are the
+`docs/architecture.md`. The approved unified Qt phase follows the UIU tasks in
+`docs/development/checklist.md`; both direction adapters use the `merlin` facade.
+Downstream simulation modes are the
 ideal/reference experiment and measurement-driven analysis using RxMER, downstream
 channel estimates and an applied modulation profile. Support is developed against
 pinned DOCSIS3.1/4.0 evidence up to16384-QAM; do not equate a recognized order with
@@ -47,9 +49,10 @@ adds integration guidance under the existing signal-processing, scientific-testi
 and public-API skills. Use their upstream references for explicitly scoped work.
 That guidance migration is historical; subsequent backend acceptance belongs to
 the unified checklist. Source-repository permissions and pass states do not transfer.
-The current backend execution authorization is retained in
-`docs/development/backend-execution-authorization.md`; it authorizes focused local
-commits and continuation for this integration, without pushes or Qt expansion.
+The historical backend execution authorization is retained in
+`docs/development/backend-execution-authorization.md`; it records the earlier backend-only phase. Current user authorization permits
+focused local commits and continuation of the approved unified Qt tasks; pushes,
+merges, releases and system installation still require separate authorization.
 
 The minimum engine is a MERLIN-only closed loop: source → MERLIN TX → channel
 model → MERLIN RX → compare recovered bits against the original source. Another
@@ -58,8 +61,9 @@ prerequisite. Preserve normative/source-table checks and honest decoder outcomes
 do not describe closed-loop results as external interoperability evidence.
 
 The CLI functional MVP is complete within its documented supported scope.
-The existing native Qt UI is presentation only; upstream Qt is outside this backend
-phase. Follow
+The native Qt UI remains presentation only. Upstream Qt was excluded from the
+historical backend-only phase; the approved unified Qt phase now includes its
+native configuration, lifecycle, instruments, files and restart recovery. Follow
 the UI section in docs/architecture.md and docs/development/ui-checklist.md,
 starting left to right with OFDM Channel Descriptor (OCD). The Qt workbench
 shell, Rust-validated timing/interleaving editor, PRBS-TX source editor and DPD

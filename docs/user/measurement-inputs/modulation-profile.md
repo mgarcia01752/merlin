@@ -26,7 +26,7 @@ preserves it. Remove input is also staged until Apply. Captures stay unchanged;
 this dialog does not export modified captures or start a run. Settings and inputs
 are included in saved workbench JSON; viewing and zoom are temporary.
 
-Use **View Profile…** to inspect the capture with the PNM Viewer layout.
+Use **View Profile…** to inspect the capture with MERLIN’s profile viewer.
 Channel and MAC chips identify the capture. Toggle individual **Profiles** to
 overlay their colored traces; **All** enables every profile. These selections
 never change the profile chosen for Apply. Carrier buttons filter Data, Pilots,

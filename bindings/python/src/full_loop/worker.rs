@@ -4,6 +4,7 @@
  */
 //! Bounded one-result native dispatch; interpreter interrupts become cooperative cancellation.
 use super::*;
+use crate::constants::FULL_LOOP_TERMINAL_CHANNEL_CAPACITY;
 use std::{
     sync::{mpsc, Mutex},
     time::Duration,
@@ -28,7 +29,7 @@ pub(super) fn execute(
     control: api::FullLoopControl,
     limit: Option<merlin::common::RetainedFootprint>,
 ) -> PyResult<api::FullLoopResult> {
-    let (sender, receiver) = mpsc::sync_channel(1);
+    let (sender, receiver) = mpsc::sync_channel(FULL_LOOP_TERMINAL_CHANNEL_CAPACITY);
     let receiver = Mutex::new(receiver);
     let token = control.clone();
     let handle = std::thread::Builder::new()
