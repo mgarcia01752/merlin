@@ -2003,7 +2003,7 @@ See [setup](setup.md) and [design](features/development-setup/design.md).
   Requirements: [SECURITY-DEPS-02](../requirements.md#ds-security-deps-02).
 
 <a id="task-security-deps-03"></a>
-- [ ] **SECURITY-DEPS-03** Patch the Qt URL dependency and verify all audits.
+- [x] **SECURITY-DEPS-03** Patch the Qt URL dependency and verify all audits.
   Requirements: [REQ-SEC-URL-01](../requirements.md#req-sec-url-01).
   Architecture/owners: [security validation](../architecture.md#security-validation).
   Depends on: SECURITY-DEPS-02.
@@ -2011,6 +2011,8 @@ See [setup](setup.md) and [design](features/development-setup/design.md).
   suppressions and existing Qt URL tests, compilation and Clippy. Preserve MSRV,
   notices and scientific behavior. Hosted results remain separate from local tests.
   [Design and evidence](features/security-checks/design.md#security-deps-03-patched-url-dependency).
+  Accepted on `v0.5.1`: all four hosted audits and native Qt consumers pass;
+  [hosted evidence](features/security-checks/design.md#patch-051-hosted-acceptance).
 
 
 <a id="task-ui-dpd-view-02"></a>
@@ -2104,7 +2106,7 @@ validation are complete; the user guide includes the current dark capture.
   Requirements: [CI-DESKTOP-QA-01](../requirements.md#ds-ci-desktop-qa-01).
 
 <a id="task-ci-source-01"></a>
-- [ ] **CI-SOURCE-01** Make the complete PNM source/test closure repository-owned.
+- [x] **CI-SOURCE-01** Make the complete PNM source/test closure repository-owned.
   Requirements: [REQ-CI-PNM-01](../requirements.md#req-ci-pnm-01).
   Architecture/owners: [shared validation](../architecture.md#shared-master-and-release-validation-ci-consolidate-01).
   Depends on: CI-CONSOLIDATE-01, API-INSTALL-03.
@@ -2112,6 +2114,9 @@ validation are complete; the user guide includes the current dark capture.
   notices; extracted clean-source builds with empty caches/Git transport disabled;
   focused tests and actual hosted clean installer/native wheel passes.
   [Design and evidence](features/security-checks/design.md#ci-source-01-repository-owned-pnm-source-closure).
+  Accepted on `v0.5.1`: extracted-source checks, original decoder tests,
+  all four hosted installers, both native wheels and publication pass;
+  [hosted evidence](features/security-checks/design.md#patch-051-hosted-acceptance).
 
 
 [Design](features/workbench-configuration/design.md).

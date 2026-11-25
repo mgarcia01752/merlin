@@ -2549,9 +2549,10 @@ See [DOC-PUSH-01 design](development/features/docs-only-push/design.md).
 
 ### Security validation
 
-Separate CodeQL and RustSec workflows own source-security analysis and dependency
-advisory checks. They run without the simulation matrix on Ubuntu 24.04, and
-tag publication depends on both succeeding alongside native tests. The local
+Separate CodeQL and RustSec jobs in the shared workflow own source-security
+analysis and dependency advisory checks. They run independently of the simulation
+matrix on Ubuntu 24.04, and tag publication depends on both succeeding alongside
+native tests. The local
 audit launcher verifies a pinned static tool in ignored local storage; it does
 not install system packages or change the simulation core or dependency graph.
 See [security checks](development/security.md).
@@ -2574,9 +2575,13 @@ No scientific calculation is implemented in Python and no CLI subprocess is
 invoked. Mutable requests are copied at acceptance; scientific results are
 read-only, and JSON dictionaries are independent transport snapshots.
 
-Local development wheels target Ubuntu 22.04 x86_64 / CPython 3.10. Other targets
-remain unverified. Package distribution is `merlin-ofdm`, imported as `merlin`;
-these are local development artifacts, not a publication or release claim.
+Release wheels target Ubuntu 22.04 x86_64 and Windows x64 / CPython 3.10.
+The Ubuntu wheel is also exercised on Ubuntu 24.04 and 26.04. Source installers
+are validated with the configured Python 3.10/3.12/3.14 Ubuntu/Windows matrix;
+this does not establish support for every OS/Python combination.
+Package distribution is `merlin-ofdm`, imported as `merlin`. Both native wheels
+were tested and published for `v0.5.1`; see the
+[hosted release evidence](development/features/security-checks/design.md#patch-051-hosted-acceptance).
 See the [Python guide](user/python/README.md) and
 [current design](development/features/high-level-api/design.md).
 
@@ -2706,14 +2711,18 @@ See [design](development/features/workbench-configuration/design.md) and
 ### Shared Master and Release validation (CI-CONSOLIDATE-01)
 
 Only ci.yml (Master) and release.yml (Release) remain. Master owns preflight,
-CodeQL, both-lock RustSec, Qt checks and native Ubuntu22/24/26 tests with the
-four-process pinned nextest runner and retained doctests/example/analysis phases.
+CodeQL, core/Qt/Python/decoder-lock RustSec, Qt checks and native Ubuntu22/24/26
+tests with the four-process pinned nextest runner and retained
+doctests/example/analysis phases.
 Release verifies its tag and calls that same workflow with release=true, adding
 optimized builds, packages and installed lifecycle checks. Publication waits for
 all shared jobs and exact artifacts/checksums. The initial desktop failure in
 run43061645839 was Azure mirror DNS/connectivity during APT setup, before Qt
 compilation. Strict refresh plus bounded setup retries and CI-only HTTPS mirror
-preference address that path; successful hosted recovery remains unverified.
+preference address that path. The `v0.5.1` run verifies successful setup,
+native validation, installed lifecycle and publication across the configured
+targets; see the
+[hosted evidence](development/features/security-checks/design.md#patch-051-hosted-acceptance).
 
 [CI-SOURCE-01](development/checklist.md#task-ci-source-01) supplies the unchanged
 PNM decoder and its licensed test closure under `third-party/pnm` for
