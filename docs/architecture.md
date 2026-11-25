@@ -1990,7 +1990,12 @@ source comparison and downstream isolation. Measured-input import and scientific
 instruments keep separate gates.
 
 The shared shell uses `qml/shell/directions/PersistentDirectionTabs.qml` with
-two persistent Loaders. Main polls both real adapters regardless of selected tab.
+two persistent Loaders. Direction navigation uses content-sized folder tabs
+labelled Downstream and Upstream on a shared content edge; the selected tab
+joins the canvas without a bottom seam.
+[UI-TABS-01](development/checklist.md#task-ui-tabs-01) owns this presentation
+refinement and its [design](development/features/unified-qt-workbench/design.md#ui-tabs-01-folder-style-direction-tabs).
+Main polls both real adapters regardless of selected tab.
 The thin `bridge/direction_shell.rs` projects canonical scalar keys, dirty flags,
 selection and dispatch phase through `shell/presentation.rs`; opaque identity
 text preserves native integers without JavaScript numeric conversion. Selection

@@ -20,6 +20,7 @@ FocusScope {
     readonly property string upstreamDirection: "upstream"
     // Presentation spacing/typography, independent of all scientific limits.
     readonly property int frameSpacing: 8
+    readonly property int tabSpacing: 4
     readonly property int tabPadding: 12
     readonly property int tabHeight: 42
     readonly property int labelPixelSize: 13
@@ -265,62 +266,96 @@ FocusScope {
     ColumnLayout {
         id: content
         anchors.fill: parent
-        spacing: root.frameSpacing
-        RowLayout {
-            id: tabRow
+        spacing: 0
+        Item {
+            id: tabStrip
+            objectName: "directionTabStrip"
             Layout.fillWidth: true
-            spacing: root.frameSpacing
-            Repeater {
-                model: [root.downstreamDirection, root.upstreamDirection]
-                delegate: TabButton {
-                    id: tab
-                    required property string modelData
-                    readonly property bool selected: root.selectedDirection === modelData
-                    objectName: modelData + "DirectionTab"
-                    Layout.fillWidth: true
-                    implicitHeight: Math.max(root.tabHeight,
-                        contentItem.implicitHeight + topPadding + bottomPadding)
-                    leftPadding: root.tabPadding
-                    rightPadding: root.tabPadding
-                    font.pixelSize: root.labelPixelSize
-                    focusPolicy: Qt.StrongFocus
-                    autoExclusive: false
-                    checked: selected
-                    text: modelData === root.downstreamDirection
-                        ? "Downstream (OFDM)" : "Upstream (OFDMA)"
-                    Accessible.name: text
-                    ThemePalette { targetControl: tab; theme: root.theme }
-                    onClicked: {
-                        root.requestDirection(modelData)
-                        // The host may accept asynchronously or decline selection.
-                        checked = Qt.binding(function() { return tab.selected })
-                    }
-                    Keys.onLeftPressed: function(event) {
-                        root.requestDirection(root.downstreamDirection)
-                        event.accepted = true
-                    }
-                    Keys.onRightPressed: function(event) {
-                        root.requestDirection(root.upstreamDirection)
-                        event.accepted = true
-                    }
-                    background: Rectangle {
-                        radius: root.tabCornerRadius
-                        color: tab.selected ? root.theme.accentSoft
-                            : tab.hovered ? root.theme.button : root.theme.panel
-                        border.width: tab.visualFocus
-                            ? root.focusedBorderWidth : root.normalBorderWidth
-                        border.color: tab.visualFocus || tab.selected
-                            ? root.theme.accent : root.theme.line
-                    }
-                    contentItem: Label {
-                        text: tab.text
-                        font: tab.font
-                        color: root.theme.text
-                        wrapMode: Text.WordWrap
-                        horizontalAlignment: Text.AlignHCenter
-                        verticalAlignment: Text.AlignVCenter
+            implicitHeight: tabRow.implicitHeight
+            Rectangle {
+                objectName: "directionTabBaseline"
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                height: root.normalBorderWidth
+                color: root.theme.line
+            }
+            RowLayout {
+                id: tabRow
+                anchors.fill: parent
+                anchors.leftMargin: root.frameSpacing
+                anchors.rightMargin: root.frameSpacing
+                spacing: root.tabSpacing
+                Repeater {
+                    model: [root.downstreamDirection, root.upstreamDirection]
+                    delegate: TabButton {
+                        id: tab
+                        required property string modelData
+                        readonly property bool selected: root.selectedDirection === modelData
+                        objectName: modelData + "DirectionTab"
+                        Layout.fillWidth: true
+                        Layout.minimumWidth: 0
+                        Layout.maximumWidth: implicitWidth
+
+                        // Prevent whole-pixel layout rounding from clipping fractional font widths.
+                        implicitWidth: Math.ceil(contentItem.implicitWidth) + leftPadding + rightPadding
+                        implicitHeight: Math.max(root.tabHeight,
+                            contentItem.implicitHeight + topPadding + bottomPadding)
+                        leftPadding: root.tabPadding
+                        rightPadding: root.tabPadding
+                        font.pixelSize: root.labelPixelSize
+                        focusPolicy: Qt.StrongFocus
+                        autoExclusive: false
+                        checked: selected
+                        text: modelData === root.downstreamDirection
+                            ? "Downstream" : "Upstream"
+                        Accessible.name: text
+                        ThemePalette { targetControl: tab; theme: root.theme }
+                        onClicked: {
+                            root.requestDirection(modelData)
+                            // The host may accept asynchronously or decline selection.
+                            checked = Qt.binding(function() { return tab.selected })
+                        }
+                        Keys.onLeftPressed: function(event) {
+                            root.requestDirection(root.downstreamDirection)
+                            event.accepted = true
+                        }
+                        Keys.onRightPressed: function(event) {
+                            root.requestDirection(root.upstreamDirection)
+                            event.accepted = true
+                        }
+                        background: Rectangle {
+                            objectName: tab.modelData + "DirectionTabSurface"
+                            topLeftRadius: root.tabCornerRadius
+                            topRightRadius: root.tabCornerRadius
+                            color: tab.selected ? root.theme.background
+                                : tab.hovered ? root.theme.button : root.theme.panel
+                            border.width: tab.visualFocus
+                                ? root.focusedBorderWidth : root.normalBorderWidth
+                            border.color: tab.visualFocus
+                                ? root.theme.accent : root.theme.line
+                            Rectangle {
+                                objectName: tab.modelData + "DirectionTabJoin"
+                                anchors.left: parent.left
+                                anchors.right: parent.right
+                                anchors.bottom: parent.bottom
+                                height: parent.border.width
+                                visible: tab.selected
+                                color: parent.color
+                            }
+                        }
+                        contentItem: Label {
+                            text: tab.text
+                            font: tab.font
+                            color: tab.selected ? root.theme.accent : root.theme.text
+                            wrapMode: Text.NoWrap
+                            elide: Text.ElideRight
+                            horizontalAlignment: Text.AlignHCenter
+                            verticalAlignment: Text.AlignVCenter
+                        }
                     }
                 }
+                Item { Layout.fillWidth: true }
             }
         }
         Label {
@@ -328,6 +363,7 @@ FocusScope {
             Layout.fillWidth: true
             Layout.leftMargin: root.frameSpacing
             Layout.rightMargin: root.frameSpacing
+            Layout.topMargin: root.frameSpacing
             visible: root.otherDirectionActive && text.length > 0
             text: root.executionStatus
             color: root.theme.statusAttention
@@ -339,6 +375,7 @@ FocusScope {
             Layout.fillWidth: true
             Layout.leftMargin: root.frameSpacing
             Layout.rightMargin: root.frameSpacing
+            Layout.topMargin: root.frameSpacing
             visible: text.length > 0
             text: root.feedbackMessage
             color: root.feedbackIsError ? root.theme.statusError : root.theme.muted

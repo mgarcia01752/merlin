@@ -362,6 +362,30 @@ Item {
                     const rendered = grabImage(shell)
                     const sample = downstream.mapToItem(shell, 2, 2)
                     compare(rendered.pixel(Math.round(sample.x), Math.round(sample.y)), testTheme.panel)
+                    const downstreamTab = findChild(shell, "downstreamDirectionTab")
+                    const upstreamTab = findChild(shell, "upstreamDirectionTab")
+                    verify(downstreamTab.width + upstreamTab.width < shell.width)
+                    for (const direction of ["downstream", "upstream"]) {
+                        selectWithPointer(shell, direction)
+                        const selectedTab = findChild(shell, direction + "DirectionTab")
+                        const inactiveTab = direction === "downstream" ? upstreamTab : downstreamTab
+                        compare(selectedTab.contentItem.lineCount, 1)
+                        verify(!selectedTab.contentItem.truncated,
+                            direction + " label clipped at viewport " + width
+                            + ": tab=" + selectedTab.width
+                            + ", text=" + selectedTab.contentItem.implicitWidth)
+                        const image = grabImage(shell)
+
+                        // Sample the shared edge inside and outside the selected folder.
+                        const joined = selectedTab.mapToItem(shell,
+                            selectedTab.width / 2, selectedTab.height - shell.normalBorderWidth)
+                        const separated = inactiveTab.mapToItem(shell,
+                            inactiveTab.width / 2, inactiveTab.height - shell.normalBorderWidth)
+                        compare(image.pixel(Math.floor(joined.x), Math.floor(joined.y)),
+                            testTheme.background)
+                        compare(image.pixel(Math.floor(separated.x), Math.floor(separated.y)),
+                            testTheme.line)
+                    }
                     if (width === window.narrowWidth) {
                         grabImage(shell).save("tabs-"
                             + (dark ? "dark" : "light") + "-narrow.png")

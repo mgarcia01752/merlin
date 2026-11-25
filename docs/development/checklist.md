@@ -707,6 +707,16 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Acceptance: Both actual direction runs, independent API/wheel/CLI regressions as affected, zero scientific boundary entries, complete inventory disposition/licensing, Qt/native build/launch, scientific presentation and persistence checks, final guides/skills/links/evidence and focused commit report. Record every remaining platform/mode limitation. Complete a line-by-line numeric audit of the integration changes across production code, defaults, examples and tests; centralize genuinely shared definitions in common constants owners, name independent policies separately and document retained mathematical/specification/test anchors. Link the reviewed file inventory and acceptance evidence before checking this task.
   Evidence: [final runtime and correspondence record](features/unified-qt-workbench/validation.md#uiu-qa-01-final-unified-acceptance), [all-task commit/validation report](features/unified-qt-workbench/completion-report.md), [reviewed numeric scope](features/unified-qt-workbench/final-numeric-review.json) and [final source destinations](features/unified-qt-workbench/final-source-inventory.json). Level 3 runtime, source/constant/licensing review and preliminary documentation checks pass; the final state audit records the 21-task closeout. Native/hosted/installed platform limitations remain explicit.
 
+## Unified Qt presentation refinements
+
+<a id="task-ui-tabs-01"></a>
+- [x] **UI-TABS-01** Present direction pages as connected folder-style tabs.
+  Requirements: [REQ-UIU-05](../requirements.md#req-uiu-05), [REQ-UIU-25](../requirements.md#req-uiu-25).
+  Dependencies: [UIU-SHELL-01](#task-uiu-shell-01).
+  Architecture/files: [shared shell](../architecture.md#unified-qt-session-and-file-lifecycle); [design and owner map](features/unified-qt-workbench/design.md#ui-tabs-01-folder-style-direction-tabs).
+  Acceptance: Content-sized tabs, rounded top corners, shared baseline and selected-page connection in both themes and narrow layouts; preserve pointer/keyboard switching, focus and persistent children. Run affected QML tests, native build/visual checks and documentation traceability; update the dark user-guide image.
+  Evidence: [executed validation](features/unified-qt-workbench/design.md#ui-tabs-01-folder-style-direction-tabs) records 60 passing shell QML checks, Qt formatting/Clippy, final API boundary and documentation checks, optimized native build and real VM pointer switching. Updated dark guides/README show the simple Downstream/Upstream labels. Historical UIU task states remain unchanged.
+
 ## Architecture and module rules
 
 <a id="task-arch-01"></a>

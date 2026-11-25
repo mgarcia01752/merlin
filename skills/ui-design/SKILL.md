@@ -48,9 +48,10 @@ migration; update the relevant user guides.
 
 ## Folder-style page tabs
 
-Page navigation, including **Downstream (OFDM)** and **Upstream (OFDMA)**, uses
-folder-style tabs. Give each tab rounded upper corners and a shared baseline
-at the top of its content panel. The selected tab must visually join the panel,
+Page navigation uses folder-style tabs. Label the direction tabs **Downstream**
+and **Upstream**, without OFDM/OFDMA suffixes. Give each tab rounded upper
+corners and a shared baseline at the top of its content panel. The selected tab
+must visually join the panel,
 with a continuous surface and no separating bottom border; inactive tabs recede
 behind that edge. Do not render page tabs as detached action buttons, pills or
 segmented buttons, or apply `WorkbenchActionButton` styling to them.

@@ -55,12 +55,13 @@ Cancel or X discards it. Close dismisses a viewer. Tabs, diagram symbols and
 capture-tree arrows retain their own shapes. See
 [workbench configuration](workbench-configuration.md) for the shared controls.
 
-The native Qt workbench has persistent **Downstream (OFDM)** and
-**Upstream (OFDMA)** tabs below the shared menus. Switching tabs preserves each
-direction's work. One simulation can run at a time; a paused run still owns that
-slot. The lower-right controls always address the selected direction. To stop or
-resume a downstream run while viewing Upstream, return to Downstream. The other
-tab displays which direction is active.
+The native Qt workbench has persistent **Downstream** and **Upstream**
+folder-style tabs below the shared menus. The tabs fit their labels and share an
+edge with the canvas; the selected tab joins its page.
+Switching tabs preserves each direction's work. One simulation can run at a time;
+a paused run still owns that slot. The lower-right controls always address the
+selected direction. To stop or resume a downstream run while viewing Upstream,
+return to Downstream. The other tab displays which direction is active.
 
 Downstream opens the existing single-channel system diagram. Click
 OFDM Channel Descriptor (OCD), PRBS-TX, Transmitter, Channel Simulator, Receiver, PRBS-RX or one
@@ -77,7 +78,7 @@ diagram uses the available space. Shared File, Settings, About and update action
 remain above the tabs. PRBS-RX opens a structured
 [comparison summary with payload graphs](closed-loop-workbench.md#inspect-actual-results).
 
-![Downstream tab with its original simulation paused](../images/workbench/unified-downstream-dark.png)
+![Downstream workbench with its selected folder tab](../images/workbench/unified-downstream-dark.png)
 
 The Upstream tab shows the approved CM transmitter → channel → CMTS receiver
 layout. Its [configuration editors](upstream-workbench.md) load a native upstream
@@ -90,7 +91,7 @@ is shown as unavailable. File actions are currently enabled on Downstream only;
 selecting Upstream cannot save or replace the downstream project. Settings and
 About remain available from either tab.
 
-![Upstream tab while the downstream simulation remains paused](../images/workbench/unified-upstream-dark.png)
+![Upstream workbench with its selected folder tab](../images/workbench/unified-upstream-dark.png)
 
 The revised diagram groups **OCD** and **DPD** inside **Transmitter Configuration**
 at the left. Click either card to open its own editor. Their shared connector

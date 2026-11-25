@@ -18,6 +18,10 @@ requirement/architecture links and dependency edges rather than duplicating
 completion marks here. Existing UI-01 through UI-04 and UI-ORG history below
 retain their original status owners and evidence.
 
+The folder-style direction-tab refinement is tracked by
+[UI-TABS-01](checklist.md#task-ui-tabs-01), with the existing shell/session
+behavior preserved; its official completion mark remains in that checklist.
+
 The [downstream contract register](../requirements.md#detailed-downstream-contract-register)
 adds requirement/task/evidence navigation without changing these detail marks.
 Historical shell proposals and validation paragraphs describe their own milestone;

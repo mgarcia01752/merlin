@@ -5826,3 +5826,59 @@ preserved. Native/hosted/installed platform limitations remain explicit.
 The [final acceptance](validation.md#uiu-qa-01-final-unified-acceptance) closes
 UIU-QA-01 after all runtime gates and source reviews pass. No scientific scope,
 public behavior, task dependency or historical completion state is changed.
+
+### UI-TABS-01 folder-style direction tabs
+
+The user requested folder tabs rather than detached tab buttons, as recorded in
+the [UI skill](../../../../skills/ui-design/SKILL.md#folder-style-page-tabs).
+This refines [REQ-UIU-05](../../../requirements.md#req-uiu-05) and
+[REQ-UIU-25](../../../requirements.md#req-uiu-25); the
+[official task](../../checklist.md#task-ui-tabs-01) preserves historical UIU acceptance.
+
+| Owner | Existing contract | Decision |
+| --- | --- | --- |
+| `apps/qt/qml/shell/directions/PersistentDirectionTabs.qml` | Two persistent Loaders, Rust-owned selection, scoped intents and restored focus. | ADAPT only tab sizing, shape and shared content edge. Reuse TabButton accessibility/interaction, named layout constants and shared theme colors. |
+| `apps/qt/tests/shell/tst_direction_tabs.qml` | Actual pointer/keyboard, declined selection, both themes, resize and persistent-child checks. | REUSE the complete suite; extend rendered seam/geometry and full single-line label checks across both selections and themes. |
+| `apps/qt/qml/Main.qml` | Native shared shell, two direction adapters and project startup. | REUSE unchanged; capture the actual owned VM window and switch tabs with real pointer events. No new runtime probe or registration. |
+
+Tabs are labelled Downstream and Upstream without OFDM/OFDMA suffixes. They
+occupy their label widths and share a baseline immediately above the page.
+Only upper corners are rounded. The selected tab uses the canvas surface and
+covers its bottom seam; inactive tabs remain visually recessed. Existing accepted
+selection, focus, running/paused ownership, identities and persistent pages stay
+with their current owners. No backend, schema, registration or public API changes.
+
+Validation is scoped to this presentation refinement: complete direction-shell
+QML tests, applicable formatting/Clippy/boundary and documentation checks, retained-
+artifact optimized Qt build and actual VM rendering. Root science/Python/CLI and
+packaging regressions are not required because their inputs/contracts are unchanged.
+
+Executed validation (2026-11-25):
+
+- Complete `apps/qt/tests/shell/` QML suite: 60 pass records, no failures or
+  skips. Both selections and themes at wide/narrow widths retain live children,
+  pointer/keyboard behavior, focus and the correct selected/inactive bottom edge.
+- Qt Cargo formatting and all-target Clippy with `-D warnings` pass. Subsequent
+  QML-only label corrections preserve those Rust inputs. The final API boundary
+  has zero scientific dependencies and zero legacy exceptions.
+- `scripts/qt-desktop.sh build` passes for the final optimized executable.
+  Actual owned VM-window captures and real pointer selection verify both tabs;
+  the dark workbench guide and README images are refreshed from unaltered pixels.
+- Current feature-documentation, integration-traceability, skill validation,
+  Python-guide consistency and diff whitespace checks pass.
+
+The native review found a wrapped label caused by fractional text widths being
+rounded down during layout. A no-wrap check initially failed (59 pass records,
+one clipping failure); rounding the natural text width upward resolves it, and
+the final complete shell run passes. The user's final labels are Downstream and
+Upstream without suffixes. Two existing `activeFocusOnTab` warnings occur in the
+unchanged host-help test. The downstream native capture displays the standard
+presentation-limit notice; this unit establishes tab appearance/switching and
+does not establish that notice's cause or new scientific acceptance.
+
+Logs, initial/final native evidence and the exact executable/source hashes stay
+under ignored `docs/development/local/unified-qt-workbench/folder-tabs/`.
+Full root Rust, Python wheels, CLI, Qt Rust runtime and packaging suites were not
+rerun: their implementations, APIs, dependencies, registration and saved-data
+contracts are unchanged. Earlier UIU acceptance remains historical evidence for
+its recorded candidate; installed/hosted platform gates remain separate.
