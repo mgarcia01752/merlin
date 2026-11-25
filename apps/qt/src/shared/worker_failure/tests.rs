@@ -193,3 +193,18 @@ fn message_only_replacement_admits_actual_help_clone_while_original_stays_charge
     assert_eq!(WorkerFailure::default().message(), "");
     assert!(WorkerFailure::default().diagnostic().is_none());
 }
+
+#[test]
+fn shared_message_limit_preserves_unicode_scalars_and_existing_short_errors() {
+    assert_eq!(
+        super::bounded_message("Unchanged short diagnostic"),
+        "Unchanged short diagnostic"
+    );
+    // Independent display-policy anchor: 4096 scalars, including one four-byte glyph.
+    let source = format!("{}🚀discarded", "x".repeat(4095));
+    let message = super::bounded_message(&source);
+    assert_eq!(message.chars().count(), 4096);
+    assert_eq!(message.len(), 4099);
+    assert!(message.ends_with('🚀'));
+    assert!(source.ends_with("discarded"));
+}

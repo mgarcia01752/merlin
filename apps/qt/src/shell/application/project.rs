@@ -10,6 +10,43 @@ use super::{
 use crate::shell::ReplacePermission;
 
 impl ApplicationSessions {
+    /// Restores both native identities and original-source protection atomically.
+    /// # Arguments
+    /// * `expected` - Exact downstream/upstream guards captured before preparation.
+    /// * `ready`, `dirty` - Independent prepared readiness and saved edit flags.
+    /// * `selected` - Saved direction, applied after both owner checks pass.
+    /// * `paths` - Fully admitted same-host original-path registry candidate.
+    /// * `expected_paths` - Original live registry snapshot, checked under its lock.
+    /// # Returns
+    /// Genuine new keys; caller attaches already prepared scientific owners without
+    /// allocation or failure after this commit. No Save acknowledgement is implied.
+    /// # Errors
+    /// Foreign registry, admission, active work, stale guard, closing or exhausted
+    /// identity space preserves both projects, selection and all protected paths.
+    pub(crate) fn restore_projects(
+        &self,
+        expected: (ProjectSnapshot, ProjectSnapshot),
+        ready: (bool, bool),
+        dirty: (bool, bool),
+        selected: Direction,
+        paths: super::InputPaths,
+        expected_paths: &[crate::shared::update_recovery::OriginalPath],
+    ) -> Result<(SessionKey, SessionKey), ApplicationError> {
+        if !paths.belongs_to(&self.budget) {
+            return Err(ApplicationError::Session(
+                crate::shell::SessionError::WrongBudget,
+            ));
+        }
+        let downstream = metadata(&self.budget, DownstreamReadiness(ready.0))?;
+        let upstream = metadata(&self.budget, UpstreamReadiness(ready.1))?;
+        let mut sessions = lock(self.sessions.value());
+        self.input_paths.replace_with(paths, expected_paths, || {
+            sessions
+                .restore_projects(expected, downstream, upstream, dirty, selected)
+                .map_err(ApplicationError::Session)
+        })
+    }
+
     /// Closes only after both exact project guards and dirty decisions pass atomically.
     /// # Arguments
     /// * `downstream`, `upstream` - Native snapshots captured before close decisions.
@@ -136,3 +173,7 @@ impl ApplicationSessions {
 #[cfg(test)]
 #[path = "project_tests.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "recovery_tests.rs"]
+mod recovery_tests;

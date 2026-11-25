@@ -296,40 +296,21 @@ pub(crate) fn adopt_accepted(
     accepted::adopt_with(context, state, expected, || Ok(()))
 }
 
-/// Adopts a target-admitted project with its final guarded readiness transition.
-///
+/// Publishes admitted inputs around the caller's final guarded host transaction.
 /// # Arguments
-/// * `context`, `state`, `expected` - Exact target, replacement and captured original.
-/// * `target`, `permission` - Exact native project snapshot and dirty decision.
-/// * `ready` - Receiver readiness after all concrete target-root preflight succeeds.
-///
+/// * `context`, `state`, `expected` - Actual accepted owner and complete candidate.
+/// * `commit` - Last fallible owner transition, with no partial publication on error.
 /// # Returns
-/// Genuine committed key. No scientific preparation or new data copy occurs here.
-///
+/// Caller result after one infallible accepted-owner swap.
 /// # Errors
-/// Ownership/staleness or final metadata/revision failure preserves the old project.
-pub(crate) fn adopt_project(
+/// Foreign ownership, changed accepted state or original commit error.
+pub(crate) fn adopt_prepared_transaction<T>(
     context: &Context,
     state: AcceptedState,
     expected: &Snapshot,
-    target: crate::shell::ProjectSnapshot,
-    permission: crate::shell::ReplacePermission,
-    ready: bool,
-) -> Result<crate::shell::SessionKey, String> {
-    accepted::adopt_with(context, state, expected, || {
-        context
-            .application
-            .replace_project(target, permission, ready)
-            .map_err(|error| match error {
-                crate::shell::ApplicationError::Retention(_) => {
-                    "The session retained-data limit would be exceeded.".into()
-                }
-                crate::shell::ApplicationError::Session(crate::shell::SessionError::StaleGuard) => {
-                    "The prepared workbench target is stale.".into()
-                }
-                _ => "The workbench target cannot accept this project.".into(),
-            })
-    })
+    commit: impl FnOnce() -> Result<T, String>,
+) -> Result<T, String> {
+    accepted::adopt_with(context, state, expected, commit)
 }
 
 /// Reads the actual current accepted owner's test ledger, without estimating science.

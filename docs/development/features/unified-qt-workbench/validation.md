@@ -5343,3 +5343,46 @@ unchanged numerical work. The full Qt Rust cases are unchanged. The frozen
 history script initially rejected any completion; the explicit FILE01-only
 transition audit confirms 19/21 accepted, 27 bidirectional requirements, 31
 unchanged dependency edges and all historical downstream states preserved.
+
+## UIU-RECOVERY-01 dual-project restart acceptance
+
+[REQ-UIU-23](../../../requirements.md#req-uiu-23) is accepted for native
+MERLIN recovery in this Linux workspace. The [design](design.md#uiu-recovery-01-dual-project-restart-transaction)
+and [machine-readable evidence](restart-recovery-evidence.json) record the exact owners,
+candidate hashes, commands, failed attempts, successful reruns and scope.
+Normal projects remain independent; the private transport is not an Open/Save
+workspace format.
+
+| Executed gate | Observed result |
+| --- | --- |
+| Complete affected Qt crate | 642 cases passed together, one actual-GUI artifact case explicitly ignored in that ordinary run. The final new/changed error cases pass in a 25-case filter, and all seven recovery worker cases pass after the collision and relative-path fixes. These sets overlap; this is not a claimed full 645-case rerun. UIU-QA-01 owns the final current complete crate. |
+| Private codec and canonical pair | Independent literal/base64 and binary-byte anchors; unsupported/missing/duplicate/unknown/truncated/oversized inputs; partial downstream/blank upstream; dirty/tab combinations; stale either-owner, foreign budget, active/closing host and original registry rollback pass. Failed writes preserve the prior bundle; private destination aliases reject. |
+| Affected QML | Shell, downstream workbench, upstream draft/workbench suites pass 177 records. The final updater suite passes ten records, including queued completion, duplicate click, changed admission and asynchronous failure. Installation waits for the actual saved acknowledgement. |
+| Actual native two-process restart | Real Main and native Open picker edit downstream noise seed and upstream source seed to distinct typed values of 2. Export preserves both live identities, dirty flags, settings and destinations. A separate process restores both projects, selection and theme, then completes an actual upstream run while preserving downstream state. Export starts with a relative CLI destination in the project directory; restore starts from the repository directory. Both source project hashes remain unchanged. |
+| Nested public project consumers | The explicit actual-GUI Rust artifact test passes for the two exact recovered runnable documents and the prior unchanged downstream document. Three independently executed installed native Python cases match Rust reports, options, original provenance and observation policy. The verified native artifact SHA is recorded; no Python scientific calculations are used. |
+| Build and boundaries | Rust formatting, relevant all-target Clippy, optimized native build and zero-scientific-dependency boundary pass. Final documentation/matrix/history gates are recorded separately below. |
+
+The private transport bounds each document by 144 MiB, serialized metadata by
+an independent 16 MiB policy and the derived total by 400 MiB. It retains the
+actual original-path registry and admits both candidates before one guarded pair
+publication. Retained byte/entry/root accounting and finite execution scratch
+remain separate; no total RSS guarantee is inferred. Worker and Qt error strings
+use the shared Unicode-character policy. Old downstream-only private recovery
+is recognized explicitly, never inferred from a filename: its absent destination
+stays unset and unsaved. Present-null `format` rejects rather than falling back.
+
+The full-crate failed candidate exposed a changed downstream retained-data error;
+its original mapping and unchanged assertion are preserved. Two initial native
+probe assumptions (transient startup metadata and the upstream presentation
+property) were corrected without relaxing product guards. Failed receipts remain
+under ignored `recovery-01/`; only the final `native-relative-draft` run supplies
+GUI acceptance. The [current dark screenshot](../../../images/workbench/workbench-dual-project-recovery-dark.png)
+is an unaltered actual Main capture after restored execution.
+
+The installed wheel is reused because no linked public Rust implementation,
+binding or public project contract changed in this Qt-private unit. Full root
+workspace, CLI and packaging regressions are deferred to UIU-QA-01 rather than
+repeated here. Native Windows GUI/filesystem, UAC/MSI and installed Linux
+polkit/DEB lifecycle remain unexecuted; source-checkout no-install guards stay
+intact. No install, push, release or external interoperability claim follows.
+Continue UIU-QA-01.

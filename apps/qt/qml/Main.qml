@@ -252,6 +252,32 @@ ApplicationWindow {
             Qt.exit(1)
         }
     }
+    readonly property bool updateRecoveryProbeRequested: Qt.application.arguments.indexOf("--update-recovery-probe") >= 0
+    property QtObject updateRecoveryProbe: null
+    property Component updateRecoveryProbeComponent: Component {
+        UpdateRecoveryProbe {
+            onFinished: function(success, message) { Qt.exit(success ? 0 : 1) }
+        }
+    }
+    /** Exercise only fixed native restart scenarios; normal startup adds no probe. */
+    function startUpdateRecoveryProbe() {
+        const args = Qt.application.arguments
+        const modeArgument = args.indexOf("--update-recovery-probe")
+        const imageArgument = args.indexOf("--update-recovery-image")
+        if (modeArgument < 0 || modeArgument + 1 >= args.length || imageArgument < 0 || imageArgument + 1 >= args.length) {
+            console.error("Update recovery probe requires mode and a fresh image path.")
+            Qt.exit(1)
+            return
+        }
+        updateRecoveryProbe = updateRecoveryProbeComponent.createObject(window, {
+            rootWindow:window,workbench:workbench,tabs:directionTabs,host:directionHost,
+            controls:sharedControls,fileBackend:workbenchFile,upstreamBackend:upstreamSession,
+            mode:args[modeArgument + 1],screenshotPath:args[imageArgument + 1]
+        })
+        if (!updateRecoveryProbe) {
+            Qt.exit(1)
+        }
+    }
     readonly property bool presentationProbeRequested: Qt.application.arguments.indexOf("--session-presentation-probe") >= 0
     readonly property bool directionProbeRequested: Qt.application.arguments.indexOf("--direction-shell-probe") >= 0
     readonly property bool upstreamConfigurationProbeRequested: Qt.application.arguments.indexOf("--upstream-configuration-probe") >= 0
@@ -490,14 +516,44 @@ ApplicationWindow {
             Qt.exit(1)
         }
     }
+    property bool restoringUpdate: false
+    /** Begin guarded native recovery without blocking the Qt event loop. */
+    function beginUpdateRestore() {
+        const result = JSON.parse(workbenchFile.restore_update(upstreamSession))
+        restoringUpdate = result.preparing === true
+        if (result.error) {
+            workbench.showFileMessage(result.error)
+        }
+    }
+    Timer {
+        interval: applicationTheme.sessionPollIntervalMs
+        running: window.restoringUpdate
+        repeat: true
+        onTriggered: {
+            const result = JSON.parse(workbenchFile.poll_update_recovery(upstreamSession))
+            if (result.preparing === true) {
+                return
+            }
+            window.restoringUpdate = false
+            if (result.restored === true) {
+                workbench.adoptState({load:result})
+                workbench.adoptProject(result)
+                directionHost.poll()
+            } else if (result.error) {
+                workbench.showFileMessage(result.error)
+            }
+        }
+    }
     Component.onCompleted: {
         branding.update_icon(applicationTheme.dark)
         if (Qt.application.arguments.indexOf("--restore-update") >= 0) {
-            Qt.callLater(function() { workbench.restoreUpdate() })
+            Qt.callLater(window.beginUpdateRestore)
         } else {
             Qt.callLater(function() { workbench.beginOpen(JSON.parse(workbenchFile.startup())) })
         }
-        if (projectFileProbeRequested) {
+        if (updateRecoveryProbeRequested) {
+            Qt.callLater(startUpdateRecoveryProbe)
+        } else if (projectFileProbeRequested) {
             Qt.callLater(startProjectFileProbe)
         } else if (presentationProbeRequested) {
             Qt.callLater(startPresentationProbe)
@@ -526,7 +582,7 @@ ApplicationWindow {
     ThemePalette { targetControl: window; theme: applicationTheme }
     color: applicationTheme.background
     onClosing: function(close) {
-        if (updates.state.installing) {
+        if (updates.state.installing || updates.preparingRecovery || window.restoringUpdate) {
             close.accepted = false
             updates.showUpdates()
             return
@@ -555,13 +611,13 @@ ApplicationWindow {
                 theme: applicationTheme
                 fileActionsEnabled: !!window.workbench && window.pendingFileDirection === window.noFileDirection
                     && !window.workbench.runState.busy && !window.workbench.loadingProject
-                    && !directionHost.upstreamState.busy && !updates.state.installing
+                    && !directionHost.upstreamState.busy && !updates.state.installing && !updates.preparingRecovery && !window.restoringUpdate
                 saveActionsEnabled: fileActionsEnabled && (window.selectedDirection === "downstream"
                     || (!!directionHost.upstreamState.project && !!directionHost.upstreamState.project.can_save))
                 onNewRequested: window.routeFile("new", false)
                 onOpenRequested: window.routeFile("open", false)
                 onSaveRequested: function(saveAs) { window.routeFile("save", saveAs) }
-                onGlobalSettingsRequested: { if (!updates.state.installing) workbench.settingsPopup.openChecked() }
+                onGlobalSettingsRequested: { if (!updates.state.installing && !updates.preparingRecovery && !window.restoringUpdate) workbench.settingsPopup.openChecked() }
                 onAboutRequested: workbench.aboutPopup.openChecked()
                 onFaqRequested: workbench.openHelp("")
                 onTerminologyRequested: function(target) { Qt.openUrlExternally(target) }
@@ -572,17 +628,19 @@ ApplicationWindow {
                 Layout.rightMargin: 12
                 theme: applicationTheme; backend: updateInfo
                 canUpdate: !!window.workbench && !directionHost.presentation.applicationBusy
-                    && !directionHost.upstreamState.busy && !directionHost.upstreamState.configured
+                    && !directionHost.upstreamState.busy && !directionHost.upstreamState.preparing
+                    && !window.restoringUpdate
                     && !window.workbench.loadingProject
-                prepareUpdate: function() { return workbench.saveUpdateRecovery() }
-                startupCheck: !window.projectFileProbeRequested && !window.presentationProbeRequested && !window.directionProbeRequested && !window.upstreamConfigurationProbeRequested && !window.upstreamExecutionProbeRequested && !window.upstreamInputsProbeRequested && !window.upstreamGridProbeRequested && !window.upstreamInstrumentsProbeRequested && !window.downstreamSharedProbeRequested && !window.upstreamFecProbeRequested && Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
+                prepareUpdate: function() { return workbench.saveUpdateRecovery(upstreamSession) }
+                pollRecovery: function() { return JSON.parse(workbenchFile.poll_update_recovery(upstreamSession)) }
+                startupCheck: !window.updateRecoveryProbeRequested && !window.projectFileProbeRequested && !window.presentationProbeRequested && !window.directionProbeRequested && !window.upstreamConfigurationProbeRequested && !window.upstreamExecutionProbeRequested && !window.upstreamInputsProbeRequested && !window.upstreamGridProbeRequested && !window.upstreamInstrumentsProbeRequested && !window.downstreamSharedProbeRequested && !window.upstreamFecProbeRequested && Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
             }
         }
     }
     ColumnLayout {
         id: unifiedFrame
         anchors.fill: parent
-        enabled: !updates.state.installing
+        enabled: !updates.state.installing && !updates.preparingRecovery && !window.restoringUpdate
         readonly property int shellEdgeMargin: 16
         readonly property int shellRowGap: 8
         spacing: shellRowGap

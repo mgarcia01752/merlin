@@ -688,12 +688,12 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Evidence: [persistence acceptance plan](features/unified-qt-workbench/validation.md#persistence), [edited-configuration prerequisite](features/unified-qt-workbench/design.md#uiu-file-01-edited-configuration-provenance-prerequisite), [native source/write unit](features/unified-qt-workbench/validation.md#uiu-file-01-native-source-and-safe-write-unit); [native routing/dirty acceptance](features/unified-qt-workbench/validation.md#uiu-file-01-native-routing-and-dirty-transactions) passes 610 Qt Rust cases plus the explicit actual-GUI artifact gate, six affected QML suites (177 records), eight installed native parity cases and 28 real Main file checkpoints. Independent paths, target-tab Save/Discard/Cancel, protected originals, both dirty Close cancellations and actual Start after aborted Close pass; declared native clean Close succeeds. Startup false-dirty and probe-only binding failures remain recorded. Continue UIU-RECOVERY-01.
 
 <a id="task-uiu-recovery-01"></a>
-- [ ] **UIU-RECOVERY-01** Preserve both direction projects across application restart/update.
+- [x] **UIU-RECOVERY-01** Preserve both direction projects across application restart/update.
   Requirements: [REQ-UIU-23](../requirements.md#req-uiu-23).
   Dependencies: [UIU-FILE-01](#task-uiu-file-01).
   Architecture/files: [persistence owner](../architecture.md#unified-qt-session-and-file-lifecycle), [inventory/destinations](features/unified-qt-workbench/source-inventory.json), [API/file plan](features/unified-qt-workbench/api-gap-matrix.md).
   Acceptance: Bounded private recovery bundle of independently API-valid projects and active-tab/UI state, atomic restore/failure tests and source-install guards; no installed lifecycle claim without native evidence.
-  Evidence: [persistence acceptance plan](features/unified-qt-workbench/validation.md#persistence); pending implementation/acceptance.
+  Evidence: [dual-project native restart acceptance](features/unified-qt-workbench/validation.md#uiu-recovery-01-dual-project-restart-acceptance): complete 642-case Qt run plus final affected error/recovery cases, 187 QML records, Clippy/format/boundary and optimized build pass. Actual independent processes preserve both edited projects, normal paths, dirty flags, selected tab and theme, then complete a restored upstream run. Relative CLI paths survive changed restart cwd; originals remain unchanged. Exact nested documents pass the explicit Rust artifact gate and three installed-native Python parity cases. Atomic rejection, private-path collision, prior-format migration and queued-install failure guards pass. Installed platform lifecycles remain unverified. Continue UIU-QA-01.
 
 <a id="task-uiu-qa-01"></a>
 - [ ] **UIU-QA-01** Accept unified Qt functionality and reconcile final correspondence.

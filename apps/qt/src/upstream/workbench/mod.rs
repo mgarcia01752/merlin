@@ -38,7 +38,6 @@ use preparation::{Pending, Prepared};
 
 // Application input and UI diagnostic policies; neither is a normative PHY limit.
 pub(crate) const MAX_CONFIGURATION_BYTES: usize = 16 * 1024 * 1024;
-const MAX_ERROR_CHARACTERS: usize = 4096;
 
 // Report data and one terminal have separate identities and share bounded transport.
 const RUN_COMPLETION_CAPACITY: usize = 2;
@@ -530,7 +529,7 @@ impl Model {
 /// The unchanged bounded prefix. Retained worker text is separately admitted before
 /// enqueue; independent GUI copies use the same admitted error owner.
 pub(super) fn error_text(error: impl AsRef<str>) -> String {
-    error.as_ref().chars().take(MAX_ERROR_CHARACTERS).collect()
+    crate::shared::worker_failure::bounded_message(error)
 }
 
 #[cfg(test)]

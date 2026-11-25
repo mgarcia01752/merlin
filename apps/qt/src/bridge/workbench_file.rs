@@ -3,12 +3,14 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Native project Open/Save coordinator with validation before adoption.
+#[cfg(test)]
+use crate::downstream::workbench::project_file::Project;
 use crate::downstream::{
     common::constants::{
         MAX_OBSERVATION_OPTIONS_DOCUMENT_BYTES, MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES,
         MAX_SAVE_OPTIONS_PACKET_BYTES,
     },
-    workbench::{project_file::Project, session as workbench_session},
+    workbench::session as workbench_session,
 };
 #[cfg(test)]
 use crate::shared::project_path::{append_destination_suffix, WORKBENCH_FILE_SUFFIX};
@@ -22,6 +24,7 @@ use merlin::downstream::MAX_TRANSMISSION_DOCUMENT_BYTES;
 use serde_json::json;
 use std::path::PathBuf;
 mod intent;
+mod recovery;
 #[cxx_qt::bridge]
 pub mod bridge {
     unsafe extern "C++" {
@@ -82,19 +85,31 @@ pub mod bridge {
         /// Requests cooperative cancellation while preserving the current WB.
         #[qinvokable]
         fn cancel_open(self: &WorkbenchFile);
-        /// Saves accepted settings in a private update-recovery WB.
+        /// Queues a private bundle containing both accepted direction projects.
         /// # Arguments
-        /// * `settings`, `receiver` - Current accepted configuration JSON.
-        /// * `verified`, `dark` - Accepted comparison and appearance choices.
+        /// * `target` - Live same-thread upstream QObject, exclusively borrowed.
+        /// * `options` - Existing bounded downstream Save packet and actual observations.
         /// # Returns
-        /// Saved/error status; never changes the user's explicit Save destination.
+        /// Preparing/error status; installation must await completed polling.
+        /// # Safety
+        /// Qt supplies a live registered upstream QObject on its owning GUI thread.
         #[qinvokable]
-        fn save_update_recovery(
+        unsafe fn save_update_recovery(
             self: Pin<&mut WorkbenchFile>,
-            settings: &QString,
-            receiver: &QString,
-            verified: bool,
-            dark: bool,
+            target: *mut UpstreamSession,
+            options: &QString,
+        ) -> QString;
+        /// Polls the dual-project write or restores both fully admitted native owners.
+        /// # Arguments
+        /// * `target` - Live same-thread upstream QObject, exclusively borrowed.
+        /// # Returns
+        /// Preparing, saved, restored or original bounded error metadata.
+        /// # Safety
+        /// Qt supplies a live registered upstream QObject on its owning GUI thread.
+        #[qinvokable]
+        unsafe fn poll_update_recovery(
+            self: Pin<&mut WorkbenchFile>,
+            target: *mut UpstreamSession,
         ) -> QString;
         /// Consumes an optional CLI workbench after the GUI event loop is ready.
         /// # Returns
@@ -103,9 +118,16 @@ pub mod bridge {
         fn startup(self: Pin<&mut WorkbenchFile>) -> QString;
         /// Starts background recovery after an automatic restart.
         /// # Returns
-        /// Loading/error metadata; poll_open adopts only validated completion.
+        /// Preparing/error metadata; completed polling atomically adopts both projects.
+        /// # Arguments
+        /// * `target` - Live same-thread upstream QObject, exclusively borrowed.
+        /// # Safety
+        /// Qt supplies a live registered upstream QObject on its owning GUI thread.
         #[qinvokable]
-        fn restore_update(self: Pin<&mut WorkbenchFile>) -> QString;
+        unsafe fn restore_update(
+            self: Pin<&mut WorkbenchFile>,
+            target: *mut UpstreamSession,
+        ) -> QString;
         /// Saves accepted block state and embedded original input bytes atomically.
         /// # Arguments
         /// * `save_as` - True selects a new destination; first Save also prompts.
@@ -123,6 +145,7 @@ pub struct WorkbenchFileRust {
     pub(super) context: crate::downstream::workbench::session::Context,
     path: Option<ProjectPath>,
     loader: crate::downstream::workbench::project_load::Loader,
+    recovery: Option<Box<Retained<recovery::Job>>>,
     intent: Option<Box<Retained<std::cell::RefCell<intent::Intent>>>>,
 }
 
@@ -225,6 +248,7 @@ fn path(url: &str) -> Result<PathBuf, String> {
 }
 #[cfg(target_os = "linux")]
 fn recovery_path() -> Result<PathBuf, String> {
+    use crate::platform::constants::{NON_OWNER_PERMISSION_BITS, PRIVATE_DIRECTORY_MODE};
     let base = std::env::var_os("XDG_STATE_HOME")
         .map(PathBuf::from)
         .filter(|path| path.is_absolute())
@@ -234,11 +258,11 @@ fn recovery_path() -> Result<PathBuf, String> {
     use std::os::unix::fs::{DirBuilderExt, PermissionsExt};
     std::fs::DirBuilder::new()
         .recursive(true)
-        .mode(0o700)
+        .mode(PRIVATE_DIRECTORY_MODE)
         .create(&directory)
         .map_err(|error| error.to_string())?;
     let metadata = std::fs::symlink_metadata(&directory).map_err(|error| error.to_string())?;
-    if !metadata.is_dir() || metadata.permissions().mode() & 0o077 != 0 {
+    if !metadata.is_dir() || metadata.permissions().mode() & NON_OWNER_PERMISSION_BITS != 0 {
         return Err("Update recovery directory must be private.".into());
     }
     Ok(directory.join("workbench.merlin.json"))
@@ -347,48 +371,56 @@ impl bridge::WorkbenchFile {
         }
     }
 
-    /// Stores a private recovery WB without overwriting a user-selected file.
+    /// Starts private recovery export without changing normal Save destinations.
     /// # Arguments
-    /// * `settings`, `receiver` - Accepted configuration JSON, each at most 4096 bytes.
-    /// * `verified`, `dark` - Accepted comparison and appearance choices.
+    /// * `target` - Live upstream QObject, exclusively borrowed on its GUI thread.
+    /// * `options` - Exact bounded downstream Save packet, including observations.
     /// # Returns
-    /// Saved/error JSON; failed validation prevents update installation.
-    pub fn save_update_recovery(
-        self: core::pin::Pin<&mut Self>,
-        settings: &QString,
-        receiver: &QString,
-        verified: bool,
-        dark: bool,
+    /// Preparing/error JSON. Only a completed saved response authorizes install.
+    /// # Safety
+    /// The caller guarantees a live registered upstream QObject on this GUI thread.
+    pub unsafe fn save_update_recovery(
+        mut self: core::pin::Pin<&mut Self>,
+        target: *mut bridge::UpstreamSession,
+        options: &QString,
     ) -> QString {
-        if self.rust().loader.is_loading() {
-            return QString::from("{\"error\":\"Wait for workbench loading to finish.\"}");
+        if options.len() > MAX_SAVE_OPTIONS_PACKET_BYTES as isize {
+            return QString::from(
+                json!({"error":"Recovery options exceed the packet byte limit."}).to_string(),
+            );
         }
-        let save = || -> Result<(), String> {
-            if settings.to_string().len() > MAX_TRANSMISSION_DOCUMENT_BYTES
-                || receiver.to_string().len() > MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES
-            {
-                return Err("Recovery configuration exceeds limits.".into());
-            }
-            let project = Project {
-                schema_version: crate::downstream::common::constants::WORKBENCH_SCHEMA_VERSION,
-                application: "MERLIN".into(),
-                transmission: serde_json::from_str(&settings.to_string())
-                    .map_err(|error| error.to_string())?,
-                sections: workbench_session::saved_sections(&self.rust().context),
-                receiver: serde_json::from_str(&receiver.to_string())
-                    .map_err(|error| error.to_string())?,
-                comparison_enabled: verified,
-                dark,
-            };
-            project.write(&recovery_path()?, &self.rust().context.application)
+        // SAFETY: Qt's declared QObject pointer is borrowed synchronously for this
+        // call; neither it nor its model reference crosses the worker boundary.
+        let result = unsafe {
+            recovery::with_target(&mut self.as_mut().rust_mut(), target, |file, upstream| {
+                file.start_recovery_write(
+                    upstream,
+                    options.to_string().into_bytes(),
+                    recovery_path()?,
+                )
+            })
         };
-        QString::from(
-            match save() {
-                Ok(()) => json!({"saved":true}),
-                Err(error) => json!({"error":error}),
-            }
-            .to_string(),
-        )
+        recovery::response(result)
+    }
+
+    /// Polls recovery and publishes only the complete prepared pair.
+    /// # Arguments
+    /// * `target` - Live upstream QObject, exclusively borrowed on its GUI thread.
+    /// # Returns
+    /// Preparing/saved/restored or bounded failure metadata, never scientific buffers.
+    /// # Safety
+    /// The caller guarantees a live registered upstream QObject on this GUI thread.
+    pub unsafe fn poll_update_recovery(
+        mut self: core::pin::Pin<&mut Self>,
+        target: *mut bridge::UpstreamSession,
+    ) -> QString {
+        // SAFETY: Same synchronous Qt ownership contract as save_update_recovery.
+        let result = unsafe {
+            recovery::with_target(&mut self.as_mut().rust_mut(), target, |file, upstream| {
+                file.poll_recovery(upstream)
+            })
+        };
+        recovery::response(result)
     }
 
     /// Starts the one-shot command-line workbench through the normal loader.
@@ -408,18 +440,24 @@ impl bridge::WorkbenchFile {
         QString::from(result.to_string())
     }
 
-    /// Starts private recovery without waiting for capture validation.
+    /// Prepares both saved projects without replacing either live native owner.
+    /// # Arguments
+    /// * `target` - Live same-thread upstream QObject, exclusively borrowed.
     /// # Returns
-    /// Loading metadata; poll_open preserves the current WB on any failure.
-    pub fn restore_update(mut self: core::pin::Pin<&mut Self>) -> QString {
-        let result = match recovery_path() {
-            Ok(path) => {
-                let context = self.rust().context.clone();
-                self.as_mut().rust_mut().loader.start(&context, Some(path))
-            }
-            Err(error) => json!({"error":error}),
+    /// Preparing/error metadata; polling owns the final guarded transaction.
+    /// # Safety
+    /// The caller guarantees a live registered upstream QObject on this GUI thread.
+    pub unsafe fn restore_update(
+        mut self: core::pin::Pin<&mut Self>,
+        target: *mut bridge::UpstreamSession,
+    ) -> QString {
+        // SAFETY: No QObject pointer or GUI reference is retained by the worker.
+        let result = unsafe {
+            recovery::with_target(&mut self.as_mut().rust_mut(), target, |file, upstream| {
+                file.start_recovery_restore(upstream, recovery_path()?)
+            })
         };
-        QString::from(result.to_string())
+        recovery::response(result)
     }
 
     /// Starts background Open without blocking Qt's window-event processing.

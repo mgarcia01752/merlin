@@ -13,6 +13,7 @@
 //! preparation, worker/transport and presentation owners remain separate work. This
 //! component and its QObject registration do not establish aggregate acceptance.
 mod session;
+pub(crate) use session::ProjectSource;
 pub(crate) mod workbench;
 
 pub use session::{

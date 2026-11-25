@@ -57,6 +57,7 @@ pub(super) fn populated() -> WorkbenchFileRust {
         path: Some(path),
         loader: Default::default(),
         intent: None,
+        recovery: None,
     }
 }
 

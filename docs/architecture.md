@@ -2004,8 +2004,9 @@ maps these owners and acceptance. Upstream editing/instrument bindings now pass
 their direction-specific US tasks. Native New/Save target the captured active
 direction; Open detects its direction before a guarded native handoff and dirty
 decision. A foreign project never falls through to downstream scientific state.
-Restart recovery remains UIU-RECOVERY-01, including the conservative update guard
-while an upstream configuration exists until dual recovery is accepted.
+Private restart recovery now prepares both direction projects off the GUI thread
+and atomically adopts the pair. An accepted upstream configuration no longer
+blocks update preparation; installation waits for the completed private write.
 
 Normal project files remain direction-specific. Open validates/detects direction
 and guards that target tab's dirty state before mutation. Schema 1/2 retain DS
@@ -2044,8 +2045,19 @@ admits its dirty revision before publication, while project attachment remains
 clean. Close resolves both exact targets before atomic shutdown. Downstream
 native instruments explicitly reject schema-3 observation policies they cannot
 apply; public Rust/Python consumers continue to support those policies.
-Update recovery privately bundles both
-independently valid projects plus active-tab state. All file/capture, viewport,
+Update recovery uses `shared/update_recovery.rs` for a strict, bounded private
+transport, `bridge/workbench_file/recovery.rs` for the existing worker/public
+preparation owners, and `shell/recovery.rs` for guarded pair publication. It
+preserves independently admitted project bytes, normal destinations, dirty flags,
+active tab, theme and actual original-input protection records. Runnable nested
+documents retain public API admission; partial downstream editors and blank
+upstream remain explicit native states. Relative normal destinations become
+absolute only in the recovery copy, so a changed restart directory cannot
+redirect Save. The private file cannot become either normal Save destination.
+The previous downstream-only private format migrates explicitly with an unset
+normal destination and unsaved state. No result data or unapplied draft is
+persisted. The [recovery design](development/features/unified-qt-workbench/design.md#uiu-recovery-01-dual-project-restart-transaction)
+defines transport limits, owner preflight and failure retention. All file/capture, viewport,
 worker, retained-result and aggregate-memory budgets remain bounded; errors or
 cancellation preserve accepted inputs/completed trials. See the
 [compatibility matrix](development/features/unified-qt-workbench/compatibility-matrix.md).

@@ -12,6 +12,20 @@ use crate::{
     shell::{Retained, RetentionBudget},
 };
 
+/// Bounds native worker diagnostics before retaining or publishing UI text.
+/// # Arguments
+/// * `message` - Original backend/parser error, borrowed without another full copy.
+/// # Returns
+/// At most the shared scalar-character ceiling, preserving valid UTF-8 and the
+/// existing upstream prefix-truncation behavior. This is not a byte or PHY limit.
+pub(crate) fn bounded_message(message: impl AsRef<str>) -> String {
+    message
+        .as_ref()
+        .chars()
+        .take(super::presentation::constants::MAX_WORKER_ERROR_CHARACTERS)
+        .collect()
+}
+
 #[derive(Debug)]
 pub(crate) enum WorkerFailure {
     Detailed(Box<Retained<AdmissionError>>),

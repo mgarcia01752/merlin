@@ -4,6 +4,10 @@
  */
 //! Named display units; scientific values and clocks come from the public backend.
 
+/// Existing native worker diagnostic ceiling, in Unicode scalar characters.
+/// This display policy is independent of equal-valued path and result populations.
+pub(crate) const MAX_WORKER_ERROR_CHARACTERS: usize = 4096;
+
 /// Samples per megasample for displaying backend sample rates as Msamples/s.
 /// This SI display conversion is not a clock, PSD normalization or time policy.
 pub(crate) const SAMPLES_PER_MEGASAMPLE: f64 = 1_000_000.0;

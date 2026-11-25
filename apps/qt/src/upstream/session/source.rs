@@ -44,6 +44,12 @@ pub(super) fn retain_measured_source(
     Ok(reservation.retain(bytes.into()))
 }
 
+/// Immutable, charged scientific owner shared with a finite recovery worker.
+/// No scientific payload or allocation is copied by this handle.
+pub(crate) struct ProjectSource {
+    session: super::SharedSession,
+}
+
 impl UpstreamController {
     /// Serializes an idle upstream direction project through public admission.
     ///
@@ -60,9 +66,31 @@ impl UpstreamController {
     /// source for unsupported typed-only construction, invalid public project or
     /// serialization/byte limits. Existing results and original inputs survive.
     pub fn project_document(&self) -> Result<Vec<u8>, String> {
+        self.project_source()?.document()
+    }
+
+    /// Shares the accepted source for off-GUI project serialization.
+    /// # Returns
+    /// One alias of the existing admitted owner, without cloning science or results.
+    /// # Errors
+    /// Active execution rejects the request before another source handle is returned.
+    pub(crate) fn project_source(&self) -> Result<ProjectSource, String> {
         if self.active.is_some() {
             return Err(format!("{:?}", ControllerError::Busy));
         }
+        Ok(ProjectSource {
+            session: std::sync::Arc::clone(&self.session),
+        })
+    }
+}
+
+impl ProjectSource {
+    /// Serializes the captured accepted owner using the existing public project contract.
+    /// # Returns
+    /// Exact validated project bytes; caller runs off-GUI and admits retained output.
+    /// # Errors
+    /// Busy scientific storage, missing original source or public serialization error.
+    pub(crate) fn document(&self) -> Result<Vec<u8>, String> {
         let storage = match self.session.value().try_lock() {
             Ok(storage) => storage,
             Err(TryLockError::Poisoned(cause)) => cause.into_inner(),

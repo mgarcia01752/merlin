@@ -42,4 +42,4 @@ pub(crate) const MAX_SESSION_OPEN_VIEWS: usize = 32;
 
 /// Existing distinct original-source protection cap, shared by both directions.
 /// This is a host path-inventory policy, separate from configuration/error text limits.
-pub(super) const MAX_ORIGINAL_SOURCE_PATHS: usize = 4096;
+pub(crate) const MAX_ORIGINAL_SOURCE_PATHS: usize = 4096;

@@ -174,6 +174,43 @@ impl ApplicationSessions {
         self.input_paths.clear(direction);
     }
 
+    /// Snapshots actual protected originals without inferring capture filenames.
+    /// # Returns
+    /// Independently admitted path buffers, including both direction flags.
+    /// # Errors
+    /// Capacity arithmetic or same-host retained admission failure.
+    pub(crate) fn snapshot_input_paths(
+        &self,
+    ) -> Result<Box<Retained<Vec<crate::shared::update_recovery::OriginalPath>>>, String> {
+        self.input_paths.snapshot(&self.budget)
+    }
+
+    /// Prepares a whole replacement path registry without publishing any record.
+    /// # Arguments
+    /// * `paths` - Validated private recovery records, retaining canonical spelling.
+    /// # Returns
+    /// Complete same-host registry for the final dual-project transaction.
+    /// # Errors
+    /// Invalid/duplicate paths, population bounds or retained admission.
+    pub(crate) fn prepare_input_paths(
+        &self,
+        paths: Vec<crate::shared::update_recovery::OriginalPath>,
+    ) -> Result<InputPaths, String> {
+        InputPaths::prepare(paths, &self.budget)
+    }
+
+    /// Checks whether a recovery export still protects exactly its captured inputs.
+    /// # Arguments
+    /// * `paths` - Actual records captured for the write, including ownership flags.
+    /// # Returns
+    /// True only for an unchanged host inventory; no file is accessed.
+    pub(crate) fn input_paths_match(
+        &self,
+        paths: &[crate::shared::update_recovery::OriginalPath],
+    ) -> bool {
+        self.input_paths.matches(paths)
+    }
+
     /// Measures only the permanent application counter baseline for owner fixtures.
     ///
     /// # Returns

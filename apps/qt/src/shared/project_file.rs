@@ -44,6 +44,25 @@ pub(crate) fn write_bytes(path: &Path, bytes: &[u8]) -> Result<(), String> {
     write_bytes_with_limit(path, bytes, MAX_PROJECT_BYTES)
 }
 
+/// Writes a private multi-project recovery bundle through the same atomic writer.
+/// # Arguments
+/// * `path`, `bytes` - Platform-private destination and fully validated bundle bytes.
+/// * `maximum_bytes` - Separate combined-bundle policy; single projects keep their cap.
+/// # Returns
+/// Unit after sync/rename; the caller preserves original-input protection.
+/// # Errors
+/// Oversized output, nonregular target or original sibling filesystem failure.
+pub(crate) fn write_recovery_bytes(
+    path: &Path,
+    bytes: &[u8],
+    maximum_bytes: usize,
+) -> Result<(), String> {
+    if bytes.len() > maximum_bytes {
+        return Err("Update recovery exceeds its combined byte limit.".into());
+    }
+    write_bytes_with_limit(path, bytes, maximum_bytes)
+}
+
 fn write_bytes_with_limit(path: &Path, bytes: &[u8], maximum_bytes: usize) -> Result<(), String> {
     if bytes.len() > maximum_bytes {
         return Err("Workbench exceeds 144 MiB.".into());

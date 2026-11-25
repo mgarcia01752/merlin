@@ -33,6 +33,53 @@ pub(crate) struct Saved {
     pub(crate) expected: ProjectSnapshot,
 }
 
+impl SaveOptions {
+    /// Serializes exact accepted editor settings through the normal Save contract.
+    /// # Arguments
+    /// * `sections` - Actual immutable accepted sections, retaining original bytes.
+    /// # Returns
+    /// Public schema-3 bytes for runnable state or legacy partial-editor bytes.
+    /// # Errors
+    /// Existing editor/public/observation validation or byte-ceiling failure.
+    pub(crate) fn encode(
+        self,
+        sections: super::super::session::SectionSnapshot,
+    ) -> Result<Vec<u8>, String> {
+        let Self {
+            settings,
+            receiver,
+            observations,
+            verified,
+            dark,
+            runnable,
+        } = self;
+        let project = Project {
+            schema_version: crate::downstream::common::constants::WORKBENCH_SCHEMA_VERSION,
+            application: "MERLIN".into(),
+            transmission: serde_json::from_str(&settings).map_err(|error| error.to_string())?,
+            sections,
+            receiver: serde_json::from_str(&receiver).map_err(|error| error.to_string())?,
+            comparison_enabled: verified,
+            dark,
+        };
+        project.validate()?;
+        let bytes = if runnable {
+            let observations: Option<merlin::downstream::FullLoopObservationInput> =
+                serde_json::from_str(&observations).map_err(|error| error.to_string())?;
+            crate::downstream::workbench::project_envelope::encode_runnable(
+                &project,
+                observations.as_ref(),
+            )?
+        } else {
+            serde_json::to_vec_pretty(&project).map_err(|error| error.to_string())?
+        };
+        if bytes.len() > MAX_PROJECT_BYTES {
+            return Err("Workbench exceeds 144 MiB.".into());
+        }
+        Ok(bytes)
+    }
+}
+
 impl Loader {
     /// Queues one exact revision's validation, serialization and atomic write.
     /// # Arguments
@@ -46,35 +93,9 @@ impl Loader {
     pub(crate) fn start_save(&mut self, request: SaveRequest) -> Value {
         let budget = request.application.budget().clone();
         let status = self.start_candidate(&budget, move |_, _| {
-            let SaveOptions {
-                settings,
-                receiver,
-                observations,
-                verified,
-                dark,
-                runnable,
-            } = serde_json::from_slice(request.options.value())
+            let options: SaveOptions = serde_json::from_slice(request.options.value())
                 .map_err(|error| error.to_string())?;
-            let project = Project {
-                schema_version: crate::downstream::common::constants::WORKBENCH_SCHEMA_VERSION,
-                application: "MERLIN".into(),
-                transmission: serde_json::from_str(&settings).map_err(|error| error.to_string())?,
-                sections: request.sections,
-                receiver: serde_json::from_str(&receiver).map_err(|error| error.to_string())?,
-                comparison_enabled: verified,
-                dark,
-            };
-            project.validate()?;
-            let bytes = if runnable {
-                let observations: Option<merlin::downstream::FullLoopObservationInput> =
-                    serde_json::from_str(&observations).map_err(|error| error.to_string())?;
-                crate::downstream::workbench::project_envelope::encode_runnable(
-                    &project,
-                    observations.as_ref(),
-                )?
-            } else {
-                serde_json::to_vec_pretty(&project).map_err(|error| error.to_string())?
-            };
+            let bytes = options.encode(request.sections)?;
             if request.application.snapshot(Direction::Downstream) != request.expected {
                 return Err("The downstream project changed before writing.".into());
             }

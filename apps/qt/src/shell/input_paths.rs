@@ -96,9 +96,11 @@ impl Ord for Record {
 
 /// Shared registry handle; clones retain one admitted root and the same records.
 #[derive(Clone)]
-pub(super) struct InputPaths {
+pub(crate) struct InputPaths {
     storage: Arc<Storage>,
 }
+
+mod recovery;
 
 // The key's path is immutable and is its only Borrow/Eq/Ord input. The Cell flags
 // and reservation's accounting mutex never participate in lookup or ordering.

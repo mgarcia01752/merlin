@@ -254,6 +254,38 @@ impl PreparedProject {
         })
     }
 
+    /// Prepares one nested recovery document through the normal native owners.
+    /// # Arguments
+    /// * `bytes`, `path` - Exact project bytes and its saved normal destination.
+    /// * `application`, `target`, `expected` - Original canonical and accepted guards.
+    /// * `dark` - Saved application appearance, applied before metadata admission.
+    /// # Returns
+    /// Complete admitted models, including partial legacy editors where supported.
+    /// # Errors
+    /// Existing public/editor/observation or retained admission errors, without mutation.
+    pub(crate) fn prepare_recovery(
+        bytes: &[u8],
+        path: Option<ProjectPath>,
+        application: &crate::shell::ApplicationSessions,
+        target: crate::shell::ProjectSnapshot,
+        expected: Snapshot,
+        dark: bool,
+    ) -> Result<Self, String> {
+        let mut decoded = super::project_envelope::decode(bytes)?;
+        decoded.project.dark = dark;
+        let mut candidate = Self::prepare_with_plan(
+            decoded.project,
+            path,
+            application,
+            target.key,
+            expected,
+            MetadataKind::Opened,
+            decoded.public_plan,
+        )?;
+        candidate.project_guard = target;
+        Ok(candidate)
+    }
+
     /// Publishes a completed project on the calling GUI thread only.
     /// # Arguments
     /// * `context` - Validated target owner; other contexts and transfers stay untouched.
@@ -298,9 +330,45 @@ impl PreparedProject {
     /// # Errors
     /// Every stale/dirty/ownership/Busy/admission failure precedes target mutation.
     pub(crate) fn adopt_with_permission(
-        mut self,
+        self,
         context: &Context,
         permission: crate::shell::ReplacePermission,
+    ) -> Result<AdoptedProject, String> {
+        let guard = self.project_guard;
+        let adopted = self.adopt_transaction(context, |ready| {
+            context
+                .application
+                .replace_project(guard, permission, ready)
+                .map_err(|error| match error {
+                    crate::shell::ApplicationError::Retention(_) => {
+                        "The session retained-data limit would be exceeded.".into()
+                    }
+                    crate::shell::ApplicationError::Session(
+                        crate::shell::SessionError::StaleGuard,
+                    ) => "The prepared workbench target is stale.".into(),
+                    _ => "The workbench target cannot accept this project.".into(),
+                })
+        })?;
+        context
+            .application
+            .clear_input_paths(crate::shell::Direction::Downstream);
+        Ok(adopted)
+    }
+
+    /// Attaches all admitted downstream roots around a final canonical transaction.
+    /// # Arguments
+    /// * `context` - Exact accepting downstream owner, independent of selected tab.
+    /// * `commit` - Last fallible readiness operation; must publish no partial state
+    ///   on error and may attach the already prepared upstream owner on success.
+    /// # Returns
+    /// Already admitted editor metadata/path after infallible native model attachment.
+    /// # Errors
+    /// Target/accepted staleness, missing/foreign root or commit rejection precedes
+    /// accepted-input publication. Original-path cleanup remains caller-owned.
+    pub(crate) fn adopt_transaction(
+        mut self,
+        context: &Context,
+        commit: impl FnOnce(bool) -> Result<crate::shell::SessionKey, String>,
     ) -> Result<AdoptedProject, String> {
         if context
             .application
@@ -353,13 +421,11 @@ impl PreparedProject {
             .ok_or("Prepared transmitter is missing.")?
             .check_prepared_target(context.application.budget())
             .map_err(|error| error.into_message())?;
-        let key = super::session::adopt_project(
+        let key = super::session::adopt_prepared_transaction(
             context,
             self.accepted,
             &self.expected,
-            self.project_guard,
-            permission,
-            ready,
+            || commit(ready),
         )?;
         // Detached models still hold isolated Contexts. Only the genuine key is
         // stamped here; the GUI attaches its Context after removing each model.
@@ -370,9 +436,6 @@ impl PreparedProject {
             .commit_prepared_generation(key);
         *context.result.borrow_mut() = None;
         crate::downstream::instruments::receiver::performance::clear(context);
-        context
-            .application
-            .clear_input_paths(crate::shell::Direction::Downstream);
         context
             .prepared
             .with(|prepared| *prepared.borrow_mut() = self.models);

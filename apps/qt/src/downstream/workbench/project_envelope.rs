@@ -13,7 +13,7 @@ use serde::{Deserialize, Serialize};
 use std::io::{self, Write};
 
 /// Established partial-editor wire versions, independent of current Save routing.
-const LEGACY_EDITOR_SCHEMAS: [u32; 2] = [1, 2];
+pub(crate) const LEGACY_EDITOR_SCHEMAS: [u32; 2] = [1, 2];
 const PROJECT_LIMIT_MESSAGE: &str = "Workbench exceeds 144 MiB.";
 
 /// Editor state and, for schema 3, the complete independently admitted public plan.

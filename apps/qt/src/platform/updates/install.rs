@@ -8,6 +8,7 @@ use super::download::copy_verified;
 #[cfg(test)]
 use super::download::trusted;
 use super::release;
+use crate::platform::constants::{NON_OWNER_PERMISSION_BITS, PRIVATE_DIRECTORY_MODE};
 use serde::{Deserialize, Serialize};
 #[cfg(test)]
 use sha2::{Digest, Sha256};
@@ -69,7 +70,10 @@ impl Directory {
                 .map_err(|error| error.to_string())?;
             let token = format!("{:032x}", u128::from_be_bytes(random));
             let path = PathBuf::from("/var/tmp").join(format!("merlin-update-{token}"));
-            match fs::DirBuilder::new().mode(0o700).create(&path) {
+            match fs::DirBuilder::new()
+                .mode(PRIVATE_DIRECTORY_MODE)
+                .create(&path)
+            {
                 Ok(()) => return Ok(Self(path)),
                 Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => continue,
                 Err(error) => return Err(error.to_string()),
@@ -202,7 +206,7 @@ pub(crate) fn elevated(directory: &Path) -> Result<(), String> {
     let metadata = directory_file
         .metadata()
         .map_err(|error| error.to_string())?;
-    if metadata.uid() != owner || metadata.mode() & 0o077 != 0 {
+    if metadata.uid() != owner || metadata.mode() & NON_OWNER_PERMISSION_BITS != 0 {
         return Err("Update directory must be private and owned by the requesting user.".into());
     }
     let descriptor_path = PathBuf::from(format!("/proc/self/fd/{}", directory_file.as_raw_fd()));
@@ -396,6 +400,7 @@ mod tests {
         use std::os::unix::fs::PermissionsExt;
         let directory = Directory::new().unwrap();
         let path = directory.0.clone();
+        // Independent octal permission anchor: owner rwx, no group/other bits.
         assert_eq!(
             fs::metadata(&path).unwrap().permissions().mode() & 0o777,
             0o700

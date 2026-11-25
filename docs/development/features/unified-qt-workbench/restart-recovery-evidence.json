@@ -1,0 +1,868 @@
+{
+  "task": "UIU-RECOVERY-01",
+  "base": "81a0e78eefab96f17abec208937ffe5824e18f2a",
+  "requirements": [
+    "REQ-UIU-23"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-session-and-file-lifecycle",
+  "design": "design.md#uiu-recovery-01-dual-project-restart-transaction",
+  "status": "Dual-project native recovery accepted in this Linux MERLIN workspace.",
+  "validation_level": 2,
+  "source_sha256": {
+    "apps/qt/build.rs": "7c0fe73eab47923969b067884e38a6b89bc51f1878e70799f1b75340c413dc14",
+    "apps/qt/qml/Main.qml": "1720ffa91ae3a506754f4e15f9b122e986cf14b71e0e31293d476e074e7a95ac",
+    "apps/qt/qml/downstream/DownstreamWorkbench.qml": "44c2f44cbc51189f2cec7cf0102de456e35c8c902b800a5ab191c0f76428d8b7",
+    "apps/qt/qml/shell/UpdateNotification.qml": "820fae9f4fca2d7086200aded0b77a0cec7503ce7869e1f0c48c095e070008b8",
+    "apps/qt/qml/validation/UpdateRecoveryProbe.qml": "c1f0c82515a8fdf7d15f44eff698b0c1535578ea340fb4c5825304bed0bf735c",
+    "apps/qt/src/bridge/workbench_file.rs": "d57fd60e0c8e8e5a9eb26d0e14be77874b08d26476f573d7ee9c08bea7e5e698",
+    "apps/qt/src/bridge/workbench_file/editor_tests.rs": "1575b476afae019c2bfd924853399aa1d91b339d3ad7bf879455d2cfbbed8eab",
+    "apps/qt/src/bridge/workbench_file/recovery.rs": "4a081fb3a8cf92b2522dd42e6d9e292ad9f846e1ae454ce6b086582ad0212c38",
+    "apps/qt/src/bridge/workbench_file/recovery_tests.rs": "2e86053e653f345d34081b6573c27bfe474ae5449ec32069663436f807f33069",
+    "apps/qt/src/downstream/workbench/project_envelope.rs": "8ac6ed87da3ec668a6f8d3768e03dd17fafae13aa658acaa2f297c4d881b97de",
+    "apps/qt/src/downstream/workbench/project_file.rs": "5ae0c18045f7437b31f12626e9b3d469281421fdaa675257368d4fc9f9014f07",
+    "apps/qt/src/downstream/workbench/project_load.rs": "fcbd7c66bcc2fbe21ae41a0b60e2310ce22254aaf22e2c26b91425ec19ab4188",
+    "apps/qt/src/downstream/workbench/project_load/save.rs": "6afc2c8b1f4987b961456524399f1af74e795cff9ef9f1e94a851c1dd6f6061f",
+    "apps/qt/src/downstream/workbench/session.rs": "12a82e29cbf56181a043e746dd0923312fe57d4c5f0bcd9251841c1eaf2d91fb",
+    "apps/qt/src/platform/constants.rs": "8c96202246dbcbec09021bf7fa0a437a9abc36c729128fbf9833790cd2ff9ccc",
+    "apps/qt/src/platform/mod.rs": "7526550a20616185eb609bb1ebe3ab260318c7d3c4f7fe30ef0ad05c2618a59d",
+    "apps/qt/src/platform/updates/install.rs": "5edce6c808c65ffba8f382c4d235b52f6813d7b885c95a10ed616c60ca48a8a8",
+    "apps/qt/src/shared/mod.rs": "c36f3199fee0263f0dd8c4f4bdecf4609707a3ca08de24af7d9d31332a53dbb9",
+    "apps/qt/src/shared/presentation/constants.rs": "fc851e545e844f89300a94df905ce29687fcd4eae28ca2c665975369c9164894",
+    "apps/qt/src/shared/project_file.rs": "49a5cbef47199a522ad7120f35c7dbf978c71bd73707a1a0e3438cf83fd616ba",
+    "apps/qt/src/shared/update_recovery.rs": "4caa4ec86bd5748c7bb773c5c73d5df5e69bd07322629b8ebe9277120e1c45eb",
+    "apps/qt/src/shared/update_recovery_tests.rs": "baedeaadbec28a81ae1e42d70e2e3c1e0f8091893868bef0457abd27be872626",
+    "apps/qt/src/shared/worker_failure.rs": "fe4fbbbe31de4624c12ab72bdde581beebea70283d5936bc1814f262f895e8e8",
+    "apps/qt/src/shared/worker_failure/tests.rs": "3a1d03058f062906c58b2d5ba4ea8c1ea90ee01738af0d45f309e36bf7ecb05a",
+    "apps/qt/src/shell/application.rs": "f9c178afba906d8d81461a9aa34d91a455310c6d7fa81747556f2057b26f9cdc",
+    "apps/qt/src/shell/application/project.rs": "975be34daa3f2b974be2faca2d072debded0b65312a35f7d532df2a7df708cbb",
+    "apps/qt/src/shell/application/recovery_tests.rs": "62c274e104da17b3feb7e7824fd633e51c4384ea4fc96cc7f6364a019be920d1",
+    "apps/qt/src/shell/constants.rs": "c010f704d8aa89d64ab1c540c8b60241dc00305c79473f7de6929cfaeee8346e",
+    "apps/qt/src/shell/input_paths.rs": "c6b50c580796549188fe3cfd5abf0a104fa2d567d8ece1dfd095cc49a8181e54",
+    "apps/qt/src/shell/input_paths/recovery.rs": "96b3ae000fab34288fa79ebb1b55ebc9f4584e1581f42b2e7cb15ace746d4394",
+    "apps/qt/src/shell/mod.rs": "9946a68e78edca1e3ea221f5101ff7ea6fca31684040952e34f69c70ff7193e2",
+    "apps/qt/src/shell/recovery.rs": "ef5cba7a7998caf0c1a299b028915f029400dc5ea00a8ed0691ae839f998c097",
+    "apps/qt/src/upstream/mod.rs": "0256eb28cab5a5c522cbbf266614ebe8b8692e85587d5e3245fd11b33e36878c",
+    "apps/qt/src/upstream/session.rs": "33971c5119f3033213c223dabca3f2a4029ec720dc51af1f3dcfe82038455c1f",
+    "apps/qt/src/upstream/session/source.rs": "5410832eebd2a3e6449c29a2e77ec4f5ce7fb790b0439167cfb9d3d0fe4a5200",
+    "apps/qt/src/upstream/workbench/mod.rs": "8be4dccab39dea34b1460060f1df2a4b0f25cbf3e510e2389a05c60b3327e08f",
+    "apps/qt/src/upstream/workbench/project.rs": "db57d5bf193cbef3e8ab12e7c33ca3e5b64fc31806ee9cd7ba3b29e434e3ae87",
+    "apps/qt/tests/tst_updates.qml": "b1906ef9380d68f1ebf6d056c9bd385bd1cbcb6c32b7e5bcdc1e32287a81b344"
+  },
+  "raw_evidence": "docs/development/local/unified-qt-workbench/recovery-01",
+  "executed": [
+    {
+      "name": "format",
+      "command": [
+        "scripts/cargo-local.sh",
+        "fmt",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.7913255849998677,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/accepted-gates-results.json"
+    },
+    {
+      "name": "complete-qt",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "--",
+        "--test-threads=4"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 223.63937108800747,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/accepted-gates-results.json"
+    },
+    {
+      "name": "qt-clippy",
+      "command": [
+        "scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 83.52216067099653,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/accepted-gates-results.json"
+    },
+    {
+      "name": "qt-release",
+      "command": [
+        "scripts/qt-desktop.sh",
+        "build"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 112.25649460499699,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/accepted-gates-results.json"
+    },
+    {
+      "name": "format",
+      "command": [
+        "scripts/cargo-local.sh",
+        "fmt",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.8144202470139135,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/message-gates-results.json"
+    },
+    {
+      "name": "bounded-errors",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "error",
+        "--",
+        "--test-threads=4"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 88.45109637698624,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/message-gates-results.json"
+    },
+    {
+      "name": "recovery-worker",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "bridge::workbench_file::recovery::",
+        "--",
+        "--test-threads=4"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 91.99064936500508,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/message-gates-results.json"
+    },
+    {
+      "name": "qt-clippy",
+      "command": [
+        "scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 83.33467363499221,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/message-gates-results.json"
+    },
+    {
+      "name": "qt-release",
+      "command": [
+        "scripts/qt-desktop.sh",
+        "build"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 112.03404677700019,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/message-gates-results.json"
+    },
+    {
+      "name": "format",
+      "command": [
+        "scripts/cargo-local.sh",
+        "fmt",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.7836042440030724,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/collision-gates-results.json"
+    },
+    {
+      "name": "recovery-worker",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "bridge::workbench_file::recovery::",
+        "--",
+        "--test-threads=4"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 20.890028438996524,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/collision-gates-results.json"
+    },
+    {
+      "name": "qt-clippy",
+      "command": [
+        "scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 12.941579856997123,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/collision-gates-results.json"
+    },
+    {
+      "name": "qt-release",
+      "command": [
+        "scripts/qt-desktop.sh",
+        "build"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 25.927209348010365,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/collision-gates-results.json"
+    },
+    {
+      "name": "format",
+      "command": [
+        "scripts/cargo-local.sh",
+        "fmt",
+        "--manifest-path",
+        "apps/qt/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.859249589004321,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/relative-gates-results.json"
+    },
+    {
+      "name": "recovery-worker",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "bridge::workbench_file::recovery::",
+        "--",
+        "--test-threads=4"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 101.26192213999457,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/relative-gates-results.json"
+    },
+    {
+      "name": "qt-clippy",
+      "command": [
+        "scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 88.91213585398509,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/relative-gates-results.json"
+    },
+    {
+      "name": "qt-release",
+      "command": [
+        "scripts/qt-desktop.sh",
+        "build"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 119.95555102999788,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/relative-gates-results.json"
+    },
+    {
+      "label": "direction-shell",
+      "command": [
+        "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+        "-input",
+        "/home/dev01/Projects/merlin/apps/qt/tests/shell"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.6159774090046994,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/qml-level2/results.json"
+    },
+    {
+      "label": "downstream-workbench",
+      "command": [
+        "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+        "-input",
+        "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.441040563004208,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/qml-level2/results.json"
+    },
+    {
+      "label": "upstream-drafts",
+      "command": [
+        "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+        "-input",
+        "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_drafts.qml"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 78.7035553099995,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/qml-level2/results.json"
+    },
+    {
+      "label": "upstream-workbench",
+      "command": [
+        "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+        "-input",
+        "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_workbench.qml"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 21.82004961000348,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/qml-level2/results.json"
+    },
+    {
+      "command": [
+        "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+        "-input",
+        "/home/dev01/Projects/merlin/apps/qt/tests/tst_updates.qml"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.175697671016678,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/qml-named-timers/results.json"
+    }
+  ],
+  "native": {
+    "executable_sha256": "72e1414226ce35d440d385f713f96a49f5a2df87751a17441a06cff8bc68bf35",
+    "projects": {
+      "recovery-downstream.merlin.json": {
+        "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft/recovery-downstream.merlin.json",
+        "source": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-routing/native-binding-fix/downstream-open.merlin.json",
+        "sha256": "08825504b2ecbc7ce8ce5ca3615585f77787fe89180464a356bf63a6766b96ec"
+      },
+      "recovery-upstream.merlin.json": {
+        "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft/recovery-upstream.merlin.json",
+        "source": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-routing/native-binding-fix/upstream-a.merlin.json",
+        "sha256": "5287501faf197bc8b30013eb76a77d21f7b778b36628090ce1d17ce6898f4ab5"
+      }
+    },
+    "runs": [
+      {
+        "mode": "save",
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--update-recovery-probe",
+          "save",
+          "--update-recovery-image",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft/save-canvas.png",
+          "--workbench",
+          "./recovery-downstream.merlin.json"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft",
+        "exit_code": 0,
+        "elapsed_seconds": 6.682790302002104,
+        "failure": null,
+        "probe": [
+          {
+            "probe": "update-recovery",
+            "mode": "save",
+            "success": true,
+            "phase": "capture-grace",
+            "error": "",
+            "bundleSaved": true,
+            "checkpoints": [
+              {
+                "name": "before-export",
+                "state": {
+                  "downstreamIdentity": "downstream/3/1",
+                  "upstreamIdentity": "upstream/4/1",
+                  "downstreamDirty": true,
+                  "upstreamDirty": true,
+                  "selectedDirection": "upstream",
+                  "downstreamPath": "./recovery-downstream.merlin.json",
+                  "upstreamPath": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft/recovery-upstream.merlin.json",
+                  "downstreamNoiseSeed": 2,
+                  "upstreamSourceSeed": "2",
+                  "downstreamAcceptedOptions": "{\"all_profiles\":false,\"channel_filter\":{\"mode\":\"diagonal\"},\"duration_ms\":1,\"max_iterations\":50,\"max_runtime_ms\":300000,\"mce\":{\"averaging_symbols\":16,\"minimum_variance\":1e-8},\"noise_seed\":2,\"receiver_mode\":\"supplied_channel\",\"selected_profile_ids\":[0,1,2,3]}",
+                  "downstreamAcceptedObservations": "{\"max_elements_per_event\":16384,\"max_events\":10000,\"max_retained_bytes\":100663296,\"max_total_elements\":1048576,\"stages\":[{\"max_events\":1,\"observation_only\":true,\"stage\":\"source.payload\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.payload.ldpc\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.payload.interleaved_bits\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.payload.labels\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.cells.mapped\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.cells.interleaved\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.frame.bins\"},{\"max_events\":64,\"observation_only\":false,\"stage\":\"tx.plc.message\"},{\"max_events\":1,\"observation_only\":false,\"stage\":\"tx.plc.iq\"},{\"max_events\":1,\"observation_only\":false,\"stage\":\"tx.plc.preamble\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.pilots.continuous\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.pilots.scattered\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.ifft.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.cp.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.window.samples\"},{\"max_events\":4,\"observation_only\":true,\"stage\":\"tx.overlap_add.samples\"},{\"max_events\":12,\"observation_only\":true,\"stage\":\"channel.output\"},{\"max_events\":4,\"observation_only\":true,\"stage\":\"rx.framed.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"rx.cp.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"rx.fft.bins\"},{\"max_events\":4,\"observation_only\":true,\"stage\":\"rx.channel_estimation.response\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"rx.bits.inverse\"}]}",
+                  "upstreamSession": "4",
+                  "upstreamGeneration": "1",
+                  "dark": true
+                }
+              },
+              {
+                "name": "after-export-preserved",
+                "state": {
+                  "downstreamIdentity": "downstream/3/1",
+                  "upstreamIdentity": "upstream/4/1",
+                  "downstreamDirty": true,
+                  "upstreamDirty": true,
+                  "selectedDirection": "upstream",
+                  "downstreamPath": "./recovery-downstream.merlin.json",
+                  "upstreamPath": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft/recovery-upstream.merlin.json",
+                  "downstreamNoiseSeed": 2,
+                  "upstreamSourceSeed": "2",
+                  "downstreamAcceptedOptions": "{\"all_profiles\":false,\"channel_filter\":{\"mode\":\"diagonal\"},\"duration_ms\":1,\"max_iterations\":50,\"max_runtime_ms\":300000,\"mce\":{\"averaging_symbols\":16,\"minimum_variance\":1e-8},\"noise_seed\":2,\"receiver_mode\":\"supplied_channel\",\"selected_profile_ids\":[0,1,2,3]}",
+                  "downstreamAcceptedObservations": "{\"max_elements_per_event\":16384,\"max_events\":10000,\"max_retained_bytes\":100663296,\"max_total_elements\":1048576,\"stages\":[{\"max_events\":1,\"observation_only\":true,\"stage\":\"source.payload\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.payload.ldpc\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.payload.interleaved_bits\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.payload.labels\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.cells.mapped\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.cells.interleaved\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.frame.bins\"},{\"max_events\":64,\"observation_only\":false,\"stage\":\"tx.plc.message\"},{\"max_events\":1,\"observation_only\":false,\"stage\":\"tx.plc.iq\"},{\"max_events\":1,\"observation_only\":false,\"stage\":\"tx.plc.preamble\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.pilots.continuous\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.pilots.scattered\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.ifft.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.cp.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.window.samples\"},{\"max_events\":4,\"observation_only\":true,\"stage\":\"tx.overlap_add.samples\"},{\"max_events\":12,\"observation_only\":true,\"stage\":\"channel.output\"},{\"max_events\":4,\"observation_only\":true,\"stage\":\"rx.framed.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"rx.cp.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"rx.fft.bins\"},{\"max_events\":4,\"observation_only\":true,\"stage\":\"rx.channel_estimation.response\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"rx.bits.inverse\"}]}",
+                  "upstreamSession": "4",
+                  "upstreamGeneration": "1",
+                  "dark": true
+                }
+              }
+            ],
+            "restoredExecutionRun": null,
+            "screenshot": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft/save-canvas.png",
+            "captureTarget": "upstream-workbench",
+            "fullWindowCaptureMarker": true,
+            "installation": "Not requested or executed.",
+            "elapsedMs": 5111
+          }
+        ],
+        "actions": [
+          {
+            "window": 14680071,
+            "pid": 703879,
+            "action": "Actual native Open",
+            "seconds": 3.22039375899476
+          }
+        ],
+        "full_capture": {
+          "window": 12582919,
+          "pid": 703858,
+          "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft/save-main.png",
+          "sha256": "38e45a9dbee978bd3f767dc0bbc75d7d29505c7aab5c531e58c3ef1f646d7955",
+          "source": "Unaltered actual owned native Main pixels"
+        }
+      },
+      {
+        "mode": "restore",
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--update-recovery-probe",
+          "restore",
+          "--update-recovery-image",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft/restore-canvas.png",
+          "--restore-update"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin",
+        "exit_code": 0,
+        "elapsed_seconds": 3.769992679997813,
+        "failure": null,
+        "probe": [
+          {
+            "probe": "update-recovery",
+            "mode": "restore",
+            "success": true,
+            "phase": "capture-grace",
+            "error": "",
+            "bundleSaved": false,
+            "checkpoints": [
+              {
+                "name": "restored-pair",
+                "state": {
+                  "downstreamIdentity": "downstream/3/0",
+                  "upstreamIdentity": "upstream/4/0",
+                  "downstreamDirty": true,
+                  "upstreamDirty": true,
+                  "selectedDirection": "upstream",
+                  "downstreamPath": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft/recovery-downstream.merlin.json",
+                  "upstreamPath": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft/recovery-upstream.merlin.json",
+                  "downstreamNoiseSeed": 2,
+                  "upstreamSourceSeed": "2",
+                  "downstreamAcceptedOptions": "{\"all_profiles\":false,\"channel_filter\":{\"mode\":\"diagonal\"},\"duration_ms\":1,\"max_iterations\":50,\"max_runtime_ms\":300000,\"mce\":{\"averaging_symbols\":16,\"minimum_variance\":1e-8},\"noise_seed\":2,\"receiver_mode\":\"supplied_channel\",\"selected_profile_ids\":[0,1,2,3]}",
+                  "downstreamAcceptedObservations": "{\"max_elements_per_event\":16384,\"max_events\":10000,\"max_retained_bytes\":100663296,\"max_total_elements\":1048576,\"stages\":[{\"max_events\":1,\"observation_only\":true,\"stage\":\"source.payload\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.payload.ldpc\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.payload.interleaved_bits\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.payload.labels\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.cells.mapped\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.cells.interleaved\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.frame.bins\"},{\"max_events\":64,\"observation_only\":false,\"stage\":\"tx.plc.message\"},{\"max_events\":1,\"observation_only\":false,\"stage\":\"tx.plc.iq\"},{\"max_events\":1,\"observation_only\":false,\"stage\":\"tx.plc.preamble\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.pilots.continuous\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.pilots.scattered\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.ifft.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.cp.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.window.samples\"},{\"max_events\":4,\"observation_only\":true,\"stage\":\"tx.overlap_add.samples\"},{\"max_events\":12,\"observation_only\":true,\"stage\":\"channel.output\"},{\"max_events\":4,\"observation_only\":true,\"stage\":\"rx.framed.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"rx.cp.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"rx.fft.bins\"},{\"max_events\":4,\"observation_only\":true,\"stage\":\"rx.channel_estimation.response\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"rx.bits.inverse\"}]}",
+                  "upstreamSession": "4",
+                  "upstreamGeneration": "0",
+                  "dark": true
+                }
+              },
+              {
+                "name": "actual-restored-run-completed",
+                "state": {
+                  "downstreamIdentity": "downstream/3/0",
+                  "upstreamIdentity": "upstream/4/0",
+                  "downstreamDirty": true,
+                  "upstreamDirty": true,
+                  "selectedDirection": "upstream",
+                  "downstreamPath": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft/recovery-downstream.merlin.json",
+                  "upstreamPath": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft/recovery-upstream.merlin.json",
+                  "downstreamNoiseSeed": 2,
+                  "upstreamSourceSeed": "2",
+                  "downstreamAcceptedOptions": "{\"all_profiles\":false,\"channel_filter\":{\"mode\":\"diagonal\"},\"duration_ms\":1,\"max_iterations\":50,\"max_runtime_ms\":300000,\"mce\":{\"averaging_symbols\":16,\"minimum_variance\":1e-8},\"noise_seed\":2,\"receiver_mode\":\"supplied_channel\",\"selected_profile_ids\":[0,1,2,3]}",
+                  "downstreamAcceptedObservations": "{\"max_elements_per_event\":16384,\"max_events\":10000,\"max_retained_bytes\":100663296,\"max_total_elements\":1048576,\"stages\":[{\"max_events\":1,\"observation_only\":true,\"stage\":\"source.payload\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.payload.ldpc\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.payload.interleaved_bits\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.payload.labels\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.cells.mapped\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.cells.interleaved\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.frame.bins\"},{\"max_events\":64,\"observation_only\":false,\"stage\":\"tx.plc.message\"},{\"max_events\":1,\"observation_only\":false,\"stage\":\"tx.plc.iq\"},{\"max_events\":1,\"observation_only\":false,\"stage\":\"tx.plc.preamble\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.pilots.continuous\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.pilots.scattered\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.ifft.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.cp.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"tx.window.samples\"},{\"max_events\":4,\"observation_only\":true,\"stage\":\"tx.overlap_add.samples\"},{\"max_events\":12,\"observation_only\":true,\"stage\":\"channel.output\"},{\"max_events\":4,\"observation_only\":true,\"stage\":\"rx.framed.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"rx.cp.samples\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"rx.fft.bins\"},{\"max_events\":4,\"observation_only\":true,\"stage\":\"rx.channel_estimation.response\"},{\"max_events\":1,\"observation_only\":true,\"stage\":\"rx.bits.inverse\"}]}",
+                  "upstreamSession": "4",
+                  "upstreamGeneration": "0",
+                  "dark": true
+                }
+              }
+            ],
+            "restoredExecutionRun": "1",
+            "screenshot": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft/restore-canvas.png",
+            "captureTarget": "upstream-workbench",
+            "fullWindowCaptureMarker": true,
+            "installation": "Not requested or executed.",
+            "elapsedMs": 2501
+          }
+        ],
+        "actions": [],
+        "full_capture": {
+          "window": 14680071,
+          "pid": 703950,
+          "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/native-relative-draft/restore-main.png",
+          "sha256": "0ab11f25e17591cef379da57b0f6c397c40759df16cfcc10fce305ae207f7624",
+          "source": "Unaltered actual owned native Main pixels"
+        }
+      }
+    ]
+  },
+  "nested_project_parity": {
+    "executed": [
+      {
+        "name": "rust",
+        "command": [
+          "scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "bridge::workbench_file::project_consumer_tests::actual_gui_project_files_load_and_run_through_public_rust_for_native_python_parity",
+          "--",
+          "--ignored",
+          "--exact",
+          "--test-threads=1"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 111.07119487601449
+      },
+      {
+        "name": "native-python",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/native/installed/bin/python",
+          "-I",
+          "/home/dev01/Projects/merlin/apps/qt/tests/project_api_parity.py",
+          "--references",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/nested-parity/references",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/recovery-01/nested-parity/native-python",
+          "--native-sha256",
+          "d3a6638b50d8fde1dfae9ffdbdf6692a2498e8cee56d6ea520d78ceaa19be907"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 3.7448663109971676
+      }
+    ],
+    "inputs": {
+      "downstream-a.merlin.json": "a491e426763b5f737915c51d9c45e45eb3387cee41be349ac2ba8bdcff868678",
+      "upstream-a.merlin.json": "4be0c8bc3629f6d840d757c110d651fdf79c8c33f04b5d84aaabdb139104e954",
+      "downstream-open.merlin.json": "08825504b2ecbc7ce8ce5ca3615585f77787fe89180464a356bf63a6766b96ec"
+    }
+  },
+  "native_python": {
+    "exit_code": 0,
+    "native_sha256": "d3a6638b50d8fde1dfae9ffdbdf6692a2498e8cee56d6ea520d78ceaa19be907",
+    "passed": 3,
+    "cases": [
+      {
+        "case": "downstream-a.merlin.json",
+        "source_sha256": "2e54556cf8081b07c4c97105f6745b12f38cb27520c26ed89629523bf7dbb661",
+        "direction": "downstream",
+        "status": "complete"
+      },
+      {
+        "case": "downstream-open.merlin.json",
+        "source_sha256": "3a4234b6417d440e1f631e6d15244b8d053240fb7b49169c2acbd3f59f3c6e63",
+        "direction": "downstream",
+        "status": "complete"
+      },
+      {
+        "case": "upstream-a.merlin.json",
+        "source_sha256": "9dab79755eaa8407a28c3cbcd464b1bc41c31c17118c6176363185e393f286ef",
+        "status": "Completed",
+        "bits": 1976,
+        "bit_errors": 0,
+        "recovered": true
+      }
+    ],
+    "scope": "Qt adapter exports through installed native Rust; no external interoperability claim."
+  },
+  "scope": {
+    "full_qt": "642 existing/new cases passed together before final error/collision additions; final changed consumers separately pass 25 error-filter cases and all 7 recovery worker cases. These overlap; no full645-case run is claimed here. Final current complete crate remains QA-01.",
+    "qml": "177 affected shell/downstream/upstream records plus 10 updater records pass; not a claim of the full QML tree.",
+    "normal_save": "No Save acknowledgement or live destination mutation on private export. Absolute recovery copies preserve CLI-relative destinations across process cwd changes.",
+    "transport": "144 MiB per nested document; independent16 MiB serialized metadata; derived400 MiB combined limit. Retained capacity/entry/root contracts preserved; finite execution scratch is separate, not RSS accounting.",
+    "legacy": "Previous private DS schema1/2 explicitly migrates only if format key absent. Missing old normal path stays unset/dirty; new present-null format rejects.",
+    "failures": [
+      "Initial compile errors corrected before passing gates.",
+      "Full crate exposed changed downstream retention diagnostic; original mapping and assertion preserved.",
+      "Initial native loading-status assumption and upstream draft property were probe defects; failed receipts preserved, product guards retained."
+    ],
+    "not_required": [
+      "No wheel rebuild for this Qt-private transport/adoption unit: unchanged linked public Rust/binding/schema contracts exercised using the independently installed native artifact.",
+      "No repeated full core workspace/CLI/package suite here; final applicable regression is QA-01."
+    ],
+    "unexecuted": [
+      "Native Windows GUI/filesystem/UAC/MSI lifecycle.",
+      "Installed Linux polkit/DEB handoff/restart and hosted CI/publication."
+    ]
+  },
+  "isolated_agent_adoption": {
+    "worktree": "/home/dev01/Projects/merlin-worktrees/qt-recovery-codec",
+    "base": "81a0e78eefab96f17abec208937ffe5824e18f2a",
+    "frozen_sha256": {
+      "apps/qt/src/shared/update_recovery.rs": "d709926836f593989955a681dde84e9442e400fc26e78dfcc4eddf9d88340e84",
+      "apps/qt/src/shared/update_recovery_tests.rs": "baedeaadbec28a81ae1e42d70e2e3c1e0f8091893868bef0457abd27be872626",
+      "apps/qt/qml/validation/UpdateRecoveryProbe.qml": "a64e0daad5d7cff071d430cd5f380eab7ca1ead2db0b95ca65161857f30ace13"
+    },
+    "integration": "Root inspected/adapted files; final hashes above differ deliberately. Read-only QA found relative destination gap; worker/native cwd regression covers final fix. No duplicate worktree builds/commits."
+  },
+  "documentation_gates": [
+    {
+      "label": "recovery-accepted-matrix",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/api_operation_matrix.py",
+        "--exports",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/rust-exports.json",
+        "--native-exports",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/native/native-exports.json",
+        "--executed-record",
+        "docs/development/features/high-level-api/namespace-test-results.json",
+        "--executed-record",
+        "docs/development/features/pnm-measurement-inputs/decoder-test-results.json",
+        "--executed-record",
+        "docs/development/features/pnm-measurement-inputs/association-test-results.json",
+        "--executed-record",
+        "docs/development/features/high-level-api/operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/high-level-api/python-test-results.json",
+        "--executed-record",
+        "docs/development/features/high-level-api/python-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-estimate-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-soft-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-resource-metadata-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-downstream-metadata-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-input-metadata-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-archive-bound-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-output-bound-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-query-envelope-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-control-metadata-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/us-03-source-json-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/file-options-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/project-configuration-edits-operation-test-results.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.934521822986426
+    },
+    {
+      "label": "recovery-accepted-boundary",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/qt_api_boundary.py",
+        "--final"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.4402565060008783
+    },
+    {
+      "label": "recovery-accepted-feature-documents",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/feature_documentation.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 10.595968671987066
+    },
+    {
+      "label": "recovery-accepted-traceability",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/integration_traceability.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.259929919004207
+    },
+    {
+      "label": "recovery-accepted-task-history",
+      "command": [
+        "python3",
+        "-B",
+        "docs/development/local/unified-qt-workbench/audit_recovery_uiu_traceability.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.10448219798854552
+    },
+    {
+      "label": "recovery-accepted-versions",
+      "command": [
+        "python3",
+        "-B",
+        "tools/release/versions.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.03632251900853589
+    },
+    {
+      "label": "recovery-accepted-guide",
+      "command": [
+        "python3",
+        "-B",
+        "tools/python/update_integration_doc.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.03468873500241898
+    },
+    {
+      "label": "recovery-accepted-final-qt-format",
+      "command": [
+        "scripts/cargo-local.sh",
+        "fmt",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.7924252510129008
+    },
+    {
+      "label": "recovery-accepted-final-diff",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 2,
+      "elapsed_seconds": 0.03945654700510204,
+      "note": "Initial diff check caught an extra EOF blank line; removed and rerun separately before commit."
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.031776513991644606,
+      "stdout": ""
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "docs/development/local/unified-qt-workbench/audit_recovery_uiu_traceability.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.0916637470072601,
+      "stdout": "{\n  \"requirements\": 27,\n  \"tasks\": 21,\n  \"dependency_edges\": 31,\n  \"completed\": 20,\n  \"all_nonempty_bidirectional_requirements_and_architecture_links\": true,\n  \"all_previous_checklist_ids_lines_and_states_preserved\": true,\n  \"only_new_completion\": \"UIU-RECOVERY-01\"\n}\n"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/feature_documentation.py"
+      ],
+      "exit_code": 0,
+      "raw_record": "docs/development/local/unified-qt-workbench/recovery-01/recovery-final-links.json",
+      "scope": "Final renamed evidence record and links after preserving historical API-04 recovery-evidence.json unchanged."
+    }
+  ]
+}

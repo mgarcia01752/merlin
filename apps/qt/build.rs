@@ -86,6 +86,7 @@ fn main() {
                     "qml/shell/directions/DirectionRunControls.qml",
                     "qml/validation/SessionPresentationProbe.qml",
                     "qml/validation/ProjectFileProbe.qml",
+                    "qml/validation/UpdateRecoveryProbe.qml",
                     "qml/validation/DirectionShellProbe.qml",
                     "qml/validation/UpstreamConfigurationProbe.qml",
                     "qml/validation/UpstreamExecutionProbe.qml",

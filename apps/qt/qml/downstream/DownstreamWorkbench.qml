@@ -273,26 +273,23 @@ Item {
             Qt.callLater(wbConfig.openChecked);
         }
     }
-    function restoreUpdate() {
-        beginOpen(JSON.parse(fileBackend.restore_update()));
-    }
-    function saveUpdateRecovery() {
+    /** Existing Save packet shared by normal project and private recovery writers. */
+    function saveOptionsPacket() {
         const current = JSON.parse(runBackend.poll());
-        return JSON.parse(fileBackend.save_update_recovery(settingsBackend.current(), JSON.stringify(current.accepted_options || null), current.verified, theme.dark));
+        return JSON.stringify({settings:settingsBackend.current(),
+            receiver:JSON.stringify(current.accepted_options || null),
+            observations:JSON.stringify(current.accepted_observations || null),
+            verified:current.verified,dark:theme.dark,
+            runnable:current.receiver_status === "complete"});
+    }
+    function saveUpdateRecovery(upstream) {
+        return JSON.parse(fileBackend.save_update_recovery(upstream, saveOptionsPacket()));
     }
     function saveProject(saveAs, quiet) {
         if (runState.busy || loadingProject) {
             return false;
         }
-        const current = JSON.parse(runBackend.poll());
-        const result = JSON.parse(fileBackend.save(saveAs, JSON.stringify({
-            settings: settingsBackend.current(),
-            receiver: JSON.stringify(current.accepted_options || null),
-            observations: JSON.stringify(current.accepted_observations || null),
-            verified: current.verified,
-            dark: theme.dark,
-            runnable: current.receiver_status === "complete"
-        })));
+        const result = JSON.parse(fileBackend.save(saveAs, saveOptionsPacket()));
         if (result.error) {
             showFileMessage(result.error);
         } else if (result.saved) {

@@ -5649,3 +5649,96 @@ restore the test SpinBox binding after a simulated edit, capture the complete
 prompt and check original-path protection before New correctly releases it. Its source checks are preparation,
 not evidence of native rendering or interaction. Current executed scope belongs
 to [validation](validation.md#uiu-file-01-native-routing-and-dirty-transactions).
+
+
+## UIU-RECOVERY-01 dual-project restart transaction
+
+Scope: [REQ-UIU-23](../../../requirements.md#req-uiu-23), after accepted
+UIU-FILE-01. This closes the existing recovery task without changing normal Save
+or adding scientific APIs. Executed acceptance and remaining platform boundaries
+are recorded in [validation](validation.md#uiu-recovery-01-dual-project-restart-acceptance).
+
+| Owner and disposition | Existing contract / necessary change |
+| --- | --- |
+| Add `apps/qt/src/shared/update_recovery.rs` and tests | Separate private version-1 bundle; fixed downstream/upstream fields, exact project bytes encoded as base64, independent destinations/dirty flags, selected direction, theme and actual directional original-path records. Bound each project by the existing 144 MiB transport policy, metadata by a separate 16 MiB application ceiling, and derive the combined ceiling from two base64 project ceilings plus metadata. Strict decoding rejects unknown/duplicate fields and unsupported versions. |
+| Edit `apps/qt/src/shell/input_paths.rs`; add its recovery helper | Reuse the existing canonical path registry. Snapshot actual records; fully admit replacement records before publication. Do not infer paths from capture names. Preserve shared directional ownership and the original-input union. |
+| Edit `apps/qt/src/shell/application/project.rs` and `shell/mod.rs` | One guarded pair replacement checks both original snapshots, no active run, both readiness candidates, identity space and retained ownership before changing either direction. Restore dirty flags and selection without acknowledging Save. |
+| Edit `apps/qt/src/downstream/workbench/project_load.rs` | Reuse existing native editor/public-project preparation and admitted model transfers. Allow its final accepted-input transaction to commit the canonical pair; after that point only infallible owner attachment remains. Keep ordinary Open cleanup unchanged. |
+| Edit `apps/qt/src/upstream/session/source.rs` and `upstream/workbench/project.rs` | Share the admitted immutable source for worker serialization; reuse public project admission and `PreparedSession::from_project`. Adopt the prepared owner after canonical pair commit, preserving blank upstream state without fabricating configuration. |
+| Add `apps/qt/src/bridge/workbench_file/recovery.rs`; edit bridge registration | Bounded existing task/channel primitives carry one write/restore operation. Off-GUI serialization, I/O and preparation; exact guards checked again on completion. Typed synchronous QObject handoff only attaches fully prepared native owners. The private filename never becomes a normal destination. |
+| Edit `qml/Main.qml`, `qml/downstream/DownstreamWorkbench.qml`, `qml/shell/UpdateNotification.qml` and affected tests/probe | Wait for completed recovery before install; failure/staleness keeps the app running. Startup restores both projects before selecting the saved tab. Retain installed-only updater guards; no installation is authorized. |
+
+Reuse decisions: SHARE the existing downstream SaveOptions serialization choice,
+upstream project exporter, bounded task transport and sibling atomic writer;
+ADAPT native project adoption into a pair transaction. SEPARATE private bundle
+version/combined byte policy from public project schema and single-file limits.
+RETAIN partial downstream editor schemas and explicit blank upstream as valid
+native states. Runnable project documents still pass their existing public API
+admission; results, unapplied drafts and instrument datasets are not recovery
+configuration. Original input bytes/provenance stay inside their project owners.
+
+The codec is isolated agent work in `qt-recovery-codec`; root owns registration,
+coordination, canonical docs/checklist and acceptance commits. The audit agent is
+read-only. No agent builds a duplicate target tree.
+
+Acceptance covers independent paths/dirty flags and both selected tabs; runnable,
+partial and blank states; edited/measured exact originals/options/policies;
+malformed/truncated/duplicate/oversized bundles; stale or second-candidate failure
+preserving both owners and protection records; failed writes preserving the prior
+bundle; asynchronous install waiting and source-checkout no-install guards. Run
+actual native restart/save interactions and affected Rust/QML consumers. Existing
+Rust/Python saved-project parity applies to nested runnable documents; no wheel
+rebuild is required when their unchanged contract is exercised with the installed
+native artifact. Installed updater lifecycle and Windows GUI remain distinct,
+unexecuted platform gates unless actual evidence is obtained.
+
+
+The inspected previous updater producer wrote a single downstream schema-1/2
+editor at the same private filename. Recovery explicitly recognizes that legacy
+shape only when the new `format` key is absent. A present key, including null,
+always takes strict bundle decoding. Legacy restart restores its accepted
+settings/theme, a blank upstream tab and downstream selection; the missing
+normal destination remains unset and downstream is marked unsaved rather than
+inventing a successful normal Save. Original protections absent from that old
+format cannot be inferred from capture names. Current bundles retain the exact
+actual registry, with its original snapshot checked under the registry lock
+around the canonical pair commit.
+
+
+The final numeric review reuses `Theme.sessionPollIntervalMs` for both recovery
+completion consumers, independently of the updater's HTTP-status cadence.
+`platform/constants.rs` owns the shared Linux directory-creation mode and
+non-owner permission mask used by recovery and package staging; their independent
+octal test anchor remains literal. The existing bounded delivery frame covers
+the inline recovery product once, while independently allocated project/path
+children retain their own guards. No second inline-product charge is added.
+
+
+Malformed field names can enlarge parser diagnostics independently of valid
+metadata. Recovery bounds errors before worker retention and again at the Qt
+response boundary using the existing 4096-Unicode-scalar policy. Its shared owner
+is `shared/presentation/constants.rs` with formatting in
+`shared/worker_failure.rs`; the existing upstream wrapper delegates without
+changing its prefix semantics. A real worker with an oversized unknown field
+and an independent four-byte Unicode boundary test cover this case. Full Qt
+acceptance exposed a changed downstream retained-data rejection diagnostic; the
+original mapping and existing assertion are preserved in the final adoption
+wrapper. Failed candidate runs remain recorded separately from passing gates.
+
+
+Private-file identity checks resolve existing files or their existing parents
+before comparing normal destinations. Export rejects either direction pointing
+to the private target; restore rejects bundle metadata pointing to its own input.
+This preserves the normal project file and both current owners, including a
+symlink alias. A previous manual Open of a legacy private recovery file therefore
+requires Save As to a normal destination before a new update export. Conservative
+Windows case matching preserves the guard; native Windows filesystem behavior
+remains an unexecuted platform boundary.
+
+Recovery copies resolve normal destinations to absolute paths before native
+admission. Live relative CLI paths and ordinary Save remain unchanged. A real
+two-process GUI check exports from the project directory and restores from the
+repository directory, then runs the restored upstream project. The existing
+worker round trip also covers a relative destination without changing process
+cwd inside concurrent tests. Startup-update delay and update-status polling keep
+distinct named policies; only recovery completion shares session polling.

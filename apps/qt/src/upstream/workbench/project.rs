@@ -54,6 +54,64 @@ pub(crate) struct Opened {
 }
 
 impl Model {
+    /// Checks that private recovery can attach to this genuine idle target.
+    /// # Arguments
+    /// * `application` - Canonical host that admitted the recovery candidates.
+    /// # Returns
+    /// Unit for an idle same-host owner, independent of selected tab.
+    /// # Errors
+    /// Foreign model, active/pending work or unresolved file intent.
+    pub(crate) fn ensure_recovery_target(
+        &self,
+        application: &crate::shell::ApplicationSessions,
+    ) -> Result<(), String> {
+        if !application.budget().owns(&self._fixed_guard) {
+            return Err("Update recovery requires the same application host.".into());
+        }
+        self.ensure_project_intent_available()
+    }
+
+    /// Captures only an idle accepted source for the private recovery worker.
+    /// # Returns
+    /// Existing charged source alias, or None for a genuinely blank upstream tab.
+    /// # Errors
+    /// Pending work, unresolved file decision, stale controller or active execution.
+    pub(crate) fn recovery_source(&self) -> Result<Option<crate::upstream::ProjectSource>, String> {
+        self.ensure_project_intent_available()?;
+        match &self.controller {
+            Some(controller) if self.current() => controller.project_source().map(Some),
+            Some(_) => Err("The upstream project changed before recovery preparation.".into()),
+            None => Ok(None),
+        }
+    }
+
+    /// Attaches a completely prepared owner after the canonical recovery pair commit.
+    /// # Arguments
+    /// * `session` - Admitted public session, or None for a saved blank tab.
+    /// * `path` - Saved normal destination; never the private recovery filename.
+    /// * `key` - Genuine upstream key returned by the just-completed pair transaction.
+    /// # Returns
+    /// Unit after infallible native attachment; paths, dirty flags and selection
+    /// were already validated by the canonical transaction. No source path is cleared.
+    pub(crate) fn attach_recovery(
+        &mut self,
+        session: Option<PreparedSession>,
+        path: Option<ProjectPath>,
+        key: crate::shell::SessionKey,
+    ) {
+        self.controller = session.map(|session| {
+            UpstreamController::new(key, session)
+                .expect("Canonical pair recovery supplies the upstream key")
+        });
+        self.key = self.controller.as_ref().map(|_| key);
+        self.clear_project_views();
+        self.project = Files {
+            path,
+            status: Status::Opened,
+            intent: None,
+        };
+    }
+
     /// Stages a native direction-detected project before its target dirty decision.
     /// # Arguments
     /// * `candidate` - Complete same-host public scientific/path owner from Open.

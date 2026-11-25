@@ -176,6 +176,7 @@ impl<Sections: Borrow<BTreeMap<String, Value>> + Serialize> Project<Sections> {
     /// # Errors
     /// Rejects invalid configuration before writing; also reports serialization,
     /// file-size, filesystem or nonregular destination errors.
+    #[cfg(test)]
     pub(crate) fn write(
         &self,
         path: &Path,

@@ -401,6 +401,15 @@ Receiver Apply help also retains admitted error details. If those details cannot
 fit, the existing fixed limit message appears without generated help; accepted
 receiver settings and results remain available.
 
+Updater restart recovery is separate from File → Save. It preserves both projects,
+their independent destinations and unsaved-change flags, the active tab and theme.
+Installation waits for the private bundle to finish writing. See the
+[Ubuntu update flow](install/ubuntu-desktop.md) and
+[Windows update flow](install/windows.md) for retry paths and platform limits.
+Unapplied drafts and simulation results are excluded.
+
+![Upstream run after restoring both projects](../images/workbench/workbench-dual-project-recovery-dark.png)
+
 ## Help and chart details
 
 Hover or focus a known workbench

@@ -21,6 +21,7 @@ use merlin::{
     },
 };
 use source::retain_measured_source;
+pub(crate) use source::ProjectSource;
 use std::{
     io,
     mem::size_of,

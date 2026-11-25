@@ -61,9 +61,13 @@ rebooted; if installation needs a Windows restart, the result says so.
 
 A canceled administrator prompt or failed MSI reopens the previous application
 when it remains available, with the recovery workbench and an error message.
-Failures before handoff leave MERLIN open. Recovery contains accepted settings
-and inputs, not unsaved dialog drafts or simulation results. Updates are blocked
-while a simulation or WB load is active. Source/extracted copies cannot install.
+Failures before handoff leave MERLIN open. Installation waits until a private
+bundle of both accepted projects has finished writing. Restart restores their
+independent Save paths and unsaved-change flags, selected tab and theme, including
+blank upstream or incomplete downstream editor state. Unapplied drafts and
+simulation results are excluded. Normal Save still writes the active direction.
+A rejected bundle leaves current projects unchanged. Updates are blocked while
+a simulation or file operation is active. Source/extracted copies cannot install.
 
 Older versions whose Update opens the release page need one manual MSI upgrade
 to a version containing this updater. The new handoff's Windows UAC, cancellation,

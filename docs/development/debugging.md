@@ -67,6 +67,21 @@ A missing ready acknowledgement keeps the original process open. Native contract
 run with `scripts/windows/test-update.ps1` without downloading or installing.
 
 
+## Private update-recovery probe
+
+`--update-recovery-probe save --workbench /absolute/project.merlin.json
+--update-recovery-image /absolute/fresh/save.png` exercises the actual native
+upstream Open picker, accepted edits in both directions and private export.
+Run a separate process with `--update-recovery-probe restore --restore-update
+--update-recovery-image /absolute/fresh/restore.png` using the same isolated
+`XDG_STATE_HOME` and configuration directory. It verifies restored destinations,
+dirty flags, selected tab and theme, then executes the restored upstream project.
+Require successful `MERLIN_RECOVERY_PROBE` JSON records and fresh actual-window
+images for both processes. The fixed probe suppresses startup update lookup,
+does not install anything and loads no arbitrary QML. Use disposable project
+copies and ignored output paths; the original normal project bytes must remain
+unchanged. Windows native lifecycle verification remains separate.
+
 ## Session presentation admission probe
 
 For development validation, `--session-presentation-probe

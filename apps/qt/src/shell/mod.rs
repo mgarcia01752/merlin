@@ -10,11 +10,13 @@ mod dispatch;
 mod identity;
 mod input_paths;
 pub(crate) mod presentation;
+mod recovery;
 mod retention;
 mod transport;
 mod worker;
 
 pub use application::{ApplicationError, ApplicationSessions};
+pub(crate) use input_paths::InputPaths;
 
 pub use dispatch::{
     ActiveRun, DispatchError, DispatchGate, DispatchPhase, RunCancellation, RunLease,
