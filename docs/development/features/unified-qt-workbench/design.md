@@ -5592,3 +5592,60 @@ without discarding the stash after the prerequisite; keep FILE01 unchecked.
 The [edited-source prerequisite receipt](project-configuration-edits-evidence.json)
 and [exact operation cases](project-configuration-edits-operation-test-results.json)
 record independent backend/native acceptance before pending Qt consumption.
+
+#### UIU-FILE-01 native direction routing and dirty transactions
+
+The native file transaction uses the existing owners and transports. Downstream
+`project_load::Loader` detects the bounded source's public direction before
+preparing a target. Its typed upstream product moves synchronously between the
+registered `WorkbenchFile` and `UpstreamSession` QObjects on the GUI thread;
+QML receives only compiled direction/action tags, never project documents,
+source paths or native revision guards. `upstream/session/project_restore.rs`
+restores the actual public session, including accepted options, observation
+policy and complete measured-source inventory. No scientific API is added.
+
+`workbench_file/intent.rs` owns captured downstream New/Open decisions and
+asynchronous Save acknowledgement. `upstream/workbench/project.rs` owns the
+corresponding upstream path and intent. Save validates/serializes/writes through
+the existing bounded file worker or upstream preparation/controller slot. A
+successful write is followed by exact native acknowledgement before adopting
+its destination. Only that matching successful Save refreshes an already
+captured New/Open guard from dirty to clean; a later edit never inherits this
+permission. A dispatched atomic Save cannot be reported cancelled after its
+write may have committed. Chooser Cancel remains a no-op before dispatch.
+
+Accepted downstream input publication now admits its dirty revision inside the
+same transaction before swapping the input/document root. OCD editor Apply and
+the first enabling of verification similarly admit dirty state before mutation;
+project OCD attachment uses a separately validated restore operation and stays
+clean. Receiver options retain their existing atomic generation admission.
+These close concrete persistence failures when subsequent receiver admission
+rejects; they do not reopen accepted scientific/session tasks.
+
+The downstream envelope keeps schema-1/2 incomplete editor loading and partial
+schema-2 Save. Runnable native Save uses schema 3 and the actual accepted
+observation policy. A schema-3 public policy that the current native instruments
+cannot reproduce is explicitly rejected by native Open. At this stage those
+instruments require their exact default policy; absent and nondefault policies
+remain valid through public Rust/Python Project consumers. No default is silently
+substituted. `shared/project_file.rs::PROJECT_SCHEMA_VERSION` owns the compatible
+native envelope constant; the independent legacy editor version stays separate.
+
+`direction_shell/close.rs` captures both exact native snapshots. Save/Discard/
+Cancel proceeds downstream then upstream where needed, leaving simulation
+admission open until both decisions resolve and a final atomic recheck succeeds.
+Cancelling the second decision does not discard either accepted project. Actual
+successful Save is preserved, even if the other direction later cancels Close.
+`Main.qml` dispatches continuation using fresh native status, independent of
+optional retained display admission, and handles both queued and immediate Save
+completion. Restart/update bundling remains the next existing task.
+
+The isolated source helpers were reviewed before adoption: upstream restore,
+application project guards, downstream envelope and dirty dialog retain their
+MERLIN GPL headers. Root alone adopts/registers them, implements cross-owner
+routing and writes the integration commit. `ProjectFileProbe.qml` is a separately
+frozen isolated-agent handoff. Root adaptations dismiss actual file feedback,
+restore the test SpinBox binding after a simulated edit, capture the complete
+prompt and check original-path protection before New correctly releases it. Its source checks are preparation,
+not evidence of native rendering or interaction. Current executed scope belongs
+to [validation](validation.md#uiu-file-01-native-routing-and-dirty-transactions).

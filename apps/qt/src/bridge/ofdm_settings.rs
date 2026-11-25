@@ -40,6 +40,13 @@ pub mod bridge {
         /// Empty on success; a diagnostic on rejection, preserving previous state.
         #[qinvokable]
         fn apply(self: Pin<&mut OfdmSettings>, document: &QString) -> QString;
+        /// Restores already adopted native project settings without an editor revision.
+        /// # Arguments
+        /// * `document` - Bounded validated project transmission settings.
+        /// # Returns
+        /// Empty on success; validation failure preserves the current settings.
+        #[qinvokable]
+        fn restore(self: Pin<&mut OfdmSettings>, document: &QString) -> QString;
         /// Returns derived timing or an error as JSON without modifying state.
         /// # Arguments
         /// * `document` - Draft transmission settings document.
@@ -69,6 +76,21 @@ fn parse(document: &str) -> Result<TransmissionConfiguration, String> {
 impl OfdmSettingsRust {
     fn accept(&mut self, document: &str) -> Result<(), String> {
         self.accepted = parse(document)?.settings().clone();
+        Ok(())
+    }
+
+    fn apply_edit(
+        &mut self,
+        document: &str,
+        application: &crate::shell::ApplicationSessions,
+    ) -> Result<(), String> {
+        let candidate = parse(document)?.settings().clone();
+        if candidate != self.accepted {
+            application
+                .mark_project_dirty(crate::shell::Direction::Downstream)
+                .map_err(|error| format!("{error:?}"))?;
+            self.accepted = candidate;
+        }
         Ok(())
     }
 
@@ -116,10 +138,30 @@ impl bridge::OfdmSettings {
     /// # Returns
     /// Empty on success or a human-readable diagnostic.
     pub fn apply(mut self: core::pin::Pin<&mut Self>, document: &QString) -> QString {
-        match self.as_mut().rust_mut().accept(&document.to_string()) {
+        let application = crate::downstream::workbench::session::Context::default().application;
+        match self
+            .as_mut()
+            .rust_mut()
+            .apply_edit(&document.to_string(), &application)
+        {
             Ok(()) => QString::from(""),
             Err(error) => QString::from(error),
         }
+    }
+    /// Restores the native project's validated settings after atomic adoption.
+    /// # Arguments
+    /// * `document` - Existing bounded project transmission JSON.
+    /// # Returns
+    /// Empty after replacement, or validation error without mutation. Unlike an
+    /// editor Apply, this attachment does not dirty the newly adopted project.
+    pub fn restore(mut self: core::pin::Pin<&mut Self>, document: &QString) -> QString {
+        QString::from(
+            self.as_mut()
+                .rust_mut()
+                .accept(&document.to_string())
+                .err()
+                .unwrap_or_default(),
+        )
     }
     /// Adapts core timing results to presentation units without changing settings.
     /// # Arguments
@@ -169,6 +211,27 @@ mod tests {
         // A 50 kHz carrier grid at the downstream clock has 4096 FFT samples.
         assert_eq!(model.accepted.subcarrier_spacing.fft_samples(), 4096);
         assert_eq!(model.accepted.time_interleaver_depth, 32);
+    }
+
+    #[test]
+    fn ocd_edit_dirties_before_swap_and_rejected_host_preserves_settings() {
+        let host = crate::shell::ApplicationSessions::desktop().unwrap();
+        let mut model = OfdmSettingsRust::default();
+        let original = model.accepted.clone();
+        let mut draft = json!(original);
+        draft["subcarrier_spacing"] = json!("50000");
+        model.apply_edit(&draft.to_string(), &host).unwrap();
+        assert!(host.snapshot(crate::shell::Direction::Downstream).dirty);
+        assert_ne!(model.accepted, original);
+        let clean = host.snapshot(crate::shell::Direction::Downstream);
+        host.acknowledge_save(clean).unwrap();
+        model.apply_edit(&draft.to_string(), &host).unwrap();
+        assert!(!host.snapshot(crate::shell::Direction::Downstream).dirty);
+        model.accept(&json!(original).to_string()).unwrap();
+        assert!(!host.snapshot(crate::shell::Direction::Downstream).dirty);
+        host.shutdown();
+        assert!(model.apply_edit(&draft.to_string(), &host).is_err());
+        assert_eq!(model.accepted, original);
     }
 
     #[test]

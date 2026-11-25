@@ -7,6 +7,7 @@ mod capture;
 mod edit;
 mod grid;
 mod instrument;
+mod project;
 mod query;
 use super::captures::CaptureDisplay;
 use super::drafts::SharedDraft;
@@ -43,6 +44,16 @@ struct InputFormat {
 type ControllerSlot = Arc<Retained<Mutex<Option<UpstreamController>>>>;
 
 pub(super) enum Pending {
+    ProjectSaved {
+        expected: crate::shell::ProjectSnapshot,
+        receiver: DeliveryReceiver<Result<Retained<super::project::Written>, WorkerFailure>>,
+        owner: ControllerSlot,
+    },
+    ProjectOpened {
+        expected: crate::shell::ProjectSnapshot,
+        permission: crate::shell::ReplacePermission,
+        receiver: DeliveryReceiver<Result<Retained<super::project::Opened>, WorkerFailure>>,
+    },
     Instrument {
         expected: SessionKey,
         run: Option<crate::shell::RunToken>,
@@ -74,6 +85,18 @@ pub(super) enum Pending {
 }
 
 pub(super) enum Prepared {
+    ProjectSaved {
+        expected: crate::shell::ProjectSnapshot,
+        controller: UpstreamController,
+        candidate: Result<Retained<super::project::Written>, WorkerFailure>,
+        delivery: Option<RetentionReservation>,
+    },
+    ProjectOpened {
+        expected: crate::shell::ProjectSnapshot,
+        permission: crate::shell::ReplacePermission,
+        candidate: Result<Retained<super::project::Opened>, WorkerFailure>,
+        delivery: Option<RetentionReservation>,
+    },
     Instrument {
         expected: SessionKey,
         run: Option<crate::shell::RunToken>,
@@ -244,6 +267,26 @@ impl Pending {
     /// None while pending; original owner and an explicit error after disconnection.
     pub(super) fn poll(&self) -> Option<Prepared> {
         match self {
+            Self::ProjectSaved {
+                expected,
+                receiver,
+                owner,
+            } => receive(receiver).map(|(delivery, candidate)| Prepared::ProjectSaved {
+                expected: *expected,
+                controller: take_controller(owner),
+                candidate,
+                delivery,
+            }),
+            Self::ProjectOpened {
+                expected,
+                permission,
+                receiver,
+            } => receive(receiver).map(|(delivery, candidate)| Prepared::ProjectOpened {
+                expected: *expected,
+                permission: *permission,
+                candidate,
+                delivery,
+            }),
             Self::Instrument {
                 expected,
                 run,

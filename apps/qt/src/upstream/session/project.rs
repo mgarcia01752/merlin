@@ -8,7 +8,7 @@
 //! actual current options/policy and owns off-GUI execution, reservations and I/O.
 //! This module never reconstructs source documents or implements scientific logic.
 
-use crate::shared::project_file::MAX_PROJECT_BYTES;
+use crate::shared::project_file::{MAX_PROJECT_BYTES, PROJECT_SCHEMA_VERSION};
 use merlin::{
     common::{Project, ProjectDirection},
     upstream::{ExperimentOptions, ReceiverObservationPolicy, SoftObservationPolicyInfo},
@@ -16,8 +16,6 @@ use merlin::{
 use serde::Serialize;
 use std::io::{self, Write};
 
-/// Direction-tagged wire contract; `Project::from_bytes` validates this value.
-const PROJECT_SCHEMA_VERSION: u32 = 3;
 const PROJECT_LIMIT_MESSAGE: &str = "Upstream project exceeds the byte limit.";
 
 /// Borrowed exact accepted input, before any outer project escaping.

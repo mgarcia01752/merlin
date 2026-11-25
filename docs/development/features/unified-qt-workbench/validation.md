@@ -5281,3 +5281,65 @@ from Rust tests. Open/Save routing, captured-revision acknowledgement, both-tab
 dirty/close prompts and actual picker/menu interactions remain pending. Full
 workspace/native/Qt/QML/CLI/packaging regressions remain at their applicable task
 and final gates; no unexecuted suite is reported passed.
+
+## UIU-FILE-01 native routing and dirty transactions
+
+Native direction-aware file routing, independent destinations, background Save,
+captured dirty decisions and both-project Close are implemented. The [executed receipt](file-routing-evidence.json) closes FILE01 after native GUI,
+installed-consumer and complete relevant-feature acceptance. Recovery remains
+separate.
+
+Focused checks cover real-filesystem asynchronous Save, matching Save→New/Open
+guard refresh, chooser/intent cancellation, failed writes, source protection,
+newer revisions after writing and accepted-input edits without a generation
+change. Close checks preserve admission on first/second Cancel or stale edits,
+then verify atomic final shutdown/cancellation only after both decisions. Source
+review found fast completion and optional display-admission continuation hazards;
+Main now uses fresh native status and handles immediate Saved as well as queued
+Saving. An accepted-input dirty producer gap and separate OCD/verification dirty
+producers were corrected within this persistence task.
+
+The exact policy-admission tests distinguish publicly valid downstream policies
+from the native instruments' supported default policy, with no implicit
+replacement. Existing partial/legacy editor and original source/write evidence
+remain authoritative for their scoped cases. The native picker probe and actual
+GUI-exported project Rust/installed-Python gate are distinct from the ordinary
+fixtures; an unexecuted native gate is never inferred from source preparation.
+
+The actual native probe caught an initialization regression: untouched downstream
+view refresh advanced dirty state and blocked startup Open. The corrected path
+leaves an unconfigured owner untouched; actual accepted editor mutations still
+admit dirty revisions. Its focused native regression, Clippy and optimized build
+pass. The original failed startup attempt and screenshot remain in ignored raw
+evidence. A subsequent probe completed 23 file checkpoints before a test-only
+SpinBox assignment removed its existing QML binding; restoring that binding
+preserves the unchanged editor assertions. The final native run passes all 28
+checkpoints, twelve real OS pickers and both Close cancellation sequences, then
+executes a real upstream run to Completed after aborted Close. Actual native
+Replace confirmation is exercised against the protected source, whose bytes
+remain unchanged. The [current native image](../../../images/workbench/directional-file-dirty-dark.png)
+shows the real target prompt; the prior attempt's stale X11 frame is not visual
+acceptance evidence. The driver now raises the owned Main window before capture.
+
+Initial helper compilation (missing report trait import), test-only unused-import/
+comment Clippy failures and an interrupted optimized build remain recorded;
+none is reported passed. Complete Qt acceptance passes all 610 ordinary Rust cases, with the separate
+actual-GUI artifact gate explicitly executed (three projects, one Rust case).
+Six affected QML suites pass 177 records. Eight actual Qt exports, including the
+three GUI-written files, load/run through the isolated installed native wheel
+and match separately executed Rust reports. The wheel artifact hash and legacy
+Python alias are checked. The declared native WM_DELETE_WINDOW protocol then
+closes a loaded clean project successfully; the unsupported synthetic compositor
+shortcut attempt is retained separately. Final boundary, compatibility and
+traceability checks pass. No scientific kernel, facade export, dependency or
+binding contract changes in this task; full final workspace/CLI/packaging gates
+remain QA01. Windows/installed update lifecycles remain unexecuted.
+
+Final QML brace/binding formatting changes preserve behavior. The optimized
+executable is rebuilt and all 28 native checkpoints pass again. All three final
+GUI-written project files are byte-identical to the independently Rust/native-
+Python-validated files; their SHA-256 equality is recorded rather than rerunning
+unchanged numerical work. The full Qt Rust cases are unchanged. The frozen
+history script initially rejected any completion; the explicit FILE01-only
+transition audit confirms 19/21 accepted, 27 bidirectional requirements, 31
+unchanged dependency edges and all historical downstream states preserved.

@@ -23,6 +23,35 @@ pub mod bridge {
         #[qml_element]
         type UpstreamSession = super::UpstreamSessionRust;
 
+        /// Starts native upstream project Save or Save As without blocking on I/O.
+        /// # Arguments
+        /// * `save_as` - Select a new destination; first Save also uses the picker.
+        /// # Returns
+        /// Empty after dispatch/chooser Cancel; Poll supplies actual completion.
+        #[qinvokable]
+        fn save_project(self: Pin<&mut UpstreamSession>, save_as: bool) -> QString;
+
+        /// Captures native upstream New identity before a dirty-state decision.
+        /// # Returns
+        /// Empty after capture; Poll's project decision contains only its action tag.
+        #[qinvokable]
+        fn request_new_project(self: Pin<&mut UpstreamSession>) -> QString;
+
+        /// Selects a native upstream project before its target dirty decision.
+        /// # Returns
+        /// Empty after chooser Cancel/capture; no file is adopted until resolution.
+        #[qinvokable]
+        fn choose_open_project(self: Pin<&mut UpstreamSession>) -> QString;
+
+        /// Resolves the previously captured native upstream project intent.
+        /// # Arguments
+        /// * `discard`, `cancel` - Explicit prompt outcome; Cancel preserves all data.
+        /// # Returns
+        /// Empty after dispatch/adoption, or the original stale/dirty diagnostic.
+        #[qinvokable]
+        fn resolve_project(self: Pin<&mut UpstreamSession>, discard: bool, cancel: bool)
+            -> QString;
+
         /// Selects a real local upstream configuration using the OS-native picker.
         /// # Returns
         /// Empty on Cancel or queued preparation; the original error otherwise.
@@ -195,7 +224,7 @@ impl UpstreamSessionRust {
     /// Retries a rejected constructor without changing accepted readiness or data.
     /// # Returns
     /// Existing/admitted model or None while the same host remains at its limit.
-    fn ensure_model(&mut self) -> Option<&mut Model> {
+    pub(super) fn ensure_model(&mut self) -> Option<&mut Model> {
         if self.model.is_none() {
             self.model = Model::new(self.application.clone()).ok();
         }
@@ -225,6 +254,108 @@ impl UpstreamSessionRust {
 }
 
 impl bridge::UpstreamSession {
+    /// Queues one direction's real public project through its existing worker.
+    /// # Arguments
+    /// * `save_as` - Native destination selection, without changing the old path.
+    /// # Returns
+    /// Empty on queued work or chooser Cancel; actual errors otherwise. Successful
+    /// write and exact captured-revision acknowledgement are observed through Poll.
+    pub fn save_project(mut self: core::pin::Pin<&mut Self>, save_as: bool) -> QString {
+        let result = (|| {
+            let needs_path = {
+                let mut owner = self.as_mut().rust_mut();
+                let model = owner.ensure_model().ok_or(
+                    crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE,
+                )?;
+                if model.state()["project"]["can_save"] != true {
+                    return Err(
+                        "Apply a configuration and finish upstream work before saving.".into(),
+                    );
+                }
+                save_as || model.project_path().is_none()
+            };
+            let destination = if needs_path {
+                let Some(uri) =
+                    crate::platform::native_file_picker::save("Save MERLIN Upstream Workbench")?
+                else {
+                    return Ok(());
+                };
+                Some(
+                    cxx_qt_lib::QUrl::from(&QString::from(uri))
+                        .to_local_file()
+                        .map(|path| std::path::PathBuf::from(path.to_string()))
+                        .ok_or("Choose a local project destination.")?,
+                )
+            } else {
+                None
+            };
+            self.as_mut()
+                .rust_mut()
+                .ensure_model()
+                .ok_or(crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE)?
+                .save_project(destination)
+        })();
+        QString::from(result.err().unwrap_or_default())
+    }
+
+    /// Captures the native exact target without exposing revisions to QML.
+    /// # Returns
+    /// Empty after capture; accepted science/path remains untouched until resolution.
+    pub fn request_new_project(mut self: core::pin::Pin<&mut Self>) -> QString {
+        let mut owner = self.as_mut().rust_mut();
+        let result = owner
+            .ensure_model()
+            .ok_or(
+                crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE.to_owned(),
+            )
+            .and_then(Model::request_project_new);
+        QString::from(result.err().unwrap_or_default())
+    }
+
+    /// Selects a real local project without copying its document through QML.
+    /// # Returns
+    /// Empty after Cancel/captured native intent; resolution prepares public
+    /// scientific admission off the GUI, preserving old state on wrong direction.
+    pub fn choose_open_project(mut self: core::pin::Pin<&mut Self>) -> QString {
+        let result = (|| {
+            let Some(uri) =
+                crate::platform::native_file_picker::choose_workbench("Open MERLIN Workbench")?
+            else {
+                return Ok(());
+            };
+            let path = cxx_qt_lib::QUrl::from(&QString::from(uri))
+                .to_local_file()
+                .map(|path| std::path::PathBuf::from(path.to_string()))
+                .ok_or("Choose a local project path.")?;
+            self.as_mut()
+                .rust_mut()
+                .ensure_model()
+                .ok_or(crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE)?
+                .request_project_open(path)
+        })();
+        QString::from(result.err().unwrap_or_default())
+    }
+
+    /// Forwards a prompt outcome to its original native target.
+    /// # Arguments
+    /// * `discard`, `cancel` - Explicit decision; no destination/document is supplied.
+    /// # Returns
+    /// Empty after resolution, or the unchanged native stale/dirty diagnostic.
+    pub fn resolve_project(
+        mut self: core::pin::Pin<&mut Self>,
+        discard: bool,
+        cancel: bool,
+    ) -> QString {
+        let mut owner = self.as_mut().rust_mut();
+        let result = owner
+            .ensure_model()
+            .ok_or(
+                crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE.to_owned(),
+            )
+            .and_then(|model| model.resolve_project(discard, cancel));
+        QString::from(result.err().unwrap_or_default())
+    }
+
     /// Dispatches one finite public observation from a compiled instrument tag.
     /// # Arguments
     /// * `kind` - Existing destination, bounded before copying Qt text.

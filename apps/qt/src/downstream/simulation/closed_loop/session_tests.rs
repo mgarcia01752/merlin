@@ -402,3 +402,51 @@ fn rejected_initial_performance_admission_returns_the_lease_without_dispatch_or_
     drop(pressure);
     assert_eq!(budget.usage(), before);
 }
+
+#[test]
+fn verification_edit_is_dirty_and_idempotent_and_rejected_shutdown_keeps_flag() {
+    let context = Context::isolated();
+    let application = context.application.clone();
+    let mut model = Model::for_context(context).unwrap();
+    assert!(!model.verify);
+    model.enable_verification();
+    let dirty = application.snapshot(crate::shell::Direction::Downstream);
+    assert!(dirty.dirty && model.verify);
+    application.acknowledge_save(dirty).unwrap();
+    let clean = application.snapshot(crate::shell::Direction::Downstream);
+    model.enable_verification();
+    assert_eq!(
+        application.snapshot(crate::shell::Direction::Downstream),
+        clean
+    );
+    model.verify = false;
+    application.shutdown();
+    model.enable_verification();
+    assert!(!model.verify);
+    assert_eq!(
+        application.snapshot(crate::shell::Direction::Downstream),
+        clean
+    );
+}
+
+#[test]
+fn initial_unconfigured_refresh_keeps_both_blank_projects_clean_for_startup_open() {
+    let context = Context::isolated();
+    let application = context.application.clone();
+    let downstream = application.snapshot(crate::shell::Direction::Downstream);
+    let upstream = application.snapshot(crate::shell::Direction::Upstream);
+    let mut model = Model::for_context(context).unwrap();
+    let settings = serde_json::to_string(&TransmissionSettings::default()).unwrap();
+    model.configure(&settings);
+    model.configure(&settings);
+    assert_eq!(
+        application.snapshot(crate::shell::Direction::Downstream),
+        downstream
+    );
+    assert_eq!(
+        application.snapshot(crate::shell::Direction::Upstream),
+        upstream
+    );
+    assert!(model.generation.is_none() && model.request.is_none());
+    assert!(!downstream.dirty && !upstream.dirty);
+}

@@ -10,6 +10,7 @@ fn current_selected_actions_reject_hidden_foreign_and_stale_identity_without_mut
     let application = ApplicationSessions::desktop().unwrap();
     let owner = DirectionShellRust {
         application: application.clone(),
+        close: None,
     };
     let downstream = QString::from("downstream");
     let upstream = QString::from("upstream");
@@ -51,6 +52,7 @@ fn unknown_direction_and_empty_identity_leave_canonical_selection_and_owners_unc
     let application = ApplicationSessions::desktop().unwrap();
     let owner = DirectionShellRust {
         application: application.clone(),
+        close: None,
     };
     let downstream = application.snapshot(Direction::Downstream);
     let upstream = application.snapshot(Direction::Upstream);

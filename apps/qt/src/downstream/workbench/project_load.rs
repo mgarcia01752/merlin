@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Single-flight background Open; only completed owned state crosses threads.
+mod save;
 use super::{
     project_file::{Editors, Project, MAX_PROJECT_BYTES},
     session::{AcceptedState, Context, Snapshot},
@@ -24,6 +25,7 @@ use crate::{
         RetentionBudget,
     },
 };
+pub(crate) use save::{SaveOptions, SaveRequest};
 use serde_json::{json, Value};
 use std::{
     path::PathBuf,
@@ -81,6 +83,7 @@ pub(crate) struct PreparedProject {
     pub path: Option<ProjectPath>,
     accepted: AcceptedState,
     target: crate::shell::SessionKey,
+    project_guard: crate::shell::ProjectSnapshot,
     expected: Snapshot,
     models: PreparedModels,
     metadata: Box<Retained<Value>>,
@@ -161,6 +164,18 @@ impl PreparedProject {
         expected: Snapshot,
         kind: MetadataKind,
     ) -> Result<Self, String> {
+        Self::prepare_with_plan(project, path, application, target, expected, kind, None)
+    }
+
+    fn prepare_with_plan(
+        project: Project,
+        path: Option<ProjectPath>,
+        application: &crate::shell::ApplicationSessions,
+        target: crate::shell::SessionKey,
+        expected: Snapshot,
+        kind: MetadataKind,
+        public_plan: Option<merlin::downstream::FullLoopSweepPlan>,
+    ) -> Result<Self, String> {
         let budget = application.budget();
         if path.as_ref().is_some_and(|path| !budget.owns(path)) {
             return Err("Prepared project path belongs to another application host.".into());
@@ -185,7 +200,11 @@ impl PreparedProject {
             project.comparison_enabled,
             budget,
         )?;
-        receiver.prepare_inputs_for_budget(&settings, &inputs, &project.sections, budget)?;
+        if let Some(plan) = public_plan {
+            receiver.prepare_public_plan_for_budget(plan, budget)?;
+        } else {
+            receiver.prepare_inputs_for_budget(&settings, &inputs, &project.sections, budget)?;
+        }
         let mut transmitter = Analyzer::for_context(candidate_context).map_err(|_| {
             crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE.to_owned()
         })?;
@@ -221,6 +240,7 @@ impl PreparedProject {
             path,
             accepted,
             target,
+            project_guard: application.snapshot(crate::shell::Direction::Downstream),
             expected,
             models: PreparedModels {
                 source: Some(Box::new(source)),
@@ -243,7 +263,45 @@ impl PreparedProject {
     /// Rejects a stale generation or foreign host before any target state changes.
     /// Scientific roots and final readiness are checked before the owner swap;
     /// subsequent GUI attachment needs no new reservation or generation advance.
-    pub(crate) fn adopt(mut self, context: &Context) -> Result<AdoptedProject, String> {
+    pub(crate) fn adopt(self, context: &Context) -> Result<AdoptedProject, String> {
+        self.adopt_with_permission(context, crate::shell::ReplacePermission::DiscardConfirmed)
+    }
+
+    /// Borrows the native exact target captured before its dirty-state decision.
+    /// # Returns
+    /// Direction/key/revision guard, retained in Rust rather than passed through QML.
+    pub(crate) fn project_guard(&self) -> crate::shell::ProjectSnapshot {
+        self.project_guard
+    }
+
+    /// Refreshes only this intent's guard after its exact successful native Save.
+    /// # Arguments
+    /// * `saved`, `current` - Acknowledged pre-write and resulting clean snapshots.
+    /// # Returns
+    /// Unit; unrelated/newer intent guards are never changed or implicitly confirmed.
+    pub(crate) fn refresh_saved_guard(
+        &mut self,
+        saved: crate::shell::ProjectSnapshot,
+        current: crate::shell::ProjectSnapshot,
+    ) {
+        if self.project_guard == saved {
+            self.project_guard = current;
+        }
+    }
+
+    /// Adopts a completely prepared direction project after its exact dirty decision.
+    /// # Arguments
+    /// * `context` - Actual downstream owner and accepted-input store.
+    /// * `permission` - Explicit clean/discard authorization for the captured guard.
+    /// # Returns
+    /// New clean native identity and already-admitted editor/path metadata.
+    /// # Errors
+    /// Every stale/dirty/ownership/Busy/admission failure precedes target mutation.
+    pub(crate) fn adopt_with_permission(
+        mut self,
+        context: &Context,
+        permission: crate::shell::ReplacePermission,
+    ) -> Result<AdoptedProject, String> {
         if context
             .application
             .snapshot(crate::shell::Direction::Downstream)
@@ -299,7 +357,8 @@ impl PreparedProject {
             context,
             self.accepted,
             &self.expected,
-            self.target,
+            self.project_guard,
+            permission,
             ready,
         )?;
         // Detached models still hold isolated Contexts. Only the genuine key is
@@ -341,25 +400,50 @@ const LOADER_BUSY_MESSAGE: &str = "A workbench is already loading.";
 // One loader completion; independent of scientific progress callback capacity.
 const LOADER_COMPLETION_CAPACITY: usize = 1;
 
+enum LoadCandidate {
+    Downstream(Box<PreparedProject>),
+    Upstream(Box<Retained<crate::upstream::workbench::PreparedProject>>),
+    Saved(Box<Retained<save::Saved>>),
+}
+
 struct Job {
-    receiver: DeliveryReceiver<Result<Option<Box<PreparedProject>>, WorkerFailure>>,
+    receiver: DeliveryReceiver<Result<Option<LoadCandidate>, WorkerFailure>>,
     cancelled: Arc<Retained<AtomicBool>>,
     stage: Arc<Retained<AtomicU8>>,
     started: Instant,
     _fixed_guard: Retained<()>,
+    saving: bool,
 }
 
 /// One tracked worker, with nonblocking progress/completion and cancellation.
 #[derive(Default)]
 pub(crate) struct Loader {
     job: Option<Job>,
+    upstream: Option<Box<Retained<crate::upstream::workbench::PreparedProject>>>,
+    saved: Option<Box<Retained<save::Saved>>>,
 }
 impl Loader {
     /// Reports whether a load is still tracked, including cancellation.
     /// # Returns
     /// True until completion is drained; prevents conflicting file operations.
     pub(crate) fn is_loading(&self) -> bool {
-        self.job.is_some()
+        self.job.is_some() || self.upstream.is_some() || self.saved.is_some()
+    }
+
+    /// Transfers a direction-detected candidate directly to its native adapter.
+    /// # Returns
+    /// Original same-host scientific/path owner, without copying through QML.
+    pub(crate) fn take_upstream(
+        &mut self,
+    ) -> Option<Box<Retained<crate::upstream::workbench::PreparedProject>>> {
+        self.upstream.take()
+    }
+
+    /// Takes a completed write before exact native revision acknowledgement.
+    /// # Returns
+    /// Admitted destination/guard, without cleaning or changing either session.
+    pub(crate) fn take_saved(&mut self) -> Option<Box<Retained<save::Saved>>> {
+        self.saved.take()
     }
     /// Starts the native picker or recovery read on a background thread.
     /// # Arguments
@@ -418,7 +502,7 @@ impl Loader {
             .key;
         let expected = super::session::snapshot(context);
         let budget = application.budget().clone();
-        self.start_with(&budget, move |stage, cancelled| {
+        self.start_candidate(&budget, move |stage, cancelled| {
             use crate::platform::startup::AdmittedSource;
             use std::io::IsTerminal;
             let (mut reader, destination): (Box<dyn std::io::Read>, Option<ProjectPath>) =
@@ -471,25 +555,60 @@ impl Loader {
                 return Ok(None);
             };
             stage.store(2, Ordering::Relaxed);
-            let project = serde_json::from_slice(&bytes)
+            #[derive(serde::Deserialize)]
+            struct DirectionHeader {
+                direction: Option<merlin::common::ProjectDirection>,
+            }
+            let header: DirectionHeader = serde_json::from_slice(&bytes)
+                .map_err(|error| format!("Invalid workbench JSON: {error}"))?;
+            if header.direction == Some(merlin::common::ProjectDirection::Upstream) {
+                // Public admission verifies schema, direction and complete source;
+                // the header merely routes to that authority and never accepts it.
+                let public = merlin::common::Project::from_bytes(&bytes)
+                    .map_err(|error| error.to_string())?;
+                if cancelled.load(Ordering::Relaxed) {
+                    return Ok(None);
+                }
+                let reservation = application
+                    .budget()
+                    .reserve_resources(RetainedResources {
+                        payload_bytes: std::mem::size_of::<
+                            Retained<crate::upstream::workbench::PreparedProject>,
+                        >(),
+                        ..Default::default()
+                    })
+                    .map_err(|error| format!("{error:?}"))?;
+                let session =
+                    crate::upstream::PreparedSession::from_project(&public, application.budget())?;
+                let prepared = crate::upstream::workbench::PreparedProject {
+                    session,
+                    path: destination,
+                };
+                return Ok(Some(LoadCandidate::Upstream(Box::new(
+                    reservation.retain(prepared),
+                ))));
+            }
+            let decoded = super::project_envelope::decode(&bytes)
                 .map_err(|error| format!("Invalid workbench JSON: {error}"))?;
             drop(bytes);
             if cancelled.load(Ordering::Relaxed) {
                 return Ok(None);
             }
             stage.store(3, Ordering::Relaxed);
-            PreparedProject::prepare_guarded(
-                project,
+            PreparedProject::prepare_with_plan(
+                decoded.project,
                 destination,
                 &application,
                 target,
                 expected,
                 MetadataKind::Opened,
+                decoded.public_plan,
             )
-            .map(Some)
+            .map(|project| Some(LoadCandidate::Downstream(Box::new(project))))
         })
     }
 
+    #[cfg(test)]
     fn start_with(
         &mut self,
         budget: &RetentionBudget,
@@ -497,7 +616,21 @@ impl Loader {
             + Send
             + 'static,
     ) -> Value {
-        if self.job.is_some() {
+        self.start_candidate(budget, move |stage, cancelled| {
+            work(stage, cancelled).map(|candidate| {
+                candidate.map(|candidate| LoadCandidate::Downstream(Box::new(candidate)))
+            })
+        })
+    }
+
+    fn start_candidate(
+        &mut self,
+        budget: &RetentionBudget,
+        work: impl FnOnce(&AtomicU8, &AtomicBool) -> Result<Option<LoadCandidate>, String>
+            + Send
+            + 'static,
+    ) -> Value {
+        if self.is_loading() {
             return json!({"error": LOADER_BUSY_MESSAGE});
         }
         let prepare = || {
@@ -514,15 +647,13 @@ impl Loader {
             let progress = stage.clone();
             let worker_budget = budget.clone();
             let task = admit_task(budget, move || {
-                let result = work(progress.value(), stop.value())
-                    .map(|project| project.map(Box::new))
-                    .map_err(|message| {
-                        WorkerFailure::admit_with_fallback(
-                            message.into(),
-                            &worker_budget,
-                            WORKER_FAILURE_ADMISSION_MESSAGE,
-                        )
-                    });
+                let result = work(progress.value(), stop.value()).map_err(|message| {
+                    WorkerFailure::admit_with_fallback(
+                        message.into(),
+                        &worker_budget,
+                        WORKER_FAILURE_ADMISSION_MESSAGE,
+                    )
+                });
                 let _ = delivery.send(result);
             })?;
             Ok::<_, crate::shell::RetentionError>((receiver, cancelled, stage, fixed, task))
@@ -543,6 +674,7 @@ impl Loader {
                     stage,
                     started: Instant::now(),
                     _fixed_guard: fixed.retain(()),
+                    saving: false,
                 });
                 self.status()
             }
@@ -555,6 +687,9 @@ impl Loader {
     /// No result; one-worker guard remains until completion is drained.
     pub(crate) fn cancel(&self) {
         if let Some(job) = &self.job {
+            if job.saving {
+                return;
+            }
             job.cancelled.value().store(true, Ordering::Relaxed);
         }
     }
@@ -594,12 +729,20 @@ impl Loader {
             return (json!({"cancelled":true}), None);
         }
         match message {
-            Ok(Some(prepared)) => {
+            Ok(Some(LoadCandidate::Downstream(prepared))) => {
                 log::debug!(
                     "workbench_open_completed elapsed_ms={}",
                     job.started.elapsed().as_millis()
                 );
                 (json!({"loading":false}), Some(*prepared))
+            }
+            Ok(Some(LoadCandidate::Upstream(prepared))) => {
+                self.upstream = Some(prepared);
+                (json!({"loading":false,"upstream_detected":true}), None)
+            }
+            Ok(Some(LoadCandidate::Saved(saved))) => {
+                self.saved = Some(saved);
+                (json!({"loading":false,"write_completed":true}), None)
             }
             Ok(None) => (json!({"cancelled":true}), None),
             Err(error) => {
@@ -616,7 +759,9 @@ impl Loader {
         let Some(job) = &self.job else {
             return json!({"loading":false});
         };
-        let phase = if job.cancelled.value().load(Ordering::Relaxed) {
+        let phase = if job.saving {
+            "Saving workbench"
+        } else if job.cancelled.value().load(Ordering::Relaxed) {
             "Cancelling"
         } else {
             match job.stage.value().load(Ordering::Relaxed) {
@@ -626,7 +771,7 @@ impl Loader {
                 _ => "Validating captures and preparing workbench",
             }
         };
-        json!({"loading":true,"phase":phase,"elapsed_ms":job.started.elapsed().as_millis() as u64,"debug_ui":crate::platform::startup::debug_ui(),"cancelling":job.cancelled.value().load(Ordering::Relaxed)})
+        json!({"loading":true,"saving":job.saving,"phase":phase,"elapsed_ms":job.started.elapsed().as_millis() as u64,"debug_ui":crate::platform::startup::debug_ui(),"cancelling":job.cancelled.value().load(Ordering::Relaxed)})
     }
 }
 impl Drop for Loader {

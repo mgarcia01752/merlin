@@ -201,7 +201,16 @@ pub(super) fn update(
         candidate.sections,
         context.application.budget(),
     )?;
+
+    // Dirty admission belongs to this accepted-input transaction, even when a
+    // later receiver reconfiguration rejects. Project preparation uses admit
+    // directly and therefore never dirties the live target before adoption.
+    context
+        .application
+        .mark_project_dirty(crate::shell::Direction::Downstream)
+        .map_err(|error| format!("{error:?}"))?;
     *current = Some(admitted);
+
     // A successful edit invalidates unconsumed project models from the previous
     // accepted owner. Rejected candidates leave those transfers untouched.
     *context.prepared.borrow_mut() = Default::default();

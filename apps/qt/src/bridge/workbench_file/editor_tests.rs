@@ -56,6 +56,7 @@ pub(super) fn populated() -> WorkbenchFileRust {
         context,
         path: Some(path),
         loader: Default::default(),
+        intent: None,
     }
 }
 

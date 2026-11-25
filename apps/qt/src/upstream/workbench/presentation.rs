@@ -43,6 +43,6 @@ impl Model {
             "has_result":self.report.is_some(),"result":result,"error":self.error.message(),
             "draft":self.draft_state(),"configuration_view":configuration,"execution_view":execution,
             "capture_view":self.capture_state(),"resource_grid_view":self.grid_state(),
-            "instrument_view":self.instrument_state()})
+            "instrument_view":self.instrument_state(),"project":self.project_state()})
     }
 }

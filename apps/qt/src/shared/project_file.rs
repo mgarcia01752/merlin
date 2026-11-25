@@ -14,6 +14,10 @@ use std::{fs, io::Write, path::Path};
 /// This bounds serialized project output, independently of scientific validation.
 pub(crate) const MAX_PROJECT_BYTES: usize = 144 * 1024 * 1024;
 
+/// Direction-tagged project wire schema, admitted by `merlin::common::Project`.
+/// Legacy partial downstream editors retain their separately owned schema 1/2.
+pub(crate) const PROJECT_SCHEMA_VERSION: u32 = 3;
+
 /// Writes already-validated project bytes through an exclusive sibling file.
 ///
 /// The caller must first validate the complete scientific project and reject

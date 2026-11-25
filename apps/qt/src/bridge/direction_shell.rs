@@ -6,6 +6,7 @@
 use crate::shell::{presentation, ApplicationSessions, Direction};
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
+mod close;
 
 #[cxx_qt::bridge]
 pub mod bridge {
@@ -17,6 +18,24 @@ pub mod bridge {
         #[qobject]
         #[qml_element]
         type DirectionShell = super::DirectionShellRust;
+
+        /// Captures both native projects before any close-time dirty decision.
+        /// # Returns
+        /// Next compiled direction tag or ready metadata; no cancellation occurs.
+        #[qinvokable]
+        fn begin_close(self: Pin<&mut DirectionShell>) -> QString;
+        /// Resolves one exact native close target, preserving the live host on Cancel.
+        /// # Arguments
+        /// * `discard`, `cancel` - Explicit current prompt outcome.
+        /// # Returns
+        /// Next direction, ready, cancellation or original stale/dirty error.
+        #[qinvokable]
+        fn close_decision(self: Pin<&mut DirectionShell>, discard: bool, cancel: bool) -> QString;
+        /// Rechecks both guards before irreversible admission shutdown.
+        /// # Returns
+        /// Ready only after both decisions still match; failures keep the app live.
+        #[qinvokable]
+        fn finish_close(self: Pin<&mut DirectionShell>) -> QString;
 
         /// Reads bounded canonical metadata for both persistent direction views.
         /// # Returns
@@ -46,6 +65,7 @@ pub mod bridge {
 /// Existing host handles only; no additional scientific owner or payload allocation.
 pub struct DirectionShellRust {
     application: ApplicationSessions,
+    close: Option<Box<crate::shell::Retained<close::Intent>>>,
 }
 
 impl Default for DirectionShellRust {
@@ -55,6 +75,7 @@ impl Default for DirectionShellRust {
     fn default() -> Self {
         Self {
             application: crate::downstream::workbench::session::Context::default().application,
+            close: None,
         }
     }
 }
@@ -81,6 +102,47 @@ impl DirectionShellRust {
 }
 
 impl bridge::DirectionShell {
+    /// Captures both native guards before any dirty prompt or worker cancellation.
+    /// # Returns
+    /// Bounded direction/ready metadata; scientific data and revisions stay in Rust.
+    pub fn begin_close(mut self: core::pin::Pin<&mut Self>) -> QString {
+        let result = self.as_mut().rust_mut().begin_close();
+        QString::from(
+            result
+                .unwrap_or_else(|error| serde_json::json!({"error":error}))
+                .to_string(),
+        )
+    }
+
+    /// Resolves the native current direction after the actual dialog closes.
+    /// # Arguments
+    /// * `discard`, `cancel` - Explicit decision, without any caller-provided guard.
+    /// # Returns
+    /// Next direction/ready metadata or original error; Cancel leaves admission open.
+    pub fn close_decision(
+        mut self: core::pin::Pin<&mut Self>,
+        discard: bool,
+        cancel: bool,
+    ) -> QString {
+        let result = self.as_mut().rust_mut().close_decision(discard, cancel);
+        QString::from(
+            result
+                .unwrap_or_else(|error| serde_json::json!({"error":error}))
+                .to_string(),
+        )
+    }
+
+    /// Rechecks both exact native decisions before closing shared execution admission.
+    /// # Returns
+    /// Ready only after successful atomic shutdown; errors leave the window open.
+    pub fn finish_close(mut self: core::pin::Pin<&mut Self>) -> QString {
+        let result = self.as_mut().rust_mut().finish_close();
+        QString::from(
+            result
+                .unwrap_or_else(|error| serde_json::json!({"error":error}))
+                .to_string(),
+        )
+    }
     /// Projects existing application metadata through the accepted scalar owner.
     /// # Returns
     /// Bounded JSON for admission by the shell's persistent presentation owner.

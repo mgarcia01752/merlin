@@ -298,7 +298,7 @@ impl bridge::ClosedLoop {
     /// Accepts independent source comparison without generating data.
     pub fn verify(mut self: core::pin::Pin<&mut Self>) {
         if let Some(model) = self.as_mut().rust_mut().ensure_model() {
-            model.verify = true;
+            model.enable_verification();
         }
     }
     /// Starts at most one bounded Rust worker.

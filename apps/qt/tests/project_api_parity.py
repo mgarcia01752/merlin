@@ -40,6 +40,17 @@ def main():
         wire = json.loads(record['project'])
         expected = record['reference']
         project = common.Project.from_bytes(record['project'].encode())
+        if project.direction == 'downstream':
+            assert wire['direction'] == 'downstream'
+            request = project.downstream_plan().request(0)
+            del project
+            actual = request.run().report()
+            for key in ['status', 'summary', 'error', 'unrecovered_generated_payloads']:
+                assert actual.get(key) == expected[key], (source.name, key)
+            (args.output / source.name).write_text(json.dumps(actual) + '\n')
+            cases.append({'case': source.name, 'source_sha256': hashlib.sha256(source.read_bytes()).hexdigest(),
+                          'direction': 'downstream', 'status': actual['status']})
+            continue
         assert project.direction == 'upstream'
         session = project.upstream_simulation()
         saved_policy = wire['contents']['receiver_observations']

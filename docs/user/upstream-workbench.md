@@ -28,6 +28,24 @@ plan before accepting it. Captured settings are read-only in the scalar editors;
 edit the complete plan and reload it to change those settings. Loading a synthetic
 configuration explicitly restores its applicable editors.
 
+## Save, reopen and close
+
+Use **File → Save** or **Save As** while the Upstream tab is selected. The first
+Save asks for a native destination; later Save uses that upstream destination.
+Downstream keeps its separate file. The saved project includes accepted current
+configuration, runtime options, receiver observations and complete measured-plan
+inputs, with original source bytes and provenance preserved. Drafts and previous
+run results are not saved. A blank New upstream project needs a configuration
+before Save becomes available.
+
+**File → Open** detects the saved direction before asking about unsaved changes
+to that project. Save, Discard and Cancel apply to the target, independent of the
+selected tab. Opening a valid upstream project selects Upstream after adoption;
+failed or cancelled operations preserve both accepted projects and destinations.
+Closing resolves both projects' unsaved changes before shutting down; cancelling
+the second prompt leaves the first project available too. See the shared
+[file guide](workbench.md#workbench-configuration-files).
+
 ## Inspect original captures
 
 Open **UCD / OFDMA Configuration**, **RxMER** or **CM Pre-Eq**, then **View Capture**.

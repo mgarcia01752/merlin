@@ -9,6 +9,7 @@ MenuBar {
     id: bar
     required property var theme
     property bool fileActionsEnabled: true
+    property bool saveActionsEnabled: fileActionsEnabled
     signal newRequested()
     signal openRequested()
     signal saveRequested(bool saveAs)
@@ -31,10 +32,10 @@ MenuBar {
         }
         MenuItem {
             objectName: "saveWorkbenchConfig"
-            action: Action { text: "Save"; shortcut: StandardKey.Save; enabled: bar.fileActionsEnabled; onTriggered: bar.saveRequested(false) }
+            action: Action { text: "Save"; shortcut: StandardKey.Save; enabled: bar.saveActionsEnabled; onTriggered: bar.saveRequested(false) }
             Accessible.description: "Save accepted block settings and original inputs in workbench JSON."
         }
-        MenuItem { objectName: "saveWorkbenchAs"; action: Action { text: "Save As"; shortcut: StandardKey.SaveAs; enabled: bar.fileActionsEnabled; onTriggered: bar.saveRequested(true) }
+        MenuItem { objectName: "saveWorkbenchAs"; action: Action { text: "Save As"; shortcut: StandardKey.SaveAs; enabled: bar.saveActionsEnabled; onTriggered: bar.saveRequested(true) }
             Accessible.description: "Save accepted block settings and original inputs in workbench JSON." }
     }
     Menu {

@@ -309,6 +309,20 @@ See [supported profile files and limits](measurement-inputs/modulation-profile.m
 ## Workbench configuration files
 
 Use **File → Open**, **Save** or **Save As** for self-contained JSON workbenches.
+Save and Save As write the active direction's accepted project. Each direction
+keeps its own destination and unsaved state; normal Save does not combine both
+projects. New clears only the selected direction. A blank upstream project must
+be configured before it can be saved.
+
+Open detects the file's direction and asks about that target's unsaved changes,
+even when the other tab is selected. Save/Discard/Cancel preserves the unrelated
+project. A successful Open selects its direction; cancellation or failure keeps
+the current tab and accepted data. Closing asks about both dirty projects before
+shutting down. Save runs in the background; wait for an atomic write already in
+progress to finish before closing.
+
+![Native Save/Discard/Cancel prompt for the actual target project](../images/workbench/directional-file-dirty-dark.png)
+
 The main Open chooser filters to **MERLIN Workbenches (*.merlin.json)**,
 so example PNM files and metadata are hidden while folders stay navigable.
 Individual input-block pickers keep their own selection behavior.

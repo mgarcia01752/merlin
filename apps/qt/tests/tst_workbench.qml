@@ -37,6 +37,7 @@ Pane {
         function defaults() { return accepted }
         function describe(document) { return JSON.stringify({summary: "Timing configuration"}) }
         function apply(document) { accepted = document; return "" }
+        function restore(document) { accepted = document; return "" }
     }
     QtObject {
         id: profileBackend
@@ -270,7 +271,7 @@ Pane {
         function cancel_open() { openResponse={cancelled:true} }
         property var saveResponse: ({cancelled:true})
         property var lastSavedReceiver:null
-        function save(saveAs,settings,receiver,verified,dark) {lastSavedReceiver=JSON.parse(receiver);return JSON.stringify(saveResponse)}
+        function save(saveAs,options) {const packet=JSON.parse(options);lastSavedReceiver=JSON.parse(packet.receiver);return JSON.stringify(saveResponse)}
     }
     WorkbenchMenuBar {
         id: appMenu

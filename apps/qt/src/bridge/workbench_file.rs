@@ -4,11 +4,16 @@
  */
 //! Native project Open/Save coordinator with validation before adoption.
 use crate::downstream::{
-    common::constants::{MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES, WORKBENCH_FILE_SUFFIX},
+    common::constants::{
+        MAX_OBSERVATION_OPTIONS_DOCUMENT_BYTES, MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES,
+        MAX_SAVE_OPTIONS_PACKET_BYTES,
+    },
     workbench::{project_file::Project, session as workbench_session},
 };
+#[cfg(test)]
+use crate::shared::project_path::{append_destination_suffix, WORKBENCH_FILE_SUFFIX};
 use crate::{
-    shared::project_path::{self, ProjectPath},
+    shared::project_path::{self, normalize_destination, ProjectPath},
     shell::Retained,
 };
 use cxx_qt::CxxQtType;
@@ -16,11 +21,14 @@ use cxx_qt_lib::{QString, QUrl};
 use merlin::downstream::MAX_TRANSMISSION_DOCUMENT_BYTES;
 use serde_json::json;
 use std::path::PathBuf;
+mod intent;
 #[cxx_qt::bridge]
 pub mod bridge {
     unsafe extern "C++" {
         include!("cxx-qt-lib/qstring.h");
         type QString = cxx_qt_lib::QString;
+        include!("merlin-qt/src/bridge/upstream_session.cxxqt.h");
+        type UpstreamSession = crate::bridge::upstream_session::bridge::UpstreamSession;
     }
     extern "RustQt" {
         #[qobject]
@@ -31,6 +39,23 @@ pub mod bridge {
         /// Reload metadata with default settings and no configured run or inputs.
         #[qinvokable]
         fn new_workbench(self: Pin<&mut WorkbenchFile>) -> QString;
+        /// Captures the actual downstream New target before its dirty decision.
+        /// # Returns
+        /// Native action/dirty metadata; accepted state stays untouched.
+        #[qinvokable]
+        fn request_new_project(self: Pin<&mut WorkbenchFile>) -> QString;
+        /// Reads only the pending downstream file action's bounded prompt metadata.
+        /// # Returns
+        /// Native action/dirty tags, without paths, source documents or revisions.
+        #[qinvokable]
+        fn file_decision(self: &WorkbenchFile) -> QString;
+        /// Resolves the previously captured downstream file action.
+        /// # Arguments
+        /// * `discard`, `cancel` - Explicit dirty-dialog outcomes for this target.
+        /// # Returns
+        /// Existing adopted editor metadata or error/cancellation, preserving failure state.
+        #[qinvokable]
+        fn resolve_project(self: Pin<&mut WorkbenchFile>, discard: bool, cancel: bool) -> QString;
         /// Starts background project selection, validation and preparation.
         /// # Returns
         /// Loading status or diagnostic; poll_open alone adopts completion.
@@ -41,6 +66,19 @@ pub mod bridge {
         /// Bounded metadata; this never waits for a worker.
         #[qinvokable]
         fn poll_open(self: Pin<&mut WorkbenchFile>) -> QString;
+        /// Moves a direction-detected project to its actual native upstream owner.
+        /// # Arguments
+        /// * `target` - Live GUI-thread upstream QObject; no document passes QML.
+        /// # Returns
+        /// Empty after staging its exact target dirty decision; original error otherwise.
+        /// # Safety
+        /// Qt supplies a live pointer of the declared registered QObject type,
+        /// exclusively borrowed for this synchronous GUI-thread invocation.
+        #[qinvokable]
+        unsafe fn handoff_upstream(
+            self: Pin<&mut WorkbenchFile>,
+            target: *mut UpstreamSession,
+        ) -> QString;
         /// Requests cooperative cancellation while preserving the current WB.
         #[qinvokable]
         fn cancel_open(self: &WorkbenchFile);
@@ -71,21 +109,12 @@ pub mod bridge {
         /// Saves accepted block state and embedded original input bytes atomically.
         /// # Arguments
         /// * `save_as` - True selects a new destination; first Save also prompts.
-        /// * `settings` - Current bounded OCD JSON.
-        /// * `receiver` - Accepted receiver options, null if unconfigured.
-        /// * `verified` - Independent source-comparison acceptance.
-        /// * `dark` - Global appearance choice.
+        /// * `options` - Bounded accepted OCD/receiver/observation settings packet,
+        ///   comparison/appearance choices and native runnable readiness.
         /// # Returns
         /// Project path metadata or a diagnostic; no source file is overwritten.
         #[qinvokable]
-        fn save(
-            self: Pin<&mut WorkbenchFile>,
-            save_as: bool,
-            settings: &QString,
-            receiver: &QString,
-            verified: bool,
-            dark: bool,
-        ) -> QString;
+        fn save(self: Pin<&mut WorkbenchFile>, save_as: bool, options: &QString) -> QString;
     }
 }
 /// Current explicit workbench destination; project contents stay in Rust-owned sessions.
@@ -94,11 +123,12 @@ pub struct WorkbenchFileRust {
     pub(super) context: crate::downstream::workbench::session::Context,
     path: Option<ProjectPath>,
     loader: crate::downstream::workbench::project_load::Loader,
+    intent: Option<Box<Retained<std::cell::RefCell<intent::Intent>>>>,
 }
 
 impl WorkbenchFileRust {
     fn create_blank(&mut self) -> Result<Box<Retained<serde_json::Value>>, String> {
-        if self.loader.is_loading() {
+        if self.loader.is_loading() || self.intent.is_some() {
             return Err("Wait for workbench loading to finish.".into());
         }
         let candidate =
@@ -108,6 +138,7 @@ impl WorkbenchFileRust {
         Ok(adopted.metadata)
     }
 
+    #[cfg(test)]
     fn save_to(
         &mut self,
         destination: Option<PathBuf>,
@@ -117,6 +148,10 @@ impl WorkbenchFileRust {
         dark: bool,
     ) -> Result<serde_json::Value, String> {
         validate_project_options(settings, receiver)?;
+        let expected = self
+            .context
+            .application
+            .snapshot(crate::shell::Direction::Downstream);
         let candidate = match destination {
             Some(destination) => Some(project_path::admit(
                 normalize_destination(destination)?,
@@ -152,32 +187,16 @@ impl WorkbenchFileRust {
             dark,
         };
         project.write(target.value(), &self.context.application)?;
+        self.context
+            .application
+            .acknowledge_save(expected)
+            .map_err(|error| format!("{error:?}"))?;
         let result = json!({"saved":true,"path":target.value().to_string_lossy()});
         if let Some(candidate) = candidate {
             self.path = Some(candidate);
         }
         Ok(result)
     }
-}
-
-fn normalize_destination(mut destination: PathBuf) -> Result<PathBuf, String> {
-    if !destination
-        .to_string_lossy()
-        .ends_with(WORKBENCH_FILE_SUFFIX)
-    {
-        destination = append_destination_suffix(&destination)?;
-    }
-    Ok(destination)
-}
-
-fn append_destination_suffix(destination: &std::path::Path) -> Result<PathBuf, String> {
-    let destination = PathBuf::from(format!("{}{WORKBENCH_FILE_SUFFIX}", destination.display()));
-    if destination.exists() {
-        return Err(
-            "Choose the full .merlin.json filename to confirm replacement of that project.".into(),
-        );
-    }
-    Ok(destination)
 }
 
 fn validate_project_options(settings: &str, receiver: &str) -> Result<(), String> {
@@ -195,6 +214,9 @@ mod editor_tests;
 #[cfg(test)]
 #[path = "workbench_file/path_tests.rs"]
 mod path_tests;
+#[cfg(test)]
+#[path = "workbench_file/project_consumer_tests.rs"]
+mod project_consumer_tests;
 fn path(url: &str) -> Result<PathBuf, String> {
     QUrl::from(&QString::from(url))
         .to_local_file()
@@ -243,6 +265,77 @@ fn recovery_path() -> Result<PathBuf, String> {
 }
 
 impl bridge::WorkbenchFile {
+    /// Captures an exact New target without replacing accepted editor state.
+    /// # Returns
+    /// Bounded dirty-decision metadata or original native admission error.
+    pub fn request_new_project(mut self: core::pin::Pin<&mut Self>) -> QString {
+        let result = self.as_mut().rust_mut().request_new();
+        QString::from(
+            result
+                .unwrap_or_else(|error| json!({"error":error}))
+                .to_string(),
+        )
+    }
+
+    /// Reads the currently captured native prompt without copying a guard.
+    /// # Returns
+    /// Action/dirty metadata; no path, scientific document or revision crosses QML.
+    pub fn file_decision(&self) -> QString {
+        QString::from(self.rust().decision().to_string())
+    }
+
+    /// Resolves the actual native target captured before the prompt.
+    /// # Arguments
+    /// * `discard`, `cancel` - Explicit outcome for the captured revision only.
+    /// # Returns
+    /// Adopted editor metadata or bounded error/cancellation state.
+    pub fn resolve_project(
+        mut self: core::pin::Pin<&mut Self>,
+        discard: bool,
+        cancel: bool,
+    ) -> QString {
+        let result = self.as_mut().rust_mut().resolve_intent(discard, cancel);
+        QString::from(
+            result
+                .unwrap_or_else(|error| json!({"error":error}))
+                .to_string(),
+        )
+    }
+    /// Transfers one complete prepared owner between the existing Qt adapters.
+    /// # Arguments
+    /// * `target` - Declared registered upstream QObject supplied by the main shell.
+    /// # Returns
+    /// Empty after same-host staging; null, missing or stale/busy admission rejects
+    /// without replacing either accepted direction. No scientific data is copied.
+    /// # Safety
+    /// The nonnull target must be live on this GUI thread and exclusively borrowed
+    /// for the call. Qt's typed QObject invocation and main-shell ownership provide
+    /// these conditions. Unsafe code is confined to this presentation interop.
+    pub unsafe fn handoff_upstream(
+        mut self: core::pin::Pin<&mut Self>,
+        target: *mut bridge::UpstreamSession,
+    ) -> QString {
+        let result = (|| {
+            // Qt holds the object throughout the synchronous typed invocation.
+            let target =
+                unsafe { target.as_mut() }.ok_or("Upstream project target is unavailable.")?;
+            let mut target = unsafe { core::pin::Pin::new_unchecked(target) };
+            let candidate = self
+                .as_mut()
+                .rust_mut()
+                .loader
+                .take_upstream()
+                .ok_or("No upstream project is ready for handoff.")?;
+            target
+                .as_mut()
+                .rust_mut()
+                .ensure_model()
+                .ok_or(crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE)?
+                .stage_prepared_project(candidate)
+        })();
+        QString::from(result.err().unwrap_or_default())
+    }
+
     /// Creates an explicit blank WB without saving or overwriting any file.
     /// # Returns
     /// Default settings for editor reload, with no accepted inputs or run options.
@@ -333,6 +426,11 @@ impl bridge::WorkbenchFile {
     /// # Returns
     /// Loading status or a diagnostic; completion is collected by poll_open.
     pub fn open(mut self: core::pin::Pin<&mut Self>) -> QString {
+        if self.rust().intent.is_some() {
+            return QString::from(
+                json!({"error":"Finish the pending project decision first."}).to_string(),
+            );
+        }
         let context = self.rust().context.clone();
         QString::from(
             self.as_mut()
@@ -349,13 +447,15 @@ impl bridge::WorkbenchFile {
     pub fn poll_open(mut self: core::pin::Pin<&mut Self>) -> QString {
         let (status, prepared) = self.as_mut().rust_mut().loader.poll();
         let result = if let Some(prepared) = prepared {
-            match prepared.adopt(&self.rust().context) {
-                Ok(adopted) => {
-                    self.as_mut().rust_mut().path = adopted.path;
-                    return QString::from(adopted.metadata.value().to_string());
-                }
-                Err(error) => json!({"error":error}),
-            }
+            self.as_mut()
+                .rust_mut()
+                .stage_open(prepared)
+                .unwrap_or_else(|error| json!({"error":error}))
+        } else if status["write_completed"] == true {
+            self.as_mut()
+                .rust_mut()
+                .adopt_saved()
+                .unwrap_or_else(|error| json!({"error":error}))
         } else {
             status
         };
@@ -370,26 +470,22 @@ impl bridge::WorkbenchFile {
     /// Saves current accepted state without converting samples or depending on source paths.
     /// # Arguments
     /// * `save_as` - Prompt for a new destination even if Save already has one.
-    /// * `settings` - Validated OCD JSON, bounded to 4096 bytes.
-    /// * `receiver` - Accepted options or null, bounded to 4096 bytes.
-    /// * `verified` - Comparison setup.
-    /// * `dark` - Appearance preference.
+    /// * `options` - Bounded accepted OCD/receiver/observation settings packet,
+    ///   comparison/appearance choices and native runnable readiness. Scientific
+    ///   validation, serialization and I/O execute on the existing file worker.
     /// # Returns
     /// Success/path or explicit error/cancellation, preserving the previous file on failure.
-    pub fn save(
-        mut self: core::pin::Pin<&mut Self>,
-        save_as: bool,
-        settings: &QString,
-        receiver: &QString,
-        verified: bool,
-        dark: bool,
-    ) -> QString {
+    pub fn save(mut self: core::pin::Pin<&mut Self>, save_as: bool, options: &QString) -> QString {
         if self.rust().loader.is_loading() {
             return QString::from("{\"error\":\"Wait for workbench loading to finish.\"}");
         }
-        let settings = settings.to_string();
-        let receiver = receiver.to_string();
-        if let Err(error) = validate_project_options(&settings, &receiver) {
+        if options.len() > MAX_SAVE_OPTIONS_PACKET_BYTES as isize {
+            return QString::from(
+                json!({"error":"Project Save options exceed the packet byte limit."}).to_string(),
+            );
+        }
+        let options = options.to_string().into_bytes();
+        if let Err(error) = intent::validate_save_packet(&options) {
             return QString::from(json!({"error":error}).to_string());
         }
         let destination = if save_as || self.rust().path.is_none() {
@@ -407,7 +503,7 @@ impl bridge::WorkbenchFile {
         let result = self
             .as_mut()
             .rust_mut()
-            .save_to(destination, &settings, &receiver, verified, dark)
+            .queue_save(destination, options)
             .unwrap_or_else(|error| json!({"error":error}));
         QString::from(result.to_string())
     }

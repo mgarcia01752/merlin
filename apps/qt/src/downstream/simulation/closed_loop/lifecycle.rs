@@ -25,6 +25,23 @@ type PreparedConfiguration<Error = AdmissionError> = Option<
 >;
 
 impl Model {
+    /// Enables persisted independent comparison after native dirty admission.
+    /// # Returns
+    /// Unit without regenerating data; an already enabled flag is unchanged.
+    /// Closing/exhausted host preserves the prior flag and records its diagnostic.
+    pub(crate) fn enable_verification(&mut self) {
+        if self.verify {
+            return;
+        }
+        match self
+            .context
+            .application
+            .mark_project_dirty(crate::shell::Direction::Downstream)
+        {
+            Ok(()) => self.verify = true,
+            Err(error) => self.set_message(application_error(error)),
+        }
+    }
     /// Cancels active work after the new unconfigured generation is admitted.
     /// # Returns
     /// True after admission; rejection preserves the accepted request and report.
@@ -44,7 +61,11 @@ impl Model {
     /// * `settings` - Current OCD JSON; failure remains visible in model state.
     pub(crate) fn configure(&mut self, settings: &str) {
         if self.options.is_none() {
-            self.invalidate();
+            // Initial view refresh has no accepted receiver generation to
+            // invalidate. Actual editor transactions already admit dirty state.
+            if self.generation.is_some() {
+                self.invalidate();
+            }
             return;
         }
         let _ = self.accept_options(self.options.clone(), self.verify, settings);
@@ -129,6 +150,50 @@ impl Model {
             self.options_guard = guard;
         }
         self.accept_prepared(prepared);
+        if let Some(guard) = fixed_guard {
+            self.fixed_guard = guard;
+        }
+        Ok(())
+    }
+
+    /// Retains a schema-3 project's actual public plan without rebuilding its policy.
+    /// # Arguments
+    /// * `plan` - Independently admitted public request/profile/observation settings.
+    /// * `budget` - Accepting host covering old and prepared scientific owners.
+    /// # Returns
+    /// Complete idle candidate roots with their existing actual-capacity charges.
+    /// No run, target generation or accepted editor state changes here.
+    /// # Errors
+    /// Busy, missing staged options, a policy unsupported by native instruments
+    /// or root/fixed metadata rejection preserves this candidate unchanged.
+    pub(crate) fn prepare_public_plan_for_budget(
+        &mut self,
+        plan: merlin::downstream::FullLoopSweepPlan,
+        budget: &RetentionBudget,
+    ) -> Result<(), String> {
+        self.check_prepared_idle()?;
+        if self.options.is_none() || self.generation.is_some() {
+            return Err("Stage the saved receiver options before its public project plan.".into());
+        }
+        self.check_metadata_target(budget)?;
+        let fixed_guard = self.fixed_target(budget).map_err(fixed_error)?;
+        let request = plan.request(0).map_err(|error| error.to_string())?;
+
+        // Native instruments currently require their complete accepted default
+        // observation set. API-only policies remain valid for public consumers;
+        // reject unsupported UI imports explicitly rather than replacing them.
+        if serde_json::to_value(request.observation_policy().map(|policy| policy.settings()))
+            .map_err(|error| error.to_string())?
+            != serde_json::to_value(Some(merlin::downstream::FullLoopObservationInput::default()))
+                .map_err(|error| error.to_string())?
+        {
+            return Err("This downstream project's observation policy is not supported by the native instruments. Open it through the public Rust or Python Project API.".into());
+        }
+        let request = request_retention::admit_request(request, budget).map_err(owner_error)?;
+        let plan = request_retention::admit_plan(plan, budget).map_err(owner_error)?;
+        self.request = Some(request);
+        self.plan = Some(plan);
+        self.error = Default::default();
         if let Some(guard) = fixed_guard {
             self.fixed_guard = guard;
         }

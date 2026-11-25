@@ -1528,9 +1528,9 @@ visible tabs and direction-scoped shell actions now pass
 [SHELL acceptance](development/features/unified-qt-workbench/validation.md#uiu-shell-01-persistent-tabs-and-scoped-actions).
 Both view instances persist through idle, running and paused selection changes;
 the existing native cursor and exact opaque direction keys guard each action.
-Shared Settings/About remain available from either direction. Upstream File
-actions remain disabled until their native adapter is delivered by UIU-FILE-01.
-Unified Qt project/recovery adoption and final platform/numeric gates retain their
+Shared Settings/About remain available from either direction. Native directional
+File adapters and dirty transactions now pass [UIU-FILE-01 acceptance](development/features/unified-qt-workbench/validation.md#uiu-file-01-native-routing-and-dirty-transactions), including actual Main/picker interactions and independent public API consumers.
+Source preparation remains distinct from that executed acceptance. Recovery and final platform/numeric gates retain their
 separate official tasks.
 
 Accepted user choices: **one active run across both tabs initially** and
@@ -2000,11 +2000,12 @@ DirectionRunControls retain the established diagnostic/F1 Help, elapsed/activity
 semantics and lower-right controls; rejected optional text cannot redirect Stop
 or Pause. Existing presentation owners admit coherent display replacements.
 The [shell design](development/features/unified-qt-workbench/design.md#uiu-shell-01-persistent-tabs-and-scoped-actions)
-maps these owners and acceptance. Upstream editing/instrument bindings remain
-US tasks. File actions are enabled only for the current downstream file adapter;
-upstream must not fall through to downstream Save/Open/New. Unified file and
-restart recovery remain UIU-FILE-01/UIU-RECOVERY-01, including the conservative
-update guard while an upstream configuration exists.
+maps these owners and acceptance. Upstream editing/instrument bindings now pass
+their direction-specific US tasks. Native New/Save target the captured active
+direction; Open detects its direction before a guarded native handoff and dirty
+decision. A foreign project never falls through to downstream scientific state.
+Restart recovery remains UIU-RECOVERY-01, including the conservative update guard
+while an upstream configuration exists until dual recovery is accepted.
 
 Normal project files remain direction-specific. Open validates/detects direction
 and guards that target tab's dirty state before mutation. Schema 1/2 retain DS
@@ -2035,6 +2036,14 @@ separate. Canonical string comparison preserves signed-zero edits. The shared
 retain public validation and host-wide original-input protection. Its
 [focused evidence](development/features/unified-qt-workbench/validation.md#uiu-file-01-native-source-and-safe-write-unit)
 does not establish native file routing or dirty-prompt acceptance.
+The [native routing unit](development/features/unified-qt-workbench/design.md#uiu-file-01-native-direction-routing-and-dirty-transactions)
+uses the existing downstream file worker, upstream preparation slot and canonical
+project guards. Typed GUI-thread QObject handoff transfers the actual admitted
+upstream product; project documents/revisions remain native. Each accepted edit
+admits its dirty revision before publication, while project attachment remains
+clean. Close resolves both exact targets before atomic shutdown. Downstream
+native instruments explicitly reject schema-3 observation policies they cannot
+apply; public Rust/Python consumers continue to support those policies.
 Update recovery privately bundles both
 independently valid projects plus active-tab state. All file/capture, viewport,
 worker, retained-result and aggregate-memory budgets remain bounded; errors or

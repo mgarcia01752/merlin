@@ -300,7 +300,7 @@ pub(crate) fn adopt_accepted(
 ///
 /// # Arguments
 /// * `context`, `state`, `expected` - Exact target, replacement and captured original.
-/// * `target` - Captured canonical downstream identity/generation.
+/// * `target`, `permission` - Exact native project snapshot and dirty decision.
 /// * `ready` - Receiver readiness after all concrete target-root preflight succeeds.
 ///
 /// # Returns
@@ -312,13 +312,14 @@ pub(crate) fn adopt_project(
     context: &Context,
     state: AcceptedState,
     expected: &Snapshot,
-    target: crate::shell::SessionKey,
+    target: crate::shell::ProjectSnapshot,
+    permission: crate::shell::ReplacePermission,
     ready: bool,
 ) -> Result<crate::shell::SessionKey, String> {
     accepted::adopt_with(context, state, expected, || {
         context
             .application
-            .configure_downstream_if(target, ready)
+            .replace_project(target, permission, ready)
             .map_err(|error| match error {
                 crate::shell::ApplicationError::Retention(_) => {
                     "The session retained-data limit would be exceeded.".into()

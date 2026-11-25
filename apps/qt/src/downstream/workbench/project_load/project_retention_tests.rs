@@ -353,7 +353,10 @@ fn received_project_stays_charged_after_loader_cancel_until_final_delivery_drop(
         .unwrap();
     let product = measurement.recv_timeout(WATCHDOG).unwrap();
     let frame = delivery.fixture_reserved_resources();
-    let prepared = delivery.value().as_ref().unwrap().as_ref().unwrap();
+    let candidate = delivery.value().as_ref().unwrap().as_ref().unwrap();
+    let super::LoadCandidate::Downstream(prepared) = candidate else {
+        panic!("The legacy fixture must preserve its downstream candidate.");
+    };
     assert!(budget.owns(prepared.path.as_ref().unwrap()));
     assert!(budget.owns(&prepared.metadata));
     assert!(budget.owns(&prepared._fixed_guard));

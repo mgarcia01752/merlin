@@ -46,32 +46,212 @@ ApplicationWindow {
     property alias tabs: directionTabs
     property alias shellHost: directionHost
     property alias runControls: sharedControls
+    property alias projectDirtyDialog: projectDirty
     readonly property string selectedDirection: directionHost.presentation.selectedDirection || ""
-    /** Keep active-direction file actions away from an unsupported foreign adapter. */
+    // Compiled UI cursors only; native adapters retain all paths and revision guards.
+    readonly property int noFileDirection: -1
+    readonly property int downstreamFileDirection: 0
+    readonly property int upstreamFileDirection: 1
+    readonly property int newFileAction: 0
+    readonly property int openFileAction: 1
+    readonly property int closeFileAction: 2
+    property bool finalCloseAccepted: false
+    property int pendingFileDirection: noFileDirection
+    property int pendingFileAction: newFileAction
+    property bool saveBeforeFileDecision: false
+
+    /** Route Open by native content detection and Save/New by their captured origin. */
     function routeFile(action, saveAs) {
-        const identity = directionTabs.identityFor(selectedDirection)
-        if (selectedDirection !== "downstream" || !workbench
-                || !directionHost.accepts(selectedDirection, identity)) {
-            return false
+        const identity = directionTabs.identityFor(selectedDirection);
+        if (!workbench || pendingFileDirection !== noFileDirection || !directionHost.accepts(selectedDirection, identity)) {
+            return false;
         }
-        if (action === "new") {
-            workbench.requestNewProject()
-        } else if (action === "open") {
-            workbench.openProject()
+        if (action === "open") {
+            workbench.openProject();
+        } else if (action === "new") {
+            if (selectedDirection === "upstream") {
+                const error = upstreamSession.request_new_project() || "";
+                directionHost.poll();
+                if (error) {
+                    directionHost.feedback(error);
+                    return false;
+                }
+                showFileDecision(true);
+            } else {
+                const result = JSON.parse(workbenchFile.request_new_project());
+                if (result.error) {
+                    workbench.showFileMessage(result.error);
+                    return false;
+                }
+                showFileDecision(false);
+            }
         } else if (action === "save") {
-            workbench.saveProject(saveAs)
+            if (selectedDirection === "upstream") {
+                const error = upstreamSession.save_project(saveAs) || "";
+                directionHost.poll();
+                directionHost.feedback(error);
+            } else {
+                workbench.saveProject(saveAs);
+            }
         } else {
-            return false
+            return false;
         }
-        return true
+        return true;
     }
-    WorkbenchFile { id: workbenchFile }
+    /** Open one compiled prompt for the native target, independent of selected tab. */
+    function showFileDecision(upstream) {
+        const value = upstream ? JSON.parse(upstreamSession.state()).project : JSON.parse(workbenchFile.file_decision());
+        if (!value || !value.decision) {
+            return;
+        }
+        pendingFileDirection = upstream ? upstreamFileDirection : downstreamFileDirection;
+        pendingFileAction = value.decision === "open" ? openFileAction : newFileAction;
+        if (!value.dirty) {
+            resolveFileDecision(false, false);
+            return;
+        }
+        if (!projectDirty.openChecked()) {
+            resolveFileDecision(false, true);
+            directionHost.feedback("The project decision could not be displayed. Retry the file action.");
+        }
+    }
+    /** Transfer actual native ownership; neither paths nor documents pass through QML. */
+    function receiveUpstreamProject() {
+        const error = workbenchFile.handoff_upstream(upstreamSession) || "";
+        directionHost.poll();
+        if (error) {
+            directionHost.feedback(error);
+            return;
+        }
+        showFileDecision(true);
+    }
+    /** Resolve only the original native intent; failed/stale actions preserve both tabs. */
+    function resolveFileDecision(discard, cancel) {
+        if (pendingFileAction === closeFileAction) {
+            pendingFileDirection = noFileDirection;
+            saveBeforeFileDecision = false;
+            continueClose(JSON.parse(directionBackend.close_decision(discard, cancel)));
+            return;
+        }
+        const upstream = pendingFileDirection === upstreamFileDirection;
+        const opening = pendingFileAction === openFileAction;
+        pendingFileDirection = noFileDirection;
+        saveBeforeFileDecision = false;
+        if (upstream) {
+            const error = upstreamSession.resolve_project(discard, cancel) || "";
+            directionHost.poll();
+            directionHost.feedback(error);
+            if (!error && !cancel && opening) {
+                directionHost.selectDirection("upstream");
+            }
+        } else {
+            const result = JSON.parse(workbenchFile.resolve_project(discard, cancel));
+            if (result.error) {
+                workbench.showFileMessage(result.error);
+            }
+            if (result.created || result.opened) {
+                workbench.adoptProject(result);
+                if (opening) {
+                    directionHost.selectDirection("downstream");
+                }
+            }
+            directionHost.poll();
+        }
+    }
+    /** Continue only after the exact captured Save succeeds; chooser Cancel aborts. */
+    function saveForFileDecision() {
+        saveBeforeFileDecision = true;
+        if (pendingFileDirection === upstreamFileDirection) {
+            const error = upstreamSession.save_project(false) || "";
+            directionHost.poll();
+            const project = JSON.parse(upstreamSession.state()).project;
+            if (!error && project.status === "saved" && !project.dirty) {
+                resolveFileDecision(false, false);
+            } else if (error || project.status !== "saving") {
+                resolveFileDecision(false, true);
+                directionHost.feedback(error);
+            }
+        } else if (!workbench.saveProject(false, true)) {
+            resolveFileDecision(false, true);
+        }
+    }
+    /** A failed write never authorizes a pending replacement. */
+    function downstreamWriteSettled(saved) {
+        if (saveBeforeFileDecision && pendingFileDirection === downstreamFileDirection) {
+            resolveFileDecision(false, !saved);
+        }
+    }
+    /** Present the next native dirty owner; admission remains live until both agree. */
+    function continueClose(result) {
+        if (result.error) {
+            directionHost.feedback(result.error);
+            return;
+        }
+        if (result.cancelled) {
+            return;
+        }
+        if (result.ready) {
+            const finished = JSON.parse(directionBackend.finish_close());
+            if (finished.error) {
+                directionHost.feedback(finished.error);
+                return;
+            }
+            finalCloseAccepted = true;
+            Qt.callLater(window.close);
+            return;
+        }
+        pendingFileAction = closeFileAction;
+        pendingFileDirection = result.direction === "upstream" ? upstreamFileDirection : downstreamFileDirection;
+        if (!projectDirty.openChecked()) {
+            resolveFileDecision(false, true);
+            directionHost.feedback("The close decision could not be displayed. Retry closing.");
+        }
+    }
+    WorkbenchFile {
+        id: workbenchFile
+    }
+    ProjectDirtyDialog {
+        id: projectDirty
+        objectName: "projectDirtyDialog"
+        theme: applicationTheme
+        direction: window.pendingFileDirection === window.upstreamFileDirection ? "upstream" : "downstream"
+        action: window.pendingFileAction === window.closeFileAction ? "close" : window.pendingFileAction === window.openFileAction ? "open" : "new"
+        saveAllowed: window.pendingFileDirection === window.upstreamFileDirection ? !!directionHost.upstreamState.project && !!directionHost.upstreamState.project.can_save : !!window.workbench && !window.workbench.runState.busy && !window.workbench.loadingProject
+        onSaveRequested: window.saveForFileDecision()
+        onDiscardRequested: window.resolveFileDecision(true, false)
+        onCancelled: window.resolveFileDecision(false, true)
+    }
     TransmitterAnalyzer { id: transmitterAnalyzer }
     property Component presentationBackendComponent: Component { PresentationRetention {} }
     function createPresentationBackend(parent) {
         return presentationBackendComponent.createObject(parent)
     }
     Theme { id: applicationTheme; presentationBackendFactory: window.createPresentationBackend; onDarkChanged: branding.update_icon(dark) }
+    readonly property bool projectFileProbeRequested: Qt.application.arguments.indexOf("--project-file-probe") >= 0
+    property QtObject projectFileProbe: null
+    property Component projectFileProbeComponent: Component {
+        ProjectFileProbe {
+            onFinished: function(success, message) { Qt.exit(success ? 0 : 1) }
+        }
+    }
+    /** Exercise actual native file menus, dirty decisions and both project owners. */
+    function startProjectFileProbe() {
+        const args = Qt.application.arguments
+        const imageArgument = args.indexOf("--project-file-image")
+        if (imageArgument < 0 || imageArgument + 1 >= args.length) {
+            console.error("Project file probe requires a fresh screenshot path.")
+            Qt.exit(1)
+            return
+        }
+        projectFileProbe = projectFileProbeComponent.createObject(window, {
+            rootWindow: window, workbench: workbench, tabs: directionTabs,
+            host: directionHost, controls: sharedControls, dirtyDialog: projectDirty,
+            captureItem: unifiedFrame, screenshotPath: args[imageArgument + 1]
+        })
+        if (!projectFileProbe) {
+            Qt.exit(1)
+        }
+    }
     readonly property bool presentationProbeRequested: Qt.application.arguments.indexOf("--session-presentation-probe") >= 0
     readonly property bool directionProbeRequested: Qt.application.arguments.indexOf("--direction-shell-probe") >= 0
     readonly property bool upstreamConfigurationProbeRequested: Qt.application.arguments.indexOf("--upstream-configuration-probe") >= 0
@@ -317,7 +497,9 @@ ApplicationWindow {
         } else {
             Qt.callLater(function() { workbench.beginOpen(JSON.parse(workbenchFile.startup())) })
         }
-        if (presentationProbeRequested) {
+        if (projectFileProbeRequested) {
+            Qt.callLater(startProjectFileProbe)
+        } else if (presentationProbeRequested) {
             Qt.callLater(startPresentationProbe)
         } else if (directionProbeRequested) {
             Qt.callLater(startDirectionProbe)
@@ -347,7 +529,20 @@ ApplicationWindow {
         if (updates.state.installing) {
             close.accepted = false
             updates.showUpdates()
+            return
         }
+        if (finalCloseAccepted) {
+            return
+        }
+        close.accepted = false
+        if (pendingFileDirection !== noFileDirection) {
+            return
+        }
+        if (!workbench || workbench.loadingProject || directionHost.upstreamState.preparing) {
+            directionHost.feedback("Wait for the project file operation to finish before closing.")
+            return
+        }
+        continueClose(JSON.parse(directionBackend.begin_close()))
     }
     menuBar: Item {
         implicitHeight: Math.max(topMenu.implicitHeight, 32)
@@ -358,8 +553,11 @@ ApplicationWindow {
                 id: topMenu
                 Layout.fillWidth: true
                 theme: applicationTheme
-                fileActionsEnabled: window.selectedDirection === "downstream" && !!window.workbench
-                    && !window.workbench.runState.busy && !window.workbench.loadingProject && !updates.state.installing
+                fileActionsEnabled: !!window.workbench && window.pendingFileDirection === window.noFileDirection
+                    && !window.workbench.runState.busy && !window.workbench.loadingProject
+                    && !directionHost.upstreamState.busy && !updates.state.installing
+                saveActionsEnabled: fileActionsEnabled && (window.selectedDirection === "downstream"
+                    || (!!directionHost.upstreamState.project && !!directionHost.upstreamState.project.can_save))
                 onNewRequested: window.routeFile("new", false)
                 onOpenRequested: window.routeFile("open", false)
                 onSaveRequested: function(saveAs) { window.routeFile("save", saveAs) }
@@ -377,7 +575,7 @@ ApplicationWindow {
                     && !directionHost.upstreamState.busy && !directionHost.upstreamState.configured
                     && !window.workbench.loadingProject
                 prepareUpdate: function() { return workbench.saveUpdateRecovery() }
-                startupCheck: !window.presentationProbeRequested && !window.directionProbeRequested && !window.upstreamConfigurationProbeRequested && !window.upstreamExecutionProbeRequested && !window.upstreamInputsProbeRequested && !window.upstreamGridProbeRequested && !window.upstreamInstrumentsProbeRequested && !window.downstreamSharedProbeRequested && !window.upstreamFecProbeRequested && Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
+                startupCheck: !window.projectFileProbeRequested && !window.presentationProbeRequested && !window.directionProbeRequested && !window.upstreamConfigurationProbeRequested && !window.upstreamExecutionProbeRequested && !window.upstreamInputsProbeRequested && !window.upstreamGridProbeRequested && !window.upstreamInstrumentsProbeRequested && !window.downstreamSharedProbeRequested && !window.upstreamFecProbeRequested && Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
             }
         }
     }
@@ -409,6 +607,9 @@ ApplicationWindow {
                     receiverBackend: receiverInstruments
                     runBackend: closedLoop
                     fileBackend: workbenchFile
+                    onProjectDecisionRequested: window.showFileDecision(false)
+                    onUpstreamProjectDetected: window.receiveUpstreamProject()
+                    onProjectWriteSettled: function(saved) { window.downstreamWriteSettled(saved) }
                     onUpdatesRequested: { updates.showUpdates(); updates.refresh() }
                     onExternalLinkRequested: function(target) { Qt.openUrlExternally(target) }
                 }
@@ -487,6 +688,12 @@ ApplicationWindow {
                 window.workbench.pollRun()
             }
             directionHost.poll()
+            if (window.saveBeforeFileDecision && window.pendingFileDirection === window.upstreamFileDirection) {
+                const actual = JSON.parse(upstreamSession.state())
+                if (!actual.preparing) {
+                    window.resolveFileDecision(false, actual.project.status !== "saved" || !!actual.project.dirty)
+                }
+            }
             sharedControls.retryRejectedText()
         }
     }

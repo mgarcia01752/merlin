@@ -135,12 +135,22 @@ Item {
 
     property bool hasProject: false
     property bool loadingProject: false
+    signal projectDecisionRequested()
+    signal upstreamProjectDetected()
+    signal projectWriteSettled(bool saved)
+    property bool pendingProjectDecision: false
+    property bool pendingUpstreamDelivery: false
+    property bool pendingWriteCompletion: false
+    property bool pendingWriteSucceeded: false
+    property bool savingProject: false
+    property bool quietProjectWrite: false
     property bool configureAfterOpen: false
     readonly property var loadState: states.value ? states.value.load : ({loading:false, phase:"", elapsed_ms:0, cancelling:false})
     property alias faqPopup: faqDialog
     function openHelp(code) { faqDialog.showEntry(code, runState.diagnostic && runState.diagnostic.code===code ? runState.diagnostic : null) }
     property alias configurationPopup: wbConfig
     property alias entryPopup: workbenchEntry
+    property alias fileFeedbackPopup: fileFeedback
     function configureProject() {
         if (runState.busy || loadingProject) { return }
         if (hasProject) { wbConfig.openChecked() }
@@ -160,51 +170,139 @@ Item {
     }
     readonly property string fileMessage: states.value ? states.value.fileMessage : ""
     function openProject() {
-        if (runState.busy || loadingProject) { return }
-        beginOpen(JSON.parse(fileBackend.open()))
+        if (runState.busy || loadingProject) {
+            return;
+        }
+        beginOpen(JSON.parse(fileBackend.open()));
     }
     function beginOpen(result) {
-        if (result.error) { showFileMessage(result.error);configureAfterOpen=false;return }
-        adoptState({load:result})
-        loadingProject=!!result.loading
-        if (loadingProject) { loadingDialog.openChecked() }
+        if (result.error) {
+            showFileMessage(result.error);
+            configureAfterOpen = false;
+            return;
+        }
+        adoptState({
+            load: result
+        });
+        loadingProject = !!result.loading;
+        savingProject = !!result.saving;
+        if (loadingProject) {
+            loadingDialog.openChecked();
+        }
     }
     function pollOpen() {
-        if (!loadingProject) { return }
-        const result=JSON.parse(fileBackend.poll_open())
-        adoptState({load:result})
-        if (result.loading) { return }
-        if (result.opened) { adoptProject(result);adoptState({fileMessage:result.path ? "Opened "+result.path : "Workbench restored"}) }
-        loadingProject=false
-        loadingDialog.close()
-        if (result.error) { showFileMessage(result.error) }
-        if (result.opened && configureAfterOpen) { wbConfig.openChecked() }
-        configureAfterOpen=false
+        if (!loadingProject) {
+            return;
+        }
+        const result = JSON.parse(fileBackend.poll_open());
+        adoptState({
+            load: result
+        });
+        if (result.loading) {
+            return;
+        }
+        if (result.opened) {
+            adoptProject(result);
+            adoptState({
+                fileMessage: result.path ? "Opened " + result.path : "Workbench restored"
+            });
+        }
+        pendingProjectDecision = !!result.downstream_decision;
+        pendingUpstreamDelivery = !!result.upstream_detected;
+        pendingWriteCompletion = savingProject;
+        pendingWriteSucceeded = !!result.saved;
+        savingProject = false;
+        loadingProject = false;
+        const wasVisible = loadingDialog.visible;
+        loadingDialog.close();
+        if (!wasVisible) {
+            Qt.callLater(deliverFileCompletion);
+        }
+        if (result.saved && !quietProjectWrite && !JSON.parse(fileBackend.file_decision()).decision) {
+            hasProject = true;
+            showFileMessage("Saved " + result.path);
+        }
+        if (result.error) {
+            showFileMessage(result.error);
+        }
+        if (!pendingProjectDecision) {
+            configureAfterOpen = false;
+        }
+    }
+    /** Deliver only bounded operation tags after the loading dialog releases its slot. */
+    function deliverFileCompletion() {
+        if (pendingProjectDecision) {
+            pendingProjectDecision = false;
+            projectDecisionRequested();
+        }
+        if (pendingUpstreamDelivery) {
+            pendingUpstreamDelivery = false;
+            upstreamProjectDetected();
+        }
+        if (pendingWriteCompletion) {
+            pendingWriteCompletion = false;
+            quietProjectWrite = false;
+            projectWriteSettled(pendingWriteSucceeded);
+        }
     }
     function adoptProject(result) {
-        hasProject=true
-        settingsBackend.apply(JSON.stringify(result.transmission))
-        profileBackend.reload();sourceBackend.reload();measurementBackend.reload()
-        runBackend.restore(JSON.stringify(result.receiver),result.verified,settingsBackend.current())
-        if (result.dark !== null && result.dark !== undefined) { theme.dark=result.dark }
+        hasProject = true;
+        settingsBackend.restore(JSON.stringify(result.transmission));
+        profileBackend.reload();
+        sourceBackend.reload();
+        measurementBackend.reload();
+        runBackend.restore(JSON.stringify(result.receiver), result.verified, settingsBackend.current());
+        if (result.dark !== null && result.dark !== undefined) {
+            theme.dark = result.dark;
+        }
         if (result.prepared) {
-            adoptState({profile:result.profile_state,source:result.source_state,measurement:result.measurement_state})
-            refreshTransmitterState();pollRun()
-        } else { refreshProfileState();refreshSourceState();pollRun() }
+            adoptState({
+                profile: result.profile_state,
+                source: result.source_state,
+                measurement: result.measurement_state
+            });
+            refreshTransmitterState();
+            pollRun();
+        } else {
+            refreshProfileState();
+            refreshSourceState();
+            pollRun();
+        }
+        if (result.opened && configureAfterOpen) {
+            configureAfterOpen = false;
+            Qt.callLater(wbConfig.openChecked);
+        }
     }
     function restoreUpdate() {
-        beginOpen(JSON.parse(fileBackend.restore_update()))
+        beginOpen(JSON.parse(fileBackend.restore_update()));
     }
     function saveUpdateRecovery() {
-        const current = JSON.parse(runBackend.poll())
-        return JSON.parse(fileBackend.save_update_recovery(settingsBackend.current(),JSON.stringify(current.accepted_options || null),current.verified,theme.dark))
+        const current = JSON.parse(runBackend.poll());
+        return JSON.parse(fileBackend.save_update_recovery(settingsBackend.current(), JSON.stringify(current.accepted_options || null), current.verified, theme.dark));
     }
-    function saveProject(saveAs) {
-        if (runState.busy || loadingProject) { return }
-        const current = JSON.parse(runBackend.poll())
-        const result=JSON.parse(fileBackend.save(saveAs,settingsBackend.current(),JSON.stringify(current.accepted_options || null),current.verified,theme.dark))
-        if (result.error) { showFileMessage(result.error) }
-        else if (result.saved) { hasProject=true;showFileMessage("Saved "+result.path) }
+    function saveProject(saveAs, quiet) {
+        if (runState.busy || loadingProject) {
+            return false;
+        }
+        const current = JSON.parse(runBackend.poll());
+        const result = JSON.parse(fileBackend.save(saveAs, JSON.stringify({
+            settings: settingsBackend.current(),
+            receiver: JSON.stringify(current.accepted_options || null),
+            observations: JSON.stringify(current.accepted_observations || null),
+            verified: current.verified,
+            dark: theme.dark,
+            runnable: current.receiver_status === "complete"
+        })));
+        if (result.error) {
+            showFileMessage(result.error);
+        } else if (result.saved) {
+            hasProject = true;
+            showFileMessage("Saved " + result.path);
+        } else if (result.loading) {
+            quietProjectWrite = !!quiet;
+            beginOpen(result);
+        }
+        return !!result.loading || !!result.saved;
     }
     required property var runBackend
     readonly property var runState: states.value ? states.value.run : initialRunState()
@@ -527,6 +625,7 @@ Item {
     FaqDialog { id: faqDialog; theme: workbench.theme; backend: workbench.aboutBackend }
     WorkbenchLoadingDialog {
         id: loadingDialog; theme: workbench.theme; loadState: workbench.loadState
+        onClosed: Qt.callLater(workbench.deliverFileCompletion)
         onCancelRequested: workbench.fileBackend.cancel_open()
     }
     Timer { interval: 100; running: workbench.loadingProject; repeat: true; onTriggered: workbench.pollOpen() }

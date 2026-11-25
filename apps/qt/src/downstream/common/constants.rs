@@ -9,18 +9,22 @@
 /// even though both currently admit 4096 bytes. It is not a PHY or runtime bound.
 pub(crate) const MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES: usize = 4096;
 
+/// Native policy JSON transport ceiling, matching the public stage-policy parser.
+/// This is independent of receiver option bytes and scientific retained-data limits.
+pub(crate) const MAX_OBSERVATION_OPTIONS_DOCUMENT_BYTES: usize = 64 * 1024;
+
+/// Native Save packet allows JSON escaping of bounded OCD/options/policy strings.
+/// Independent of project file bytes and the limits on each embedded option field.
+pub(crate) const MAX_SAVE_OPTIONS_PACKET_BYTES: usize = 512 * 1024;
+
 /// Maximum received-word bars shown by the existing downstream verification view.
 /// This display cap is independent of the backend's retained-codeword budget;
 /// omitted comparisons remain explicitly counted when more details are retained.
 pub(crate) const MAX_VERIFICATION_WORD_BARS: usize = 64;
 
-/// Current native saved-workbench format written by New, Save and recovery.
+/// Legacy native editor format for incomplete downstream Save and recovery.
 /// Legacy readers and independent compatibility vectors retain their older versions.
 pub(crate) const WORKBENCH_SCHEMA_VERSION: u32 = 2;
-
-/// Existing native saved-project filename suffix, including its leading dot.
-/// This file-naming contract is independent of the schema-version integer.
-pub(crate) const WORKBENCH_FILE_SUFFIX: &str = ".merlin.json";
 
 /// Fixed adjacent-window graph padding preserving the existing full-view time scale.
 /// This prefix allowance is a display policy, not a validator or a claimed PHY limit.

@@ -474,7 +474,8 @@ impl Model {
             "completed_symbols":progress.map_or(0, |value| value.3),
             "can_start":ready&&self.verify&&self.worker.is_none()&&active.is_none()&&current,"has_result":result.is_some(),"result_token":self.token.to_string(),"result":summary,
             "application_busy":active.is_some(),"active_direction":active.map(|run| match run.token.key.direction {Direction::Downstream=>"downstream",Direction::Upstream=>"upstream"}),
-            "available_profile_ids":profile_ids,"applied_profile_id":applied_profile_id,"options":self.options.clone().unwrap_or_default(),"accepted_options":self.options,"verified":self.verify})
+            "available_profile_ids":profile_ids,"applied_profile_id":applied_profile_id,"options":self.options.clone().unwrap_or_default(),"accepted_options":self.options,"verified":self.verify,
+            "accepted_observations":self.request.as_ref().and_then(|owner|owner.value().observation_policy()).map(|policy|policy.settings())})
     }
     fn accepts_callback(&self, token: crate::shell::RunToken) -> bool {
         self.worker

@@ -16,10 +16,12 @@ mod measured_view;
 mod observation_policy;
 mod preparation;
 mod presentation;
+mod project;
 pub(crate) use captures::{Family as CaptureFamily, MAX_CAPTURE_FAMILY_CHARACTERS};
 pub(crate) use drafts::{MAX_DRAFT_CHANGE_BYTES, MAX_DRAFT_ID_CHARACTERS};
 pub(crate) use grid_view::MAX_GRID_REQUEST_BYTES;
 pub(crate) use instrument_view::MAX_INSTRUMENT_KIND_CHARACTERS;
+pub(crate) use project::Opened as PreparedProject;
 
 use crate::shared::{
     presentation::constants::WORKER_FAILURE_ADMISSION_MESSAGE, worker_failure::WorkerFailure,
@@ -70,6 +72,7 @@ pub(crate) struct Model {
     instrument: Option<instrument_view::Observation>,
     instrument_status: ObservationStatus,
     instrument_sequence: u64,
+    project: project::Files,
 
     // Drop controllers, pending slots and data aliases before this containing charge.
     _fixed_guard: Retained<()>,
@@ -109,6 +112,7 @@ impl Model {
             instrument: None,
             instrument_status: ObservationStatus::default(),
             instrument_sequence: 0,
+            project: project::Files::default(),
             _fixed_guard: fixed_guard,
         }))
     }
@@ -203,6 +207,11 @@ impl Model {
     /// # Errors
     /// Missing/stale ownership cannot cancel another direction or replacement session.
     pub(crate) fn stop(&mut self) -> Result<(), String> {
+        // A dispatched atomic Save may already have replaced its destination.
+        // Never suppress that successful completion or claim it was cancelled.
+        if matches!(self.pending.as_ref(), Some(Pending::ProjectSaved { .. })) {
+            return Err("Project Save is finishing. Wait for its completion.".into());
+        }
         if self.pending.is_some() {
             self.preparation_cancelled = true;
             return Ok(());
@@ -270,6 +279,23 @@ impl Model {
 
     fn adopt_prepared(&mut self, prepared: Prepared) -> Result<(), WorkerFailure> {
         match prepared {
+            Prepared::ProjectSaved {
+                expected,
+                controller,
+                candidate,
+                delivery: _delivery_guard,
+            } => {
+                self.controller = Some(controller);
+                self.adopt_project_save(expected, candidate)?;
+            }
+            Prepared::ProjectOpened {
+                expected,
+                permission,
+                candidate,
+                delivery: _delivery_guard,
+            } => {
+                self.adopt_project_open(expected, permission, candidate)?;
+            }
             Prepared::Instrument {
                 delivery: _delivery_guard,
                 expected,

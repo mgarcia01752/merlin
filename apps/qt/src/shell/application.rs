@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Canonical application identities and dispatch over existing direction owners.
+mod project;
 use super::{
     constants::{
         MAX_SESSION_CHANNELS, MAX_SESSION_CHANNEL_SLOTS, MAX_SESSION_OPEN_VIEWS,

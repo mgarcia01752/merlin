@@ -5,6 +5,7 @@
 //! Actual upstream sessions and reports, without another scientific interface.
 mod failure;
 mod project;
+mod project_restore;
 mod source;
 use crate::shell::{
     spawn_worker, Direction, Retained, RetainedResources, RetentionBudget, RetentionError,
