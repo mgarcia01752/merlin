@@ -2,59 +2,130 @@
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="docs/images/logo/merlin-logo-dark-rounded.svg">
     <source media="(prefers-color-scheme: light)" srcset="docs/images/logo/merlin-logo-light-rounded.svg">
-    <img src="docs/images/logo/merlin-logo-light-rounded.svg" alt="MERLIN — DOCSIS OFDM Simulation Toolkit" width="520">
+    <img src="docs/images/logo/merlin-logo-light-rounded.svg" alt="MERLIN — DOCSIS OFDM/OFDMA Simulation Toolkit" width="520">
   </picture>
 </p>
 
-# MERLIN — DOCSIS OFDM Simulation Toolkit
+# MERLIN — DOCSIS OFDM/OFDMA Simulation Toolkit
 
 *Modulation, Encoding, Reception, Link Impairments & Noise*
 
 [![Status: Under development](https://img.shields.io/badge/Status-Under_development-yellow)](docs/development/status.md)
-[![Version: 0.4.0](https://img.shields.io/badge/Version-0.4.0-blue)](VERSION)
+[![Latest tag](https://img.shields.io/github/v/tag/mgarcia01752/merlin?sort=semver&label=Latest%20tag)](https://github.com/mgarcia01752/merlin/tags)
 [![Master](https://github.com/mgarcia01752/merlin/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/mgarcia01752/merlin/actions/workflows/ci.yml)
 [![Release](https://github.com/mgarcia01752/merlin/actions/workflows/release.yml/badge.svg)](https://github.com/mgarcia01752/merlin/actions/workflows/release.yml)
 [![Rust 1.85.1](https://img.shields.io/badge/Rust-1.85.1-000000?logo=rust&logoColor=white)](rust-toolchain.toml)
 [![Ubuntu 22.04+ targets: 22.04, 24.04, 26.04 x64](https://img.shields.io/badge/Ubuntu_LTS-22.04%20%7C%2024.04%20%7C%2026.04-E95420?logo=ubuntu&logoColor=white)](docs/development/native-delivery.md)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-MERLIN simulates the **downstream PHY of a CMTS for a single DOCSIS OFDM
-channel**, from payload encoding to waveform generation and receiver recovery.
-It combines BCH/LDPC coding, profile-based QAM modulation, interleaving,
-PLC/NCP signaling and pilots with configurable channel impairments.
+MERLIN is a Rust toolkit for **DOCSIS downstream OFDM and upstream OFDMA PHY
+simulation**. Two independent engines share DSP and FEC infrastructure, with one
+public Rust facade, one native Python distribution and one command-line executable.
+The native Qt workbench provides downstream configuration and instruments.
 
-Run an ideal reference or use captured RxMER, downstream channel estimates and
-an applied modulation profile. Compare recovered data with the original source
-to measure bit errors, decoding failures, corrections and iteration counts.
-All signal processing and FEC run in Rust. Full CMTS MAC services and
-multi-channel operation are outside the simulator's scope.
+Run a synthetic reference or an admitted measurement-driven experiment, then
+compare recovered data with the original source. Inspect actual bit errors,
+decoder decisions, corrections and iteration counts. All signal processing,
+FEC and simulation orchestration run in Rust.
 
-The unified backend also provides an independent [upstream OFDMA engine](docs/user/upstream/README.md),
-with typed configuration, CM TX, channel, received-only CMTS RX and measured
-UCD/RxMER/Pre-Eq admission. Rust exposes `merlin::{downstream,upstream,common}`;
-one native Python distribution mirrors those namespaces and preserves
-`merlin.Simulation`. The [upstream CLI](docs/user/upstream/cli.md) uses the existing
-executable. The Qt workbench continues to present downstream OFDM only.
+## Supported scope
 
-Install the desktop workbench: [Ubuntu DEB](docs/user/install/ubuntu-desktop.md) ·
-[Windows MSI](docs/user/install/windows.md). Windows native validation is pending;
-macOS is deferred.
+| Direction | Signal path | Configuration and observations |
+| --- | --- | --- |
+| [Downstream OFDM](docs/user/channel-runner/README.md) | CMTS transmitter → channel → CM receiver | BCH/LDPC, profile-based QAM, interleaving, PLC/NCP and pilots; ideal references or captured RxMER/channel estimates with an applied modulation profile. |
+| [Upstream OFDMA](docs/user/upstream/README.md) | CM transmitter → channel → CMTS receiver | Typed channel, burst-profile and grant configuration; synthetic runs or explicitly associated UCD, RxMER and CM Pre-Eq captures. Normal receiver processing uses received observations. |
 
-Example inputs: [CLI requests and use cases](examples/cli/README.md) ·
-[UI workbenches](examples/workbench/README.md) · [Example folder guide](examples/README.md).
+The unified backend has passed its
+[local integration acceptance](docs/development/features/unified-backend/validation.md#int-accept-01-final-backend-acceptance).
+Direction-specific configurations, limits and reports remain distinct. See the
+[downstream support matrix](docs/reference/ofdm-support.md) and
+[upstream measurement contracts](docs/user/upstream/measurements.md) before
+selecting operating modes or combining captures.
 
-## Workbench overview
+Full CMTS MAC services, channel bonding, multi-channel simulation and wider
+upstream acquisition/ranging are outside the accepted scope. Closed-loop results
+describe MERLIN's modeled experiment; they do not establish external modem
+interoperability. The Qt workbench on `master` presents downstream OFDM only;
+the unified upstream UI remains separate development work.
+
+## Get started
+
+**Desktop:** follow the [Ubuntu DEB](docs/user/install/ubuntu-desktop.md) or
+[Windows MSI](docs/user/install/windows.md) guide. Check the exact version's
+[release assets](https://github.com/mgarcia01752/merlin/releases) and checksums
+before installing. A Git tag alone does not establish published packages or
+successful native validation. macOS delivery remains deferred.
+
+**CLI from source:** configure the pinned toolchain using the
+[development setup guide](docs/development/setup.md), then run these commands
+from the repository root:
+
+```bash
+scripts/cargo-local.sh build -p ofdm-fec-cli --release --locked
+mkdir -p local
+
+# Run the downstream waveform/AWGN example.
+target/release/ofdm-fec channel \
+  --input examples/cli/channel-awgn.json \
+  --output local/downstream-report.json
+
+# Validate the upstream plan without running the engine, then execute it.
+target/release/ofdm-fec upstream preview \
+  --input examples/cli/upstream/us-50khz.json \
+  --output local/upstream-preview.json
+target/release/ofdm-fec upstream run \
+  --input examples/cli/upstream/us-50khz.json \
+  --output local/upstream-report.json
+```
+
+Choose new output paths on subsequent runs; existing files are never replaced.
+Inspect recovery and FEC outcomes as well as run status. See the
+[downstream CLI](docs/user/channel-runner/cli.md),
+[upstream CLI](docs/user/upstream/cli.md) and
+[CLI example inventory](examples/cli/README.md) for measured runs, probes and limits.
+
+## Rust and Python APIs
+
+The thin `merlin` facade exposes both independent engines and shared contracts:
+
+```rust
+use merlin::downstream::Simulation as DownstreamSimulation;
+use merlin::upstream::Simulation as UpstreamSimulation;
+use merlin::common;
+```
+
+The native `merlin-ofdm` Python distribution mirrors those namespaces:
+
+```python
+from merlin.downstream import Simulation as DownstreamSimulation
+from merlin.upstream import Simulation as UpstreamSimulation
+import merlin.common
+```
+
+Existing `docsis_ofdm_fec::api::{Simulation, Merlin}` Rust imports and Python
+`merlin.Simulation` retain downstream behavior. Loading and configuration remain
+idle until an explicit run. Python calls the Rust engine directly.
+
+Start with the [Rust API guide](docs/reference/public-api.md),
+[Python installation guide](docs/user/python/integration.md),
+[upstream Python guide](docs/user/python/upstream.md) and
+[paired Rust/Python examples](examples/api/README.md).
+
+<a id="workbench-overview"></a>
+
+## Downstream workbench
 
 <p align="center">
   <a href="docs/user/workbench.md"><img src="docs/images/workbench/readme-workbench-dark.png" alt="Current MERLIN workbench with transmitter, channel, receiver and measurement inputs" width="1100"></a>
 </p>
 
-Actual native workbench. See the [workbench guide](docs/user/workbench.md)
-for configuration and test-point instruments.
+Native downstream workbench capture. See the [workbench guide](docs/user/workbench.md)
+for configuration, run controls, saved projects and test-point instruments.
+Ready-to-open inputs are in the [workbench examples](examples/workbench/README.md).
 
 ## Signal analyzers and RxMER Designer
 
-Actual native UI captures. Select an image to open its guide.
+Native downstream UI captures. Select an image to open its guide.
 
 | Spectrum Analyzer | QAM Analyzer |
 | :---: | :---: |
@@ -81,11 +152,15 @@ Actual native UI captures. Select an image to open its guide.
 ## Documentation
 
 - [UI Guide](docs/user/workbench.md): configure and run the Qt workbench.
-- [Rust API Guide](docs/reference/public-api.md): use the simulation engine directly.
+- [Upstream OFDMA Guide](docs/user/upstream/README.md): configuration, stages, captures, sessions and CLI.
+- [Rust API Guide](docs/reference/public-api.md): use both simulation engines directly.
 - [Python Guide](docs/user/python/README.md): native bindings, local wheel setup and examples.
+- [Architecture](docs/architecture.md), [requirements](docs/requirements.md) and [checklist](docs/development/checklist.md): canonical ownership, contracts and acceptance evidence.
 
 See the [documentation index](docs/README.md) for CLI usage, simulation models,
-reference material and development guides.
+reference material and development guides. The [examples index](examples/README.md)
+separates CLI requests, saved workbenches and measurement fixtures. The checkout's
+canonical version is [VERSION](VERSION).
 
 Apache-2.0 signal-processing libraries and tooling; the Qt application is
 [GPL-3.0-only](apps/qt/LICENSE). With MIT/Apache dependencies and a Rust-adapted MIT BCH

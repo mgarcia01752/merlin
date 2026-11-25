@@ -2,12 +2,12 @@
 
 Current backend status follows the [official integration checklist](checklist.md#unified-backend-integration)
 and [local validation record](features/unified-backend/validation.md).
-Version source: root `VERSION`, currently **0.4.0**. This describes the current
-checkout, not a published release, platform certification or interoperability claim.
+Version source: root [VERSION](../../VERSION). This describes the current checkout;
+package publication, platform validation and interoperability require their own evidence.
 
-MERLIN — DOCSIS OFDM Simulation Toolkit — has grown from an isolated FEC
-experiment into a standalone Rust
-**downstream OFDM waveform and FEC simulation engine**. Its minimum closed-loop milestone is complete for the documented supported
+MERLIN — DOCSIS OFDM/OFDMA Simulation Toolkit — provides independent Rust
+**downstream OFDM and upstream OFDMA waveform and FEC simulation engines**.
+The downstream minimum closed-loop milestone is complete for the documented supported
 configurations: MERLIN TX → channel model → MERLIN RX → original-source comparison.
 The independent upstream OFDMA backend now implements typed configuration, CM TX,
 channel, received-only CMTS RX, bounded sessions and measured UCD/RxMER/Pre-Eq
