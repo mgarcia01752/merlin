@@ -25,6 +25,8 @@ The matching upstream canvas framing and simplified CMTS control route follow
 [UI-US-LAYOUT-01](checklist.md#task-ui-us-layout-01) under the same status owner.
 The later reversed upstream orientation and receiver-side control connection
 follow [UI-US-LAYOUT-02](checklist.md#task-ui-us-layout-02).
+The subsequent shared diagram style and direct CMTS junction follow
+[UI-US-LAYOUT-03](checklist.md#task-ui-us-layout-03).
 
 The [downstream contract register](../requirements.md#detailed-downstream-contract-register)
 adds requirement/task/evidence navigation without changing these detail marks.

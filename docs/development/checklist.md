@@ -733,6 +733,14 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Acceptance: Show CMTS Receiver ← Channel Simulator ← CM Transmitter; route configuration/grants to the receiver, retaining CM-originated sample flow, C before H and received C×H labels. Preserve drill-ins, keyboard/focus, both themes and narrow scrolling; pass affected QML, documentation/boundary checks, optimized native build and actual VM rendering. Refresh dark guide images.
   Evidence: [executed validation](features/unified-qt-workbench/design.md#ui-us-layout-02-reversed-canvas-and-receiver-side-control) records 13 startup-view and 60 shell QML passes, formatting, final API boundary and traceability checks, optimized native build and actual VM captures. Updated dark guide/README images show leftward sample flow and receiver-side control; downstream pixels are unchanged. Previous refinement acceptance remains historical.
 
+<a id="task-ui-us-layout-03"></a>
+- [x] **UI-US-LAYOUT-03** Match upstream and downstream diagram presentation.
+  Requirements: [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-10](../requirements.md#req-uiu-10), [REQ-UIU-25](../requirements.md#req-uiu-25).
+  Dependencies: [UI-US-LAYOUT-02](#task-ui-us-layout-02).
+  Architecture/files: [upstream presentation](../architecture.md#unified-qt-upstream-scientific-presentation); [design and owners](features/unified-qt-workbench/design.md#ui-us-layout-03-consistent-direction-diagrams).
+  Acceptance: Reuse solid muted arrows, common block/grid/group styling and row geometry. Connect the internal CMTS junction directly to the adjacent receiver without a lower detour; preserve leftward upstream samples, distinct scientific planes, all drill-ins, keyboard access, themes and narrow scrolling. Pass affected direction/shell QML, formatting, API boundary and documentation checks, optimized native build and actual VM comparison; refresh dark screenshots.
+  Evidence: [executed validation](features/unified-qt-workbench/design.md#ui-us-layout-03-consistent-direction-diagrams) records 13 upstream startup, 55 downstream and 60 shell QML passes, formatting, final API boundary/documentation checks, optimized build and actual VM comparison. Dark guide/README screenshots show the consistent layout and direct receiver connection; downstream pixels remain unchanged. Historical refinement states are preserved.
+
 ## Architecture and module rules
 
 <a id="task-arch-01"></a>

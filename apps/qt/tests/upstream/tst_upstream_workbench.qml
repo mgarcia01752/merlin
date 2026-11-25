@@ -196,7 +196,7 @@ Pane {
             const channel = blockFor("channel");
             const receiver = blockFor("receiver");
             compare(tx.heading, "CM Transmitter");
-            compare(channel.heading, "Channel Simulator");
+            compare(channel.heading, "Channel\nSimulator");
             compare(receiver.heading, "CMTS Receiver");
             verify(receiver.x + receiver.width < channel.x);
             verify(channel.x + channel.width < tx.x);
@@ -207,19 +207,31 @@ Pane {
             const measurement = findChild(workbench, "preEqualizationMeasurement");
             const verification = findChild(workbench, "receiverVerification");
             compare(data.role, "data");
-            compare(data.dashed, false);
+            for (const name of ["txChannelData", "channelReceiverData", "sourceData", "rxmerMeasurement", "preEqualizationMeasurement", "receiverVerification", "configurationCollector", "receiverControl", "ucdControl", "profilesControl", "grantsControl"]) {
+                const route = findChild(workbench, name);
+                compare(route.comparison, false, name + " must use a solid line");
+                compare(route.theme.muted, theme.muted);
+            }
             compare(data.fromX, tx.x);
             compare(data.toX, channel.x + channel.width);
             compare(received.fromX, channel.x);
             compare(received.toX, receiver.x + receiver.width);
             verify(data.fromX > data.toX);
             verify(received.fromX > received.toX);
-            compare(control.markerShape, "square");
-            compare(control.toX, receiver.x + receiver.width / 2);
-            compare(control.toY, receiver.y + receiver.height);
-            compare(findChild(workbench, "configurationControl").toX, control.toX);
-            compare(measurement.markerShape, "circle");
-            compare(verification.markerShape, "diamond");
+            compare(control.role, "control");
+            compare(control.toX, receiver.x);
+            compare(control.toY, receiver.y + receiver.height / 2);
+            compare(control.fromY, control.toY);
+            const group = findChild(workbench, "upstreamConfigurationGroup");
+            verify(control.fromX > group.x && control.fromX < group.x + group.width);
+            const collector = findChild(workbench, "configurationCollector");
+            compare(collector.fromX, control.fromX);
+            verify(collector.fromY < control.fromY && collector.toY > control.fromY);
+            verify(collector.fromY > group.y && collector.toY < group.y + group.height);
+            compare(findChild(workbench, "configurationControl"), null);
+            compare(findChild(workbench, "upstreamConnectionLegend"), null);
+            compare(measurement.role, "measurement");
+            compare(verification.role, "verification");
             compare(measurement.toY, data.fromY);
             verify(measurement.toX > data.toX && measurement.toX < data.fromX);
             compare(verification.fromY, receiver.y);
@@ -247,8 +259,12 @@ Pane {
 
         function test_both_themes_update_routes_blocks_and_popups(data) {
             theme.dark = data.dark;
-            compare(findChild(workbench, "txChannelData").roleColor, theme.accent);
-            compare(findChild(workbench, "rxmerMeasurement").roleColor, theme.txScatteredPilot);
+            compare(findChild(workbench, "txChannelData").theme.muted, theme.muted);
+            compare(findChild(workbench, "rxmerMeasurement").theme.muted, theme.muted);
+            const group = findChild(workbench, "upstreamConfigurationGroup");
+            compare(group.color, theme.workbenchConfigurationFill);
+            compare(group.border.color, theme.accent);
+            compare(group.radius, theme.workbenchConfigurationRadius);
             mouseClick(blockFor("transmitter"));
             const popup = workbench.sectionDialogs.transmitter;
             tryCompare(popup, "opened", true);
@@ -278,8 +294,10 @@ Pane {
             window.height = narrowHeight;
             const viewport = findChild(workbench, "upstreamViewport");
             const tx = blockFor("transmitter");
-            compare(viewport.contentWidth, workbench.minimumDiagramWidth);
-            compare(viewport.contentHeight, workbench.minimumDiagramHeight);
+            verify(viewport.compactViewport);
+            compare(viewport.contentWidth, workbench.minimumDiagramWidth + theme.workbenchCanvasSideMargin);
+            compare(viewport.contentHeight, workbench.minimumDiagramHeight + theme.workbenchCanvasBottomMargin);
+            compare(findChild(workbench, "upstreamDiagram").scale, 1);
             verify(viewport.contentWidth > viewport.width);
             const scrollbar = findChild(workbench, "upstreamHorizontalScrollBar");
             tryVerify(function () {
@@ -303,6 +321,9 @@ Pane {
             tryCompare(tx, "activeFocus", true);
             window.width = desktopWidth + workbench.blockWidth;
             window.height = desktopHeight;
+            verify(!viewport.compactViewport);
+            compare(viewport.contentWidth, viewport.width);
+            compare(viewport.contentHeight, viewport.height);
             const receiver = blockFor("receiver");
             const channel = blockFor("channel");
             compare(channel.x - receiver.x - receiver.width, tx.x - channel.x - channel.width);

@@ -15,6 +15,27 @@ QtObject {
     readonly property int workbenchCanvasSideMargin: 24
     readonly property int workbenchCanvasTopMargin: 24
     readonly property int workbenchCanvasBottomMargin: 20
+    // Shared diagram coordinates and pixel styling preserve the downstream layout.
+    readonly property int workbenchDiagramWidth: 1140
+    readonly property int workbenchDiagramHeight: 580
+    readonly property int workbenchBlockWidth: 195
+    readonly property int workbenchBlockHeight: 90
+    readonly property int workbenchInputRowTop: 65
+    readonly property int workbenchMainRowTop: 245
+    readonly property int workbenchLowerRowTop: 425
+    readonly property int workbenchFirstColumnLeft: 325
+    readonly property int workbenchColumnGap: 110
+    readonly property int workbenchConfigurationLeft: 10
+    readonly property int workbenchConfigurationWidth: 270
+    readonly property int workbenchConfigurationRadius: 20
+    readonly property real workbenchConfigurationBorderWidth: 1.5
+    readonly property int workbenchConfigurationHeadingSize: 17
+    readonly property color workbenchConfigurationFill: dark ? "#0b2332" : accentSoft
+    // Junction inset is separate from the canvas bottom margin despite equal values.
+    readonly property int workbenchConfigurationJunctionInset: 20
+    readonly property int workbenchGridOrigin: 16
+    readonly property int workbenchGridSpacing: 24
+    readonly property int workbenchGridDotSize: 1
     // Injected by the native application; tests supply an explicit fixture.
     property var presentationBackendFactory: null
     property bool presentationAdmissionRejected: false

@@ -416,9 +416,9 @@ Item {
                 onPaint: {
                     const ctx = getContext("2d")
                     ctx.reset(); ctx.fillStyle = theme.line
-                    for (let x = 16; x < width; x += 24) {
-                        for (let y = 16; y < height; y += 24) {
-                            ctx.fillRect(x, y, 1, 1)
+                    for (let x = theme.workbenchGridOrigin; x < width; x += theme.workbenchGridSpacing) {
+                        for (let y = theme.workbenchGridOrigin; y < height; y += theme.workbenchGridSpacing) {
+                            ctx.fillRect(x, y, theme.workbenchGridDotSize, theme.workbenchGridDotSize)
                         }
                     }
                 }
@@ -427,64 +427,68 @@ Item {
                 id: diagram
                 enabled: !workbench.loadingProject
                 anchors.centerIn: parent
-                width: 1140; height: 580
-                scale: Math.min((parent.width - 24) / width, (parent.height - 20) / height)
+                width: theme.workbenchDiagramWidth; height: theme.workbenchDiagramHeight
+                scale: Math.min((parent.width - theme.workbenchCanvasSideMargin) / width, (parent.height - theme.workbenchCanvasBottomMargin) / height)
+                readonly property real configurationCollectorX: transmitterConfigurationGroup.x + transmitterConfigurationGroup.width - theme.workbenchConfigurationJunctionInset
+                readonly property real dataAxis: transmitterBlock.y + transmitterBlock.height / 2
+                readonly property real estimateBranchY: (channelBlock.y + channelBlock.height + channelEstimateBlock.y) / 2
                 Rectangle {
+                    id: transmitterConfigurationGroup
                     objectName: "transmitterConfigurationGroup"
-                    x: 10; y: 130; width: 270; height: 320; radius: 20
-                    color: theme.dark ? "#0b2332" : theme.accentSoft
-                    border.color: theme.accent; border.width: 1.5
+                    x: theme.workbenchConfigurationLeft; y: 130; width: theme.workbenchConfigurationWidth; height: 320; radius: theme.workbenchConfigurationRadius
+                    color: theme.workbenchConfigurationFill
+                    border.color: theme.accent; border.width: theme.workbenchConfigurationBorderWidth
                     Label {
                         x: 10; y: 16; width: parent.width - 20
                         text: "Transmitter Configuration"
                         horizontalAlignment: Text.AlignHCenter
-                        color: theme.text; font.pixelSize: 17; font.weight: Font.DemiBold
+                        color: theme.text; font.pixelSize: theme.workbenchConfigurationHeadingSize; font.weight: Font.DemiBold
                     }
                 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 242.5; fromY: 230; toX: 260; toY: 230; arrowHead: false }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 242.5; fromY: 350; toX: 260; toY: 350; arrowHead: false }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 260; fromY: 230; toX: 260; toY: 350; arrowHead: false }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 260; fromY: 290; toX: 325; toY: 290 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 520; fromY: 290; toX: 630; toY: 290 }
-                Connection { objectName: "channelReceiverConnection"; anchors.fill: parent; theme: workbench.theme; fromX: 825; fromY: 290; toX: 935; toY: 290 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 422.5; fromY: 155; toX: 422.5; toY: 245 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 1032.5; fromY: 245; toX: 1032.5; toY: 155 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 727.5; fromY: 155; toX: 727.5; toY: 245 }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 880; fromY: 425; toX: 880; toY: 380; arrowHead: false }
-                Connection { objectName: "estimateChannelConnection"; anchors.fill: parent; theme: workbench.theme; fromX: 727.5; fromY: 380; toX: 880; toY: 380; arrowHead: false }
-                Connection { objectName: "estimateReceiverBranch"; visible: receiverBlock.indicatorText !== "MCE"; anchors.fill: parent; theme: workbench.theme; fromX: 880; fromY: 380; toX: 1032.5; toY: 380; arrowHead: false }
-                Connection { anchors.fill: parent; theme: workbench.theme; fromX: 727.5; fromY: 380; toX: 727.5; toY: 335 }
-                Connection { objectName: "estimateReceiverConnection"; visible: receiverBlock.indicatorText !== "MCE"; anchors.fill: parent; theme: workbench.theme; fromX: 1032.5; fromY: 380; toX: 1032.5; toY: 335 }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: ofdmBlock.x + ofdmBlock.width; fromY: ofdmBlock.y + ofdmBlock.height / 2; toX: diagram.configurationCollectorX; toY: ofdmBlock.y + ofdmBlock.height / 2; arrowHead: false }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: profileBlock.x + profileBlock.width; fromY: profileBlock.y + profileBlock.height / 2; toX: diagram.configurationCollectorX; toY: profileBlock.y + profileBlock.height / 2; arrowHead: false }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: diagram.configurationCollectorX; fromY: ofdmBlock.y + ofdmBlock.height / 2; toX: diagram.configurationCollectorX; toY: profileBlock.y + profileBlock.height / 2; arrowHead: false }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: diagram.configurationCollectorX; fromY: diagram.dataAxis; toX: transmitterBlock.x; toY: diagram.dataAxis }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: transmitterBlock.x + transmitterBlock.width; fromY: diagram.dataAxis; toX: channelBlock.x; toY: diagram.dataAxis }
+                Connection { objectName: "channelReceiverConnection"; anchors.fill: parent; theme: workbench.theme; fromX: channelBlock.x + channelBlock.width; fromY: diagram.dataAxis; toX: receiverBlock.x; toY: diagram.dataAxis }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: sourceBlock.x + sourceBlock.width / 2; fromY: sourceBlock.y + sourceBlock.height; toX: transmitterBlock.x + transmitterBlock.width / 2; toY: transmitterBlock.y }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: receiverBlock.x + receiverBlock.width / 2; fromY: receiverBlock.y; toX: verificationBlock.x + verificationBlock.width / 2; toY: verificationBlock.y + verificationBlock.height }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: rxmerBlock.x + rxmerBlock.width / 2; fromY: rxmerBlock.y + rxmerBlock.height; toX: channelBlock.x + channelBlock.width / 2; toY: channelBlock.y }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: channelEstimateBlock.x + channelEstimateBlock.width / 2; fromY: channelEstimateBlock.y; toX: channelEstimateBlock.x + channelEstimateBlock.width / 2; toY: diagram.estimateBranchY; arrowHead: false }
+                Connection { objectName: "estimateChannelConnection"; anchors.fill: parent; theme: workbench.theme; fromX: channelBlock.x + channelBlock.width / 2; fromY: diagram.estimateBranchY; toX: channelEstimateBlock.x + channelEstimateBlock.width / 2; toY: diagram.estimateBranchY; arrowHead: false }
+                Connection { objectName: "estimateReceiverBranch"; visible: receiverBlock.indicatorText !== "MCE"; anchors.fill: parent; theme: workbench.theme; fromX: channelEstimateBlock.x + channelEstimateBlock.width / 2; fromY: diagram.estimateBranchY; toX: receiverBlock.x + receiverBlock.width / 2; toY: diagram.estimateBranchY; arrowHead: false }
+                Connection { anchors.fill: parent; theme: workbench.theme; fromX: channelBlock.x + channelBlock.width / 2; fromY: diagram.estimateBranchY; toX: channelBlock.x + channelBlock.width / 2; toY: channelBlock.y + channelBlock.height }
+                Connection { objectName: "estimateReceiverConnection"; visible: receiverBlock.indicatorText !== "MCE"; anchors.fill: parent; theme: workbench.theme; fromX: receiverBlock.x + receiverBlock.width / 2; fromY: diagram.estimateBranchY; toX: receiverBlock.x + receiverBlock.width / 2; toY: receiverBlock.y + receiverBlock.height }
                 WorkbenchBlock {
-                    id: ofdmBlock; objectName: "ofdmBlock"; x: 47.5; y: 185; width: 195; height: 90
+                    id: ofdmBlock; objectName: "ofdmBlock"; x: transmitterConfigurationGroup.x + (transmitterConfigurationGroup.width - width) / 2; y: 185; width: theme.workbenchBlockWidth; height: theme.workbenchBlockHeight
                     theme: workbench.theme; heading: "OFDM Channel\nDescriptor\n(OCD)"
                     blockStatus: workbench.profileState.ofdm_status
                     statusReason: workbench.profileState.reason
                     onClicked: ofdmDialog.openChecked()
                 }
                 WorkbenchBlock {
-                    id: sourceBlock; objectName: "sourceBlock"; x: 325; y: 65; width: 195; height: 90
+                    id: sourceBlock; objectName: "sourceBlock"; x: transmitterBlock.x; y: theme.workbenchInputRowTop; width: theme.workbenchBlockWidth; height: theme.workbenchBlockHeight
                     theme: workbench.theme; heading: "PRBS-TX"
                     blockStatus: workbench.sourceState.status
                     statusReason: workbench.sourceState.reason
                     onClicked: sourceDialog.openChecked()
                 }
                 WorkbenchBlock {
-                    id: transmitterBlock; objectName: "transmitterBlock"; x: 325; y: 245; width: 195; height: 90
+                    id: transmitterBlock; objectName: "transmitterBlock"; x: theme.workbenchFirstColumnLeft; y: theme.workbenchMainRowTop; width: theme.workbenchBlockWidth; height: theme.workbenchBlockHeight
                     theme: workbench.theme; heading: "Transmitter"
                     blockStatus: workbench.transmitterState.status
                     statusReason: workbench.transmitterState.reason
                     onClicked: transmitterDialog.openChecked()
                 }
                 WorkbenchBlock {
-                    id: channelBlock; objectName: "channelBlock"; x: 630; y: 245; width: 195; height: 90
+                    id: channelBlock; objectName: "channelBlock"; x: transmitterBlock.x + transmitterBlock.width + theme.workbenchColumnGap; y: theme.workbenchMainRowTop; width: theme.workbenchBlockWidth; height: theme.workbenchBlockHeight
                     theme: workbench.theme; heading: "Channel\nSimulator"
                     blockStatus: workbench.measurementState.channel.status
                     statusReason: workbench.measurementState.channel.reason
                     onClicked: channelDialog.openChecked()
                 }
                 WorkbenchBlock {
-                    id: receiverBlock; objectName: "receiverBlock"; x: 935; y: 245; width: 195; height: 90
+                    id: receiverBlock; objectName: "receiverBlock"; x: channelBlock.x + channelBlock.width + theme.workbenchColumnGap; y: theme.workbenchMainRowTop; width: theme.workbenchBlockWidth; height: theme.workbenchBlockHeight
                     theme: workbench.theme; heading: "Receiver"
                     indicatorText: workbench.runState.options.receiver_mode === "merlin_estimated" ? "MCE" : ""
                     indicatorDescription: "MERLIN Channel Estimation enabled. Estimates correction from received pilots."
@@ -493,14 +497,14 @@ Item {
                     onClicked: receiverDialog.openChecked()
                 }
                 WorkbenchBlock {
-                    id: verificationBlock; objectName: "verificationBlock"; x: 935; y: 65; width: 195; height: 90
+                    id: verificationBlock; objectName: "verificationBlock"; x: receiverBlock.x; y: theme.workbenchInputRowTop; width: theme.workbenchBlockWidth; height: theme.workbenchBlockHeight
                     theme: workbench.theme; heading: "PRBS-RX"
                     blockStatus: workbench.runState.verify_status
                     statusReason: workbench.runState.verified ? "Independent recovered-source comparison enabled." : "Enable independent source comparison in PRBS-RX."
                     onClicked: verificationDialog.openChecked()
                 }
                 WorkbenchBlock {
-                    id: profileBlock; objectName: "profileBlock"; x: 47.5; y: 305; width: 195; height: 90
+                    id: profileBlock; objectName: "profileBlock"; x: ofdmBlock.x; y: 305; width: theme.workbenchBlockWidth; height: theme.workbenchBlockHeight
                     theme: workbench.theme; heading: "Downstream\nProfile\nDescriptor (DPD)"
                     pnmFileType: "CmDsOfdmModulationProfile"
                     blockStatus: workbench.profileState.profile_status
@@ -508,7 +512,7 @@ Item {
                     onClicked: profileDialog.openChecked()
                 }
                 WorkbenchBlock {
-                    id: channelEstimateBlock; objectName: "channelEstimateBlock"; x: 770; y: 425; width: 220; height: 90
+                    id: channelEstimateBlock; objectName: "channelEstimateBlock"; x: 770; y: theme.workbenchLowerRowTop; width: 220; height: theme.workbenchBlockHeight
                     theme: workbench.theme; heading: "DS Channel Est."
                     pnmFileType: "CmDsOfdmChanEstimateCoef"
                     blockStatus: workbench.measurementState.response.status
@@ -516,7 +520,7 @@ Item {
                     onClicked: responseDialog.openChecked()
                 }
                 WorkbenchBlock {
-                    id: rxmerBlock; objectName: "rxmerBlock"; x: 630; y: 65; width: 195; height: 90
+                    id: rxmerBlock; objectName: "rxmerBlock"; x: channelBlock.x; y: theme.workbenchInputRowTop; width: theme.workbenchBlockWidth; height: theme.workbenchBlockHeight
                     theme: workbench.theme; heading: "RxMER"
                     pnmFileType: "CmDsOfdmRxMer"
                     blockStatus: workbench.measurementState.rxmer.status

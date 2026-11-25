@@ -6,7 +6,6 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Controls
-import QtQuick.Layouts
 import "../shared/components"
 import "../shared/presentation"
 
@@ -53,37 +52,26 @@ Item {
     }
 
     // Keep the three stages and control group separate within the shared frame.
-    readonly property real minimumDiagramWidth: 1100
-    readonly property real minimumDiagramHeight: 700
-    readonly property real edgeMargin: 32
-    readonly property real blockWidth: 200
-    readonly property real mainBlockHeight: 96
-    readonly property int mainBlockCount: 3
-    readonly property real inputBlockHeight: 84
-    readonly property real configurationWidth: 220
-    readonly property real configurationTop: 84
+    readonly property real minimumDiagramWidth: theme.workbenchDiagramWidth
+    readonly property real minimumDiagramHeight: theme.workbenchDiagramHeight
+    readonly property real edgeMargin: theme.workbenchConfigurationLeft
+    readonly property real blockWidth: theme.workbenchBlockWidth
+    readonly property real mainBlockHeight: theme.workbenchBlockHeight
+    readonly property real inputBlockHeight: theme.workbenchBlockHeight
+    readonly property real configurationWidth: theme.workbenchConfigurationWidth
+    readonly property real configurationTop: mainTop - (configurationHeight - mainBlockHeight) / 2
+    // Three configuration editors need a taller group than Downstream's two.
     readonly property real configurationHeight: 390
-    readonly property real configurationInset: 16
+    readonly property real configurationInset: (configurationWidth - blockWidth) / 2
     readonly property real configurationHeaderHeight: 48
     readonly property real configurationRowGap: 22
-    readonly property real configurationGap: 84
-    readonly property real mainTop: 286
-    readonly property real upperInputTop: 116
-    readonly property real correctionTop: 470
-
-    // Place CMTS control below its receiver, clear of the waveform path.
-    readonly property real controlBaseline: (mainTop + mainBlockHeight + correctionTop) / 2
-    readonly property real legendBottomMargin: 24
-    readonly property real legendGap: 24
-    readonly property real legendLineWidth: 48
-    readonly property real legendLineHeight: 18
-    readonly property real gridSpacing: 20
-    readonly property real gridDotRadius: 1
+    readonly property real mainTop: theme.workbenchMainRowTop
+    readonly property real upperInputTop: theme.workbenchInputRowTop
+    readonly property real correctionTop: theme.workbenchLowerRowTop
     readonly property real panelRadius: 12
     readonly property real captionFontSize: 12
-    readonly property real groupHeadingFontSize: 16
+    readonly property real groupHeadingFontSize: theme.workbenchConfigurationHeadingSize
     readonly property real captionGap: 14
-    readonly property real controlCollectorGap: 24
     readonly property var sectionDialogs: ({
             ucd: ucdDialog,
             profiles: profilesDialog,
@@ -124,15 +112,17 @@ Item {
      * Only viewport geometry changes; accepted host state is untouched.
      */
     function revealBlock(block) {
-        if (block.x < viewport.contentX + edgeMargin) {
-            viewport.contentX = Math.max(0, block.x - edgeMargin);
-        } else if (block.x + block.width > viewport.contentX + viewport.width - edgeMargin) {
-            viewport.contentX = Math.min(viewport.contentWidth - viewport.width, block.x + block.width + edgeMargin - viewport.width);
+        const topLeft = block.mapToItem(viewport.contentItem, 0, 0);
+        const bottomRight = block.mapToItem(viewport.contentItem, block.width, block.height);
+        if (topLeft.x < viewport.contentX + edgeMargin) {
+            viewport.contentX = Math.max(0, topLeft.x - edgeMargin);
+        } else if (bottomRight.x > viewport.contentX + viewport.width - edgeMargin) {
+            viewport.contentX = Math.min(viewport.contentWidth - viewport.width, bottomRight.x + edgeMargin - viewport.width);
         }
-        if (block.y < viewport.contentY + edgeMargin) {
-            viewport.contentY = Math.max(0, block.y - edgeMargin);
-        } else if (block.y + block.height > viewport.contentY + viewport.height - edgeMargin) {
-            viewport.contentY = Math.min(viewport.contentHeight - viewport.height, block.y + block.height + edgeMargin - viewport.height);
+        if (topLeft.y < viewport.contentY + edgeMargin) {
+            viewport.contentY = Math.max(0, topLeft.y - edgeMargin);
+        } else if (bottomRight.y > viewport.contentY + viewport.height - edgeMargin) {
+            viewport.contentY = Math.min(viewport.contentHeight - viewport.height, bottomRight.y + edgeMargin - viewport.height);
         }
     }
 
@@ -188,6 +178,28 @@ Item {
         color: workbench.theme.background
         border.color: workbench.theme.line
         radius: workbench.panelRadius
+        Canvas {
+            id: grid
+            anchors.fill: parent
+            onWidthChanged: requestPaint()
+            onHeightChanged: requestPaint()
+            Connections {
+                target: workbench.theme
+                function onDarkChanged() {
+                    grid.requestPaint();
+                }
+            }
+            onPaint: {
+                const context = getContext("2d");
+                context.reset();
+                context.fillStyle = workbench.theme.line;
+                for (let row = workbench.theme.workbenchGridOrigin; row < height; row += workbench.theme.workbenchGridSpacing) {
+                    for (let column = workbench.theme.workbenchGridOrigin; column < width; column += workbench.theme.workbenchGridSpacing) {
+                        context.fillRect(column, row, workbench.theme.workbenchGridDotSize, workbench.theme.workbenchGridDotSize);
+                    }
+                }
+            }
+        }
     }
     Flickable {
         id: viewport
@@ -195,8 +207,9 @@ Item {
         anchors.fill: canvasFrame
         clip: true
         boundsBehavior: Flickable.StopAtBounds
-        contentWidth: Math.max(width, workbench.minimumDiagramWidth)
-        contentHeight: Math.max(height, workbench.minimumDiagramHeight)
+        readonly property bool compactViewport: width < workbench.minimumDiagramWidth
+        contentWidth: compactViewport ? Math.max(width, workbench.minimumDiagramWidth + workbench.theme.workbenchCanvasSideMargin) : width
+        contentHeight: compactViewport ? Math.max(height, workbench.minimumDiagramHeight + workbench.theme.workbenchCanvasBottomMargin) : height
         ScrollBar.horizontal: ScrollBar {
             objectName: "upstreamHorizontalScrollBar"
         }
@@ -206,37 +219,17 @@ Item {
         Item {
             id: diagram
             objectName: "upstreamDiagram"
-            width: viewport.contentWidth
-            height: viewport.contentHeight
-            readonly property real mainLeft: workbench.edgeMargin + workbench.configurationWidth + workbench.configurationGap
-            readonly property real mainGap: (width - mainLeft - workbench.edgeMargin - workbench.blockWidth * workbench.mainBlockCount) / 2
+            width: workbench.minimumDiagramWidth
+            height: workbench.minimumDiagramHeight
+            x: (viewport.contentWidth - width * scale) / 2
+            y: (viewport.contentHeight - height * scale) / 2
+            transformOrigin: Item.TopLeft
+            scale: viewport.compactViewport ? 1 : Math.min((viewport.width - workbench.theme.workbenchCanvasSideMargin) / width, (viewport.height - workbench.theme.workbenchCanvasBottomMargin) / height)
+            readonly property real mainLeft: workbench.theme.workbenchFirstColumnLeft
+            readonly property real mainGap: workbench.theme.workbenchColumnGap
             readonly property real dataAxis: workbench.mainTop + workbench.mainBlockHeight / 2
-            readonly property real controlX: workbench.edgeMargin + workbench.configurationWidth + workbench.controlCollectorGap
+            readonly property real controlX: configurationGroup.x + configurationGroup.width - workbench.theme.workbenchConfigurationJunctionInset
             readonly property real correctionX: transmitterBlock.x - mainGap / 2
-            Canvas {
-                id: grid
-                anchors.fill: parent
-                onWidthChanged: requestPaint()
-                onHeightChanged: requestPaint()
-                Connections {
-                    target: workbench.theme
-                    function onDarkChanged() {
-                        grid.requestPaint();
-                    }
-                }
-                onPaint: {
-                    const context = getContext("2d");
-                    context.reset();
-                    context.fillStyle = workbench.theme.line;
-                    for (let row = workbench.gridSpacing; row < height; row += workbench.gridSpacing) {
-                        for (let column = workbench.gridSpacing; column < width; column += workbench.gridSpacing) {
-                            context.beginPath();
-                            context.arc(column, row, workbench.gridDotRadius, 0, Math.PI * 2);
-                            context.fill();
-                        }
-                    }
-                }
-            }
             Rectangle {
                 id: configurationGroup
                 objectName: "upstreamConfigurationGroup"
@@ -244,9 +237,10 @@ Item {
                 y: workbench.configurationTop
                 width: workbench.configurationWidth
                 height: workbench.configurationHeight
-                radius: workbench.panelRadius
-                color: workbench.theme.panel
-                border.color: workbench.theme.line
+                radius: workbench.theme.workbenchConfigurationRadius
+                color: workbench.theme.workbenchConfigurationFill
+                border.color: workbench.theme.accent
+                border.width: workbench.theme.workbenchConfigurationBorderWidth
                 Label {
                     anchors.top: parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -255,7 +249,7 @@ Item {
                     text: "CMTS Configuration"
                     color: workbench.theme.text
                     font.pixelSize: workbench.groupHeadingFontSize
-                    font.bold: true
+                    font.weight: Font.DemiBold
                 }
             }
             UpstreamConnection {
@@ -268,7 +262,6 @@ Item {
                 toX: channelBlock.x + channelBlock.width
                 toY: diagram.dataAxis
                 arrowHead: true
-                showMarker: true
             }
             UpstreamConnection {
                 objectName: "channelReceiverData"
@@ -280,7 +273,6 @@ Item {
                 toX: receiverBlock.x + receiverBlock.width
                 toY: diagram.dataAxis
                 arrowHead: true
-                showMarker: true
             }
             UpstreamConnection {
                 objectName: "sourceData"
@@ -292,7 +284,6 @@ Item {
                 toX: transmitterBlock.x + transmitterBlock.width / 2
                 toY: transmitterBlock.y
                 arrowHead: true
-                showMarker: true
             }
             UpstreamConnection {
                 objectName: "rxmerMeasurement"
@@ -304,7 +295,6 @@ Item {
                 toX: channelBlock.x + channelBlock.width / 2
                 toY: channelBlock.y
                 arrowHead: true
-                showMarker: true
             }
             UpstreamConnection {
                 objectName: "preEqualizationMeasurement"
@@ -316,7 +306,6 @@ Item {
                 toX: diagram.correctionX
                 toY: diagram.dataAxis
                 arrowHead: true
-                showMarker: true
             }
             UpstreamConnection {
                 objectName: "receiverVerification"
@@ -328,7 +317,6 @@ Item {
                 toX: verificationBlock.x + verificationBlock.width / 2
                 toY: verificationBlock.y + verificationBlock.height
                 arrowHead: true
-                showMarker: true
             }
             UpstreamConnection {
                 objectName: "configurationCollector"
@@ -338,33 +326,19 @@ Item {
                 fromX: diagram.controlX
                 fromY: ucdBlock.y + ucdBlock.height / 2
                 toX: diagram.controlX
-                toY: workbench.controlBaseline
+                toY: grantsBlock.y + grantsBlock.height / 2
                 arrowHead: false
-                showMarker: false
-            }
-            UpstreamConnection {
-                objectName: "configurationControl"
-                anchors.fill: parent
-                theme: workbench.theme
-                role: "control"
-                fromX: diagram.controlX
-                fromY: workbench.controlBaseline
-                toX: receiverBlock.x + receiverBlock.width / 2
-                toY: workbench.controlBaseline
-                arrowHead: false
-                showMarker: false
             }
             UpstreamConnection {
                 objectName: "receiverControl"
                 anchors.fill: parent
                 theme: workbench.theme
                 role: "control"
-                fromX: receiverBlock.x + receiverBlock.width / 2
-                fromY: workbench.controlBaseline
-                toX: receiverBlock.x + receiverBlock.width / 2
-                toY: receiverBlock.y + receiverBlock.height
+                fromX: diagram.controlX
+                fromY: diagram.dataAxis
+                toX: receiverBlock.x
+                toY: diagram.dataAxis
                 arrowHead: true
-                showMarker: true
             }
             UpstreamConnection {
                 objectName: "ucdControl"
@@ -376,7 +350,6 @@ Item {
                 toX: diagram.controlX
                 toY: ucdBlock.y + ucdBlock.height / 2
                 arrowHead: false
-                showMarker: false
             }
             UpstreamConnection {
                 objectName: "profilesControl"
@@ -388,7 +361,6 @@ Item {
                 toX: diagram.controlX
                 toY: profilesBlock.y + profilesBlock.height / 2
                 arrowHead: false
-                showMarker: false
             }
             UpstreamConnection {
                 objectName: "grantsControl"
@@ -400,7 +372,6 @@ Item {
                 toX: diagram.controlX
                 toY: grantsBlock.y + grantsBlock.height / 2
                 arrowHead: false
-                showMarker: false
             }
             WorkbenchBlock {
                 id: ucdBlock
@@ -490,7 +461,7 @@ Item {
                 id: channelBlock
                 objectName: "upstreamChannelBlock"
                 theme: workbench.theme
-                heading: "Channel Simulator"
+                heading: "Channel\nSimulator"
                 blockStatus: workbench.blockPresentation("channel").status || "attention"
                 statusReason: workbench.blockPresentation("channel").reason || "Accepted upstream state is unavailable."
                 x: receiverBlock.x + receiverBlock.width + diagram.mainGap
@@ -617,7 +588,7 @@ Item {
                 x: diagram.correctionX + workbench.captionGap
                 y: (diagram.dataAxis + preEqualizationBlock.y) / 2 - implicitHeight / 2
                 text: "C before H"
-                color: workbench.theme.txScatteredPilot
+                color: workbench.theme.muted
                 font.pixelSize: workbench.captionFontSize
             }
             Label {
@@ -641,61 +612,7 @@ Item {
                 color: workbench.theme.muted
                 font.pixelSize: workbench.captionFontSize
             }
-            Label {
-                x: diagram.controlX
-                y: workbench.controlBaseline + workbench.captionGap
-                width: receiverBlock.x + receiverBlock.width / 2 - x
-                text: "Configuration / grants"
-                horizontalAlignment: Text.AlignHCenter
-                color: workbench.theme.txPlc
-                font.pixelSize: workbench.captionFontSize
-            }
-            RowLayout {
-                objectName: "upstreamConnectionLegend"
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: workbench.legendBottomMargin
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: workbench.legendGap
-                Repeater {
-                    model: [
-                        {
-                            role: "data",
-                            label: "Waveform / data"
-                        },
-                        {
-                            role: "control",
-                            label: "Control"
-                        },
-                        {
-                            role: "measurement",
-                            label: "Measurement"
-                        },
-                        {
-                            role: "verification",
-                            label: "Verification"
-                        }
-                    ]
-                    RowLayout {
-                        id: legendEntry
-                        required property var modelData
-                        UpstreamConnection {
-                            Layout.preferredWidth: workbench.legendLineWidth
-                            Layout.preferredHeight: workbench.legendLineHeight
-                            theme: workbench.theme
-                            role: legendEntry.modelData.role
-                            fromX: 0
-                            fromY: height / 2
-                            toX: width
-                            toY: height / 2
-                        }
-                        Label {
-                            text: legendEntry.modelData.label
-                            color: workbench.theme.text
-                            font.pixelSize: workbench.captionFontSize
-                        }
-                    }
-                }
-            }
+
         }
     }
     Label {

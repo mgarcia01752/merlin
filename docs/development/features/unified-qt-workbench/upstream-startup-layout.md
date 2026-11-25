@@ -14,7 +14,15 @@ preserves the approved presentation and connector semantics.
 
 ## Subsequent presentation refinement
 
-The latest 2026-11-25 request reverses the canvas to **CMTS Receiver ← Channel
+The final 2026-11-25 consistency request keeps leftward sample flow and CMTS
+receiver-side control, but replaces the dashed/marked connections with
+Downstream's plain solid arrows. The CMTS junction stays inside its group and
+connects directly to the adjacent receiver at the main row; there is no lower
+detour. Both directions share block, grid and group styling, with narrow upstream
+scrolling retained. See [UI-US-LAYOUT-03](../../checklist.md#task-ui-us-layout-03)
+and its [design](design.md#ui-us-layout-03-consistent-direction-diagrams).
+
+The preceding 2026-11-25 request reverses the canvas to **CMTS Receiver ← Channel
 Simulator ← CM Transmitter** and connects CMTS Configuration to CMTS Receiver.
 It supersedes the earlier transmitter-only wire refinement described below.
 PRBS blocks follow their stages, correction C remains before physical H, and

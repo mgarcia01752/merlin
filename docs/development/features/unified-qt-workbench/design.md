@@ -5981,3 +5981,64 @@ image identities remain under ignored
 `docs/development/local/unified-qt-workbench/upstream-flow/`. Installed, Windows
 and hosted validation were not executed. Historical UIU and prior refinement
 completion states remain unchanged.
+
+### UI-US-LAYOUT-03 consistent direction diagrams
+
+The user requested similar Downstream and Upstream canvases, solid connectors
+and a direct CMTS Configuration-to-receiver route. The
+[official task](../../checklist.md#task-ui-us-layout-03) links
+[REQ-UIU-08](../../../requirements.md#req-uiu-08),
+[REQ-UIU-10](../../../requirements.md#req-uiu-10) and
+[REQ-UIU-25](../../../requirements.md#req-uiu-25) to the
+[current architecture](../../../architecture.md#unified-qt-upstream-scientific-presentation).
+The previous leftward upstream flow and receiver-side control remain accepted;
+this refinement replaces the earlier dashed/marked routes and lower detour.
+
+| Owner | Inspected contract | Decision |
+| --- | --- | --- |
+| `apps/qt/qml/shared/theme/Theme.qml` | Downstream defines established block, row, grid and group styling values. | SHARE named presentation geometry and decoration with both directions, preserving downstream values. |
+| `apps/qt/qml/downstream/DownstreamWorkbench.qml` | Existing solid `Connection` arrows, centered/scaled diagram and internal configuration junction. | REUSE behavior and replace shared geometry literals with Theme definitions and block-derived endpoints. |
+| `apps/qt/qml/upstream/UpstreamConnection.qml` | Role-specific colors, dashed lines and decorative midpoint markers. | ADAPT as a thin shared `Connection` specialization retaining semantic role metadata; use solid muted arrows without markers. |
+| `apps/qt/qml/upstream/UpstreamWorkbench.qml` | Three configuration editors, reversed flow, lower control detour, large scrolling canvas and legend. | ADAPT common styling/rows and normal-window fitting; keep scrolling at narrow widths, use an internal junction directly into receiver center and remove the extra legend. |
+| `apps/qt/tests/upstream/tst_upstream_workbench.qml` and `apps/qt/tests/tst_workbench.qml` | Real navigation, themes, scientific labels, downstream behavior and narrow scrolling. | REUSE existing coverage; update route/style and mapped-focus expectations for the requested appearance. |
+
+CMTS Configuration retains three separate editors, so its group is taller than
+the downstream two-editor group. Backend host inputs, drill-in signals, public
+APIs, science, session lifecycle, registration and saved projects are unchanged.
+Shared presentation constants describe pixels and design coordinates, with
+independent group policies kept separate. C before H and received C×H labels
+retain authoritative reference planes; the group and endpoints convey connection
+roles without a parallel colored/marked legend.
+
+Acceptance uses both complete changed workbench QML files, relevant shell tests,
+formatting, API-boundary/documentation checks, the optimized executable and actual
+VM comparison. Full backend/Python/CLI/packaging regressions are not required for
+QML-only layout and shared presentation constants.
+
+Executed validation (2026-11-25): complete upstream startup-view tests pass
+13 QML records, downstream workbench tests 55 and shell tests 60, with no failures
+or skips. Coverage retains every drill-in, readiness/admission behavior, theme
+and keyboard/focus checks, independent C/H/C×H planes and actual narrow scrollbar
+dragging. It checks all eleven upstream connectors are solid, the CMTS junction
+is inside its group, control enters the receiver horizontally, normal views fit
+and compact views retain unscaled scrolling. Unchanged `activeFocusOnTab`
+warnings occur twice each in the shell contextual-help and downstream
+receiver-navigation cases.
+
+Qt formatting, final API boundary (zero scientific dependencies/legacy files),
+current documentation/requirement traceability, Python-guide consistency and
+diff checks pass. The optimized native build passes in 2m 08s. Actual owned VM
+window captures and real pointer selection verify the shared appearance and
+direct receiver route; downstream pixels are byte-identical to the preceding
+candidate. Dark guide and README images are refreshed from unaltered upstream
+pixels. The standard startup presentation-limit notice remains visible and
+uninvestigated; this unit makes no new scientific acceptance claim.
+
+No Rust code or contracts changed, so Rust runtime tests/Clippy, backend,
+Python wheels/parity, CLI, persistence and packaging suites were not rerun.
+Unchanged upstream instrument/configuration suites are outside this geometry
+change; complete affected startup/downstream/shell coverage was executed.
+Executed/not-required checks, exact source/binary/image identities, fixture
+renders and native captures remain under ignored
+`docs/development/local/unified-qt-workbench/consistent-diagrams/`. Installed,
+Windows and hosted checks were not executed. Historical task states are preserved.

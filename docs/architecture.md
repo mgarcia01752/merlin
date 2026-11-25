@@ -2091,12 +2091,20 @@ transmitter/session configuration remains backend-owned. Both directions reuse
 named canvas margins from the shared Theme, introduced by
 [UI-US-LAYOUT-01](development/checklist.md#task-ui-us-layout-01).
 [UI-US-LAYOUT-02](development/checklist.md#task-ui-us-layout-02) records the
-latest [orientation and receiver-control refinement](development/features/unified-qt-workbench/design.md#ui-us-layout-02-reversed-canvas-and-receiver-side-control).
+[orientation and receiver-control refinement](development/features/unified-qt-workbench/design.md#ui-us-layout-02-reversed-canvas-and-receiver-side-control).
+[UI-US-LAYOUT-03](development/checklist.md#task-ui-us-layout-03) then aligns both
+directions' block geometry, canvas grid and configuration-group styling through
+the shared Theme. Upstream uses the same plain solid, muted arrows as Downstream,
+with an internal CMTS configuration junction connecting directly to the adjacent
+receiver at its center line. There is no route around the receiver, separate
+connector legend or decorative line markers. Compact upstream windows retain
+scrolling; normal windows fit the diagram using Downstream's scale policy.
 Control configuration never enters the sample-data path. Separate PRBS-TX,
 RxMER, CM Pre-Eq and PRBS-RX blocks attach to
 their actual source, impairment, transmit-correction and recovered-output planes.
-Use solid arrows for waveform/data, distinct control and measurement connectors,
-and a verification connector to PRBS-RX, with balanced, noncrossing routing.
+All startup connectors use the shared solid-arrow renderer. Configuration-group
+placement, source/destination labels and C/H/C×H captions distinguish control,
+measurement and verification meanings, with balanced, noncrossing routing.
 
 Reuse the downstream dark theme, dotted canvas, WorkbenchBlock, Connection,
 status/focus/hover behavior, WorkbenchDialog and shared run controls. Preserve
