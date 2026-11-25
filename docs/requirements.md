@@ -1853,6 +1853,35 @@ verification in a separate [Python release guide](user/python/releases.md),
 linked from Python installation and generated downstream integration documents.
 Configuration is not evidence of native Windows execution or published assets.
 
+#### REQ-CI-PNM-01
+
+MERLIN setup, builds, tests, packaging and runtime MUST use a repository-owned
+application source closure and MUST NOT require another project repository,
+sibling checkout, source-access credential or warm Git dependency cache.
+The imported PNM source/tests/resources MUST preserve exact original bytes,
+copyrights, licenses, notices and source provenance; scientific behavior and
+public contracts MUST remain unchanged. Ordinary locked registry dependencies
+and pinned local toolchains remain supported.
+Owner: [shared CI architecture](architecture.md#shared-master-and-release-validation-ci-consolidate-01).
+Delivery: [CI-SOURCE-01](development/checklist.md#task-ci-source-01).
+Implementation: `third-party/pnm`, local Cargo paths,
+`tools/development/check_sources.py` and `tools/packaging/notices.py`.
+Acceptance: unchanged-source and original decoder tests, fresh extracted-source
+builds with empty caches/Git transport disabled, package notices and actual clean
+hosted installer/native wheel jobs, recorded in the
+[release repair design](development/features/security-checks/design.md#ci-source-01-repository-owned-pnm-source-closure).
+
+#### REQ-SEC-URL-01
+
+The Qt locked dependency graph MUST use the patched `url` 2.5.9 release, retain
+Rust 1.85.1 compatibility and pass existing URL validation/consumer checks.
+Core, Qt, Python and imported-decoder RustSec audits MUST retain their failure policy without
+advisory suppression. Owner: [security architecture](architecture.md#security-validation).
+Delivery: [SECURITY-DEPS-03](development/checklist.md#task-security-deps-03).
+Implementation: `apps/qt/Cargo.toml` and `apps/qt/Cargo.lock`.
+Acceptance: actual audits and existing Qt consumer tests, compilation and Clippy,
+recorded in the [release repair design](development/features/security-checks/design.md#security-deps-03-patched-url-dependency).
+
 API documentation and example changes cover both Rust and Python unless
 explicitly scoped otherwise. Default profile-capture loading uses DOCSIS 3.1;
 explicit protocol selection remains supported and file versions do not infer it.

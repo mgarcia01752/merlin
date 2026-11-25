@@ -1,0 +1,711 @@
+{
+  "repository": "https://github.com/PyPNMApps/PNM-Viewer-Toolkit",
+  "revision": "5fbd5561f3e06b73486546b5ffa520279080a5eb",
+  "package": "pnm",
+  "version": "0.3.6",
+  "license": "Apache-2.0",
+  "scope": "Reusable Rust core, original tests/examples, logging and MAC-sanitized licensed test fixtures. No desktop/UI implementation.",
+  "modifications": [
+    "Add a local three-member test workspace. Executable source, resource data, original Rust tests and nine required binary fixtures remain unchanged.",
+    "Adapt three README links/commands for the standalone source layout; preserve and verify each original README.upstream.txt."
+  ],
+  "files": [
+    {
+      "path": "LICENSE",
+      "sha256": "b847ce4f2487cf57026611f1193c06f97d054ee5e84b6163b562db4168bca0f6",
+      "git_blob": "eb6fffa0a705cd9389ff6592190eae8d36238ea3"
+    },
+    {
+      "path": "LICENSES/Apache-2.0.txt",
+      "sha256": "507435d71ab5dacd16fd13e968649a1940b72b67faa6381124200ec5d0162ef3",
+      "git_blob": "46c536c7bc5198fb5b5d0eb5e6e3dd21cd8d9d05"
+    },
+    {
+      "path": "NOTICE",
+      "sha256": "067995de122a64cc41a5d561c3c79c1ba0b88f81e965506000d60d66ca3092a7",
+      "git_blob": "cbb41f71b25ad00e85aaefa43b6d7a88a10db8db"
+    },
+    {
+      "path": "crates/core/Cargo.toml",
+      "sha256": "f1e9f7de85743c8aeaeec197a3e496bd29d246af0e5e6921f68769f9b9380ca2",
+      "git_blob": "92bfd236278fa0a562ad453a203508fd2cd069f5"
+    },
+    {
+      "path": "crates/core/build.rs",
+      "sha256": "7a699392f4e131fc8ec9b278a7fc1fe37204f78905bb3e1fab3fd4211c644dc2",
+      "git_blob": "7e1da96148b9c7a0f1c1ccd0da2b895377806091"
+    },
+    {
+      "path": "crates/core/build/qam_boundaries.rs",
+      "sha256": "3bbf52c7e62825c2787dd894e860fa8f694e0d878579577f6b706fd371262e94",
+      "git_blob": "60c1f1986e34c3a9adcdc74f95164ade59c39509"
+    },
+    {
+      "path": "crates/core/examples/README.md",
+      "sha256": "cc4a2ed2ff105c5c736b5fdeacfe1258cd1b8294d0d9008498451a799bcfbcbe",
+      "git_blob": "395d08dd0d3b68322423878480b923cbd964ab33",
+      "upstream_sha256": "e8da35718a1e80fb8878599a25d6fc6f1d065e20071c78d8db5a67b4283bd60e",
+      "upstream_copy": "crates/core/examples/README.upstream.txt"
+    },
+    {
+      "path": "crates/core/examples/channel_estimate_json.rs",
+      "sha256": "67ba1fff5b88576146d12c0c88e0046af0734a906307e9a8f71ddc940a92cf2f",
+      "git_blob": "b952d1dfdc12e30c2e46904c4939c567aa70410f"
+    },
+    {
+      "path": "crates/core/examples/common/mod.rs",
+      "sha256": "b90448ab972e3f08c9b232008596b415b6eb7dab99c0d24f814e3436840f2821",
+      "git_blob": "e8c2a3281e708a43eb8007ee7abcd8c3fb584222"
+    },
+    {
+      "path": "crates/core/examples/constellation_json.rs",
+      "sha256": "d7727dc73d33905823730e0f57d59fb46d10e98ddb9b1f383da44ab7eb287f37",
+      "git_blob": "ec4e56dca4f5c928940f175cdefb056e9b53355c"
+    },
+    {
+      "path": "crates/core/examples/fec_summary_json.rs",
+      "sha256": "5ca55e361c2633cea15a96f1419eb33a0a6a26226e659802ae343554d9a7eb6c",
+      "git_blob": "23ce9f709503f4a0b6b1860039c95085a38b988d"
+    },
+    {
+      "path": "crates/core/examples/generate_spectrum_demo.rs",
+      "sha256": "cdc5b9d11a034d674b17bd54a625bc9e226ee7fb19317049670c0ca2547d0b65",
+      "git_blob": "a1c84a9bf426fb851cdc4caf5fa60684a2abd4ff"
+    },
+    {
+      "path": "crates/core/examples/histogram_json.rs",
+      "sha256": "340f61c3050115d694062d4b3e6cd140ed5d2fb2a61a4b45affa0d55ce73340a",
+      "git_blob": "10a84cd0d5548780cf3193c8ad8f8191a8a7f39b"
+    },
+    {
+      "path": "crates/core/examples/latency_json.rs",
+      "sha256": "c3ac034c751a9bf887f7999d5a3a65d8181a8c50969127bd0e943b65f47a3090",
+      "git_blob": "410f7e4648a9be77988e329055ea7fd31bc47864"
+    },
+    {
+      "path": "crates/core/examples/modulation_profile_json.rs",
+      "sha256": "c33189448652397919d30b19230e9785f86d420098d0131cac928f8eabbf2dc2",
+      "git_blob": "be473a64f85a1e042b147e504e5e7c198f092205"
+    },
+    {
+      "path": "crates/core/examples/pnm_json.rs",
+      "sha256": "608893a39e0bf3b54c203071370f5ff08e2f6f6b9b0c009b2a04cf931739f9cf",
+      "git_blob": "fda44d6e73509f685f0dd247da637121efca6e24"
+    },
+    {
+      "path": "crates/core/examples/rxmer_json.rs",
+      "sha256": "7afaa6e842f63307a9dce2cd167fd31d8ebeae4ced3cd5d090afbf846aeb3e04",
+      "git_blob": "d379131aa01395691f8c2f569cc53f713035377d"
+    },
+    {
+      "path": "crates/core/examples/spectrum_json.rs",
+      "sha256": "5b8388c8f37e9fec28ccc2ba591952b14e980bd6990dec78dac7f86589365d00",
+      "git_blob": "243fccc4aa41612a300fb7d9fbaaf9aff8609455"
+    },
+    {
+      "path": "crates/core/examples/symbol_capture_header_json.rs",
+      "sha256": "7d5a38fcb9ad265a818b0f2e7d899518aee5e1738e46c5d3c08b45f70c41cb98",
+      "git_blob": "e5506af2302e8e9f6a9f9a66796452d4e1f08945"
+    },
+    {
+      "path": "crates/core/examples/upstream_pre_eq_json.rs",
+      "sha256": "a865317da12b2664bdcc05cded2ee8d3c2fe629878fdacd740c0f6decc1c21a4",
+      "git_blob": "f8b65c39fb3bf224ea2393f1342f0d99bca81cd9"
+    },
+    {
+      "path": "crates/core/examples/upstream_pre_eq_last_json.rs",
+      "sha256": "2d4c278c1207f790c060ac3b69b21c955c240a9b83eaa5ab87f1132e842b46b6",
+      "git_blob": "51d7d7a917a0f7ca695f76e49a605a1ec889fad2"
+    },
+    {
+      "path": "crates/core/resources/qam-table/1024QAM_table.txt",
+      "sha256": "5fa129396987afce51a3aac5b4a2851cf1637894fa0d8013a7af00bb7133151d",
+      "git_blob": "6471021676b4f17b37e01de7a6bbdda9aa5bcd7d"
+    },
+    {
+      "path": "crates/core/resources/qam-table/128QAM_table.txt",
+      "sha256": "47f1b644d7e1df00d181c5b74f1469a38bcd748922275e6f03d7066d17f72f67",
+      "git_blob": "a0cee508b3e706aba59a2e080d5df9a3076dc4a1"
+    },
+    {
+      "path": "crates/core/resources/qam-table/16384QAM_table.txt",
+      "sha256": "2b372b248a3dc7eded7a5c4ca79d4f85c8620f2ec135920467ca70a4d682e7d0",
+      "git_blob": "e668ce9c452ce0e5bb27a231c61f5d5cd6325199"
+    },
+    {
+      "path": "crates/core/resources/qam-table/16QAM_table.txt",
+      "sha256": "dd6d4a320418ffada704fa7f76192c30ff400427fefe16acb49d16c9dcbd6306",
+      "git_blob": "d4a56c163fdf443b394f7f608509b04efd66d28c"
+    },
+    {
+      "path": "crates/core/resources/qam-table/2048QAM_table.txt",
+      "sha256": "99aa9567c09677f73a27324a1062b984aef89f7f1d06b5cf443c21497942511a",
+      "git_blob": "6e5eaa78afc1d7269585f55bdc4a1ce2fcf61609"
+    },
+    {
+      "path": "crates/core/resources/qam-table/256QAM_table.txt",
+      "sha256": "6572a2c4d0c889ba21c90f7892fe564f6dd0212523867c4a6061b7565811a7ee",
+      "git_blob": "2e9c9aef72a7a18841214a4bb0ec6f980e753a53"
+    },
+    {
+      "path": "crates/core/resources/qam-table/2QAM_table.txt",
+      "sha256": "9edb585543fb9e9b6a2b5c3d7f29b6b2734798001a6ad8732cff8c9b05e8acaf",
+      "git_blob": "0b92efb1cf3c7ea8c304f120154aa2d1f46fcd6a"
+    },
+    {
+      "path": "crates/core/resources/qam-table/4096QAM_table.txt",
+      "sha256": "b875214454063be6dde49b4d6d09b87b20c8cc60c77eacdfc17115751892a6fc",
+      "git_blob": "3b7ab3d3dc15f1260ac713ae1376c9063ecbd6c8"
+    },
+    {
+      "path": "crates/core/resources/qam-table/4QAM_table.txt",
+      "sha256": "52a5f33b03c1c13d0bfc27079128792459c9720d95587ba42a74d6c257fa8280",
+      "git_blob": "271a3f53c6020a8b912965d39080417fee6220b9"
+    },
+    {
+      "path": "crates/core/resources/qam-table/512QAM_table.txt",
+      "sha256": "4f40fb442999ee1435839ba7a94ef9ce70cab4269ce8b921d9fb287317231f77",
+      "git_blob": "58682a92d5a04500e5a68cc9c04fb4673f3bf10b"
+    },
+    {
+      "path": "crates/core/resources/qam-table/64QAM_table.txt",
+      "sha256": "c79f6fedca4542ce6b87371ae541d087ea0b6011442c7f21dd64b8ec8ec5a682",
+      "git_blob": "e625c275d5d32a26b30ce022e141c33b06f86f1b"
+    },
+    {
+      "path": "crates/core/resources/qam-table/8192QAM_table.txt",
+      "sha256": "51c5fc26fd065b311a9a7daed9c4334a04665be5652511db570af7870b927ae2",
+      "git_blob": "4fd5c9949d4201fca724b31af2b77ecbbe84512d"
+    },
+    {
+      "path": "crates/core/resources/qam-table/8QAM_table.txt",
+      "sha256": "6a6a1743b91d1172a5e3ba07bfc296249c6fa287ea1c2b5608ec98e87c32aced",
+      "git_blob": "bddf1e851097bf24713c8c90b5dfb9e32293d052"
+    },
+    {
+      "path": "crates/core/resources/qam-table/ConstellationScalingFactors.txt",
+      "sha256": "b20cfd0c588d559e2c9db51bd20e4f098da502f1ac952080ae72ae18b9dce263",
+      "git_blob": "cdd98b549c7a1b3f1f98ec2bc145b543424e041c"
+    },
+    {
+      "path": "crates/core/resources/qam-table/LICENSE",
+      "sha256": "507435d71ab5dacd16fd13e968649a1940b72b67faa6381124200ec5d0162ef3",
+      "git_blob": "46c536c7bc5198fb5b5d0eb5e6e3dd21cd8d9d05"
+    },
+    {
+      "path": "crates/core/resources/qam-table/NOTICE",
+      "sha256": "067995de122a64cc41a5d561c3c79c1ba0b88f81e965506000d60d66ca3092a7",
+      "git_blob": "cbb41f71b25ad00e85aaefa43b6d7a88a10db8db"
+    },
+    {
+      "path": "crates/core/resources/qam-table/README.md",
+      "sha256": "87623d9056963f729e25f628b674c067c6e4d55d82cbee6980906d0b30c4e698",
+      "git_blob": "8d391b9ce631eabe6ce5a0a8a8b9654abbc3a6a3",
+      "upstream_sha256": "9a0205a8b821ca85b3eee9cc3f7af170f258e433d71b4a2bdffebfb2ab2cbb2b",
+      "upstream_copy": "crates/core/resources/qam-table/README.upstream.txt"
+    },
+    {
+      "path": "crates/core/resources/qam-table/provenance.json",
+      "sha256": "bd41f643bff2e014670973ce7dea9c6606cee55cb9d32ed2844579ca026d1d29",
+      "git_blob": "70ec286abaab2a0fa2ebef759a993395bfee8222"
+    },
+    {
+      "path": "crates/core/src/common/json.rs",
+      "sha256": "846ac37562dd170f4f8dcee8bdc758effb7296e748333e17a08bea5075af200b",
+      "git_blob": "197733cb15c4f76da8278636c54bde146f130046"
+    },
+    {
+      "path": "crates/core/src/common/mod.rs",
+      "sha256": "0d4cfc755ad67b140ff29dda2764f6a0d03165e0e05caad93f95d5af74dbfdb8",
+      "git_blob": "00e37514f55fdd6eaa5ebc61d3dd1e1215c0b6e7"
+    },
+    {
+      "path": "crates/core/src/common/reader.rs",
+      "sha256": "611d287e010452c3f4c36bf43c043df0a0511c15b13503ba856a7de981247c4c",
+      "git_blob": "953d18fdb374e9548b1c9cf6b0e7eab69613290f"
+    },
+    {
+      "path": "crates/core/src/common/signal_processing/bit_loading/mod.rs",
+      "sha256": "3e59d5f5675253c1af4f530989614eaaee5f6ad24a5e9a994cdef8937fa242af",
+      "git_blob": "ab78ef076259e0bd18cb38426fd65a00c68ade9b"
+    },
+    {
+      "path": "crates/core/src/common/signal_processing/channel_response.rs",
+      "sha256": "da5c4498e3d7f921c07a2a20259bef6a74042b8e8c0635504f3ee5995687dbf0",
+      "git_blob": "6baa4bf843e9c7e160272c8ec48826fd9da70022"
+    },
+    {
+      "path": "crates/core/src/common/signal_processing/decision_boundary.rs",
+      "sha256": "703084af5b2cdad6e2a8c06ae6ebb0031affa364071614dc672d7a3e7c5c94db",
+      "git_blob": "4827e6828df386e09a07f78f5a6007f5db2a9355"
+    },
+    {
+      "path": "crates/core/src/common/signal_processing/mod.rs",
+      "sha256": "79dce1da4fb203469bd220619b780bb5d96504a69f1b8a4f22fc33e9d446cbb6",
+      "git_blob": "f71cc5e2de0c8a59f442f4778a70c4413fca5581"
+    },
+    {
+      "path": "crates/core/src/common/signal_processing/moving_average.rs",
+      "sha256": "865c7819790e887966059425d9a5d19ff84aed4a1ca0901f6396d65205a2b768",
+      "git_blob": "c33e2ff0090b8ebe1d135d1d1ef1a8a6fd9e591f"
+    },
+    {
+      "path": "crates/core/src/common/signal_processing/ofdm.rs",
+      "sha256": "9e6aafdbbee214d0bb119ed853063684f57dce734ff485dc7d276a1a5441eb86",
+      "git_blob": "f73d47bdd54d26d1e7b3b19ef6948799da76595b"
+    },
+    {
+      "path": "crates/core/src/common/signal_processing/pre_equalization/mod.rs",
+      "sha256": "424858483320389d2a4792f948f727095047b54d0673795a0512ad263ab959db",
+      "git_blob": "da78f04d5fce7727a6f241e51864e287fa77b84c"
+    },
+    {
+      "path": "crates/core/src/common/signal_processing/qam.rs",
+      "sha256": "169063091d711f192b480be92ec28e07e28055828abfd6b91591e1c3911d99bd",
+      "git_blob": "a543b9f10b2a5f7ab239f38a470d769b5eb4aa76"
+    },
+    {
+      "path": "crates/core/src/common/signal_processing/shannon.rs",
+      "sha256": "afd1672af2cee80273c573e92d05afeae72b912d7915ba3ed77ace2b440ba13e",
+      "git_blob": "a5098750bd86ca81b25b2c030c75d1b9cace14f3"
+    },
+    {
+      "path": "crates/core/src/common/signal_processing/spectrum.rs",
+      "sha256": "7f45e69743d2033f75a2484160a95d64cf78f141ef4d8f8c2ecd47f43601ffe7",
+      "git_blob": "77fd6840a6ca6ee7d3a2f3ae0c85cd8a86f04348"
+    },
+    {
+      "path": "crates/core/src/common/signal_processing/spectrum_power.rs",
+      "sha256": "f2d1c92916f690ae3d9a24efb7cd8e0992f2ef3d5dc229484d022c6013d71a76",
+      "git_blob": "ed4d46f92613b46946a592e2a87f0c829a092fed"
+    },
+    {
+      "path": "crates/core/src/diagnostic.rs",
+      "sha256": "3d2ea3e2ca7d3230dad202d103c3a03e68f2ba2fe4b313fad83add393ba612c4",
+      "git_blob": "d02c14425c8b27eac8bc687465194152ce3bf075"
+    },
+    {
+      "path": "crates/core/src/lib.rs",
+      "sha256": "9e2e58999fc37052e34d49e24b6fd5e98896d84cca155df1d56b16b6120a29d6",
+      "git_blob": "53f70ced2aaa352a58ca0dcaa55abfe75c3cce6d"
+    },
+    {
+      "path": "crates/core/src/pnm/analysis/constellation.rs",
+      "sha256": "3e3be5199c8e8a97d96176fb7a8c33f2f2bd91401a872cf66a8857cf859beca3",
+      "git_blob": "41a2bc0214b425988a16285e074695823cdcc7cb"
+    },
+    {
+      "path": "crates/core/src/pnm/analysis/constellation/mer.rs",
+      "sha256": "7f0063d40931217564bb4c0aae0253ec224ea22abca1f6fcf374bd055c1173c9",
+      "git_blob": "b5b67da4dca52acc77eb288cdb5d8be59df257fc"
+    },
+    {
+      "path": "crates/core/src/pnm/analysis/mod.rs",
+      "sha256": "4b4a1bb5d012cf5032b2d5b29607b1fd217a7c41a6bffa2f43a3496886823b1f",
+      "git_blob": "60ab1e7d716d9066ab183d92539dfe39614c32e4"
+    },
+    {
+      "path": "crates/core/src/pnm/analysis/modulation_profile.rs",
+      "sha256": "7d37f67e2497ca0f4a2d921abf361ae8dc91d2e9a791fa149d3b40b7058751b4",
+      "git_blob": "44c2000a918b5088409d2e4775af779399bc31f4"
+    },
+    {
+      "path": "crates/core/src/pnm/analysis/rxmer/aggregate.rs",
+      "sha256": "604a0690246e3b28ae2f45a1d925993da5677797109ca91e67f615e63a3625f4",
+      "git_blob": "47e7aee4c42efb8214dcbd0875492c2fe070fa85"
+    },
+    {
+      "path": "crates/core/src/pnm/analysis/rxmer/mod.rs",
+      "sha256": "557dd40f0e8c0f75a322aae8734b36bac6fcb0ad9a201c1bea6d9d553208f2a5",
+      "git_blob": "2ab64fc8ab4c3609d6d91f0ce0ff7781453e3c63"
+    },
+    {
+      "path": "crates/core/src/pnm/analysis/spectrum/mod.rs",
+      "sha256": "ed22444488be4f25f772038cba7b386b3605ac7bbe42224770ce192133b47873",
+      "git_blob": "0f05803cec14078e6de05a4b490146a161ba2c50"
+    },
+    {
+      "path": "crates/core/src/pnm/analysis/upstream_pre_equalization.rs",
+      "sha256": "778e951823dc6cebaf5bd140bda42dd66a733f280bc3d7e8ae6cec38474ca069",
+      "git_blob": "97e31c59f220d1732b33c033d13df3516cad002e"
+    },
+    {
+      "path": "crates/core/src/pnm/analysis/upstream_pre_equalization/comparison.rs",
+      "sha256": "45b7ffc65a96f68ed6f67bf7cb6c2ce03cd4a9221b9a5f7570db2b4ed4705f73",
+      "git_blob": "d72a823d43be8e4ea28166b3883851782307751b"
+    },
+    {
+      "path": "crates/core/src/pnm/data_type/mac.rs",
+      "sha256": "c58b720b357e5f1100b25e65d7b565843760d55b3fa2746cb9ebe7d972e39359",
+      "git_blob": "b7b25cc589fd3507dcc46be2954a0d786ee41ca7"
+    },
+    {
+      "path": "crates/core/src/pnm/data_type/mod.rs",
+      "sha256": "63442f43b12411abc4fa9ce31adad486b05100fb00cd110db4c234d097d6b97e",
+      "git_blob": "ec73da172929d7bacbeb581d07f160c8e3407f6c"
+    },
+    {
+      "path": "crates/core/src/pnm/data_type/modulation.rs",
+      "sha256": "758205aa24ad159aaa1d701397265aa3262b4b23e5e26d320c7bcff889c4259c",
+      "git_blob": "cd540e9f4e3366bffb50bdf50329e64b787da2e6"
+    },
+    {
+      "path": "crates/core/src/pnm/data_type/units.rs",
+      "sha256": "8aaf7c7bb7b8956cdd09de1fdc60246c5d272ed021a7f0cdb10190f88e640a63",
+      "git_blob": "d7da8ba9d18128d8ea934464566627cbe08f2f61"
+    },
+    {
+      "path": "crates/core/src/pnm/lib/fixed_point_decoder.rs",
+      "sha256": "d6010d48422c022c0f80f1ab6a2c14ff16b24dc8aa4225d1e33fcaf720c8fef2",
+      "git_blob": "4a0c062ef1bb78289b8ccf53bfda8df1e0e1bbec"
+    },
+    {
+      "path": "crates/core/src/pnm/lib/mod.rs",
+      "sha256": "01931de8654d96db0b760f664cac125c9d4603209109cb87f6abd99852ae39a8",
+      "git_blob": "f05df1e36958ac9ad8f80ef661e51da3da4e6549"
+    },
+    {
+      "path": "crates/core/src/pnm/mod.rs",
+      "sha256": "a31f908358f51e124dfc97087c4a6519b0f0b520b3a9a7f9a82e06f845d15119",
+      "git_blob": "e639e34e80a13c40208ae1c8da57e23eee563096"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/cm_ds_const_disp_meas.rs",
+      "sha256": "2f664843d4090c2616fc4306046f356e5e66aae2816ddcdbae9e1dcd997286ff",
+      "git_blob": "b83162a16a295e133522470b047e9991acb8145f"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/cm_ds_hist.rs",
+      "sha256": "87b8a14317e40892af529ba59d1533bf618647b74603b073e64c45bd7ec7c5d6",
+      "git_blob": "fb625239176a95bc607e54f53d8f22f253d6cefd"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/cm_ds_ofdm_chan_estimate_coef.rs",
+      "sha256": "6afe81a3d61485706fa5846da876f406ba0ca8cda0c3461e219328a68c85edf9",
+      "git_blob": "e33c55587e9ab7ae17e200e7044108829714f5a4"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/cm_ds_ofdm_fec_summary.rs",
+      "sha256": "3dc0276426e6cc020ad7390fe55cf3a2a3d815360dad14872f471f286f6c904f",
+      "git_blob": "7c7e39d7826e5fadfff15e652577012757860fd4"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/cm_ds_ofdm_modulation_profile.rs",
+      "sha256": "eaf119c6bd9a4abb9ab39802825fd41243fb5f2527f1c669b5d9439c1795188c",
+      "git_blob": "b291b187708d7515495f60bca0846ebbe86cfc9a"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/cm_ds_ofdm_rx_mer.rs",
+      "sha256": "ebc2d676e7abb09aaab2b6861f8872345007779228b9d723682265aacada9b6d",
+      "git_blob": "d006c88f6fad2b1e1bb3e4c7ea71252fb45a53e7"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/cm_latency_rpt.rs",
+      "sha256": "f5aef0ae488cc2834c36fcc68c627e0153ff43dcfee1baa097148c8bcdcdcad8",
+      "git_blob": "191d098662826ff82086c2f3902d4ac166b6a571"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/cm_spectrum_analysis.rs",
+      "sha256": "495ac6cf79591bca56db06fcf3768caff751f69b85aa7f90705f6fc9c983b228",
+      "git_blob": "6326db66c747c5f6e9e167b2dbf8632b83f133fb"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/cm_symbol_capture.rs",
+      "sha256": "6e4de36d61c5cdecdf3ee4723b696f7a28f1b47cfcf7c0db8244dad33e1efe32",
+      "git_blob": "3ee01386ed987efafa7fcb97a21e8f3b37eb6dc0"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/cm_us_ofdma_pre_eq.rs",
+      "sha256": "31b5149d55ca33a1e8c4f62aa9e18ba5f6c51d3a5ba476ebd5f6ea1256ada1d7",
+      "git_blob": "3b6a5bdf6fa98666b5ac5b1de25a5280780953f2"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/mod.rs",
+      "sha256": "4d5b0f60384efc9baf2800b7208a2928d712561cfcdef2ef29f3d140e69d4d61",
+      "git_blob": "7d8ddefa48ad2d8f0bfc16001f210daae2ab80f1"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/model/mod.rs",
+      "sha256": "afa793fd47478fd55cf6d6986a3a4a3249bd46d41ec4688252bdfba99c11f664",
+      "git_blob": "ce9ca49e66484dc49d03b98c10bdbdd932674bdb"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/model/pnm_header.rs",
+      "sha256": "17a85b8dd7f260388c3c9c6bb35ffb7bc8711f955859ab6b73608b99150cf406",
+      "git_blob": "c48ffbb28dae1b30366fc1a56711a17c156806ca"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/parse_limits.rs",
+      "sha256": "8a478823b6e79856494538e8b0ec77cdfe90990e85a9e1a12d9d1f70f0271d33",
+      "git_blob": "f51ad94ecf3eb7c398f2a5c960944589e9871ed1"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/pnm_file.rs",
+      "sha256": "ea60b89f85becbee5a7d6f59ac6e2a9890707f612a69ea28d26d62fdbc90e40c",
+      "git_blob": "5452c0db885eaf4f2825262e4fa87b9336f3b6c8"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/pnm_file_type.rs",
+      "sha256": "0c78568354896b73d54edd5eaf7c65014e47d2a5f4dce9c4a1eff6029665da47",
+      "git_blob": "784879e1380ef234e58a5c255bfc887cf552c5d1"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/pnm_header.rs",
+      "sha256": "57fd1a0f05a1c2ef28571aa82ba02e9b4bb37eaf6ad5681b6902f2e3051625b2",
+      "git_blob": "d433b2a2384b2979c1eca84afc769bbee1b9ad39"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/support/mod.rs",
+      "sha256": "8f7c60ebd9cea1bce231b74ecbd822e6c68b329988229c64e2160806820e4bb3",
+      "git_blob": "a67d3ce77ba8d6390ebe8cfb8638e79801c1dbd1"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/support/payload.rs",
+      "sha256": "912b48a3927007a0d600188c9d3876cf27def7272063bc8cfa15ef777acabf67",
+      "git_blob": "b4dd223d81d60b4bce8ff6748dacda06986187a1"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/support/serialization.rs",
+      "sha256": "eabce605d863cbd798177240b5e58427dc33b32c927cd18286fd02037e3322e9",
+      "git_blob": "b840babf1575aec24ebc9aab592b8ad70003fdb6"
+    },
+    {
+      "path": "crates/core/src/pnm/parser/support/values.rs",
+      "sha256": "eea00cefea5cee0dfa14f58bde7b5c5efdaba088c9dfccbcd53fd741223035ab",
+      "git_blob": "46c5bba1cf2faa9db48a55d20a28470ead5a1790"
+    },
+    {
+      "path": "crates/core/tests/common/mod.rs",
+      "sha256": "0027d11d845f847dadc1323157141a31ea15a0a69cd4b00b2849fb19215a40e2",
+      "git_blob": "89930963757c7cf2999ee4b8303000021f3e530f"
+    },
+    {
+      "path": "crates/core/tests/test_bit_loading.rs",
+      "sha256": "1ec4e9f7c1745ed131249366fcbcb22e454a710563894c24ca44741a2cb24dbf",
+      "git_blob": "cc9b159422c49106cae03cb24928c89bed87ca9c"
+    },
+    {
+      "path": "crates/core/tests/test_channel_response.rs",
+      "sha256": "58001a769e4a7c5b6377277032951081537cbf089e3f0a5f91dda48336ae0782",
+      "git_blob": "e63307befcaea4c5e63baf94a28d62f4e0d91b26"
+    },
+    {
+      "path": "crates/core/tests/test_cm_ds_const_disp_meas.rs",
+      "sha256": "63c65e85e0b5690e2f4494b7517d06cd9b7c3793d85eab3d12773238b84cbbbb",
+      "git_blob": "6741fe28a56a0b82e8529ffdedcef279a7583327"
+    },
+    {
+      "path": "crates/core/tests/test_cm_ds_hist.rs",
+      "sha256": "3fbeac74b92252e1b31647bac96c19cdb6fa879a2d0779c3847dc033746976cf",
+      "git_blob": "a719d2b56e840d6e5f1c7387204c55b6288ef651"
+    },
+    {
+      "path": "crates/core/tests/test_cm_ds_ofdm_chan_estimate_coef.rs",
+      "sha256": "5fc065d607ed3c5c3be592694ba87afe10149d979762e11382c2628039c121e1",
+      "git_blob": "efe406a094ec1900d3ae0e16c5f127701b7d4f45"
+    },
+    {
+      "path": "crates/core/tests/test_cm_ds_ofdm_fec_summary.rs",
+      "sha256": "32e6548ab736837fd23646698f1b77b008eaec860a87e2d5c04d3c70335f7df2",
+      "git_blob": "f7d44d6dace40e3277462fe108862460479f60b6"
+    },
+    {
+      "path": "crates/core/tests/test_cm_ds_ofdm_modulation_profile.rs",
+      "sha256": "eae84271ba308812820d3cc2d40861720b437085e22eaca5dbaa35d3bc8b85c7",
+      "git_blob": "e33bc750701c678c54c22a5ee8e4e09ce2d6b225"
+    },
+    {
+      "path": "crates/core/tests/test_cm_ds_ofdm_rx_mer.rs",
+      "sha256": "c13eb0f526961dae2c8a1e9a6dee784133fe4c51cab61080a318bbb8039e7d8a",
+      "git_blob": "f13c274add342cf0dd0dadbcc059d4f3d386dd02"
+    },
+    {
+      "path": "crates/core/tests/test_cm_latency_rpt.rs",
+      "sha256": "ec6fa283e12f50a3edf94fe0de23e3421f8e939ede86ac6f1bffe1349d7c3e37",
+      "git_blob": "b981b0586807521057b5378dcb32dacda612a2e1"
+    },
+    {
+      "path": "crates/core/tests/test_cm_spectrum_analysis.rs",
+      "sha256": "b4fc5ca05959e5f607f532adadc651ad630fe4c890e60358154f160845576940",
+      "git_blob": "1d9c2930dcb503dff9b6ab8c52cdc2a77bea2617"
+    },
+    {
+      "path": "crates/core/tests/test_cm_symbol_capture.rs",
+      "sha256": "cd95be74b366bfe3fedcc5a9ad8f8268070804ca4ded98a75e80e1bd1ab4f74b",
+      "git_blob": "ba4ca87e2f5815fe3e8af5629af2ab93156539c5"
+    },
+    {
+      "path": "crates/core/tests/test_cm_us_ofdma_pre_eq.rs",
+      "sha256": "356253dded1f3f602300e76cf4f8d8e39a4d17f404a87666af5f9ddbae282e18",
+      "git_blob": "66b29f8d34128c08c9318df950229f0f588ddea3"
+    },
+    {
+      "path": "crates/core/tests/test_constellation_mer.rs",
+      "sha256": "4b4ae87369ac65da5893683dbb1520fff3f530ca5dc9f6db228a4b20a6dfe510",
+      "git_blob": "dff89b3429382b9608ef6d27f682bd6edf5819b8"
+    },
+    {
+      "path": "crates/core/tests/test_decision_boundary.rs",
+      "sha256": "855d1009cb786e462fe8c6bbae9d1f17e7dfd65ca99b62a3a1c6d56083f52434",
+      "git_blob": "63df0de274cd1a05cad3fe7a2b4d0cbe5359d1d2"
+    },
+    {
+      "path": "crates/core/tests/test_fixed_point_decoder.rs",
+      "sha256": "d0472b0e29ff33b506dd5fd25fd8af9e55e29916d4ec98f0f08b96438a202429",
+      "git_blob": "83cebd262168d83e679558ff33fa8f525a636861"
+    },
+    {
+      "path": "crates/core/tests/test_moving_average.rs",
+      "sha256": "e34f75deb7025c57978c0ed26c177abc0e00bf549a48b1fa40130f32249d02c7",
+      "git_blob": "3f6fc1b80b0817e5a8d32afa17365eccc7f93fc2"
+    },
+    {
+      "path": "crates/core/tests/test_ofdm.rs",
+      "sha256": "c216ce8a48d6bca058098006a08574a36648b2c2423700edd6934e667da9c1a7",
+      "git_blob": "103f989eb7f7724667e94a4315857d8b46a09a53"
+    },
+    {
+      "path": "crates/core/tests/test_pnm_file.rs",
+      "sha256": "32b8de688a7c286e1e3b0a443f6ad8ce799e1de9bf8c3b5c2f6257103ff247d6",
+      "git_blob": "e93f265ef7227c2e9eeea7ce24ea1f7a628a644e"
+    },
+    {
+      "path": "crates/core/tests/test_pre_eq_comparison.rs",
+      "sha256": "2e0d27ab91642521b81ee9469fee377ae39cc4923c352e9a9fd4246e9575a496",
+      "git_blob": "4dec92b20796410d99fe71b975c24bca1fa94223"
+    },
+    {
+      "path": "crates/core/tests/test_pre_equalization_math.rs",
+      "sha256": "118b398d92becb55e734ba49028b33b045e2dde58b506cf47d7d58e762ac3bce",
+      "git_blob": "7bebaeae520bfaae7e6b69c9b4d9d79a6efe3a44"
+    },
+    {
+      "path": "crates/core/tests/test_qam.rs",
+      "sha256": "6044fb978f607d2809a400c685b6dac07b412d5c62751af9e1557a96ac167e7e",
+      "git_blob": "572fd5f5a309165dc27f7fc2fcbbf586ede8b9ac"
+    },
+    {
+      "path": "crates/core/tests/test_rxmer_aggregate.rs",
+      "sha256": "0dc2cf2be90d255344543ce82a85f4638eb415802691c6921256845f5e19d572",
+      "git_blob": "4722c98e849e80bd9667adeac936553eccaff4b5"
+    },
+    {
+      "path": "crates/core/tests/test_rxmer_analysis.rs",
+      "sha256": "606a97fc376941acd0ca8f0cba2ad824ea4df07bb7b8e7b5ffca2058ff66ccdc",
+      "git_blob": "b78afe8405dd2b8d51f10a575aaa096b8fb84967"
+    },
+    {
+      "path": "crates/core/tests/test_shannon.rs",
+      "sha256": "48dffc44cee417a85ca053911ab238f89c9c11dd9d25492d7a0bf7cc65cdc5bb",
+      "git_blob": "4b3a8b6e7a4897c0d9319072443bd5b883f6d359"
+    },
+    {
+      "path": "crates/core/tests/test_spectrum_aggregate.rs",
+      "sha256": "0af5571f70218bf05b786f08051de8994f129a36855113b5fb32c302073088ea",
+      "git_blob": "1d4b30ddd0899a503e770f4dc443cba506025b08"
+    },
+    {
+      "path": "crates/core/tests/test_spectrum_bandwidth.rs",
+      "sha256": "c506d818cc3c6d00fe2ad953c4772e80597d0ccb2a289d2da91bc0624c4d6f82",
+      "git_blob": "f2886295ff7680a2bc6b459a9c148696fc9ee466"
+    },
+    {
+      "path": "crates/core/tests/test_spectrum_power.rs",
+      "sha256": "4c65378a8a152e9819597e76bce8ab77a7e726240fe9c16847e07e08b76524c0",
+      "git_blob": "383dbe9db9c8b322e10561f8170bc6e797ccdfdb"
+    },
+    {
+      "path": "crates/core/tests/test_upstream_pre_equalization_analysis.rs",
+      "sha256": "92cdc547a8218cd443236ec296f2d2f3741c08e8e109cf55ef18ed6a23a2dba8",
+      "git_blob": "595ff8be60370f6500210aace7b86343a3b787df"
+    },
+    {
+      "path": "crates/logging/Cargo.toml",
+      "sha256": "04ac9ea80361399fec1ec8b4c44ee930d24bbd86a90c146f820b6a91cff06031",
+      "git_blob": "70930f53e5274fc497626d68b51e4e99d150f771"
+    },
+    {
+      "path": "crates/logging/src/lib.rs",
+      "sha256": "f313e8dfbcb63bc659e10014ae8483d8c58b9480ea2bc538db38ac88d58bced9",
+      "git_blob": "7b65f0946d6d2a4aee8da4d563f44e01ad740108"
+    },
+    {
+      "path": "tests/fixtures/Cargo.toml",
+      "sha256": "87e3425eb541f2d22f94af0605bdce6f677e3a3b27d74cfcf08e964c475d100b",
+      "git_blob": "6b887727558fa72fb743a4c68d1525e52f676be8"
+    },
+    {
+      "path": "tests/fixtures/lib.rs",
+      "sha256": "8776039b1ea4b753c715d62be7cd9df200ab2bc8a63ceba3486def78e6731376",
+      "git_blob": "1119976e47fd6356c0c306298ea03abe2be99848"
+    },
+    {
+      "path": "tests/fixtures/pypnm/LICENSE",
+      "sha256": "507435d71ab5dacd16fd13e968649a1940b72b67faa6381124200ec5d0162ef3",
+      "git_blob": "46c536c7bc5198fb5b5d0eb5e6e3dd21cd8d9d05"
+    },
+    {
+      "path": "tests/fixtures/pypnm/NOTICE",
+      "sha256": "067995de122a64cc41a5d561c3c79c1ba0b88f81e965506000d60d66ca3092a7",
+      "git_blob": "cbb41f71b25ad00e85aaefa43b6d7a88a10db8db"
+    },
+    {
+      "path": "tests/fixtures/pypnm/README.md",
+      "sha256": "d3a060b0dec9f46a94fa28c3f4d98c46b53527bce160e3566ba3149cf05572b9",
+      "git_blob": "e0d7f1c32b61ecea035a298199da6bb8af9cd93d",
+      "upstream_sha256": "6c40c5fe553185786fb435fc6eb73acddd3ac4fc9fe61eb7d98976c331703a4c",
+      "upstream_copy": "tests/fixtures/pypnm/README.upstream.txt"
+    },
+    {
+      "path": "tests/fixtures/pypnm/provenance.json",
+      "sha256": "cc16746495fecdb603f89f86b18e9de6c7cb8006a9ebcc201020f3b1e664b421",
+      "git_blob": "91e5c6b25d6bed686c6fea2f92a62e251efedc7c"
+    },
+    {
+      "path": "tests/fixtures/pypnm/tests/files/channel_estimation.bin",
+      "sha256": "e06997c3fcc35456ebbec5d03933814f3aebb1e412afe68989850e8c506103e5",
+      "git_blob": "590b47c4a006fe9053f8490ef9bed7dce1364048"
+    },
+    {
+      "path": "tests/fixtures/pypnm/tests/files/const_display.bin",
+      "sha256": "21b818b6a3f1c2604582672b93ab34356978983fafc84a998d344435f96c5d59",
+      "git_blob": "ecb671751ed2035b5b397c29c46270753ec2a028"
+    },
+    {
+      "path": "tests/fixtures/pypnm/tests/files/fec_summary.bin",
+      "sha256": "26f5d3311a9b8f76eadf6787ccdf4722ec344dafcbb67d0d654b06f111ad6ee9",
+      "git_blob": "f031a7090cad4355ff7b7a4ad86206530d35ec9e"
+    },
+    {
+      "path": "tests/fixtures/pypnm/tests/files/histogram.bin",
+      "sha256": "6bc8fcf845655a8d1280214d000a52750c68132d582e3e95618affd3d97384de",
+      "git_blob": "efac70d958ace0ce9994980ec5f69b7d46c5e561"
+    },
+    {
+      "path": "tests/fixtures/pypnm/tests/files/modulation_profile.bin",
+      "sha256": "bfefd266de98685fe158630c5f98c4a7a57cb22feb55bcdd92012c06135c824a",
+      "git_blob": "51bed78bd811c1f92887c0e02b43ae22fffac16a"
+    },
+    {
+      "path": "tests/fixtures/pypnm/tests/files/rxmer.bin",
+      "sha256": "864ba70b0361bd8b4912b55f55e8db72dd7b319b478ce1988103979e0b19c98e",
+      "git_blob": "80c5cc56315310c51af9b1ed63048289d4432aaa"
+    },
+    {
+      "path": "tests/fixtures/pypnm/tests/files/spectrum_analyzer.bin",
+      "sha256": "db6c9e5b38eef9de5b36e25989f7d592191c8626c65e8d0c08c58af511e9a1a4",
+      "git_blob": "6514559dc269b7da521ffa6460b83b0c6811e91a"
+    },
+    {
+      "path": "tests/fixtures/pypnm/tests/files/us_pre_equalizer_coef.bin",
+      "sha256": "179c15e74bb9565833c5182c2f9dc91da877f2da5313dc393b272cb02082f6d5",
+      "git_blob": "7ce8d1976c81a482368c805fdda4292ceb65de84"
+    },
+    {
+      "path": "tests/fixtures/pypnm/tests/files/us_pre_equalizer_coef_last.bin",
+      "sha256": "93861ed87b6b6a38354354704b87572fb0366f2b0f963eb11c266e9ff878bb28",
+      "git_blob": "30794d16f114ca5d1e18208082ca76ebaf15030a"
+    }
+  ],
+  "excluded_scope": "Unreferenced viewer demos, Python test references and unrelated fixtures are omitted. The original fixture crate retains its nine required licensed MAC-sanitized captures."
+}

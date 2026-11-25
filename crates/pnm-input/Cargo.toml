@@ -10,7 +10,7 @@ description = "Optional bounded native PNM and file adapter for MERLIN"
 docsis-ofdma = { path = "../ofdma" }
 base64 = "=0.22.1"
 docsis-ofdm-fec = { path = "../ofdm", features = ["high-level-api"] }
-pnm = { git = "https://github.com/PyPNMApps/PNM-Viewer-Toolkit.git", rev = "5fbd5561f3e06b73486546b5ffa520279080a5eb", version = "=0.3.6" }
+pnm = { path = "../../third-party/pnm/crates/core", version = "=0.3.6" }
 
 serde = { version = "=1.0.228", features = ["derive"] }
 serde_json = { version = "=1.0.145", features = ["float_roundtrip"] }

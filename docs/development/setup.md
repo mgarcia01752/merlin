@@ -33,12 +33,13 @@ Qt archives include qtbase, qtdeclarative (Quick/Controls/Dialogs), qtshadertool
 qtsvg, qttools and ICU. The pinned aqtinstall 3.3.0 runs only in the development
 virtual environment under local/qt-tools; no Python sidecar is used by MERLIN.
 
-All downloaded SDKs/toolchains and sources live under ignored local/. The PNM
-library is fetched from PNM Viewer Toolkit at the exact Git revision in
-apps/qt/Cargo.toml/Cargo.lock (currently pnm 0.3.6). No viewer source copy or
-runtime viewer installation is required. Cargo's source cache is a download,
-not tracked project code. License/NOTICE files remain tracked for attribution.
-The sanitized binary demo is an intentional capture fixture, not a source copy.
+Downloaded SDKs/toolchains and registry caches live under ignored local/.
+The PNM 0.3.6 decoder, its original tests and licensed fixture closure are
+tracked under [third-party/pnm](../../third-party/pnm/README.md). All consumers
+use local Cargo paths, with original source hashes and notices preserved.
+No other project repository, private repository credential or warm Git source
+cache is required. `tools/development/check_sources.py` verifies the imported
+source inventory without network access or writes.
 
 Build and run after setup:
 

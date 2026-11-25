@@ -1,0 +1,31 @@
+PNM Viewer Toolkit - Component Licensing
+
+PNM Viewer Toolkit uses different licenses for different components. This is not a
+choice of either license for every file.
+
+Apache License, Version 2.0 (SPDX: Apache-2.0)
+--------------------------------------------
+The reusable Rust libraries under crates/ and project-owned development tooling
+are licensed under the Apache License, Version 2.0. The full license is in:
+
+    LICENSES/Apache-2.0.txt
+
+GNU General Public License, Version 3 only (SPDX: GPL-3.0-only)
+-----------------------------------------------------------
+The Qt desktop and UI under apps/qt/, and its Rust
+capture layer under apps/viewer/, are licensed
+GPL-3.0-only, as identified by their package metadata and source headers.
+The full license is in:
+
+    LICENSES/GPL-3.0-only.txt
+
+Component scope and third-party material
+---------------------------------------
+Package license metadata and source-file SPDX headers identify the applicable
+component license. Preserve existing copyright statements and notices.
+Third-party dependencies, copied fixtures, reference documents and specification
+extracts retain their own licensing and terms; this notice does not relicense
+them. See NOTICE and tests/fixtures/pypnm/LICENSE and NOTICE for PyPNM material.
+
+This component split follows the original PNM Viewer bootstrap requirements,
+preserved in skills/pnm-viewer-development/references/bootstrap-guide.md.

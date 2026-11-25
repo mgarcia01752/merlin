@@ -102,5 +102,27 @@ class NoticeCheckoutTests(unittest.TestCase):
                 self.collect(root, metadata, root / 'notices')
 
 
+    def test_local_third_party_dependency_retains_full_notices(self):
+        """A path dependency remains third-party material in every built package."""
+        with tempfile.TemporaryDirectory() as area:
+            root = Path(area)
+            source = root / 'third-party/example'
+            source.mkdir(parents=True)
+            (source / 'LICENSE').write_text('Original full license\n')
+            (source / 'NOTICE').write_text('Original copyright and attribution\n')
+            package = {'id': 'local-third-party', 'name': 'example', 'version': '1.0.0',
+                       'source': None, 'manifest_path': str(source / 'Cargo.toml'),
+                       'license': 'Apache-2.0', 'repository': 'https://example.invalid/source'}
+            metadata = {'packages': [package], 'resolve': {'nodes': [{'id': package['id']}]}}
+            destination = root / 'notices'
+            self.collect(root, metadata, destination)
+            self.assertEqual((destination / 'example-1.0.0/NOTICE').read_bytes(),
+                             (source / 'NOTICE').read_bytes())
+            self.assertEqual((destination / 'example-1.0.0/LICENSE').read_bytes(),
+                             (source / 'LICENSE').read_bytes())
+            inventory = json.loads((destination / 'manifest.json').read_text())
+            self.assertEqual(inventory[0]['name'], 'example')
+
+
 if __name__ == '__main__':
     unittest.main()

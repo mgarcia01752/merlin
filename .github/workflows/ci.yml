@@ -51,6 +51,8 @@ jobs:
       - name: Versions, helpers and style
         run: |
           python tools/release/versions.py
+          python tools/development/check_sources.py
+          cargo test --manifest-path third-party/pnm/Cargo.toml --workspace --locked
           python -m unittest discover -s tools/release -p 'test_*.py'
           python -m unittest discover -s tools/python -p 'test_*.py'
           python -m unittest discover -s tools/git/tests -p 'test_*.py'

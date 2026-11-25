@@ -1,0 +1,6 @@
+# Copyright 2026 MERLIN contributors
+# SPDX-License-Identifier: Apache-2.0
+# Standalone test workspace for the unchanged imported decoder and its test owners.
+[workspace]
+members = ["crates/core", "crates/logging", "tests/fixtures"]
+resolver = "2"

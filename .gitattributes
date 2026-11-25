@@ -5,3 +5,5 @@
 # Captures and saved workbenches retain exact bytes and provenance hashes.
 /examples/workbench/** -text
 /examples/measurements/** -text
+# Preserve the original decoder, fixture and legal bytes on every checkout.
+/third-party/pnm/** -text

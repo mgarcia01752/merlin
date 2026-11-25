@@ -75,17 +75,16 @@ Ubuntu prerequisites and prepares the project-local pinned Rust/Qt toolchain.
 Its check/dry-run modes do not install packages.
 
 Set QT_SDK_DIR to an existing SDK or place it under local/qt/6.8.3/gcc_64.
-For the current development VM, the existing reference SDK can be read without
-modifying the reference checkout:
+Keep the SDK inside MERLIN so development does not require another checkout:
 
 ```bash
 cd /home/dev01/Projects/merlin
-export QT_SDK_DIR=/home/dev01/Projects/PNM-Viewer-Toolkit/local/qt/6.8.3/gcc_64
+export QT_SDK_DIR="$PWD/local/qt/6.8.3/gcc_64"
 scripts/qt-desktop.sh build
 scripts/qt-desktop.sh run
 ```
 
-This is a development SDK selection, not a production dependency on the viewer.
+This is a project-local development SDK selection.
 The helper uses MERLIN's local/merlin-cargo cache and apps/qt/target outputs;
 it does not write into the reference repository. It uses an available Cargo or
 the existing project-local toolchain. Missing SDK/toolchain prerequisites stop

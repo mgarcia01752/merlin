@@ -35,7 +35,10 @@ def collect_notices(root, destination, manifest=None):
                             capture_output=True, text=True)
     metadata = json.loads(result.stdout)
     included = {node["id"] for node in metadata["resolve"]["nodes"]}
-    packages = [package for package in metadata["packages"] if package["id"] in included and package["source"]]
+    third_party = (root / "third-party").resolve()
+    packages = [package for package in metadata["packages"]
+                if package["id"] in included and (package["source"]
+                    or Path(package["manifest_path"]).resolve().is_relative_to(third_party))]
     destination.mkdir(parents=True)
     records = []
     for package in sorted(packages, key=lambda package: (package["name"], package["version"])):
@@ -75,6 +78,9 @@ def collect_notices(root, destination, manifest=None):
         if not files and (package["name"], package["version"]) == ("pnm", "0.3.6"):
             source_directory = directory.parents[1]
             files = notice_files(source_directory)
+            provenance = source_directory / "provenance.json"
+            if provenance.is_file():
+                files.append(provenance)
         if not files:
             raise ValueError(f"Dependency needs a reviewed full license notice: {package['name']}")
         target = destination / f"{package['name']}-{package['version']}"

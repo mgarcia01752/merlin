@@ -2002,6 +2002,16 @@ See [setup](setup.md) and [design](features/development-setup/design.md).
 
   Requirements: [SECURITY-DEPS-02](../requirements.md#ds-security-deps-02).
 
+<a id="task-security-deps-03"></a>
+- [ ] **SECURITY-DEPS-03** Patch the Qt URL dependency and verify all audits.
+  Requirements: [REQ-SEC-URL-01](../requirements.md#req-sec-url-01).
+  Architecture/owners: [security validation](../architecture.md#security-validation).
+  Depends on: SECURITY-DEPS-02.
+  Acceptance: pin patched `url` 2.5.9; pass core/Qt/Python/decoder audits without
+  suppressions and existing Qt URL tests, compilation and Clippy. Preserve MSRV,
+  notices and scientific behavior. Hosted results remain separate from local tests.
+  [Design and evidence](features/security-checks/design.md#security-deps-03-patched-url-dependency).
+
 
 <a id="task-ui-dpd-view-02"></a>
 - [x] **UI-DPD-VIEW-02** Adapt the full PNM Viewer modulation view with
@@ -2092,6 +2102,16 @@ validation are complete; the user guide includes the current dark capture.
   release packaging/installed lifecycle and publication on a new authorized tag.
 
   Requirements: [CI-DESKTOP-QA-01](../requirements.md#ds-ci-desktop-qa-01).
+
+<a id="task-ci-source-01"></a>
+- [ ] **CI-SOURCE-01** Make the complete PNM source/test closure repository-owned.
+  Requirements: [REQ-CI-PNM-01](../requirements.md#req-ci-pnm-01).
+  Architecture/owners: [shared validation](../architecture.md#shared-master-and-release-validation-ci-consolidate-01).
+  Depends on: CI-CONSOLIDATE-01, API-INSTALL-03.
+  Acceptance: unchanged imported hashes/tests, local consumer paths and package
+  notices; extracted clean-source builds with empty caches/Git transport disabled;
+  focused tests and actual hosted clean installer/native wheel passes.
+  [Design and evidence](features/security-checks/design.md#ci-source-01-repository-owned-pnm-source-closure).
 
 
 [Design](features/workbench-configuration/design.md).

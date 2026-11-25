@@ -1,5 +1,6 @@
 [workspace]
 members = ["crates/merlin", "crates/phy-api", "crates/dsp", "crates/ofdma", "crates/ofdm", "crates/fec-codec", "crates/cli", "crates/pnm-input"]
+exclude = ["third-party/pnm", "third-party/pnm/crates/core", "third-party/pnm/crates/logging", "third-party/pnm/tests/fixtures"]
 resolver = "2"
 
 [workspace.dependencies]

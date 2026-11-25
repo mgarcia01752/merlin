@@ -591,7 +591,6 @@ checksum = "a89322df9ebe1c1578d689c92318e070967d1042b512afbe49518723f4e6d5cd"
 [[package]]
 name = "pnm"
 version = "0.3.6"
-source = "git+https://github.com/PyPNMApps/PNM-Viewer-Toolkit.git?rev=5fbd5561f3e06b73486546b5ffa520279080a5eb#5fbd5561f3e06b73486546b5ffa520279080a5eb"
 dependencies = [
  "delaunator",
  "serde",

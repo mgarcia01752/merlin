@@ -24,6 +24,7 @@ if [[ "$SKIP_TEST" == 1 ]]; then
   echo 'Local Rust tests and simulation smokes explicitly skipped; hosted CI remains required.'
 fi
 python3 tools/release/versions.py
+python3 tools/development/check_sources.py
 python3 tools/python/update_integration_doc.py --check
 python3 -m unittest discover -s tools/release -p 'test_*.py'
 python3 -m unittest discover -s tools/python -p 'test_*.py'
@@ -31,6 +32,7 @@ python3 -m unittest discover -s tools/git/tests -p 'test_*.py'
 python3 -m unittest discover -s tools/packaging -p 'test_*.py'
 python3 -m unittest discover -s tools/validation -p 'test_*.py'
 python3 -m unittest discover -s tools/testing -p 'test_*.py'
+python3 -m unittest discover -s tools/development/tests -p 'test_*.py'
 SHELL_SCRIPTS=(scripts/cargo-local.sh scripts/check-before-push.sh scripts/test-local.sh tools/bump-version.sh tools/git/git-save.sh tools/git/git-push.sh)
 for script in "${SHELL_SCRIPTS[@]}"; do
   bash -n "${script}"
@@ -49,6 +51,7 @@ if [[ "$TEST_QUICK" == 1 ]]; then
   TEST_ARGS+=(--test-quick)
 fi
 "${SCRIPT_DIR}/test-local.sh" all "${TEST_ARGS[@]}"
+"${SCRIPT_DIR}/cargo-local.sh" test --manifest-path third-party/pnm/Cargo.toml --workspace --locked
 "${SCRIPT_DIR}/cargo-local.sh" build -p ofdm-fec-cli --release --locked
 SMOKE_DIRECTORY="$(mktemp -d)"
 trap 'rm -rf -- "${SMOKE_DIRECTORY}"' EXIT

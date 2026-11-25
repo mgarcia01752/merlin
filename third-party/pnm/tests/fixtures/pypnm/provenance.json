@@ -1,0 +1,120 @@
+{
+  "repository": "https://github.com/PyPNMApps/PyPNM",
+  "commit": "82bbf79fe04a0b5e766dc3eb4d5ca2004008bca9",
+  "copied_on": "2026-11-03",
+  "modified": true,
+  "files": [
+    {
+      "path": "tests/files/rxmer.bin",
+      "sha256": "864ba70b0361bd8b4912b55f55e8db72dd7b319b478ce1988103979e0b19c98e",
+      "size_bytes": 7508,
+      "original_sha256": "406d98c348a3481c73015690fd576e83cbc12ff403486bc15c0c680a73cc4b88",
+      "modified": true,
+      "sanitized_fields": [
+        "mac_address"
+      ]
+    },
+    {
+      "path": "tests/files/fec_summary.bin",
+      "sha256": "26f5d3311a9b8f76eadf6787ccdf4722ec344dafcbb67d0d654b06f111ad6ee9",
+      "size_bytes": 48030,
+      "original_sha256": "331b0bca95ec1a9507529a46f433cd012adb1127176a89ba196df69e22c358b1",
+      "modified": true,
+      "sanitized_fields": [
+        "mac_address"
+      ]
+    },
+    {
+      "path": "tests/test_pnm_rxmer_parse.py",
+      "sha256": "114b4b74bf829f68631cbad4435c3095d30ae69f4a25ab23225b3daf6f472441",
+      "size_bytes": 2998
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "507435d71ab5dacd16fd13e968649a1940b72b67faa6381124200ec5d0162ef3",
+      "size_bytes": 11344
+    },
+    {
+      "path": "NOTICE",
+      "sha256": "067995de122a64cc41a5d561c3c79c1ba0b88f81e965506000d60d66ca3092a7",
+      "size_bytes": 500
+    },
+    {
+      "path": "tests/files/channel_estimation.bin",
+      "sha256": "e06997c3fcc35456ebbec5d03933814f3aebb1e412afe68989850e8c506103e5",
+      "size_bytes": 29948,
+      "original_sha256": "ef55e55ecfd4f3019d28c97ef709f1ce9f1269a0bd3da921cb00421ff812a808",
+      "modified": true,
+      "sanitized_fields": [
+        "mac_address"
+      ]
+    },
+    {
+      "path": "tests/files/const_display.bin",
+      "sha256": "21b818b6a3f1c2604582672b93ab34356978983fafc84a998d344435f96c5d59",
+      "size_bytes": 32798,
+      "original_sha256": "082bdf30c3cf67059df4d73c58b9d0e70a718abccd37a9d4e4aa3071dcbcd8e0",
+      "modified": true,
+      "sanitized_fields": [
+        "mac_address"
+      ]
+    },
+    {
+      "path": "tests/files/histogram.bin",
+      "sha256": "6bc8fcf845655a8d1280214d000a52750c68132d582e3e95618affd3d97384de",
+      "size_bytes": 1053,
+      "original_sha256": "f72d4ea1a5f536666966c2f7b58f8b43030427faa3fbe42bfd2496bd6a876c66",
+      "modified": true,
+      "sanitized_fields": [
+        "mac_address"
+      ]
+    },
+    {
+      "path": "tests/files/us_pre_equalizer_coef.bin",
+      "sha256": "179c15e74bb9565833c5182c2f9dc91da877f2da5313dc393b272cb02082f6d5",
+      "size_bytes": 7138,
+      "original_sha256": "e5e40252e636a65d2fb462a67a3a4cc520cbdabcf107f1c65bd87851cd54c4fe",
+      "modified": true,
+      "sanitized_fields": [
+        "mac_address",
+        "cmts_mac_address"
+      ]
+    },
+    {
+      "path": "tests/files/us_pre_equalizer_coef_last.bin",
+      "sha256": "93861ed87b6b6a38354354704b87572fb0366f2b0f963eb11c266e9ff878bb28",
+      "size_bytes": 7138,
+      "original_sha256": "98e2a30a587895dc3981da0c72333ee64946cde14b99a7cface9caed533698fd",
+      "modified": true,
+      "sanitized_fields": [
+        "mac_address",
+        "cmts_mac_address"
+      ]
+    },
+    {
+      "path": "tests/files/spectrum_analyzer.bin",
+      "sha256": "db6c9e5b38eef9de5b36e25989f7d592191c8626c65e8d0c08c58af511e9a1a4",
+      "size_bytes": 41511,
+      "original_sha256": "85a2e6508d6be4d1ba2e9eb817ddccf1b9fbba71e2e50c106ea58b96e1a4beea",
+      "modified": true,
+      "sanitized_fields": [
+        "mac_address"
+      ]
+    },
+    {
+      "path": "tests/files/modulation_profile.bin",
+      "sha256": "bfefd266de98685fe158630c5f98c4a7a57cb22feb55bcdd92012c06135c824a",
+      "size_bytes": 1881,
+      "original_sha256": "34790aafa578883d1aedca6e79befc413ff193632142f6c55c680bdcabbc54de",
+      "modified": true,
+      "sanitized_fields": [
+        "mac_address"
+      ]
+    }
+  ],
+  "sanitization": {
+    "mac_address": "00:ca:00:00:00:01",
+    "tool": "tools/security/pnm-mac-updater.py",
+    "scope": "All CM and CMTS MAC fields; measurement bytes unchanged"
+  }
+}

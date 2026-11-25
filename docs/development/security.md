@@ -4,7 +4,8 @@
 security-extended queries and build-mode none. It uploads findings to GitHub's
 Security / Code scanning view without repeating the full simulation build.
 [Dependency security](../../.github/workflows/ci.yml) checks
-both core and desktop Cargo.lock files against the current RustSec advisory database with cargo-audit 0.22.2.
+the core, desktop, Python and imported-decoder Cargo.lock files against the current
+RustSec advisory database with cargo-audit 0.22.2.
 
 Both checks run inside the shared Master workflow on main/master pushes, pull
 requests, weekly and manually, and inside Release through that same workflow.
@@ -26,7 +27,10 @@ The script needs Bash, curl, tar, sha256sum and network access. It verifies the
 pinned SHA256 of the official static Linux musl binary before extraction and
 execution. Downloads stay under ignored `local/security-tools/`; the report is
 `local/security-audit/report.json` for core and
-`local/security-audit/qt-report.json` for desktop. No host packages are installed, and Cargo.lock
+`local/security-audit/qt-report.json` for desktop,
+`local/security-audit/python-report.json` for Python and
+`local/security-audit/decoder-report.json` for the original decoder test workspace.
+No host packages are installed, and Cargo.lock
 is unchanged. Cached archives are verified again on every invocation. Updating
 the audit tool requires updating its version and checksum together.
 
@@ -41,3 +45,11 @@ and the newly audited desktop finding RUSTSEC-2026-0202 with cxx 1.0.195 and
 matching cxx-gen 0.7.195. Both graphs report zero vulnerability and unsoundness
 findings in the local 2026-11-10 audit; no suppressions are used. See
 [SECURITY-DEPS-02](features/ubuntu-desktop/design.md#security-deps-02-release-dependency-audit).
+
+The current URL dependency repair pins `url` 2.5.9 for
+[RUSTSEC-2026-0592](https://rustsec.org/advisories/RUSTSEC-2026-0592.html).
+All four local graphs pass the vulnerability/unsoundness gate without
+suppressions. The existing `humantime` maintenance warning remains visible in
+application graphs under the unchanged informational-advisory policy. Hosted
+acceptance belongs to the next patch run; see the
+[repair record](features/security-checks/design.md#security-deps-03-patched-url-dependency).

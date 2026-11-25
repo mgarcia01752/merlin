@@ -329,12 +329,13 @@ semantics explicitly rather than silently changing an opened WB's run selection.
 
 ## Reusing the PNM Viewer Qt framework
 
-For MERLIN UI work, inspect reusable shell, theme, dialogs, navigation, adapter
-and build patterns in /home/dev01/Projects/PNM-Viewer-Toolkit read-only before
-rebuilding equivalent infrastructure. Adapt suitable components into MERLIN;
-all writes and implementation remain in /home/dev01/Projects/merlin. Do not
-modify, build or run services in the reference repository as part of this reuse.
-Keep MERLIN standalone: no runtime dependency on the viewer checkout, no viewer
+For MERLIN UI work, inspect its existing shell, theme, dialogs, navigation,
+adapters and build patterns before rebuilding equivalent infrastructure.
+Authorized read-only inspection of another source repository may inform a new
+reuse decision; it must not become a setup, build, test or runtime prerequisite.
+Adapt approved components and their required notices into MERLIN. Do not modify,
+build or run services in a reference repository as part of that inspection.
+Keep MERLIN standalone: no dependency on a viewer checkout, no viewer
 capture workflows, and no transfer of simulation/DSP/FEC ownership out of Rust.
 
 The user accepted GPL reuse for the Qt application. Preserve GPL-3.0-only on
@@ -529,10 +530,18 @@ state on rejected drafts. Update user docs and dark VM screenshots with changes.
 
 ## Development dependencies and decoder reuse
 
-Reuse the PNM decoder through its exact Git revision/version in the Qt manifest
-and lockfile; fetch source into ignored Cargo storage rather than vendoring a
-viewer source copy. Preserve dependency licenses/notices. Runtime must not require
-the reference checkout or a decoder subprocess. New Ubuntu development prerequisites
+MERLIN is self-contained at the application source boundary. Setup, builds,
+packaging, tests and runtime must not fetch another project repository or require
+a sibling checkout, private source credential or warm Git dependency cache.
+Use the reviewed decoder under `third-party/pnm` through local Cargo paths.
+Ordinary locked registry dependencies and pinned development toolchains remain
+supported. Preserve imported source identity, original copyright/SPDX, full
+licenses, notices and independent tests. Include local third-party dependencies
+in package notices even when Cargo reports them as path dependencies. Validate
+from an extracted clean source tree with empty caches and Git fetching disabled;
+verify every shipped consumer and package independently. Reuse reference
+repositories only as authorized read-only evidence, never as a delivery dependency.
+New Ubuntu development prerequisites
 belong in `scripts/install-development.sh` and `docs/development/setup.md`;
 `install.sh --development` is the entry point. Validate safe check/dry-run modes
 without installing system packages or discarding build caches.

@@ -1472,10 +1472,11 @@ compact schemes in Rust and show at most 256 scheme rows for the selected profil
 hints; JSON text (including optional UTF-8 BOM), recognized binary PNM, unsupported
 text/binary and empty content are distinguished before decoding. Files are bounded
 to 16 MiB. The Qt Rust adapter retains original bytes/hashes and draft/accepted
-input; QML presents bounded rows. Binary conversion uses pnm 0.3.6 fetched from
-PNM Viewer Toolkit at Git revision 5fbd5561f3e06b73486546b5ffa520279080a5eb.
-Sources live in ignored Cargo cache, not a vendored viewer copy. Runtime needs no
-viewer checkout, Python, network or decoder subprocess. Preserve dependency notices.
+input; QML presents bounded rows. Binary conversion uses the repository-owned
+pnm 0.3.6 source under `third-party/pnm`, imported unchanged from source revision
+5fbd5561f3e06b73486546b5ffa520279080a5eb with its original test/license closure.
+Setup, builds and runtime need no other project repository, source-access token
+or Git source cache. Preserve imported hashes and packaged dependency notices.
 
 The core's `scenario::pnm_json::import_profiles` shares validation with the CLI's
 three-capture importer. The optional `pnm-input` feature enables it without FEC or
@@ -2555,6 +2556,13 @@ audit launcher verifies a pinned static tool in ignored local storage; it does
 not install system packages or change the simulation core or dependency graph.
 See [security checks](development/security.md).
 
+[SECURITY-DEPS-03](development/checklist.md#task-security-deps-03) owns the
+`url` 2.5.9 Qt dependency correction for
+[REQ-SEC-URL-01](requirements.md#req-sec-url-01). The
+[release repair design](development/features/security-checks/design.md#security-deps-03-patched-url-dependency)
+preserves every lockfile audit, notices and existing Qt URL behavior, including
+the imported decoder's standalone test lockfile.
+
 ### Optional native Python API
 
 `bindings/python` is a separate PyO3/maturin workspace using the canonical
@@ -2706,6 +2714,17 @@ all shared jobs and exact artifacts/checksums. The initial desktop failure in
 run43061645839 was Azure mirror DNS/connectivity during APT setup, before Qt
 compilation. Strict refresh plus bounded setup retries and CI-only HTTPS mirror
 preference address that path; successful hosted recovery remains unverified.
+
+[CI-SOURCE-01](development/checklist.md#task-ci-source-01) supplies the unchanged
+PNM decoder and its licensed test closure under `third-party/pnm` for
+[REQ-CI-PNM-01](requirements.md#req-ci-pnm-01), which requires repository-owned
+application source dependencies. Consumers use local Cargo paths; source hashes and full
+licenses/notices preserve provenance. `tools/development/check_sources.py`
+verifies that closure without source caches or network access. Third-party path
+dependencies remain in packaged notice inventories. Setup/build/runtime cannot
+require other project repositories, checkout paths or repository credentials.
+Normal locked registry packages and pinned local toolchains remain supported.
+See the [owner and acceptance design](development/features/security-checks/design.md#ci-source-01-repository-owned-pnm-source-closure).
 
 ### FEC Monitor presentation (UI-FEC-02)
 

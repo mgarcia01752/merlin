@@ -23,6 +23,10 @@ simulation**. Two independent engines share DSP and FEC infrastructure, with one
 public Rust facade, one native Python distribution and one command-line executable.
 The native Qt workbench provides downstream configuration and instruments.
 
+Application source, including the licensed PNM decoder and its tests, lives in
+this checkout. Builds do not require another project repository or private source
+credentials; normal locked registry dependencies and toolchain downloads remain.
+
 Run a synthetic reference or an admitted measurement-driven experiment, then
 compare recovered data with the original source. Inspect actual bit errors,
 decoder decisions, corrections and iteration counts. All signal processing,

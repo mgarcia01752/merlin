@@ -1,0 +1,9 @@
+[package]
+name = "logging"
+version = "0.3.6"
+edition = "2021"
+rust-version = "1.85"
+license = "Apache-2.0"
+
+[dependencies]
+tracing-subscriber = { version = "=0.3.20", default-features = false, features = ["fmt", "env-filter"] }

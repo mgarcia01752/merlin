@@ -124,9 +124,13 @@ under .agents/skills/ and .claude/skills/.
   authorization. Supply commands when asked for commit/push commands.
 
 Development setup uses `./install.sh --development` on the initial Ubuntu x64
-targets, with read-only `--check` and `--dry-run` modes. The PNM Rust decoder is
-an exact Git/version dependency fetched into ignored Cargo caches; do not vendor
-PNM Viewer source. Keep source pins, developer prerequisites and setup docs current.
+targets, with read-only `--check` and `--dry-run` modes. The PNM Rust decoder
+and its licensed test closure live under third-party/pnm with immutable source
+provenance and original notices. Setup, builds, packaging and runtime must not
+require another project repository, sibling checkout, repository token or Git
+dependency cache. Normal locked registry packages and project-local toolchains
+remain supported. Preserve imported scientific source unless a separately reviewed
+correction is required. Keep provenance, prerequisites and setup docs current.
 No setup invocation or system package installation is implied by ordinary UI work.
 
 Validation scope:

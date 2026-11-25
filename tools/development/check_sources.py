@@ -3,57 +3,67 @@
 # Copyright 2026 MERLIN contributors
 # SPDX-License-Identifier: Apache-2.0
 #
-"""Check the Cargo-cached PNM source against the Qt manifest's exact Git pin."""
+"""Verify repository-owned decoder source without Git access or Cargo caches."""
+import hashlib
+import json
 from pathlib import Path
 import re
-import subprocess
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def expected_pin():
-    """Read the controlled one-line pnm dependency declaration.
+def local_source(root=ROOT):
+    """Validate the complete imported source inventory and return its crate root.
 
-    Return repository URL, full revision and package version. Raise ValueError
-    when the manifest does not declare all three explicit pins.
+    Args:
+        root: MERLIN checkout containing the tracked third-party source closure.
+    Returns:
+        Local decoder crate directory after every recorded byte identity matches.
+    Raises:
+        ValueError for redirected paths, invalid provenance or changed source.
+        OSError for missing source files; no downloads or writes occur.
     """
-    # Full dependency line: pnm = { git = "URL", rev = "HASH", version = "=0.3.6" }.
-    # Group 1 contains the inline table; no substring match of another package.
-    match = re.search(r'^pnm = (\{[^\n]+\})$',
-                      (ROOT / "apps/qt/Cargo.toml").read_text(), re.MULTILINE)
-    if not match:
-        raise ValueError("Missing pinned pnm dependency")
-    # Each quoted key/value, e.g. rev = "abc" -> ('rev', 'abc'); no escape syntax
-    # is accepted because this is a controlled Git URL/revision/version declaration.
-    values = dict(re.findall(r'(git|rev|version) = "([^"\n]+)"', match.group(1)))
-    if set(values) != {"git", "rev", "version"} or not re.fullmatch(r'[0-9a-f]{40}', values["rev"]):
-        raise ValueError("PNM source must have a full Git revision and exact version")
-    if not values["version"].startswith("="):
-        raise ValueError("PNM package version must be exact")
-    return values["git"], values["rev"], values["version"][1:]
-
-
-def cached_source():
-    """Find the exact checked-out Git revision in MERLIN's Qt Cargo cache.
-
-    Return the source root or None. This checks files and Git metadata only;
-    it does not download sources, compile, create directories or modify Git state.
-    """
-    _, revision, version = expected_pin()
-    for manifest in (ROOT / "local/merlin-cargo/git/checkouts").glob("*/*/crates/core/Cargo.toml"):
-        checkout = manifest.parents[2]
-        result = subprocess.run(["git", "-C", str(checkout), "rev-parse", "HEAD"],
-                                text=True, capture_output=True, check=False)
-        # Whole package-version line, e.g. version = "0.3.6" -> 0.3.6.
-        recorded = re.search(r'^version = "([^"\n]+)"$', manifest.read_text(), re.MULTILINE)
-        if result.returncode == 0 and result.stdout.strip() == revision and recorded and recorded.group(1) == version:
-            return checkout
-    return None
+    root = root.resolve()
+    source = root / "third-party/pnm"
+    provenance = source / "provenance.json"
+    if (source.is_symlink() or provenance.is_symlink()
+            or not source.resolve().is_relative_to(root)):
+        raise ValueError("PNM source must remain inside MERLIN")
+    origin = json.loads(provenance.read_text(encoding="utf-8"))
+    if not re.fullmatch(r"[0-9a-f]{40}", origin["revision"]) or not origin["files"]:
+        raise ValueError("Invalid PNM source provenance")
+    manifest = source / "crates/core/Cargo.toml"
+    if manifest.is_symlink() or not manifest.resolve().is_relative_to(source.resolve()):
+        raise ValueError("PNM manifest must remain inside its source root")
+    version = re.search(r'^version = "([^"\n]+)"$', manifest.read_text(), re.MULTILINE)
+    if version is None or version[1] != origin["version"]:
+        raise ValueError("PNM package version differs from its recorded source")
+    for record in origin["files"]:
+        path = source / record["path"]
+        if path.is_symlink() or not path.resolve().is_relative_to(source.resolve()):
+            raise ValueError("PNM inventory path escapes its source root")
+        if hashlib.sha256(path.read_bytes()).hexdigest() != record["sha256"]:
+            raise ValueError(f"PNM source checksum changed: {record['path']}")
+        if "upstream_copy" in record:
+            original = source / record["upstream_copy"]
+            if (not original.resolve().is_relative_to(source.resolve())
+                    or hashlib.sha256(original.read_bytes()).hexdigest() != record["upstream_sha256"]):
+                raise ValueError(f"PNM original documentation changed: {record['path']}")
+    for name in ("apps/qt/Cargo.toml", "crates/pnm-input/Cargo.toml"):
+        consumer = root / name
+        dependency = re.search(r'^pnm = (\{[^\n]+\})$', consumer.read_text(), re.MULTILINE)
+        fields = dict(re.findall(r'(path|version) = "([^"\n]+)"', dependency[1])) if dependency else {}
+        if (set(fields) != {"path", "version"}
+                or "git" in dependency[1]
+                or (consumer.parent / fields["path"]).resolve() != manifest.parent.resolve()
+                or fields["version"] != "=" + origin["version"]):
+            raise ValueError(f"Consumer must use the local pinned PNM source: {name}")
+    return manifest.parent
 
 
 if __name__ == "__main__":
-    location = cached_source()
-    if location is None:
-        print("Pinned PNM source is not cached; run ./install.sh --development")
-        raise SystemExit(1)
-    print(f"Pinned PNM source ready: {location}")
+    try:
+        location = local_source()
+    except (OSError, ValueError, KeyError) as error:
+        raise SystemExit(f"Local PNM source verification failed: {error}") from None
+    print(f"Local PNM source ready: {location}")

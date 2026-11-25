@@ -1,0 +1,20 @@
+{
+  "source": "PyPNM/src/pypnm/support/qam-table",
+  "commit": "82bbf79fe04a0b5e766dc3eb4d5ca2004008bca9",
+  "files": {
+    "1024QAM_table.txt": "5fa129396987afce51a3aac5b4a2851cf1637894fa0d8013a7af00bb7133151d",
+    "128QAM_table.txt": "47f1b644d7e1df00d181c5b74f1469a38bcd748922275e6f03d7066d17f72f67",
+    "16384QAM_table.txt": "2b372b248a3dc7eded7a5c4ca79d4f85c8620f2ec135920467ca70a4d682e7d0",
+    "16QAM_table.txt": "dd6d4a320418ffada704fa7f76192c30ff400427fefe16acb49d16c9dcbd6306",
+    "2048QAM_table.txt": "99aa9567c09677f73a27324a1062b984aef89f7f1d06b5cf443c21497942511a",
+    "256QAM_table.txt": "6572a2c4d0c889ba21c90f7892fe564f6dd0212523867c4a6061b7565811a7ee",
+    "2QAM_table.txt": "9edb585543fb9e9b6a2b5c3d7f29b6b2734798001a6ad8732cff8c9b05e8acaf",
+    "4096QAM_table.txt": "b875214454063be6dde49b4d6d09b87b20c8cc60c77eacdfc17115751892a6fc",
+    "4QAM_table.txt": "52a5f33b03c1c13d0bfc27079128792459c9720d95587ba42a74d6c257fa8280",
+    "512QAM_table.txt": "4f40fb442999ee1435839ba7a94ef9ce70cab4269ce8b921d9fb287317231f77",
+    "64QAM_table.txt": "c79f6fedca4542ce6b87371ae541d087ea0b6011442c7f21dd64b8ec8ec5a682",
+    "8192QAM_table.txt": "51c5fc26fd065b311a9a7daed9c4334a04665be5652511db570af7870b927ae2",
+    "8QAM_table.txt": "6a6a1743b91d1172a5e3ba07bfc296249c6fa287ea1c2b5608ec98e87c32aced",
+    "ConstellationScalingFactors.txt": "b20cfd0c588d559e2c9db51bd20e4f098da502f1ac952080ae72ae18b9dce263"
+  }
+}

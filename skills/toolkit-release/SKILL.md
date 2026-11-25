@@ -9,6 +9,13 @@ Read docs/development/git.md, VERSION and the local helpers before commands.
 VERSION is canonical; tools/release/versions.py checks every local manifest and
 Cargo.lock. Do not edit package versions independently or adopt four-part versions.
 
+Application source dependencies must be available from this checkout without
+another project repository or source-access credential. Verify imported source
+hashes, all dependency locks and packaged third-party notices. Keep imported
+component versions separate from MERLIN version synchronization. A cold extracted
+source/wheel build with Git network access disabled is required when that closure
+changes; a warm source cache does not establish release readiness.
+
 Use tools/bump-version.sh --bump major|minor|patch for local version edits.
 --dry-run previews without writes. Major resets minor/patch; minor resets patch.
 Tags are vMAJOR.MINOR.PATCH. Bumping does not authorize committing or pushing.
