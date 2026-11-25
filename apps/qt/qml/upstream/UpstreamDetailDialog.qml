@@ -46,6 +46,8 @@ WorkbenchDialog {
     property string captureFamily: ""
     property bool captureBusy: false
     signal captureRequested(string family)
+    property bool fecInspection: false
+    signal fecRequested()
     property var stages: []
     readonly property real preferredDialogWidth: 620
     readonly property real preferredDialogHeight: 560
@@ -77,6 +79,17 @@ WorkbenchDialog {
         ColumnLayout {
             width: scroller.availableWidth
             spacing: dialog.sectionSpacing
+            WorkbenchActionButton {
+                objectName: "upstreamDetailFecInspect"
+                theme: dialog.theme
+                text: "Inspect FEC / LLR"
+                visible: dialog.fecInspection
+                enabled: !dialog.captureBusy
+                onClicked: {
+                    dialog.close();
+                    dialog.fecRequested();
+                }
+            }
             WorkbenchActionButton {
                 objectName: "upstreamCaptureInspect"
                 theme: dialog.theme

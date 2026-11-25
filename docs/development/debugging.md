@@ -184,7 +184,9 @@ measurement consumers. It navigates through the actual parent workbench before
 opening nested instruments. Bounded phase diagnostics identify popup admission
 or window-attachment failures. Require successful `MERLIN_DOWNSTREAM_SHARED_PROBE`
 JSON and fresh content/Main images, using `MERLIN_DOWNSTREAM_SHARED_CAPTURE ready`
-for the latter. No picker input or arbitrary QML is accepted by this probe.
+for the latter. It also opens the actual FEC monitor, checks both word-table
+filters and inspects both independent-verification count charts. No picker input
+or arbitrary QML is accepted by this probe.
 
 The existing bundled `--upstream-inputs-probe --upstream-inputs-image
 /absolute/fresh/inputs.png` additionally checks original RxMER plot aliases,
@@ -195,3 +197,23 @@ source/hash/value comparisons and fresh images. `MERLIN_UPSTREAM_RXMER_CAPTURE
 ready` identifies the actual RxMER Main-window capture. These are opt-in finite
 validation consumers; normal startup creates none of their probe owners. They
 change only their loaded test sessions and write explicitly requested new images.
+
+## Decoder and independent-verification probe
+
+`--upstream-fec-probe --upstream-fec-image /absolute/fresh/fec.png` opens the
+actual Main receiver/PRBS-RX dialogs and their FEC/LLR instrument. Its owned native
+pickers request `fec-50`, `fec-25` and `fec-cancel` through
+`MERLIN_UPSTREAM_FEC_PICKER`. Use the existing synthetic documents with two
+complete grants for each numerology and 256 grants for genuine cancellation,
+within unchanged scientific sample/runtime limits. The native observation policy
+opts into finite actual soft retention; no report history is reconstructed.
+
+Require successful `MERLIN_UPSTREAM_FEC_PROBE` JSON, all three picker responses,
+28 original-data views, genuine Pause/Stop acknowledgement, preserved partial
+coverage and independent downstream state. `MERLIN_UPSTREAM_FEC_CAPTURE ready`
+and `MERLIN_UPSTREAM_LLR_CAPTURE ready` provide finite actual Main capture grace
+periods; the requested content path and its `.llr.png` companion are separate
+captures. Compare actual words/cell metrics/input windows through the installed
+public API. A full independent run can establish cancelled completed-prefix
+values; it cannot establish identical cancellation timing or whole-report counters.
+All fixed probes suppress automatic update lookup and leave normal startup alone.

@@ -156,7 +156,7 @@ Item {
 
     /** Open a direction-specific scientific consumer and request its native default. */
     function openInstrument(kind) {
-        const popup = kind === "qam" ? qamDialog : kind === "spectrum" ? spectrumDialog : kind === "response" ? responseDialog : null;
+        const popup = kind === "qam" ? qamDialog : kind === "spectrum" ? spectrumDialog : kind === "response" ? responseDialog : kind === "fec" ? fecDialog : null;
         if (!popup || !popup.openChecked()) {
             return false;
         }
@@ -791,6 +791,7 @@ Item {
         onDraftCancelled: function(token) { workbench.draftCancelled(token); }
         onConfigurationLoadRequested: workbench.configurationLoadRequested()
         onResponseRequested: workbench.openInstrument("response")
+        onFecRequested: workbench.openInstrument("fec")
     }
     SourceDialog {
         id: sourceDialog
@@ -832,6 +833,8 @@ Item {
         objectName: "upstreamVerificationDialog"
         theme: workbench.theme
         presentation: workbench.detailPresentation("verification")
+        captureBusy: workbench.host && workbench.host.upstreamState ? workbench.host.upstreamState.busy === true || workbench.host.upstreamState.application_busy === true : false
+        onFecRequested: workbench.openInstrument("fec")
         onClosed: verificationBlock.forceActiveFocus()
     }
     UpstreamCaptureDialog {
@@ -874,6 +877,13 @@ Item {
     UpstreamResponseDialog {
         id: responseDialog
         objectName: "upstreamResponseDialog"
+        theme: workbench.theme
+        host: workbench.host
+        onInstrumentRequested: function(kind, selection, context) { workbench.instrumentRequested(kind, selection, context); }
+    }
+    UpstreamFecDialog {
+        id: fecDialog
+        objectName: "upstreamFecDialog"
         theme: workbench.theme
         host: workbench.host
         onInstrumentRequested: function(kind, selection, context) { workbench.instrumentRequested(kind, selection, context); }

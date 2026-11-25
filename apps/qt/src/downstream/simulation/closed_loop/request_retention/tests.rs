@@ -31,7 +31,7 @@ const ACTIVE_EXECUTION_LIMIT_MS: u64 = 60000;
 const WATCHDOG: Duration = Duration::from_secs(20);
 const POLL_INTERVAL: Duration = Duration::from_millis(5);
 
-#[derive(Clone, Copy)]
+#[derive(Debug, Clone, Copy)]
 enum Dimension {
     Payload,
     Entries,
@@ -272,6 +272,28 @@ fn wait_for(mut ready: impl FnMut() -> bool) {
     }
 }
 
+// Preserve the existing ceiling and exact equality while identifying which real
+// dimension/stage failed; a generic timeout alone cannot diagnose owner cleanup.
+fn wait_for_observation<T: std::fmt::Debug + PartialEq>(
+    stage: &str,
+    dimension: Dimension,
+    mut observe: impl FnMut() -> T,
+    expected: T,
+) {
+    let deadline = Instant::now() + WATCHDOG;
+    loop {
+        let actual = observe();
+        if actual == expected {
+            return;
+        }
+        assert!(
+            Instant::now() < deadline,
+            "Actual owner lifecycle watchdog: {stage}, {dimension:?}; actual {actual:?}, expected {expected:?}"
+        );
+        std::thread::sleep(POLL_INTERVAL);
+    }
+}
+
 #[test]
 fn exact_public_quantities_and_cross_budget_aliases_cover_both_real_roots() {
     let (mut model, _) = prepared_model(COMPLETE_OBSERVATION_MS, None);
@@ -338,7 +360,12 @@ fn every_real_candidate_dimension_preserves_accepted_science_generation_and_repo
         assert!(model.error.message().is_empty());
         let before_run = context.application.budget().usage();
         model.start();
-        wait_for(|| model.poll()["busy"] == false);
+        wait_for_observation(
+            "scientific completion",
+            dimension,
+            || model.poll()["busy"].clone(),
+            serde_json::Value::Bool(false),
+        );
         let report = latest(&context).expect("Accepted real science must complete");
         assert_eq!(report.job.status, ChannelJobStatus::Complete);
         let settled = [
@@ -355,7 +382,12 @@ fn every_real_candidate_dimension_preserves_accepted_science_generation_and_repo
         ]
         .into_iter()
         .fold(before_run, sum);
-        wait_for(|| context.application.budget().usage() == settled);
+        wait_for_observation(
+            "terminal owner cleanup",
+            dimension,
+            || context.application.budget().usage(),
+            settled,
+        );
         let request = Arc::clone(model.request.as_ref().unwrap());
         let plan = Arc::clone(model.plan.as_ref().unwrap());
         let key = model.generation;

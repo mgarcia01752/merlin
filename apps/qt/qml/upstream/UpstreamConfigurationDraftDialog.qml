@@ -25,6 +25,8 @@ WorkbenchDialog {
     property string captureFamily: ""
     property bool responseInspection: false
     signal responseRequested()
+    property bool fecInspection: false
+    signal fecRequested()
     signal captureRequested(string family)
     signal draftRequested(string sectionId)
     signal draftApplyRequested(string sectionId, string token, var values)
@@ -641,6 +643,17 @@ WorkbenchDialog {
         applyEnabled: dialog.canApply
         onApplied: dialog.applyDraft()
         onCancelled: dialog.cancelDraft()
+        WorkbenchActionButton {
+            objectName: "upstreamFecInspect"
+            theme: dialog.theme
+            text: "Inspect FEC / LLR"
+            visible: dialog.fecInspection
+            enabled: dialog.canLoadConfiguration
+            onClicked: {
+                dialog.cancelDraft();
+                dialog.fecRequested();
+            }
+        }
         WorkbenchActionButton {
             objectName: "upstreamResponseInspect"
             theme: dialog.theme

@@ -65,6 +65,11 @@ fn actual_completed_report_drives_exact_rows_and_previous_run_identity() {
     assert_eq!(row_value(&view, "Run"), token.run.to_string());
     assert_eq!(row_value(&view, "Lifecycle"), "Completed");
     assert_eq!(
+        row_value(&view, "PRBS15 source seed"),
+        verified.source_seed.to_string()
+    );
+    assert!(row_value(&view, "Source").contains("Continuous PRBS15"));
+    assert_eq!(
         row_value(&view, "Compared source bits"),
         verified.compared_source_bits.to_string()
     );

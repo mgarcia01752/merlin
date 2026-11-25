@@ -104,7 +104,9 @@ completed/pending codewords. Decoder convergence, parity, shortening and fill
 outcomes remain separate from independent source comparison. **Completed** means
 the scheduled work ended normally; **Verified** requires the backend's complete
 source/FEC/fill/coverage acceptance. With no comparison, BER is **Unavailable**.
-Nonzero BER uses scientific notation; exact zero is shown as `0`.
+Nonzero BER uses scientific notation; exact zero is shown as `0`. The report also
+shows the original continuous PRBS15 source seed. Use **Inspect FEC / LLR** from
+CMTS Receiver or PRBS-RX for [actual decoder/soft observations](upstream/instruments.md#ldpc-and-soft-observations).
 
 A cancelled or timed-out report can contain useful completed work without full
 recovery. Failure context remains visible when supplied by the backend. While a

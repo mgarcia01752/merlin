@@ -86,6 +86,29 @@ ApplicationWindow {
     property QtObject upstreamGridProbe: null
     readonly property bool upstreamInstrumentsProbeRequested: Qt.application.arguments.indexOf("--upstream-instruments-probe") >= 0
     property QtObject upstreamInstrumentsProbe: null
+    readonly property bool upstreamFecProbeRequested: Qt.application.arguments.indexOf("--upstream-fec-probe") >= 0
+    property QtObject upstreamFecProbe: null
+    property Component upstreamFecProbeComponent: Component {
+        UpstreamFecProbe {
+            onFinished: function(success, message) { Qt.exit(success ? 0 : 1) }
+        }
+    }
+    /** Exercise actual native decoder/soft observations under fixed finite scenarios. */
+    function startUpstreamFecProbe() {
+        const args = Qt.application.arguments
+        const imageArgument = args.indexOf("--upstream-fec-image")
+        if (imageArgument < 0 || imageArgument + 1 >= args.length) {
+            console.error("Upstream FEC probe requires a fresh screenshot path.")
+            Qt.exit(1)
+            return
+        }
+        upstreamFecProbe = upstreamFecProbeComponent.createObject(window, {
+            rootWindow: window, workbench: workbench, tabs: directionTabs,
+            host: directionHost, controls: sharedControls, captureItem: unifiedFrame,
+            screenshotPath: args[imageArgument + 1]
+        })
+        if (!upstreamFecProbe) { Qt.exit(1) }
+    }
     readonly property bool downstreamSharedProbeRequested: Qt.application.arguments.indexOf("--downstream-shared-probe") >= 0
     property QtObject downstreamSharedProbe: null
     property Component downstreamSharedProbeComponent: Component {
@@ -308,6 +331,8 @@ ApplicationWindow {
             Qt.callLater(startDownstreamSharedProbe)
         } else if (upstreamInstrumentsProbeRequested) {
             Qt.callLater(startUpstreamInstrumentsProbe)
+        } else if (upstreamFecProbeRequested) {
+            Qt.callLater(startUpstreamFecProbe)
         } else if (upstreamGridProbeRequested) {
             Qt.callLater(startUpstreamGridProbe)
         } else if (Qt.application.arguments.indexOf("--smoke-test") >= 0) {
@@ -352,7 +377,7 @@ ApplicationWindow {
                     && !directionHost.upstreamState.busy && !directionHost.upstreamState.configured
                     && !window.workbench.loadingProject
                 prepareUpdate: function() { return workbench.saveUpdateRecovery() }
-                startupCheck: !window.presentationProbeRequested && !window.directionProbeRequested && !window.upstreamConfigurationProbeRequested && !window.upstreamExecutionProbeRequested && Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
+                startupCheck: !window.presentationProbeRequested && !window.directionProbeRequested && !window.upstreamConfigurationProbeRequested && !window.upstreamExecutionProbeRequested && !window.upstreamInputsProbeRequested && !window.upstreamGridProbeRequested && !window.upstreamInstrumentsProbeRequested && !window.downstreamSharedProbeRequested && !window.upstreamFecProbeRequested && Qt.application.arguments.indexOf("--check-updates")<0 && Qt.application.arguments.indexOf("--smoke-test")<0
             }
         }
     }

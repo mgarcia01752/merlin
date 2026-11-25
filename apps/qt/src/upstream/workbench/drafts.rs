@@ -92,7 +92,7 @@ impl Draft {
             .ok_or("Load a source configuration before applying edits.")?
             .clone();
         fields::merge(&mut document, &self.fields, changes)?;
-        PreparedSession::from_document(document, super::observation_policy::estimates()?, budget)
+        PreparedSession::from_document(document, super::observation_policy::instruments()?, budget)
             .map_err(|error| format!("{error:?}"))
     }
 }

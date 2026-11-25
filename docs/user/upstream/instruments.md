@@ -89,3 +89,50 @@ separate transmit-correction evidence. Use a complete measured plan to configure
 an explicitly supported experiment.
 
 ![Actual original upstream RxMER plot](../../images/workbench/upstream-rxmer-dark.png)
+
+
+## LDPC and soft observations
+
+After a run, open **CMTS Receiver → Inspect FEC / LLR**, or use the same action
+from **PRBS-RX**. The receiver action closes its configuration draft without
+applying it. Select an observation plane:
+
+- **Completed LDPC words** shows the actual selected started grant's completed
+  words, upstream code family, iterations, convergence, parity, shortened-zero
+  consistency, fill consistency and original source-bit start. The chart shows
+  actual iterations for that page; it is not a whole-run iteration histogram.
+  Upstream data has no BCH stage or per-word independent source-error count.
+- **Raw / derandomized cell LLRs** shows actual MSB-first bit metrics with their
+  original retained-cell, frame, symbol and physical-carrier positions. Raw
+  demapper and PHY-derandomized values are separate columns.
+- **Completed LDPC input LLRs** shows original transmitted-bit indices and the
+  exact input to an actually completed decoder call. These are not posterior
+  metrics or restored shortened priors. Positive natural-log P(0)/P(1) favors zero.
+
+Use the supplied started-grant or retained-word choices and **Next**, **Previous**
+and **First** for original-coordinate pages. The initial views contain one
+completed word, up to eight computed cells or 64 actual word-input values.
+A missing history stays unavailable; changing views never replays a receiver or
+advances its source. Table rows are virtualized and scroll independently.
+**Details** reveals original identities, copy/retention counts, dimensions,
+reference planes and independent source-coverage metrics below the instruments.
+
+New native sessions retain at most 64 computed cells and two complete LDPC-input
+words under a separate finite scalar budget. These observation choices do not
+change source, receiver, decoding or recovery behavior. Earlier reports without
+soft retention remain unavailable, and a partial report can contain computed
+cells without any completed word.
+
+PRBS-RX shows the original continuous PRBS15 seed, lifecycle, generated/compared/
+unverified meaningful bits, bit errors and optional BER. BER uses the independently
+compared meaningful bits as its denominator. No compared bits means unavailable;
+exact zero is `0`, and nonzero BER uses scientific notation. Convergence, parity,
+fill and ordinary lifecycle completion do not independently prove recovery.
+Cancelled work retains its original completed observations and incomplete coverage.
+
+![Actual native upstream LDPC observations](../../images/workbench/upstream-fec-dark.png)
+
+![Actual native upstream LDPC input metrics](../../images/workbench/upstream-llr-dark.png)
+
+The [receiver soft-observation contract](soft-observations.md) and
+[recovery guide](recovery.md) explain the backend's supported planes and limits.

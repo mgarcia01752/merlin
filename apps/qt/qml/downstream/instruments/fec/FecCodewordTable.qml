@@ -5,6 +5,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../../../shared/instruments"
 
 ColumnLayout {
     id: table
@@ -38,27 +39,13 @@ ColumnLayout {
         Label { text:table.projection.summary || ""; color: table.theme.muted; Layout.fillWidth: true; wrapMode: Text.WordWrap }
         CheckBox { objectName: "fecErrorsOnly"; text: "Errors Only"; checked: table.errorsOnly; onToggled: table.errorsOnly = checked }
     }
-    Row {
+    ObservationTable {
         Layout.fillWidth: true
-        Repeater {
-            model: table.headings
-            Label { required property string modelData; width: table.width / table.headings.length; text: modelData; color: table.theme.accent; font.bold: true; wrapMode: Text.WordWrap }
-        }
-    }
-    ListView {
-        objectName: "receiverFecWords"
-        Layout.fillWidth: true; Layout.fillHeight: true; clip: true
-        model: table.formattedRows
-        ScrollBar.vertical: ScrollBar {}
-        delegate: Row {
-            required property var modelData
-            width: ListView.view.width; height: 32
-            readonly property var values: modelData
-            Repeater {
-                model: parent.values
-                Label { required property var modelData; width: table.width / table.headings.length; text: modelData; color: text === "Fail" ? table.theme.statusError : table.theme.text }
-            }
-        }
-        Label { anchors.centerIn: parent; visible: !table.filtered.length; text: table.errorsOnly ? "No errors in retained records." : "No retained codewords."; color: table.theme.muted }
+        Layout.fillHeight: true
+        theme: table.theme
+        headings: table.headings
+        rows: table.formattedRows
+        rowsObjectName: "receiverFecWords"
+        emptyText: table.errorsOnly ? "No errors in retained records." : "No retained codewords."
     }
 }

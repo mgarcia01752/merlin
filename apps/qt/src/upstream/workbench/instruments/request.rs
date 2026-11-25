@@ -4,7 +4,8 @@
  */
 //! Private direction transport selects existing typed public observation operations.
 use super::{
-    common, Display, QamRequest, ResponseMetric, ResponseRequest, ResponseSource, SpectrumRequest,
+    common, Display, FecRequest, QamRequest, ResponseMetric, ResponseRequest, ResponseSource,
+    SpectrumRequest,
 };
 use crate::{
     shared::presentation::constants::MAX_SCATTER_PLOT_POINTS,
@@ -21,6 +22,7 @@ pub(in crate::upstream::workbench) enum Request {
     Qam(QamRequest),
     Spectrum(SpectrumRequest),
     Response(ResponseRequest),
+    Fec(FecRequest),
 }
 
 impl Request {
@@ -39,6 +41,7 @@ impl Request {
             "qam" => serde_json::from_str(selection).map(Self::Qam),
             "spectrum" => serde_json::from_str(selection).map(Self::Spectrum),
             "response" => serde_json::from_str(selection).map(Self::Response),
+            "fec" => serde_json::from_str(selection).map(Self::Fec),
             _ => return Err("Choose a supported upstream instrument.".into()),
         }
         .map_err(|error| error.to_string())
@@ -70,6 +73,7 @@ impl Request {
             .ok_or("Run upstream before inspecting actual observations.")?;
         let report = retained.value();
         match kind {
+            "fec" => Ok(Self::Fec(FecRequest::default())),
             "qam" => {
                 let preferred = Tap::RxEqualized;
                 let tap = report
@@ -141,6 +145,9 @@ impl Request {
         match self {
             Self::Qam(request) => super::qam(report.value(), request, budget),
             Self::Spectrum(request) => super::spectrum(report.value(), request, budget),
+            Self::Fec(request) => {
+                super::admit(super::fec::project(report.value(), request)?, budget)
+            }
             Self::Response(_) => {
                 unreachable!("Response dispatches before requiring an actual report")
             }

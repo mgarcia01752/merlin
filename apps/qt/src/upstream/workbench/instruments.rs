@@ -4,9 +4,13 @@
  */
 //! Passive bounded instrument DTOs; public upstream owners retain all science.
 mod common;
+mod fec;
+#[cfg(test)]
+mod fec_tests;
 mod qam;
 mod request;
 mod response;
+mod soft;
 mod spectrum;
 #[cfg(test)]
 mod tests;
@@ -15,6 +19,7 @@ use crate::{
     downstream::inputs::retention::{admit_model, json_children},
     shell::{Retained, RetentionBudget},
 };
+use fec::FecRequest;
 use merlin::upstream::{BatchReport, QamConstellationRequest, QamPairRequest, Tap};
 pub(super) use request::Request;
 use response::{Metric as ResponseMetric, ResponseRequest, Source as ResponseSource};
@@ -120,19 +125,21 @@ fn admit(mut snapshot: Value, budget: &RetentionBudget) -> Result<Retained<Displ
         .as_str()
         .unwrap_or("Original retained upstream observations; missing history is unavailable.")
         .into();
-    snapshot["metadata_rows"] = snapshot["metadata"]
-        .as_object()
-        .map(|metadata| {
-            metadata
-                .iter()
-                .map(|(name, value)| {
-                    serde_json::json!({"label":name.replace('_', " "),
+    if snapshot.get("metadata_rows").is_none() {
+        snapshot["metadata_rows"] = snapshot["metadata"]
+            .as_object()
+            .map(|metadata| {
+                metadata
+                    .iter()
+                    .map(|(name, value)| {
+                        serde_json::json!({"label":name.replace('_', " "),
                     "value":value.as_str().map(str::to_owned).unwrap_or_else(||value.to_string())})
-                })
-                .collect::<Vec<_>>()
-        })
-        .unwrap_or_default()
-        .into();
+                    })
+                    .collect::<Vec<_>>()
+            })
+            .unwrap_or_default()
+            .into();
+    }
     let mut resources = json_children(&snapshot)?;
     resources.payload_bytes = resources
         .payload_bytes

@@ -5125,3 +5125,75 @@ not a claim that unexecuted suites passed. Full applicable final regression,
 line-by-line numeric audit and final correspondence remain UIU-QA-01.
 Continue UIU-SHARED-02 for actual FEC/LLR and verification presentation; project
 Save/Open and restart/update recovery retain their separate official tasks.
+
+## UIU-SHARED-02 integrated decoder and verification acceptance
+
+The [decoder owner design](design.md#uiu-shared-02-actual-decoder-and-independent-verification-consumers)
+reuses existing public FEC/recovery and optional soft-observation operations.
+No backend, binding, root manifest, scientific algorithm or public default changes.
+`ObservationTable` serves actual DS FEC words and US completed-word/cell/input
+views. `CountBarChart` serves actual DS independent-verification counts and US
+selected-word iterations. DS preparation, BCH/control columns, filters, payload
+wording and its separate whole-run iteration histogram remain unchanged.
+Sixteen independent dark/light before/after table/chart images are byte-identical.
+
+The actual Linux Qt 6.8.3 XCB/software/Fusion application loads both synthetic
+numerologies and a bounded cancellation experiment through real owned native
+pickers. Twenty-eight views exercise original completed words, second grants,
+raw/derandomized cells, exact completed-input windows, Next/Previous/First,
+second retained words and PRBS-RX navigation. The installed unchanged public Rust
+binding independently matches every selected scalar, flag, family, shortening,
+identity, cell coordinate, raw/derandomized value and original LDPC input value.
+Complete report summaries/verification match exactly. Cancelled completed-prefix
+values match a full independent run; its timing and whole-report counters are
+explicitly not claimed identical. Genuine Pause/Stop acknowledgement retains
+completed data, pending work and unverified meaningful bits without false recovery.
+
+The actual DS saved example also passes its twenty-two QAM, twelve spectrum,
+five response and five original-measurement views, then both FEC word-table
+filters and both independent-verification count charts. Original BCH/control
+semantics and independent upstream state remain intact; render-only queries do
+not advance science. Newly admitted native sessions opt into finite actual soft
+retention without changing public defaults. Both numerologies' QAM/PSD/response
+views are independently compared again under that native policy. Original capture
+and complete measured-plan checks retain their original hashes, nulls and recovery.
+
+The [scoped decoder receipt](shared-decoder-evidence.json) records complete Qt Rust,
+focused upstream, relevant complete QML, warnings-denied Clippy, formatting,
+public-API boundary, optimized build, native compatibility and packaging results.
+The real failed-channel case distinguishes non-convergence/parity failures from
+independent bit errors; no decoder outcome is edited to produce that evidence.
+All 113 affected upstream cases pass. The initial complete Qt crate attempt
+records 520 passes and one owner-lifecycle watchdog failure during overlapping
+validation. The unchanged exact case and complete seven-case retention group
+then pass alone. Its test now identifies the stage, resource dimension and actual
+versus expected observation on failure, preserving the same 20-second watchdog
+and exact assertions. The final full crate run passes all 522 cases with no
+overlapping build/native work; both attempts and their actual outcomes are
+recorded in the receipt. No production downstream owner or scientific limit
+changes. Unexecuted or failed suites are never counted as passes.
+
+The final style review changes only whitespace in two branch bodies. Exact prior
+source reconstruction proves their tokens unchanged; all nine FEC Rust cases,
+the complete nine-record FEC QML suite, final Clippy/format/boundary, optimized
+build and fresh twenty-eight-view native decoder/API comparison pass afterward.
+Other native receipts retain their original artifact hashes and apply only to
+their unchanged owners. The current executable SHA-256 is
+`56bd56df587e53ca7f0815fbb118c0d4a58c001edf06ce6cd7a4c49e871d2f4d`.
+
+The pointer regression initially found the outer scrollbar intercepting the
+original-data table's real drag. Reserving the actual style scrollbar width fixes
+it; the complete FEC QML suite verifies pointer press/drag/release and original
+array aliases. Test discovery also detects orphan Qt `_data` providers; the
+formerly orphaned empty/null renderer case now executes as a real test. Native
+[LDPC](../../../images/workbench/upstream-fec-dark.png) and
+[input-LLR](../../../images/workbench/upstream-llr-dark.png) captures appear in the
+[user guide](../../../user/upstream/instruments.md#ldpc-and-soft-observations).
+
+Only UIU-SHARED-02 changes its official completion state. Root full workspace,
+CLI and fresh wheels are not required for this Qt-only change: accepted scientific
+sources and bindings remain unchanged, and original data comparisons use the
+existing installed binding. Full applicable final regression, numeric audit and
+final correspondence remain UIU-QA-01. Native GUI evidence is this Linux VM;
+no Windows installed lifecycle, field measurement or external interoperability
+claim follows. Continue UIU-FILE-01, then UIU-RECOVERY-01 and final UIU-QA-01.

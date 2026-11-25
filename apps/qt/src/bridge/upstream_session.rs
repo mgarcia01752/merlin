@@ -82,7 +82,7 @@ pub mod bridge {
 
         /// Opens one finite public upstream observation without executing a run.
         /// # Arguments
-        /// * `kind` - Existing QAM, spectrum or response presentation destination.
+        /// * `kind` - Existing QAM, spectrum, response or FEC presentation destination.
         /// # Returns
         /// Empty after background dispatch; the native diagnostic otherwise.
         #[qinvokable]

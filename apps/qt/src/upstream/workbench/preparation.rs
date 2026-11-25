@@ -306,12 +306,12 @@ fn prepare_input(bytes: &[u8], budget: &RetentionBudget) -> Result<PreparedSessi
         .is_ok_and(|input| input.format == MEASURED_INPUT_FORMAT);
     if measured {
         let plan = MeasuredExperiment::from_json(bytes).map_err(|error| error.to_string())?;
-        PreparedSession::from_measured(plan, super::observation_policy::estimates()?, budget)
+        PreparedSession::from_measured(plan, super::observation_policy::instruments()?, budget)
             .map_err(|error| format!("{error:?}"))
     } else {
         let document =
             ConfigurationDocument::from_json(bytes).map_err(|error| error.to_string())?;
-        PreparedSession::from_document(document, super::observation_policy::estimates()?, budget)
+        PreparedSession::from_document(document, super::observation_policy::instruments()?, budget)
             .map_err(|error| format!("{error:?}"))
     }
 }

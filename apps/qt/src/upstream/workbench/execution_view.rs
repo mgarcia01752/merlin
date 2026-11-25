@@ -78,7 +78,7 @@ impl Model {
 /// * `ber` - Original optional public metric, absent without compared decisions.
 /// # Returns
 /// Explicit unavailable, exact zero or scientific notation with the shared precision.
-fn ber_label(ber: Option<f64>) -> String {
+pub(super) fn ber_label(ber: Option<f64>) -> String {
     match ber {
         None => "Unavailable".into(),
         Some(0.0) => "0".into(),
@@ -113,6 +113,11 @@ fn report_presentation(report: &BatchReport, run: &str, previous: bool) -> (Valu
     let mut rows = vec![
         row("Run", run),
         row("Lifecycle", format!("{:?}", verification.status)),
+        row(
+            "Source",
+            "Continuous PRBS15 · independent recovered-source comparison",
+        ),
+        row("PRBS15 source seed", verification.source_seed),
         row(
             "Full reference recovery",
             if verification.reference_recovered {

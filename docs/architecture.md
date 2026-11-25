@@ -2136,9 +2136,24 @@ finite passive controller-slot worker in `preparation/query`; neither executes a
 simulation or mutates its source. Newly admitted native upstream sessions request
 one complete actual received-pilot estimate through the existing public retention
 policy, without changing public API defaults or scientific recovery. Missing or
-partial history remains explicit. Shared FEC/verification acceptance remains
-UIU-SHARED-02; [integrated instrument acceptance](development/features/unified-qt-workbench/validation.md#uiu-shared-01-integrated-shared-instrument-acceptance)
+partial history remains explicit. [Integrated instrument acceptance](development/features/unified-qt-workbench/validation.md#uiu-shared-01-integrated-shared-instrument-acceptance)
 closes UIU-SHARED-01 with actual consumers in both directions.
+
+FEC/verification integration reuses original public decoder/recovery and optional
+soft observations through that same passive transport. The [SHARED-02 owner design](development/features/unified-qt-workbench/design.md#uiu-shared-02-actual-decoder-and-independent-verification-consumers)
+owns common `ObservationTable` and `CountBarChart` drawing with separate DS
+BCH/control and US LDPC semantics. DS wrappers retain their original preparation,
+filters and payload/error wording; the whole-run iteration histogram stays separate.
+Private upstream `instruments/fec.rs` and `soft.rs` project original public decoder
+outcomes and soft metrics into finite scalar tables. Raw demapper, derandomized
+and completed-word input metrics remain separate; independent source comparison
+alone owns BER and recovery claims. The native policy retains at most 64 actual
+cells and two completed-word inputs under a separate 65536-LLR ceiling; public
+defaults remain unchanged. Old absent history is never replayed. Each dialog page
+retains at most eight cells or 256 input-bit rows under existing aggregate
+admission. Wide original identities/frame/source offsets remain decimal strings.
+The [decoder acceptance record](development/features/unified-qt-workbench/validation.md#uiu-shared-02-integrated-decoder-and-verification-acceptance)
+links actual direction consumers, independent comparisons and native captures.
 
 Requirements: [REQ-UIU-15](requirements.md#req-uiu-15), [REQ-UIU-16](requirements.md#req-uiu-16), [REQ-UIU-17](requirements.md#req-uiu-17), [REQ-UIU-18](requirements.md#req-uiu-18), [REQ-UIU-19](requirements.md#req-uiu-19), [REQ-UIU-20](requirements.md#req-uiu-20), [REQ-UIU-21](requirements.md#req-uiu-21).
 Delivery: [UIU-SHARED-01](development/checklist.md#task-uiu-shared-01), [UIU-SHARED-02](development/checklist.md#task-uiu-shared-02).

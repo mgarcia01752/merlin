@@ -195,6 +195,8 @@ QtObject {
         property var responses: []
         property var measurements: []
         property var tabIsolation: []
+        property var fecTables: []
+        property var verificationBars: []
         property bool screenshotSaved: false
     }
     property Timer timer: Timer {
@@ -677,6 +679,50 @@ QtObject {
         return true;
     }
 
+    /** Inspect the real DS table after its existing direction-owned preparation. */
+    function recordFecTable(errorsOnly) {
+        const popup = observations.popup;
+        const table = findObject(popup.contentItem, item => item.rowsObjectName === "receiverFecWords");
+        const list = findItem(popup.contentItem, "receiverFecWords");
+        require(table && list && table.visible && list.visible, "Actual shared DS codeword table is absent or hidden.");
+        const original = popup.presentationCoverage.value.codewords;
+        const rows = errorsOnly ? original.errors : original.all;
+        require(table.rows === rows && table.headings === original.headings && list.count === rows.length,
+            "Shared DS codeword drawing lost its admitted original row/headings alias.");
+        require(original.words.length > 0 && original.headings.indexOf("BCH") >= 0 && original.headings.indexOf("BCH Corrections") >= 0,
+            "DS FEC extraction removed actual codewords or the independent BCH columns.");
+        require(observations.fecTables.length < 2, "DS FEC table receipt exceeded its fixed cases.");
+        observations.fecTables = observations.fecTables.concat([{errorsOnly: errorsOnly,
+            statistics: popup.statistics, projection: original, headings: table.headings,
+            rows: table.rows, listCount: list.count, qmlType: String(table),
+            rowsAlias: table.rows === rows, headingsAlias: table.headings === original.headings,
+            visual: visualCounts(table)}]);
+        checkOwners();
+    }
+
+    /** Inspect the actual original PRBS-RX charts through shared count-bar drawing. */
+    function recordVerification() {
+        const popup = observations.popup;
+        require(popup.hasResult && popup.statistics.available && popup.comparisonResult,
+            "Actual DS independent comparison is unavailable after its completed run.");
+        const charts = popup.statistics.verification_charts;
+        require(charts && charts.compared === (popup.comparisonResult.bits_tested > 0),
+            "DS verification lost its original compared-bit availability.");
+        const values = [charts.recovery, charts.word_errors];
+        const drawing = values.map(value => {
+            const item = findObject(popup.contentItem, candidate => candidate.chart === value && typeof candidate.categoryAxisLabel === "string");
+            require(item && item.visible && visualCounts(item).canvases === 1,
+                "Actual shared DS verification count-bar renderer/alias is absent.");
+            return {chart: value, chartAlias: item.chart === value, qmlType: String(item),
+                heading: item.heading, categoryAxisLabel: item.categoryAxisLabel,
+                zeroMessage: item.zeroMessage, visual: visualCounts(item)};
+        });
+        require(observations.verificationBars.length === 0, "DS verification receipt was recorded twice.");
+        observations.verificationBars = [{result: popup.comparisonResult, statistics: popup.statistics,
+            status: popup.statusText, display: popup.display, drawing: drawing}];
+        checkOwners();
+    }
+
     /** Capture only a QML-owned visible popup; runner may also capture actual Main. */
     function capture() {
         require(popupReady() && observations.viewer.contextCurrent && workbench.theme.dark === true && screenshotPath.length > 0, "Fresh dark original-measurement capture is unavailable.");
@@ -730,6 +776,8 @@ QtObject {
             responses: observations.responses,
             measurements: observations.measurements,
             tabIsolation: observations.tabIsolation,
+            fecTables: observations.fecTables,
+            verificationBars: observations.verificationBars,
             upstreamSciencePreserved: success,
             noRenderOnlySimulationAdvance: success,
             dark: workbench.theme.dark === true,
@@ -955,6 +1003,52 @@ QtObject {
             } else if (observations.phase === "capture-grace") {
                 require(observations.popup.opened && observations.viewer.contextCurrent, "Actual measurement disappeared during capture grace.");
                 if (now - observations.phaseAt >= captureGraceMs) {
+                    closePopup("fec-open");
+                }
+            } else if (observations.phase === "fec-open") {
+                if (!observations.popup.visible) {
+                    openParent(workbench.receiverPopup, "receiverBlock", "fec-parent");
+                }
+            } else if (observations.phase === "fec-parent") {
+                if (popupReady()) {
+                    click(observations.parentPopup.contentItem, "receiverFecMonitor");
+                    observations.popup = observations.parentPopup.fecPopup;
+                    next("fec-words");
+                }
+            } else if (observations.phase === "fec-words") {
+                if (popupReady()) {
+                    const tab = findItem(observations.popup.contentItem, "fecWordsTab");
+                    require(tab && tab.enabled, "Actual DS codeword tab is unavailable.");
+                    tab.checked = true;
+                    tab.clicked();
+                    next("fec-table");
+                }
+            } else if (observations.phase === "fec-table") {
+                if (popupReady()) {
+                    recordFecTable(false);
+                    const filter = findItem(observations.popup.contentItem, "fecErrorsOnly");
+                    require(filter && filter.enabled && !filter.checked, "Actual DS codeword filter is unavailable.");
+                    filter.checked = true;
+                    filter.toggled();
+                    next("fec-errors");
+                }
+            } else if (observations.phase === "fec-errors") {
+                if (popupReady()) {
+                    recordFecTable(true);
+                    closePopup("fec-parent-close");
+                }
+            } else if (observations.phase === "fec-parent-close") {
+                closeParent("verification-open");
+            } else if (observations.phase === "verification-open") {
+                if (!observations.popup.visible && !observations.parentPopup.visible) {
+                    observations.popup = workbench.verificationPopup;
+                    observations.parentPopup = null;
+                    click(workbench, "verificationBlock");
+                    next("verification-record");
+                }
+            } else if (observations.phase === "verification-record") {
+                if (popupReady()) {
+                    recordVerification();
                     closePopup("switch-upstream");
                 }
             } else if (observations.phase === "switch-upstream") {
@@ -988,6 +1082,8 @@ QtObject {
                     require(observations.spectra.some(entry => entry.selection.owner === "tx" && entry.viewport.points.length > 0) && observations.spectra.some(entry => entry.selection.owner === "rx" && entry.viewport.points.length > 0), "Actual shared spectrum lacked a retained TX or RX consumer.");
                     require(observations.responses.some(entry => entry.selection.source === 0 && entry.selection.view === 0 && entry.response.available) && observations.responses.some(entry => entry.selection.source === 0 && entry.selection.view === 4 && entry.response.available && entry.response.detail), "Configured H and original backend impulse/echo evidence are incomplete.");
                     require(observations.measurements.every(entry => entry.viewport.points.length > 0 && entry.filesAlias), "An original measurement payload was not displayed through its parent alias.");
+                    require(observations.fecTables.length === 2 && observations.verificationBars.length === 1,
+                        "Actual shared DS codeword/filter and independent verification evidence is incomplete.");
                     complete(true, "");
                 }
             }

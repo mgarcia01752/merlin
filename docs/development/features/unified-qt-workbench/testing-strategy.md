@@ -69,6 +69,12 @@ their risk-specific checks.
   build/check environment for affected work. Keep the latest Qt executable built
   before UI handoff. A source-only change need not repeat unchanged desktop
   startup probes unless its risk affects them; Level 2/3 gates still apply.
+- Run complete Qt crate acceptance without overlapping compiler or native GUI
+  validation jobs. Existing lifecycle watchdogs are independent of scientific
+  execution limits; CPU contention can obscure their failures. Preserve a failed
+  attempt, diagnose the exact stage/dimension, and rerun the affected case/group
+  before complete acceptance. Do not raise watchdogs or weaken owner assertions
+  merely to obtain a pass.
 - Build/install a fresh Python wheel when changed linked Rust/binding code or
   package/import/schema contracts require native verification. Verify the exact
   tested artifact and import origin. Reuse its installed environment for further

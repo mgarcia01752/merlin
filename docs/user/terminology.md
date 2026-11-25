@@ -64,7 +64,9 @@ and the [Spectrum Analyzer](spectrum-analyzer.md).
 | Constellation | A plot of I/Q values. Ideal modulation points form the reference pattern; noise and distortion can displace received points. |
 | Data / NCP colors | Mixed TX QAM plots use green squares for data and red circles for NCP, with a legend. These colors indicate roles, not success/error status. |
 | Decision boundary | A dividing line between regions assigned to neighboring constellation points by the slicer. Crossing one can change the hard symbol decision. |
+| Derandomized LLR | Actual receiver soft evidence after the PHY randomizer mask is reversed. It remains separate from raw demapper evidence and independent source comparison. See [upstream soft views](upstream/instruments.md#ldpc-and-soft-observations). |
 | Filler | Explicit non-payload cells used where the transport requires them. Mixed TX plots show retained filler as amber diamonds. Missing history is separate and is not plotted as zero-valued I/Q. |
+| LDPC input LLR | Actual soft evidence passed to a completed LDPC decoder call at transmitted-bit positions. It excludes internally restored shortened priors and is not a posterior metric. See [upstream soft views](upstream/instruments.md#ldpc-and-soft-observations). |
 | LLR | Log-likelihood ratio: soft evidence for a bit being zero versus one. In MERLIN's LLR view, positive favors zero and negative favors one; larger magnitude indicates stronger evidence under the model. |
 | QAM | Quadrature Amplitude Modulation: information represented by a set of I/Q constellation points. |
 | QAM order | Number of available constellation points. 256-QAM carries 8 coded bits per data cell; 4096-QAM carries 12. These are coded bits, not net payload bits after FEC overhead. |

@@ -5365,3 +5365,72 @@ and [scoped receipt](shared-instruments-evidence.json) close UIU-SHARED-01 with
 actual API-backed consumers in both directions. The [instrument guide](../../../user/upstream/instruments.md)
 contains the four actual dark native captures. Continue UIU-SHARED-02 using the
 existing public FEC, soft-observation and verification operations.
+
+### UIU-SHARED-02 actual decoder and independent verification consumers
+
+This task follows accepted UIU-SHARED-01 and implements REQ-UIU-15/19/20.
+The read-only owner audit found no scientific API gap. Reuse existing public
+`BatchReport::{fec_summary,fec_words,verification,soft_observations,soft_cells,soft_word}`.
+Do not infer independent source errors from convergence/parity or add BCH to US.
+
+| Inspected owner/symbol | Existing contract | Decision and concrete destination |
+| --- | --- | --- |
+| `qml/downstream/instruments/fec/FecCodewordTable.qml` | Original DS words, error filter, BCH/control-specific columns and pre-admitted strings. | SHARE only header/ListView drawing in `qml/shared/instruments/ObservationTable.qml`; keep DS preparation/filter semantics unchanged. Actual US FEC and soft tables consume original public observations. |
+| `qml/downstream/receiver/VerificationBarChart.qml` | Pre-admitted original count/fraction bars; payload-specific axis/zero-error wording. | SHARE drawing in `qml/shared/instruments/CountBarChart.qml`; preserve DS wrapper/default wording. Actual US completed-word iterations use explicit original-word axes and never inherit zero-error claims. Keep DS whole-run iteration histogram separate. |
+| Existing `upstream/workbench/instruments` and exact-context passive worker | One finite admitted display, report/run/key/sequence validation and stale/cancel preservation. | REUSE transport for a typed private FEC selector with completed-word, computed-cell and completed-word-input modes; `instruments/fec.rs` and `instruments/soft.rs` own projections only. |
+| Existing native observation policy | Opt-in actual received estimates; public soft retention is independently disabled by default. | ADAPT native workbench policy with finite named cell/word/LLR retention before future runs, through the existing validated public policy. Keep old reports unavailable and prove source/recovery equivalence; no replay or public-default change. |
+| `execution_view.rs`, `UpstreamVerificationDialog.qml` and `ReceiverDialog.qml` | Actual whole-report coverage/optional BER, finite existing rows and direction-specific configuration. | REUSE independent comparison rows; expose original PRBS15 seed and exact source/coverage semantics. Add native FEC/LLR navigation and `UpstreamFecDialog.qml`; no scientific logic in QML. |
+
+Root owns private Rust projections, policy, model/bridge/host, upstream dialog,
+Main/build registration, native probes and canonical acceptance/docs. The isolated
+UI agent owns only the two shared drawing files, their two DS wrappers and a new
+focused renderer test. A fresh worktree starts at accepted SHARED-01; primary and
+prior worktrees remain intact. No independent build/cache or global registration
+changes belong to that agent. Root integrates reviewed frozen files and commits.
+
+The FEC query preserves actual grant/profile/IUC/family, shortening, coded/source
+offsets, outcome flags and iterations. Its native display copies scalar metadata,
+not unnecessary decision bit vectors; the public decision-copy ceiling still
+bounds the temporary typed query. Bounded pages preserve original continuation
+and exact-end behavior. Whole-report optional BER keeps its compared-bit
+denominator; US exposes no invented per-word source-error count.
+
+Soft cells preserve actual raw demapper and derandomized vectors with original
+cell/bit positions. Completed-word input stays a separate plane: transmitted
+LDPC input, positive natural-log P(0)/P(1) favors zero, no posterior or restored
+shortened priors. Native rows are finite viewports over the original bounded
+public copies; retain wide identities/source/frame positions as decimal text.
+Old/disabled/missing/incomplete observations stay explicitly unavailable.
+
+Acceptance covers exact scalar/vector transport, family/shortening/seed/BER and
+partial outcomes, bounds/continuation/exact end, wide IDs, no source advance,
+unchanged recovery, stale/cancel/admission preservation, two actual direction
+consumers per extraction, all affected complete Qt/QML feature tests and actual
+native navigation/visual inspection with independent installed-public-API
+comparisons. Public scientific/default/binding sources remain unchanged; reuse
+unchanged vectors and native API evidence. Full final acceptance remains QA-01.
+
+The implemented native policy retains 64 actual cells and two completed-word
+inputs under a distinct 65536-LLR aggregate copy ceiling, without changing public
+defaults. Original cell queries use at most eight cells; original input windows
+default to 64 rows with a separate 256-row native ceiling. These are separately
+named presentation/retention policies, not additional PHY domains.
+
+The actual dialog reserves the outer scrollbar's style width so it cannot
+intercept drags intended for the inner original-data table. A real pointer test
+failed before that correction and passes afterward. Details start collapsed so
+actual tables/charts are visible on the native desktop. Shared DS preparation
+remains unchanged; sixteen independent dark/light before/after captures are
+byte-identical. Public backend/binding/root dependency sources remain unchanged.
+
+Current executed evidence and remaining final gates belong to the
+[decoder acceptance record](validation.md#uiu-shared-02-integrated-decoder-and-verification-acceptance)
+and its scoped receipt; source-only evidence does not establish native acceptance.
+
+An observed complete-crate owner-watchdog failure adds test-only diagnostics in
+`downstream/simulation/closed_loop/request_retention/tests.rs`: preserve the exact
+20-second ceiling/equalities and report scientific-completion versus terminal
+cleanup, resource dimension and observed/expected state. No downstream production
+owner or retained-data contract changes. Preserve the initial failed attempt and
+the unchanged isolated/group passes, then run complete acceptance without
+overlapping compiler or GUI work under the existing testing strategy.

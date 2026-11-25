@@ -5,6 +5,7 @@
 import QtQuick
 
 UpstreamDetailDialog {
+    fecInspection: true
     title: "PRBS-RX / Verification"
     purpose: "Inspect independent source verification after recovered CMTS receiver output."
     referencePlane: "Independent recovered-source comparison. Completion, decoder consistency and full recovery are separate outcomes; missing comparison is unavailable."

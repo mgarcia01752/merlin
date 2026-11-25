@@ -6,7 +6,7 @@
 use super::super::tests::{configured, wait_for};
 use super::*;
 use crate::shell::ApplicationSessions;
-use merlin::upstream::{ConfigurationDocument, ReceiverObservationPolicy, Simulation};
+use merlin::upstream::{ConfigurationDocument, ReceiverObservationPolicy, ReportJson, Simulation};
 use std::sync::Arc;
 
 const DOCUMENT: &[u8] = include_bytes!("../../../../../../examples/cli/upstream/us-50khz.json");
@@ -20,6 +20,45 @@ fn context(view: &Value) -> String {
     json!({"query_sequence":view["query_sequence"],"session_token":view["session_token"],
         "configuration_generation":view["configuration_generation"],"run":view["run"]})
     .to_string()
+}
+
+#[test]
+fn native_fec_soft_queries_are_passive_and_stale_or_cancelled_replacements_keep_owners() {
+    let application = ApplicationSessions::desktop().unwrap();
+    let downstream = application.snapshot(Direction::Downstream);
+    let mut model = configured(application.clone());
+    model.start().unwrap();
+    wait_for(|| model.poll()["busy"] == false);
+    let retained = Arc::clone(&model.report.as_ref().unwrap().1);
+    let original = retained.value().to_json().unwrap();
+    model.begin_instrument("fec").unwrap();
+    let words = settle(&mut model);
+    assert_eq!(words["snapshot"]["selection"]["mode"], "words");
+    let request = words["snapshot"]["choices"]["mode_requests"]["soft_cells"].to_string();
+    model
+        .request_instrument("fec", &request, &context(&words))
+        .unwrap();
+    let cells = settle(&mut model);
+    assert_eq!(cells["snapshot"]["status"], "ready");
+    assert!(model
+        .request_instrument("fec", &request, &context(&words))
+        .is_err());
+    assert_eq!(model.instrument_state()["snapshot"], cells["snapshot"]);
+    model.begin_instrument("fec").unwrap();
+    let words = settle(&mut model);
+    let input = words["snapshot"]["choices"]["mode_requests"]["soft_word"].to_string();
+    model
+        .request_instrument("fec", &input, &context(&words))
+        .unwrap();
+    model.stop().unwrap();
+    let cancelled = settle(&mut model);
+    assert_eq!(cancelled["status"], "unavailable");
+    assert_eq!(cancelled["snapshot"], words["snapshot"]);
+    assert!(model.controller.is_some());
+    assert!(Arc::ptr_eq(&retained, &model.report.as_ref().unwrap().1));
+    assert_eq!(retained.value().to_json().unwrap(), original);
+    assert_eq!(application.snapshot(Direction::Downstream), downstream);
+    assert!(application.active().is_none());
 }
 
 fn response(source: &str, metric: &str) -> String {

@@ -1,0 +1,2309 @@
+{
+  "task": "UIU-SHARED-02",
+  "status": "accepted",
+  "validation_level": 2,
+  "accepted_base": "3bcc97097d7b66a86848b6b354f12fba7f24e4b3",
+  "requirements": [
+    "REQ-UIU-15",
+    "REQ-UIU-19",
+    "REQ-UIU-20"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-shared-instruments",
+  "design": "design.md#uiu-shared-02-actual-decoder-and-independent-verification-consumers",
+  "raw_evidence": "docs/development/local/unified-qt-workbench/shared-02/",
+  "source_sha256": {
+    "apps/qt/build.rs": "85514fbc0b681ae86d3c6aa3fe735564fc3b7e546d2bc45019741c791f965fd3",
+    "apps/qt/qml/Main.qml": "32fd5079fd4ecb940963bce5cd03be5db60e092cfb311e69c70c08682cdb7513",
+    "apps/qt/qml/downstream/instruments/fec/FecCodewordTable.qml": "df85798fd6a02436cb833cb7ff36e6f15091f0564546c1533e731fa88c125fba",
+    "apps/qt/qml/downstream/receiver/VerificationBarChart.qml": "15fbbbb880da77dfe705ef5ce494195a194be7910cd2cf88b2e213fda78eb1d5",
+    "apps/qt/qml/shared/instruments/CountBarChart.qml": "ec8f710fa34cc1c67f93d1aaf3c15e2c4a4caf1785370bc31e5b2966e2a6ce2a",
+    "apps/qt/qml/shared/instruments/ObservationTable.qml": "076b38066aefc4a2650a27be735dae645a734ed3006ccdd4ff9cf95bd17caecc",
+    "apps/qt/qml/upstream/ReceiverDialog.qml": "d6b34ea302912ff14bb8131b0702984ef81a6335fa4b6bab1a280b50303c81c0",
+    "apps/qt/qml/upstream/UpstreamConfigurationDraftDialog.qml": "cc5e817e20bfbe35a97be664f264a2893eaa9c115adcb098f2c1949f4ad15648",
+    "apps/qt/qml/upstream/UpstreamDetailDialog.qml": "02a5a85eb89ebd1c2f554a33d78d6622438d098e834be7ad7ff14958b264f55a",
+    "apps/qt/qml/upstream/UpstreamFecDialog.qml": "6407579d840f1486234376cc2b0eb0dc9a7a8458ed69deddcd18c488454a0af9",
+    "apps/qt/qml/upstream/UpstreamVerificationDialog.qml": "60fea1f34a970990160b4527d979f8c3dbf0f78f3d926b32a747ea02867b3d68",
+    "apps/qt/qml/upstream/UpstreamWorkbench.qml": "858553ecafc34525935d25d722e367e350a33ab03b568586495d1a2d4ce14354",
+    "apps/qt/qml/validation/DownstreamSharedInstrumentsProbe.qml": "d20c7a71798dd95dfa666cb6cd8df05e47d1ccd57b8e5ef9fdca5a6eb95f348e",
+    "apps/qt/qml/validation/UpstreamFecProbe.qml": "218650cb4cad0a489e47a91d250851881d3c0a94f4306ad326151808af5a23de",
+    "apps/qt/src/bridge/upstream_session.rs": "804329651c5f807c926602ab9efc1f9355aa2ffedc279f17be68564a0ba7c672",
+    "apps/qt/src/downstream/simulation/closed_loop/request_retention/tests.rs": "05b3ce7fca8da7a9633ad48c690cd16f3a18c3e2f6e8cee0beb97fa662e41a3d",
+    "apps/qt/src/upstream/workbench/drafts.rs": "b1ee2b6b172c79219bdc2a481e6bfb9513561d1eed2aa38dab646e683c71ebc4",
+    "apps/qt/src/upstream/workbench/execution_view.rs": "b884e8c740b64bb70bd6a60bcdf6bc077c6e90351af72d95f2dbe7643548931e",
+    "apps/qt/src/upstream/workbench/execution_view/tests.rs": "d23fb3ab28cbe7d091ac019a63283ec9f1a39ff17ce1361a81a2c15035392ec0",
+    "apps/qt/src/upstream/workbench/instrument_view/tests.rs": "c996d8914552e8849be254318a5ad41fed614b79c15c6c83dade6d72ab2c8f0e",
+    "apps/qt/src/upstream/workbench/instruments.rs": "7bb1c041dd61ad2fd5f82eb27c3aafaa32119335fbd485fa488eb39b0ce09656",
+    "apps/qt/src/upstream/workbench/instruments/fec.rs": "d904a93574661d7224d2ec23c34b35863f046b0daa3ca942e1fb284e933d2220",
+    "apps/qt/src/upstream/workbench/instruments/fec_tests.rs": "ccb14b1ddbb6ae02be185772053efb64b4086c02532f9cbd8741f6e383708479",
+    "apps/qt/src/upstream/workbench/instruments/request.rs": "d4496981995b8c2e32a2d3f152267fbbfcdb0cd8fbe9d984f494d1de52923f86",
+    "apps/qt/src/upstream/workbench/instruments/soft.rs": "29c9124d7d86e789ffebac3ffbc8eb68f4e61475ea1f35c1eae8ab474628a76b",
+    "apps/qt/src/upstream/workbench/observation_policy.rs": "375138a96bc5c31496e6289b9f3b2b02b8b19fe36c2ff11a60fe2f590ffa7d58",
+    "apps/qt/src/upstream/workbench/preparation.rs": "8b38a428fbcb202205d6731d3a8e9f0c35eb992a65802ca63f9a3ec63947ddd0",
+    "apps/qt/tests/tst_shared_decoder_presentation.qml": "e029e8345fd54763452ca49c359392198a3b598d4aae21056aff860375922314",
+    "apps/qt/tests/upstream/tst_upstream_fec.qml": "975d90c3c1781b46d32caaf00a98112229faa2ec90a25d92b0e61eceb4e7ee7d",
+    "docs/images/workbench/upstream-fec-dark.png": "56370046a78d9789c42002b9b007ce76ec024db410535bfd0e76f6338caa0512",
+    "docs/images/workbench/upstream-llr-dark.png": "da358c14987d0b40e7fe6a5bcfb53f385cde83eb474ef33af36b87bdfb5b11de"
+  },
+  "ownership": {
+    "science": "Unchanged public facade FEC/verification/soft operations; no new API or scientific implementation.",
+    "shared_renderers": {
+      "ObservationTable.qml": [
+        "Actual DS BCH/control-aware completed words",
+        "Actual US LDPC words and original cell/input scalar rows"
+      ],
+      "CountBarChart.qml": [
+        "Actual DS independent-verification count bars",
+        "Actual US selected completed-word iteration bars"
+      ]
+    },
+    "native_observation_policy": {
+      "actual_cells": 64,
+      "completed_word_inputs": 2,
+      "word_llr_ceiling": 65536,
+      "public_defaults_unchanged": true
+    },
+    "display": {
+      "maximum_cells": 8,
+      "maximum_bit_rows": 256,
+      "initial_bit_rows": 64,
+      "wide_identifiers": "Original decimal strings",
+      "admission": "Existing aggregate retained owners and exact-context passive worker"
+    }
+  },
+  "validation": {
+    "qt_rust": {
+      "final_complete": [
+        {
+          "label": "qt-rust-consumers",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "--",
+            "--test-threads=2"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 388.9036714410031
+        }
+      ],
+      "final_complete_passed": 522,
+      "final_complete_failed": 0,
+      "original_complete_attempt": [
+        {
+          "label": "qt-rust-consumers",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "--",
+            "--test-threads=2"
+          ],
+          "exit_code": 101,
+          "elapsed_seconds": 551.0187037889991
+        }
+      ],
+      "complete_attempt_passed": 520,
+      "complete_attempt_failed": 1,
+      "total_current_unique_cases": 522,
+      "isolated_retry": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "downstream::simulation::closed_loop::request_retention::tests::every_real_candidate_dimension_preserves_accepted_science_generation_and_report",
+          "--",
+          "--exact",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 54.61377676599659
+      },
+      "serial_retention_group": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "downstream::simulation::closed_loop::request_retention::",
+          "--",
+          "--test-threads=1",
+          "--nocapture"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 37.74728234000213
+      },
+      "focused_final": [
+        {
+          "label": "format",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "fmt",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.0114643310080282
+        },
+        {
+          "label": "upstream-rust",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "--",
+            "upstream::workbench::",
+            "--test-threads=2"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 43.28062367599341
+        }
+      ],
+      "evidence_scope": "Original complete521-case run remains recorded with one20s owner-watchdog timeout during overlapping validation. Unchanged case and complete7-case request-retention group pass alone. Added stage/dimension/actual-versus-expected diagnostics without changing the20s ceiling or exact assertions; final complete522-case run passes without overlapping build/native work.113 affected upstream cases include a real failed-channel experiment. No production DS owner or scientific acceptance limit changes."
+    },
+    "checks": [
+      {
+        "label": "clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 120.23851881100563
+      },
+      {
+        "label": "format-check",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.7746307390043512
+      },
+      {
+        "label": "boundary",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.34251978699467145
+      }
+    ],
+    "qml": [
+      {
+        "label": "upstream/tst_upstream_fec.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_fec.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.32540816300024744,
+        "attempt": "final-branches",
+        "passed": 9,
+        "stdout_sha256": "a897c0ccecc1fa639dae87da61c6e4259443568024637f41d8241b895f95cd85"
+      },
+      {
+        "label": "tst_shared_decoder_presentation.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_shared_decoder_presentation.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.0573659159999806,
+        "attempt": "complete-renderers",
+        "passed": 18,
+        "stdout_sha256": "a767abd5fec865601baee814d1c7d476bebc436ccc67df3cbe5647fae1701b5e"
+      },
+      {
+        "label": "upstream/tst_upstream_drafts.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_drafts.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 69.09953969599155,
+        "attempt": "complete-renderers",
+        "passed": 49,
+        "stdout_sha256": "2ffbc7f50362aa3d68acde6ea040494079b88a3eeec72209ed8e3f9a0029872d"
+      },
+      {
+        "label": "upstream/tst_upstream_host_drafts.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_host_drafts.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.5331055169954197,
+        "attempt": "complete-renderers",
+        "passed": 14,
+        "stdout_sha256": "e3f208c2994149e1d3370420c166c52977c93209824feb7e3aa915dcaf59397a"
+      },
+      {
+        "label": "upstream/tst_upstream_workbench.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_workbench.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 22.475865160988178,
+        "attempt": "complete-renderers",
+        "passed": 13,
+        "stdout_sha256": "23589445c1acf180b7a66ee4c9ab628380508c61563ba19bab814c96b9618a93"
+      },
+      {
+        "label": "tst_workbench.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 12.242554686003132,
+        "attempt": "shared-consumers",
+        "passed": 55,
+        "stdout_sha256": "3ec2aa6151356ba68a2701663601dbaf807b44642682e05dd3a4f49d79cfb0dc"
+      },
+      {
+        "label": "tst_soft_diagnostics.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_soft_diagnostics.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.7570749550068285,
+        "attempt": "shared-consumers",
+        "passed": 3,
+        "stdout_sha256": "a040b74a0a9ef3d3c74417ddfa0c2daf38b185346dfd1c72f191bdf766dfc840"
+      },
+      {
+        "label": "tst_control_palette.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_control_palette.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.0318040729907807,
+        "attempt": "shared-consumers",
+        "passed": 4,
+        "stdout_sha256": "7c202bbe79ff9e11c4b533a54671d87c7df1d5e27321f866b065f80b14a355f7"
+      },
+      {
+        "label": "tst_tooltips.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_tooltips.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 5.041760847001569,
+        "attempt": "shared-consumers",
+        "passed": 4,
+        "stdout_sha256": "90f01f1dbc352818cc37616e5af2dadab1823a7c4a5009eb9414defa46bff7cd"
+      },
+      {
+        "label": "tst_presentation_owner.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_presentation_owner.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.07303045799199026,
+        "attempt": "shared-consumers",
+        "passed": 11,
+        "stdout_sha256": "526a0728962b41bf48837d73b2ce8cd4254ccdaa1d7f2f526260ad92bb819d44"
+      },
+      {
+        "label": "tst_presentation_footprint.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_presentation_footprint.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.2073980900022434,
+        "attempt": "shared-consumers",
+        "passed": 45,
+        "stdout_sha256": "4015259d20b042e2654a11bc14bbfce5a8423c4d63eaa776edbdc3a2006f0aed"
+      },
+      {
+        "label": "shell/tst_shell_host.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/shell/tst_shell_host.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.23827780099236406,
+        "attempt": "shared-consumers",
+        "passed": 11,
+        "stdout_sha256": "e000f5896a8581d9068533561063c0dcddcaa287e6840a785b270397ae483f6f"
+      },
+      {
+        "label": "tst_updates.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_updates.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.43790678099321667,
+        "attempt": "shared-consumers",
+        "passed": 7,
+        "stdout_sha256": "92b300d08675dec16421e1f7f676bdc02d477a2cfbdb75a46abb2db0cb531a43"
+      },
+      {
+        "label": "upstream/tst_upstream_instruments.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_instruments.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.37777151599584613,
+        "attempt": "policy-consumers",
+        "passed": 24,
+        "stdout_sha256": "4c561d61b7336c5682fb5c6c2720f7cf6c614b8cd6e4b4b6fd384333ed725e71"
+      },
+      {
+        "label": "upstream/tst_upstream_response.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_response.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.22669575399777386,
+        "attempt": "remaining-policy-consumers",
+        "passed": 19,
+        "stdout_sha256": "876972642e02d9fc4b67e0824f6ee9a9212b7c773f74b864614c4e653318cc33"
+      },
+      {
+        "label": "upstream/tst_upstream_captures.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_captures.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.39145256600750145,
+        "attempt": "remaining-policy-consumers",
+        "passed": 20,
+        "stdout_sha256": "aad6387d635c4c9ac99a8e0df15494bb400e11d636c3d1981aa49c57f6c4600e"
+      },
+      {
+        "label": "upstream/tst_upstream_capture_plot.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_capture_plot.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.19948895899869967,
+        "attempt": "remaining-policy-consumers",
+        "passed": 7,
+        "stdout_sha256": "50246270cbbf5c09c17379fe2fc5dd78c30447a98e34adf672b5d30c087d2ec8"
+      }
+    ],
+    "qml_pass_records": 313,
+    "qml_static": [
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/qml/Main.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/qml/downstream/instruments/fec/FecCodewordTable.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/qml/downstream/receiver/VerificationBarChart.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/qml/upstream/ReceiverDialog.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/qml/upstream/UpstreamConfigurationDraftDialog.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/qml/upstream/UpstreamDetailDialog.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/qml/upstream/UpstreamVerificationDialog.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/qml/upstream/UpstreamWorkbench.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/qml/validation/DownstreamSharedInstrumentsProbe.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/qml/shared/instruments/CountBarChart.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/qml/shared/instruments/ObservationTable.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/qml/upstream/UpstreamFecDialog.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/qml/validation/UpstreamFecProbe.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/tests/tst_shared_decoder_presentation.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmlformat",
+        "file": "apps/qt/tests/upstream/tst_upstream_fec.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/qml/Main.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 235
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/qml/downstream/instruments/fec/FecCodewordTable.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/qml/downstream/receiver/VerificationBarChart.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/qml/upstream/ReceiverDialog.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/qml/upstream/UpstreamConfigurationDraftDialog.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/qml/upstream/UpstreamDetailDialog.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/qml/upstream/UpstreamVerificationDialog.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/qml/upstream/UpstreamWorkbench.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/qml/validation/DownstreamSharedInstrumentsProbe.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/qml/shared/instruments/CountBarChart.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/qml/shared/instruments/ObservationTable.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/qml/upstream/UpstreamFecDialog.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 6
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/qml/validation/UpstreamFecProbe.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/tests/tst_shared_decoder_presentation.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 0
+      },
+      {
+        "tool": "qmllint",
+        "file": "apps/qt/tests/upstream/tst_upstream_fec.qml",
+        "exit_code": 0,
+        "diagnostic_lines": 12
+      }
+    ],
+    "qml_static_scope": "All15 changed QML files parse. qmllint exits0: Main has unresolved generated native-module imports under filesystem-only lint, new dialog/test have unqualified outer-component ID warnings; actual registered optimized native application and real QML consumers pass. This is not a zero-warning static-lint claim.",
+    "optimized_build": [
+      {
+        "label": "build",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/qt-desktop.sh",
+          "build"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 111.2300533009984
+      }
+    ],
+    "final_executable_sha256": "56bd56df587e53ca7f0815fbb118c0d4a58c001edf06ce6cd7a4c49e871d2f4d",
+    "native_decoder": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--upstream-fec-probe",
+        "--upstream-fec-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-fec-current/fec-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 17.841353558003902,
+      "executable_sha256": "56bd56df587e53ca7f0815fbb118c0d4a58c001edf06ce6cd7a4c49e871d2f4d",
+      "source_sha256": {
+        "fec-50": "4e5fe76fe7b2602bc90b3c18710393b4f66d892ca461eb396655242ae3a43730",
+        "fec-25": "b69e169ef213d1a82ea9900ab842a076dbde32a088fb9b2e327ec4025094baab",
+        "fec-cancel": "ee76681e36a63cbfdde2b6117ade3008362ea63141a848528a33c297014e0b6a"
+      },
+      "source_fixture": "Existing synthetic 50/25 kHz documents with two complete grants; cancellation uses256 within unchanged finite scientific samples/runtime. Native observation policy is explicit, source documents otherwise unchanged.",
+      "picker_actions": [
+        {
+          "action": "fec-50",
+          "owned_window": 14680071,
+          "picker_pid": 619832,
+          "seconds": 4.294035939004971
+        },
+        {
+          "action": "fec-25",
+          "owned_window": 14680071,
+          "picker_pid": 619903,
+          "seconds": 7.32892073399853
+        },
+        {
+          "action": "fec-cancel",
+          "owned_window": 14680071,
+          "picker_pid": 619951,
+          "seconds": 15.762215638998896
+        }
+      ],
+      "full_window_capture": {
+        "window": 12582919,
+        "pid": 619810,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-fec-current/upstream-fec-main-dark.png",
+        "sha256": "56370046a78d9789c42002b9b007ce76ec024db410535bfd0e76f6338caa0512",
+        "size": [
+          1210,
+          736
+        ],
+        "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+      },
+      "extra_captures": {
+        "llr": {
+          "window": 12582919,
+          "pid": 619810,
+          "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-fec-current/llr-main-dark.png",
+          "sha256": "da358c14987d0b40e7fe6a5bcfb53f385cde83eb474ef33af36b87bdfb5b11de",
+          "size": [
+            1210,
+            736
+          ],
+          "source": "Unaltered actual owned native X11 Main window pixels."
+        }
+      },
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-fec-current/fec-dark.png",
+      "image_sha256": "08afd6a46ccbde007656d579f5885dad788d49651f716d762b3c1e266dc3efcc",
+      "comparison": {
+        "executable_sha256": "56bd56df587e53ca7f0815fbb118c0d4a58c001edf06ce6cd7a4c49e871d2f4d",
+        "interpreter": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/native/installed/bin/python",
+        "native_binding_origin": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/native/installed/lib/python3.10/site-packages/merlin/upstream.py",
+        "all_original_values_match": true,
+        "views_compared": 28,
+        "comparisons": [
+          {
+            "tag": "fec-50",
+            "action": "words-initial",
+            "mode": "words",
+            "original_values_compared": 1,
+            "snapshot_sha256": "fd9adbea042c11052a9efaecbe4ec4df31f5d176356683f9c3748d04266dedf8",
+            "reference_sha256": "bee39ad05730ba463a8ca01d45f1f120144b4305864a63681d6d8ca2ca1d470d"
+          },
+          {
+            "tag": "fec-50",
+            "action": "second-grant",
+            "mode": "words",
+            "original_values_compared": 1,
+            "snapshot_sha256": "a03ef5c6e6a9ede0c747efabd04b63a7bb50e283fcd0ab4df2eccc7483f8443c",
+            "reference_sha256": "6aaaa54a55c40cc344b3ca1016866007725d72acf99a93327e3d3de4996aab65"
+          },
+          {
+            "tag": "fec-50",
+            "action": "soft-cells-initial",
+            "mode": "soft_cells",
+            "original_values_compared": 26,
+            "snapshot_sha256": "a1a3fca4053f740e4b72769299d505017ff5f6ebab6c1aadc6abf872eb41adb3",
+            "reference_sha256": "c3fcf03f4e409f80fda824280ba7f0c3ceb460646c2f5e6a0e82082866f73da9"
+          },
+          {
+            "tag": "fec-50",
+            "action": "soft-cells-next",
+            "mode": "soft_cells",
+            "original_values_compared": 32,
+            "snapshot_sha256": "25a8a96e9419859475d911631181956a837082ebc3fd6ded982317106bb6c24e",
+            "reference_sha256": "ac402c89336c60cd14acbbd1020e1e334a7fc2c9355dae9a98088201a20b24bb"
+          },
+          {
+            "tag": "fec-50",
+            "action": "soft-cells-previous",
+            "mode": "soft_cells",
+            "original_values_compared": 26,
+            "snapshot_sha256": "a1a3fca4053f740e4b72769299d505017ff5f6ebab6c1aadc6abf872eb41adb3",
+            "reference_sha256": "c3fcf03f4e409f80fda824280ba7f0c3ceb460646c2f5e6a0e82082866f73da9"
+          },
+          {
+            "tag": "fec-50",
+            "action": "soft-word-initial",
+            "mode": "soft_word",
+            "original_values_compared": 64,
+            "snapshot_sha256": "86c2ce61510f63a70b2ddb08117d7dade5b05a4a9ee9643f2651efe4e94d1809",
+            "reference_sha256": "685eac159e7167b3f6f1098f92a41e21a4cad230462c563e3a985b1478300661"
+          },
+          {
+            "tag": "fec-50",
+            "action": "soft-word-next",
+            "mode": "soft_word",
+            "original_values_compared": 64,
+            "snapshot_sha256": "b6b48acb12f9b7094dc0b12dddc092a80d4db6e3317db1ed1d650fa4f7cdb019",
+            "reference_sha256": "685eac159e7167b3f6f1098f92a41e21a4cad230462c563e3a985b1478300661"
+          },
+          {
+            "tag": "fec-50",
+            "action": "soft-word-first",
+            "mode": "soft_word",
+            "original_values_compared": 64,
+            "snapshot_sha256": "86c2ce61510f63a70b2ddb08117d7dade5b05a4a9ee9643f2651efe4e94d1809",
+            "reference_sha256": "685eac159e7167b3f6f1098f92a41e21a4cad230462c563e3a985b1478300661"
+          },
+          {
+            "tag": "fec-50",
+            "action": "second-retained-word",
+            "mode": "soft_word",
+            "original_values_compared": 64,
+            "snapshot_sha256": "e50e999a1c32af76074b0f68407bab3b7231bd3aa2d3bc38e0c32f244e6e962f",
+            "reference_sha256": "9d050c1bbc0af3f5ec0f795b1dc5ba19013d11cc0c8ad572c3b244b907f29961"
+          },
+          {
+            "tag": "fec-50",
+            "action": "verification-route-words",
+            "mode": "words",
+            "original_values_compared": 1,
+            "snapshot_sha256": "fd9adbea042c11052a9efaecbe4ec4df31f5d176356683f9c3748d04266dedf8",
+            "reference_sha256": "bee39ad05730ba463a8ca01d45f1f120144b4305864a63681d6d8ca2ca1d470d"
+          },
+          {
+            "tag": "fec-25",
+            "action": "words-initial",
+            "mode": "words",
+            "original_values_compared": 1,
+            "snapshot_sha256": "07228886301c8d1dd95e57c515cf5cafc58681306789e74040da6312ea800c24",
+            "reference_sha256": "636c87944ee4d26a85d970c57be45a384c3ebb0449f426b2b3e3b167d27381dc"
+          },
+          {
+            "tag": "fec-25",
+            "action": "second-grant",
+            "mode": "words",
+            "original_values_compared": 1,
+            "snapshot_sha256": "c2c3f2b8c33bd7655933ba96c3766f4f1fd90d46c134cf7f105991fcab3aae0b",
+            "reference_sha256": "d1d43ac4bfd67c4f5e964af16820dac7b03d51e8109162b328e284de1f33afa8"
+          },
+          {
+            "tag": "fec-25",
+            "action": "soft-cells-initial",
+            "mode": "soft_cells",
+            "original_values_compared": 31,
+            "snapshot_sha256": "2662cf59d32cdca18632ba9495ededef03a53bad3714a11397ef7990b56e3aa4",
+            "reference_sha256": "52751ce3ea2ff2672f0370d5d1f9f6d02f52e39ebe5b750317e2b8135663a96f"
+          },
+          {
+            "tag": "fec-25",
+            "action": "soft-cells-next",
+            "mode": "soft_cells",
+            "original_values_compared": 38,
+            "snapshot_sha256": "c846b39f5f96fcc5e14a0148e2c1a77162ec7c88e2b0b03587588553900c7096",
+            "reference_sha256": "54d5522428549fdcf6050a0648aa1361571c84048ce93d1342144a0f02d13d9f"
+          },
+          {
+            "tag": "fec-25",
+            "action": "soft-cells-previous",
+            "mode": "soft_cells",
+            "original_values_compared": 31,
+            "snapshot_sha256": "2662cf59d32cdca18632ba9495ededef03a53bad3714a11397ef7990b56e3aa4",
+            "reference_sha256": "52751ce3ea2ff2672f0370d5d1f9f6d02f52e39ebe5b750317e2b8135663a96f"
+          },
+          {
+            "tag": "fec-25",
+            "action": "soft-word-initial",
+            "mode": "soft_word",
+            "original_values_compared": 64,
+            "snapshot_sha256": "d921bbc72039f27d3adf86778f4c90f69c34b35ff4e3ea92b534673a65e2e3bf",
+            "reference_sha256": "99b7b217b465b2c5cd51598eac96fd2a27056003425955aae0faa5c0fb543fea"
+          },
+          {
+            "tag": "fec-25",
+            "action": "soft-word-next",
+            "mode": "soft_word",
+            "original_values_compared": 64,
+            "snapshot_sha256": "bebabb1ab8e3da9cc869641d807c19e01630c89c46f3fb3f13978fd2b57f66ea",
+            "reference_sha256": "99b7b217b465b2c5cd51598eac96fd2a27056003425955aae0faa5c0fb543fea"
+          },
+          {
+            "tag": "fec-25",
+            "action": "soft-word-first",
+            "mode": "soft_word",
+            "original_values_compared": 64,
+            "snapshot_sha256": "d921bbc72039f27d3adf86778f4c90f69c34b35ff4e3ea92b534673a65e2e3bf",
+            "reference_sha256": "99b7b217b465b2c5cd51598eac96fd2a27056003425955aae0faa5c0fb543fea"
+          },
+          {
+            "tag": "fec-25",
+            "action": "second-retained-word",
+            "mode": "soft_word",
+            "original_values_compared": 64,
+            "snapshot_sha256": "76cf27fb715b9c2d2350df7670f14ea6966fae028a1003aaee05424105e74ab0",
+            "reference_sha256": "7e5d2128ac44013b9157d617213f61060d4b66862d02e78ed4b2c46bd39bfa22"
+          },
+          {
+            "tag": "fec-25",
+            "action": "verification-route-words",
+            "mode": "words",
+            "original_values_compared": 1,
+            "snapshot_sha256": "07228886301c8d1dd95e57c515cf5cafc58681306789e74040da6312ea800c24",
+            "reference_sha256": "636c87944ee4d26a85d970c57be45a384c3ebb0449f426b2b3e3b167d27381dc"
+          },
+          {
+            "tag": "fec-cancel",
+            "action": "words-initial",
+            "mode": "words",
+            "original_values_compared": 1,
+            "snapshot_sha256": "c0d1330fb8ca340359044aab5f05b02f534377b2f0841f1a9089db8801e90a73",
+            "reference_sha256": "5d032e9a64519e232a0e017109af7514a54f5372643bdba9934823cc17f21c72"
+          },
+          {
+            "tag": "fec-cancel",
+            "action": "soft-cells-initial",
+            "mode": "soft_cells",
+            "original_values_compared": 26,
+            "snapshot_sha256": "bc3e846d322e7fb775712de83146461dd48e3225a4a0bc27770344a2d033473c",
+            "reference_sha256": "d917de3b143602cb44a699cf9f6773011adb53d1688936a3fbb4ea75f9f9d155"
+          },
+          {
+            "tag": "fec-cancel",
+            "action": "soft-cells-next",
+            "mode": "soft_cells",
+            "original_values_compared": 32,
+            "snapshot_sha256": "47cd709d9060982aa6a3b89931854836534a35a84dfc4f038e53e19cce36cc53",
+            "reference_sha256": "1c700f736b4e2e6480dc39b41f855340bfc8fdfce5ad5ce165e647db80961b8e"
+          },
+          {
+            "tag": "fec-cancel",
+            "action": "soft-cells-previous",
+            "mode": "soft_cells",
+            "original_values_compared": 26,
+            "snapshot_sha256": "bc3e846d322e7fb775712de83146461dd48e3225a4a0bc27770344a2d033473c",
+            "reference_sha256": "d917de3b143602cb44a699cf9f6773011adb53d1688936a3fbb4ea75f9f9d155"
+          },
+          {
+            "tag": "fec-cancel",
+            "action": "soft-word-initial",
+            "mode": "soft_word",
+            "original_values_compared": 64,
+            "snapshot_sha256": "63aa01062d75badce8792281e6d100971ce5a92e4087f78c1f365aeba0f04cb9",
+            "reference_sha256": "7e6c8c1c59a17cacf94260b5b25847e27f51e5682b82ec1cfc3de2fa6d01ae52"
+          },
+          {
+            "tag": "fec-cancel",
+            "action": "soft-word-next",
+            "mode": "soft_word",
+            "original_values_compared": 64,
+            "snapshot_sha256": "00b8884236f3804320ad1bbf29d6dcce5ef6db6cb51e64efdfeebbf73e2a2d7b",
+            "reference_sha256": "7e6c8c1c59a17cacf94260b5b25847e27f51e5682b82ec1cfc3de2fa6d01ae52"
+          },
+          {
+            "tag": "fec-cancel",
+            "action": "soft-word-first",
+            "mode": "soft_word",
+            "original_values_compared": 64,
+            "snapshot_sha256": "63aa01062d75badce8792281e6d100971ce5a92e4087f78c1f365aeba0f04cb9",
+            "reference_sha256": "7e6c8c1c59a17cacf94260b5b25847e27f51e5682b82ec1cfc3de2fa6d01ae52"
+          },
+          {
+            "tag": "fec-cancel",
+            "action": "verification-route-words",
+            "mode": "words",
+            "original_values_compared": 1,
+            "snapshot_sha256": "c0d1330fb8ca340359044aab5f05b02f534377b2f0841f1a9089db8801e90a73",
+            "reference_sha256": "5d032e9a64519e232a0e017109af7514a54f5372643bdba9934823cc17f21c72"
+          }
+        ],
+        "evidence_scope": "Complete native reports match independently run existing Rust API exactly. Actual cancelled report metadata is checked for partial coverage; retained completed prefix values match a full independent run of the same configuration. Cancellation timing and whole-report metadata are not asserted identical. No Python scientific calculations, wheel rebuild, or API change."
+      },
+      "views": 28,
+      "actual_pause_acknowledged": true,
+      "cancellation_lease_checked": true,
+      "downstream_science_preserved": true,
+      "passive_source_preserved": true
+    },
+    "native_downstream": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--downstream-shared-probe",
+        "--downstream-shared-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-downstream-decoder/downstream-shared-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 40.25548866500321,
+      "executable_sha256": "39d06537e0ca92f67f0895e46c2e6fe941a0866a60939d5b8466f873421f203a",
+      "source_sha256": {},
+      "source_fixture": "Existing self-contained downstream saved example, original embedded measurements and actual native recovery.",
+      "picker_actions": [],
+      "full_window_capture": {
+        "window": 12582919,
+        "pid": 611876,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-downstream-decoder/downstream-shared-main-dark.png",
+        "sha256": "72dbe76aa1a3fd43c886f4824a58585a1e7896335c9e7821ae66c91b9812fefc",
+        "size": [
+          1210,
+          736
+        ],
+        "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+      },
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-downstream-decoder/downstream-shared-dark.png",
+      "image_sha256": "43e2a2dd6b3b394feeeb94450bbd6c4391e33650cdb20350536191a6542abb78",
+      "qam_views": 22,
+      "spectrum_views": 12,
+      "response_views": 5,
+      "original_measurement_views": 5,
+      "fec_table_filters": 2,
+      "verification_consumers": 2,
+      "upstream_science_preserved": true,
+      "no_render_only_simulation_advance": true
+    },
+    "native_policy_instruments": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--upstream-instruments-probe",
+        "--upstream-instruments-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-policy-instruments/instruments-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 67.71312993299216,
+      "executable_sha256": "39d06537e0ca92f67f0895e46c2e6fe941a0866a60939d5b8466f873421f203a",
+      "source_sha256": {
+        "instruments-50": "41910ed860bce3fb18014355e2bc7f72d6eea3439ecd0f80a604ea35edce6468",
+        "instruments-25": "a17ae95349bd084a7b05ee23ece4d2faf705ae8deefaca734e821d6c1b92e023"
+      },
+      "source_fixture": "Existing synthetic 50/25 kHz documents with explicit bounded seven-tap retention; real native runs and immutable observations.",
+      "picker_actions": [
+        {
+          "action": "instruments-50",
+          "owned_window": 14680071,
+          "picker_pid": 612320,
+          "seconds": 5.53459303600539
+        },
+        {
+          "action": "instruments-25",
+          "owned_window": 14680071,
+          "picker_pid": 612539,
+          "seconds": 23.58810361599899
+        }
+      ],
+      "full_window_capture": {
+        "window": 12582919,
+        "pid": 612245,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-policy-instruments/upstream-instruments-main-dark.png",
+        "sha256": "e4f4964faefa7e54858b1b4f45c66e9f9e90d03ade0b6ef80211fcc6b0ddcecc",
+        "size": [
+          1210,
+          736
+        ],
+        "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+      },
+      "extra_captures": {
+        "qam": {
+          "window": 12582919,
+          "pid": 612245,
+          "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-policy-instruments/qam-main-dark.png",
+          "sha256": "00a5e002e30b8997940f07ad46360d1dbabffaea84ed11cbadbe679cd6afdc76",
+          "size": [
+            1210,
+            736
+          ],
+          "source": "Unaltered actual owned native X11 Main window pixels."
+        },
+        "response": {
+          "window": 12582919,
+          "pid": 612245,
+          "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-policy-instruments/response-main-dark.png",
+          "sha256": "24426f822b3ea1181c8a23ddae795b8995587fb067f5aa7687d493de8a5d7427",
+          "size": [
+            1210,
+            736
+          ],
+          "source": "Unaltered actual owned native X11 Main window pixels."
+        }
+      },
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-policy-instruments/instruments-dark.png",
+      "image_sha256": "787a261596472ddcb48c620365b37446beaf9d0a2ec2fd1988422dbba509fa42",
+      "comparison": {
+        "executable_sha256": "39d06537e0ca92f67f0895e46c2e6fe941a0866a60939d5b8466f873421f203a",
+        "interpreter": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/native/installed/bin/python",
+        "native_binding_origin": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/native/installed/lib/python3.10/site-packages/merlin/upstream.py",
+        "all_original_science_and_metadata_match": true,
+        "views_compared": 28,
+        "comparisons": [
+          {
+            "tag": "instruments-50",
+            "action": "qam-initial",
+            "kind": "qam",
+            "original_points_compared": 732,
+            "viewport_sha256": "261732c25df881dbc3aa7117fe82b3066d16e1df918eb5e0f249f02da64fa701",
+            "reference_sha256": "57a1582a9036546ecb2647f0574e98be2af361d24aff46119704316622897ca5",
+            "visual": {
+              "items": 88,
+              "canvases": 2
+            },
+            "query_ms": null,
+            "heartbeat_ticks": null
+          },
+          {
+            "tag": "instruments-50",
+            "action": "qam-raw",
+            "kind": "qam",
+            "original_points_compared": 732,
+            "viewport_sha256": "7506e00667b4dbc1ec68b363c9f8d52fe2fecf1ea43427132f64f7c45e4d278d",
+            "reference_sha256": "57a1582a9036546ecb2647f0574e98be2af361d24aff46119704316622897ca5",
+            "visual": {
+              "items": 88,
+              "canvases": 2
+            },
+            "query_ms": 321,
+            "heartbeat_ticks": 2
+          },
+          {
+            "tag": "instruments-50",
+            "action": "qam-unit-reference",
+            "kind": "qam",
+            "original_points_compared": 36,
+            "viewport_sha256": "ce0883eb7768d0ff64f4f83501065e8f8963765395602cc266eec76a54d8f218",
+            "reference_sha256": "cc7514544c53ddc90cc9321ad2adb9f567bfd368137b255d0cf6298ee3b5db5b",
+            "visual": {
+              "items": 92,
+              "canvases": 2
+            },
+            "query_ms": 95,
+            "heartbeat_ticks": 2
+          },
+          {
+            "tag": "instruments-50",
+            "action": "qam-exact-pairing",
+            "kind": "qam",
+            "original_points_compared": 220,
+            "viewport_sha256": "c9e2e9e95c220621f388511939ea9b9e917b44ea4795f38528d6cba9c0059dad",
+            "reference_sha256": "bf0230e464ec4e70a34dd8fcfa469c98c093e75825fbf1fa32f36da600825d09",
+            "visual": {
+              "items": 93,
+              "canvases": 2
+            },
+            "query_ms": 170,
+            "heartbeat_ticks": 2
+          },
+          {
+            "tag": "instruments-50",
+            "action": "spectrum-initial",
+            "kind": "spectrum",
+            "original_points_compared": 2048,
+            "viewport_sha256": "137fd7b42940aca2b83bb926403670f5dc616e2ebcf1e101108298a68591a914",
+            "reference_sha256": "3b8ce45d0ecbf19d12f5e18bc7fca1408ad1542ec8ed714b97c52e265cda12aa",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": null,
+            "heartbeat_ticks": null
+          },
+          {
+            "tag": "instruments-50",
+            "action": "spectrum-channel-output",
+            "kind": "spectrum",
+            "original_points_compared": 2048,
+            "viewport_sha256": "18ff0b09244e69c6f50ec73ca7343fdb192e5044abaf07d0998d04a178c754a4",
+            "reference_sha256": "017cfa4fc313d71049768015ca90722a8732d26ee728ab63d1eea00c6364a393",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": 271,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-50",
+            "action": "spectrum-zoom",
+            "kind": "spectrum",
+            "original_points_compared": 1024,
+            "viewport_sha256": "36b3304da0945b704fe736b7dd7ef606e55e92513d04ec3b2769ccc025baafe3",
+            "reference_sha256": "017cfa4fc313d71049768015ca90722a8732d26ee728ab63d1eea00c6364a393",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": 149,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-50",
+            "action": "spectrum-reset",
+            "kind": "spectrum",
+            "original_points_compared": 2048,
+            "viewport_sha256": "278a5bc0f5ce0a61ac01cab56cfbcae1c29c7f5e420d6b51e4c8f41ff6fce5da",
+            "reference_sha256": "017cfa4fc313d71049768015ca90722a8732d26ee728ab63d1eea00c6364a393",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": 276,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-50",
+            "action": "response-H",
+            "kind": "response",
+            "original_points_compared": 2048,
+            "viewport_sha256": "a85c28c0907ccc444f1a5951fa7eaa4ef63f9dbe958766dafdaf1bffecfba309",
+            "reference_sha256": "1b38a9f7906387c717aed4b057e061c8a4e62e14fa8f4453b28dbbdc3309340e",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": null,
+            "heartbeat_ticks": null
+          },
+          {
+            "tag": "instruments-50",
+            "action": "response-C",
+            "kind": "response",
+            "original_points_compared": 2048,
+            "viewport_sha256": "5fc48d8d922be92f23782c9f9daec03afb45ab713bf42e88a6f563019dc7fbc3",
+            "reference_sha256": "69065770d913c0f97dafd4c84d60d5bb045fadea1bfb5823e6046bebde8eef07",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": 577,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-50",
+            "action": "response-composite",
+            "kind": "response",
+            "original_points_compared": 2048,
+            "viewport_sha256": "39ed3e34a2291e4ef09f8dd4eef28eab497263adfd38b3f155f046a0fa7d0357",
+            "reference_sha256": "596854f5db191947c76fb21d8c143d724ad1cea17c382b678228e67fb1c1cff9",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": 538,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-50",
+            "action": "response-impulse",
+            "kind": "response",
+            "original_points_compared": 2048,
+            "viewport_sha256": "b456d56eb71ab0d37f040b881c683f2b76f3745a15b7f76d0aa1ff5a8660f11f",
+            "reference_sha256": "8d7d268f1dce3f12cd950b4628d6ccee574fb91eaf030a75eb8f2448f906fe93",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": 434,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-50",
+            "action": "response-received-amplitude",
+            "kind": "response",
+            "original_points_compared": 2048,
+            "viewport_sha256": "7a3276372d4d1a391b2b012b19bc5cb5e7712c2c79695e6b8ba1773fb5cbcdb3",
+            "reference_sha256": "5d0859d64f114d00c32e99b2e328b8c1a7b635d38c1ba531a0095a050281a4f9",
+            "visual": {
+              "items": 75,
+              "canvases": 1
+            },
+            "query_ms": 439,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-50",
+            "action": "response-received-phase",
+            "kind": "response",
+            "original_points_compared": 2048,
+            "viewport_sha256": "e785a58169353e64c9f1a65669ecd917aa6959cf075c8bf28d8975cd51a7e17e",
+            "reference_sha256": "5d0859d64f114d00c32e99b2e328b8c1a7b635d38c1ba531a0095a050281a4f9",
+            "visual": {
+              "items": 75,
+              "canvases": 1
+            },
+            "query_ms": 481,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "qam-initial",
+            "kind": "qam",
+            "original_points_compared": 1120,
+            "viewport_sha256": "4178a9707c1e8eb473da4c497ab7f0fb978de0d6df39d74c97700dc0c5583c01",
+            "reference_sha256": "18038e5f969ded04089f2789b883f0cd52f9af270f7e95d885c63074e5e98bd2",
+            "visual": {
+              "items": 88,
+              "canvases": 2
+            },
+            "query_ms": null,
+            "heartbeat_ticks": null
+          },
+          {
+            "tag": "instruments-25",
+            "action": "qam-raw",
+            "kind": "qam",
+            "original_points_compared": 1120,
+            "viewport_sha256": "d2a2fef19552ce1f0208fc5fb1501fdf1836320e9fbea7f8764b50a7f5d82aaf",
+            "reference_sha256": "18038e5f969ded04089f2789b883f0cd52f9af270f7e95d885c63074e5e98bd2",
+            "visual": {
+              "items": 88,
+              "canvases": 2
+            },
+            "query_ms": 654,
+            "heartbeat_ticks": 2
+          },
+          {
+            "tag": "instruments-25",
+            "action": "qam-unit-reference",
+            "kind": "qam",
+            "original_points_compared": 20,
+            "viewport_sha256": "30505431f15ef9ebe96ff57379e5d2515810a579cc6094469768ec9e33c613d3",
+            "reference_sha256": "68c6ee6d169a0b12a2dd1075be9edb0243e2c1aafc5a4b2ecb35cb6f972688e7",
+            "visual": {
+              "items": 92,
+              "canvases": 2
+            },
+            "query_ms": 101,
+            "heartbeat_ticks": 2
+          },
+          {
+            "tag": "instruments-25",
+            "action": "qam-exact-pairing",
+            "kind": "qam",
+            "original_points_compared": 352,
+            "viewport_sha256": "19bd65b02fd46ab079f4160962d8f4bee40437cad2d0d24a223d7ec65abcb194",
+            "reference_sha256": "9c243aab3e86b2f77c4fa7a91afe841e2458b66ce0317dfae8f19a2bcb7a1ce0",
+            "visual": {
+              "items": 93,
+              "canvases": 2
+            },
+            "query_ms": 279,
+            "heartbeat_ticks": 2
+          },
+          {
+            "tag": "instruments-25",
+            "action": "spectrum-initial",
+            "kind": "spectrum",
+            "original_points_compared": 4096,
+            "viewport_sha256": "6bf19d81ae110d773bc9eb0488138918e55a2b53862dc59b8bd05e553c335184",
+            "reference_sha256": "2267aa84a579d2fc7e6973b80045915a9d57f220d349a02ac64e5af410996e58",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": null,
+            "heartbeat_ticks": null
+          },
+          {
+            "tag": "instruments-25",
+            "action": "spectrum-channel-output",
+            "kind": "spectrum",
+            "original_points_compared": 4096,
+            "viewport_sha256": "a5dcae15ff7031895c1b8f3ad9705f90b54f8fea6f53d2abd0c113fb57e8ec9d",
+            "reference_sha256": "5e397572220e1ddc70e9c48a0509e15426cbb130aaee4d40744037c914d5179b",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": 362,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "spectrum-zoom",
+            "kind": "spectrum",
+            "original_points_compared": 2048,
+            "viewport_sha256": "72081f447b4bdff43b151ee4a805281bbd02f5f3196c31f99e321f51e5556ac9",
+            "reference_sha256": "5e397572220e1ddc70e9c48a0509e15426cbb130aaee4d40744037c914d5179b",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": 181,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "spectrum-reset",
+            "kind": "spectrum",
+            "original_points_compared": 4096,
+            "viewport_sha256": "80ab7c2c65776103bcfb54c80c4cbbff4204b785bb896a6cca55581d0e59f7bb",
+            "reference_sha256": "5e397572220e1ddc70e9c48a0509e15426cbb130aaee4d40744037c914d5179b",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": 418,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "response-H",
+            "kind": "response",
+            "original_points_compared": 4096,
+            "viewport_sha256": "85c2548237107f4cc3504298c9d2b98ede4f3c79ca6acdb57f1c583e7e7d9eaf",
+            "reference_sha256": "ecf3368504626763a6da107d36b96435ba8f6c07f91dc5c4a054f8a9fb8a45f6",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": null,
+            "heartbeat_ticks": null
+          },
+          {
+            "tag": "instruments-25",
+            "action": "response-C",
+            "kind": "response",
+            "original_points_compared": 4096,
+            "viewport_sha256": "de3ca9fd5429fb51eec1be2be51c0733fa193e7770d47d130a570e3a27270502",
+            "reference_sha256": "be8224f5f6bdb9f380f9fd59687068352cab5968b3d6803cf7a69cf9dafae571",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": 1019,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "response-composite",
+            "kind": "response",
+            "original_points_compared": 4096,
+            "viewport_sha256": "823aa58d9f19a5265418edb1822962264cced1770edfd7c6368f07e26e0b684b",
+            "reference_sha256": "c459515843946c2861ef2603892fe3037f6c484bebe38165cff9f230987967de",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": 873,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "response-impulse",
+            "kind": "response",
+            "original_points_compared": 4096,
+            "viewport_sha256": "cc3dbd14f259a5f604431f3edee5b642a8e53c20493af1c23b9a5e79134948bb",
+            "reference_sha256": "a1b93ea830133965a2fc2101c33f8e9025f77d1ee7760b41f8e3ae255cf3b16c",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": 722,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "response-received-amplitude",
+            "kind": "response",
+            "original_points_compared": 4096,
+            "viewport_sha256": "a6a8236d64e4d12ed1b333e3592250ce6e8042c59955a7324e783ceeb376e5ba",
+            "reference_sha256": "11ca343a2f0b815b8bfa324eeb2e3eb01bf48f5ec80f2300efcf3c2aa1526e2a",
+            "visual": {
+              "items": 75,
+              "canvases": 1
+            },
+            "query_ms": 661,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "response-received-phase",
+            "kind": "response",
+            "original_points_compared": 4096,
+            "viewport_sha256": "b5e7547afe6ce6a755468c140b37bee413f2d5b2ef1b63f2a68d56a7f366dc47",
+            "reference_sha256": "11ca343a2f0b815b8bfa324eeb2e3eb01bf48f5ec80f2300efcf3c2aa1526e2a",
+            "visual": {
+              "items": 75,
+              "canvases": 1
+            },
+            "query_ms": 655,
+            "heartbeat_ticks": 1
+          }
+        ],
+        "plans": [
+          {
+            "tag": "instruments-50",
+            "identity": "upstream/2/1",
+            "key": "{\"session\":\"2\",\"generation\":\"1\"}",
+            "result": {
+              "ber": 0,
+              "bit_errors": 0,
+              "bits_tested": 1976,
+              "completed_grants": 1,
+              "reference_recovered": true,
+              "run": "1",
+              "status": "Completed",
+              "unverified_source_bits": 0
+            }
+          },
+          {
+            "tag": "instruments-25",
+            "identity": "upstream/2/2",
+            "key": "{\"session\":\"2\",\"generation\":\"2\"}",
+            "result": {
+              "ber": 0,
+              "bit_errors": 0,
+              "bits_tested": 4216,
+              "completed_grants": 1,
+              "reference_recovered": true,
+              "run": "2",
+              "status": "Completed",
+              "unverified_source_bits": 0
+            }
+          }
+        ],
+        "pre_run_unavailable": 2,
+        "tab_isolation": [
+          {
+            "tag": "instruments-50",
+            "key": "{\"session\":\"2\",\"generation\":\"1\"}",
+            "run": "1",
+            "preserved": true
+          },
+          {
+            "tag": "instruments-25",
+            "key": "{\"session\":\"2\",\"generation\":\"2\"}",
+            "run": "2",
+            "preserved": true
+          }
+        ],
+        "screen_navigation": [
+          {
+            "tag": "instruments-50",
+            "inspection": {
+              "point": {
+                "detail": {
+                  "carrier": 146,
+                  "frame": "0",
+                  "identity": {
+                    "generation": "1",
+                    "grant": "1",
+                    "run": "2"
+                  },
+                  "loading": 4,
+                  "role": "Data",
+                  "symbol": 0,
+                  "value": {
+                    "im": 0.31622776601683794,
+                    "re": 0.31622776601683794
+                  }
+                },
+                "readout": "left \u00b7 frame 0 \u00b7 symbol 0 \u00b7 carrier 146 \u00b7 loading 4 \u00b7 raw I 0.31622776601683794 \u00b7 raw Q 0.31622776601683794",
+                "role": "data",
+                "series": "left",
+                "x": 0.6515151515151514,
+                "y": 0.34848484848484856
+              },
+              "text": "left \u00b7 frame 0 \u00b7 symbol 0 \u00b7 carrier 146 \u00b7 loading 4 \u00b7 raw I 0.31622776601683794 \u00b7 raw Q 0.31622776601683794\n{\n  \"carrier\": 146,\n  \"frame\": \"0\",\n  \"identity\": {\n    \"generation\": \"1\",\n    \"grant\": \"1\",\n    \"run\": \"2\"\n  },\n  \"loading\": 4,\n  \"role\": \"Data\",\n  \"symbol\": 0,\n  \"value\": {\n    \"im\": 0.31622776601683794,\n    \"re\": 0.31622776601683794\n  }\n}",
+              "magnification": 2,
+              "panX": 0.1,
+              "panY": 0.1
+            },
+            "reset": true,
+            "noQuery": true
+          },
+          {
+            "tag": "instruments-25",
+            "inspection": {
+              "point": {
+                "detail": {
+                  "carrier": 264,
+                  "frame": "0",
+                  "identity": {
+                    "generation": "3",
+                    "grant": "1",
+                    "run": "4"
+                  },
+                  "loading": 4,
+                  "role": "Data",
+                  "symbol": 0,
+                  "value": {
+                    "im": 0.31622776601683794,
+                    "re": 0.31622776601683794
+                  }
+                },
+                "readout": "left \u00b7 frame 0 \u00b7 symbol 0 \u00b7 carrier 264 \u00b7 loading 4 \u00b7 raw I 0.31622776601683794 \u00b7 raw Q 0.31622776601683794",
+                "role": "data",
+                "series": "left",
+                "x": 0.6330772826747999,
+                "y": 0.3669227173252001
+              },
+              "text": "left \u00b7 frame 0 \u00b7 symbol 0 \u00b7 carrier 264 \u00b7 loading 4 \u00b7 raw I 0.31622776601683794 \u00b7 raw Q 0.31622776601683794\n{\n  \"carrier\": 264,\n  \"frame\": \"0\",\n  \"identity\": {\n    \"generation\": \"3\",\n    \"grant\": \"1\",\n    \"run\": \"4\"\n  },\n  \"loading\": 4,\n  \"role\": \"Data\",\n  \"symbol\": 0,\n  \"value\": {\n    \"im\": 0.31622776601683794,\n    \"re\": 0.31622776601683794\n  }\n}",
+              "magnification": 2,
+              "panX": 0.1,
+              "panY": 0.1
+            },
+            "reset": true,
+            "noQuery": true
+          }
+        ],
+        "maximum_heartbeat_gap_including_pickers_ms": 5446,
+        "evidence_scope": "Reused installed binding of unchanged backend; Python orchestrates Rust operations only, never scientific calculations."
+      }
+    },
+    "native_measured_inputs": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--upstream-inputs-probe",
+        "--upstream-inputs-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-policy-measurements/inputs-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 63.00036326299596,
+      "executable_sha256": "39d06537e0ca92f67f0895e46c2e6fe941a0866a60939d5b8466f873421f203a",
+      "expected_sources": {
+        "ucd-binary": {
+          "family": "ucd",
+          "original_sha256": "7e47467fae5d8aaabbaa52f7d2dda028a3865fa5b9bf603548a38c00393c3e74",
+          "original_bytes": 92,
+          "delivery_sha256": "7e47467fae5d8aaabbaa52f7d2dda028a3865fa5b9bf603548a38c00393c3e74",
+          "delivery_bytes": 92
+        },
+        "ucd-json": {
+          "family": "ucd",
+          "original_sha256": "7e47467fae5d8aaabbaa52f7d2dda028a3865fa5b9bf603548a38c00393c3e74",
+          "original_bytes": 92,
+          "delivery_sha256": "32b0c2d503096fc5885474107d907e27244c76ea198c0f3bb97739cfc2299d04",
+          "delivery_bytes": 936
+        },
+        "rxmer-binary": {
+          "family": "rxmer",
+          "original_sha256": "d1da22fb4a1413f18477b48f4f698e6243ad14d03a28a6ba66daaebed78d41ba",
+          "original_bytes": 697,
+          "delivery_sha256": "d1da22fb4a1413f18477b48f4f698e6243ad14d03a28a6ba66daaebed78d41ba",
+          "delivery_bytes": 697
+        },
+        "rxmer-json": {
+          "family": "rxmer",
+          "original_sha256": "1ee74407762af69674b866bfb5fde97eef2f45af3fa990252b64813cdd1deb84",
+          "original_bytes": 301,
+          "delivery_sha256": "24c3f9ebb2b1027015ef85526e1e0f7c26a7b6b4f0bede15cac7902d407fa4e3",
+          "delivery_bytes": 2391
+        },
+        "pre-eq-binary": {
+          "family": "pre_eq",
+          "original_sha256": "09de1df6055de967c8ef36ad1cd6c2f9b142ebf53408aff5ce5b88b709b6f05b",
+          "original_bytes": 50,
+          "delivery_sha256": "09de1df6055de967c8ef36ad1cd6c2f9b142ebf53408aff5ce5b88b709b6f05b",
+          "delivery_bytes": 50
+        },
+        "pre-eq-json": {
+          "family": "pre_eq",
+          "original_sha256": "497f49bedb09587daaeac3c95630c32b70b0b6dd7d948a7e3fa716ac4ad9320f",
+          "original_bytes": 50,
+          "delivery_sha256": "3ea8f39ef5bb81ad49a525b14d84ca4150cdbdcac21076b414aff9af773718fe",
+          "delivery_bytes": 622
+        }
+      },
+      "fixture_scope": "Existing authored/sanitized fixtures; not field or interoperability evidence.",
+      "picker_actions": [
+        {
+          "action": "ucd-binary",
+          "owned_window": 14680071,
+          "picker_pid": 613013,
+          "seconds": 4.736690510006156
+        },
+        {
+          "action": "cancel",
+          "owned_window": 14680071,
+          "picker_pid": 613044,
+          "seconds": 6.68023274699226
+        },
+        {
+          "action": "ucd-json",
+          "owned_window": 14680071,
+          "picker_pid": 613063,
+          "seconds": 8.757463378991815
+        },
+        {
+          "action": "rxmer-binary",
+          "owned_window": 14680071,
+          "picker_pid": 613091,
+          "seconds": 12.094491570998798
+        },
+        {
+          "action": "rxmer-json",
+          "owned_window": 14680071,
+          "picker_pid": 613165,
+          "seconds": 19.339769330996205
+        },
+        {
+          "action": "pre-eq-binary",
+          "owned_window": 14680071,
+          "picker_pid": 613270,
+          "seconds": 23.264983650005888
+        },
+        {
+          "action": "pre-eq-json",
+          "owned_window": 14680071,
+          "picker_pid": 613342,
+          "seconds": 31.211233948997688
+        },
+        {
+          "action": "invalid",
+          "owned_window": 14680071,
+          "picker_pid": 613447,
+          "seconds": 40.618871230995865
+        },
+        {
+          "action": "measured-50",
+          "owned_window": 14680071,
+          "picker_pid": 613641,
+          "seconds": 50.315271800005576
+        },
+        {
+          "action": "measured-25",
+          "owned_window": 14680071,
+          "picker_pid": 613762,
+          "seconds": 60.03377644899592
+        }
+      ],
+      "full_window_capture": {
+        "window": 12582919,
+        "pid": 612998,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-policy-measurements/upstream-inputs-main-dark.png",
+        "sha256": "279048a3b7bf97a8c58c26cb0ec57b8332923cf0807238efb39f7615dedc9719",
+        "size": [
+          1210,
+          736
+        ],
+        "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+      },
+      "extra_captures": {
+        "rxmer": {
+          "window": 12582919,
+          "pid": 612998,
+          "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-policy-measurements/rxmer-main-dark.png",
+          "sha256": "b009be1f0f45980b86c927978a3f0ee3ef1a79000bb8577ce6bfef60928f0947",
+          "size": [
+            1210,
+            736
+          ],
+          "source": "Unaltered actual owned native X11 Main window pixels."
+        }
+      },
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-policy-measurements/inputs-dark.png",
+      "image_sha256": "8c3e68775f394c62203efcc5a3a11d1951c1f97dc22a698c06baa3b9d6f3134c",
+      "comparison": {
+        "executable_sha256": "39d06537e0ca92f67f0895e46c2e6fe941a0866a60939d5b8466f873421f203a",
+        "installed_reference_interpreter": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/native/installed/bin/python",
+        "inspections_compared": 6,
+        "original_delivery_hashes_lengths": true,
+        "public_observation_rows_and_nulls": true,
+        "measured_plans_verified": 2
+      },
+      "original_rxmer": {
+        "executable_sha256": "39d06537e0ca92f67f0895e46c2e6fe941a0866a60939d5b8466f873421f203a",
+        "original_rxmer_viewports_compared": [
+          {
+            "tag": "rxmer-binary",
+            "action": "original",
+            "points": 400,
+            "first": 0,
+            "nulls": 0,
+            "source_metadata_sha256": "b9af01261a1c7287bca88538f83536657cdf44633b70acdcd0f3575cbdf6bedd",
+            "viewport_sha256": "a0113908b06d90cda0be0875d9e0fac7cef97dece4637d81f015023b28553504"
+          },
+          {
+            "tag": "rxmer-json",
+            "action": "original",
+            "points": 4,
+            "first": 0,
+            "nulls": 1,
+            "source_metadata_sha256": "93563cac0a0fa955b676052db4ad325e231423c58e0cd5f2f680c9c100f061bf",
+            "viewport_sha256": "5a73bac8aae0d8253abb0d4af17e7010eb4684719d492086601d0cb867d8e12d"
+          },
+          {
+            "tag": "rxmer-binary",
+            "action": "paged",
+            "points": 336,
+            "first": 64,
+            "nulls": 0,
+            "source_metadata_sha256": "b9af01261a1c7287bca88538f83536657cdf44633b70acdcd0f3575cbdf6bedd",
+            "viewport_sha256": "d5cce6d330874284d2cf8f54e38823a40d6c5285292d1b892b838cb64b8c8864"
+          },
+          {
+            "tag": "rxmer-binary",
+            "action": "zoom",
+            "points": 168,
+            "first": 148,
+            "nulls": 0,
+            "source_metadata_sha256": "b9af01261a1c7287bca88538f83536657cdf44633b70acdcd0f3575cbdf6bedd",
+            "viewport_sha256": "fdf3cd1081a4a0cf430649917b57c3987f730c28cfbb2810afba719cad00a67b"
+          },
+          {
+            "tag": "rxmer-binary",
+            "action": "reset",
+            "points": 400,
+            "first": 0,
+            "nulls": 0,
+            "source_metadata_sha256": "b9af01261a1c7287bca88538f83536657cdf44633b70acdcd0f3575cbdf6bedd",
+            "viewport_sha256": "a0113908b06d90cda0be0875d9e0fac7cef97dece4637d81f015023b28553504"
+          }
+        ],
+        "original_points_and_nulls_match": true,
+        "actual_zoom_reset": true,
+        "unchanged_original_provenance": true,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-02/native-policy-measurements/inputs-dark.png.rxmer.png",
+        "image_sha256": "6c3982f69323f50d3856bf80f589d302f2dd09ce0321c467f360eb853a78f36f"
+      }
+    },
+    "native_compatibility": {
+      "commands": [
+        {
+          "label": "editors",
+          "command": [
+            "python3",
+            "-B",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/run_upstream_configuration_probe.py",
+            "shared-02-final"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 14.080565138006932
+        },
+        {
+          "label": "shell",
+          "command": [
+            "python3",
+            "-B",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/run_direction_shell_probe.py",
+            "shared-02-final"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.8412018490053015
+        },
+        {
+          "label": "startup",
+          "command": [
+            "python3",
+            "-B",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/run_native_ui_smokes.py",
+            "shared-02-final"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 5.731107655999949
+        }
+      ],
+      "seven_editors": {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--upstream-configuration-probe",
+          "--upstream-configuration-image",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/shared-02-final/receiver-configuration-dark.png",
+          "--workbench",
+          "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 13.876898651011288,
+        "executable_sha256": "39d06537e0ca92f67f0895e46c2e6fe941a0866a60939d5b8466f873421f203a",
+        "source_sha256": "ba39970338d18e741c0c17362298dc9a71ad39a3a5f2022d8390e128e053e41d",
+        "source_fixture": "Existing us-50khz.json plus explicit synthetic unity Pre-Eq plan; not captured field input.",
+        "picker_actions": [
+          {
+            "action": "cancel",
+            "owned_window": 14680071,
+            "picker_pid": 613975,
+            "seconds": 6.389625497002271
+          },
+          {
+            "action": "load",
+            "owned_window": 14680071,
+            "picker_pid": 614003,
+            "seconds": 8.366485698003089
+          }
+        ],
+        "full_window_capture": {
+          "window": 12582919,
+          "pid": 613956,
+          "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/shared-02-final/upstream-configuration-main-dark.png",
+          "sha256": "dea71c7df709cf66888cc6a32a3447260203e6433aaff94e1939a815b6f8181d",
+          "size": [
+            1210,
+            736
+          ],
+          "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+        },
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/shared-02-final/receiver-configuration-dark.png",
+        "image_sha256": "94d38362eb6d0a26ce1f55b09471d3730425dfc9d6ccb683614c3d3b002ba8e6"
+      },
+      "direction_shell": {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--direction-shell-probe",
+          "--direction-shell-downstream-image",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/shared-02-final/downstream-dark.png",
+          "--direction-shell-upstream-image",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/shared-02-final/upstream-dark.png",
+          "--workbench",
+          "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.7210055269970326,
+        "executable_sha256": "39d06537e0ca92f67f0895e46c2e6fe941a0866a60939d5b8466f873421f203a",
+        "display": ":0",
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/shared-02-final/downstream-dark.png",
+        "upstream_image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/shared-02-final/upstream-dark.png",
+        "upstream_image_sha256": "486345a60178f2af414739e4b00471b874fa84532bb96ef9af9f0c6e6af15494",
+        "image_sha256": "3f4dd220f6173ed9b281d50c555910a399b67b974b4c23e49016eba155a4d5ff"
+      },
+      "startup_projects": {
+        "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "sha256": "39d06537e0ca92f67f0895e46c2e6fe941a0866a60939d5b8466f873421f203a",
+        "display": ":0",
+        "display_dimensions": [
+          "dimensions:    1280x800 pixels (338x211 millimeters)"
+        ],
+        "qt_sdk_version": "6.8.3",
+        "commands": [
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--check-workbench",
+              "examples/workbench/single/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 0.0595845559873851,
+            "stdout": "Workbench inputs accepted.\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--check-workbench",
+              "examples/workbench/multi-rxmer/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 0.07056299300165847,
+            "stdout": "Workbench inputs accepted.\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--check-workbench",
+              "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 0.5659240899985889,
+            "stdout": "Workbench inputs accepted.\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--check-workbench",
+              "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 0.032654909999109805,
+            "stdout": "Workbench inputs accepted.\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--smoke-test"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 2.4025123460014584,
+            "stdout": "MERLIN_QT_STYLE=Fusion\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--smoke-test",
+              "--workbench",
+              "examples/workbench/single/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 2.3327318450028542,
+            "stdout": "MERLIN_QT_STYLE=Fusion\n",
+            "stderr": ""
+          }
+        ]
+      }
+    },
+    "original_ds_pixel_parity": [
+      {
+        "case": "dark-empty",
+        "before_sha256": "470c4ce135916bebd1d5b969552c4f1d140e599121c373181524ee6f635b1748",
+        "after_sha256": "470c4ce135916bebd1d5b969552c4f1d140e599121c373181524ee6f635b1748",
+        "same_png": true
+      },
+      {
+        "case": "dark-horizontal",
+        "before_sha256": "57700cf915761e7d830c3cb87ea350978f2a4bdb681dc4df064c214a8743c870",
+        "after_sha256": "57700cf915761e7d830c3cb87ea350978f2a4bdb681dc4df064c214a8743c870",
+        "same_png": true
+      },
+      {
+        "case": "dark-table-all",
+        "before_sha256": "46e16b4219e22e0d385a2d8e6afc684017f7e8b48b27acaecdc1be00b14b2c1d",
+        "after_sha256": "46e16b4219e22e0d385a2d8e6afc684017f7e8b48b27acaecdc1be00b14b2c1d",
+        "same_png": true
+      },
+      {
+        "case": "dark-table-empty",
+        "before_sha256": "4799c0b4a6481654b50aaffc47c11cf2585a7458256432a34c3a270bc65f964b",
+        "after_sha256": "4799c0b4a6481654b50aaffc47c11cf2585a7458256432a34c3a270bc65f964b",
+        "same_png": true
+      },
+      {
+        "case": "dark-table-errors",
+        "before_sha256": "7d4dee84fc5d42f89e5af3a3feee687392b5fd55e5c39f1daeba6872d0d81897",
+        "after_sha256": "7d4dee84fc5d42f89e5af3a3feee687392b5fd55e5c39f1daeba6872d0d81897",
+        "same_png": true
+      },
+      {
+        "case": "dark-table-errors-empty",
+        "before_sha256": "a9649871a407eb59b81904ca56745193fb2561939b091e96ead7674edcf19935",
+        "after_sha256": "a9649871a407eb59b81904ca56745193fb2561939b091e96ead7674edcf19935",
+        "same_png": true
+      },
+      {
+        "case": "dark-vertical",
+        "before_sha256": "89e34eaf2f76c385d54a1bf4f2f4ca440826647c71a116bcf9fb8967d01a2156",
+        "after_sha256": "89e34eaf2f76c385d54a1bf4f2f4ca440826647c71a116bcf9fb8967d01a2156",
+        "same_png": true
+      },
+      {
+        "case": "dark-zero",
+        "before_sha256": "92d39d6eb84fc2ab8687ac73bd2e6cbbecb91b03d3cee194366ebdb6d180ac61",
+        "after_sha256": "92d39d6eb84fc2ab8687ac73bd2e6cbbecb91b03d3cee194366ebdb6d180ac61",
+        "same_png": true
+      },
+      {
+        "case": "light-empty",
+        "before_sha256": "4a380237014e822ff8e6a6b32e4cf5788191fa2b6adc5bd9395fddd96ba52280",
+        "after_sha256": "4a380237014e822ff8e6a6b32e4cf5788191fa2b6adc5bd9395fddd96ba52280",
+        "same_png": true
+      },
+      {
+        "case": "light-horizontal",
+        "before_sha256": "c301e7df598fefce384373cc30fdc91b499b726055700e61651af753c0fefb90",
+        "after_sha256": "c301e7df598fefce384373cc30fdc91b499b726055700e61651af753c0fefb90",
+        "same_png": true
+      },
+      {
+        "case": "light-table-all",
+        "before_sha256": "44561b297fd6479a65e6d5b9b51deef6a32bf6f342031550ac69410eb8fc0046",
+        "after_sha256": "44561b297fd6479a65e6d5b9b51deef6a32bf6f342031550ac69410eb8fc0046",
+        "same_png": true
+      },
+      {
+        "case": "light-table-empty",
+        "before_sha256": "ecfb14a134fecfafdcae4b5e5e15b269b5931f72c8e780ea1ab85551f83b27ba",
+        "after_sha256": "ecfb14a134fecfafdcae4b5e5e15b269b5931f72c8e780ea1ab85551f83b27ba",
+        "same_png": true
+      },
+      {
+        "case": "light-table-errors",
+        "before_sha256": "97a850865f916b8287aa536cc53d12973af605f191efd7e6aa4c3125cbd1c498",
+        "after_sha256": "97a850865f916b8287aa536cc53d12973af605f191efd7e6aa4c3125cbd1c498",
+        "same_png": true
+      },
+      {
+        "case": "light-table-errors-empty",
+        "before_sha256": "415f98af4aa9968892172e2279f57174b7915820fb6e3feef83f50aa11086345",
+        "after_sha256": "415f98af4aa9968892172e2279f57174b7915820fb6e3feef83f50aa11086345",
+        "same_png": true
+      },
+      {
+        "case": "light-vertical",
+        "before_sha256": "9add3ab64d38e66039053f12bcf668253b821f717beeaae76a36faa485833a5d",
+        "after_sha256": "9add3ab64d38e66039053f12bcf668253b821f717beeaae76a36faa485833a5d",
+        "same_png": true
+      },
+      {
+        "case": "light-zero",
+        "before_sha256": "dc3d467c0f223255cb08c9215aa5aaa845997089d1cfe3b4a3bfca451a225c69",
+        "after_sha256": "dc3d467c0f223255cb08c9215aa5aaa845997089d1cfe3b4a3bfca451a225c69",
+        "same_png": true
+      }
+    ],
+    "final_branch_format": [
+      {
+        "file": "apps/qt/src/upstream/workbench/instruments/fec.rs",
+        "previous_sha256": "45f64bd1ef6c8d3c5903a6dcce45270d11b72807e46c4b00e8f5b2cf18c3e0b5",
+        "current_sha256": "d904a93574661d7224d2ec23c34b35863f046b0daa3ca942e1fb284e933d2220",
+        "change": "Only branch-body whitespace; exact prior source reconstructed and hashed.",
+        "tokens_unchanged": true
+      },
+      {
+        "file": "apps/qt/qml/upstream/UpstreamFecDialog.qml",
+        "previous_sha256": "1dfe1496b7b368278b7c7b39ee219f9b99ab53ea24661b5fd007ae9680105391",
+        "current_sha256": "6407579d840f1486234376cc2b0eb0dc9a7a8458ed69deddcd18c488454a0af9",
+        "change": "Only branch-body whitespace; exact prior source reconstructed and hashed.",
+        "tokens_unchanged": true
+      }
+    ],
+    "final_fec_style_tests": [
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.9319196319993353
+      },
+      {
+        "label": "fec-style",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "upstream::workbench::instruments::fec_tests::",
+          "--",
+          "--test-threads=2"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 90.3061222719989
+      }
+    ],
+    "unchanged_native_consumer_reuse_scope": "DS and prior QAM/PSD/response/capture/editor/shell/startup owners are unchanged after the recorded artifact. Final only production edits are token-identical whitespace in fec.rs and UpstreamFecDialog.qml; hashes reconstruct prior exact source. Complete522-case Qt result remains applicable; targeted9FEC Rust/9FEC QML, latest Clippy/build and fresh28-view actual native decoder comparison execute afterward.",
+    "packaging": {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/packaging",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.7007297370000742,
+      "scope": "Existing package/resource unit contracts; no install/publication/lifecycle claim."
+    },
+    "documentation": [
+      {
+        "label": "strict-matrix",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/api_operation_matrix.py",
+          "--exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/rust-exports.json",
+          "--native-exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/native/native-exports.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 9.836072076999699
+      },
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.187618726005894
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 8.595879358006641
+      },
+      {
+        "label": "uiu-history",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/audit_shared_decoder_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.11644507400342263
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.07011104299454018
+      },
+      {
+        "label": "guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.0715143160050502
+      },
+      {
+        "label": "diff",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.0361703319940716
+      },
+      {
+        "label": "staged-diff",
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.006140748009784147
+      }
+    ]
+  },
+  "regressions_found_and_resolved": [
+    {
+      "issue": "OuterScrollView intercepted pointer drag intended for original-data table scrollbar.",
+      "resolution": "Reserve actual style scrollbar width; real handle press/drag/release test now passes and preserves original arrays.",
+      "evidence": "qml-pointer-separated-scrollbars-results.json"
+    },
+    {
+      "issue": "Qt test name ending_data registered only as an orphan provider.",
+      "resolution": "Rename actual empty/null renderer test; strict discovery ensures every named test executes.",
+      "evidence": "tst_shared_decoder_presentation.qml-complete-renderers.stdout"
+    }
+  ],
+  "not_required": [
+    {
+      "suite": "Root full workspace, CLI and fresh Python wheel rebuild",
+      "reason": "Scientific/backend/binding/root manifests remain unchanged; original values are compared independently through reused installed public Rust binding. Full applicable final regression stays QA-01."
+    },
+    {
+      "suite": "Further repeat of complete522-case Qt crate",
+      "reason": "Final complete run includes all source and diagnostic changes; no subsequent executable owner changes require another full run. Original failed attempt is retained honestly."
+    }
+  ],
+  "deferred_gates": [
+    "UIU-FILE-01 per-direction Save/Open",
+    "UIU-RECOVERY-01 restart/update recovery",
+    "UIU-QA-01 full applicable final regression, numeric audit and correspondence"
+  ],
+  "limitations": [
+    "Actual GUI evidence is this Linux Qt6.8.3 XCB/software/Fusion VM; no installed Windows or hosted lifecycle claim.",
+    "Synthetic/authored fixtures and MERLIN closed loops do not establish field measurement or external interoperability.",
+    "Cancellation comparison establishes completed prefix values, not identical timing or whole-report metadata.",
+    "Fixed finite native soft history is opt-in; unavailable data is never reconstructed."
+  ]
+}

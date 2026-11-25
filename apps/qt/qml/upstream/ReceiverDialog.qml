@@ -7,6 +7,7 @@ import QtQuick
 UpstreamConfigurationDraftDialog {
     sectionId: "receiver"
     responseInspection: true
+    fecInspection: true
     approvedFields: ["estimator", "maximum_pilot_gap", "reference_variance", "equalizer_power_floor", "ldpc_iterations"]
     title: "CMTS Receiver"
     purpose: "Receiver processing obtains its observations from the modeled channel."
