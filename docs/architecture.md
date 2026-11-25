@@ -2082,13 +2082,16 @@ The configuration/TX/channel/RX/PNM/verification drill-ins use direction-specifi
 models and authoritative stage observations. The user approved the
 [startup layout](development/features/unified-qt-workbench/upstream-startup-layout.md)
 on 2026-11-22 for REQ-UIU-10 and UIU-US-01. Its three main rounded blocks run
-horizontally: **CM Transmitter → Channel Simulator → CMTS Receiver**. A visually
+horizontally: **CMTS Receiver ← Channel Simulator ← CM Transmitter**. Upstream
+samples still originate at the CM transmitter and reach the CMTS receiver. A visually
 separate CMTS Configuration group on the left contains clickable UCD / OFDMA
 Configuration, IUC / Burst Profiles and MAP / Grants blocks. The visible control
-route ends at CM Transmitter; corresponding receiver/session configuration is
-implicit within the CMTS group. Both directions reuse named canvas margins from
-the shared Theme. [UI-US-LAYOUT-01](development/checklist.md#task-ui-us-layout-01)
-records this [presentation refinement](development/features/unified-qt-workbench/design.md#ui-us-layout-01-shared-canvas-framing-and-implicit-cmts-control).
+route ends at CMTS Receiver, adjacent to its CMTS Configuration group; matching
+transmitter/session configuration remains backend-owned. Both directions reuse
+named canvas margins from the shared Theme, introduced by
+[UI-US-LAYOUT-01](development/checklist.md#task-ui-us-layout-01).
+[UI-US-LAYOUT-02](development/checklist.md#task-ui-us-layout-02) records the
+latest [orientation and receiver-control refinement](development/features/unified-qt-workbench/design.md#ui-us-layout-02-reversed-canvas-and-receiver-side-control).
 Control configuration never enters the sample-data path. Separate PRBS-TX,
 RxMER, CM Pre-Eq and PRBS-RX blocks attach to
 their actual source, impairment, transmit-correction and recovered-output planes.

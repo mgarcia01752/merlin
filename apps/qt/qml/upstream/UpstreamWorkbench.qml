@@ -71,7 +71,7 @@ Item {
     readonly property real upperInputTop: 116
     readonly property real correctionTop: 470
 
-    // Place the transmitter control route between its output block and CM Pre-Eq.
+    // Place CMTS control below its receiver, clear of the waveform path.
     readonly property real controlBaseline: (mainTop + mainBlockHeight + correctionTop) / 2
     readonly property real legendBottomMargin: 24
     readonly property real legendGap: 24
@@ -212,7 +212,7 @@ Item {
             readonly property real mainGap: (width - mainLeft - workbench.edgeMargin - workbench.blockWidth * workbench.mainBlockCount) / 2
             readonly property real dataAxis: workbench.mainTop + workbench.mainBlockHeight / 2
             readonly property real controlX: workbench.edgeMargin + workbench.configurationWidth + workbench.controlCollectorGap
-            readonly property real correctionX: transmitterBlock.x + transmitterBlock.width + mainGap / 2
+            readonly property real correctionX: transmitterBlock.x - mainGap / 2
             Canvas {
                 id: grid
                 anchors.fill: parent
@@ -263,9 +263,9 @@ Item {
                 anchors.fill: parent
                 theme: workbench.theme
                 role: "data"
-                fromX: transmitterBlock.x + transmitterBlock.width
+                fromX: transmitterBlock.x
                 fromY: diagram.dataAxis
-                toX: channelBlock.x
+                toX: channelBlock.x + channelBlock.width
                 toY: diagram.dataAxis
                 arrowHead: true
                 showMarker: true
@@ -275,9 +275,9 @@ Item {
                 anchors.fill: parent
                 theme: workbench.theme
                 role: "data"
-                fromX: channelBlock.x + channelBlock.width
+                fromX: channelBlock.x
                 fromY: diagram.dataAxis
-                toX: receiverBlock.x
+                toX: receiverBlock.x + receiverBlock.width
                 toY: diagram.dataAxis
                 arrowHead: true
                 showMarker: true
@@ -349,20 +349,20 @@ Item {
                 role: "control"
                 fromX: diagram.controlX
                 fromY: workbench.controlBaseline
-                toX: transmitterBlock.x + transmitterBlock.width / 2
+                toX: receiverBlock.x + receiverBlock.width / 2
                 toY: workbench.controlBaseline
                 arrowHead: false
                 showMarker: false
             }
             UpstreamConnection {
-                objectName: "transmitterControl"
+                objectName: "receiverControl"
                 anchors.fill: parent
                 theme: workbench.theme
                 role: "control"
-                fromX: transmitterBlock.x + transmitterBlock.width / 2
+                fromX: receiverBlock.x + receiverBlock.width / 2
                 fromY: workbench.controlBaseline
-                toX: transmitterBlock.x + transmitterBlock.width / 2
-                toY: transmitterBlock.y + transmitterBlock.height
+                toX: receiverBlock.x + receiverBlock.width / 2
+                toY: receiverBlock.y + receiverBlock.height
                 arrowHead: true
                 showMarker: true
             }
@@ -472,7 +472,7 @@ Item {
                 heading: "CM Transmitter"
                 blockStatus: workbench.blockPresentation("transmitter").status || "attention"
                 statusReason: workbench.blockPresentation("transmitter").reason || "Accepted upstream state is unavailable."
-                x: diagram.mainLeft
+                x: channelBlock.x + channelBlock.width + diagram.mainGap
                 y: workbench.mainTop
                 width: workbench.blockWidth
                 height: workbench.mainBlockHeight
@@ -493,7 +493,7 @@ Item {
                 heading: "Channel Simulator"
                 blockStatus: workbench.blockPresentation("channel").status || "attention"
                 statusReason: workbench.blockPresentation("channel").reason || "Accepted upstream state is unavailable."
-                x: transmitterBlock.x + transmitterBlock.width + diagram.mainGap
+                x: receiverBlock.x + receiverBlock.width + diagram.mainGap
                 y: workbench.mainTop
                 width: workbench.blockWidth
                 height: workbench.mainBlockHeight
@@ -514,7 +514,7 @@ Item {
                 heading: "CMTS Receiver"
                 blockStatus: workbench.blockPresentation("receiver").status || "attention"
                 statusReason: workbench.blockPresentation("receiver").reason || "Accepted upstream state is unavailable."
-                x: channelBlock.x + channelBlock.width + diagram.mainGap
+                x: diagram.mainLeft
                 y: workbench.mainTop
                 width: workbench.blockWidth
                 height: workbench.mainBlockHeight
@@ -632,7 +632,7 @@ Item {
             }
             Label {
                 objectName: "upstreamReceiverLabel"
-                x: channelBlock.x + channelBlock.width
+                x: receiverBlock.x + receiverBlock.width
                 y: diagram.dataAxis + workbench.captionGap
                 width: diagram.mainGap
                 text: "Received observations: C×H"
@@ -644,7 +644,7 @@ Item {
             Label {
                 x: diagram.controlX
                 y: workbench.controlBaseline + workbench.captionGap
-                width: transmitterBlock.x + transmitterBlock.width / 2 - x
+                width: receiverBlock.x + receiverBlock.width / 2 - x
                 text: "Configuration / grants"
                 horizontalAlignment: Text.AlignHCenter
                 color: workbench.theme.txPlc

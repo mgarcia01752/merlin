@@ -725,6 +725,14 @@ The strategy's risk expansion applies to every level; preserve all criteria belo
   Acceptance: Share the unchanged downstream canvas margins; omit the explicit receiver control branch while preserving the transmitter/configuration route, scientific reference planes, separate drill-ins, focus, resize and scrolling. Pass affected QML checks, native optimized build/rendering and documentation traceability; refresh actual dark images.
   Evidence: [executed validation](features/unified-qt-workbench/design.md#ui-us-layout-01-shared-canvas-framing-and-implicit-cmts-control) records 179 upstream, 55 downstream and 60 shell passing QML records plus the three-record spacing follow-up, formatting, final boundary and traceability checks, optimized build and native VM captures. The downstream capture remains byte-identical; updated upstream images show no receiver control branch.
 
+<a id="task-ui-us-layout-02"></a>
+- [x] **UI-US-LAYOUT-02** Reverse upstream canvas orientation and connect CMTS control to its receiver.
+  Requirements: [REQ-UIU-08](../requirements.md#req-uiu-08), [REQ-UIU-10](../requirements.md#req-uiu-10), [REQ-UIU-25](../requirements.md#req-uiu-25).
+  Dependencies: [UI-US-LAYOUT-01](#task-ui-us-layout-01).
+  Architecture/files: [upstream presentation](../architecture.md#unified-qt-upstream-scientific-presentation); [design and owners](features/unified-qt-workbench/design.md#ui-us-layout-02-reversed-canvas-and-receiver-side-control).
+  Acceptance: Show CMTS Receiver ← Channel Simulator ← CM Transmitter; route configuration/grants to the receiver, retaining CM-originated sample flow, C before H and received C×H labels. Preserve drill-ins, keyboard/focus, both themes and narrow scrolling; pass affected QML, documentation/boundary checks, optimized native build and actual VM rendering. Refresh dark guide images.
+  Evidence: [executed validation](features/unified-qt-workbench/design.md#ui-us-layout-02-reversed-canvas-and-receiver-side-control) records 13 startup-view and 60 shell QML passes, formatting, final API boundary and traceability checks, optimized native build and actual VM captures. Updated dark guide/README images show leftward sample flow and receiver-side control; downstream pixels are unchanged. Previous refinement acceptance remains historical.
+
 ## Architecture and module rules
 
 <a id="task-arch-01"></a>

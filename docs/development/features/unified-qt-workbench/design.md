@@ -5925,3 +5925,59 @@ captures include the standard presentation-limit notice; this unit does not
 establish its cause or any new scientific acceptance. Rust runtime/Clippy,
 backend, Python wheels, CLI and packaging regressions were not repeated because
 their implementations and contracts are unchanged. No installed-platform claim.
+
+### UI-US-LAYOUT-02 reversed canvas and receiver-side control
+
+The user's next refinement reverses the visual upstream orientation to
+**CMTS Receiver ← Channel Simulator ← CM Transmitter** and connects CMTS
+Configuration to CMTS Receiver. The
+[official task](../../checklist.md#task-ui-us-layout-02) links
+[REQ-UIU-08](../../../requirements.md#req-uiu-08),
+[REQ-UIU-10](../../../requirements.md#req-uiu-10) and
+[REQ-UIU-25](../../../requirements.md#req-uiu-25) to the
+[current architecture](../../../architecture.md#unified-qt-upstream-scientific-presentation).
+This supersedes the preceding transmitter-only visual route, preserving that
+task's historical acceptance and shared canvas margins.
+
+Reuse `apps/qt/qml/upstream/UpstreamWorkbench.qml`, its existing stage blocks,
+connection renderer and named geometry. Position the receiver nearest the CMTS
+group, the channel centrally and the transmitter on the right. Reverse both
+waveform arrows while retaining CM → channel → CMTS scientific order. PRBS-TX
+and PRBS-RX follow their respective stages; CM Pre-Eq remains at the transmitter/
+channel boundary, with C before H. Place received C×H observations between the
+channel and receiver. End the separate configuration/grants route at the receiver.
+
+Inputs remain the existing accepted host presentation; outputs remain the same
+drill-in signals. Backend configuration, public APIs, lifecycle, serialization,
+dependencies and registration are unchanged. No new constants or scientific
+implementations are required. The only code owners are this upstream QML view
+and its existing `apps/qt/tests/upstream/tst_upstream_workbench.qml` cases.
+
+Acceptance uses the complete changed startup-view test file (both arrow routes,
+reference planes, all block interactions, themes and narrow scrolling), relevant
+shell compatibility checks, formatting/API boundary and documentation checks,
+an optimized Qt build and actual owned VM-window captures. Backend, Python
+wheels, CLI and packaging suites are not required for presentation-only geometry.
+
+Executed validation (2026-11-25): the complete changed startup-view file passes
+13 QML records and the shell directory passes 60, with no failures or skips.
+Both arrows point from CM toward CMTS, with distinct control/measurement/
+verification roles and C/H/C×H planes retained. Tests exercise every drill-in,
+both themes, keyboard/focus return and real narrow scrollbar dragging. Two
+unchanged `activeFocusOnTab` warnings occur in the shell contextual-help case.
+Qt formatting, final API boundary (zero scientific dependencies/legacy files),
+current feature-documentation, integration-traceability, generated Python-guide
+consistency and diff checks pass. No Rust changes require a new Clippy run.
+
+The optimized native build passes in 2m 07s. Actual owned VM-window capture and
+real pointer selection verify the reversed canvas and CMTS receiver connection;
+the downstream image remains byte-identical to the preceding candidate. Dark
+guide and README images are refreshed from unaltered native pixels. The standard
+startup presentation-limit notice remains visible; its cause is uninvestigated
+and this presentation unit makes no new scientific acceptance claim.
+
+Executed and not-required checks, logs, fixture renders and exact source/binary/
+image identities remain under ignored
+`docs/development/local/unified-qt-workbench/upstream-flow/`. Installed, Windows
+and hosted validation were not executed. Historical UIU and prior refinement
+completion states remain unchanged.

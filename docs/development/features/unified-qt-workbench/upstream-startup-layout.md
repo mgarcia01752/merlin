@@ -14,7 +14,17 @@ preserves the approved presentation and connector semantics.
 
 ## Subsequent presentation refinement
 
-On 2026-11-25 the user requested the same canvas framing as Downstream and
+The latest 2026-11-25 request reverses the canvas to **CMTS Receiver ← Channel
+Simulator ← CM Transmitter** and connects CMTS Configuration to CMTS Receiver.
+It supersedes the earlier transmitter-only wire refinement described below.
+PRBS blocks follow their stages, correction C remains before physical H, and
+received C×H stays at the channel/receiver boundary. Backend TX/RX configuration
+and scientific processing order are unchanged. See
+[UI-US-LAYOUT-02](../../checklist.md#task-ui-us-layout-02) and its
+[design](design.md#ui-us-layout-02-reversed-canvas-and-receiver-side-control).
+The original approval below is retained as historical input.
+
+Earlier on 2026-11-25 the user requested the same canvas framing as Downstream and
 omission of the explicit CMTS Configuration → CMTS Receiver connector. The
 visible control route still reaches CM Transmitter; corresponding receiver
 configuration remains implicit within the CMTS group. This visual refinement

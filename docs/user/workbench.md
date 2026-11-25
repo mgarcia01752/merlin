@@ -80,10 +80,10 @@ remain above the tabs. PRBS-RX opens a structured
 
 ![Downstream workbench with its selected folder tab](../images/workbench/unified-downstream-dark.png)
 
-The Upstream tab shows the approved CM transmitter → channel → CMTS receiver
-layout with the same canvas framing as Downstream. Its CMTS control connector
-ends at CM Transmitter; receiver-side configuration is implicit in the CMTS
-group. Its [configuration editors](upstream-workbench.md) load a native upstream
+The Upstream tab shows **CMTS Receiver ← Channel Simulator ← CM Transmitter**
+with the same canvas framing as Downstream. Samples travel from the CM on the
+right to the CMTS on the left. The separate CMTS Configuration group connects
+to CMTS Receiver. Its [configuration editors](upstream-workbench.md) load a native upstream
 JSON document and apply supported settings through Rust validation. The shared
 controls run upstream simulation; PRBS-RX shows its actual independent recovery
 and partial-report coverage. See [upstream execution](upstream-workbench.md#run-and-inspect-results)
