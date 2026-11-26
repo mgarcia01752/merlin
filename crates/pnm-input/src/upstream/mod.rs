@@ -6,6 +6,8 @@
 mod association;
 mod pre_eq;
 mod rxmer;
+mod rxmer_format;
+mod synthetic_rxmer;
 mod ucd;
 mod ucd_projection;
 pub use association::{
@@ -15,6 +17,10 @@ use docsis_ofdma::api::Iq;
 pub use docsis_ofdma::api::{ApiError, ApiResult, CaptureFailure};
 pub use pre_eq::{PreEqCapture, PreEqCaptureKind, PreEqHeader};
 pub use rxmer::{RxmerCapture, RxmerHeader};
+pub use synthetic_rxmer::{
+    SyntheticRxmerCapture, SyntheticRxmerRequest, SyntheticRxmerValues,
+    MAX_SYNTHETIC_RXMER_REQUEST_BYTES,
+};
 pub use ucd::{UcdBurst, UcdCapture, UcdHeader, UcdTlv};
 pub use ucd_projection::reassemble_ucd;
 

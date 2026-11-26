@@ -38,6 +38,13 @@ infer CM/CCAP identity, resample grids or reinterpret corrective C as physical H
 See [measurement admission](../upstream/measurements.md) for supported composition,
 source-time and corresponding-probe constraints.
 
+For offline synthetic inputs, use
+`SyntheticRxmerCapture.from_json(request_json)` and retain both
+`original_bytes()` and `to_json()`. The native generator records synthetic
+origin and never starts a simulation or contacts a device. The
+[generator guide](../upstream/synthetic-rxmer.md) documents the request, limits,
+paired Rust/Python examples and future parser follow-up.
+
 ## Control and errors
 
 The common RunControl is the existing downstream stop token. An upstream

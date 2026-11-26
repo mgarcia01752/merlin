@@ -1,0 +1,39 @@
+{
+  "format": "merlin.upstream.synthetic-rxmer-request",
+  "schema_version": 1,
+  "capture_time_epoch_seconds": 1700000000,
+  "if_index": 102,
+  "ccap_id": "synthetic-cmts.merlin.invalid",
+  "rpd_id": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "rpd_port": 0,
+  "cm_mac": [
+    2,
+    0,
+    0,
+    0,
+    0,
+    1
+  ],
+  "number_of_averages": 1,
+  "pre_eq_enabled": true,
+  "subcarrier_zero_hz": 5000000,
+  "first_active_subcarrier": 256,
+  "subcarrier_spacing_khz": 25,
+  "values": {
+    "kind": "flat",
+    "mer_db": 35.0,
+    "count": 1024,
+    "missing_subcarriers": [
+      320,
+      321
+    ]
+  },
+  "range_policy": "reject"
+}

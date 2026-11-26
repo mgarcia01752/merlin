@@ -12,16 +12,8 @@ use serde::Serialize;
 use sha2::{Digest, Sha256};
 use std::sync::Arc;
 
-const FILE_TYPE: [u8; 4] = [0x50, 0x4e, 0x4e, 0x69];
-// Table 410: fixed major2 header, not a legacy unversioned PNM header.
-const HEADER_BYTES: usize = 297;
-const CCAP_ID_START: usize = 14;
-const CCAP_ID_END: usize = 270;
-const SPACING_OFFSET: usize = 292;
-const DATA_LENGTH_OFFSET: usize = 293;
-// Application geometry/budget, not a universal PNM file-size requirement.
-const MAX_DATA_BYTES: usize = 4096;
-const MAX_FILE_BYTES: usize = HEADER_BYTES + MAX_DATA_BYTES;
+use super::rxmer_format::*;
+use crate::common::rxmer::{MISSING_VALUE, STEPS_PER_DB};
 
 /// Original major2 file fields, borrowed immutably from a decoded observation.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
@@ -114,20 +106,20 @@ impl RxmerCapture {
         if bytes[..4] != FILE_TYPE {
             return Err(error(CaptureFailure::Unsupported, "rxmer.file_type", 0));
         }
-        if bytes[4] != 2 {
-            return Err(error(CaptureFailure::Unsupported, "rxmer.major_version", 4));
+        if bytes[MAJOR_OFFSET] != MAJOR_VERSION {
+            return Err(error(
+                CaptureFailure::Unsupported,
+                "rxmer.major_version",
+                MAJOR_OFFSET,
+            ));
         }
-        let fft_len = match bytes[SPACING_OFFSET] {
-            25 => 4096,
-            50 => 2048,
-            _ => {
-                return Err(error(
-                    CaptureFailure::Unsupported,
-                    "rxmer.subcarrier_spacing",
-                    SPACING_OFFSET,
-                ))
-            }
-        };
+        let fft_len = fft_len(bytes[SPACING_OFFSET]).ok_or_else(|| {
+            error(
+                CaptureFailure::Unsupported,
+                "rxmer.subcarrier_spacing",
+                SPACING_OFFSET,
+            )
+        })?;
         let declared = unsigned_int(bytes, DATA_LENGTH_OFFSET);
         let count = usize::try_from(declared).map_err(|_| {
             error(
@@ -147,38 +139,38 @@ impl RxmerCapture {
         if HEADER_BYTES + count != bytes.len() {
             return Err(invalid("rxmer.data_length", DATA_LENGTH_OFFSET));
         }
-        let first = unsigned_short(bytes, 290);
+        let first = unsigned_short(bytes, FIRST_CARRIER_OFFSET);
         if usize::from(first) >= fft_len || usize::from(first) + count > fft_len {
-            return Err(invalid("rxmer.subcarrier_grid", 290));
+            return Err(invalid("rxmer.subcarrier_grid", FIRST_CARRIER_OFFSET));
         }
         if !bytes[CCAP_ID_START..CCAP_ID_END].contains(&0) {
             return Err(invalid("rxmer.ccap_id_terminator", CCAP_ID_START));
         }
         let header = RxmerHeader {
-            major_version: bytes[4],
-            minor_version: bytes[5],
-            capture_time_epoch_seconds: unsigned_int(bytes, 6),
-            if_index: unsigned_int(bytes, 10),
+            major_version: bytes[MAJOR_OFFSET],
+            minor_version: bytes[MINOR_OFFSET],
+            capture_time_epoch_seconds: unsigned_int(bytes, TIME_OFFSET),
+            if_index: unsigned_int(bytes, INTERFACE_OFFSET),
             ccap_id_raw: bytes[CCAP_ID_START..CCAP_ID_END].to_vec(),
-            rpd_id: bytes[270..276]
+            rpd_id: bytes[RPD_ID_START..RPD_ID_END]
                 .try_into()
-                .map_err(|_| invalid("rxmer.rpd_id", 270))?,
-            rpd_port: bytes[276],
-            cm_mac: bytes[277..283]
+                .map_err(|_| invalid("rxmer.rpd_id", RPD_ID_START))?,
+            rpd_port: bytes[RPD_PORT_OFFSET],
+            cm_mac: bytes[CM_MAC_START..CM_MAC_END]
                 .try_into()
-                .map_err(|_| invalid("rxmer.cm_mac", 277))?,
-            number_of_averages: unsigned_short(bytes, 283),
-            pre_eq_on_off: bytes[285],
-            subcarrier_zero_hz: unsigned_int(bytes, 286),
+                .map_err(|_| invalid("rxmer.cm_mac", CM_MAC_START))?,
+            number_of_averages: unsigned_short(bytes, AVERAGES_OFFSET),
+            pre_eq_on_off: bytes[PRE_EQ_OFFSET],
+            subcarrier_zero_hz: unsigned_int(bytes, ZERO_FREQUENCY_OFFSET),
             first_active_subcarrier: first,
             subcarrier_spacing_khz: bytes[SPACING_OFFSET],
             data_length_bytes: declared,
         };
         let readings_db = bytes[HEADER_BYTES..]
             .iter()
-            .map(|value| match value {
-                255 => None,
-                value => Some(f64::from(*value) * 0.25),
+            .map(|value| match *value {
+                MISSING_VALUE => None,
+                value => Some(f64::from(value) / STEPS_PER_DB),
             })
             .collect();
         Ok(Self {

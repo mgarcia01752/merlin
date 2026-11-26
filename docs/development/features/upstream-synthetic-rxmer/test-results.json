@@ -1,0 +1,541 @@
+{
+  "schema_version": 1,
+  "baseline_revision": "44f599cf132b299885dcc8e64cd46fedd818e548",
+  "scope": "Focused synthetic RxMER generation and affected compatibility; installed Linux x86_64 CPython 3.10, not field interoperability or new hosted/release acceptance. Full pnm-input run preceded the additional shipped-fixture test; final targeted run includes that test and expanded invalid-version cases.",
+  "source_sha256": {
+    "bindings/python/python/merlin/upstream.py": "496620e35b51f36a5d76b71215bc9985040991cd89792afad30a92d6257d2ac0",
+    "bindings/python/python/merlin/upstream.pyi": "9edd28395ff8df1b8d6a9c0442ecfcfde1c1302868fd912987ee32b40975c885",
+    "bindings/python/src/upstream/mod.rs": "7a240af84ab95b84589e9e134a0929f31b8477f443d66cf2a7c223913ba4c5a8",
+    "bindings/python/src/upstream/synthetic_rxmer.rs": "ee1d4857845602215f4b0b17ff2ea1d76243b574e51159160201a516f1b35aa1",
+    "bindings/python/tests/test_upstream_synthetic_rxmer.py": "b6f6d349369503644ba545a5df7902f178d8e72a846d7d7181b168db33504aab",
+    "crates/pnm-input/src/common/mod.rs": "9dff7b907a0e4252a48500aa155c77b76f938a7a80df87edac962320051374da",
+    "crates/pnm-input/src/common/rxmer.rs": "7351f0dfb7445023295645dee81e75dac22dcad359023800e8c517401e09233d",
+    "crates/pnm-input/src/rxmer_export/mod.rs": "063edcbbaea72ecf8f54efef19858fbbf987c36e71946668a34a6998ae78d9c6",
+    "crates/pnm-input/src/upstream/rxmer.rs": "e608f597a245579468284527f52c67d5e74b67a645a8dc184428140067f1e442",
+    "crates/pnm-input/src/upstream/rxmer_format.rs": "54cb2f29c13ee1b8ac3b48b0186232fdbfc5503885ecb0ed4b15489ce385f768",
+    "crates/pnm-input/src/upstream/synthetic_rxmer.rs": "5a2e2a7e2887ada19c80cefeb06423af26e770cf5c7d5495a2ad31b11cc1b5d7",
+    "crates/pnm-input/tests/upstream_synthetic_rxmer.rs": "083a7bbb874be9ac4bea80fecfa85dd16f3f8a4ce7cc306cfa94a2b7432b8f01",
+    "examples/api/python/generate_upstream_rxmer.py": "1ea4d916db8379a3e3af3ea8dbabd9b480e58e6358322569e325f4e52f3b01b6",
+    "examples/api/rust/generate_upstream_rxmer.rs": "62cffa946c465abc6167da2889869d14a1255e7603f5868963f5ff07c91227f7",
+    "examples/measurements/upstream/synthetic-rxmer/us-25khz/synthetic-cmts-rxmer.bin": "ff31067322a516be49bdea864c448ab3a402aa3f5700c0890c473a8df16b1f81",
+    "examples/measurements/upstream/synthetic-rxmer/us-25khz/synthetic-cmts-rxmer.bin.merlin.json": "2899ac47ff613a9983bb15dd494cc1742354a966d0c8a46c0c16ecccf664c41a",
+    "examples/measurements/upstream/synthetic-rxmer/us-25khz.json": "d168fbdbfb37026b5791b36acb28bb993d9ad484962e5506cb02a3d91af69764",
+    "examples/measurements/upstream/synthetic-rxmer/us-50khz/synthetic-cmts-rxmer.bin": "2a29250a026e10dc34c0e4bb36ab55a89a2e7708802593f416f6f4c9f311f10b",
+    "examples/measurements/upstream/synthetic-rxmer/us-50khz/synthetic-cmts-rxmer.bin.merlin.json": "709a6c8bef513c1ac5fcca2f1e7453f6d9a0a594493c6a92b07b62392e940ce7",
+    "examples/measurements/upstream/synthetic-rxmer/us-50khz.json": "0238e31e46719968d7b13cfb3b742de5a6763157792e6bf3b3658756413bdc35",
+    "tools/testing/native_api.py": "fa884183f3c4bc262d23015543af83d1d9e8a7d14f5934b5dc4d344e924913ed"
+  },
+  "wheel_sha256": "035ce3550308f10f83f2595c0356bbbafa63266e2cceadbf8011e49777b7e7b1",
+  "runs": [
+    {
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "-p",
+        "pnm-input",
+        "--test",
+        "upstream_synthetic_rxmer",
+        "--test",
+        "upstream_rxmer",
+        "--test",
+        "rxmer_export",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.901225465000607,
+      "passed": 16,
+      "cases": [
+        {
+          "test_file": "crates/pnm-input/tests/rxmer_export.rs",
+          "qualified_test_case": "independent_golden_header_payload_and_decoder_roundtrip"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/rxmer_export.rs",
+          "qualified_test_case": "strict_guard_clamp_quantization_and_nonfinite_are_independent_of_ui"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/rxmer_export.rs",
+          "qualified_test_case": "json_preserves_full_precision_missing_values_and_metadata_without_binary_limits"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/rxmer_export.rs",
+          "qualified_test_case": "create_new_files_manifest_batch_cancellation_and_failure"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+          "qualified_test_case": "every_raw_reading_encoding_and_interior_missing_positions"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+          "qualified_test_case": "frozen_25khz_vendor_minor_integrated_ccap_and_exact_subgrid"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+          "qualified_test_case": "truncated_trailing_wrong_type_version_and_declared_lengths"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+          "qualified_test_case": "frozen_50khz_metadata_offsets_values_nulls_and_hash"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+          "qualified_test_case": "exact_file_grid_and_empty_observation_boundaries"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_rxmer.rs",
+          "qualified_test_case": "raw_minor_flag_identifier_padding_and_original_lifetimes"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_synthetic_rxmer.rs",
+          "qualified_test_case": "literal_header_and_quarter_db_octets_match_ossi"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_synthetic_rxmer.rs",
+          "qualified_test_case": "explicit_clamping_rounding_and_source_immutability"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_synthetic_rxmer.rs",
+          "qualified_test_case": "invalid_metadata_unknown_fields_and_nonfinite_values_reject"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_synthetic_rxmer.rs",
+          "qualified_test_case": "both_spacings_preserve_physical_missing_positions_and_originals"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_synthetic_rxmer.rs",
+          "qualified_test_case": "shipped_synthetic_examples_match_requests_and_provenance"
+        },
+        {
+          "test_file": "crates/pnm-input/tests/upstream_synthetic_rxmer.rs",
+          "qualified_test_case": "malformed_missing_extents_and_capacity_bounds_reject"
+        }
+      ]
+    },
+    {
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_upstream_synthetic_rxmer.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.050713330012513325,
+      "passed": 3,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_upstream_synthetic_rxmer.py",
+          "qualified_test_case": "SyntheticRxmerTests.test_installed_native_matches_independent_rust_outputs_and_owns_results"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_synthetic_rxmer.py",
+          "qualified_test_case": "SyntheticRxmerTests.test_invalid_metadata_and_resource_errors_remain_structured"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_synthetic_rxmer.py",
+          "qualified_test_case": "SyntheticRxmerTests.test_literal_scaling_missing_values_and_conversion_policy"
+        }
+      ]
+    },
+    {
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_upstream_rxmer_capture.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.07163785200100392,
+      "passed": 2,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_upstream_rxmer_capture.py",
+          "qualified_test_case": "RxmerCaptureTests.test_native_actual_rust_process_parity_metadata_readings_and_lifetimes"
+        },
+        {
+          "test_file": "bindings/python/tests/test_upstream_rxmer_capture.py",
+          "qualified_test_case": "RxmerCaptureTests.test_native_unknown_metadata_and_structured_rejections"
+        }
+      ]
+    },
+    {
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_rxmer_export.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.10156516102142632,
+      "passed": 1,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_rxmer_export.py",
+          "qualified_test_case": "RxmerExportTests.test_shared_conversion_guards_and_lossless_json"
+        }
+      ]
+    },
+    {
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/installed/bin/python",
+        "-I",
+        "-B",
+        "-c",
+        "import sys,unittest\nsys.path.insert(0, sys.argv[1])\ntests = ['test_installed_imports_and_legacy_identity', 'test_discovery_and_typing_payload', 'test_stub_signatures_and_root_alias']\nsuite = unittest.defaultTestLoader.loadTestsFromNames(['test_namespaces.NamespaceImports.' + name for name in tests])\nresult = unittest.TextTestRunner(verbosity=2).run(suite)\nraise SystemExit(not result.wasSuccessful())\n",
+        "/home/dev01/Projects/merlin/bindings/python/tests"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.05425742900115438,
+      "passed": 3,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ]
+    }
+  ],
+  "validation_checks": {
+    "full_pnm_input": {
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "-p",
+        "pnm-input",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 163.12268226398737,
+      "passed": 73
+    },
+    "pnm_clippy": {
+      "command": [
+        "scripts/cargo-local.sh",
+        "clippy",
+        "-p",
+        "pnm-input",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 17.104178752022563
+    },
+    "binding_clippy": {
+      "command": [
+        "scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "bindings/python/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 30.234147825016407
+    },
+    "workspace_format": {
+      "command": [
+        "scripts/cargo-local.sh",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.9173184819810558
+    },
+    "binding_format": {
+      "command": [
+        "scripts/cargo-local.sh",
+        "fmt",
+        "--manifest-path",
+        "bindings/python/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.0012840509880334
+    },
+    "examples_and_installed_validation": [
+      {
+        "label": "rust-us-25khz",
+        "command": [
+          "scripts/cargo-local.sh",
+          "run",
+          "-p",
+          "pnm-input",
+          "--locked",
+          "--example",
+          "generate_upstream_rxmer",
+          "--",
+          "/home/dev01/Projects/merlin/examples/measurements/upstream/synthetic-rxmer/us-25khz.json",
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/rust-output/us-25khz"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "elapsed_seconds": 0.13796532698324881
+      },
+      {
+        "label": "rust-us-50khz",
+        "command": [
+          "scripts/cargo-local.sh",
+          "run",
+          "-p",
+          "pnm-input",
+          "--locked",
+          "--example",
+          "generate_upstream_rxmer",
+          "--",
+          "/home/dev01/Projects/merlin/examples/measurements/upstream/synthetic-rxmer/us-50khz.json",
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/rust-output/us-50khz"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "elapsed_seconds": 0.10255422801128589
+      },
+      {
+        "label": "rust-inspect",
+        "command": [
+          "scripts/cargo-local.sh",
+          "run",
+          "-p",
+          "pnm-input",
+          "--locked",
+          "--example",
+          "inspect_rxmer"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "elapsed_seconds": 0.08639746799599379
+      },
+      {
+        "label": "install",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/installed/bin/python",
+          "-I",
+          "-m",
+          "pip",
+          "install",
+          "--no-index",
+          "--no-deps",
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/wheels-final/merlin_ofdm-0.5.1-cp310-cp310-linux_x86_64.whl"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "elapsed_seconds": 0.5904053270060103
+      },
+      {
+        "label": "test_upstream_synthetic_rxmer",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_upstream_synthetic_rxmer.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "elapsed_seconds": 0.050713330012513325
+      },
+      {
+        "label": "test_upstream_rxmer_capture",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_upstream_rxmer_capture.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "elapsed_seconds": 0.07163785200100392
+      },
+      {
+        "label": "test_rxmer_export",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_rxmer_export.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "elapsed_seconds": 0.10156516102142632
+      },
+      {
+        "label": "namespaces",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/installed/bin/python",
+          "-I",
+          "-B",
+          "-c",
+          "import sys,unittest\nsys.path.insert(0, sys.argv[1])\ntests = ['test_installed_imports_and_legacy_identity', 'test_discovery_and_typing_payload', 'test_stub_signatures_and_root_alias']\nsuite = unittest.defaultTestLoader.loadTestsFromNames(['test_namespaces.NamespaceImports.' + name for name in tests])\nresult = unittest.TextTestRunner(verbosity=2).run(suite)\nraise SystemExit(not result.wasSuccessful())\n",
+          "/home/dev01/Projects/merlin/bindings/python/tests"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "elapsed_seconds": 0.05425742900115438
+      },
+      {
+        "label": "native-inventory",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/installed/bin/python",
+          "-I",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/native-exports.json"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "elapsed_seconds": 0.127933462994406
+      },
+      {
+        "label": "python-us-25khz",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/installed/bin/python",
+          "-I",
+          "/home/dev01/Projects/merlin/examples/api/python/generate_upstream_rxmer.py",
+          "/home/dev01/Projects/merlin/examples/measurements/upstream/synthetic-rxmer/us-25khz.json",
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/python-us-25khz"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "elapsed_seconds": 0.03799958899617195
+      },
+      {
+        "label": "python-no-clobber-us-25khz",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/installed/bin/python",
+          "-I",
+          "/home/dev01/Projects/merlin/examples/api/python/generate_upstream_rxmer.py",
+          "/home/dev01/Projects/merlin/examples/measurements/upstream/synthetic-rxmer/us-25khz.json",
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/python-us-25khz"
+        ],
+        "exit_code": 1,
+        "expected_exit_code": 1,
+        "elapsed_seconds": 0.032516946987016127
+      },
+      {
+        "label": "rust-no-clobber-us-25khz",
+        "command": [
+          "scripts/cargo-local.sh",
+          "run",
+          "-p",
+          "pnm-input",
+          "--locked",
+          "--example",
+          "generate_upstream_rxmer",
+          "--",
+          "/home/dev01/Projects/merlin/examples/measurements/upstream/synthetic-rxmer/us-25khz.json",
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/rust-output/us-25khz"
+        ],
+        "exit_code": 1,
+        "expected_exit_code": 1,
+        "elapsed_seconds": 0.11030110798310488
+      },
+      {
+        "label": "python-us-50khz",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/installed/bin/python",
+          "-I",
+          "/home/dev01/Projects/merlin/examples/api/python/generate_upstream_rxmer.py",
+          "/home/dev01/Projects/merlin/examples/measurements/upstream/synthetic-rxmer/us-50khz.json",
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/python-us-50khz"
+        ],
+        "exit_code": 0,
+        "expected_exit_code": 0,
+        "elapsed_seconds": 0.04212721099611372
+      },
+      {
+        "label": "python-no-clobber-us-50khz",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/installed/bin/python",
+          "-I",
+          "/home/dev01/Projects/merlin/examples/api/python/generate_upstream_rxmer.py",
+          "/home/dev01/Projects/merlin/examples/measurements/upstream/synthetic-rxmer/us-50khz.json",
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/python-us-50khz"
+        ],
+        "exit_code": 1,
+        "expected_exit_code": 1,
+        "elapsed_seconds": 0.03180745700956322
+      },
+      {
+        "label": "rust-no-clobber-us-50khz",
+        "command": [
+          "scripts/cargo-local.sh",
+          "run",
+          "-p",
+          "pnm-input",
+          "--locked",
+          "--example",
+          "generate_upstream_rxmer",
+          "--",
+          "/home/dev01/Projects/merlin/examples/measurements/upstream/synthetic-rxmer/us-50khz.json",
+          "/home/dev01/Projects/merlin/docs/development/local/upstream-synthetic-rxmer/verification-final/rust-output/us-50khz"
+        ],
+        "exit_code": 1,
+        "expected_exit_code": 1,
+        "elapsed_seconds": 0.11209541899734177
+      }
+    ]
+  },
+  "not_required": {
+    "full_workspace_science_and_cli": "No PHY/FEC/session/CLI implementation changed; complete affected adapter crate and targeted downstream export coverage executed.",
+    "qt_qml": "No Qt registration, presentation, lifecycle or workbench schema changed.",
+    "other_platforms_and_release": "No release/publication performed; hosted acceptance remains separate."
+  }
+}

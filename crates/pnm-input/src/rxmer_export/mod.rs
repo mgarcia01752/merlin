@@ -6,15 +6,13 @@
 //! big-endian fields follow pinned Apache PNM 5fbd556 reader implementation.
 //! Rounding/clamping are explicit export policies, never changes to source data.
 mod files;
+use crate::common::rxmer::{quantize, MISSING_VALUE};
 use docsis_ofdm_fec::scenario::RxMerFrame;
 pub use files::{save, save_with_format, ExportDestination};
 use serde::{Deserialize, Serialize};
 use std::fmt;
 const HEADER_LENGTH: usize = 28;
 const HEADER_PREFIX: [u8; 6] = [0x50, 0x4e, 0x4e, 0x04, 1, 0];
-const MAXIMUM_MER_DB: f64 = 63.5;
-const STEPS_PER_DB: f64 = 4.0;
-const MISSING_VALUE: u8 = 0xff;
 /// Maximum collection captures; application limit, not an encoded PNM limit.
 pub const MAX_EXPORT_CAPTURES: usize = 256;
 /// Maximum total original-grid samples admitted by one export.
@@ -180,17 +178,17 @@ pub fn encode(frame: &RxMerFrame, policy: RangePolicy) -> Result<EncodedRxmer, E
             summary.missing += 1;
             continue;
         };
-        let bounded = value.clamp(0.0, MAXIMUM_MER_DB);
+        let quantized = quantize(*value, policy).map_err(|_| {
+            let mut error = failure("out_of_range", format!("{value:.6} dB is outside PNM range 0–63.5 dB. Adjust the recipe or explicitly enable Clamp to PNM range."));
+            error.subcarrier = Some(usize::from(grid.first_subcarrier_index) + index);
+            error
+        })?;
+        let bounded = quantized.bounded_db;
         if *value != bounded {
-            if matches!(policy, RangePolicy::Reject) {
-                let mut error = failure("out_of_range", format!("{value:.6} dB is outside PNM range 0–63.5 dB. Adjust the recipe or explicitly enable Clamp to PNM range."));
-                error.subcarrier = Some(usize::from(grid.first_subcarrier_index) + index);
-                return Err(error);
-            }
             summary.clipped += 1;
         }
-        let encoded = (bounded * STEPS_PER_DB).round() as u8;
-        let decoded = f64::from(encoded) / STEPS_PER_DB;
+        let encoded = quantized.byte;
+        let decoded = quantized.decoded_db;
         let rounding = (decoded - bounded).abs();
         if rounding > 0.0 {
             summary.rounded += 1;

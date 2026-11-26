@@ -4,12 +4,12 @@ Subordinate to [API architecture](../../../architecture.md#unified-rust-python-a
 [requirements](../../../requirements.md#req-com-api-09) and the
 [official checklist](../../checklist.md#int-rust-01). This is the single operation
 matrix required by master §7. The [full row data](operation-matrix.json) now records
-364 explicit public Rust operations and 373 installed native Python entries with
+368 explicit public Rust operations and 377 installed native Python entries with
 all seventeen cells, expanded macro methods, adapter exports and deliberate language differences. Shared contract cells
 resolve through named definitions in that same data file. The session table below
 is a readable subset of this one matrix. [Native operation acceptance](python-operation-evidence.json)
 checks every installed constructor, method, property and constant, exact signatures,
-88 directional/common class exports and 59 preserved legacy root exports. Named
+88 historical directional/common class exports and 59 preserved legacy root exports. Named
 owner regressions establish behavioral scope; metadata alone is not scientific
 execution or exhaustive getter-branch coverage.
 
@@ -18,6 +18,18 @@ roundtrip and retain exact named historical MERLIN component cases. The
 [namespace run records](namespace-test-results.json) retain actual compatibility,
 engine/lifecycle and analysis-only execution. Historical source results are not
 substituted for these MERLIN runs.
+
+## Subsequent focused extensions
+
+The operation matrix includes subsequent additive operations, each with its own
+requirement, task and executed validation. Historical run records and compiler/
+native source snapshots retain their original scope; the extension does not
+rewrite those earlier acceptance records. The synthetic RxMER extension brings
+the current directional/common class count to 89.
+
+| Requirement / owner | Rust | Native Python | Contract / validation |
+| --- | --- | --- | --- |
+| [REQ-US-RXMER-SYN-01](../../../requirements.md#req-us-rxmer-syn-01), `pnm-input::upstream` | `SyntheticRxmerCapture::generate(&SyntheticRxmerRequest) -> ApiResult<Self>`; `from_json(&str) -> ApiResult<Self>`; `capture(&self) -> &RxmerCapture`; `to_json(&self) -> ApiResult<String>`; `MAX_SYNTHETIC_RXMER_REQUEST_BYTES: usize` | `merlin.upstream.SyntheticRxmerCapture.from_json(request: str)`; `original_bytes() -> bytes`; `to_json() -> str`; `SyntheticRxmerCapture.MAX_REQUEST_BYTES: int` | Rust owns bounds, conversion, errors and generation. Python JSON maps the typed Rust request, returns owned binary instead of a borrow and performs no science. Neither starts a session. [US-RXMER-SYN-01 design/evidence](../upstream-synthetic-rxmer/design.md), literal Rust vectors and independent installed-wheel/example parity. |
 
 <a id="namespace-proposal-for-review"></a>
 ## Selected namespace implementation

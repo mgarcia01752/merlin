@@ -777,6 +777,9 @@ MERLIN execution: [exact implementation/test record](development/features/ofdma/
 
 #### REQ-US-PNM-01
 
+Related extension: [REQ-US-RXMER-SYN-01](#req-us-rxmer-syn-01) generates
+explicitly synthetic files without replacing capture admission.
+
 Imported observations SHALL preserve original bytes, hashes, timestamps, exact grids, nulls, identities, units and reference/provenance.
 
 Acceptance: Original input remains recoverable after decode/selection/replay; malformed, incompatible and oversized inputs reject without replacing accepted state; upstream formats need pinned evidence and lawful fixtures.
@@ -2353,3 +2356,18 @@ only; the final integration/documentation gates remain open.
 | <a id="ds-doc-r3"></a>**DOC-R3** | [original clause](development/features/unified-backend/design.md#requirements-and-acceptance); [architecture](architecture.md#unified-backend-integration); [canonical documents](development/features/unified-backend/design.md#architecture-and-file-ownership) | [INT-DOC-01](development/checklist.md#int-doc-01); [documentation evidence](development/features/unified-backend/validation.md)  Documentation delivery: [DOC-ORG-01](development/checklist.md#doc-org-01). |
 | <a id="ds-doc-r4"></a>**DOC-R4** | [original clause](development/features/unified-backend/design.md#requirements-and-acceptance); [architecture](architecture.md#unified-backend-integration); [canonical documents](development/features/unified-backend/design.md#architecture-and-file-ownership) | [INT-DOC-01](development/checklist.md#int-doc-01); [documentation evidence](development/features/unified-backend/validation.md) |
 | <a id="ds-doc-r5"></a>**DOC-R5** | [original clause](development/features/unified-backend/design.md#requirements-and-acceptance); [architecture](architecture.md#unified-backend-integration); [canonical documents](development/features/unified-backend/design.md#architecture-and-file-ownership) | [INT-DOC-01](development/checklist.md#int-doc-01); [documentation evidence](development/features/unified-backend/validation.md) |
+
+### Synthetic upstream RxMER output
+
+#### REQ-US-RXMER-SYN-01
+
+MERLIN MUST generate bounded synthetic CMTS RxMER files using pinned CCAP-OSSI
+I18 Table 410 and quarter-dB/null semantics, preserving physical carrier order
+and explicit metadata. Rust and native Python MUST share validation, conversion
+and provenance. Generated data MUST remain labelled synthetic through its artifact
+and exported sidecar; generation MUST NOT imply measured acquisition, averaging,
+association or simulation. Existing downstream exports and upstream decoding
+MUST remain compatible. Output examples MUST refuse existing destinations.
+Owner: [PNM architecture](architecture.md#unified-pnm-and-capture-admission).
+Delivery: [US-RXMER-SYN-01](development/checklist.md#task-us-rxmer-syn-01).
+Implementation/tests and acceptance: [design](development/features/upstream-synthetic-rxmer/design.md).

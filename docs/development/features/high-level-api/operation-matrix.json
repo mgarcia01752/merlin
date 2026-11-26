@@ -58,7 +58,9 @@
     "status.common": "Implemented Rust shared contract and installed native common aliases/query; common cancellation reaches both directions.",
     "evidence.native": "python-test-results.json: actual installed native cases with fresh independent Rust process references; python-evidence.json records unit/platform/ownership scope. Class descriptor/signature discovery establishes availability; owner regressions establish the named behavioral scope, not every internal getter branch.",
     "status.native": "Implemented installed native operation/projection; named local contract tests pass. Windows and other interpreters remain unverified; final complete-workspace acceptance is separate.",
-    "errors.native": "Checked native argument conversion can raise TypeError/OverflowError/ValueError where applicable. Domain/admission/execution failures preserve Rust ApiError categories and structured details; property/constant inspection never fabricates a scientific outcome."
+    "errors.native": "Checked native argument conversion can raise TypeError/OverflowError/ValueError where applicable. Domain/admission/execution failures preserve Rust ApiError categories and structured details; property/constant inspection never fabricates a scientific outcome.",
+    "evidence.synthetic_rxmer": "../upstream-synthetic-rxmer/test-results.json: literal Rust header/scaling and error tests, complete pnm-input regression, actual installed native compatibility, and separately executed Rust/Python examples. No field interoperability claim.",
+    "units.synthetic_rxmer": "RxMER dB and quarter-dB octets, original physical carrier indices, spacing kHz, frequency Hz, unsigned Unix epoch seconds, explicit CM/CCAP/RPD/interface identities and finite byte/entry budgets."
   },
   "type_exports": {
     "downstream": [
@@ -731,6 +733,18 @@
       {
         "export": "pnm_input::upstream::RxmerHeader",
         "kind": "struct"
+      },
+      {
+        "export": "pnm_input::upstream::SyntheticRxmerCapture",
+        "kind": "struct"
+      },
+      {
+        "export": "pnm_input::upstream::SyntheticRxmerRequest",
+        "kind": "struct"
+      },
+      {
+        "export": "pnm_input::upstream::SyntheticRxmerValues",
+        "kind": "enum"
       },
       {
         "export": "pnm_input::upstream::UcdBurst",
@@ -17787,6 +17801,214 @@
       },
       "evidence": "evidence.ds",
       "status": "status.ds"
+    },
+    {
+      "direction": "upstream",
+      "rust_namespace": "pnm_input::upstream",
+      "python_namespace": "merlin.upstream",
+      "input_ownership": "ownership.borrowed",
+      "units": "units.synthetic_rxmer",
+      "error_behavior": "errors.us",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-US-RXMER-SYN-01",
+        "REQ-COM-API-09"
+      ],
+      "checklist": [
+        "US-RXMER-SYN-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::literal_header_and_quarter_db_octets_match_ossi",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::both_spacings_preserve_physical_missing_positions_and_originals",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::explicit_clamping_rounding_and_source_immutability",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::invalid_metadata_unknown_fields_and_nonfinite_values_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::malformed_missing_extents_and_capacity_bounds_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::shipped_synthetic_examples_match_requests_and_provenance"
+        ],
+        "python": {
+          "status": "actual installed native parity and structured errors",
+          "cases": [
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_installed_native_matches_independent_rust_outputs_and_owns_results",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_literal_scaling_missing_values_and_conversion_policy",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_invalid_metadata_and_resource_errors_remain_structured"
+          ]
+        }
+      },
+      "evidence": "evidence.synthetic_rxmer",
+      "status": "status.us",
+      "operation": "pnm_input::upstream::SyntheticRxmerCapture::generate",
+      "rust_type_method": {
+        "signature": "pub fn generate(request: &SyntheticRxmerRequest) -> ApiResult<Self>",
+        "source_file": "crates/pnm-input/src/upstream/synthetic_rxmer.rs",
+        "rustdoc": "pnm_input/upstream/struct.SyntheticRxmerCapture.html"
+      },
+      "python_type_method": {
+        "availability": "installed native JSON adapter",
+        "declaration": "SyntheticRxmerCapture.from_json(request)",
+        "native_operation": "merlin.upstream.SyntheticRxmerCapture.from_json"
+      },
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Owned generated bytes/provenance with preserved request. capture() is a Rust borrow; Python returns an owned binary copy that the existing RxmerCapture decoder can inspect. Typed generate maps through bounded JSON in Python, without a duplicate scientific implementation."
+      }
+    },
+    {
+      "direction": "upstream",
+      "rust_namespace": "pnm_input::upstream",
+      "python_namespace": "merlin.upstream",
+      "input_ownership": "ownership.borrowed",
+      "units": "units.synthetic_rxmer",
+      "error_behavior": "errors.us",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-US-RXMER-SYN-01",
+        "REQ-COM-API-09"
+      ],
+      "checklist": [
+        "US-RXMER-SYN-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::literal_header_and_quarter_db_octets_match_ossi",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::both_spacings_preserve_physical_missing_positions_and_originals",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::explicit_clamping_rounding_and_source_immutability",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::invalid_metadata_unknown_fields_and_nonfinite_values_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::malformed_missing_extents_and_capacity_bounds_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::shipped_synthetic_examples_match_requests_and_provenance"
+        ],
+        "python": {
+          "status": "actual installed native parity and structured errors",
+          "cases": [
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_installed_native_matches_independent_rust_outputs_and_owns_results",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_literal_scaling_missing_values_and_conversion_policy",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_invalid_metadata_and_resource_errors_remain_structured"
+          ]
+        }
+      },
+      "evidence": "evidence.synthetic_rxmer",
+      "status": "status.us",
+      "operation": "pnm_input::upstream::SyntheticRxmerCapture::from_json",
+      "rust_type_method": {
+        "signature": "pub fn from_json(input: &str) -> ApiResult<Self>",
+        "source_file": "crates/pnm-input/src/upstream/synthetic_rxmer.rs",
+        "rustdoc": "pnm_input/upstream/struct.SyntheticRxmerCapture.html"
+      },
+      "python_type_method": {
+        "availability": "installed native method/projection",
+        "declaration": "SyntheticRxmerCapture.from_json(request)",
+        "native_operation": "merlin.upstream.SyntheticRxmerCapture.from_json"
+      },
+      "report_contract": {
+        "rust_return": "ApiResult<Self>",
+        "scope": "Owned generated bytes/provenance with preserved request. capture() is a Rust borrow; Python returns an owned binary copy that the existing RxmerCapture decoder can inspect. Typed generate maps through bounded JSON in Python, without a duplicate scientific implementation."
+      }
+    },
+    {
+      "direction": "upstream",
+      "rust_namespace": "pnm_input::upstream",
+      "python_namespace": "merlin.upstream",
+      "input_ownership": "ownership.borrowed",
+      "units": "units.synthetic_rxmer",
+      "error_behavior": "errors.none",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-US-RXMER-SYN-01",
+        "REQ-COM-API-09"
+      ],
+      "checklist": [
+        "US-RXMER-SYN-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::literal_header_and_quarter_db_octets_match_ossi",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::both_spacings_preserve_physical_missing_positions_and_originals",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::explicit_clamping_rounding_and_source_immutability",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::invalid_metadata_unknown_fields_and_nonfinite_values_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::malformed_missing_extents_and_capacity_bounds_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::shipped_synthetic_examples_match_requests_and_provenance"
+        ],
+        "python": {
+          "status": "actual installed native parity and structured errors",
+          "cases": [
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_installed_native_matches_independent_rust_outputs_and_owns_results",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_literal_scaling_missing_values_and_conversion_policy",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_invalid_metadata_and_resource_errors_remain_structured"
+          ]
+        }
+      },
+      "evidence": "evidence.synthetic_rxmer",
+      "status": "status.us",
+      "operation": "pnm_input::upstream::SyntheticRxmerCapture::capture",
+      "rust_type_method": {
+        "signature": "pub fn capture(&self) -> &RxmerCapture",
+        "source_file": "crates/pnm-input/src/upstream/synthetic_rxmer.rs",
+        "rustdoc": "pnm_input/upstream/struct.SyntheticRxmerCapture.html"
+      },
+      "python_type_method": {
+        "availability": "installed native method/projection",
+        "declaration": "SyntheticRxmerCapture.original_bytes(self, /)",
+        "native_operation": "merlin.upstream.SyntheticRxmerCapture.original_bytes"
+      },
+      "report_contract": {
+        "rust_return": "&RxmerCapture",
+        "scope": "Owned generated bytes/provenance with preserved request. capture() is a Rust borrow; Python returns an owned binary copy that the existing RxmerCapture decoder can inspect. Typed generate maps through bounded JSON in Python, without a duplicate scientific implementation."
+      }
+    },
+    {
+      "direction": "upstream",
+      "rust_namespace": "pnm_input::upstream",
+      "python_namespace": "merlin.upstream",
+      "input_ownership": "ownership.borrowed",
+      "units": "units.synthetic_rxmer",
+      "error_behavior": "errors.us",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-US-RXMER-SYN-01",
+        "REQ-COM-API-09"
+      ],
+      "checklist": [
+        "US-RXMER-SYN-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::literal_header_and_quarter_db_octets_match_ossi",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::both_spacings_preserve_physical_missing_positions_and_originals",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::explicit_clamping_rounding_and_source_immutability",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::invalid_metadata_unknown_fields_and_nonfinite_values_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::malformed_missing_extents_and_capacity_bounds_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::shipped_synthetic_examples_match_requests_and_provenance"
+        ],
+        "python": {
+          "status": "actual installed native parity and structured errors",
+          "cases": [
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_installed_native_matches_independent_rust_outputs_and_owns_results",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_literal_scaling_missing_values_and_conversion_policy",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_invalid_metadata_and_resource_errors_remain_structured"
+          ]
+        }
+      },
+      "evidence": "evidence.synthetic_rxmer",
+      "status": "status.us",
+      "operation": "pnm_input::upstream::SyntheticRxmerCapture::to_json",
+      "rust_type_method": {
+        "signature": "pub fn to_json(&self) -> ApiResult<String>",
+        "source_file": "crates/pnm-input/src/upstream/synthetic_rxmer.rs",
+        "rustdoc": "pnm_input/upstream/struct.SyntheticRxmerCapture.html"
+      },
+      "python_type_method": {
+        "availability": "installed native method/projection",
+        "declaration": "SyntheticRxmerCapture.to_json(self, /)",
+        "native_operation": "merlin.upstream.SyntheticRxmerCapture.to_json"
+      },
+      "report_contract": {
+        "rust_return": "ApiResult<String>",
+        "scope": "Owned generated bytes/provenance with preserved request. capture() is a Rust borrow; Python returns an owned binary copy that the existing RxmerCapture decoder can inspect. Typed generate maps through bounded JSON in Python, without a duplicate scientific implementation."
+      }
     }
   ],
   "executed_records": [
@@ -17795,7 +18017,8 @@
     "docs/development/features/pnm-measurement-inputs/association-test-results.json",
     "docs/development/features/high-level-api/operation-test-results.json",
     "docs/development/features/high-level-api/python-test-results.json",
-    "docs/development/features/high-level-api/python-operation-test-results.json"
+    "docs/development/features/high-level-api/python-operation-test-results.json",
+    "docs/development/features/upstream-synthetic-rxmer/test-results.json"
   ],
   "python_operations": [
     {
@@ -40518,6 +40741,233 @@
       },
       "evidence": "evidence.native",
       "status": "status.native"
+    },
+    {
+      "direction": "upstream",
+      "rust_namespace": "pnm_input::upstream",
+      "python_namespace": "merlin.upstream",
+      "input_ownership": "ownership.borrowed",
+      "units": "units.synthetic_rxmer",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-US-RXMER-SYN-01",
+        "REQ-COM-API-09"
+      ],
+      "checklist": [
+        "US-RXMER-SYN-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::literal_header_and_quarter_db_octets_match_ossi",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::both_spacings_preserve_physical_missing_positions_and_originals",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::explicit_clamping_rounding_and_source_immutability",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::invalid_metadata_unknown_fields_and_nonfinite_values_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::malformed_missing_extents_and_capacity_bounds_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::shipped_synthetic_examples_match_requests_and_provenance"
+        ],
+        "python": {
+          "status": "actual installed native parity and structured errors",
+          "cases": [
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_installed_native_matches_independent_rust_outputs_and_owns_results",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_literal_scaling_missing_values_and_conversion_policy",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_invalid_metadata_and_resource_errors_remain_structured"
+          ]
+        }
+      },
+      "evidence": "evidence.synthetic_rxmer",
+      "status": "status.native",
+      "operation": "merlin.upstream.SyntheticRxmerCapture.MAX_REQUEST_BYTES",
+      "rust_type_method": {
+        "export": "pnm_input::upstream::SyntheticRxmerCapture",
+        "source_file": "bindings/python/src/upstream/synthetic_rxmer.rs",
+        "symbol": "PySyntheticRxmerCapture",
+        "signature": "pub const MAX_SYNTHETIC_RXMER_REQUEST_BYTES: usize",
+        "mapping": "Thin native checked conversion over the shared Rust generator. MAX_REQUEST_BYTES is the Rust-owned request limit; original_bytes composes capture() with RxmerCapture::original_bytes()."
+      },
+      "python_type_method": {
+        "availability": "installed native constant",
+        "name": "MAX_REQUEST_BYTES",
+        "kind": "constant",
+        "signature": null,
+        "declaration": "SyntheticRxmerCapture.MAX_REQUEST_BYTES"
+      },
+      "report_contract": {
+        "python_return": "int",
+        "scope": "Owned native values, same bounded generator, synthetic provenance and shared errors. Constant inspection does not perform science."
+      }
+    },
+    {
+      "direction": "upstream",
+      "rust_namespace": "pnm_input::upstream",
+      "python_namespace": "merlin.upstream",
+      "input_ownership": "ownership.borrowed",
+      "units": "units.synthetic_rxmer",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-US-RXMER-SYN-01",
+        "REQ-COM-API-09"
+      ],
+      "checklist": [
+        "US-RXMER-SYN-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::literal_header_and_quarter_db_octets_match_ossi",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::both_spacings_preserve_physical_missing_positions_and_originals",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::explicit_clamping_rounding_and_source_immutability",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::invalid_metadata_unknown_fields_and_nonfinite_values_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::malformed_missing_extents_and_capacity_bounds_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::shipped_synthetic_examples_match_requests_and_provenance"
+        ],
+        "python": {
+          "status": "actual installed native parity and structured errors",
+          "cases": [
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_installed_native_matches_independent_rust_outputs_and_owns_results",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_literal_scaling_missing_values_and_conversion_policy",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_invalid_metadata_and_resource_errors_remain_structured"
+          ]
+        }
+      },
+      "evidence": "evidence.synthetic_rxmer",
+      "status": "status.native",
+      "operation": "merlin.upstream.SyntheticRxmerCapture.from_json",
+      "rust_type_method": {
+        "export": "pnm_input::upstream::SyntheticRxmerCapture",
+        "source_file": "bindings/python/src/upstream/synthetic_rxmer.rs",
+        "symbol": "PySyntheticRxmerCapture",
+        "signature": "pub fn from_json(input: &str) -> ApiResult<Self>",
+        "mapping": "Thin native checked conversion over the shared Rust generator. MAX_REQUEST_BYTES is the Rust-owned request limit; original_bytes composes capture() with RxmerCapture::original_bytes().",
+        "delegated_operation": "pnm_input::upstream::SyntheticRxmerCapture::from_json"
+      },
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "from_json",
+        "kind": "method",
+        "signature": "(request)",
+        "declaration": "SyntheticRxmerCapture.from_json(request)"
+      },
+      "report_contract": {
+        "python_return": "SyntheticRxmerCapture",
+        "scope": "Owned native values, same bounded generator, synthetic provenance and shared errors. Constant inspection does not perform science."
+      }
+    },
+    {
+      "direction": "upstream",
+      "rust_namespace": "pnm_input::upstream",
+      "python_namespace": "merlin.upstream",
+      "input_ownership": "ownership.borrowed",
+      "units": "units.synthetic_rxmer",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-US-RXMER-SYN-01",
+        "REQ-COM-API-09"
+      ],
+      "checklist": [
+        "US-RXMER-SYN-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::literal_header_and_quarter_db_octets_match_ossi",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::both_spacings_preserve_physical_missing_positions_and_originals",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::explicit_clamping_rounding_and_source_immutability",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::invalid_metadata_unknown_fields_and_nonfinite_values_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::malformed_missing_extents_and_capacity_bounds_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::shipped_synthetic_examples_match_requests_and_provenance"
+        ],
+        "python": {
+          "status": "actual installed native parity and structured errors",
+          "cases": [
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_installed_native_matches_independent_rust_outputs_and_owns_results",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_literal_scaling_missing_values_and_conversion_policy",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_invalid_metadata_and_resource_errors_remain_structured"
+          ]
+        }
+      },
+      "evidence": "evidence.synthetic_rxmer",
+      "status": "status.native",
+      "operation": "merlin.upstream.SyntheticRxmerCapture.original_bytes",
+      "rust_type_method": {
+        "export": "pnm_input::upstream::SyntheticRxmerCapture",
+        "source_file": "bindings/python/src/upstream/synthetic_rxmer.rs",
+        "symbol": "PySyntheticRxmerCapture",
+        "signature": "pub fn capture(&self) -> &RxmerCapture",
+        "mapping": "Thin native checked conversion over the shared Rust generator. MAX_REQUEST_BYTES is the Rust-owned request limit; original_bytes composes capture() with RxmerCapture::original_bytes().",
+        "delegated_operation": "pnm_input::upstream::SyntheticRxmerCapture::capture"
+      },
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "original_bytes",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "SyntheticRxmerCapture.original_bytes(self, /)"
+      },
+      "report_contract": {
+        "python_return": "bytes",
+        "scope": "Owned native values, same bounded generator, synthetic provenance and shared errors. Constant inspection does not perform science."
+      }
+    },
+    {
+      "direction": "upstream",
+      "rust_namespace": "pnm_input::upstream",
+      "python_namespace": "merlin.upstream",
+      "input_ownership": "ownership.borrowed",
+      "units": "units.synthetic_rxmer",
+      "error_behavior": "errors.native",
+      "lifecycle_behavior": "lifecycle.inspect",
+      "compatibility": "compatibility.us",
+      "requirement": [
+        "REQ-US-RXMER-SYN-01",
+        "REQ-COM-API-09"
+      ],
+      "checklist": [
+        "US-RXMER-SYN-01"
+      ],
+      "tests": {
+        "rust": [
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::literal_header_and_quarter_db_octets_match_ossi",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::both_spacings_preserve_physical_missing_positions_and_originals",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::explicit_clamping_rounding_and_source_immutability",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::invalid_metadata_unknown_fields_and_nonfinite_values_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::malformed_missing_extents_and_capacity_bounds_reject",
+          "crates/pnm-input/tests/upstream_synthetic_rxmer.rs::shipped_synthetic_examples_match_requests_and_provenance"
+        ],
+        "python": {
+          "status": "actual installed native parity and structured errors",
+          "cases": [
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_installed_native_matches_independent_rust_outputs_and_owns_results",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_literal_scaling_missing_values_and_conversion_policy",
+            "bindings/python/tests/test_upstream_synthetic_rxmer.py::SyntheticRxmerTests.test_invalid_metadata_and_resource_errors_remain_structured"
+          ]
+        }
+      },
+      "evidence": "evidence.synthetic_rxmer",
+      "status": "status.native",
+      "operation": "merlin.upstream.SyntheticRxmerCapture.to_json",
+      "rust_type_method": {
+        "export": "pnm_input::upstream::SyntheticRxmerCapture",
+        "source_file": "bindings/python/src/upstream/synthetic_rxmer.rs",
+        "symbol": "PySyntheticRxmerCapture",
+        "signature": "pub fn to_json(&self) -> ApiResult<String>",
+        "mapping": "Thin native checked conversion over the shared Rust generator. MAX_REQUEST_BYTES is the Rust-owned request limit; original_bytes composes capture() with RxmerCapture::original_bytes().",
+        "delegated_operation": "pnm_input::upstream::SyntheticRxmerCapture::to_json"
+      },
+      "python_type_method": {
+        "availability": "installed native method",
+        "name": "to_json",
+        "kind": "method",
+        "signature": "(self, /)",
+        "declaration": "SyntheticRxmerCapture.to_json(self, /)"
+      },
+      "report_contract": {
+        "python_return": "str",
+        "scope": "Owned native values, same bounded generator, synthetic provenance and shared errors. Constant inspection does not perform science."
+      }
     }
   ],
   "native_type_exports": {
@@ -41104,6 +41554,13 @@
         "module": "merlin.upstream",
         "signature": "(config, id, mer_db)",
         "constructible": true
+      },
+      {
+        "name": "SyntheticRxmerCapture",
+        "canonical_name": "SyntheticRxmerCapture",
+        "module": "merlin.upstream",
+        "signature": "()",
+        "constructible": false
       },
       {
         "name": "UcdCapture",

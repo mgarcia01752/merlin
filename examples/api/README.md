@@ -228,6 +228,17 @@ scripts/cargo-local.sh run -p merlin --example upstream_session --locked
 local/api-python-test/bin/python examples/api/python/run_upstream.py
 ```
 
+## Synthetic CMTS RxMER in both languages
+
+The [Rust generator](rust/generate_upstream_rxmer.rs) and
+[native Python generator](python/generate_upstream_rxmer.py) create an upstream
+CCAP-OSSI binary and synthetic-provenance sidecar in a new directory. Neither
+executes a simulation or overwrites an existing destination. The
+[generator guide](../../docs/user/upstream/synthetic-rxmer.md) describes commands,
+request schema and limits. Matching requests and generated files for both
+spacings are under
+[synthetic-rxmer](../measurements/upstream/synthetic-rxmer/README.md).
+
 ## Simulation sessions and timed checks
 
 The basic Rust/Python examples create a Simulation, load the profile collection,

@@ -3226,3 +3226,19 @@ validation are complete; the user guide includes the current dark capture.
   show VF/distance only for echo ([design](features/receiver-instruments/design.md#rx-resp-plc--plc-region-and-contextual-velocity-factor)).
 
   Requirements: [RX-RESP-PLC](../requirements.md#ds-rx-resp-plc).
+
+### Synthetic CMTS RxMER generation
+
+<a id="task-us-rxmer-syn-01"></a>
+- [x] **US-RXMER-SYN-01** Add OSSI-based synthetic CMTS RxMER generation,
+  provenance and paired Rust/native Python examples without changing decoder
+  admission or downstream behavior.
+  Requirements: [REQ-US-RXMER-SYN-01](../requirements.md#req-us-rxmer-syn-01).
+  Architecture: [PNM owner](../architecture.md#unified-pnm-and-capture-admission).
+  Depends on: INT-PNM-01, INT-PNM-02.
+  Acceptance: independent bytes/scaling, both grids, limits/missing values,
+  downstream export regression, installed Rust/Python parity, no-clobber output
+  and traceability. [Design](features/upstream-synthetic-rxmer/design.md).
+  Local acceptance: 73 complete crate cases; final focused 16 Rust / nine native
+  cases, both example pairs, Clippy, formatting and traceability passed.
+  [Executed evidence](features/upstream-synthetic-rxmer/test-results.json).

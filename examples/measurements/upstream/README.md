@@ -12,6 +12,10 @@ not field captures or external interoperability evidence.
 | `pre-eq/` | Applied s2.13 and last-update s1.14 complex coefficients. |
 | `measured/` | Complete synthetic capture cohorts and explicit association plans. |
 
+The separate [synthetic-rxmer](synthetic-rxmer/README.md) folder contains new
+MERLIN generator requests, binaries and provenance for both carrier spacings.
+Those outputs are not part of the historical source inventory below.
+
 Origin: the approved source revision
 `69b38071cd3ebebc4eb96849f82b7871ab8da5ec`, Apache-2.0, copyright
 2026 MORGANA contributors. The [per-file inventory](../../../docs/development/features/ofdma/source-files.json)

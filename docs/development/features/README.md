@@ -91,6 +91,8 @@ Workbench guides: [channel measurements](../../user/channel-measurements.md),
 
 ## PNM and measurement processing
 
+- **upstream-synthetic-rxmer**: [design.md](upstream-synthetic-rxmer/design.md).
+
 - **pnm-measurement-inputs**: [README.md](pnm-measurement-inputs/README.md) · [profile-view.md](pnm-measurement-inputs/profile-view.md) · [upstream.md (active functional owner)](pnm-measurement-inputs/upstream.md).
 - **pnm-reference-skill**: [design.md](pnm-reference-skill/design.md).
 - **rxmer-designer**: [design.md](rxmer-designer/design.md) · [pnm-export-plan.md](rxmer-designer/pnm-export-plan.md) · [validation.md](rxmer-designer/validation.md).

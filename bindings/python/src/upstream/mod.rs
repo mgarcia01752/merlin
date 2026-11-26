@@ -9,6 +9,7 @@ mod document;
 mod measurements;
 mod reports;
 mod simulation;
+mod synthetic_rxmer;
 use pyo3::prelude::*;
 
 mod api {
@@ -62,6 +63,7 @@ pub(crate) fn register(parent: &Bound<'_, PyModule>) -> PyResult<()> {
     configuration::register(&module)?;
     document::register(&module)?;
     capture::register(&module)?;
+    synthetic_rxmer::register(&module)?;
     simulation::register(&module)?;
     reports::register(&module)?;
     measurements::register(&module)?;

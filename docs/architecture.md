@@ -550,6 +550,15 @@ control and independent comparison acceptance belongs in
 
 ### Unified PNM and capture admission
 
+The [synthetic CMTS RxMER generator](development/features/upstream-synthetic-rxmer/design.md)
+adds bounded, explicitly synthetic CCAP-OSSI files under the existing `pnm-input`
+owner. Its Rust request/artifact and native Python adapter retain provenance;
+generation does not associate observations or start simulation. Shared quarter-dB
+conversion is independent of direction-specific file headers. RAVEN's future
+parser and an upstream Qt Designer are separate follow-ups.
+Its acceptance is [REQ-US-RXMER-SYN-01](requirements.md#req-us-rxmer-syn-01)
+through [US-RXMER-SYN-01](development/checklist.md#task-us-rxmer-syn-01).
+
 Active feature detail: [upstream capture admission and measured input](development/features/pnm-measurement-inputs/upstream.md).
 The [Pre-Eq feature](development/features/ofdma/pre-equalization.md) owns the
 correction-bank/application handoff after raw adapter admission.

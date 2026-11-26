@@ -30,3 +30,7 @@ compatible profile selection are documented in the
 The unified API pair uses [Rust](../crates/merlin/examples/upstream_session.rs) and
 [Python](api/python/run_upstream.py) over the same bounded upstream configuration.
 Both discover inventory through Rust and preserve existing downstream examples.
+
+The [synthetic CMTS RxMER generator](../docs/user/upstream/synthetic-rxmer.md)
+has paired Rust/native Python examples and standard binary/provenance outputs
+for both upstream carrier spacings. It performs no simulation or device capture.

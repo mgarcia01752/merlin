@@ -17,6 +17,7 @@ use std::{
     io::{Read, Write},
     path::Path,
 };
+mod common;
 pub mod rxmer_export;
 pub mod upstream;
 pub mod workbench;

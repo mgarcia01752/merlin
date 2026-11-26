@@ -8,6 +8,7 @@ The independent upstream Rust engine has local synthetic backend acceptance:
 - [Received-only receiver](receiver.md).
 - [Bounded sessions and reports](session.md).
 - [Measurement admission](measurements.md).
+- [Synthetic CMTS RxMER generator](synthetic-rxmer.md).
 - [Directional CLI](cli.md).
 
 Native PNM capture-backed runs, the public Rust facade,
