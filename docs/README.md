@@ -4,6 +4,7 @@
 
 | Guide | Start here |
 | --- | --- |
+| [Getting Started](user/getting-started.md) | Desktop installation, CLI quick start and paired Rust/Python namespace imports |
 | [UI Guide](user/workbench.md) | Downstream workbench configuration, instruments, runs and saved projects |
 | [Upstream OFDMA](user/upstream/README.md) | Rust engine, configuration, stages, measurements and directional CLI |
 | [Rust API Guide](reference/public-api.md) | Simulation entry points, typed inputs, results and stage APIs |

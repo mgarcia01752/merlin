@@ -1824,6 +1824,17 @@ integration. It does not mean all the broader product items above are complete.
 
 ### Repository introduction
 
+<a id="task-doc-brand-06"></a>
+- [x] **DOC-BRAND-06** Move README command/import examples into a linked
+  getting-started guide and present smaller downstream/upstream workspace images
+  side by side, preserving honest release/development captions and source pixels.
+  Requirements: [DOC-BRAND-06](../requirements.md#doc-brand-06).
+  Architecture: [workspace guide](../architecture.md#updated-workspace-diagram-guide).
+  Depends on: DOC-BRAND-05.
+  Acceptance: visual/image-integrity review, unchanged screenshot hashes,
+  resolved documentation links, preserved command/API examples and traceability.
+  [Design and evidence](features/readme-workbench-diagram/design.md#doc-brand-06-compact-workspaces-and-quick-start).
+
 <a id="task-doc-brand-05"></a>
 - [x] **DOC-BRAND-05** Refresh the native README overview/analyzers, add
   RxMER Designer, center gallery titles and remove obsolete image assets.

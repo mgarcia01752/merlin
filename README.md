@@ -52,80 +52,32 @@ describe MERLIN's modeled experiment; they do not establish external modem
 interoperability. The Qt workbench on `master` presents downstream OFDM only;
 the unified upstream UI remains separate development work.
 
+<a id="rust-and-python-apis"></a>
+
 ## Get started
 
 **Desktop:** follow the [Ubuntu DEB](docs/user/install/ubuntu-desktop.md) or
-[Windows MSI](docs/user/install/windows.md) guide. Check the exact version's
-[release assets](https://github.com/mgarcia01752/merlin/releases) and checksums
-before installing. A Git tag alone does not establish published packages or
-successful native validation. macOS delivery remains deferred.
+[Windows MSI](docs/user/install/windows.md) guide and choose the matching
+[release assets](https://github.com/mgarcia01752/merlin/releases).
 
-**CLI from source:** configure the pinned toolchain using the
-[development setup guide](docs/development/setup.md), then run these commands
-from the repository root:
-
-```bash
-scripts/cargo-local.sh build -p ofdm-fec-cli --release --locked
-mkdir -p local
-
-# Run the downstream waveform/AWGN example.
-target/release/ofdm-fec channel \
-  --input examples/cli/channel-awgn.json \
-  --output local/downstream-report.json
-
-# Validate the upstream plan without running the engine, then execute it.
-target/release/ofdm-fec upstream preview \
-  --input examples/cli/upstream/us-50khz.json \
-  --output local/upstream-preview.json
-target/release/ofdm-fec upstream run \
-  --input examples/cli/upstream/us-50khz.json \
-  --output local/upstream-report.json
-```
-
-Choose new output paths on subsequent runs; existing files are never replaced.
-Inspect recovery and FEC outcomes as well as run status. See the
-[downstream CLI](docs/user/channel-runner/cli.md),
-[upstream CLI](docs/user/upstream/cli.md) and
-[CLI example inventory](examples/cli/README.md) for measured runs, probes and limits.
-
-## Rust and Python APIs
-
-The thin `merlin` facade exposes both independent engines and shared contracts:
-
-```rust
-use merlin::downstream::Simulation as DownstreamSimulation;
-use merlin::upstream::Simulation as UpstreamSimulation;
-use merlin::common;
-```
-
-The native `merlin-ofdm` Python distribution mirrors those namespaces:
-
-```python
-from merlin.downstream import Simulation as DownstreamSimulation
-from merlin.upstream import Simulation as UpstreamSimulation
-import merlin.common
-```
-
-Existing `docsis_ofdm_fec::api::{Simulation, Merlin}` Rust imports and Python
-`merlin.Simulation` retain downstream behavior. Loading and configuration remain
-idle until an explicit run. Python calls the Rust engine directly.
-
-Start with the [Rust API guide](docs/reference/public-api.md),
-[Python installation guide](docs/user/python/integration.md),
-[upstream Python guide](docs/user/python/upstream.md) and
-[paired Rust/Python examples](examples/api/README.md).
+**CLI, Rust and Python:** the [getting-started guide](docs/user/getting-started.md)
+contains runnable commands, namespace imports and links to the detailed API guides.
+Browse the [CLI examples](examples/cli/README.md) and
+[paired Rust/Python examples](examples/api/README.md) for complete workflows.
 
 <a id="workbench-overview"></a>
+<a id="downstream-workbench"></a>
 
-## Downstream workbench
+## Workspaces
 
-<p align="center">
-  <a href="docs/user/workbench.md"><img src="docs/images/workbench/readme-workbench-dark.png" alt="Current MERLIN workbench with transmitter, channel, receiver and measurement inputs" width="1100"></a>
-</p>
+| Downstream | Upstream |
+| :---: | :---: |
+| [<img src="docs/images/workbench/unified-downstream-dark.png" alt="Downstream workspace in the unified Qt development branch" width="430">](docs/images/workbench/unified-downstream-dark.png) | [<img src="docs/images/workbench/unified-upstream-dark.png" alt="Upstream workspace in the unified Qt development branch" width="430">](docs/images/workbench/unified-upstream-dark.png) |
 
-Native downstream workbench capture. See the [workbench guide](docs/user/workbench.md)
-for configuration, run controls, saved projects and test-point instruments.
-Ready-to-open inputs are in the [workbench examples](examples/workbench/README.md).
+Native previews from the
+[`feature/unified-qt-workbench` branch](https://github.com/mgarcia01752/merlin/tree/feature/unified-qt-workbench).
+Select either image to view it full size. See the [workbench guide](docs/user/workbench.md)
+and [saved examples](examples/workbench/README.md) for the released downstream UI.
 
 ## Signal analyzers and RxMER Designer
 
@@ -140,7 +92,7 @@ Native downstream UI captures. Select an image to open its guide.
 <h3 align="center">RxMER Designer</h3>
 
 <p align="center">
-  <a href="docs/user/measurement-inputs/rxmer-designer.md"><img src="docs/images/workbench/rxmer-designer-dark.png" alt="RxMER Designer with seeded random variation, frequency effects and PLC shading" width="1100"></a>
+  <a href="docs/user/measurement-inputs/rxmer-designer.md"><img src="docs/images/workbench/rxmer-designer-dark.png" alt="RxMER Designer with seeded random variation, frequency effects and PLC shading" width="700"></a>
 </p>
 
 ## Measurements and demos
@@ -155,6 +107,7 @@ Native downstream UI captures. Select an image to open its guide.
 
 ## Documentation
 
+- [Getting Started](docs/user/getting-started.md): installation, CLI commands and Rust/Python imports.
 - [UI Guide](docs/user/workbench.md): configure and run the Qt workbench.
 - [Upstream OFDMA Guide](docs/user/upstream/README.md): configuration, stages, captures, sessions and CLI.
 - [Rust API Guide](docs/reference/public-api.md): use both simulation engines directly.

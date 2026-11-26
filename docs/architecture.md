@@ -1607,6 +1607,12 @@ interaction, ownership and validation. UI-01 remains partially implemented; this
 
 ### Updated workspace diagram guide
 
+The root README owns the compact product overview and side-by-side downstream
+and upstream workspace previews. The [getting-started guide](user/getting-started.md)
+owns runnable CLI commands and paired Rust/Python namespace examples. Preview
+captions distinguish the separate Qt integration branch from released desktop
+support. See [DOC-BRAND-06](development/features/readme-workbench-diagram/design.md#doc-brand-06-compact-workspaces-and-quick-start).
+
 The updated user sketch adds a separate **OFDM transmission settings** panel.
 Use this as the workspace navigation guide, not a final screen layout. Each
 processing block and analyzer opens its own focused panel; the settings panel

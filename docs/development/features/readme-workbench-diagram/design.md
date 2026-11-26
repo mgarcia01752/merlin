@@ -86,3 +86,46 @@ and retired TX QAM thumbnail were removed, and shared user-guide assets were
 replaced in place. Architecture ownership is unchanged. Image decoding,
 README/affected guide links, centered gallery markup and diff whitespace pass.
 The full automated suite was not run for this documentation-only refresh.
+
+## DOC-BRAND-06: Compact workspaces and quick start
+
+Keep README as the product overview. Move its downstream/upstream CLI command
+sequence and paired Rust/Python namespace imports into
+`docs/user/getting-started.md`, linked from README and the documentation index.
+Preserve the existing command arguments, compatibility notes, explicit-run
+semantics and non-overwriting output guidance. This changes documentation
+ownership, not simulation, public APIs or desktop delivery support.
+
+Reuse the native downstream/upstream PNGs from Qt integration commit
+`d66c287870def960146cc8219f765b65dae2e00d`, adding them under
+`docs/images/workbench/` without resampling or editing pixels. Display both in
+one two-column table at 430 pixels each, retaining click-through access to the
+original images. Identify them as integration-branch previews: that branch is
+not merged by this change, and the released desktop remains downstream-only.
+Keep the previous screenshot for its existing guide consumers.
+
+Owners: edit README, `docs/README.md` and this record; add the getting-started
+guide and two PNGs. Architecture:
+[workspace guide](../../../architecture.md#updated-workspace-diagram-guide).
+Requirement: [DOC-BRAND-06](../../../requirements.md#doc-brand-06).
+Task: [DOC-BRAND-06](../../checklist.md#task-doc-brand-06).
+
+Acceptance covers visual/image decoding, exact source hashes, preserved example
+blocks, side-by-side image markup, Markdown links/fragments, traceability and
+diff whitespace. No application code, dependency, scientific vector, QML or
+wheel changes; Rust/Qt/Python suites are not required for this documentation edit.
+
+Implemented and validated: all three original Bash/Rust/Python code blocks remain
+verbatim in the new guide; README has no fenced copy-and-paste examples. Existing
+overview/API fragment targets remain available. Both 1210×736 PNGs were decoded
+and visually inspected; their hashes match the source commit exactly:
+
+- Downstream: `a8497f83fa60f062c337aa3377c9d26184a909ed2003a7e112d17edc34cf0831`.
+- Upstream: `5c3ccdb19a31fcf23406d193d2dfc1df220eba3a11da715a725ae85534f1a178`.
+
+Both 430-pixel images occupy the same table row. The oversized Designer preview
+uses 700 pixels; its original asset is unchanged. Documentation links/fragments,
+integration traceability, generated Python-guide freshness and diff whitespace
+pass. Full simulation, native Qt and wheel suites were not rerun because only
+documentation and unchanged screenshot assets moved or were added. No branch
+merge, application build, release or publication is part of this task.
