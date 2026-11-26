@@ -29,7 +29,7 @@ for batch in wb.run():  # Explicit simulation; releases Python's interpreter loc
 Run the complete [Python example](../../../examples/api/python/run_multi_rxmer_cmce_workbench.py):
 
 ```bash
-local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cmce_workbench.py examples/workbench/multi-rxmer-2/workbench.merlin.json
+local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cmce_workbench.py examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json
 ```
 
 Omitting the argument selects that same bundled WB. A native wheel containing
@@ -104,7 +104,7 @@ manual option overrides through the normal API. `run()` and `run_with_control()`
 return `Vec<BatchReport>`, preserving controller-scoped identities and ownership.
 
 ```bash
-scripts/cargo-local.sh run -p pnm-input --example run_multi_rxmer_cmce_workbench --release --locked -- examples/workbench/multi-rxmer-2/workbench.merlin.json
+scripts/cargo-local.sh run -p pnm-input --example run_multi_rxmer_cmce_workbench --release --locked -- examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json
 ```
 
 The importer independently implements the saved format contract in the Apache

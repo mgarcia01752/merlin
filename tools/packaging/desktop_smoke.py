@@ -36,9 +36,13 @@ def validate(prefix, scratch):
     assert subprocess.check_output([str(executable), '--version'], env=environment, text=True).strip() == f'MERLIN {version()}'
     examples = payload / 'files/examples/workbench'
     manifest = json.loads((examples / 'manifest.json').read_text())
-    assert {bundle['id'] for bundle in manifest['bundles']} == {'single', 'multi-rxmer', 'multi-rxmer-2', 'cl-192mhz-8mhz-notch'}
+    assert {bundle['id'] for bundle in manifest['bundles']} == {
+        'single', 'multi-rxmer', 'multi-rxmer-2', 'cl-192mhz-8mhz-notch',
+        'upstream-ideal-25khz', 'upstream-ideal-50khz',
+        'upstream-synthetic-rxmer-25khz', 'upstream-synthetic-rxmer-50khz'}
     for bundle in manifest['bundles']:
         wb = examples / bundle['workbench']
+        assert wb.relative_to(examples).parts[0] == bundle['direction']
         provenance = json.loads((examples / bundle['provenance']).read_text())
         for record in provenance['files']:
             data = (wb.parent / record['file']).read_bytes()

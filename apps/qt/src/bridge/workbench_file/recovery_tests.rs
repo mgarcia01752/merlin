@@ -10,7 +10,7 @@ use std::{
     time::{Duration, Instant},
 };
 const DOWNSTREAM: &[u8] =
-    include_bytes!("../../../../../examples/workbench/single/workbench.merlin.json");
+    include_bytes!("../../../../../examples/workbench/downstream/single/workbench.merlin.json");
 const UPSTREAM: &[u8] = include_bytes!("../../../../../examples/cli/upstream/us-50khz.json");
 const WATCHDOG: Duration = Duration::from_secs(30);
 const POLL_INTERVAL: Duration = Duration::from_millis(2);
@@ -119,7 +119,7 @@ fn real_worker_restart_restores_both_public_projects_originals_dirty_flags_and_d
         // A CLI-relative destination must survive an installer changing cwd.
         // Do not change process cwd inside concurrent Rust tests.
         let live_downstream_path = if selected == Direction::Upstream {
-            PathBuf::from("examples/workbench/single/workbench.merlin.json")
+            PathBuf::from("examples/workbench/downstream/single/workbench.merlin.json")
         } else {
             directory.0.join("downstream.merlin.json")
         };

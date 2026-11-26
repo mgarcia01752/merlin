@@ -14,7 +14,7 @@ import unittest
 import merlin as m
 
 ROOT = Path(__file__).resolve().parents[3]
-WB = ROOT / "examples/workbench/cl-192mhz-8mhz-notch/cmce.merlin.json"
+WB = ROOT / "examples/workbench/downstream/cl-192mhz-8mhz-notch/cmce.merlin.json"
 RECIPE = ROOT / "crates/pnm-input/tests/fixtures/designer-flat.json"
 
 

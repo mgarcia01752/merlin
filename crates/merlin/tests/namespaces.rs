@@ -139,7 +139,7 @@ fn independent_input_and_preview_metadata_preserve_owner_types() {
 #[test]
 fn facade_common_projects_return_the_exact_directional_public_types() {
     let project = common::Project::from_bytes(include_bytes!(
-        "../../../examples/workbench/single/workbench.merlin.json"
+        "../../../examples/workbench/downstream/single/workbench.merlin.json"
     ))
     .unwrap();
     assert_eq!(project.direction(), common::ProjectDirection::Downstream);
@@ -164,7 +164,7 @@ fn facade_common_projects_return_the_exact_directional_public_types() {
 #[test]
 fn facade_saved_downstream_preparation_returns_existing_idle_public_plan() {
     let plan: downstream::FullLoopSweepPlan = downstream::inputs::Workbench::prepare_full_loop(
-        include_bytes!("../../../examples/workbench/single/workbench.merlin.json"),
+        include_bytes!("../../../examples/workbench/downstream/single/workbench.merlin.json"),
     )
     .unwrap();
     let request: downstream::FullLoopRequest = plan.request(0).unwrap();

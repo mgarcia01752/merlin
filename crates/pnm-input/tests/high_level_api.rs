@@ -57,17 +57,19 @@ fn controller() -> Merlin {
 fn binary_json_all_kinds_and_wrong_kind() {
     for (binary, json, kind) in [
         (
-            include_bytes!("../../../examples/workbench/single/modulation-profile.bin").as_slice(),
+            include_bytes!("../../../examples/workbench/downstream/single/modulation-profile.bin")
+                .as_slice(),
             PROFILE,
             10,
         ),
         (
-            include_bytes!("../../../examples/workbench/single/rxmer.bin").as_slice(),
+            include_bytes!("../../../examples/workbench/downstream/single/rxmer.bin").as_slice(),
             RX,
             4,
         ),
         (
-            include_bytes!("../../../examples/workbench/single/ds-channel-estimate.bin").as_slice(),
+            include_bytes!("../../../examples/workbench/downstream/single/ds-channel-estimate.bin")
+                .as_slice(),
             CH,
             2,
         ),
@@ -594,10 +596,10 @@ fn profile_catalog_discovery_matches_core_json_and_binary_without_selection() {
     assert_eq!(CaptureLoader::profile_ids(&json).unwrap(), core);
     let binary = input(
         "profiles.json",
-        include_bytes!("../../../examples/workbench/single/modulation-profile.bin"),
+        include_bytes!("../../../examples/workbench/downstream/single/modulation-profile.bin"),
     );
     assert_eq!(CaptureLoader::profile_ids(&binary).unwrap(), core);
-    let collection = input("collection", include_bytes!("../../../examples/workbench/multi-rxmer-2/ds_ofdm_modulation_profile_aabbccddeeff_193_1764824373.bin"));
+    let collection = input("collection", include_bytes!("../../../examples/workbench/downstream/multi-rxmer-2/ds_ofdm_modulation_profile_aabbccddeeff_193_1764824373.bin"));
     let ids = CaptureLoader::profile_ids(&collection).unwrap();
     assert_eq!(
         ids.iter().map(|id| id.value()).collect::<Vec<_>>(),
@@ -647,7 +649,8 @@ fn profile_catalog_rejects_malformed_empty_duplicate_and_out_of_domain_ids() {
         assert_eq!(core.code(), adapter.code());
     }
     let mut corrupt =
-        include_bytes!("../../../examples/workbench/single/modulation-profile.bin").to_vec();
+        include_bytes!("../../../examples/workbench/downstream/single/modulation-profile.bin")
+            .to_vec();
     corrupt.truncate(20);
     assert!(CaptureLoader::profile_ids(&input("truncated", &corrupt)).is_err());
 }
@@ -886,7 +889,7 @@ fn loaded_profiles_preserve_selection_ids_and_cancelled_entries() {
 fn default_capture_protocol_matches_explicit_loading() {
     let capture = input(
         "profiles",
-        include_bytes!("../../../examples/workbench/single/modulation-profile.bin"),
+        include_bytes!("../../../examples/workbench/downstream/single/modulation-profile.bin"),
     );
     let default = CaptureLoader::controller_from_capture(&capture).unwrap();
     let explicit = CaptureLoader::controller_from_profiles(
@@ -923,7 +926,7 @@ fn simulation_loading_is_idle_atomic_and_preserves_scoped_measurements() {
     )
     .unwrap();
     assert!(sim.load_profiles(vec![]).is_err());
-    let incompatible = input("other-channel", include_bytes!("../../../examples/workbench/multi-rxmer-2/ds_ofdm_modulation_profile_aabbccddeeff_193_1764824373.bin"));
+    let incompatible = input("other-channel", include_bytes!("../../../examples/workbench/downstream/multi-rxmer-2/ds_ofdm_modulation_profile_aabbccddeeff_193_1764824373.bin"));
     assert!(sim
         .load_profiles(CaptureLoader::profiles(&incompatible).unwrap())
         .is_err());
@@ -1001,7 +1004,7 @@ fn cpa_serialization_preserves_saved_workbenches() {
 #[test]
 fn borrowed_channel_frame_keeps_binary_original_and_decoded_provenance_distinct() {
     const ORIGINAL: &[u8] =
-        include_bytes!("../../../examples/workbench/single/ds-channel-estimate.bin");
+        include_bytes!("../../../examples/workbench/downstream/single/ds-channel-estimate.bin");
     let original = input("wrong.json", ORIGINAL);
     let capture = CaptureLoader::channel_estimate(&original).unwrap();
     let frame = capture.frame();

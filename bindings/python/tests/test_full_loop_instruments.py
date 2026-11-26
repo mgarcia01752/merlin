@@ -56,7 +56,7 @@ class FullLoopInstrumentTests(unittest.TestCase):
     def test_profile_performance_matches_independent_rust_project_process(self):
         from merlin.common import Project
         root = Path(__file__).resolve().parents[3]
-        source = (root / 'examples/workbench/single/workbench.merlin.json').read_bytes()
+        source = (root / 'examples/workbench/downstream/single/workbench.merlin.json').read_bytes()
         result = Project.from_bytes(source).downstream_plan().request(0).run()
         expected = json.loads(Path(os.environ['MERLIN_PROFILE_PERFORMANCE_REFERENCE']).read_text())
         self.assertEqual(result.profile_performance(), expected)

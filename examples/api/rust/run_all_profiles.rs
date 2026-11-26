@@ -6,7 +6,7 @@
 //! Load a profile collection once, then explicitly run every retained profile.
 use docsis_ofdm_fec::api::*;
 use pnm_input::{read_capture, CaptureLoader};
-const FIXTURE_DIRECTORY: &str = "../../examples/workbench/single";
+const FIXTURE_DIRECTORY: &str = "../../examples/workbench/downstream/single";
 const OBSERVATION_DURATION_MS: u64 = 1;
 const PROFILE_TOLERANCE_SECONDS: u32 = 90_000;
 const MAX_RUNTIME_MS: u64 = 300_000;

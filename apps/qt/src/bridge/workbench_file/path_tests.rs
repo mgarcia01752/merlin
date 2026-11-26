@@ -39,7 +39,7 @@ impl Drop for Directory {
 
 fn settings() -> (String, String, bool, bool) {
     let project: Project = serde_json::from_slice(include_bytes!(
-        "../../../../../examples/workbench/single/workbench.merlin.json"
+        "../../../../../examples/workbench/downstream/single/workbench.merlin.json"
     ))
     .unwrap();
     (

@@ -69,8 +69,8 @@ of the measurement-input blocks to open its section dialog. Close the dialog
 or press Escape to return. Use **Settings → Global → Light/Dark mode** to change the palette and icon
 across all windows. The change applies immediately and lasts for this session.
 
-Use the [curated workbench examples](workbench-examples.md) for single or multiple
-RxMER inputs on a matching OFDM grid. Native Open begins in that examples root;
+Use the [curated workbench examples](workbench-examples.md) for downstream single/multiple
+RxMER inputs or runnable upstream ideal/synthetic measured configurations. Native Open begins in that examples root;
 future installed desktop packages must ship the same portable WB bundles.
 
 The left icon/WB gutter and large internal branding header are removed so the
@@ -434,7 +434,7 @@ Launch the built desktop with a workbench path to skip the file chooser:
 ```bash
 cd /home/dev01/Projects/merlin &&
 ./apps/qt/target/release/merlin-qt \
-  --workbench examples/workbench/multi-rxmer-2/workbench.merlin.json
+  --workbench examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json
 ```
 
 Or read its JSON from standard input:
@@ -442,7 +442,7 @@ Or read its JSON from standard input:
 ```bash
 cd /home/dev01/Projects/merlin &&
 ./apps/qt/target/release/merlin-qt --workbench - \
-  < examples/workbench/multi-rxmer-2/workbench.merlin.json
+  < examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json
 ```
 
 Use the VM desktop terminal and the same Qt environment as your normal

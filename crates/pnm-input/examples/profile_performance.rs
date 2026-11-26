@@ -8,7 +8,7 @@ use pnm_input::project::Project;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let project = Project::from_bytes(include_bytes!(
-        "../../../examples/workbench/single/workbench.merlin.json"
+        "../../../examples/workbench/downstream/single/workbench.merlin.json"
     ))?;
     let plan = project.downstream_plan()?;
     let result = plan.request(0)?.run(&FullLoopControl::new())?;

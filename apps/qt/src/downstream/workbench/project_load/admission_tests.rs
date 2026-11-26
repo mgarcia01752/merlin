@@ -8,7 +8,7 @@ use crate::downstream::workbench::session;
 use crate::shell::{Direction, RetainedResources};
 
 const PROJECT: &[u8] =
-    include_bytes!("../../../../../../examples/workbench/single/workbench.merlin.json");
+    include_bytes!("../../../../../../examples/workbench/downstream/single/workbench.merlin.json");
 fn candidate(context: &Context) -> PreparedProject {
     PreparedProject::prepare(
         serde_json::from_slice(PROJECT).unwrap(),
@@ -193,7 +193,7 @@ fn real_background_loader_rejection_preserves_current_inputs_original_paths_and_
     let before = budget.usage();
     let mut loader = Loader::default();
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../examples/workbench/single/workbench.merlin.json");
+        .join("../../examples/workbench/downstream/single/workbench.merlin.json");
     let application = context.application.clone();
     let target = application.snapshot(Direction::Downstream).key;
     let expected = session::snapshot(&context);
@@ -269,7 +269,7 @@ fn successful_open_releases_only_downstream_path_records_and_preserves_original_
     let application = &context.application;
     let downstream_path = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml");
     let shared_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../examples/workbench/single/workbench.merlin.json");
+        .join("../../examples/workbench/downstream/single/workbench.merlin.json");
     let downstream_bytes = std::fs::read(&downstream_path).unwrap();
     let shared_bytes = std::fs::read(&shared_path).unwrap();
     application

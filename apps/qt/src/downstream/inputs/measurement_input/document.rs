@@ -184,8 +184,9 @@ mod tests {
 
     #[test]
     fn public_ordinary_admission_preserves_binary_bom_hashes_and_legacy_source_metadata() {
-        let binary =
-            include_bytes!("../../../../../../examples/workbench/single/ds-channel-estimate.bin");
+        let binary = include_bytes!(
+            "../../../../../../examples/workbench/downstream/single/ds-channel-estimate.bin"
+        );
         let capture = Capture::decode("wrong.json".into(), binary.to_vec(), false).unwrap();
         let Measurement::Response(frame) = &capture.measurement else {
             panic!("Expected channel response");

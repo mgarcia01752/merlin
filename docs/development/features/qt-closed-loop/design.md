@@ -102,7 +102,7 @@ including a single-example directory containing PNM/metadata alongside its WB,
 and update the user guide with a dark screenshot. Build/check only Qt.
 
 Implemented and verified on the Ubuntu VM: actual main Ctrl+O launches the
-distinct native workbench mode. In `examples/workbench/single`, the chooser
+distinct native workbench mode. In `examples/workbench/downstream/single`, the chooser
 shows only `workbench.merlin.json`, hiding its seven other PNM/metadata/license
 files. Folder navigation works and Cancel returns to the same parent window.
 The updated dark native screenshot is linked from the example guide. All 27

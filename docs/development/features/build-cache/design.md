@@ -204,7 +204,7 @@ was repeated for this helper/documentation change; the prior Rust/Qt checks rema
 recorded under the RxMER export feature.
 
 The actual native release UI loaded the unchanged
-`examples/workbench/multi-rxmer-2/workbench.merlin.json`, confirmed all Profiles
+`examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json`, confirmed all Profiles
 0/3/4 selected and a 1ms observation each, and ran the 132-capture average.
 The UI total timer froze at **00:00:07** (whole-second display). The final-profile
 status was complete, 1,807,464 bits compared and zero bit errors; that bit count

@@ -12,7 +12,7 @@ import merlin
 from merlin import common, downstream, upstream
 
 ROOT = Path(__file__).resolve().parents[3]
-DOWNSTREAM = ROOT / 'examples/workbench/single/workbench.merlin.json'
+DOWNSTREAM = ROOT / 'examples/workbench/downstream/single/workbench.merlin.json'
 UPSTREAM = ROOT / 'examples/cli/upstream/us-50khz.json'
 # A transport split deliberately unrelated to waveform symbol dimensions.
 CHUNK_SAMPLES = 257

@@ -400,7 +400,7 @@ mod tests {
 
     // Existing self-contained input fixture; no alternate scientific implementation.
     const PROJECT: &[u8] =
-        include_bytes!("../../../../../examples/workbench/single/workbench.merlin.json");
+        include_bytes!("../../../../../examples/workbench/downstream/single/workbench.merlin.json");
 
     #[test]
     fn explicit_contexts_isolate_accepted_sources_sections_and_clone_ownership() {

@@ -10,7 +10,7 @@ use pnm_input::{read_capture, CaptureLoader};
 use std::{path::Path, time::Instant};
 
 // Caller choices for the bundled fixture, not values inferred from filenames.
-const FIXTURE_DIRECTORY_FROM_MANIFEST: &str = "../../examples/workbench/multi-rxmer-2";
+const FIXTURE_DIRECTORY_FROM_MANIFEST: &str = "../../examples/workbench/downstream/multi-rxmer-2";
 const PROFILE_FILENAME: &str = "ds_ofdm_modulation_profile_aabbccddeeff_193_1764824373.bin";
 const RXMER_FILENAME_PREFIX: &str = "ds_ofdm_rxmer_per_subcar_";
 const OBSERVATION_DURATION_MS: u64 = 1;

@@ -4,7 +4,7 @@
  */
 //! Thin native access to the Rust-owned synthetic CCAP RxMER generator.
 use super::error;
-use pnm_input::upstream::{SyntheticRxmerCapture, MAX_SYNTHETIC_RXMER_REQUEST_BYTES};
+use merlin::upstream::inputs::{SyntheticRxmerCapture, MAX_SYNTHETIC_RXMER_REQUEST_BYTES};
 use pyo3::{prelude::*, types::PyBytes};
 
 #[pyclass(

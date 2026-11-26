@@ -9,13 +9,14 @@ use pnm_input::Workbench;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 
-const SINGLE: &[u8] = include_bytes!("../../../examples/workbench/single/workbench.merlin.json");
+const SINGLE: &[u8] =
+    include_bytes!("../../../examples/workbench/downstream/single/workbench.merlin.json");
 const MULTI: &[u8] =
-    include_bytes!("../../../examples/workbench/multi-rxmer/workbench.merlin.json");
+    include_bytes!("../../../examples/workbench/downstream/multi-rxmer/workbench.merlin.json");
 const PROFILE_SELECTION_WB: &[u8] =
-    include_bytes!("../../../examples/workbench/multi-rxmer-2/workbench.merlin.json");
+    include_bytes!("../../../examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json");
 const DESIGNER_WB: &[u8] =
-    include_bytes!("../../../examples/workbench/cl-192mhz-8mhz-notch/cmce.merlin.json");
+    include_bytes!("../../../examples/workbench/downstream/cl-192mhz-8mhz-notch/cmce.merlin.json");
 const RECIPE: &[u8] = include_bytes!("fixtures/designer-flat.json");
 // Original bytes exercise high/low bits and a zero octet; no text/filename conversion.
 const FILE_BYTES: &[u8] = &[0x81, 0x00, 0x5a];

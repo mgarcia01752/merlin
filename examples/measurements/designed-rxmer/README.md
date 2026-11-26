@@ -16,7 +16,7 @@ The recipe records a 48 dB baseline, -10 dB tilt, 2 dB peak-to-peak ripple at
 contains the result; do not reapply the recipe. Export rounded 7,479 samples,
 clipped none and changed samples by at most approximately 0.125 dB.
 
-Reuse [the compatible modulation profile](../../workbench/single/modulation-profile.bin)
+Reuse [the compatible modulation profile](../../workbench/downstream/single/modulation-profile.bin)
 without copying it. Its exact grid matches all 7,480 samples on channel 34, and
 its decoded hash matches the sidecar's profile hash. The Rust/Python
 `run_designed_rxmer` examples discover all captured profiles and explicitly

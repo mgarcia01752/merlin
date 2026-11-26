@@ -11,7 +11,7 @@ use crate::downstream::workbench::{
 use crate::shell::{ApplicationSessions, Direction, RetainedResources};
 
 const PROJECT: &[u8] =
-    include_bytes!("../../../../../examples/workbench/single/workbench.merlin.json");
+    include_bytes!("../../../../../examples/workbench/downstream/single/workbench.merlin.json");
 const TEST_MAXIMUM: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,
@@ -42,7 +42,7 @@ pub(super) fn populated() -> WorkbenchFileRust {
     .adopt(&context)
     .unwrap();
     let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../examples/workbench/single/workbench.merlin.json");
+        .join("../../examples/workbench/downstream/single/workbench.merlin.json");
     let url = QUrl::from_local_file(&QString::from(path.to_string_lossy().as_ref()));
     crate::platform::input_file::read_local(
         &context.application,

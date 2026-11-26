@@ -2522,11 +2522,23 @@ unity gain/attenuation and relative units. Restored settings feed the run reques
 
 ### Curated workbench examples and Open location
 
-`examples/workbench/manifest.json` inventories three runnable bundles: `single`
+[REQ-UI-EXAMPLES-03](requirements.md#req-ui-examples-03) adds explicit
+`examples/workbench/downstream/` and `examples/workbench/upstream/` ownership.
+The common manifest records each bundle's direction. Existing downstream inputs
+retain their exact bytes; four upstream schema-3 projects reuse the public
+Project owner and admitted ideal/synthetic measured configurations for both
+numerologies. [UI-EXAMPLES-03](development/checklist.md#task-ui-examples-03)
+owns saved-file Rust/Python/Qt and packaging acceptance; science/API behavior
+and the native Open root remain unchanged.
+
+`examples/workbench/manifest.json` inventories four downstream and four upstream
+runnable bundles. Downstream includes `single`
 (one DPD, one RxMER, one supplied DS channel estimate) and `multi-rxmer` (one DPD,
 five compatible RxMER inputs, one estimate), plus `multi-rxmer-2` (channel 193,
 132 pre-collected RxMER files, companion DPD, flat/unity response because no
-matching DS channel estimate is available). Each contains original files and a
+matching DS channel estimate is available), plus the synthetic
+`cl-192mhz-8mhz-notch` comparison. Upstream includes ideal-channel and synthetic
+measured-RxMER projects at both 25 kHz and 50 kHz. Each contains original files and a
 self-contained WB with hashes, provenance and licenses. Each bundle matches modem,
 channel, frequency grid and DPD coverage internally; production Rust project/request
 validation checks compatibility. Original epochs remain unchanged; multi-RxMER

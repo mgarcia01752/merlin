@@ -168,7 +168,7 @@ no engine ownership or behavior changed.
 ## API-EXAMPLES-03: channel-193 Python collection example
 
 Update the Python high-level walkthrough to consume the 132 RxMER binaries and
-companion DPD in examples/workbench/multi-rxmer-2. Select Profile A, 192 MHz,
+companion DPD in examples/workbench/downstream/multi-rxmer-2. Select Profile A, 192 MHz,
 AverageAll in Rust residual power, explicit unity H, 7200-second DPD tolerance
 and 1 ms observation with a 300-second execution bound. Retain named constants,
 numbered explanations and actual FEC/BER reporting. Loading stays separate from
@@ -429,7 +429,7 @@ examples/measurements/designed-rxmer/merlin_rxmer_designed.bin. Preserve its
 original bytes and adjacent
 .merlin.json recipe/provenance. This is synthetic designer output, not a modem
 measurement; the binary alone does not carry that provenance declaration.
-Use the matching examples/workbench/single/modulation-profile.bin identified
+Use the matching examples/workbench/downstream/single/modulation-profile.bin identified
 by its exact grid and the sidecar's decoded profile hash. Discover all captured
 profiles through Rust, run each independently with Individual selection, explicit
 unity physical channel and CmChannelEstimated correction. Do not import an unrelated

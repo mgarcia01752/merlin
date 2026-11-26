@@ -8,7 +8,7 @@ use merlin::downstream::{FullLoopStage, FullLoopStageRetention};
 use serde_json::{json, Value};
 
 const RUNNABLE: &[u8] =
-    include_bytes!("../../../../../examples/workbench/single/workbench.merlin.json");
+    include_bytes!("../../../../../examples/workbench/downstream/single/workbench.merlin.json");
 const UPSTREAM: &[u8] = include_bytes!("../../../../../examples/cli/upstream/us-50khz.json");
 
 // Independent small explicit observation choices, not new application defaults.

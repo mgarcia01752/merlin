@@ -1,0 +1,39 @@
+{
+  "application": "MERLIN",
+  "synthetic": true,
+  "source_document": "examples/cli/upstream/us-50khz.json",
+  "source_sha256": "499d7d8109e1ef91efc3615994374cee19779e365d7b004abc838eabd30652e0",
+  "files": [
+    {
+      "file": "LICENSE",
+      "bytes": 11344,
+      "sha256": "0aa9437d384f76ed211727b2136f12ea78a657eda4b4661e6d3fac0ba2656597"
+    },
+    {
+      "file": "NOTICE",
+      "bytes": 8127,
+      "sha256": "71bbc092871e6be6feff013b6f9a87fcb5fd4b6edcfdf1000d290943c18e9d77"
+    },
+    {
+      "file": "configuration.json",
+      "bytes": 3371,
+      "sha256": "499d7d8109e1ef91efc3615994374cee19779e365d7b004abc838eabd30652e0"
+    },
+    {
+      "file": "workbench.merlin.json",
+      "bytes": 4335,
+      "sha256": "a12a34daf71a070e9c0ec82f18c6106396e2b791abaea801b1d83cb8796386ee"
+    },
+    {
+      "file": "README.md",
+      "bytes": 998,
+      "sha256": "44dd7540d7d02c0d67707a6c390de67988732f263696be6aeff33c8ec4b3a09b"
+    }
+  ],
+  "limitations": [
+    "Synthetic observations only; no device capture or external interoperability claim.",
+    "Existing admitted C, H and effective C x H planes and measured associations are preserved.",
+    "Opening loads an idle project; Start runs the bounded MERLIN transmitter/channel/receiver loop."
+  ],
+  "source_revision": "f9bd6c2d3a6fd4d895776a7499d9a4c9ab474988"
+}

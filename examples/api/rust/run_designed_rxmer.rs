@@ -12,7 +12,8 @@ use std::{path::Path, time::Instant};
 
 const RXMER_PATH_FROM_MANIFEST: &str =
     "../../examples/measurements/designed-rxmer/merlin_rxmer_designed.bin";
-const PROFILE_PATH_FROM_MANIFEST: &str = "../../examples/workbench/single/modulation-profile.bin";
+const PROFILE_PATH_FROM_MANIFEST: &str =
+    "../../examples/workbench/downstream/single/modulation-profile.bin";
 const OBSERVATION_DURATION_MS: u64 = 1;
 const PROFILE_ASSOCIATION_TOLERANCE_SECONDS: u32 = 90_000;
 const MAX_RUNTIME_MS: u64 = 300_000;

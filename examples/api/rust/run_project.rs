@@ -8,7 +8,7 @@ use docsis_ofdma::api::{ExperimentOptions, ReportJson};
 use pnm_input::project::Project;
 use serde_json::{json, Value};
 
-const DOWNSTREAM: &[u8] = include_bytes!("../../workbench/single/workbench.merlin.json");
+const DOWNSTREAM: &[u8] = include_bytes!("../../workbench/downstream/single/workbench.merlin.json");
 const UPSTREAM: &str = include_str!("../../cli/upstream/us-50khz.json");
 const MEASURED: &str = include_str!("../../measurements/upstream/measured/capture-driven.json");
 // A finite external chunk split intentionally unrelated to upstream waveform geometry.

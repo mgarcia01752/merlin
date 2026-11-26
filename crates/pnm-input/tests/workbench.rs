@@ -6,7 +6,8 @@
 use docsis_ofdm_fec::api::*;
 use pnm_input::Workbench;
 use serde_json::{json, Value};
-const WB: &[u8] = include_bytes!("../../../examples/workbench/multi-rxmer-2/workbench.merlin.json");
+const WB: &[u8] =
+    include_bytes!("../../../examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json");
 fn document() -> Value {
     serde_json::from_slice(WB).unwrap()
 }
@@ -151,8 +152,10 @@ fn real_saved_workbench_fec_matches_independently_observed_native_ui() {
 #[test]
 fn imports_single_and_multi_workbenches_with_measured_channel_response() {
     for bytes in [
-        include_bytes!("../../../examples/workbench/single/workbench.merlin.json").as_slice(),
-        include_bytes!("../../../examples/workbench/multi-rxmer/workbench.merlin.json").as_slice(),
+        include_bytes!("../../../examples/workbench/downstream/single/workbench.merlin.json")
+            .as_slice(),
+        include_bytes!("../../../examples/workbench/downstream/multi-rxmer/workbench.merlin.json")
+            .as_slice(),
     ] {
         let wb = Workbench::from_bytes(bytes).unwrap();
         for sim in wb.controllers() {
@@ -184,10 +187,12 @@ fn resource_limits_reject_embedded_counts_lengths_and_oversize_files() {
 #[test]
 fn cablelabs_notch_fixture_preserves_frequency_plan_and_unity() {
     use base64::{engine::general_purpose::STANDARD, Engine};
-    const NOTCH: &[u8] =
-        include_bytes!("../../../examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json");
-    const FLAT: &[u8] =
-        include_bytes!("../../../examples/workbench/cl-192mhz-8mhz-notch/baseline.merlin.json");
+    const NOTCH: &[u8] = include_bytes!(
+        "../../../examples/workbench/downstream/cl-192mhz-8mhz-notch/workbench.merlin.json"
+    );
+    const FLAT: &[u8] = include_bytes!(
+        "../../../examples/workbench/downstream/cl-192mhz-8mhz-notch/baseline.merlin.json"
+    );
     for (bytes, has_notch) in [(NOTCH, true), (FLAT, false)] {
         let wb = Workbench::from_bytes(bytes).unwrap();
         assert_eq!(wb.controllers().len(), 1);
@@ -257,7 +262,9 @@ fn cablelabs_notch_fixture_preserves_frequency_plan_and_unity() {
 #[test]
 fn cablelabs_adapted_channel_prepares_without_changing_notch_settings() {
     use base64::{engine::general_purpose::STANDARD, Engine};
-    let bytes = include_bytes!("../../../examples/workbench/cl-192mhz-8mhz-notch/cmce.merlin.json");
+    let bytes = include_bytes!(
+        "../../../examples/workbench/downstream/cl-192mhz-8mhz-notch/cmce.merlin.json"
+    );
     let mut adapted: Value = serde_json::from_slice(bytes).unwrap();
     let original: Value = serde_json::from_slice(include_bytes!(
         "../../../examples/measurements/single-channel/channel_estimation.json"
@@ -289,7 +296,7 @@ fn cablelabs_adapted_channel_prepares_without_changing_notch_settings() {
     assert!(prepared[0].engine_settings().impairments.response.is_some());
     adapted["sections"]["measurements"]["response"] = Value::Null;
     let unity: Value = serde_json::from_slice(include_bytes!(
-        "../../../examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+        "../../../examples/workbench/downstream/cl-192mhz-8mhz-notch/workbench.merlin.json"
     ))
     .unwrap();
     assert_eq!(adapted, unity);

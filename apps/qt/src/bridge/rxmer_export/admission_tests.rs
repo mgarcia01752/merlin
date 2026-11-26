@@ -37,7 +37,7 @@ const SELECTION: &str = r#"{"first":1,"last":1,"clamp":true,"collection":false}"
 pub(super) fn prepared_owner() -> (MeasurementInputsRust, String) {
     let context = Context::for_application(ApplicationSessions::new(TEST_LIMIT).unwrap()).unwrap();
     let project: Project = serde_json::from_slice(include_bytes!(
-        "../../../../../examples/workbench/single/workbench.merlin.json"
+        "../../../../../examples/workbench/downstream/single/workbench.merlin.json"
     ))
     .unwrap();
     let (inputs, editors) = project.prepare().unwrap();

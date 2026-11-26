@@ -25,7 +25,8 @@ Designer output, not a CM measurement. Matching Rust/Python walkthroughs and
 compatible profile selection are documented in the
 [API examples](api/README.md#custom-designed-rxmer).
 
-[Upstream configuration fixtures](cli/upstream/README.md) exercise typed Rust admission and bounded runs.
+[Upstream Qt workbenches](workbench/upstream/README.md) open and run in the desktop UI.
+Separate [CLI configurations](cli/upstream/README.md) exercise typed Rust admission and bounded runs.
 
 The unified API pair uses [Rust](../crates/merlin/examples/upstream_session.rs) and
 [Python](api/python/run_upstream.py) over the same bounded upstream configuration.

@@ -14,8 +14,8 @@ import merlin.downstream as m
 from test_full_loop import inputs, options
 
 ROOT = Path(__file__).resolve().parents[3]
-SINGLE = ROOT / 'examples/workbench/single/workbench.merlin.json'
-MULTI = ROOT / 'examples/workbench/multi-rxmer/workbench.merlin.json'
+SINGLE = ROOT / 'examples/workbench/downstream/single/workbench.merlin.json'
+MULTI = ROOT / 'examples/workbench/downstream/multi-rxmer/workbench.merlin.json'
 # Independent source bytes exercise both end bits and an embedded zero octet.
 FILE_BYTES = bytes([0x81, 0x00, 0x5a])
 # Finite file-plus-fill length, independent of codec and observation budgets.

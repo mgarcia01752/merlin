@@ -9,7 +9,7 @@
 use docsis_ofdm_fec::api::*;
 use pnm_input::{read_capture, CaptureLoader};
 
-const FIXTURE_DIRECTORY: &str = "../../examples/workbench/single";
+const FIXTURE_DIRECTORY: &str = "../../examples/workbench/downstream/single";
 const PROFILE_FILENAME: &str = "modulation-profile.bin";
 const RXMER_FILENAME: &str = "rxmer.bin";
 const CHANNEL_ESTIMATE_FILENAME: &str = "ds-channel-estimate.bin";

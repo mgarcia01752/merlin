@@ -10,7 +10,7 @@ use std::sync::mpsc;
 use std::time::Duration;
 
 const PROJECT: &[u8] =
-    include_bytes!("../../../../../../examples/workbench/single/workbench.merlin.json");
+    include_bytes!("../../../../../../examples/workbench/downstream/single/workbench.merlin.json");
 // A small real observation is independent of host scheduling/counter policies.
 const OBSERVATION_MS: u64 = 1;
 const HOST_WATCHDOG: Duration = Duration::from_secs(30);

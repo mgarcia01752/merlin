@@ -11,7 +11,7 @@ use crate::downstream::workbench::{
 use crate::shell::{ApplicationSessions, RetainedResources};
 
 const PROJECT: &[u8] =
-    include_bytes!("../../../../../examples/workbench/single/workbench.merlin.json");
+    include_bytes!("../../../../../examples/workbench/downstream/single/workbench.merlin.json");
 const TEST_MAXIMUM: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,

@@ -4957,7 +4957,7 @@
       ],
       "implementation_owners": [
         "crates/ofdm/src/simulation/channel/job.rs",
-        "examples/workbench/cl-192mhz-8mhz-notch"
+        "examples/workbench/downstream/cl-192mhz-8mhz-notch"
       ],
       "validation_evidence": {
         "tests_or_fixtures": [
@@ -5054,7 +5054,7 @@
           "text": "[cl-notch-workbench/comparison-sim-1](development/features/cl-notch-workbench/comparison-sim-1.md)"
         },
         {
-          "source": "examples/workbench/cl-192mhz-8mhz-notch/README.md",
+          "source": "examples/workbench/downstream/cl-192mhz-8mhz-notch/README.md",
           "line": 106,
           "column": 9,
           "kind": "Markdown",
@@ -5156,7 +5156,7 @@
       ],
       "implementation_owners": [
         "crates/ofdm/src/simulation/channel/job.rs",
-        "examples/workbench/cl-192mhz-8mhz-notch"
+        "examples/workbench/downstream/cl-192mhz-8mhz-notch"
       ],
       "validation_evidence": {
         "tests_or_fixtures": [
@@ -5269,7 +5269,7 @@
           "text": "[cl-notch-workbench/design](development/features/cl-notch-workbench/design.md#wb-cl-05-preserve-fixture-bytes-on-windows-checkout)"
         },
         {
-          "source": "examples/workbench/cl-192mhz-8mhz-notch/README.md",
+          "source": "examples/workbench/downstream/cl-192mhz-8mhz-notch/README.md",
           "line": 71,
           "column": 1,
           "kind": "Markdown",
@@ -41486,7 +41486,7 @@
           "text": "[workbench-examples/design](development/features/workbench-examples/design.md#ui-open-01-relocatable-examples-directory)"
         },
         {
-          "source": "examples/workbench/multi-rxmer-dschan/README.md",
+          "source": "examples/workbench/downstream/multi-rxmer-dschan/README.md",
           "line": 10,
           "column": 25,
           "kind": "Markdown",
@@ -42044,8 +42044,8 @@
       "docs/user/validation/README.md": 2,
       "docs/user/waveform/rx-acquisition.md": 1,
       "examples/api/README.md": 1,
-      "examples/workbench/cl-192mhz-8mhz-notch/README.md": 2,
-      "examples/workbench/multi-rxmer-dschan/README.md": 1,
+      "examples/workbench/downstream/cl-192mhz-8mhz-notch/README.md": 2,
+      "examples/workbench/downstream/multi-rxmer-dschan/README.md": 1,
       "skills/README.md": 1,
       "skills/coding-style/SKILL.md": 1,
       "skills/git-workflow/SKILL.md": 1,

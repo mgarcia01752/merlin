@@ -53,7 +53,7 @@ all give 53. Preserve that distinction when comparing earlier screenshots.
 Run a comparison with:
 
 ```bash
-local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cmce_workbench.py examples/workbench/cl-192mhz-8mhz-notch/comparison-sim-1/user-cl-notch.merlin.json
+local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cmce_workbench.py examples/workbench/downstream/cl-192mhz-8mhz-notch/comparison-sim-1/user-cl-notch.merlin.json
 ```
 
 The materialized cases were created by `prepare_cl_comparison`; the public

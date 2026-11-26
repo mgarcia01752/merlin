@@ -1,31 +1,18 @@
 # MERLIN workbench examples
 
-Use File → Open and select a bundle's `workbench.merlin.json`. Each runnable
-directory also contains the original PNM inputs for opening individual blocks.
-WB files embed those exact bytes, so they remain self-contained after relocation.
-The former `examples/workbench.merlin.json` is now under `single/`.
+Use File → Open and choose a `workbench.merlin.json` file. Opening selects the
+project's direction and loads its settings; press Start to run. Examples are
+self-contained and require no device, network or Python process.
 
-| Directory | Modulation profile | RxMER | DS channel estimate | Default |
-| --- | --- | --- | --- | --- |
-| [single](single/README.md) | One | One | One | Single capture |
-| [multi-rxmer](multi-rxmer/README.md) | One | Five | One | Average residual power |
-| [multi-rxmer-2](multi-rxmer-2/README.md) | One | 132 | Flat/unity | Average residual power |
-| [cl-192mhz-8mhz-notch](cl-192mhz-8mhz-notch/README.md) | Synthetic 4096-QAM | 42 dB with 8 MHz notch; flat companion | Unity; adapted CMCE companion | PLC 333 MHz, notch 375 MHz |
-| [multi-rxmer-dschan](multi-rxmer-dschan/README.md) | Planned | Planned collection | Planned collection | Deferred |
+| Direction | Bundles |
+| --- | --- |
+| [Downstream](downstream/README.md) | Single/multiple RxMER captures, channel 193 collection and 192 MHz notch comparison. |
+| [Upstream](upstream/README.md) | Runnable 25/50 kHz ideal and synthetic measured-RxMER configurations. |
 
-All runnable WBs explicitly select `CmChannelEstimated`, matching the UI's
-new-configuration default. The two captured channel-34 WBs equalize with their supplied H;
-channel 193 and the default synthetic notch experiment use unity correction.
-The notch folder also offers `cmce.merlin.json` with an explicitly remapped and
-interpolated capture response for both impairment and correction.
+[manifest.json](manifest.json) is the common runnable inventory. Each bundle
+includes provenance and applicable LICENSE/NOTICE files. Original downstream
+files moved beneath `downstream/` without changing their saved input/capture
+bytes. Historical validation commands may name their former locations.
 
-Each runnable set has matching modem/channel, full frequency grid and DPD
-coverage within that set. `multi-rxmer-2` uses channel 193 and pre-collected
-RxMER history; the other runnable sets use channel 34. Original capture times
-differ; the configured association tolerance is explicit. Synthetic RxMER variants keep the baseline epoch and are alternate
-impairments, not successive measured events. Profile A/ID 0 and existing Rust
-transport limits still apply. A valid WB does not promise error-free recovery.
-
-[manifest.json](manifest.json) inventories runnable bundles and the deferred
-scenario. Each runnable bundle preserves provenance and upstream LICENSE/NOTICE.
-See the [user guide](../../docs/user/workbench-examples.md) for installed paths.
+The reserved downstream `multi-rxmer-dschan` folder remains deferred and is not
+a runnable project. CLI request JSON lives separately under [../cli](../cli/README.md).

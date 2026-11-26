@@ -9,7 +9,7 @@ use serde_json::json;
 #[test]
 fn cached_original_storage_admits_the_inclusive_boundary_and_rejects_sum_overflow() {
     let mut downstream = Project::from_bytes(include_bytes!(
-        "../../../../examples/workbench/single/workbench.merlin.json"
+        "../../../../examples/workbench/downstream/single/workbench.merlin.json"
     ))
     .unwrap();
     let upstream = Project::from_bytes(

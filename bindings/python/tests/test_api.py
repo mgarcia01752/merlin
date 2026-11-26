@@ -14,7 +14,7 @@ import unittest
 import merlin as m
 
 ROOT = Path(__file__).resolve().parents[3]
-FIXTURE = ROOT / "examples/workbench/single"
+FIXTURE = ROOT / "examples/workbench/downstream/single"
 
 
 def configured():
@@ -48,7 +48,7 @@ class NativeApiTests(unittest.TestCase):
             ids.clear()
             self.assertEqual([profile_id.value for profile_id in copied], [0, 1, 2, 3])
             self.assertEqual([value.value for value in m.DPD.profile_ids_from_file(path)], [0, 1, 2, 3])
-        collection = ROOT / "examples/workbench/multi-rxmer-2"
+        collection = ROOT / "examples/workbench/downstream/multi-rxmer-2"
         path = next(collection.glob("ds_ofdm_modulation_profile_*.bin"))
         self.assertEqual([value.value for value in m.DPD.profile_ids_from_file(path)], [0, 3, 4])
         document = json.loads(decoded_path.read_text())
@@ -243,7 +243,7 @@ class NativeApiTests(unittest.TestCase):
 class DerivedBandwidthTests(unittest.TestCase):
     def test_profile_without_bandwidth_override(self):
         """Derive the fixture width in Rust while preserving explicit origins."""
-        profile = m.DPD.from_file(ROOT / "examples/workbench/single/modulation-profile.bin", m.ProfileId.PROFILE_A)
+        profile = m.DPD.from_file(ROOT / "examples/workbench/downstream/single/modulation-profile.bin", m.ProfileId.PROFILE_A)
         derived = m.OCD.from_profile(m.ProtocolScope.DOCSIS31, profile)
         explicit = m.OCD.from_profile(m.ProtocolScope.DOCSIS31, profile,
             m.OcdOverrides(bandwidth=m.BandwidthHz(192_000_000)))

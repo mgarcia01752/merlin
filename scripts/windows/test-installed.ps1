@@ -26,7 +26,7 @@ foreach ($Path in @($Install, $Menu, $Desktop)) {
     }
 }
 New-Item -ItemType Directory $Logs, $UserFiles | Out-Null
-Copy-Item "$Root/examples/workbench/single/workbench.merlin.json" "$UserFiles/user.merlin.json"
+Copy-Item "$Root/examples/workbench/downstream/single/workbench.merlin.json" "$UserFiles/user.merlin.json"
 $Before = (Get-FileHash "$UserFiles/user.merlin.json").Hash
 
 # Run MSI operations synchronously with retained Windows Installer diagnostics.

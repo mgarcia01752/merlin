@@ -23,7 +23,7 @@ cd /home/dev01/Projects/merlin &&
 QT_QUICK_CONTROLS_STYLE=Fusion \
 LD_LIBRARY_PATH=/home/dev01/Projects/PNM-Viewer-Toolkit/local/qt/6.8.3/gcc_64/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH} \
 ./apps/qt/target/release/merlin-qt --debug-ui \
-  --workbench examples/workbench/multi-rxmer-2/workbench.merlin.json \
+  --workbench examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json \
   2>>merlin-debug.log
 ```
 

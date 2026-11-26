@@ -5,7 +5,10 @@
 //! Real asynchronous file transactions and exact target-revision preservation.
 use super::*;
 use crate::shell::ApplicationSessions;
-use merlin::{common::Project, upstream::ConfigurationDocument};
+use merlin::{
+    common::Project,
+    upstream::{ConfigurationDocument, RunStatus},
+};
 use std::{
     sync::atomic::{AtomicU64, Ordering},
     time::{Duration, Instant},
@@ -49,6 +52,45 @@ fn configured() -> (ApplicationSessions, Box<Model>) {
     drain(&mut model);
     assert!(model.current(), "{}", model.state());
     (application, model)
+}
+
+#[test]
+fn curated_upstream_projects_open_idle_and_complete_through_the_qt_model() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../examples/workbench/upstream");
+    for name in [
+        "ideal-25khz",
+        "ideal-50khz",
+        "synthetic-rxmer-25khz",
+        "synthetic-rxmer-50khz",
+    ] {
+        let application = ApplicationSessions::desktop().unwrap();
+        let mut model = Model::new(application.clone()).unwrap();
+        let path = root.join(name).join("workbench.merlin.json");
+        let original = std::fs::read(&path).unwrap();
+        let blank = application.snapshot(Direction::Upstream);
+        model
+            .open_project(path.clone(), blank, ReplacePermission::RequireClean)
+            .unwrap();
+        drain(&mut model);
+        assert_eq!(model.project_state()["status"], "opened", "{name}");
+        assert!(model.current(), "{name}: {}", model.state());
+        assert!(model.report.is_none());
+        assert!(application.active().is_none());
+        assert!(!application.snapshot(Direction::Upstream).dirty);
+        model.start().unwrap();
+        let deadline = Instant::now() + WATCHDOG;
+        while model.poll()["busy"] == true {
+            assert!(Instant::now() < deadline, "{name}: {}", model.state());
+            std::thread::sleep(POLL_INTERVAL);
+        }
+        let report = model.report.as_ref().expect("Actual Qt worker completion");
+        assert_eq!(report.1.value().status, RunStatus::Completed, "{name}");
+        assert!(report.1.value().reference_recovered, "{name}");
+        assert!(report.1.value().compared_source_bits > 0);
+        assert_eq!(report.1.value().bit_errors, 0);
+        assert!(application.active().is_none());
+        assert_eq!(std::fs::read(path).unwrap(), original);
+    }
 }
 
 #[test]
@@ -203,7 +245,7 @@ fn dirty_stale_failed_and_cancelled_open_do_not_replace_accepted_owner() {
     let wrong = directory.0.join("downstream.merlin.json");
     std::fs::write(
         &wrong,
-        include_bytes!("../../../../../examples/workbench/single/workbench.merlin.json"),
+        include_bytes!("../../../../../examples/workbench/downstream/single/workbench.merlin.json"),
     )
     .unwrap();
     model

@@ -1543,7 +1543,7 @@
     "cl": {
       "architecture": "docs/architecture.md#minimum-acceptance-merlin-closed-loop",
       "owners": [
-        "examples/workbench/cl-192mhz-8mhz-notch",
+        "examples/workbench/downstream/cl-192mhz-8mhz-notch",
         "crates/ofdm/src/simulation/channel/job.rs"
       ],
       "tests": [

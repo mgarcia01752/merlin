@@ -765,7 +765,7 @@ QtObject {
             phaseDiagnostics: observations.phaseDiagnostics,
             lastPopup: popupDiagnostics(observations.popup),
             lastParentPopup: popupDiagnostics(observations.parentPopup),
-            sourceWorkbench: "examples/workbench/single/workbench.merlin.json",
+            sourceWorkbench: "examples/workbench/downstream/single/workbench.merlin.json",
             downstreamIdentity: observations.downstreamIdentity,
             upstreamIdentity: observations.upstreamIdentity,
             acceptedOptions: observations.acceptedOptions.length ? JSON.parse(observations.acceptedOptions) : null,

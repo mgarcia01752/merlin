@@ -9,7 +9,7 @@ use pnm_input::Workbench;
 use serde_json::{json, Value};
 use sha2::{Digest, Sha256};
 const WB: &[u8] =
-    include_bytes!("../../../examples/workbench/cl-192mhz-8mhz-notch/cmce.merlin.json");
+    include_bytes!("../../../examples/workbench/downstream/cl-192mhz-8mhz-notch/cmce.merlin.json");
 const RECIPE: &[u8] = include_bytes!("fixtures/designer-flat.json");
 fn document() -> Value {
     let mut value: Value = serde_json::from_slice(WB).unwrap();

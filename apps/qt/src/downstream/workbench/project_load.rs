@@ -931,7 +931,7 @@ mod tests {
     fn command_line_file_preserves_destination_and_rejects_invalid_json() {
         let mut loader = Loader::default();
         let path = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-            .join("../../examples/workbench/single/workbench.merlin.json");
+            .join("../../examples/workbench/downstream/single/workbench.merlin.json");
         let context = Context::isolated();
         loader.start_requested(
             &context,
@@ -1038,7 +1038,7 @@ mod tests {
         let context = Context::isolated();
         loader.start_with(context.application.budget(), |_, _| {
             let project = serde_json::from_slice(include_bytes!(
-                "../../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json"
+                "../../../../../examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json"
             ))
             .unwrap();
             {

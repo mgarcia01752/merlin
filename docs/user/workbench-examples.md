@@ -5,15 +5,17 @@ examples folder. Open a scenario directory and choose `workbench.merlin.json`.
 The main **File → Open** filter is **MERLIN Workbenches (*.merlin.json)**.
 It hides binary captures and metadata JSON while preserving folder navigation.
 The input-block file pickers remain separate.
+Choose **downstream** or **upstream** first. Both folders contain ready-to-open
+projects; the project selects its direction tab automatically.
 You can also select that directory's original PNM files in the owning blocks.
 Save/Save As keep the operating system's normal destination selection.
 
 | Scenario | Files beside the WB | Default behavior |
 | --- | --- | --- |
-| `single` | One modulation profile, one RxMER, one DS channel estimate | Single RxMER input |
-| `multi-rxmer` | One modulation profile, five RxMER files, one DS channel estimate | Average linear residual power |
-| `multi-rxmer-2` | One modulation profile and 132 channel 193 RxMER files; no DS channel estimate | Average residual power; flat/unity channel response |
-| [cl-192mhz-8mhz-notch](../../examples/workbench/cl-192mhz-8mhz-notch/README.md) | Synthetic 4096-QAM profile; notch and flat RxMER JSON; three WBs | 192 MHz, PLC 333 MHz, 8 MHz notch centered at 375 MHz; Profile 3, 10 ms; unity defaults and `cmce.merlin.json` with an adapted channel response |
+| `downstream/single` | One modulation profile, one RxMER, one DS channel estimate | Single RxMER input |
+| `downstream/multi-rxmer` | One modulation profile, five RxMER files, one DS channel estimate | Average linear residual power |
+| `downstream/multi-rxmer-2` | One modulation profile and 132 channel 193 RxMER files; no DS channel estimate | Average residual power; flat/unity channel response |
+| [cl-192mhz-8mhz-notch](../../examples/workbench/downstream/cl-192mhz-8mhz-notch/README.md) | Synthetic 4096-QAM profile; notch and flat RxMER JSON; three WBs | 192 MHz, PLC 333 MHz, 8 MHz notch centered at 375 MHz; Profile 3, 10 ms; unity defaults and `cmce.merlin.json` with an adapted channel response |
 | `multi-rxmer-dschan` | Reserved documentation only | Varying channel-estimate playback is deferred |
 
 The three capture-based WBs use Profile A/ID 0, a PRBS15 source, independent comparison and
@@ -36,7 +38,7 @@ estimate was found: the WB uses a flat/unity supplied response and supplied-chan
 receiver correction (unity makes no amplitude/phase change). Average mode combines linear residual power across all
 132 captures. Hold/interpolate modes use the configured OFDM-symbol interval;
 they do not reproduce the irregular acquisition cadence. Original header capture
-times remain unchanged. See the [bundle notes](../../examples/workbench/multi-rxmer-2/README.md).
+times remain unchanged. See the [bundle notes](../../examples/workbench/downstream/multi-rxmer-2/README.md).
 
 The WBs embed exact input bytes with hashes, so copying a WB alone preserves
 its configuration. Each bundle also carries original files, provenance and
@@ -44,11 +46,32 @@ upstream LICENSE/NOTICE. See the [source inventory](../../examples/workbench/REA
 
 ![Five compatible RxMER inputs restored from the multi-rxmer WB](../images/workbench/workbench-multi-rxmer-dark.png)
 
+## Upstream examples
+
+The [upstream folder](../../examples/workbench/upstream/README.md) contains four
+self-contained saved projects: `ideal-25khz`, `ideal-50khz`,
+`synthetic-rxmer-25khz` and `synthetic-rxmer-50khz`. Open a folder's
+`workbench.merlin.json`, check the Upstream configuration, then press Start.
+Open PRBS-RX to inspect recovered bits, BER and FEC outcomes. Loading stays idle.
+
+Ideal projects use the accepted synthetic channel. Measured-plan projects use
+authored synthetic CMTS RxMER, UCD and admitted Pre-Eq data, retaining complete
+original bytes and their association/probe context. Correction C, physical
+channel H and effective C×H remain distinct. These are not field captures or
+external interoperability evidence. A future real capture parser does not
+change that provenance.
+
+Companion source documents, loose binary captures, provenance hashes and notices
+are included beside each upstream project. Run and instrument budgets are finite;
+no device/network access or Python process is required by Qt. See the
+[upstream workbench guide](upstream-workbench.md) for controls and observations.
+
 ## Development and installed paths
 
 Development builds find `examples/workbench/` relative to the executable's
 marked source checkout, independently of the shell's working directory.
-The former top-level `examples/workbench.merlin.json` moved into `single/`.
+The former top-level `examples/workbench.merlin.json` is now
+`downstream/single/workbench.merlin.json`. The common examples root is unchanged.
 
 Future desktop installers must include these same curated bundles. The native
 Open resolver already recognizes these layouts:

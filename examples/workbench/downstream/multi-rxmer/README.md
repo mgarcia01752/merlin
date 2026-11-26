@@ -12,4 +12,4 @@ Receiver errors are expected possibilities, not invalid example configuration.
 
 Original files are adjacent to and embedded in the WB. Provenance, original
 timestamps, hashes, [LICENSE](LICENSE) and [NOTICE](NOTICE) are retained. See
-[provenance](provenance.json) and the [stress input explanation](../../measurements/rxmer-fec-stress/README.md).
+[provenance](provenance.json) and the [stress input explanation](../../../measurements/rxmer-fec-stress/README.md).

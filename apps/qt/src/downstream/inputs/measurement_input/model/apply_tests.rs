@@ -53,8 +53,10 @@ fn prepared() -> (Context, ProfileModel, Model) {
 fn response() -> Capture {
     Capture::decode(
         "response.bin".into(),
-        include_bytes!("../../../../../../../examples/workbench/single/ds-channel-estimate.bin")
-            .to_vec(),
+        include_bytes!(
+            "../../../../../../../examples/workbench/downstream/single/ds-channel-estimate.bin"
+        )
+        .to_vec(),
         false,
     )
     .unwrap()

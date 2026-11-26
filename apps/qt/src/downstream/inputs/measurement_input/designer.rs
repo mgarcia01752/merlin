@@ -568,7 +568,7 @@ mod tests {
     fn fixture() -> (Session, Model) {
         let project: crate::downstream::workbench::project_file::Project =
             serde_json::from_slice(include_bytes!(
-                "../../../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json"
+                "../../../../../../examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json"
             ))
             .unwrap();
         let (inputs, editors) = project.prepare().unwrap();
@@ -732,7 +732,7 @@ mod tests {
     fn designed_flat_mer_drives_residual_power_and_real_fec() {
         let project: crate::downstream::workbench::project_file::Project =
             serde_json::from_slice(include_bytes!(
-                "../../../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json"
+                "../../../../../../examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json"
             ))
             .unwrap();
         let (mut inputs, editors) = project.prepare().unwrap();

@@ -67,7 +67,7 @@ mod tests {
     fn sparse_animation_uses_original_order_and_bounded_viewports() {
         let project: crate::downstream::workbench::project_file::Project =
             serde_json::from_slice(include_bytes!(
-                "../../../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json"
+                "../../../../../../examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json"
             ))
             .unwrap();
         let (_, editors) = project.prepare().unwrap();

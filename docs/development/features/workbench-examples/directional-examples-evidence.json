@@ -1,0 +1,426 @@
+{
+  "schema_version": 1,
+  "task": "UI-EXAMPLES-03",
+  "requirements": [
+    "REQ-UI-EXAMPLES-03",
+    "REQ-UIU-24",
+    "REQ-UIU-26"
+  ],
+  "status": "accepted",
+  "level": 3,
+  "recorded_at_utc": "2026-11-26T07:24:18.468435+00:00",
+  "candidate_parent": "bc37be7cdfb6c3c4474f2c7e8e03c4e0cce51604",
+  "integration_parents": [
+    "f9bd6c2d3a6fd4d895776a7499d9a4c9ab474988",
+    "d66c287870def960146cc8219f765b65dae2e00d"
+  ],
+  "scope": "Local master integration and direction-organized saved examples; no release or hosted/installed acceptance.",
+  "executed": [
+    {
+      "label": "full-rust",
+      "command": [
+        "scripts/test-local.sh",
+        "all"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 937.1316902929975
+    },
+    {
+      "label": "master-clippy-fixed",
+      "command": [
+        "scripts/cargo-local.sh",
+        "clippy",
+        "--workspace",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 44.21391723299166
+    },
+    {
+      "label": "facade-native-contracts",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "-p",
+        "merlin",
+        "--features",
+        "native-input",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.577736064005876
+    },
+    {
+      "label": "qt-complete-fixed",
+      "command": [
+        "scripts/qt-desktop.sh",
+        "check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 687.0278920739947
+    },
+    {
+      "label": "qt-release-final",
+      "command": [
+        "scripts/qt-desktop.sh",
+        "build"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 317.3373323639971
+    },
+    {
+      "label": "native-wheel-fixed",
+      "command": [
+        "local/api-python-build/bin/python",
+        "tools/python/build_wheel.py",
+        "--out",
+        "local/python-wheels-master-directional"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 23.2407816920022
+    },
+    {
+      "label": "native-complete-corrected",
+      "command": [
+        "python3",
+        "/home/dev01/Projects/merlin/docs/development/local/directional-workbench-examples/retry_native.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 139.20696185197448
+    },
+    {
+      "label": "native-clippy",
+      "command": [
+        "scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "bindings/python/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 21.549900871992577
+    },
+    {
+      "label": "native-project-probe",
+      "command": [
+        "python3",
+        "/home/dev01/Projects/merlin/docs/development/local/directional-workbench-examples/run_project_file_probe.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 38.400286017975304
+    },
+    {
+      "label": "qt-gui-project-consumers",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "bridge::workbench_file::project_consumer_tests::actual_gui_project_files_load_and_run_through_public_rust_for_native_python_parity",
+        "--",
+        "--ignored",
+        "--exact",
+        "--test-threads=1"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 17.706518010993022
+    },
+    {
+      "label": "gui-native-project-parity",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/directional-workbench-examples/installed-parity/installed/bin/python",
+        "-I",
+        "apps/qt/tests/project_api_parity.py",
+        "--references",
+        "/home/dev01/Projects/merlin/docs/development/local/directional-workbench-examples/gui-project-references",
+        "--output",
+        "/home/dev01/Projects/merlin/docs/development/local/directional-workbench-examples/gui-native-parity",
+        "--native-sha256",
+        "114da3c95ea7872d45cfef375efa3771ce984bad426d5325f1a0c4031da43ecf"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.2391248079948127
+    },
+    {
+      "label": "decoder-complete",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "third-party/pnm/Cargo.toml",
+        "--workspace",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 23.43026883600396
+    },
+    {
+      "label": "cli-smokes-complete",
+      "command": [
+        "bash",
+        "docs/development/local/directional-workbench-examples/cli-smokes.sh"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 41.2740934129979
+    },
+    {
+      "label": "cli-package",
+      "command": [
+        "python3",
+        "-B",
+        "tools/packaging/package.py",
+        "--binary",
+        "target/release/ofdm-fec",
+        "--output",
+        "/home/dev01/Projects/merlin/docs/development/local/directional-workbench-examples/cli-package"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.898704886989435
+    },
+    {
+      "label": "matrix-complete-fixed",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/api_operation_matrix.py",
+        "--exports",
+        "docs/development/local/directional-workbench-examples/rust-exports.json",
+        "--native-exports",
+        "docs/development/local/directional-workbench-examples/installed-parity/native-exports.json",
+        "--executed-record",
+        "docs/development/local/directional-workbench-examples/operation-executions.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.620766246982384
+    },
+    {
+      "label": "final-docs",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/feature_documentation.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 10.756314485013718
+    },
+    {
+      "label": "final-packaging",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/packaging",
+        "-p",
+        "test_*.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.6374484779953491
+    },
+    {
+      "label": "final-traceability",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/integration_traceability.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.255472249002196
+    },
+    {
+      "label": "final-format",
+      "command": [
+        "scripts/cargo-local.sh",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.2156604469928425
+    }
+  ],
+  "summary": {
+    "workspace_passed": 930,
+    "existing_workspace_benchmark_skips": 3,
+    "analysis_only_passed": 140,
+    "preparation_example_passed": 4,
+    "api_examples_passed": 14,
+    "doctests_passed": 1,
+    "qt_rust_passed": 648,
+    "ordinary_gui_artifact_ignored": 1,
+    "explicit_fresh_gui_artifact_passed": 1,
+    "qml_passed": 441,
+    "installed_native_passed": 221,
+    "actual_gui_project_native_parity": 3,
+    "decoder_workspace_passed": 102,
+    "facade_native_input_contracts_passed": 29,
+    "packaging_unit_passed": 26,
+    "validation_tool_passed": 89,
+    "testing_tool_passed": 15,
+    "all_saved_file_native_admission_passed": 8,
+    "exact_current_rust_matrix_cases": 417,
+    "rust_operation_rows": 637,
+    "native_operation_rows": 608,
+    "unchanged_relocated_non_markdown_files": 186,
+    "example_markdown_links_checked": 43
+  },
+  "artifacts": {
+    "qt_saved_file_admission": {
+      "version": "MERLIN 0.5.1",
+      "binary_sha256": "47fa3c2bc3f96bf88b1723403198fc42bf8403fd9de97e5d880b91be146a1489",
+      "checks": [
+        {
+          "id": "single",
+          "exit_code": 0,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": "",
+          "elapsed_seconds": 0.09265056700678542
+        },
+        {
+          "id": "multi-rxmer",
+          "exit_code": 0,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": "",
+          "elapsed_seconds": 0.1143682949768845
+        },
+        {
+          "id": "multi-rxmer-2",
+          "exit_code": 0,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": "",
+          "elapsed_seconds": 0.8212246710027102
+        },
+        {
+          "id": "cl-192mhz-8mhz-notch",
+          "exit_code": 0,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": "",
+          "elapsed_seconds": 0.06995320800342597
+        },
+        {
+          "id": "upstream-ideal-50khz",
+          "exit_code": 0,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": "",
+          "elapsed_seconds": 0.12863042898243293
+        },
+        {
+          "id": "upstream-ideal-25khz",
+          "exit_code": 0,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": "",
+          "elapsed_seconds": 0.03367667301790789
+        },
+        {
+          "id": "upstream-synthetic-rxmer-50khz",
+          "exit_code": 0,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": "",
+          "elapsed_seconds": 0.05695533400285058
+        },
+        {
+          "id": "upstream-synthetic-rxmer-25khz",
+          "exit_code": 0,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": "",
+          "elapsed_seconds": 0.09562029902008362
+        }
+      ]
+    },
+    "native_wheel": {
+      "file": "merlin_ofdm-0.5.1-cp310-cp310-linux_x86_64.whl",
+      "sha256": "3ebf7444643e00dba4a07fd8fdeb78f5ef21773ce1d1df8c02237f70f5b7aabd"
+    },
+    "portable_cli_archive": {
+      "archive": "merlin-cli_0.5.1_linux_amd64.tar.gz",
+      "archive_sha256": "dbd3a57001a887d9fbff56dd3c504bc78dbab92e5bad8f13ffddaa72614f47a1",
+      "bundles_checked": 8,
+      "extracted_cli_version": "ofdm-fec 0.5.1",
+      "originals_and_legal_files": "all manifested hashes and bytes pass",
+      "boundary": "Linux portable CLI archive only; no installed desktop or cross-platform runtime claim"
+    }
+  },
+  "reuse": {
+    "reason": "The Python correction changes only a test fixture root. Reuse the exact installed wheel and successful separate Rust outputs; rerun all 221 native cases.",
+    "reference_sha256": {
+      "MERLIN_UPSTREAM_RUST_PROJECT_JSON": "a93c0aab0dad801cb23cf8cdfc326c9661f5b60f8867ac5e205cfa8bd16bac55",
+      "MERLIN_UPSTREAM_RUST_SAVED_FULL_LOOP_JSON": "fa28da35df3fdadf658da023e121d3f60d75513cc6d611525c2b2e8a018b5e12",
+      "MERLIN_UPSTREAM_RUST_REFERENCE_JSON": "0417d6e711fb9e8ef695be4bc25cafdc06e7c782d3b5200f850de97db39e1b01",
+      "MERLIN_UPSTREAM_RUST_RESOURCE_GRID_JSON": "653f27fc675a9c97e7673c6bbf422e9bd94e28aada82e9fc3b90bed8ac3b7ab6",
+      "MERLIN_UPSTREAM_RUST_RECOVERY_JSON": "a960f2fc3029bb091d6b11349f8004b10bec1644b131c21458fa24f9da2e093e",
+      "MERLIN_UPSTREAM_RUST_CONFIGURED_RESPONSE_JSON": "df66121d1a05add0918125be8ef3aca008468048caa4dfd46163688988825fd9",
+      "MERLIN_UPSTREAM_RUST_RECEIVER_ESTIMATES_JSON": "2c85269225d528133eb3a5e6aa4f97f734e917bb0b9239a9a6fae576ea6b7ad9",
+      "MERLIN_UPSTREAM_RUST_SOFT_OBSERVATIONS_JSON": "45c142f1bdcf1bde35f267360a4af0a8f0a777b5a10d8bd443357c7ecbd8d2cd",
+      "MERLIN_UPSTREAM_RUST_QAM_VIEWS_JSON": "fb79cded38c20a6d8b27baa73942b7333925b2b6140cec233bcbe134fa5a5447",
+      "MERLIN_UPSTREAM_RUST_MEASUREMENTS_JSON": "6594c51eea6c16336bf7394bc8e7a48e4fb277b4ecbdd162acdfea88e36bdb04",
+      "MERLIN_UPSTREAM_RUST_DOCUMENT_JSON": "9aeaa5cdafc0d949956a41031450cc3881c09b7a5ab1afbce249e6030bc1c2ef",
+      "MERLIN_UPSTREAM_RUST_SYNTHETIC_JSON": "a6b2108d42e987537f2aa6719404067fb7ea468c642f363ddc6d1f2ed18ade89",
+      "MERLIN_UPSTREAM_RUST_UCD_JSON": "6350ca3f613c2344f0fe506d6bd8a0d975d4a7a3bf33ed3556553ea8ff915950",
+      "MERLIN_UPSTREAM_RUST_RXMER_JSON": "b18e9331d4a9980a24acf90d7b78804179b11ef3231d0a088afd9570ce1e48f4",
+      "MERLIN_UPSTREAM_RUST_CAPTURES_JSON": "e58b70a877f2a803be28d8e1f3b285a6acf4a501e4ae4c7d5d97e0a1160655b0",
+      "MERLIN_UPSTREAM_RUST_CAPTURES25_JSON": "3b7f3083504a5abbcb98bad90acb4ca49a9f47695d7b28491a108f1daf44fece",
+      "MERLIN_SOURCE_FILE_INFO_REFERENCE": "f311202193af6e53c2b19c67076af7c17157ce59b06068377bca81957f093e76",
+      "MERLIN_SPECTRUM_BUDGET_REFERENCE": "280a0982fe4a39e12a263a8e9bc63ea33d1f629dde4503f2bf591ad9e8ef93d9",
+      "MERLIN_CALIBRATED_SEQUENCE_REFERENCE": "b3f5f2d475d6bc7b8c8b1ae89509b5684753c70ab1dc0026236f31315d4f68de",
+      "MERLIN_PROFILE_PERFORMANCE_REFERENCE": "1cbc0ddbc30ca38b19d2f0b1e76223f0814a46bad3599a883dbf6f5b23f377d3",
+      "MERLIN_MEASURED_INPUT_VIEW_REFERENCE": "874802873f96355ac89932d7fb0cf7efe3139e02b510010302fb5b85596c5411",
+      "MERLIN_RETAINED_FOOTPRINT_REFERENCE": "d9f603d91df5fe1e26f6d81aedeff14f6c3b595507865090be359720dd4ec6dc",
+      "MERLIN_BOUNDED_SESSION_REFERENCE": "adeb6f0388b09139e0360acfdb41c043b31947ac3f08f34a2a6ba337d202314a",
+      "MERLIN_INPUT_RETAINED_REFERENCE": "c4e273b74dcdf29ef7d3ffc17e41a59ab9038e75fae7b7993a54022695f99509",
+      "MERLIN_BOUNDED_ARCHIVE_REFERENCE": "7cd4a3f63b846f23b510834ddca22dbbb5cb56600b3fe2bda2801fcc591665c2",
+      "MERLIN_DOWNSTREAM_RETAINED_REFERENCE": "cd08c149221605006367b880637bfc9c8b10e4f7e60c6d2c9175aa3d33209d01",
+      "MERLIN_CONTROL_FOOTPRINT_REFERENCE": "b9a129581dbd8347c775702b20deb572251306fe99ed3933e2b2cba7d8f739dc",
+      "MERLIN_TRANSMITTER_PARITY": "08ca0f3aaa3863a9f034262f92ab432d13fda67e2a879fa1e531b9b971ab8dd1",
+      "MERLIN_FULL_LOOP_PARITY": "b2ad62464c2ce6e13b7ed41cc2aa04e9842695f71482c0fad118c462d1a85e2b",
+      "MERLIN_WB_PARITY": "2667897b592b919ca5594f5fb1e7eb6b92cf339688ec3beac2f6be363e5392af",
+      "MERLIN_DESIGNER_PARITY": "595e3e96130e2d4a324b4ce909727dde0ba0ad936fbc379ae996bbfe380b5679",
+      "MERLIN_OPTIONS_RUST_REFERENCE_JSON": "4f2b5023e7930a4506c92a7ef2da8031c7241fa9f0bb0615ca99089f7d87f5d7",
+      "MERLIN_PROJECT_EDITS_RUST_REFERENCE_JSON": "407a0b44a8dcb91a83e8de04f547d12215b9cf4b8cf5d262f3cc3660b7cd03e1",
+      "MERLIN_WORKBENCH_EXAMPLES_RUST_REFERENCE_JSON": "523ac4e0dce6cd823fc946f00f85b41953bf12ef7290757ae706476c55d3c68c"
+    },
+    "source_records": "Ignored docs/development/local/directional-workbench-examples/installed-parity/; original failed receipt and logs remain preserved."
+  },
+  "failures_and_resolution": [
+    "Sort merged PNM module declarations for rustfmt.",
+    "Reconcile only the local facade version in the Qt lockfile from 0.4.0 to 0.5.1; registry identities remain unchanged.",
+    "Route the existing synthetic generator native wrapper through a facade re-export after removal of the direct adapter dependency.",
+    "Update packaging and the shared native-test helper for relocated downstream fixtures.",
+    "Correct the new test assertion to check the actual not-started-grant array, and remove a needless borrow.",
+    "Import upstream RunStatus explicitly in the new Qt model test.",
+    "Supply the explicit MERLIN-local Qt library environment for direct executable validation.",
+    "The initial native run had 9 missing-fixture errors; the complete corrected 221-case run passes.",
+    "The first extracted CLI check stopped after the release build; run the correct unchanged smoke segment before claiming smoke acceptance.",
+    "Normalize actual named Rust/native executions for the operation-matrix record; include the optional facade feature contracts and verified path-module aliases."
+  ],
+  "known_nonblocking_warnings": [
+    "Existing analysis/example-only unused timing/recovery helpers remain unsuppressed.",
+    "Existing activeFocusOnTab warnings occur twice in each of two unchanged QML cases."
+  ],
+  "not_required": [
+    "No wheel rebuild or repeated Rust reference generation after the Python fixture-path correction.",
+    "No complete Rust or Qt rerun for subsequent acceptance-document updates."
+  ],
+  "deferred": [
+    "Hosted CI and Windows native/installer runtime were not executed.",
+    "System installation, updater lifecycles, publication, new release tags and a master push are outside this request.",
+    "macOS desktop delivery remains deferred."
+  ],
+  "preservation": {
+    "registry_pins": "All three lockfiles retain exactly the pre-merge registry package versions and checksums.",
+    "downstream": "All 186 relocated non-Markdown files match the f9bd6c2d baseline. Original requirement/task IDs and completed history remain intact.",
+    "branches": "Verified ignored all-ref bundle and staged/unstaged/untracked archives preserve auxiliary work; branch cleanup follows acceptance."
+  }
+}

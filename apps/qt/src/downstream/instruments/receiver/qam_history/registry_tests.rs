@@ -74,7 +74,7 @@ fn rejected_catalog_and_late_status_replacement_preserve_exact_old_scientific_al
     let context = context();
     let budget = context.application.budget().clone();
     let mut document: Value = serde_json::from_slice(include_bytes!(
-        "../../../../../../../examples/workbench/single/workbench.merlin.json"
+        "../../../../../../../examples/workbench/downstream/single/workbench.merlin.json"
     ))
     .unwrap();
     document["receiver"]["duration_ms"] = json!(OBSERVATION_MS);

@@ -21,11 +21,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let projects: [(&str, &[u8]); 2] = [
         (
             "single",
-            include_bytes!("../../../examples/workbench/single/workbench.merlin.json"),
+            include_bytes!("../../../examples/workbench/downstream/single/workbench.merlin.json"),
         ),
         (
             "multi-rxmer",
-            include_bytes!("../../../examples/workbench/multi-rxmer/workbench.merlin.json"),
+            include_bytes!(
+                "../../../examples/workbench/downstream/multi-rxmer/workbench.merlin.json"
+            ),
         ),
     ];
     let mut cases = Vec::new();

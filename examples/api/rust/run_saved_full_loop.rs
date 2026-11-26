@@ -7,7 +7,8 @@ use docsis_ofdm_fec::api::FullLoopControl;
 use pnm_input::Workbench;
 use serde_json::{json, Value};
 
-const SAVED_PROJECT: &[u8] = include_bytes!("../../workbench/single/workbench.merlin.json");
+const SAVED_PROJECT: &[u8] =
+    include_bytes!("../../workbench/downstream/single/workbench.merlin.json");
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut document: Value = serde_json::from_slice(SAVED_PROJECT)?;

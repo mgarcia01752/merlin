@@ -105,12 +105,12 @@ let mut sim = Simulation::new();
 
 // Decode and retain all profiles; the first profile is selected automatically.
 sim.load_profiles(CaptureLoader::profiles(
-    &read_capture("examples/workbench/single/modulation-profile.bin")?,
+    &read_capture("examples/workbench/downstream/single/modulation-profile.bin")?,
 )?)?;
 
 // Add one RxMER capture and retain its ID for selection.
 let first = sim.add_rxmer(CaptureLoader::rxmer(
-    &read_capture("examples/workbench/single/rxmer.bin")?,
+    &read_capture("examples/workbench/downstream/single/rxmer.bin")?,
 )?)?;
 
 // Configure the simulation before starting it.
@@ -163,7 +163,7 @@ edited profiles retain their source catalog. Serialized DPDs include
 Static discovery remains available before selecting one:
 
 ```rust
-let input = read_capture("examples/workbench/single/modulation-profile.bin")?;
+let input = read_capture("examples/workbench/downstream/single/modulation-profile.bin")?;
 let ids = CaptureLoader::profile_ids(&input)?;
 for id in ids {
     let profile = CaptureLoader::profile(&input, id)?;

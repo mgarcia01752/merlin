@@ -49,9 +49,9 @@ scripts/cargo-local.sh run -p pnm-input --example run_single_capture --locked
 ```
 
 Cargo registers these source files as examples of `pnm-input`. They use shared
-captures under `examples/workbench/single` and
+captures under `examples/workbench/downstream/single` and
 `examples/measurements/single-channel`; no captures are duplicated here.
-The collection examples use `examples/workbench/multi-rxmer-2`:
+The collection examples use `examples/workbench/downstream/multi-rxmer-2`:
 
 ```bash
 scripts/cargo-local.sh run -p pnm-input --example run_multi_rxmer_mce --release --locked
@@ -75,7 +75,7 @@ local/api-python-test/bin/python examples/api/python/run_multi_rxmer_mce.py
 ```
 
 This loads the companion modulation-profile binary and all 132 RxMER binaries
-from `examples/workbench/multi-rxmer-2`, then runs an independent `AverageAll`
+from `examples/workbench/downstream/multi-rxmer-2`, then runs an independent `AverageAll`
 experiment for each captured profile: **0, 3 and 4**, with explicit unity H. Rust computes the average in residual power, preserving
 missing readings. The two-hour profile tolerance covers the collection.
 It explicitly selects `ReceiverMode.MERLIN_CHANNEL_ESTIMATED` (MCE) and matches
@@ -167,7 +167,7 @@ local/api-python-test/bin/python examples/api/python/run_designed_rxmer.py
 ```
 
 Both examples discover and independently run every profile in
-`examples/workbench/single/modulation-profile.bin` (currently 0, 1, 2 and 3).
+`examples/workbench/downstream/single/modulation-profile.bin` (currently 0, 1, 2 and 3).
 This profile's decoded hash matches the sidecar's `profile_sha256` and its grid
 exactly matches the designed capture: channel 34, 7,480 bins, first bin 356,
 25 kHz spacing and 631.1 MHz frequency at bin zero. The multi-rxmer-2 profile

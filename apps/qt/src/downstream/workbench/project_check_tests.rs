@@ -5,7 +5,7 @@
 //! Headless current-project regression, preserving complete legacy validation.
 use super::*;
 const DOWNSTREAM: &[u8] =
-    include_bytes!("../../../../../examples/workbench/single/workbench.merlin.json");
+    include_bytes!("../../../../../examples/workbench/downstream/single/workbench.merlin.json");
 const UPSTREAM: &str = include_str!("../../../../../examples/cli/upstream/us-50khz.json");
 
 #[test]

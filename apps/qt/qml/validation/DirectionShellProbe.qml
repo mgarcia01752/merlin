@@ -5,7 +5,7 @@
 import QtQuick
 
 // Fixed, opt-in native Main probe. Main supplies the real adapters and image paths.
-// Start with examples/workbench/single/workbench.merlin.json in the dark theme.
+// Start with examples/workbench/downstream/single/workbench.merlin.json in the dark theme.
 // No scientific values are invented: preparation reapplies its accepted options.
 QtObject {
     id: probe

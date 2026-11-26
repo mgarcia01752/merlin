@@ -28,8 +28,10 @@ fn independent_rx_response_designer_aliases_and_option_slots_keep_originals_and_
     .unwrap();
     let response = Capture::decode(
         "response.bin".into(),
-        include_bytes!("../../../../../../../../examples/workbench/single/ds-channel-estimate.bin")
-            .to_vec(),
+        include_bytes!(
+            "../../../../../../../../examples/workbench/downstream/single/ds-channel-estimate.bin"
+        )
+        .to_vec(),
         false,
     )
     .unwrap();

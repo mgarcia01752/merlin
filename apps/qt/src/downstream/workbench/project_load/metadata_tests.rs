@@ -11,7 +11,7 @@ use crate::{
 use merlin::downstream::{ChannelFilterSettings, EchoPath};
 
 const PROJECT: &[u8] =
-    include_bytes!("../../../../../../examples/workbench/single/workbench.merlin.json");
+    include_bytes!("../../../../../../examples/workbench/downstream/single/workbench.merlin.json");
 const LIMITS: RetainedResources = RetainedResources {
     payload_bytes: usize::MAX,
     ordered_entries: usize::MAX,

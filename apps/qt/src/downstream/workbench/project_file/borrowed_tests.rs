@@ -7,7 +7,7 @@ use super::*;
 use crate::downstream::workbench::session::{self, Context};
 
 const PROJECT: &[u8] =
-    include_bytes!("../../../../../../examples/workbench/single/workbench.merlin.json");
+    include_bytes!("../../../../../../examples/workbench/downstream/single/workbench.merlin.json");
 
 #[test]
 fn borrowed_sections_preserve_schema_originals_and_old_owner_during_atomic_write() {

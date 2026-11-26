@@ -33,7 +33,7 @@ const JSON_TEXT_SPARE_BYTES: usize = 61;
 const JSON_KEY_SPARE_BYTES: usize = 37;
 const JSON_ARRAY_SPARE_SLOTS: usize = 5;
 const PROJECT: &[u8] =
-    include_bytes!("../../../../../../examples/workbench/single/workbench.merlin.json");
+    include_bytes!("../../../../../../examples/workbench/downstream/single/workbench.merlin.json");
 
 #[derive(Clone, Copy)]
 enum MetadataDimension {
@@ -384,7 +384,7 @@ fn requested_file_moves_original_guard_through_loader_and_adoption_without_capac
     let context = context();
     let budget = context.application.budget().clone();
     let mut original = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
-        .join("../../examples/workbench/single/workbench.merlin.json");
+        .join("../../examples/workbench/downstream/single/workbench.merlin.json");
     original.reserve(PATH_SPARE_BYTES);
     let capacity = original.capacity();
     let path = project_path::admit(original, &budget).unwrap();

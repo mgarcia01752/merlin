@@ -10,7 +10,8 @@ const PROFILE: &[u8] =
     include_bytes!("../../../examples/measurements/single-channel/modulation_profile.bin");
 const DECODED_PROFILE: &[u8] =
     include_bytes!("../../../examples/measurements/single-channel/modulation_profile.json");
-const WORKBENCH: &[u8] = include_bytes!("../../../examples/workbench/single/workbench.merlin.json");
+const WORKBENCH: &[u8] =
+    include_bytes!("../../../examples/workbench/downstream/single/workbench.merlin.json");
 
 #[test]
 fn facade_renamed_stage_types_use_documented_public_imports_and_original_geometry() {

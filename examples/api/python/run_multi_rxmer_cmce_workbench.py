@@ -27,7 +27,7 @@ from merlin import Workbench
 
 REPOSITORY_PARENT_INDEX = 3  # examples/api/python -> repository root.
 DEFAULT_WORKBENCH = (Path(__file__).resolve().parents[REPOSITORY_PARENT_INDEX]
-                     / "examples/workbench/multi-rxmer-2/workbench.merlin.json")
+                     / "examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json")
 BER_FORMAT = ".3e"  # Four significant digits, including scientific zero.
 
 

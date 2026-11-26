@@ -1,0 +1,31 @@
+{
+  "schema_version": 3,
+  "application": "MERLIN",
+  "direction": "upstream",
+  "contents": {
+    "input": {
+      "kind": "configuration",
+      "document": "{\n  \"format\": \"merlin.upstream.configuration\",\n  \"schema_version\": 1,\n  \"presets\": [\n    {\n      \"id\": \"generic-50khz\",\n      \"description\": \"Synthetic generic example; no universal recommended loading.\",\n      \"vendor_template_id\": 224,\n      \"channel\": {\n        \"message_type\": 51,\n        \"management_version\": 5,\n        \"upstream_channel_id\": 1,\n        \"configuration_change_count\": 0,\n        \"minislot_size_ticks\": 0,\n        \"downstream_channel_id\": 1,\n        \"preamble_pattern\": null,\n        \"ranging_required\": null,\n        \"ranging_holdoff_priority\": null,\n        \"channel_class_id\": null,\n        \"change_indicator_bitmask\": 0,\n        \"timestamp_snapshot\": {\n          \"reserved\": 0,\n          \"docsis_timestamp\": 0,\n          \"divide_by_20_msb\": 0,\n          \"minislot_count\": 0\n        },\n        \"cyclic_prefix_samples\": 192,\n        \"rolloff_samples\": 64,\n        \"subcarrier_spacing_khz\": 50,\n        \"subcarrier_zero_hz\": 0,\n        \"excluded_bands\": [\n          {\n            \"first\": 0,\n            \"last\": 127\n          },\n          {\n            \"first\": 528,\n            \"last\": 2047\n          }\n        ],\n        \"unused_bands\": [\n          {\n            \"first\": 192,\n            \"last\": 527\n          }\n        ],\n        \"frame_symbols\": 6,\n        \"randomization_seed\": 8388607,\n        \"encompassed_bandwidth_hz\": 20000000,\n        \"bursts\": [\n          {\n            \"iuc\": 5,\n            \"preamble_length_bits\": null,\n            \"preamble_offset_bits\": null,\n            \"initial_ranging_subcarriers\": null,\n            \"fine_ranging_subcarriers\": null,\n            \"data_profile\": [\n              {\n                \"modulation_index\": 4,\n                \"pilot_pattern\": 1,\n                \"additional_minislots\": 7\n              }\n            ],\n            \"ir_power_control\": null\n          },\n          {\n            \"iuc\": 13,\n            \"preamble_length_bits\": null,\n            \"preamble_offset_bits\": null,\n            \"initial_ranging_subcarriers\": null,\n            \"fine_ranging_subcarriers\": null,\n            \"data_profile\": [\n              {\n                \"modulation_index\": 2,\n                \"pilot_pattern\": 1,\n                \"additional_minislots\": 7\n              }\n            ],\n            \"ir_power_control\": null\n          }\n        ]\n      },\n      \"assignment\": {\n        \"cm_mac\": [\n          2,\n          0,\n          0,\n          0,\n          0,\n          1\n        ],\n        \"registered\": true,\n        \"assigned_iucs\": [\n          5,\n          13\n        ],\n        \"ranging_sid\": 7,\n        \"testing_sid\": null,\n        \"sid_cluster\": [\n          7\n        ]\n      },\n      \"map\": null,\n      \"probe_map\": null\n    }\n  ],\n  \"selected_preset\": \"generic-50khz\",\n  \"simulation\": {\n    \"mode\": \"scheduled_data\",\n    \"selected_iuc\": 5,\n    \"source_seed\": 1,\n    \"grant_id\": 1,\n    \"epoch_sample\": 0,\n    \"first_frame\": 0,\n    \"frames\": 2,\n    \"minislots\": [\n      0,\n      1,\n      2,\n      3,\n      4,\n      5,\n      6,\n      7\n    ],\n    \"grants\": 1,\n    \"maximum_samples\": 16777216,\n    \"chunk_samples\": 997,\n    \"timeout_ms\": 30000,\n    \"retained_points\": 4096,\n    \"retained_taps\": [\n      \"TxOutput\",\n      \"RxEqualized\"\n    ],\n    \"estimator\": \"frame_flat_ls\",\n    \"maximum_pilot_gap\": 64,\n    \"reference_variance\": 0.02,\n    \"equalizer_power_floor\": 1e-12,\n    \"ldpc_iterations\": 50\n  }\n}\n"
+    },
+    "options": {
+      "grants": 1,
+      "maximum_samples": 16777216,
+      "chunk_samples": 997,
+      "timeout_ms": 30000,
+      "retained_points": 4096,
+      "retained_taps": [
+        "TxOutput",
+        "RxEqualized"
+      ]
+    },
+    "receiver_observations": {
+      "maximum_frames": 1,
+      "maximum_scalar_slots": 8192,
+      "soft": {
+        "maximum_cells": 4,
+        "maximum_words": 1,
+        "maximum_word_llrs": 16200
+      }
+    }
+  }
+}

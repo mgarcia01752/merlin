@@ -1,6 +1,8 @@
 # Unified Qt risk-based testing strategy
 
-This is the validation scheduling policy for `feature/unified-qt-workbench`.
+This is the validation scheduling policy for unified Qt workbench development,
+including its integration into `master`. The original implementation used
+`feature/unified-qt-workbench`.
 It refines the existing [validation plan](validation.md),
 [architecture](../../../architecture.md#unified-qt-acceptance),
 [REQ-UIU-24](../../../requirements.md#req-uiu-24),

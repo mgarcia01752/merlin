@@ -12,7 +12,7 @@ use std::{
 };
 
 const PROJECT: &[u8] =
-    include_bytes!("../../../../../examples/workbench/single/workbench.merlin.json");
+    include_bytes!("../../../../../examples/workbench/downstream/single/workbench.merlin.json");
 const WAIT_LIMIT: Duration = Duration::from_secs(30);
 const POLL_DELAY: Duration = Duration::from_millis(2);
 const SENTINEL: &[u8] = b"Independent existing output sentinel";

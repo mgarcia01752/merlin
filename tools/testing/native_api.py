@@ -188,7 +188,7 @@ def main():
              '--locked', '--', str(policies)], output, environment, 'policies', report['commands'])
         environment['MERLIN_API_PARITY'] = str(policies)
         workbench = run([*cargo, 'run', '-p', 'pnm-input', '--example', 'run_multi_rxmer_cmce_workbench',
-                         '--locked', '--', str(ROOT / 'examples/workbench/multi-rxmer-2/workbench.merlin.json')],
+                         '--locked', '--', str(ROOT / 'examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json')],
                         output, environment, 'workbench', report['commands'])
         json.loads(workbench.read_text())
         environment['MERLIN_WB_PARITY'] = str(workbench)
@@ -209,6 +209,11 @@ def main():
         run([*cargo, 'test', '-p', 'pnm-input', '--test', 'project_configuration_edits', '--locked'],
             output, environment, 'edited-configuration-projects', report['commands'])
         json.loads(edited_project.read_text())
+        workbench_examples = output / 'directional-workbench-examples.json'
+        environment['MERLIN_WORKBENCH_EXAMPLES_RUST_REFERENCE_JSON'] = str(workbench_examples)
+        run([*cargo, 'test', '-p', 'pnm-input', '--test', 'directional_workbench_examples', '--locked'],
+            output, environment, 'directional-workbench-examples', report['commands'])
+        json.loads(workbench_examples.read_text())
         venv.EnvBuilder(with_pip=True).create(output / 'installed')
         executable = output / ('installed/Scripts/python.exe' if sys.platform == 'win32' else 'installed/bin/python')
         run([str(executable), '-I', '-B', '-m', 'pip', 'install', '--no-index', '--no-deps', str(wheel)],
@@ -224,7 +229,7 @@ def main():
             'native-inventory', report['commands'], cwd=output)
         report['reference_environment'] = {key: value for key, value in environment.items()
             if key.startswith('MERLIN_UPSTREAM_RUST_') or key in {row[0] for row in DOWNSTREAM_REFERENCES} or key in
-            ('MERLIN_API_PARITY', 'MERLIN_WB_PARITY', 'MERLIN_DESIGNER_PARITY', 'MERLIN_TRANSMITTER_PARITY', 'MERLIN_FULL_LOOP_PARITY', 'MERLIN_OPTIONS_RUST_REFERENCE_JSON', 'MERLIN_PROJECT_EDITS_RUST_REFERENCE_JSON', 'MERLIN_SYNTHETIC_RXMER_RUST_OUTPUT')}
+            ('MERLIN_API_PARITY', 'MERLIN_WB_PARITY', 'MERLIN_DESIGNER_PARITY', 'MERLIN_TRANSMITTER_PARITY', 'MERLIN_FULL_LOOP_PARITY', 'MERLIN_OPTIONS_RUST_REFERENCE_JSON', 'MERLIN_PROJECT_EDITS_RUST_REFERENCE_JSON', 'MERLIN_SYNTHETIC_RXMER_RUST_OUTPUT', 'MERLIN_WORKBENCH_EXAMPLES_RUST_REFERENCE_JSON')}
         report['status'] = 'passed'
         print(f"Installed native API: {report['passed']} cases pass", flush=True)
     finally:

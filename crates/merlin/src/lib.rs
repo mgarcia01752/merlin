@@ -32,7 +32,8 @@ pub mod upstream {
         pub use pnm_input::upstream::{
             reassemble_ucd, CaptureAssociation, CaptureEvent, CaptureProbe, CaptureSource,
             MeasuredExperiment, PreEqCapture, PreEqCaptureKind, PreEqHeader, RxmerCapture,
-            RxmerHeader, UcdBurst, UcdCapture, UcdHeader, UcdTlv,
+            RxmerHeader, SyntheticRxmerCapture, UcdBurst, UcdCapture, UcdHeader, UcdTlv,
+            MAX_SYNTHETIC_RXMER_REQUEST_BYTES,
         };
     }
 }

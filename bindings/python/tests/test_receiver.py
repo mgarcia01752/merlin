@@ -20,7 +20,7 @@ EXAMPLE = ROOT / "examples/api/python/run_multi_rxmer_mce.py"
 UI_EXAMPLE = EXAMPLE.with_name("run_multi_rxmer_cm_chan_est.py")
 # Both entry points share the sibling workflow, as when executed by filename.
 sys.path.insert(0, str(EXAMPLE.parent))
-WORKBENCH = ROOT / "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+WORKBENCH = ROOT / "examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json"
 # Observed native release UI Profile Performance results for this exact WB.
 # These are software parity anchors, not modem interoperability vectors.
 UI_FEC_REFERENCE = [(0, 83, 0, 0), (3, 114, 5, 0), (4, 124, 19, 0)]

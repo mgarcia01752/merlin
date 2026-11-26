@@ -27,7 +27,7 @@ from merlin import (
 
 REPOSITORY_PARENT_INDEX = 3
 RXMER_PATH = "examples/measurements/designed-rxmer/merlin_rxmer_designed.bin"
-PROFILE_PATH = "examples/workbench/single/modulation-profile.bin"
+PROFILE_PATH = "examples/workbench/downstream/single/modulation-profile.bin"
 OBSERVATION_DURATION_MS = 1  # Source time, excluding acquisition/drain.
 PROFILE_ASSOCIATION_TOLERANCE_SECONDS = 90_000  # Explicit fixture epoch allowance.
 MAX_RUNTIME_MS = 300_000  # Independent host budget per profile.

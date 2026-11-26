@@ -94,7 +94,7 @@ class MeasurementPreviewTests(unittest.TestCase):
         retained = capture.frame()
         del capture
         self.assertEqual(retained['iq'][0], [3.0, 4.0])
-        binary = (ROOT / 'examples/workbench/single/ds-channel-estimate.bin').read_bytes()
+        binary = (ROOT / 'examples/workbench/downstream/single/ds-channel-estimate.bin').read_bytes()
         capture = m.ChannelEstimate.from_bytes('wrong.json', binary)
         frame = capture.frame()
         self.assertEqual(frame['capture_time'], 1391100)

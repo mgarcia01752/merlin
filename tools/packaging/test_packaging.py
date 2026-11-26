@@ -19,7 +19,7 @@ class PackageTests(unittest.TestCase):
     def test_capture_checkout_preserves_bytes_with_windows_autocrlf(self):
         """Keep provenance and embedded originals exact under Windows Git settings."""
         source = Path(__file__).resolve().parents[2]
-        relative = Path("examples/workbench/cl-192mhz-8mhz-notch/modulation_profile.json")
+        relative = Path("examples/workbench/downstream/cl-192mhz-8mhz-notch/modulation_profile.json")
         original = (source / relative).read_bytes()
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -82,12 +82,23 @@ class PackageTests(unittest.TestCase):
             bundle_ids = [bundle["id"] for bundle in manifest["bundles"]]
             self.assertCountEqual(bundle_ids, [
                 "single", "multi-rxmer", "multi-rxmer-2", "cl-192mhz-8mhz-notch",
+                "upstream-ideal-50khz", "upstream-ideal-25khz",
+                "upstream-synthetic-rxmer-50khz", "upstream-synthetic-rxmer-25khz",
             ])
             for bundle in manifest["bundles"]:
                 workbench = examples / bundle["workbench"]
                 self.assertTrue(workbench.is_file())
                 saved = json.loads(workbench.read_text())
-                self.assertEqual(saved["receiver"]["receiver_mode"], "supplied_channel")
+                self.assertEqual(workbench.relative_to(examples).parts[0], bundle['direction'])
+                if bundle['direction'] == 'downstream':
+                    self.assertEqual(saved["receiver"]["receiver_mode"], "supplied_channel")
+                else:
+                    self.assertEqual(saved['direction'], 'upstream')
+
+                    # Independent format anchor: direction-tagged saved projects use schema 3.
+                    self.assertEqual(saved['schema_version'], 3)
+                    self.assertEqual(saved['contents']['input']['document'].encode(),
+                                     (examples / bundle['source_document']).read_bytes())
                 self.assertTrue((workbench.parent / "LICENSE").is_file())
                 self.assertTrue((workbench.parent / "NOTICE").is_file())
                 provenance = json.loads((examples / bundle["provenance"]).read_text())

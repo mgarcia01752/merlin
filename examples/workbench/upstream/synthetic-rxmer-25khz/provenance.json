@@ -1,0 +1,59 @@
+{
+  "application": "MERLIN",
+  "synthetic": true,
+  "source_document": "examples/measurements/upstream/measured/capture-driven-25khz.json",
+  "source_sha256": "d5086644b6dd2222857c12dfe67b7d2b5be93cbc39f7df777aabc7276cc928f0",
+  "files": [
+    {
+      "file": "LICENSE",
+      "bytes": 11344,
+      "sha256": "0aa9437d384f76ed211727b2136f12ea78a657eda4b4661e6d3fac0ba2656597"
+    },
+    {
+      "file": "NOTICE",
+      "bytes": 8127,
+      "sha256": "71bbc092871e6be6feff013b6f9a87fcb5fd4b6edcfdf1000d290943c18e9d77"
+    },
+    {
+      "file": "measured-experiment.json",
+      "bytes": 52737,
+      "sha256": "d5086644b6dd2222857c12dfe67b7d2b5be93cbc39f7df777aabc7276cc928f0"
+    },
+    {
+      "file": "pre-eq-event-2.bin",
+      "bytes": 38,
+      "sha256": "5c10c5e97cb81ca1461f799a61e93a00e3d589ab1d2a50546cbfbbcfded824e3"
+    },
+    {
+      "file": "pre-eq-initial-1.bin",
+      "bytes": 3234,
+      "sha256": "cf16e90e627349c308a42edd45d57ebb0c368e23f76a770845ecf84bbd63c846"
+    },
+    {
+      "file": "rxmer-1.bin",
+      "bytes": 1097,
+      "sha256": "50f9cb5fe0e84b79cfd0a5a43413ff6b0044259f6051a7673fd1787c7fc45109"
+    },
+    {
+      "file": "ucd-1.bin",
+      "bytes": 96,
+      "sha256": "8b4fbb8b390ca1af657162a42d4a20e651cb2ad2cd17e8031690c038e134b9ac"
+    },
+    {
+      "file": "workbench.merlin.json",
+      "bytes": 58596,
+      "sha256": "f917b8955d07145c5430ea11577a6c5aaef26898bf51ab1437333c797132e2b2"
+    },
+    {
+      "file": "README.md",
+      "bytes": 1067,
+      "sha256": "248de379807cf5572779702410bc5616669ef3374e9b580fa168b9b2f627bb9f"
+    }
+  ],
+  "limitations": [
+    "Synthetic observations only; no device capture or external interoperability claim.",
+    "Existing admitted C, H and effective C x H planes and measured associations are preserved.",
+    "Opening loads an idle project; Start runs the bounded MERLIN transmitter/channel/receiver loop."
+  ],
+  "source_revision": "f9bd6c2d3a6fd4d895776a7499d9a4c9ab474988"
+}

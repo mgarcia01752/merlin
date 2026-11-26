@@ -31,7 +31,7 @@ from merlin import (
 # Example configuration. Change these values here when adapting the workflow.
 # These are caller choices, not settings inferred from the capture filenames.
 REPOSITORY_PARENT_INDEX = 3  # examples/api/python/ -> repository root.
-FIXTURE_DIRECTORY = "examples/workbench/multi-rxmer-2"
+FIXTURE_DIRECTORY = "examples/workbench/downstream/multi-rxmer-2"
 PROFILE_FILENAME = "ds_ofdm_modulation_profile_aabbccddeeff_193_1764824373.bin"
 RXMER_FILE_PATTERN = "ds_ofdm_rxmer_per_subcar_*.bin"
 OBSERVATION_DURATION_MS = 1  # Per profile; increase for a longer experiment.

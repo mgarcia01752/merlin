@@ -7,7 +7,7 @@ Both files are self-contained; press **Start** to run the actual Rust decoder.
 This synthetic experiment approximates CM-GL-PNM-3.1-V05-230927, Appendix II,
 pp.208–210 (especially Figure 192). It is an indirect comparison, not a
 reproduction of CableLabs hardware measurements or an LTE waveform generator.
-[Source/download and page map](../../../skills/docsis-pnm-rxmer-fec/references/source-map.md).
+[Source/download and page map](../../../../skills/docsis-pnm-rxmer-fec/references/source-map.md).
 
 ## Configuration
 
@@ -64,11 +64,11 @@ from the existing capture as documented below. No binary PNM export is generated
 To run either saved WB using an installed MERLIN Python API:
 
 ```bash
-python examples/api/python/run_multi_rxmer_cmce_workbench.py examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json
-python examples/api/python/run_multi_rxmer_cmce_workbench.py examples/workbench/cl-192mhz-8mhz-notch/baseline.merlin.json
+python examples/api/python/run_multi_rxmer_cmce_workbench.py examples/workbench/downstream/cl-192mhz-8mhz-notch/workbench.merlin.json
+python examples/api/python/run_multi_rxmer_cmce_workbench.py examples/workbench/downstream/cl-192mhz-8mhz-notch/baseline.merlin.json
 ```
 
-[Validation record](../../../docs/development/features/cl-notch-workbench/design.md).
+[Validation record](../../../../docs/development/features/cl-notch-workbench/design.md).
 
 ## Companion with adapted CM channel estimation
 
@@ -93,7 +93,7 @@ the synthetic workbench timestamp for association. Its values are not quantized
 back to binary PNM. The source Apache-2.0 license and attribution are retained.
 
 ```bash
-local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cmce_workbench.py examples/workbench/cl-192mhz-8mhz-notch/cmce.merlin.json
+local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cmce_workbench.py examples/workbench/downstream/cl-192mhz-8mhz-notch/cmce.merlin.json
 ```
 
 ## Saved Designer comparison
@@ -103,5 +103,5 @@ Python load its Designer recipe directly. The separate
 [CL-positioned 8 MHz variant](comparison-sim-1/user-cl-notch.merlin.json) retains
 its other channel/receiver settings. The same folder contains a materialized
 original and a flat-background unity sweep, with a provenance manifest.
-See the [measured simulation comparison](../../../docs/development/features/cl-notch-workbench/comparison-sim-1.md)
+See the [measured simulation comparison](../../../../docs/development/features/cl-notch-workbench/comparison-sim-1.md)
 for actual FEC, timing and limitations against CableLabs Figure 192.

@@ -2022,6 +2022,17 @@ and the
 
   Requirements: [UI-EXAMPLES-02](../requirements.md#ds-ui-examples-02).
 
+<a id="task-ui-examples-03"></a>
+- [x] **UI-EXAMPLES-03** Separate downstream/upstream workbench bundles and add
+  runnable upstream 25/50 kHz ideal and synthetic measured-RxMER configurations.
+  Requirements: [REQ-UI-EXAMPLES-03](../requirements.md#req-ui-examples-03).
+  Architecture: [curated examples](../architecture.md#curated-workbench-examples-and-open-location).
+  Depends on: UI-EXAMPLES-02, UIU-FILE-01, UIU-QA-01.
+  Acceptance: unchanged downstream inputs, Rust/native Python saved-file execution
+  parity, Qt Open/admission, packaging integrity and resolved references.
+  [Design/evidence](features/workbench-examples/design.md#ui-examples-03-directional-bundles-and-runnable-upstream-projects).
+  Evidence: [integrated Level 3 receipt](features/workbench-examples/directional-examples-evidence.json): 930/140 Rust, 648 Qt, 441 QML, 221 native Python, 29 optional facade and 102 decoder cases pass. All four upstream files run through the production Qt model; eight files pass native admission. Fresh GUI exports, CLI smokes, archive integrity and requirement links pass; original downstream bytes/history remain intact.
+
 <a id="task-ui-open-01"></a>
 - [x] **UI-OPEN-01** Default native Open to installed/source example resources,
   independently of the launch directory. [Design](features/workbench-examples/design.md).

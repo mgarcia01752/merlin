@@ -28,7 +28,7 @@ from merlin import (
 # Example configuration. Change these values here when adapting the workflow.
 # These are caller choices, not settings inferred from the capture filenames.
 REPOSITORY_PARENT_INDEX = 3  # examples/api/python/ -> repository root.
-FIXTURE_DIRECTORY = "examples/workbench/single"
+FIXTURE_DIRECTORY = "examples/workbench/downstream/single"
 PROFILE_FILENAME = "modulation-profile.bin"
 RXMER_FILENAME = "rxmer.bin"
 CHANNEL_ESTIMATE_FILENAME = "ds-channel-estimate.bin"

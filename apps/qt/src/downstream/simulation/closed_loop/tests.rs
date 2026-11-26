@@ -160,7 +160,7 @@ fn channel193_rxmer_controls_tx_reference_mer_while_nearest_points_are_optimisti
     let context = &crate::downstream::workbench::session::Context::default();
     let bytes = std::fs::read(
         std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("../../examples/workbench/multi-rxmer-2/workbench.merlin.json"),
+            .join("../../examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json"),
     )
     .unwrap();
     let project: crate::downstream::workbench::project_file::Project =

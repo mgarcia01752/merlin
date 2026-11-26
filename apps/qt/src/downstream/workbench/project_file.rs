@@ -262,7 +262,7 @@ mod tests {
     fn version_two_profile_selection_roundtrips_and_legacy_remains_explicit() {
         let original = std::fs::read(
             Path::new(env!("CARGO_MANIFEST_DIR"))
-                .join("../../examples/workbench/single/workbench.merlin.json"),
+                .join("../../examples/workbench/downstream/single/workbench.merlin.json"),
         )
         .unwrap();
         let mut project: Project = serde_json::from_slice(&original).unwrap();
@@ -315,7 +315,14 @@ mod tests {
         let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../examples/workbench");
         let manifest: Value =
             serde_json::from_slice(&std::fs::read(root.join("manifest.json")).unwrap()).unwrap();
-        let bundles = manifest["bundles"].as_array().unwrap();
+        let bundles = manifest["bundles"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|bundle| bundle["direction"] == "downstream")
+            .collect::<Vec<_>>();
+
+        // Independent inventory anchor: relocation retains all four legacy bundles.
         assert_eq!(bundles.len(), 4);
         assert_eq!(manifest["planned"][0]["id"], "multi-rxmer-dschan");
         for bundle in bundles {

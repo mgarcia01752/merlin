@@ -221,7 +221,7 @@ mod tests {
         // independent core test. Here the actual public saved-run owner exercises
         // the application registry, bounded retention and missing-run isolation.
         let mut document: Value = serde_json::from_slice(include_bytes!(
-            "../../../../../../examples/workbench/single/workbench.merlin.json"
+            "../../../../../../examples/workbench/downstream/single/workbench.merlin.json"
         ))
         .unwrap();
         document["receiver"]["duration_ms"] = json!(1);

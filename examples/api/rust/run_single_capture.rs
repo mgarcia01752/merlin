@@ -15,7 +15,7 @@ use pnm_input::{read_capture, CaptureLoader};
 // Example configuration: adapt these caller choices for your own captures.
 // Cargo registers this file as a pnm-input example, so its manifest directory
 // is crates/pnm-input even though the source lives under examples/api/rust.
-const FIXTURE_DIRECTORY_FROM_MANIFEST: &str = "../../examples/workbench/single";
+const FIXTURE_DIRECTORY_FROM_MANIFEST: &str = "../../examples/workbench/downstream/single";
 const PROFILE_FILENAME: &str = "modulation-profile.bin";
 const RXMER_FILENAME: &str = "rxmer.bin";
 const CHANNEL_ESTIMATE_FILENAME: &str = "ds-channel-estimate.bin";

@@ -22,7 +22,7 @@ const MEASURED_25: &[u8] = include_bytes!(
     "../../../../../examples/measurements/upstream/measured/capture-driven-25khz.json"
 );
 const DOWNSTREAM: &[u8] =
-    include_bytes!("../../../../../examples/workbench/single/workbench.merlin.json");
+    include_bytes!("../../../../../examples/workbench/downstream/single/workbench.merlin.json");
 
 // Independent saved overrides differ from the original source document settings.
 const SAVED_GRANTS: usize = 2;

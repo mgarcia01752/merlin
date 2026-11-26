@@ -256,10 +256,11 @@ mod tests {
     #[test]
     fn combined_preview_is_bounded_and_preserves_admission_diagnostics() {
         use merlin::downstream::{ChannelFilterSettings, EchoPath};
-        let project: crate::downstream::workbench::project_file::Project = serde_json::from_slice(
-            include_bytes!("../../../../../examples/workbench/single/workbench.merlin.json"),
-        )
-        .unwrap();
+        let project: crate::downstream::workbench::project_file::Project =
+            serde_json::from_slice(include_bytes!(
+                "../../../../../examples/workbench/downstream/single/workbench.merlin.json"
+            ))
+            .unwrap();
         let original = project.validate().unwrap();
         let mut inputs = original.clone();
         inputs.response = None;

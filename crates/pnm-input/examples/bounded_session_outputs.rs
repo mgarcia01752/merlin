@@ -40,12 +40,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     for (name, bytes) in [
         (
             "single",
-            include_bytes!("../../../examples/workbench/single/workbench.merlin.json").as_slice(),
+            include_bytes!("../../../examples/workbench/downstream/single/workbench.merlin.json")
+                .as_slice(),
         ),
         (
             "multi-rxmer",
-            include_bytes!("../../../examples/workbench/multi-rxmer/workbench.merlin.json")
-                .as_slice(),
+            include_bytes!(
+                "../../../examples/workbench/downstream/multi-rxmer/workbench.merlin.json"
+            )
+            .as_slice(),
         ),
     ] {
         for observed in [false, true] {

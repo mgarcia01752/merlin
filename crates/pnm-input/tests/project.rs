@@ -9,7 +9,7 @@ use pnm_input::project::{Project, ProjectDirection};
 use serde_json::{json, Value};
 
 const DOWNSTREAM: &[u8] =
-    include_bytes!("../../../examples/workbench/single/workbench.merlin.json");
+    include_bytes!("../../../examples/workbench/downstream/single/workbench.merlin.json");
 const UPSTREAM_50: &str = include_str!("../../../examples/cli/upstream/us-50khz.json");
 const UPSTREAM_25: &str = include_str!("../../../examples/cli/upstream/us-25khz.json");
 const MEASURED_50: &str =

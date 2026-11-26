@@ -6099,7 +6099,7 @@ Use MERLIN-local Rust/Cargo/Qt tools and existing target caches. Focused merge
 checks precede the integration commit; the directional-examples delivery runs
 Level 3 workspace, complete Qt/QML, freshly installed native Python parity, CLI,
 project persistence and packaging regressions against the final combined tree.
-That final acceptance remains pending until its actual results are recorded.
+Current integrated acceptance is recorded by [UI-EXAMPLES-03](../workbench-examples/design.md#ui-examples-03-executed-validation).
 No push, release, system installation or unrelated repository changes are implied.
 Branch cleanup must preserve unique commits and dirty auxiliary worktrees.
 
@@ -6112,3 +6112,10 @@ The initial formatting check required module ordering; the Qt locked build
 required updating only the local facade package's stale 0.4.0 lock entry to
 0.5.1. External dependency pins remain unchanged. Full combined acceptance and
 the native wheel/Qt executable builds continue with the directional examples.
+
+The fresh native build exposed the synthetic generator's old direct adapter
+import after the branch dependency convergence. Re-export its already public
+Rust owner and request limit through `merlin::upstream::inputs` and consume
+that facade from Python. This is nominal export wiring, not a new operation or
+scientific implementation; the existing generator tests and full native parity
+cover it. Preserve the direct `pnm_input` public owner for independent consumers.

@@ -18,7 +18,7 @@ from merlin import (
 )
 
 REPOSITORY_PARENT_INDEX = 3
-FIXTURE_DIRECTORY = "examples/workbench/single"
+FIXTURE_DIRECTORY = "examples/workbench/downstream/single"
 PROFILE_FILENAME = "modulation-profile.bin"
 RXMER_FILENAME = "rxmer.bin"
 CHANNEL_ESTIMATE_FILENAME = "ds-channel-estimate.bin"

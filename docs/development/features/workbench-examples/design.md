@@ -1,8 +1,88 @@
 # Workbench example bundles and installed Open defaults
 
+## UI-EXAMPLES-03: Directional bundles and runnable upstream projects
+
+The user requires delivery on `master`. Local merge `bc37be7c` preserves both
+parent histories and brings the accepted unified Qt application to master. Its
+existing public `merlin::common::Project` / native `merlin.common.Project` admit
+direction-tagged schema-3 files. Do not introduce another loader or public API.
+
+Move existing downstream bundles under `examples/workbench/downstream/` without
+changing saved documents, original captures, hashes or licenses. Add
+`examples/workbench/upstream/` with four independently saved, self-contained
+projects: ideal 25/50 kHz and synthetic measured-RxMER 25/50 kHz. Reuse the
+existing admitted configuration and measured-plan fixtures exactly; no new
+scientific modes, algorithms or public API are needed. Loading remains idle.
+
+The root manifest remains schema 1, adds an explicit direction per bundle and
+uses paths relative to the common examples root. Preserve downstream bundle IDs
+and the deferred multiple-response scenario. Native Open still starts at that
+root. Update source examples, tests, guides, installer inventories and path
+references. Keep historical acceptance states and numerical evidence intact.
+
+| Owner / symbol | Existing contract and gap | Disposition |
+| --- | --- | --- |
+| `examples/workbench/*` | Four runnable downstream bundles and one deferred folder; no upstream saved projects. | MOVE under `downstream/`; ADD four `upstream/` bundles with source documents and provenance. |
+| `examples/cli/upstream/us-{25,50}khz.json` | Supported generic synthetic configurations with explicit modes/budgets. | REUSE unchanged as embedded configuration originals. |
+| `examples/measurements/upstream/measured/capture-driven*.json` | Complete synthetic measured cohorts with explicit identities/reference planes. | REUSE unchanged; retain original capture bytes and synthetic limitations. |
+| `crates/pnm-input/src/project` and facade re-export | Existing idle original-preserving schema-3 admission and independent sessions. | REUSE; add fixture acceptance and separate-process example reference. |
+| `crates/pnm-input/tests/directional_workbench_examples.rs`, native `test_directional_workbench_examples.py` and `tools/testing/native_api.py` | New file-based admission, original identity, four complete upstream runs and separate-process native parity. | ADD/ADAPT; retain all prior tests. |
+| Native `merlin.common.Project` | Same shared Rust validation and execution. | REUSE installed wheel; add direct saved-file parity cases. |
+| `apps/qt/src/upstream/workbench/project_tests.rs` | Production asynchronous file/session owner. | ADD one test opening idle and completing all four actual saved examples. |
+| `apps/qt/src/downstream/workbench/project_file.rs` | Curated test assumes every manifest row is downstream. | ADAPT test selection by direction; no simulation behavior changes. |
+| `tools/packaging/{test_packaging,desktop_smoke}.py` | Inventories and provenance check four downstream bundles. | ADAPT to both directions; retain integrity/license/admission gates. |
+
+Requirement: [REQ-UI-EXAMPLES-03](../../../requirements.md#req-ui-examples-03).
+Task: [UI-EXAMPLES-03](../../checklist.md#task-ui-examples-03).
+Architecture: [curated examples](../../../architecture.md#curated-workbench-examples-and-open-location).
+
+Acceptance: preserve downstream binary/WB hashes across relocation; resolve
+active paths and internal links; load all manifested saved projects through the
+public Rust owner; execute all upstream projects with actual decoder/source
+comparison; verify native Python against separately executed Rust outcomes and
+settings, round-trip ownership and original provenance; validate Qt saved-file
+admission and actual upstream Open/readiness; run affected packaging/resource,
+formatting, Clippy and traceability checks. Reuse caches and the installed native
+wheel built for the integrated master candidate. The prerequisite merge makes
+this a Level 3 milestone: run the full applicable combined regressions once,
+then reuse the matching artifact for the saved-file cases. Record
+executed evidence and deferred gates before checking the task.
+
+### UI-EXAMPLES-03 executed validation
+
+Accepted on master after the integrated Level 3 gates in the
+[execution receipt](directional-examples-evidence.json). All 930 workspace cases,
+140 analysis-only cases, four preparation cases, 14 API examples and the doctest
+pass. Optional facade native-input contracts pass all 29 cases. Complete Qt
+acceptance passes 648 Rust cases and 441 QML records; the separately invoked
+actual GUI artifact gate passes, followed by three installed-native project
+comparisons. The optimized 0.5.1 executable admits all eight workbenches.
+
+All 221 installed-wheel tests pass, including four new upstream file runs. Fresh
+compiler/native exports and 417 exact executed Rust case mappings validate the
+637 Rust / 608 native operation rows. The decoder workspace passes 102 cases;
+packaging passes 26 cases. Real native Open/Save/dirty/cancel/rejection operations,
+scientific CLI smokes and the extracted portable CLI archive pass. Its eight
+bundles retain all manifested bytes, hashes and legal files. All 186 relocated
+non-Markdown downstream files match the original baseline; 43 example links
+resolve. Registry identities/checksums remain unchanged across all three locks.
+
+The first installed run failed nine cases through one stale fixture root. The
+complete corrected run reuses the exact wheel and successful Rust references;
+no failed run is reported as passed. Other compilation/harness corrections and
+existing unsuppressed warnings are retained in the receipt. Three existing host
+benchmark skips remain explicit; the ordinary ignored GUI artifact case was
+executed separately against fresh desktop exports. Hosted/Windows/installed
+lifecycles and publication are separate gates. The source checkout's latest
+production executable is built. No release/tag/version change is made.
+
+Branch cleanup preserves unique commits in a verified Git bundle and retains
+all dirty auxiliary worktrees, with source patches and untracked-file archives
+under ignored `docs/development/local/directional-workbench-examples/branch-backup/`.
+
 ## UI-EXAMPLES-01: Curated runnable bundles
 
-Organize `examples/workbench/single/` with one modulation-profile PNM, one RxMER
+Organize `examples/workbench/downstream/single/` with one modulation-profile PNM, one RxMER
 PNM, one DS channel-estimate PNM and self-contained `workbench.merlin.json`.
 `multi-rxmer/` contains the same DPD and channel estimate with several compatible
 RxMER inputs and its own WB. Reuse existing sanitized bytes and synthetic stress

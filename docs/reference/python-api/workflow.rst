@@ -13,7 +13,7 @@ Saved workbench
 
    from merlin import Workbench
 
-   wb = Workbench.from_file("examples/workbench/multi-rxmer-2/workbench.merlin.json")
+   wb = Workbench.from_file("examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json")
    print([profile.value for profile in wb.profile_ids])  # Still idle.
    for batch in wb.run():  # Releases the interpreter lock during native work.
        for entry in batch:

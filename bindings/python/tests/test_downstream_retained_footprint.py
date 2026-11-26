@@ -14,7 +14,7 @@ import merlin.common as common
 import merlin.downstream as downstream
 
 ROOT = Path(__file__).resolve().parents[3]
-PROJECTS = ROOT / 'examples/workbench'
+PROJECTS = ROOT / 'examples/workbench/downstream'
 
 
 def quantities(value):

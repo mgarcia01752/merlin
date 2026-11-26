@@ -12,7 +12,7 @@ from merlin import (
 )
 
 REPOSITORY_PARENT_INDEX = 3
-FIXTURE_DIRECTORY = "examples/workbench/single"
+FIXTURE_DIRECTORY = "examples/workbench/downstream/single"
 OBSERVATION_DURATION_MS = 1
 PROFILE_TOLERANCE_SECONDS = 90_000
 MAX_RUNTIME_MS = 300_000

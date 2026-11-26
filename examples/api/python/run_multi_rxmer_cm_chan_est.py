@@ -22,7 +22,7 @@ from merlin import ReceiverMode
 from run_multi_rxmer_mce import main as run_collection
 
 
-# Match examples/workbench/multi-rxmer-2/workbench.merlin.json.
+# Match examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json.
 RECEIVER_MODE = ReceiverMode.CM_CHANNEL_ESTIMATED
 
 

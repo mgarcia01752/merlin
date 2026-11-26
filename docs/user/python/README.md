@@ -77,7 +77,7 @@ local/api-python-test/bin/python examples/api/python/run_single_capture.py
 
 `run_single_capture.py` demonstrates the original single-capture workflow. For the
 separate example using the modulation profile and 132 RxMER binaries from
-`examples/workbench/multi-rxmer-2`, run:
+`examples/workbench/downstream/multi-rxmer-2`, run:
 
 ```bash
 local/api-python-test/bin/python examples/api/python/run_multi_rxmer_mce.py
@@ -97,7 +97,7 @@ local/api-python-test/bin/python examples/api/python/run_multi_rxmer_cm_chan_est
 ```
 
 This companion shares all other settings and reporting with the MCE example;
-it matches `examples/workbench/multi-rxmer-2/workbench.merlin.json` as saved.
+it matches `examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json` as saved.
 UI edits made later are not automatically imported into either script.
 
 For an already-loaded DPD, read its member directly:
@@ -159,13 +159,13 @@ MAX_RUNTIME_MS = 300_000  # Limit each experiment to 300 seconds of host time.
 
 # Load the capture once; this object owns its profiles and resolved channel settings.
 sim = Simulation()
-sim.load_profiles("examples/workbench/single/modulation-profile.bin")
+sim.load_profiles("examples/workbench/downstream/single/modulation-profile.bin")
 
 # Inspect the retained IDs; the first loaded profile is selected for run().
 print([profile_id.value for profile_id in sim.profile_ids])
 
 # Add measured RxMER; retain the returned identifier for later selection.
-first = sim.add_rxmer(RxMer.from_file("examples/workbench/single/rxmer.bin"))
+first = sim.add_rxmer(RxMer.from_file("examples/workbench/downstream/single/rxmer.bin"))
 
 # Configure the experiment before running it; loading does not start a run.
 sim.set_options(EvaluationOptions(

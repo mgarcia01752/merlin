@@ -368,10 +368,11 @@ mod tests {
     /// # Panics
     /// Panics if the checked sample workbench or original association no longer loads.
     pub(super) fn fixture() -> (Session, Model) {
-        let project: crate::downstream::workbench::project_file::Project = serde_json::from_slice(
-            include_bytes!("../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json"),
-        )
-        .unwrap();
+        let project: crate::downstream::workbench::project_file::Project =
+            serde_json::from_slice(include_bytes!(
+                "../../../../examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json"
+            ))
+            .unwrap();
         let (inputs, editors) = project.prepare().unwrap();
         let mut model = editors.measurements;
         model.draft_rx.truncate(2);

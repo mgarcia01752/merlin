@@ -14,7 +14,7 @@ import unittest
 import merlin as m
 
 ROOT = Path(__file__).resolve().parents[3]
-WB = ROOT / "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+WB = ROOT / "examples/workbench/downstream/multi-rxmer-2/workbench.merlin.json"
 # Independent native UI observation for the current bundled WB.
 UI_FEC = [(83, 0, 0), (114, 5, 0), (124, 19, 0)]
 
