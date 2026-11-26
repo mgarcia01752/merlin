@@ -1495,7 +1495,8 @@ WB persistence and simulation-job integration are implemented; bandwidth/spacing
 editing and skip-scheme import remain outside this editor. See the [profile input guide](user/measurement-inputs/modulation-profile.md)
 and [development setup](development/setup.md).
 
-### Reuse of the PNM Viewer Qt framework
+<a id="reuse-of-the-pnm-viewer-qt-framework"></a>
+### Reuse of the RAVEN Qt framework
 
 Normal local Qt `build`/`run` helpers use optimized release binaries, as do
 packaging and Python wheels. Explicit `build-debug`/`run-debug` preserve fast
@@ -1557,11 +1558,13 @@ X/Close and the plot supports mouse navigation and Full Span. See the
 [user guide](user/measurement-inputs/modulation-profile.md).
 
 Reuse suitable Qt shell, theme, dialog, navigation, Rust/Qt adapter and build
-patterns from `/home/dev01/Projects/PNM-Viewer-Toolkit`. The user authorized
-read-only reference inspection; all modifications stay in MERLIN. Select and
+patterns from pinned RAVEN upstream revisions, retaining the GitHub source
+reference, imported file identities and licensing. All modifications stay in MERLIN. Select and
 adapt components to this simulator rather than copying the viewer's product
 workflows. MERLIN remains standalone, with no runtime dependency on the viewer
-checkout. All simulation, DSP, modulation and FEC remain in MERLIN's Rust engine.
+checkout, build cache or toolchain. Historical upstream repository names in
+immutable provenance and original copyright notices remain intact.
+All simulation, DSP, modulation and FEC remain in MERLIN's Rust engine.
 
 The user accepted GPL reuse: the Qt application incorporating viewer desktop/UI
 code uses GPL-3.0-only, preserving source copyrights, licenses and applicable

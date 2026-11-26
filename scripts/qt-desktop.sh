@@ -58,14 +58,16 @@ case "${ACTION}" in
   run|run-debug)
     # The pinned development SDK uses XCB, including under XWayland sessions.
     export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-xcb}"
-    if [[ -z "${DISPLAY:-}" && -z "${WAYLAND_DISPLAY:-}" ]]; then
+    # XCB needs DISPLAY even when a Wayland desktop advertises WAYLAND_DISPLAY.
+    # Preserve an explicit DISPLAY, including an SSH-forwarded X server.
+    if [[ -z "${DISPLAY:-}" ]]; then
       while IFS='=' read -r setting value; do
         case "${setting}" in
           DISPLAY|XAUTHORITY) export "${setting}=${value}" ;;
         esac
       done < <(systemctl --user show-environment 2>/dev/null || true)
     fi
-    if [[ -z "${DISPLAY:-}" && -z "${WAYLAND_DISPLAY:-}" && "${QT_QPA_PLATFORM:-}" != offscreen ]]; then
+    if [[ -z "${DISPLAY:-}" && ( "${QT_QPA_PLATFORM}" == xcb || -z "${WAYLAND_DISPLAY:-}" ) && "${QT_QPA_PLATFORM}" != offscreen ]]; then
       echo 'Run from the VM desktop terminal, or configure display forwarding.' >&2
       exit 1
     fi

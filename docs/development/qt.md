@@ -90,6 +90,16 @@ it does not write into the reference repository. It uses an available Cargo or
 the existing project-local toolchain. Missing SDK/toolchain prerequisites stop
 with a diagnostic. The run helper can read DISPLAY/XAUTHORITY from the user's
 active VM desktop session, without changing the session configuration.
+XCB requires `DISPLAY` even if `WAYLAND_DISPLAY` is set. When `DISPLAY` is
+missing, the helper reads the desktop session's current `DISPLAY` and
+`XAUTHORITY`; it preserves an explicitly forwarded display. Do not copy an
+XWayland authorization filename from an older session.
+
+Upstream RAVEN source is a pinned ingestion/reference source, not a required
+local checkout. MERLIN's reusable decoder already lives under
+`third-party/pnm` with immutable GitHub provenance. Preserve original upstream
+names in that provenance and licensing. The development SDK and Cargo caches
+belong to MERLIN; do not point launchers or toolchain links at sibling projects.
 
 The VM is the interactive rendering/review target. Build success and offscreen
 rendering alone do not establish interactive approval or support on other OSes.

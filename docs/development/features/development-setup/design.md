@@ -23,6 +23,12 @@ or Python production runtime. See scripts/install-development.sh for the list.
 
 ## DEV-02: Pinned decoder source fetch
 
+This section retains the original fetch-stage history. The current implementation
+uses the ingested source under `third-party/pnm`, verified by
+`tools/development/check_sources.py`; its
+[source/provenance guide](../../../../third-party/pnm/README.md) supersedes the
+former Git-cache prerequisite described below. No sibling checkout is required.
+
 The Qt Cargo manifest and lockfile pin pnm 0.3.6 to upstream revision
 5fbd5561f3e06b73486546b5ffa520279080a5eb. Cargo fetches that source into ignored
 local/merlin-cargo/git; no PNM Viewer source is vendored in tracked MERLIN files.
@@ -51,3 +57,35 @@ All 70 declared packages are present in this host's configured Ubuntu metadata.
 Pinned cached Git source identity matches the manifest. No apt install or fresh
 Rust/Qt provisioning was executed. Pristine setup on all three Ubuntu versions
 remains DEV-03 and is not claimed by these checks.
+
+## DEV-01 correction: VM display and standalone launch references
+
+The XCB development launcher must discover `DISPLAY` when absent, including
+Wayland desktop sessions that already supply `WAYLAND_DISPLAY`. Preserve an
+explicit display/authorization for forwarded sessions and reject an unavailable
+XCB display before invoking Cargo. Explicit offscreen execution remains valid.
+Owner: `scripts/qt-desktop.sh`; acceptance:
+`tools/development/tests/test_qt_display.py` and the existing binary's real XCB
+startup smoke. This repairs the existing setup contract rather than changing
+scientific, API, persistence or UI behavior. DEV-03 provisioning remains open.
+
+The ignored VM launcher must use MERLIN's existing binary and an owned Qt
+runtime, without Cargo or a sibling repository. Remove stale dangling toolchain
+references to the former viewer checkout. RAVEN is the current upstream product
+name; immutable GitHub source identities, imported bytes and copyright holders
+remain historical evidence. The architecture retains its former section anchor.
+
+Validation passed: four isolated launcher regression cases, `bash -n`,
+ShellCheck and requirement/architecture/feature-link checks. The real existing
+Qt binary passed `--smoke-test` through the repaired VM launcher with `DISPLAY`
+and `XAUTHORITY` initially absent and `WAYLAND_DISPLAY` present. The launcher
+discovered the live desktop and exited zero with `MERLIN_QT_STYLE=Fusion`.
+`xdpyinfo` confirmed access; `libxcb-cursor.so.0` was already installed and no
+system installation was needed. The ignored launcher uses MERLIN's installed
+`/usr/lib/merlin` runtime, not a reference repository SDK. Its configuration and
+the removed dangling links remain VM-local changes.
+
+No Rust/Qt source, scientific algorithms or public API changed. Full simulation,
+Qt rebuild/QML regression, Python wheel and release suites were not required
+or executed. This launch smoke does not establish that the prebuilt executable
+was rebuilt from the current checkout or establish pristine provisioning.

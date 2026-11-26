@@ -32,8 +32,9 @@ changeable-source claims scoped through the workflow's
 
 DOCSIS OFDM Channel Sim is a standalone DOCSIS simulation
 library and CLI. Work exclusively in this repository unless scope is changed.
-For Qt framework reuse, read-only inspection of PNM-Viewer-Toolkit is authorized;
-all modifications remain in MERLIN. Follow coding-style for reuse and licensing.
+For Qt framework reuse, inspect pinned RAVEN upstream source and provenance;
+all modifications remain in MERLIN. Do not require a local RAVEN or former
+PNM Viewer Toolkit checkout. Follow coding-style for reuse and licensing.
 
 Preserve the implemented downstream OFDM and upstream OFDMA backend scopes in
 `docs/architecture.md`. Upstream Qt remains deferred. Downstream simulation modes are the

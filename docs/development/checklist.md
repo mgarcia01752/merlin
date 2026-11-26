@@ -1931,6 +1931,8 @@ Local development scope only; existing push/release and security gates stay inta
 
   Requirements: [DEV-01](../requirements.md#ds-dev-01).
 
+  VM launch correction: [display and standalone references](features/development-setup/design.md#dev-01-correction-vm-display-and-standalone-launch-references).
+
 <a id="task-dev-02"></a>
 - [x] **DEV-02** Fetch the PNM decoder by exact Git/version pins into ignored
   Cargo storage; preserve notices without vendoring viewer source.
