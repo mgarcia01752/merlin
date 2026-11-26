@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -7,6 +8,10 @@
  */
 //! PHY I20 Table 7 p48, Tables 9/10 pp67–68 and Table 51 frame bounds.
 use crate::{error::invalid, PhyResult};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::{Deserialize, Serialize};
 
 /// Fixed upstream sample rate, in samples per second.
@@ -136,5 +141,40 @@ impl Waveform {
     /// The final burst tail R is added once at terminal drain.
     pub fn stride(&self) -> usize {
         self.numerology.fft_len() + self.prefix
+    }
+}
+
+impl RetainedPayload for Waveform {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            numerology,
+            prefix,
+            rolloff,
+            frame_symbols,
+            bandwidth_hz,
+        } = self;
+        sum([
+            numerology.retained_children(),
+            prefix.retained_children(),
+            rolloff.retained_children(),
+            frame_symbols.retained_children(),
+            bandwidth_hz.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for Numerology {
+    /// Audits every inline variant without counting borrowed or fixed data twice.
+    ///
+    /// # Returns
+    /// Zero dynamic children; the enclosing root/container owns the fixed bytes.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Khz50 | Self::Khz25 => Some(RetainedFootprint::default()),
+        }
     }
 }

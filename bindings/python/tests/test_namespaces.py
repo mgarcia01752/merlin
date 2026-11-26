@@ -42,6 +42,7 @@ class NamespaceImports(unittest.TestCase):
             upstream.Simulation().preview()
         self.assertEqual(missing.exception.code, common.ErrorCode.MissingSetting)
         self.assertEqual(missing.exception.legacy_code, 'MissingSetting')
+        self.assertEqual(missing.exception.engine_code, 'MissingSetting')
         self.assertIsNone(missing.exception.field)
         self.assertIsNone(missing.exception.offset)
 

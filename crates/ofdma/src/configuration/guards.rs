@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -9,6 +10,10 @@
 use crate::{
     error::{invalid, limit},
     PhyResult,
+};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
 };
 use serde::{Deserialize, Serialize};
 
@@ -33,5 +38,16 @@ impl GuardIntervals {
             return Err(invalid("guards.origin"));
         }
         Ok(self.leading + self.trailing)
+    }
+}
+
+impl RetainedPayload for GuardIntervals {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { leading, trailing } = self;
+        sum([leading.retained_children(), trailing.retained_children()])
     }
 }

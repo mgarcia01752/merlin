@@ -32,6 +32,28 @@ A matching version/tag alone does not establish a published unified wheel.
 
 `UcdCapture`, `RxmerCapture` and `PreEqCapture` inspect bounded original bytes.
 Their exported metadata and exact original bytes/hashes remain observations.
+For each capture type, `to_source_json()` exports a lossless source envelope and
+`from_source_json(bytes)` imports it through the same Rust binary decoder. Keep
+`to_json()` for inspection; it intentionally omits original byte payloads and is
+not a source importer. Python performs no decoding or hash validation itself.
+
+```python
+from pathlib import Path
+from merlin.upstream import UcdCapture
+
+original = bytes.fromhex(Path("examples/measurements/upstream/ucd/minimal.hex").read_text())
+capture = UcdCapture.from_mac_management(original)
+source_json = capture.to_source_json()
+restored = UcdCapture.from_source_json(source_json.encode("utf-8"))
+assert restored.original_bytes() == original
+assert restored.original_sha256() == capture.original_sha256()
+```
+
+The example uses an authored synthetic fixture from a source checkout. A loaded
+source JSON file's formatting remains caller-owned; `original_bytes()` returns
+its decoded binary capture. See the transport limits and evidence distinction in
+[measurement admission](../upstream/measurements.md).
+
 `configure_measured_json(bytes)` admits a complete explicit association plan through
 Rust's PNM adapter, then atomically accepts the prepared core input. It does not
 infer CM/CCAP identity, resample grids or reinterpret corrective C as physical H.
@@ -61,3 +83,35 @@ Rust borrowed views and generic Serde helpers deliberately have language-specifi
 mappings recorded in the matrix. Python contains no simulation calculations or
 required subprocess sidecar. Native platform acceptance is recorded separately
 from source support and packaging configuration.
+
+The [configured resource-grid API](../upstream/resource-grid.md) supplies original
+allocation/pilot coordinates through an owned native snapshot without starting a
+waveform run. It preserves physical holes and original grant timing; Python
+performs no pilot placement or scientific reconstruction.
+
+Reports can also expose [actual received-pilot estimates](../upstream/receiver-estimates.md)
+when enabled before execution with `ReceiverObservationPolicy`. The session
+setter/getter preserves scientific configuration and default reports remain
+unchanged. `report.receiver_observations()` inventories completed retained frames;
+`report.receiver_estimate()` returns owned optional coefficients with original
+physical coordinates, identities and explicit effective C×H reference plane.
+
+Actual reports also expose [recovery and decoder views](../upstream/recovery.md):
+`verification()`, `fec_summary()` and bounded `fec_words(...)` return owned
+dictionaries from typed Rust projections. They preserve partial coverage and
+independent source/decoder outcomes without exporting a whole report.
+
+The [QAM reference/pairing API](../upstream/qam-views.md) supplies compatible
+backend-normalized observations, canonical labels and exact original stage
+associations through `qam_constellation(...)` and `qam_pairing(...)`.
+
+Soft diagnostics use [actual Rust receiver observations](../upstream/soft-observations.md).
+Compose `SoftObservationPolicy` onto `ReceiverObservationPolicy` before running;
+`soft_observations()`, bounded `soft_cells(...)` and `soft_word(...)` return
+owned original cell/word metrics and actual decoder outcomes. Python performs
+no demapping, mask inversion or posterior-metric reconstruction.
+
+The [configured response diagnostic](../upstream/response.md) is available on an
+idle Simulation and frozen BatchReport. It distinguishes admitted C, deterministic
+H and their composite, with optional complete periodic impulse data. It does not
+replace actual received-pilot estimates or calculate science in Python.

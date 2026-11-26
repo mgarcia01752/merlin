@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Bounded acquisition-safe pilot/PLC receive-pair observations.
@@ -13,6 +14,7 @@ use crate::{
     types::{FrequencyHz, IqPair, SubcarrierIdx, PLC_FRAME_SYMBOLS},
     SimulationError,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 /// Combined cap is four streams times this per-stream cap; adapters also bound bytes.
 pub const MAX_PAIRS_PER_STREAM: usize = 8192;
@@ -213,5 +215,174 @@ impl ProtectedConstellation {
             };
         }
         Ok(())
+    }
+}
+
+impl ProtectedConstellation {
+    /// Moves the existing final observations into exact retained capacities.
+    /// # Returns
+    /// Unit preserving all scientific values and the lazily retained pilot cache.
+    #[cfg(any(feature = "pnm-input", test))]
+    pub(crate) fn normalize_result_storage(&mut self) {
+        let Self {
+            pilot_sequence,
+            schema_version: _,
+            selection: _,
+            receiver_mode: _,
+            continuous_pilots,
+            scattered_pilots,
+            plc_data,
+            plc_preamble,
+        } = self;
+        if let Some(values) = pilot_sequence {
+            *values = std::mem::take(values).into_boxed_slice().into_vec();
+        }
+        for stream in [continuous_pilots, scattered_pilots, plc_data, plc_preamble] {
+            let ProtectedStream {
+                modulation: _,
+                status: _,
+                collected_pairs: _,
+                pairs,
+            } = stream;
+            *pairs = std::mem::take(pairs).into_boxed_slice().into_vec();
+        }
+    }
+}
+
+impl RetainedPayload for ProtectedCaptureSelection {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            pairs_per_stream,
+            first_channel_symbol,
+            end_channel_symbol_exclusive,
+        } = self;
+        merlin_api::retention_support::sum([
+            pairs_per_stream.retained_children(),
+            first_channel_symbol.retained_children(),
+            end_channel_symbol_exclusive.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ProtectedPair {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            physical_bin,
+            frequency_hz,
+            channel_symbol_index,
+            plc_phase,
+            before_equalization,
+            after_equalization,
+            reference_iq,
+            receiver_estimate_ready,
+            used_in_current_fit,
+            prior_channel_prediction,
+            pilot_reference,
+        } = self;
+        merlin_api::retention_support::sum([
+            physical_bin.retained_children(),
+            frequency_hz.retained_children(),
+            channel_symbol_index.retained_children(),
+            plc_phase.retained_children(),
+            before_equalization.retained_children(),
+            after_equalization.retained_children(),
+            reference_iq.retained_children(),
+            receiver_estimate_ready.retained_children(),
+            used_in_current_fit.retained_children(),
+            prior_channel_prediction.retained_children(),
+            pilot_reference.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ProtectedStream {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            modulation: _,
+            status,
+            collected_pairs,
+            pairs,
+        } = self;
+        merlin_api::retention_support::sum([
+            status.retained_children(),
+            collected_pairs.retained_children(),
+            pairs.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ProtectedConstellation {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            pilot_sequence,
+            schema_version,
+            selection,
+            receiver_mode,
+            continuous_pilots,
+            scattered_pilots,
+            plc_data,
+            plc_preamble,
+        } = self;
+        merlin_api::retention_support::sum([
+            pilot_sequence.retained_children(),
+            schema_version.retained_children(),
+            selection.retained_children(),
+            receiver_mode.retained_children(),
+            continuous_pilots.retained_children(),
+            scattered_pilots.retained_children(),
+            plc_data.retained_children(),
+            plc_preamble.retained_children(),
+        ])
+    }
+}
+
+#[cfg(test)]
+mod result_retention_tests;
+
+#[cfg(test)]
+mod retained_footprint_tests {
+    use super::{ProtectedCaptureSelection, ProtectedConstellation, ProtectedPair};
+    use crate::signal_processing::receiver::channel_estimation::ReceiverMode;
+    use merlin_api::retention_support::retained_footprint;
+    use std::mem::size_of;
+
+    #[test]
+    fn skipped_pilot_sequence_and_empty_stream_capacity_are_counted_passively() {
+        // Distinct unused capacities isolate the private cache and stream buffer.
+        const PILOT_CACHE_SLOTS: usize = 17;
+        const STREAM_PAIR_SLOTS: usize = 3;
+        let mut report = ProtectedConstellation::new(
+            ProtectedCaptureSelection::default(),
+            ReceiverMode::CmChannelEstimated,
+        )
+        .unwrap();
+        let serialized = serde_json::to_value(&report).unwrap();
+        report.pilot_sequence = Some(Vec::with_capacity(PILOT_CACHE_SLOTS));
+        report.continuous_pilots.pairs = Vec::with_capacity(STREAM_PAIR_SLOTS);
+        let expected = size_of::<ProtectedConstellation>()
+            + report.pilot_sequence.as_ref().unwrap().capacity()
+            + report.continuous_pilots.pairs.capacity() * size_of::<ProtectedPair>();
+        let footprint = retained_footprint(&report).unwrap();
+        assert_eq!(footprint.payload_bytes, expected);
+        assert_eq!(footprint.shared_roots, 0);
+        assert_eq!(footprint.ordered_entries, 0);
+        assert_eq!(retained_footprint(&report).unwrap(), footprint);
+        assert_eq!(serde_json::to_value(&report).unwrap(), serialized);
     }
 }

@@ -7,13 +7,14 @@ license = "Apache-2.0"
 description = "Optional bounded native PNM and file adapter for MERLIN"
 
 [dependencies]
+merlin-api = { path = "../phy-api" }
 docsis-ofdma = { path = "../ofdma" }
 base64 = "=0.22.1"
 docsis-ofdm-fec = { path = "../ofdm", features = ["high-level-api"] }
 pnm = { path = "../../third-party/pnm/crates/core", version = "=0.3.6" }
 
 serde = { version = "=1.0.228", features = ["derive"] }
-serde_json = { version = "=1.0.145", features = ["float_roundtrip"] }
+serde_json = { version = "=1.0.145", features = ["float_roundtrip", "raw_value"] }
 sha2 = "=0.10.9"
 tempfile = "=3.23.0"
 
@@ -27,6 +28,14 @@ path = "../../examples/api/rust/generate_upstream_rxmer.rs"
 [[example]]
 name = "run_single_capture"
 path = "../../examples/api/rust/run_single_capture.rs"
+
+[[example]]
+name = "run_saved_full_loop"
+path = "../../examples/api/rust/run_saved_full_loop.rs"
+
+[[example]]
+name = "run_project"
+path = "../../examples/api/rust/run_project.rs"
 
 [[example]]
 name = "run_rxmer_selection_parity"

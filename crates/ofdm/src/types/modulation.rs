@@ -1,10 +1,12 @@
 /*
  * Copyright 2026 PNM Viewer contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Shared OFDM assignments from CM-OSSI 3.1 I27 / 4.0 I13, D.2.1.7.
 use super::{BitsPerSymbol, ModulationOrder};
 use crate::signal_processing::shannon::{minimum_snr_db, ShannonSnrDb};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 
 const BPSK_BITS_PER_SYMBOL: BitsPerSymbol = 1;
@@ -159,5 +161,41 @@ impl ModulationAssignment {
             bit_loading: BPSK_BITS_PER_SYMBOL,
             shannon_minimum_mer_db: minimum_snr_db(BPSK_BITS_PER_SYMBOL)?,
         })
+    }
+}
+
+impl RetainedPayload for ModulationParameters {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            constellation: _,
+            bit_loading,
+            shannon_minimum_mer_db,
+        } = self;
+        merlin_api::retention_support::sum([
+            bit_loading.retained_children(),
+            shannon_minimum_mer_db.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for CarrierType {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Data => Some(RetainedFootprint::default()),
+            Self::ZeroBitLoaded => Some(RetainedFootprint::default()),
+            Self::ContinuousPilot => Some(RetainedFootprint::default()),
+            Self::Exclusion => Some(RetainedFootprint::default()),
+            Self::Plc => Some(RetainedFootprint::default()),
+            Self::Reserved => Some(RetainedFootprint::default()),
+            Self::Unknown => Some(RetainedFootprint::default()),
+        }
     }
 }

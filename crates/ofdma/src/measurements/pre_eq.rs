@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -13,6 +14,10 @@ use crate::{
     signal_processing::PreEqBank,
     types::Iq,
     PhyResult,
+};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
 };
 use serde::Serialize;
 use std::collections::{BTreeMap, BTreeSet};
@@ -207,5 +212,165 @@ impl PreEqPlayback {
     /// Returns false for any later nonunity event, before execution consumes input.
     pub fn all_unity(&self) -> bool {
         self.initial.is_unity() && self.effective.iter().all(PreEqBank::is_unity)
+    }
+}
+
+impl RetainedPayload for ProbeReference {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { id, bank_id } = self;
+        sum([id.retained_children(), bank_id.retained_children()])
+    }
+}
+
+impl RetainedPayload for PreEqEvent {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            id,
+            symbol,
+            operation,
+        } = self;
+        sum([
+            id.retained_children(),
+            symbol.retained_children(),
+            operation.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for PreEqPlayback {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            grid,
+            initial_id,
+            initial,
+            events,
+            probes,
+            effective,
+            symbols,
+        } = self;
+        sum([
+            grid.retained_children(),
+            initial_id.retained_children(),
+            initial.retained_children(),
+            events.retained_children(),
+            probes.retained_children(),
+            effective.retained_children(),
+            symbols.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for PreEqOperation {
+    /// Visits the original update and cached bank payload without applying it.
+    ///
+    /// # Returns
+    /// Checked child quantities, preserving caller-provided sparse-vector capacity.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Snapshot(bank) => bank.retained_children(),
+            Self::Initialize {
+                base_bank,
+                probe,
+                values,
+            }
+            | Self::Adjust {
+                base_bank,
+                probe,
+                values,
+            } => sum([
+                base_bank.retained_children(),
+                probe.retained_children(),
+                values.retained_children(),
+            ]),
+        }
+    }
+}
+
+impl PreEqPlayback {
+    /// Normalizes only owned report-snapshot capacities without changing values.
+    ///
+    /// # Returns
+    /// Unit; exact boxed-slice conversion preserves order and every scientific value.
+    pub(crate) fn compact_report_payload(&mut self) {
+        let Self {
+            grid,
+            initial_id: _,
+            initial,
+            events,
+            probes,
+            effective,
+            symbols: _,
+        } = self;
+        grid.compact_report_payload();
+        initial.compact_report_payload();
+        for event in events.iter_mut() {
+            let PreEqEvent {
+                id: _,
+                symbol: _,
+                operation,
+            } = event;
+            match operation {
+                PreEqOperation::Snapshot(bank) => bank.compact_report_payload(),
+                PreEqOperation::Initialize {
+                    base_bank: _,
+                    probe: _,
+                    values,
+                }
+                | PreEqOperation::Adjust {
+                    base_bank: _,
+                    probe: _,
+                    values,
+                } => {
+                    *values = std::mem::take(values).into_boxed_slice().into_vec();
+                }
+            }
+        }
+        for bank in effective.iter_mut() {
+            bank.compact_report_payload();
+        }
+        *events = std::mem::take(events).into_boxed_slice().into_vec();
+        *probes = std::mem::take(probes).into_boxed_slice().into_vec();
+        *effective = std::mem::take(effective).into_boxed_slice().into_vec();
+    }
+}
+
+#[cfg(test)]
+mod retained_footprint_tests {
+    use super::*;
+    use merlin_api::retention_support::retained_footprint;
+    use std::mem::size_of;
+
+    #[test]
+    fn effective_bank_cache_capacity_is_counted_beyond_original_events() {
+        const SPARE_EFFECTIVE_BANKS: usize = 3;
+        let document = crate::configuration::ConfigurationDocument::from_json(include_bytes!(
+            "../../../../examples/cli/upstream/us-synthetic-playback.json"
+        ))
+        .unwrap();
+        let (configuration, _) = document.prepare().unwrap();
+        let mut playback = configuration.pre_eq_updates.unwrap();
+        assert!(!playback.effective.is_empty());
+        let before = retained_footprint(&playback).unwrap();
+        let capacity = playback.effective.capacity();
+        playback
+            .effective
+            .reserve_exact(capacity + SPARE_EFFECTIVE_BANKS);
+        let delta = (playback.effective.capacity() - capacity) * size_of::<PreEqBank>();
+        assert_eq!(
+            retained_footprint(&playback).unwrap().payload_bytes - before.payload_bytes,
+            delta
+        );
     }
 }

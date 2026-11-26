@@ -28,6 +28,10 @@ bits and must be at least that count and at most 134217728. The summary shows
 additional PRBS bits. No automatic target is inferred from profile or duration.
 Empty files, equal targets and partial-byte fill follow the existing
 [file-source rules](simulation/file-source/README.md). Coding padding is separate.
+The public Rust source API supplies the byte/bit limits and all displayed file/fill
+counts. Editing fill policy shares the immutable original byte buffer rather
+than rereading or copying the file. Save/Open retain exact original bytes, name
+and hash; generated append and coding padding are not embedded as original data.
 
 ```mermaid
 flowchart LR

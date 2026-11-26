@@ -1,0 +1,421 @@
+{
+  "scope": "Eleven new downstream metadata/facade Rust cases and all34 exact-wheel native consumer cases executed in primary. Other103 total Rust cases incl doctest counted in evidence. No task acceptance/full-suite claim.",
+  "runs": [
+    {
+      "label": "downstream-private",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--lib",
+        "--locked",
+        "retained_footprint_tests"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.451877445004357,
+      "language": "rust",
+      "passed": 6,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/src/simulation/channel/measurement_playback.rs",
+          "qualified_test_case": "private_playback_caches_count_spare_capacity_and_each_arc_root"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/observations/store.rs",
+          "qualified_test_case": "ordered_stage_store_counts_snapshot_spares_context_roles_and_llrs"
+        },
+        {
+          "test_file": "crates/ofdm/src/simulation/source/file/config.rs",
+          "qualified_test_case": "repeated_file_roots_count_actual_shared_bytes_without_cloning_payload"
+        },
+        {
+          "test_file": "crates/ofdm/src/simulation/channel/protected_constellation/mod.rs",
+          "qualified_test_case": "skipped_pilot_sequence_and_empty_stream_capacity_are_counted_passively"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/inputs.rs",
+          "qualified_test_case": "provenance_counts_spare_strings_and_repeated_original_canonical_arc"
+        },
+        {
+          "test_file": "crates/ofdm/src/simulation/channel/constellation/model.rs",
+          "qualified_test_case": "constellation_counts_both_pair_buffers_and_each_actual_llr_capacity"
+        }
+      ],
+      "scope": "New metadata cases from complete selected command; other passing cases counted separately."
+    },
+    {
+      "label": "downstream-metadata",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--locked",
+        "--test",
+        "api_retained_footprint",
+        "--test",
+        "api_full_loop",
+        "--test",
+        "api_full_loop_observations",
+        "--test",
+        "api_measurement_sequence",
+        "--test",
+        "api_profile_capture",
+        "--test",
+        "api_channel_configuration",
+        "--test",
+        "channel_job",
+        "--test",
+        "protected_constellation"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 118.79434301400033,
+      "language": "rust",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_retained_footprint.rs",
+          "qualified_test_case": "precancelled_actual_result_counts_retained_inputs_without_fabricating_work"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_retained_footprint.rs",
+          "qualified_test_case": "prepared_request_and_sweep_count_selected_spares_without_starting_science"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_retained_footprint.rs",
+          "qualified_test_case": "finite_file_and_detached_archive_metadata_preserve_owned_observations_and_legacy_bytes"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_retained_footprint.rs",
+          "qualified_test_case": "complete_actual_result_metadata_preserves_report_inputs_stages_and_aliases"
+        }
+      ],
+      "scope": "New metadata cases from complete selected command; other passing cases counted separately."
+    },
+    {
+      "label": "facade",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "merlin",
+        "--features",
+        "native-input",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 13.530731634004042,
+      "language": "rust",
+      "passed": 1,
+      "cases": [
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "downstream_retained_operations_keep_legacy_types_and_common_result_contract"
+        }
+      ],
+      "scope": "New metadata cases from complete selected command; other passing cases counted separately."
+    },
+    {
+      "label": "downstream_retained_footprint",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_downstream_retained_footprint.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-downstream-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 11.334090595999442,
+      "language": "python",
+      "passed": 3,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_downstream_retained_footprint.py",
+          "qualified_test_case": "DownstreamRetainedFootprintTests.test_complete_partial_private_cache_and_archive_rust_parity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_downstream_retained_footprint.py",
+          "qualified_test_case": "DownstreamRetainedFootprintTests.test_legacy_aliases_metadata_and_detached_archive_lifetime"
+        },
+        {
+          "test_file": "bindings/python/tests/test_downstream_retained_footprint.py",
+          "qualified_test_case": "DownstreamRetainedFootprintTests.test_rejected_candidate_preserves_plan_and_original_request"
+        }
+      ]
+    },
+    {
+      "label": "full_loop",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_full_loop.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-downstream-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 5.062851472001057,
+      "language": "python",
+      "passed": 8,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_actual_direct_rust_process_counts_fec_settings_and_words_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_initial_pause_precancel_and_exact_finite_file_recovery"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_interpreter_interrupt_cancels_a_paused_native_worker_and_keeps_partial_report"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_pause_acknowledgement_resume_cancel_busy_and_partial_fec"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_rejections_leave_original_inputs_and_prepared_options_unchanged"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_runtime_limit_narrows_immutably_and_preserves_admission_and_retention"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop.py",
+          "qualified_test_case": "FullLoopTests.test_runtime_limit_returns_actual_partial_outcome_without_mutating_parent"
+        }
+      ]
+    },
+    {
+      "label": "full_loop_observations",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_full_loop_observations.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-downstream-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 8.572625699998753,
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_full_loop_observations.py",
+          "qualified_test_case": "FullLoopObservationTests.test_direct_rust_process_source_pilot_and_actual_waveform_windows_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop_observations.py",
+          "qualified_test_case": "FullLoopObservationTests.test_policy_missing_and_query_limits_reject_without_changing_originals"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop_observations.py",
+          "qualified_test_case": "FullLoopObservationTests.test_real_capture_keeps_science_source_pilots_grids_phases_and_owned_results"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop_observations.py",
+          "qualified_test_case": "FullLoopObservationTests.test_retention_byte_exhaustion_is_explicit_and_science_continues"
+        }
+      ]
+    },
+    {
+      "label": "workbench_full_loop",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_workbench_full_loop.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-downstream-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 2.1250851919976412,
+      "language": "python",
+      "passed": 6,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+          "qualified_test_case": "WorkbenchFullLoopTests.test_installed_idle_preparation_settings_ownership_and_precancel"
+        },
+        {
+          "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+          "qualified_test_case": "WorkbenchFullLoopTests.test_invalid_project_rejection_preserves_accepted_plan"
+        },
+        {
+          "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+          "qualified_test_case": "WorkbenchFullLoopTests.test_response_tolerance_is_independent_and_original_constructor_is_compatible"
+        },
+        {
+          "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+          "qualified_test_case": "WorkbenchFullLoopTests.test_saved_file_fill_and_timeline_settings_and_legacy_behavior"
+        },
+        {
+          "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+          "qualified_test_case": "WorkbenchFullLoopTests.test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+          "qualified_test_case": "WorkbenchFullLoopTests.test_unnamed_saved_file_keeps_original_label_recovery_and_capture_names"
+        }
+      ]
+    },
+    {
+      "label": "receiver_archive",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_receiver_archive.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-downstream-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 2.9100368459985475,
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_receiver_archive.py",
+          "qualified_test_case": "ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results"
+        },
+        {
+          "test_file": "bindings/python/tests/test_receiver_archive.py",
+          "qualified_test_case": "ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_receiver_archive.py",
+          "qualified_test_case": "ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit"
+        },
+        {
+          "test_file": "bindings/python/tests/test_receiver_archive.py",
+          "qualified_test_case": "ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation"
+        }
+      ]
+    },
+    {
+      "label": "namespaces",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_namespaces.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-downstream-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.11978643700422253,
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ]
+    },
+    {
+      "label": "retained_footprint",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_retained_footprint.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-downstream-metadata-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.11748799399356358,
+      "language": "python",
+      "passed": 5,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_retained_footprint.py",
+          "qualified_test_case": "RetainedFootprintTests.test_common_model_is_native_immutable_and_preserves_downstream_alias"
+        },
+        {
+          "test_file": "bindings/python/tests/test_retained_footprint.py",
+          "qualified_test_case": "RetainedFootprintTests.test_installed_native_complete_partial_and_private_store_parity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_retained_footprint.py",
+          "qualified_test_case": "RetainedFootprintTests.test_paused_running_session_returns_busy_and_cancel_restores_metadata"
+        },
+        {
+          "test_file": "bindings/python/tests/test_retained_footprint.py",
+          "qualified_test_case": "RetainedFootprintTests.test_queries_preserve_science_provenance_and_detached_metadata_lifetime"
+        },
+        {
+          "test_file": "bindings/python/tests/test_retained_footprint.py",
+          "qualified_test_case": "RetainedFootprintTests.test_rejected_configuration_preserves_accepted_footprint"
+        }
+      ]
+    }
+  ]
+}

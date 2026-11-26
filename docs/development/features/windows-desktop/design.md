@@ -53,7 +53,7 @@ See [example layout](../example-layout/design.md) for the README and validation.
 ## UI-MSI-03: portable offline FAQ lookup
 
 Release run 43365042088 passed Ubuntu/security checks but failed two Windows
-adapter FAQ tests before MSI packaging. Heading matching in `apps/qt/src/help.rs`
+adapter FAQ tests before MSI packaging. Heading matching in `apps/qt/src/downstream/help.rs`
 assumed LF, while Windows embeds CRLF Markdown from checkout. Normalize CRLF
 inside the bounded FAQ renderer before matching headings; preserve the catalog,
 unknown-code handling and offline-only behavior. Test every catalog section with

@@ -12,3 +12,5 @@ pub use pilot_reference::PilotReference;
 pub mod bit_loading;
 
 pub mod continuous;
+#[cfg(all(feature = "simulation", feature = "pnm-input"))]
+pub(crate) mod view;

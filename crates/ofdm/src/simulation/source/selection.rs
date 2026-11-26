@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Thin selection of continuous PRBS or finite file stages; algorithms keep one owner.
@@ -11,6 +12,7 @@ use super::{
 };
 #[cfg(feature = "simulation")]
 use crate::SimulationError;
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 /// Immutable shared source configuration; raw file bytes never enter JSON output.
 #[derive(Clone, Default, serde::Serialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
@@ -123,6 +125,21 @@ impl PayloadVerifier {
         match self {
             Self::File(verifier) => Some(verifier.recovered_file()),
             Self::Prbs(_) => None,
+        }
+    }
+}
+
+impl RetainedPayload for PayloadSourceConfig {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Prbs15 => Some(RetainedFootprint::default()),
+            Self::File { payload } => {
+                merlin_api::retention_support::sum([payload.retained_children()])
+            }
         }
     }
 }

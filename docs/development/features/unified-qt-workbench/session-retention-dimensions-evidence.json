@@ -1,0 +1,332 @@
+{
+  "task": "UIU-SESSION-01",
+  "requirements": [
+    "REQ-UIU-03",
+    "REQ-UIU-06",
+    "REQ-UIU-07"
+  ],
+  "status": "Level1 multidimensional primitive; actual aggregate admission and Level2 pending",
+  "integration_base": "badffba832a9ba3fe4ab8d52fc0df276ff4c8bec",
+  "decision": {
+    "date": "2026-11-23",
+    "approved_by": "User",
+    "selection": "Bound data bytes and container counts",
+    "contract": "Payload bytes including requested capacity and nested/cached/shared payloads; independent ordered-entry and shared-root counts; allocator/tree/refcount bookkeeping excluded from bytes; not total heap or RSS"
+  },
+  "implementation": [
+    {
+      "path": "apps/qt/src/shell/mod.rs",
+      "sha256": "736a70aad4a6c52aaa9a4cb317759f32c0b043f43db33a59d15b2b2af067a13e"
+    },
+    {
+      "path": "apps/qt/src/shell/retention.rs",
+      "sha256": "d3536ce86159842bf703a25ed52220fa21283a4e9bc9ee94a33ec978b64d0dac"
+    },
+    {
+      "path": "apps/qt/src/shell/retention_tests.rs",
+      "sha256": "72db587af074fd685e171b4627c20f625a313adb182da99bfaeedacab4a4d392"
+    }
+  ],
+  "testing": {
+    "level": 1,
+    "executed": [
+      {
+        "label": "compile",
+        "command": [
+          "/home/dev01/Projects/merlin/local/toolchains/rust-1.85.1-ylt882zx/bin/rustc",
+          "--edition=2021",
+          "--test",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-retention-dimensions-final/harness.rs",
+          "--extern",
+          "merlin=/home/dev01/Projects/merlin/apps/qt/target/debug/deps/libmerlin-3892f0def2e621d5.rlib",
+          "-L",
+          "dependency=/home/dev01/Projects/merlin/apps/qt/target/debug/deps",
+          "-D",
+          "warnings",
+          "-o",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-retention-dimensions-final/controller-tests"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.4327654090011492
+      },
+      {
+        "label": "tests",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-retention-dimensions-final/controller-tests",
+          "--test-threads=2"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.32925560799776576
+      },
+      {
+        "label": "clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/local/toolchains/rust-1.85.1-ylt882zx/bin/clippy-driver",
+          "--edition=2021",
+          "--test",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-retention-dimensions-final/harness.rs",
+          "--extern",
+          "merlin=/home/dev01/Projects/merlin/apps/qt/target/debug/deps/libmerlin-3892f0def2e621d5.rlib",
+          "-L",
+          "dependency=/home/dev01/Projects/merlin/apps/qt/target/debug/deps",
+          "-D",
+          "warnings",
+          "-D",
+          "clippy::all",
+          "--emit=metadata",
+          "-o",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-retention-dimensions-final/controller-clippy.rmeta"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.5758236149995355
+      },
+      {
+        "label": "compile-production",
+        "command": [
+          "/home/dev01/Projects/merlin/local/toolchains/rust-1.85.1-ylt882zx/bin/rustc",
+          "--edition=2021",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-retention-dimensions-final/harness.rs",
+          "--extern",
+          "merlin=/home/dev01/Projects/merlin/apps/qt/target/debug/deps/libmerlin-3892f0def2e621d5.rlib",
+          "-L",
+          "dependency=/home/dev01/Projects/merlin/apps/qt/target/debug/deps",
+          "-D",
+          "warnings",
+          "--crate-type=lib",
+          "--emit=metadata",
+          "-o",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-retention-dimensions-final/production.rmeta"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.1685958739981288
+      },
+      {
+        "label": "clippy-production",
+        "command": [
+          "/home/dev01/Projects/merlin/local/toolchains/rust-1.85.1-ylt882zx/bin/clippy-driver",
+          "--edition=2021",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-retention-dimensions-final/harness.rs",
+          "--extern",
+          "merlin=/home/dev01/Projects/merlin/apps/qt/target/debug/deps/libmerlin-3892f0def2e621d5.rlib",
+          "-L",
+          "dependency=/home/dev01/Projects/merlin/apps/qt/target/debug/deps",
+          "-D",
+          "warnings",
+          "--crate-type=lib",
+          "-D",
+          "clippy::all",
+          "--emit=metadata",
+          "-o",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-retention-dimensions-final/production-clippy.rmeta"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.26847511200321605
+      },
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/local/toolchains/rust-1.85.1-ylt882zx/bin/rustfmt",
+          "--edition",
+          "2021",
+          "--check",
+          "apps/qt/src/upstream/mod.rs",
+          "apps/qt/src/upstream/session.rs",
+          "apps/qt/src/upstream/tests.rs",
+          "apps/qt/src/shell/mod.rs",
+          "apps/qt/src/shell/retention.rs",
+          "apps/qt/src/shell/retention_tests.rs"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.06608447700273246
+      },
+      {
+        "label": "final-boundary",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.2677464699954726
+      }
+    ],
+    "combined_cases_passed": 45,
+    "new_retention_cases": 8,
+    "real_upstream_controller_cases": 10,
+    "cases": [
+      "shell::dispatch::tests::duplicate_or_stale_terminal_does_not_release_newer_run",
+      "shell::identity::tests::process_identity_exhaustion_never_wraps",
+      "shell::retention::tests::byte_only_constructor_does_not_silently_admit_unbounded_populations",
+      "shell::retention::tests::data_destructor_and_unwind_release_all_quantities_in_order",
+      "shell::retention::tests::each_inclusive_limit_rejects_one_more_without_partial_counter_changes",
+      "shell::retention::tests::failed_combined_reservation_cannot_consume_other_dimensions",
+      "shell::retention::tests::overflow_in_each_dimension_preserves_all_charges_without_allocating_payloads",
+      "shell::retention::tests::paused_cancel_rejected_replacement_and_destroyed_owner_keep_all_charges",
+      "shell::retention::tests::queued_and_replaced_aliases_keep_every_charge_until_final_drop",
+      "shell::tests::accepted_downstream_edits_cancel_once_and_keep_busy_until_stale_terminal",
+      "shell::tests::accepted_upstream_edit_cancels_only_its_old_generation_until_terminal",
+      "shell::tests::byte_limits_are_inclusive_shared_and_checked_without_large_allocations",
+      "shell::tests::callbacks_require_direction_session_generation_and_run_identity",
+      "shell::tests::cancel_while_paused_is_once_and_holds_slot_until_partial_terminal_report",
+      "shell::tests::cancelling_edit_of_idle_direction_never_touches_the_other_active_control",
+      "shell::tests::cancelling_edit_revision_exhaustion_preserves_configuration_and_active_work",
+      "shell::tests::closing_or_wrong_direction_terminal_rejection_still_consumes_lease",
+      "shell::tests::destruction_requests_once_and_worker_lease_prevents_successor_overlap",
+      "shell::tests::dirty_guard_rechecks_actual_target_and_save_does_not_clean_newer_edits",
+      "shell::tests::distinct_typed_directions_keep_configuration_results_and_dirty_state",
+      "shell::tests::dropped_unacknowledged_lease_cancels_but_never_reopens_gate",
+      "shell::tests::failed_terminal_and_rejected_candidate_preserve_previous_accepted_report",
+      "shell::tests::foreign_owner_destruction_never_cancels_another_sessions_worker",
+      "shell::tests::generation_revision_and_run_exhaustion_preserve_state_without_wrap",
+      "shell::tests::invalid_cancelling_edits_preserve_active_owners_before_any_cancel_request",
+      "shell::tests::queue_old_run_replacement_and_owner_drop_keep_byte_charges",
+      "shell::tests::retained_payload_is_destroyed_before_its_byte_reservation_is_released",
+      "shell::retention::tests::concurrent_clones_share_atomic_admission_across_all_dimensions",
+      "shell::tests::running_and_paused_runs_reject_second_start_and_keep_scoped_controls",
+      "shell::worker::tests::deterministic_os_spawn_failure_returns_the_unstarted_original_lease",
+      "shell::worker::tests::destroyed_gui_owner_cannot_release_admission_before_the_operation_returns",
+      "shell::worker::tests::invalid_static_thread_label_returns_the_unstarted_lease",
+      "shell::worker::tests::errors_and_panics_deliver_known_completion_without_abandoning_the_lease",
+      "shell::worker::tests::queued_payload_charges_follow_actual_release_when_the_gui_disappears",
+      "shell::worker::tests::successful_direction_callbacks_keep_the_original_identity_until_host_finish",
+      "upstream::session::tests::acknowledged_pause_keeps_global_slot_and_resume_uses_actual_backend",
+      "upstream::session::tests::actual_session_guard_restores_after_application_unwind",
+      "upstream::session::tests::actual_completion_preserves_configuration_provenance_and_outcome",
+      "upstream::session::tests::changed_generation_and_replaced_session_reject_returning_unstarted_lease",
+      "upstream::session::tests::failed_document_admission_preserves_existing_owner_and_releases_candidate",
+      "upstream::session::tests::disconnected_queue_and_controller_drop_release_only_after_actual_termination",
+      "upstream::session::tests::genuine_public_control_busy_failure_keeps_old_report_and_restores_session",
+      "upstream::session::tests::paused_controller_destruction_cancels_without_joining",
+      "upstream::session::tests::paused_cancel_retains_actual_partial_report_and_old_report_charge",
+      "upstream::session::tests::stale_transport_message_cannot_adopt_actual_prior_report"
+    ],
+    "source_artifact_hashes": {
+      "apps/qt/src/upstream/mod.rs": "2f0795590115d8366560441df0e07d0183fa3c9218a3c0ad8a5ea4057f650d0a",
+      "apps/qt/src/upstream/session.rs": "8eb393fe83e35e8b2d4af84c77339b5104011e5d45988cbfc6dbbc03dfec77a4",
+      "apps/qt/src/upstream/tests.rs": "258f45e9f74434ce957198618b12025b632e81d8713620c73c53bb27ed511366",
+      "apps/qt/src/shell/mod.rs": "736a70aad4a6c52aaa9a4cb317759f32c0b043f43db33a59d15b2b2af067a13e",
+      "apps/qt/src/shell/retention.rs": "d3536ce86159842bf703a25ed52220fa21283a4e9bc9ee94a33ec978b64d0dac",
+      "apps/qt/src/shell/retention_tests.rs": "72db587af074fd685e171b4627c20f625a313adb182da99bfaeedacab4a4d392",
+      "apps/qt/target/debug/deps/libmerlin-3892f0def2e621d5.rlib": "3bd491e0bb6072ff9d0b5b82035b2cb5dd5a0a05f39ca72866b843a9f2dd06fb",
+      "apps/qt/target/debug/.fingerprint/merlin-3892f0def2e621d5/lib-merlin.json": "0d62fca9dc2cf6f161dfc3e33af1f276f2487b389c1f9cc6a82ea982e0c92bde",
+      "docs/development/local/unified-qt-workbench/session-01-retention-dimensions-final/harness.rs": "c4a59cc5f411a1e1082aee6d2b3e22c40253651ba2dbd9322ea779c69e97c8af",
+      "docs/development/local/unified-qt-workbench/session-01-retention-dimensions-final/controller-tests": "22f2fcd0d33aaf9ceec6db68a62781d6ce365a5085c42c8d31143d8c5ae4b6f6"
+    },
+    "lint_allowances": [],
+    "fixture_charge_scope": "Synthetic accounting fixtures only; not scientific footprints",
+    "not_required": [
+      {
+        "checks": "Qt/QML/executable rebuild, full workspace, native Python wheel, CLI and packaging regressions",
+        "reason": "Only unregistered application accounting primitive and documentation change. Scientific/API/binding/schema/registration/presentation sources unchanged; cached facade reused for real controller tests."
+      }
+    ],
+    "deferred": [
+      "Public scientific root footprint metadata and pre-production bounds",
+      "Actual two-direction coordinator/worker admission and callback wiring",
+      "Qt runtime and complete UIU-SESSION-01 Level2 acceptance",
+      "Later shell/upstream/file/recovery and final gates"
+    ],
+    "executed_metadata": [
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 15.316036032003467
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 13.004447890001757
+      },
+      {
+        "label": "uiu-history",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/audit_foundation_uiu_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.13129925500106765
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.07039994700608077
+      },
+      {
+        "label": "guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.04404476399940904
+      },
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.41786604600201827
+      },
+      {
+        "label": "diff",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.036014049997902475
+      },
+      {
+        "label": "staged-diff",
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.010105251996719744
+      }
+    ],
+    "first_pass": {
+      "cases": 44,
+      "all_checks_passed": true,
+      "scope": "Before adding three-dimension paused lifecycle/rejected replacement/owner destruction case requested by read-only review"
+    }
+  },
+  "preservation": {
+    "no_checkbox_changes": true,
+    "current_optimized_qt_executable_sha256": "0bf1a671378b61a1414d7cbdab3ac3f050764539da1abd29eeef1a733791457c"
+  },
+  "no_push_merge_release_or_install": true,
+  "review": {
+    "kind": "Read-only independent source review",
+    "result": "No arithmetic, atomicity or release defect; clarified wrapper-vs-independent alias wording and added all-dimension lifecycle coverage"
+  }
+}

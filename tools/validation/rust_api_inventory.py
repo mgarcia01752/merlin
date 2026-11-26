@@ -14,6 +14,7 @@ from urllib.parse import unquote, urlsplit
 SOURCE_CRATES = {
     "docsis_ofdm_fec": "crates/ofdm",
     "docsis_ofdma": "crates/ofdma",
+    "merlin": "crates/merlin",
     "merlin_api": "crates/phy-api",
     "pnm_input": "crates/pnm-input",
 }
@@ -94,7 +95,11 @@ class SymbolPage(HTMLParser):
             None; completed declarations and links remain owned by this parser.
         """
         if tag == "code" and self.code is not None:
-            glob = "".join(self.code).strip().endswith("::*;")
+            declaration = " ".join("".join(self.code).split())
+            glob = declaration.endswith("::*;")
+            renamed = re.fullmatch(r"pub use [\w:]+ as (\w+);", declaration)
+            if renamed and len(self.code_links) == 1:
+                self.code_links[0]["export_name"] = renamed[1]
             for link in self.code_links:
                 link["glob"] = glob
             self.code = None
@@ -163,7 +168,7 @@ def inventory(namespace, index, documentation_root):
             href = urlsplit(link["href"])
             target = (path.parent / unquote(href.path)).resolve()
             kind = link["class"]
-            name = link["title"].split("::")[-1]
+            name = link.get("export_name", link["title"].split("::")[-1])
             export = scope + "::" + name
             if href.scheme or href.fragment or not target.is_relative_to(root) or target == path:
                 continue
@@ -196,19 +201,49 @@ def inventory(namespace, index, documentation_root):
     return sorted(result, key=lambda item: item["export"])
 
 
-def resolve_reexport_owners(data, root):
+def compiler_primitive_aliases(method, documentation_root):
+    """Read primitive type-alias declarations linked by the canonical compiler page.
+
+    Args:
+        method: Canonical rustdoc method with its actual item page.
+        documentation_root: Fresh compiler output boundary, or None.
+    Returns:
+        A map of exact linked alias names to their compiler-declared primitives.
+        Unknown/compound aliases remain unresolved; names alone are never evidence.
+    """
+    if documentation_root is None or 'rustdoc' not in method:
+        return {}
+    root = Path(documentation_root).resolve()
+    page = root / method['rustdoc']
+    aliases = {}
+    for link in read_page(page).links:
+        if link['class'] != 'type':
+            continue
+        href = urlsplit(link['href'])
+        target = (page.parent / unquote(href.path)).resolve()
+        if href.scheme or not target.is_relative_to(root) or not target.is_file():
+            continue
+        for declaration, _ in read_page(target).headers:
+            match = re.fullmatch(r'pub type (\w+) = (bool|[ui](?:8|16|32|64|128|size)|f(?:32|64));', declaration)
+            if match:
+                aliases[match[1]] = match[2]
+    return aliases
+
+
+def resolve_reexport_owners(data, root, documentation_root=None):
     """Resolve omitted rustdoc source links through explicit public Rust imports.
 
     Args:
         data: Fresh compiler inventory from every canonical direction/API root.
         root: Source checkout containing the actual public re-export declarations.
+        documentation_root: Optional freshly built canonical rustdoc for explicit imported modules.
     Returns:
         None; fills missing owners only after exact import/type/signature agreement.
     Raises:
         ValueError when an owner cannot be proven. Identical type names alone
         never establish identity across independent PHY crates.
     """
-    from implementation_evidence import rust_code
+    from implementation_evidence import block, rust_code
     exports = {item['export']: item for items in data.values() for item in items}
     for item in exports.values():
         missing = [method for method in item['methods'] if method['source_file'] is None]
@@ -222,13 +257,34 @@ def resolve_reexport_owners(data, root):
         module = directory.joinpath(*parts[1:-1])
         paths = [module.with_suffix('.rs'), module / 'mod.rs'] if len(parts) > 2 else [directory / 'lib.rs']
         source = next((path for path in paths if path.is_file()), None)
+        inline_facade = parts[:-1] == ['merlin', 'common'] and source is None
+        code = rust_code(source.read_text()) if source is not None else ''
+        if inline_facade and (directory / 'lib.rs').is_file():
+            # The facade's common namespace is declared inline. Only its exact
+            # top-level public module can establish these imports; another
+            # module containing the same type name is not source evidence.
+            facade = rust_code((directory / 'lib.rs').read_text())
+            # Find each whole public inline module opener, e.g. `pub mod common {`.
+            # No groups/flags; literal-masked code and brace depth exclude nested
+            # modules, comments and string decoys. Empty/multiple bodies prove none.
+            bodies = [block(facade, match.end() - 1)
+                      for match in re.finditer(r'\bpub\s+mod\s+common\s*\{', facade)
+                      if facade[:match.start()].count('{') == facade[:match.start()].count('}')]
+            if len(bodies) == 1:
+                code = bodies[0]
         origins = set()
-        if source is not None:
+        if code:
             # Explicit grouped pub use, e.g. docsis_ofdma::api::{ApiError, ApiResult}.
             # Groups are full source namespace and comma-delimited names/aliases.
-            for match in re.finditer(r'\bpub\s+use\s+([\w:]+)::\{([^{}]+)\}\s*;', rust_code(source.read_text())):
-                namespace = API_NAMESPACES.get(match[1])
-                if namespace is None:
+            for match in re.finditer(r'\bpub\s+use\s+([\w:]+)::\{([^{}]+)\}\s*;', code):
+                if (inline_facade
+                        and code[:match.start()].count('{') != code[:match.start()].count('}')):
+                    continue
+                # merlin_api normalizes to this very facade namespace. Resolve
+                # the facade's origin through the actual compiler crate index,
+                # never through its own missing-source inventory copy.
+                namespace = match[1] if inline_facade else API_NAMESPACES.get(match[1], match[1])
+                if match[1].split('::')[0] not in SOURCE_CRATES:
                     continue
                 for entry in match[2].split(','):
                     names = entry.strip().split(' as ')
@@ -236,17 +292,51 @@ def resolve_reexport_owners(data, root):
                         origins.add(namespace + '::' + names[0].strip())
         if len(origins) != 1:
             raise ValueError(f"No unique explicit source for re-export: {item['export']}")
-        original = exports.get(origins.pop())
+        origin = origins.pop()
+        original = exports.get(origin)
+        if original is None and documentation_root is not None:
+            namespace = origin.rsplit('::', 1)[0]
+            index = Path(documentation_root).joinpath(*namespace.split('::'), 'index.html')
+            if index.is_file():
+                candidates = [value for value in inventory(namespace, index, Path(documentation_root))
+                              if value['export'] == origin]
+                if len(candidates) == 1:
+                    original = candidates[0]
         if original is None or original['kind'] != item['kind']:
             raise ValueError(f"Re-export kind/identity is not in compiler inventory: {item['export']}")
         for method in missing:
-            candidates = [value for value in original['methods']
-                if value['operation'].rsplit('::', 1)[-1] == method['operation'].rsplit('::', 1)[-1]
-                and value['signature'] == method['signature'] and value['source_file'] is not None]
+            candidates = []
+            for value in original['methods']:
+                if (value['operation'].rsplit('::', 1)[-1] != method['operation'].rsplit('::', 1)[-1]
+                        or value['source_file'] is None):
+                    continue
+                signature = value['signature']
+                if signature != method['signature']:
+                    aliases = compiler_primitive_aliases(value, documentation_root)
+                    for name, primitive in aliases.items():
+                        signature = re.sub(r'\b' + re.escape(name) + r'\b', primitive, signature)
+                if signature == method['signature']:
+                    candidates.append((value, False))
+                    continue
+                # The exact import and compiler item kind above establish one
+                # nominal type. Rustdoc may spell that type as Self, its original
+                # name or its exposed alias. Preserve every other signature token.
+                # Whole-token substitutions, no flags/groups: Result<Self, E>
+                # and Result<Project, E> agree for the proven Project import;
+                # Selfish and elsewhere::Project remain distinct signatures.
+                original_name = original['export'].rsplit('::', 1)[-1]
+                canonical = re.sub(r'\bSelf\b', original_name, signature)
+                exposed = re.sub(r'\bSelf\b', original_name, method['signature'])
+                exposed = re.sub(r'\b' + re.escape(parts[-1]) + r'\b', original_name, exposed)
+                if canonical == exposed:
+                    candidates.append((value, True))
             if len(candidates) != 1:
                 raise ValueError(f"Re-export method has no exact canonical owner: {method['operation']}")
-            method['source_file'] = candidates[0]['source_file']
+            canonical, nominal_spelling = candidates[0]
+            method['source_file'] = canonical['source_file']
             method['reexport_origin'] = original['export']
+            if nominal_spelling:
+                method['reexport_canonical_signature'] = canonical['signature']
 
 
 def main():
@@ -262,12 +352,12 @@ def main():
     roots = {
         "downstream": ("merlin::downstream", "docsis_ofdm_fec/api/index.html"),
         "upstream": ("merlin::upstream", "docsis_ofdma/api/index.html"),
-        "common": ("merlin::common", "merlin_api/index.html"),
+        "common": ("merlin::common", "merlin/common/index.html"),
         "native-input": ("pnm_input", "pnm_input/index.html"),
     }
     data = {name: inventory(namespace, args.docs / path, args.docs)
             for name, (namespace, path) in roots.items()}
-    resolve_reexport_owners(data, Path(__file__).resolve().parents[2])
+    resolve_reexport_owners(data, Path(__file__).resolve().parents[2], args.docs)
     args.output.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
     print("Rustdoc exports:", {name: sum(len(item["methods"]) for item in items)
                               for name, items in data.items()})

@@ -1,0 +1,257 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Idle replay-capacity API prerequisite",
+  "status": "scoped backend prerequisite accepted; Qt adoption and parent incomplete",
+  "base_commit": "4ce4833e88b3f505826e29a5dba9123c2869888b",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-07",
+    "REQ-UIU-09"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "crates/ofdm/src/api/sequence/queries.rs",
+      "sha256": "99e3ef0b8c6c6136b863ff118a3d02c7215150b6fff50d5884f9486ddadcffcf"
+    },
+    {
+      "path": "crates/ofdm/tests/api_measurement_sequence.rs",
+      "sha256": "8c351a71abc93ed7ac27a5e6225289cb2bacdfeeab21aff297ac5b74a695b683"
+    },
+    {
+      "path": "bindings/python/src/sequence.rs",
+      "sha256": "7a15e084cffa6a09520bf91a52a9f551e747cd8902b2a50335e6d100bec7a45c"
+    },
+    {
+      "path": "bindings/python/python/merlin/__init__.pyi",
+      "sha256": "ed1e5fd554c7581503791cf5b520e3a1b9e78efd662dbb2925c5e7a314efa55c"
+    },
+    {
+      "path": "bindings/python/tests/test_measurement_sequence.py",
+      "sha256": "0f2327245eaa3ec809d0d4b35113c067674c1d16c553c75e42b64cea7287e4d3"
+    }
+  ],
+  "operations": {
+    "rust": "merlin::downstream::MeasurementSequenceOptions::capacity",
+    "rust_signature": "pub fn capacity( &self, transmission: &TransmissionConfiguration, duration: ObservationDuration, ) -> ApiResult<usize>",
+    "python": "merlin.downstream.MeasurementSequenceOptions.capacity",
+    "python_signature": "(self, /, transmission, duration)",
+    "owner": "Existing complete-symbol clock/capacity calculation extracted in api/sequence/queries.rs; admitted MeasurementSequence::capacity delegates unchanged.",
+    "semantics": "Immutable scalar reachability before a profile/capture/sequence exists. No source/RNG advance or run admission. Static intervals remain dormant, temporal zero rejects, original observation-duration domain retained.",
+    "shared_errors": [
+      "InvalidInput for temporal interval zero",
+      "Original timing/overflow/insufficient-symbol errors"
+    ]
+  },
+  "validation": [
+    {
+      "command": "cargo test -p docsis-ofdm-fec --features high-level-api --locked --test api_measurement_sequence",
+      "exit_code": 0,
+      "passed": 6,
+      "receipt": "ds-01-idle-capacity-rust.log"
+    },
+    {
+      "command": "cargo clippy -p docsis-ofdm-fec --features high-level-api --all-targets --locked -- -D warnings",
+      "exit_code": 0,
+      "receipt": "ds-01-idle-capacity-clippy.log"
+    },
+    {
+      "command": "cargo clippy --manifest-path bindings/python/Cargo.toml --all-targets --locked -- -D warnings",
+      "exit_code": 0,
+      "receipt": "ds-01-idle-capacity-python-clippy.log"
+    },
+    {
+      "command": "cargo check -p docsis-ofdm-fec --no-default-features --locked",
+      "exit_code": 0,
+      "receipt": "ds-01-idle-capacity-analysis-check.log"
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo fmt --manifest-path bindings/python/Cargo.toml -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo doc --workspace --no-deps --locked --features merlin/native-input",
+      "exit_code": 0,
+      "receipt": "ds-01-idle-capacity-rustdoc.log"
+    },
+    {
+      "command": "python3 -B -m unittest discover -s tools/validation -p test_*api*.py -v",
+      "exit_code": 0,
+      "passed": 34,
+      "receipt": "ds-01-idle-capacity-metadata-tests.log"
+    },
+    {
+      "command": "python3 -B tools/validation/api_operation_matrix.py with fresh Rust/native exports and every recorded execution file",
+      "exit_code": 0,
+      "receipt": "ds-01-idle-capacity-strict-matrix.log"
+    },
+    {
+      "command": "python3 -B tools/validation/feature_documentation.py",
+      "exit_code": 0,
+      "receipt": "ds-01-idle-capacity-docs-final.log"
+    },
+    {
+      "command": "python3 -B tools/validation/integration_traceability.py",
+      "exit_code": 0,
+      "receipt": "ds-01-idle-capacity-traceability.log"
+    },
+    {
+      "command": "python3 -B tools/release/versions.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -B tools/python/update_integration_doc.py --check",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  ],
+  "installed_native": {
+    "status": "passed",
+    "wheel": "/home/dev01/Projects/merlin/local/python-wheels-ds-idle-capacity/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "wheel_sha256": "f6d8b1b412422a7f978fbcf143bb3849c70ff9c195c31fc6b9b5943a92b8542d",
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-idle-capacity-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "pip",
+          "install",
+          "--no-index",
+          "--no-deps",
+          "/home/dev01/Projects/merlin/local/python-wheels-ds-idle-capacity/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+        ],
+        "label": "install",
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-idle-capacity-native",
+        "exit_code": 0,
+        "elapsed_seconds": 0.5193516880099196
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-idle-capacity-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_measurement_sequence.py",
+          "-v"
+        ],
+        "label": "measurement-sequence",
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-idle-capacity-native",
+        "exit_code": 0,
+        "elapsed_seconds": 0.173850228995434
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-idle-capacity-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_admission.py",
+          "-v"
+        ],
+        "label": "admission",
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-idle-capacity-native",
+        "exit_code": 0,
+        "elapsed_seconds": 0.1445110950007802
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-idle-capacity-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_namespaces.py",
+          "-v"
+        ],
+        "label": "namespaces",
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-idle-capacity-native",
+        "exit_code": 0,
+        "elapsed_seconds": 0.11742294100986328
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-idle-capacity-native/installed/bin/python",
+          "-I",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-idle-capacity-native/native-exports.json"
+        ],
+        "label": "native-inventory",
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-idle-capacity-native",
+        "exit_code": 0,
+        "elapsed_seconds": 0.12825770099880174
+      }
+    ]
+  },
+  "inventory_preservation": {
+    "rust_rows_before": 564,
+    "native_rows_before": 537,
+    "rust_rows_now": 565,
+    "native_rows_now": 538,
+    "all_prior_rows_deep_equal": true,
+    "class_exports_deep_equal": true,
+    "preserved_native_operation_instances": 938,
+    "new_rust_signature": "pub fn capacity( &self, transmission: &TransmissionConfiguration, duration: ObservationDuration, ) -> ApiResult<usize>",
+    "new_native_signature": "(self, /, transmission, duration)",
+    "executed_rust_cases": 6,
+    "executed_native_cases": 13
+  },
+  "executed_cases": "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
+  "numeric_review": {
+    "production_policy_owner": "Existing MAX_SEQUENCE_CAPTURES aliases the authoritative original-capture bound; no new budget.",
+    "production_literals": "Mathematical zero/one for clock origin, strict boundary and Single cardinality; no new arbitrary limit or default.",
+    "independent_test_anchors": [
+      "1-ms observation with 512-sample CP: 23/44 complete symbols at 25/50 kHz (42.5/22.5 us)",
+      "Interval exactly at complete-symbol boundary admits only the initial capture; boundary minus one admits two",
+      "Zero temporal interval fails; dormant static zero stays accepted",
+      "Maximum unsigned 64-bit interval remains finite; one-hour observation still saturates at 256 captures"
+    ],
+    "existing_vectors_and_assertions_unchanged": true,
+    "final_integration_line_by_line_review": "pending UIU-QA-01"
+  },
+  "preservation": {
+    "all_previous_operation_rows_and_class_exports_exact": true,
+    "original_admitted_sequence_signature_and_positive_capacity_behavior_retained": true,
+    "constructor_defaults_and_original_observation_domain_unchanged": true,
+    "qt_tree_and_current_guard_exactly_unchanged": true,
+    "dependencies_and_locks_unchanged": true
+  },
+  "qt_boundary": {
+    "scientific_dependencies": 3,
+    "frozen_files": 40,
+    "direct_sites": 140,
+    "consumer_implemented": false
+  },
+  "limitations": [
+    "Scoped query extraction/API acceptance; no full backend/native rerun claimed",
+    "Qt selection-status formula and narrower CWB policy still await adoption",
+    "No new resource policy, operating mode, schema or dependency",
+    "Final numeric/unified runtime and hosted/installed gates remain pending"
+  ]
+}

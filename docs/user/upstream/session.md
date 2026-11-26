@@ -20,6 +20,18 @@ stateDiagram-v2
   Partial --> Configured: retained settings and owned report
 ```
 
+`simulation.options()` borrows the actual accepted `ExperimentOptions` in the
+Basic Rust API. It includes explicit `set_options` overrides, which need not
+match the unchanged source document. This passive getter allocates nothing and
+does not advance the source. Clone it to retain an independent snapshot.
+
+The Basic Python API exposes `simulation.options() -> ExperimentOptions` through
+`merlin.upstream`. It returns an owned immutable options wrapper that can be
+passed to `Simulation(options)` or `set_options(options)` after the original
+session changes or is disposed. The existing native guard raises a structured
+`Busy` error during execution. Typed `configure(config)` preserves constructor
+options; `configure_json(bytes)` accepts the source document's options.
+
 Rejected settings preserve the accepted configuration and options. Rust's exclusive
 mutable session borrow serializes configuration/run calls. A separate cloneable
 control remains reachable from another thread for cancellation, pause/resume and
@@ -42,4 +54,5 @@ numerologies, mixed/zero loading and inspection-only controls. See
 [local acceptance](../../development/features/ofdma/design.md#session-and-core-acceptance).
 The `merlin::upstream` facade and Basic Python API namespaces follow the selected
 [namespace design](../../development/features/high-level-api/namespace-design.md)
-and their remaining acceptance gates. The current Qt workbench remains downstream.
+and its acceptance records. The native [unified workbench](../upstream-workbench.md)
+uses the same direction-specific Rust APIs.

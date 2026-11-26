@@ -1,4 +1,5 @@
 /*
+ * Copyright 2026 MERLIN contributors
  * Copyright 2026 MORGANA contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
@@ -7,6 +8,10 @@
  */
 //! Cooperative cancellation and small owned progress snapshots, no callbacks.
 use crate::{PhyError, PhyResult};
+use merlin_api::{
+    retention_support::{self as retention, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::Serialize;
 use std::sync::{
     atomic::{AtomicBool, Ordering},
@@ -50,8 +55,14 @@ pub struct ProgressSnapshot {
     pub elapsed_ms: u64,
 }
 
+/// Test-only unset cancellation threshold; production controls have no hook field.
+#[cfg(test)]
+const TEST_GRANT_CANCELLATION_UNSET: usize = usize::MAX;
+
 struct State {
     cancel: AtomicBool,
+    #[cfg(test)]
+    cancel_after_completed_grants: std::sync::atomic::AtomicUsize,
     shared_cancellation: Option<merlin_api::RunControl>,
     claimed: AtomicBool,
     progress: Mutex<ProgressSnapshot>,
@@ -103,6 +114,10 @@ impl RunControl {
         Self {
             inner: Arc::new(State {
                 cancel: AtomicBool::new(false),
+                #[cfg(test)]
+                cancel_after_completed_grants: std::sync::atomic::AtomicUsize::new(
+                    TEST_GRANT_CANCELLATION_UNSET,
+                ),
                 shared_cancellation,
                 claimed: AtomicBool::new(false),
                 pause: Mutex::new(PauseState {
@@ -122,6 +137,22 @@ impl RunControl {
             }),
         }
     }
+    /// Measures current shared control storage without advancing execution state.
+    ///
+    /// # Returns
+    /// Exact root/State payload layouts with one shared root and zero ordered
+    /// entries; an optional common cancellation adds its atomic and one root.
+    /// Clones report the same conservative footprint independently. Excludes
+    /// private allocator/refcount bookkeeping and temporary execution storage.
+    /// Progress and pause locks are short and separate, with poison recovery.
+    /// No clock is read, job claimed, Condvar waited/notified or atomic changed.
+    ///
+    /// # Errors
+    /// ResourceLimit with field `retained_footprint` on checked arithmetic overflow.
+    pub fn retained_footprint(&self) -> PhyResult<RetainedFootprint> {
+        retention::retained_footprint(self).ok_or_else(|| crate::error::limit("retained_footprint"))
+    }
+
     /// Requests cooperative stop from any thread, including before execution.
     ///
     /// Returns immediately; the engine preserves completed scientific outcomes.
@@ -215,12 +246,40 @@ impl RunControl {
             .unwrap_or_else(|poison| poison.into_inner())
             .clone()
     }
+    /// Arms deterministic owner-test cancellation at a completed-grant publication.
+    ///
+    /// # Arguments
+    /// * `completed_grants` - Completed publication count triggering cooperative stop.
+    ///
+    /// # Returns
+    /// Unit; this private test-only seam does not exist in production controls.
+    #[cfg(test)]
+    pub(crate) fn cancel_after_completed_grants_for_test(&self, completed_grants: usize) {
+        self.inner
+            .cancel_after_completed_grants
+            .store(completed_grants, Ordering::Release);
+    }
+
     pub(crate) fn publish(&self, progress: ProgressSnapshot) {
+        #[cfg(test)]
+        let cancel_at_boundary = {
+            let threshold = self
+                .inner
+                .cancel_after_completed_grants
+                .load(Ordering::Acquire);
+            threshold != TEST_GRANT_CANCELLATION_UNSET && progress.completed_grants >= threshold
+        };
         *self
             .inner
             .progress
             .lock()
             .unwrap_or_else(|poison| poison.into_inner()) = progress;
+        // The progress MutexGuard from the assignment is released before cancel
+        // takes the pause lock; test cancellation cannot introduce a lock cycle.
+        #[cfg(test)]
+        if cancel_at_boundary {
+            self.cancel();
+        }
     }
     pub(crate) fn claim(&self) -> PhyResult<Lease> {
         self.inner
@@ -254,3 +313,98 @@ impl Drop for Lease {
         self.0.inner.claimed.store(false, Ordering::Release);
     }
 }
+
+impl RetainedPayload for RunStatus {
+    /// Audits every inline variant without counting borrowed or fixed data twice.
+    ///
+    /// # Returns
+    /// Zero dynamic children; the enclosing root/container owns the fixed bytes.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Idle
+            | Self::Running
+            | Self::Paused
+            | Self::Completed
+            | Self::Cancelled
+            | Self::TimeLimit
+            | Self::Failed => Some(RetainedFootprint::default()),
+        }
+    }
+}
+
+impl RetainedPayload for RunControl {
+    /// Visits the directional shared State beyond the enclosing fixed handle.
+    ///
+    /// # Returns
+    /// Complete private child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { inner } = self;
+        inner.retained_children()
+    }
+}
+
+impl RetainedPayload for State {
+    /// Audits private control ownership with no nested progress/pause lock order.
+    ///
+    /// # Returns
+    /// Optional common cancellation and scalar-state children, or None on overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            cancel,
+            #[cfg(test)]
+            cancel_after_completed_grants,
+            shared_cancellation,
+            claimed,
+            progress,
+            pause,
+            wake,
+        } = self;
+        let _: (&AtomicBool, &AtomicBool, &Condvar) = (cancel, claimed, wake);
+        #[cfg(test)]
+        let _: &std::sync::atomic::AtomicUsize = cancel_after_completed_grants;
+        let progress = {
+            let progress = progress.lock().unwrap_or_else(|cause| cause.into_inner());
+            progress_children(&progress)
+        };
+        let pause = {
+            let pause = pause.lock().unwrap_or_else(|cause| cause.into_inner());
+            pause_children(&pause)
+        };
+        retention::sum([shared_cancellation.retained_children(), progress, pause])
+    }
+}
+
+fn progress_children(value: &ProgressSnapshot) -> Option<RetainedFootprint> {
+    let ProgressSnapshot {
+        status,
+        run,
+        completed_grants,
+        emitted_samples,
+        compared_bits,
+        elapsed_ms,
+    } = value;
+    retention::sum([
+        status.retained_children(),
+        run.retained_children(),
+        completed_grants.retained_children(),
+        emitted_samples.retained_children(),
+        compared_bits.retained_children(),
+        elapsed_ms.retained_children(),
+    ])
+}
+
+fn pause_children(value: &PauseState) -> Option<RetainedFootprint> {
+    let PauseState {
+        requested,
+        since,
+        accumulated,
+    } = value;
+    retention::sum([
+        requested.retained_children(),
+        retention::fixed_children(since),
+        retention::fixed_children(accumulated),
+    ])
+}
+
+#[cfg(test)]
+mod retention_tests;

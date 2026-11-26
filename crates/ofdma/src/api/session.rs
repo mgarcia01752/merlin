@@ -1,18 +1,24 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
  * Changes: local ownership; explicit MERLIN schema identities.
  */
 //! Exclusive Rust session; validation and execution remain in the shared core.
+mod report_retention;
 use super::{
     ApiError, ApiResult, BatchReport, ExperimentConfig, ExperimentOptions, ExperimentPreview,
     RunControl,
 };
 use crate::{
-    simulation::{preview, run},
+    simulation::{preview, run_observed},
     PhyError,
+};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
 };
 use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -38,6 +44,7 @@ pub struct Simulation {
     generation: u64,
     document: Option<super::ConfigurationDocument>,
     measured_provenance: Option<String>,
+    receiver_observations: super::ReceiverObservationPolicy,
 }
 
 impl Simulation {
@@ -53,6 +60,7 @@ impl Simulation {
             generation: 0,
             document: None,
             measured_provenance: None,
+            receiver_observations: super::ReceiverObservationPolicy::default(),
         })
     }
     /// Atomically accepts typed synthetic `configuration` through shared admission.
@@ -61,6 +69,8 @@ impl Simulation {
     /// generation and run settings. Loading never runs or consumes source.
     pub fn configure(&mut self, configuration: ExperimentConfig) -> ApiResult<()> {
         preview(&configuration, &self.options)?;
+        self.receiver_observations
+            .validate_mode(configuration.us_configuration.waveform().numerology())?;
         let generation = next_id()?;
         self.configuration = Some(configuration);
         self.document = None;
@@ -82,6 +92,8 @@ impl Simulation {
     /// Unsupported selected execution modes reject before changing accepted state.
     pub fn configure_document(&mut self, document: super::ConfigurationDocument) -> ApiResult<()> {
         let (configuration, options) = document.prepare()?;
+        self.receiver_observations
+            .validate_mode(configuration.us_configuration.waveform().numerology())?;
         let generation = next_id()?;
         self.configuration = Some(configuration);
         self.options = options;
@@ -105,6 +117,13 @@ impl Simulation {
     /// Returns a resource error if no new session identity can be allocated;
     /// failure preserves all previously accepted input and settings.
     pub fn configure_measured(&mut self, prepared: super::MeasuredConfiguration) -> ApiResult<()> {
+        self.receiver_observations.validate_mode(
+            prepared
+                .configuration
+                .us_configuration
+                .waveform()
+                .numerology(),
+        )?;
         let generation = next_id()?;
         self.configuration = Some(prepared.configuration);
         self.options = prepared.options;
@@ -120,6 +139,20 @@ impl Simulation {
     pub fn document(&self) -> Option<&super::ConfigurationDocument> {
         self.document.as_ref()
     }
+
+    /// Borrows the current validated runtime options without advancing the source.
+    ///
+    /// This includes construction options before configuration and overrides
+    /// accepted by `set_options`, which may differ from the original document.
+    /// No allocation, validation, configuration or execution occurs.
+    ///
+    /// # Returns
+    /// The actual immutable options, valid for this session borrow. Clone them
+    /// when an owned snapshot must survive later mutation or session disposal.
+    pub fn options(&self) -> &ExperimentOptions {
+        &self.options
+    }
+
     /// Atomically replaces runtime `options`, retaining accepted scientific input.
     ///
     /// Returns unit; invalid budgets or incompatible aggregate work preserve state.
@@ -132,6 +165,31 @@ impl Simulation {
         self.options = options;
         Ok(())
     }
+    /// Atomically replaces optional completed receiver-estimate retention budgets.
+    /// # Arguments
+    /// * `policy` - Validated aggregate frame/scalar policy, independent of runtime options.
+    /// # Returns
+    /// Unit without changing accepted generation, source, configuration or existing reports.
+    /// # Errors
+    /// Rejects insufficient scalar space for the accepted numerology, preserving the old policy.
+    pub fn set_receiver_observation_policy(
+        &mut self,
+        policy: super::ReceiverObservationPolicy,
+    ) -> ApiResult<()> {
+        if let Some(configuration) = &self.configuration {
+            policy.validate_mode(configuration.us_configuration.waveform().numerology())?;
+        }
+        self.receiver_observations = policy;
+        Ok(())
+    }
+
+    /// Inspects optional receiver observation budgets without starting work.
+    /// # Returns
+    /// An owned immutable policy; default disables retention independently of I/Q taps.
+    pub fn receiver_observation_policy(&self) -> super::ReceiverObservationPolicy {
+        self.receiver_observations
+    }
+
     /// Returns owned current readiness, resource counts and discovered inventory.
     ///
     /// Missing configuration returns MissingSetting; no processing is triggered.
@@ -143,6 +201,54 @@ impl Simulation {
             &self.options,
         )?)
     }
+    /// Inspects the authoritative configured base-grant allocation without executing science.
+    /// # Arguments
+    /// * `request` - Original frame/symbol/carrier viewport and at-most-16384 cell budget.
+    /// # Returns
+    /// Owned resource roles, original visits/timing and unchanged accepted generation.
+    /// No source/RNG advances and no receiver or transmitter is started.
+    /// # Errors
+    /// MissingSetting before configure; shared frame/extent/resource/overflow errors otherwise.
+    pub fn resource_grid(
+        &self,
+        request: super::ResourceGridRequest,
+    ) -> ApiResult<super::ResourceGridSnapshot> {
+        let configuration = self
+            .configuration
+            .as_ref()
+            .ok_or(ApiError::MissingSetting)?;
+        let grid = crate::resources::view::view(&configuration.us_configuration, request)?;
+        let transmission_planned = crate::grant::select(grid.grant_bits)?.transmit;
+        Ok(super::ResourceGridSnapshot {
+            format: super::resources::RESOURCE_GRID_FORMAT,
+            schema_version: super::resources::RESOURCE_GRID_SCHEMA_VERSION,
+            configuration_generation: self.generation,
+            transmission_planned,
+            grid,
+        })
+    }
+    /// Inspects configured C, deterministic H or their composite without starting a simulation.
+    /// # Arguments
+    /// * `request` - Original base-grant symbol/frequency window, finite budget and impulse opt-in.
+    /// # Returns
+    /// Owned configured transfer and optional periodic inverse with the unchanged accepted generation.
+    /// Source, receiver, channel stream and RNG state do not advance.
+    /// # Errors
+    /// MissingSetting before configure; shared extent, budget, finite-arithmetic and static-H
+    /// capability failures otherwise. Nonzero frequency offset rejects H/composite queries.
+    pub fn configured_response(
+        &self,
+        request: super::ConfiguredResponseRequest,
+    ) -> ApiResult<super::ConfiguredResponseSnapshot> {
+        let configuration = self
+            .configuration
+            .as_ref()
+            .ok_or(ApiError::MissingSetting)?;
+        let mut response = crate::instruments::response::configured(configuration, request)?;
+        response.configuration_generation = Some(self.generation);
+        Ok(response)
+    }
+
     /// Runs the complete finite experiment using a fresh cancellation handle.
     ///
     /// Returns owned completed/partial report; shared engine errors retain causes.
@@ -159,7 +265,14 @@ impl Simulation {
             .configuration
             .as_ref()
             .ok_or(ApiError::MissingSetting)?;
-        let mut report = run(config, &self.options, next_id()?, self.generation, control)?;
+        let mut report = run_observed(
+            config,
+            &self.options,
+            next_id()?,
+            self.generation,
+            control,
+            self.receiver_observations,
+        )?;
         report.measurement_provenance_json = self.measured_provenance.clone();
         report.source_configuration_json = self
             .document
@@ -177,5 +290,48 @@ impl Simulation {
     /// Returns None before configure; caller cannot mutate session state here.
     pub fn configuration(&self) -> Option<&ExperimentConfig> {
         self.configuration.as_ref()
+    }
+}
+
+impl RetainedPayload for Simulation {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            options,
+            configuration,
+            generation,
+            document,
+            measured_provenance,
+            receiver_observations,
+        } = self;
+        sum([
+            options.retained_children(),
+            configuration.retained_children(),
+            generation.retained_children(),
+            document.retained_children(),
+            measured_provenance.retained_children(),
+            receiver_observations.retained_children(),
+        ])
+    }
+}
+
+impl Simulation {
+    /// Measures the complete currently retained session without advancing science.
+    ///
+    /// # Returns
+    /// Target-layout fixed root plus requested payload capacities, ordered-entry
+    /// counts and conservatively repeated shared roots. Includes original source,
+    /// options, configuration, provenance and private caches. Excludes allocator,
+    /// tree-node and reference-count headers; this is not heap/RSS or a future
+    /// output/workspace bound. No serialization, allocation or mutation occurs.
+    ///
+    /// # Errors
+    /// ResourceLimit with field `retained_footprint` on checked arithmetic overflow.
+    pub fn retained_footprint(&self) -> ApiResult<RetainedFootprint> {
+        merlin_api::retention_support::retained_footprint(self)
+            .ok_or_else(|| crate::error::limit("retained_footprint").into())
     }
 }

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Qt adapter for transmitter readiness and bounded worker spectrum queries.
-use crate::instruments::transmitter::preview as model;
+use crate::downstream::instruments::transmitter::preview as model;
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 
@@ -104,9 +104,51 @@ pub mod bridge {
 }
 
 /// GUI-thread owner; scientific work runs on an independent bounded Rust worker.
-#[derive(Default)]
 pub struct TransmitterAnalyzerRust {
-    model: model::Analyzer,
+    context: crate::downstream::workbench::session::Context,
+    model: Option<Box<model::Analyzer>>,
+}
+
+impl Default for TransmitterAnalyzerRust {
+    /// Binds admitted preview controls to the canonical downstream host.
+    /// # Returns
+    /// Existing normal state, or minimal unavailable references on rejection.
+    fn default() -> Self {
+        Self::for_context(crate::downstream::workbench::session::Context::default())
+    }
+}
+
+impl TransmitterAnalyzerRust {
+    /// Preflights fixed runtime storage without a fallback full Analyzer.
+    /// # Arguments
+    /// * `context` - Exact host used by views, prepared transfer and retry.
+    /// # Returns
+    /// Thin adapter with an admitted Box when its host has capacity.
+    fn for_context(context: crate::downstream::workbench::session::Context) -> Self {
+        let model = model::Analyzer::for_context(context.clone()).ok();
+        Self { context, model }
+    }
+
+    /// Retries the same host after previous fixed admission rejected.
+    /// # Returns
+    /// Existing/admitted model, or None without scientific/session mutation.
+    fn ensure_model(&mut self) -> Option<&mut model::Analyzer> {
+        if self.model.is_none() {
+            self.model = model::Analyzer::for_context(self.context.clone()).ok();
+        }
+        self.model.as_deref_mut()
+    }
+
+    /// Projects explicit unavailability without allocating a full runtime model.
+    /// # Returns
+    /// False readiness and empty plotting buffers with borrowed admission wording.
+    fn unavailable_state() -> serde_json::Value {
+        let message = crate::shared::presentation::constants::RUNTIME_MODEL_ADMISSION_MESSAGE;
+        serde_json::json!({"status":"error","reason":message,"error":message,
+            "available":false,"busy":false,"can_generate":false,"has_result":false,
+            "result_token":u64::default().to_string(),"configuration_token":u64::default().to_string(),
+            "points":[],"x_ticks":[],"y_ticks":[]})
+    }
 }
 
 impl bridge::TransmitterAnalyzer {
@@ -117,13 +159,17 @@ impl bridge::TransmitterAnalyzer {
     /// # Returns
     /// Small JSON page with original metadata and finite scatter points.
     pub fn stage(&self, stage: i32, offset: i32) -> QString {
-        QString::from(crate::transmitter_instruments::stage(stage, offset).to_string())
+        QString::from(
+            crate::transmitter_instruments::stage(&self.rust().context, stage, offset).to_string(),
+        )
     }
     /// Returns actual retained graphical previews without scientific recomputation.
     /// # Returns
     /// Six bounded graphs with indices/provenance and no exact-value tables.
     pub fn stage_previews(&self) -> QString {
-        QString::from(crate::transmitter_instruments::stage_previews().to_string())
+        QString::from(
+            crate::transmitter_instruments::stage_previews(&self.rust().context).to_string(),
+        )
     }
     /// Selects an immutable physical-bin window without running a simulation.
     /// # Arguments
@@ -132,13 +178,16 @@ impl bridge::TransmitterAnalyzer {
     /// # Returns
     /// At most2048 real TX points, without inferred data/control labels.
     pub fn channel_qam(&self, first: i32, last: i32) -> QString {
-        QString::from(crate::transmitter_instruments::channel_input::qam(first, last).to_string())
+        QString::from(
+            crate::transmitter_instruments::channel_input::qam(&self.rust().context, first, last)
+                .to_string(),
+        )
     }
     /// Reads actual retained TX management packets through the existing decoders.
     /// # Returns
     /// Bounded header/TLV/byte records with transmission status.
     pub fn messages(&self) -> QString {
-        QString::from(crate::transmitter_instruments::messages().to_string())
+        QString::from(crate::transmitter_instruments::messages(&self.rust().context).to_string())
     }
     /// Reports the availability of one genuine TX waveform plane.
     /// # Arguments
@@ -146,7 +195,9 @@ impl bridge::TransmitterAnalyzer {
     /// # Returns
     /// Scalar shared SA state; no sample arrays cross this method.
     pub fn spectrum_tap(&self, tap: i32) -> QString {
-        QString::from(crate::transmitter_instruments::spectrum_state(tap).to_string())
+        QString::from(
+            crate::transmitter_instruments::spectrum_state(&self.rust().context, tap).to_string(),
+        )
     }
     /// Adapts a retained TX time-sample spectrum to a bounded viewport.
     /// # Arguments
@@ -158,7 +209,14 @@ impl bridge::TransmitterAnalyzer {
     /// Normalized viewport points or an explicit diagnostic.
     pub fn view_tap(&self, tap: i32, start: i32, count: i32, capture_axis: bool) -> QString {
         QString::from(
-            crate::transmitter_instruments::spectrum(tap, start, count, capture_axis).to_string(),
+            crate::transmitter_instruments::spectrum(
+                &self.rust().context,
+                tap,
+                start,
+                count,
+                capture_axis,
+            )
+            .to_string(),
         )
     }
     /// Resolves accepted Rust snapshots and validates supported transmitter readiness.
@@ -167,31 +225,58 @@ impl bridge::TransmitterAnalyzer {
     /// # Returns
     /// Status JSON; input changes cancel old jobs and invalidate stale samples.
     pub fn configure(mut self: core::pin::Pin<&mut Self>, settings: &QString) -> QString {
-        if let Some(model) =
-            crate::workbench::project_load::take(|prepared| prepared.transmitter.take())
+        if let Some(mut model) =
+            crate::downstream::workbench::project_load::take(&self.rust().context, |prepared| {
+                prepared.transmitter.take()
+            })
         {
-            self.as_mut().rust_mut().model.cancel();
-            self.as_mut().rust_mut().model = model;
-            return QString::from(self.rust().model.status().to_string());
+            if let Err(error) = model.rebind_prepared(self.rust().context.clone()) {
+                return QString::from(
+                    serde_json::json!({"status":"error","reason":error.into_message()}).to_string(),
+                );
+            }
+            let mut owner = self.as_mut().rust_mut();
+            if let Some(previous) = owner.model.as_deref_mut() {
+                previous.cancel();
+            }
+            let state = model.status();
+            owner.model = Some(model);
+            return QString::from(state.to_string());
         }
-        let inputs = crate::workbench::session::snapshot();
-        let model = &mut self.as_mut().rust_mut().model;
-        model.configure(&settings.to_string(), inputs);
-        QString::from(model.status().to_string())
+        let sections = crate::downstream::workbench::session::saved_sections(&self.rust().context);
+        let state = if let Some(model) = self.as_mut().rust_mut().ensure_model() {
+            model.configure(
+                &settings.to_string(),
+                sections.get("source").unwrap_or(&serde_json::Value::Null),
+                sections.get("profile").unwrap_or(&serde_json::Value::Null),
+            );
+            model.status()
+        } else {
+            TransmitterAnalyzerRust::unavailable_state()
+        };
+        QString::from(state.to_string())
     }
     /// Starts at most one bounded preview job, preserving GUI responsiveness.
     pub fn generate(mut self: core::pin::Pin<&mut Self>) {
-        self.as_mut().rust_mut().model.generate();
+        if let Some(model) = self.as_mut().rust_mut().ensure_model() {
+            model.generate();
+        }
     }
     /// Requests cancellation without waiting on scientific computation.
     pub fn cancel(mut self: core::pin::Pin<&mut Self>) {
-        self.as_mut().rust_mut().model.cancel();
+        if let Some(model) = self.as_mut().rust_mut().model.as_deref_mut() {
+            model.cancel();
+        }
     }
     /// Drains bounded completion and exposes scalar progress/readiness only.
     /// # Returns
     /// Status JSON with a token identifying any new completed result.
     pub fn poll(mut self: core::pin::Pin<&mut Self>) -> QString {
-        QString::from(self.as_mut().rust_mut().model.poll().to_string())
+        let state = self.as_mut().rust_mut().ensure_model().map_or_else(
+            TransmitterAnalyzerRust::unavailable_state,
+            model::Analyzer::poll,
+        );
+        QString::from(state.to_string())
     }
     /// Formats retained spectrum data as a bounded min/max viewport.
     /// # Arguments
@@ -201,12 +286,14 @@ impl bridge::TransmitterAnalyzer {
     /// # Returns
     /// At most 2048 display points with scientific units and Rust-derived labels.
     pub fn view(&self, start: i32, count: i32, capture_axis: bool) -> QString {
-        QString::from(
-            self.rust()
-                .model
-                .view(start, count, capture_axis)
-                .to_string(),
-        )
+        let view = self
+            .rust()
+            .model
+            .as_deref()
+            .map_or_else(TransmitterAnalyzerRust::unavailable_state, |model| {
+                model.view(start, count, capture_axis)
+            });
+        QString::from(view.to_string())
     }
     /// Adapts immutable result geometry into the shared timing display document.
     /// # Arguments
@@ -214,6 +301,17 @@ impl bridge::TransmitterAnalyzer {
     /// # Returns
     /// Bounded timing JSON or validation/unavailable diagnostic.
     pub fn timing(&self, velocity: f64) -> QString {
-        QString::from(self.rust().model.timing(velocity).to_string())
+        let view = self
+            .rust()
+            .model
+            .as_deref()
+            .map_or_else(TransmitterAnalyzerRust::unavailable_state, |model| {
+                model.timing(velocity)
+            });
+        QString::from(view.to_string())
     }
 }
+
+#[cfg(test)]
+#[path = "transmitter_analyzer/runtime_tests.rs"]
+mod runtime_tests;

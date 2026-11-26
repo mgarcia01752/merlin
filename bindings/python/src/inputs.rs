@@ -4,7 +4,7 @@
  */
 //! Native file/byte conveniences and immutable input snapshots.
 use crate::{api, error, object_from_json, quantities::*};
-use pnm_input::{read_capture, CaptureLoader};
+use merlin::downstream::inputs::{read_capture, CaptureLoader};
 use pyo3::{prelude::*, types::PyTuple};
 use std::path::PathBuf;
 /// Explicit protocol interpretation, independent of file-format revision.
@@ -391,6 +391,13 @@ macro_rules! measurement {
             fn provenance(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
                 object_from_json(py, &serde_json::to_string(self.0.provenance()).unwrap())
             }
+            /// Reads the exact backend scientific source-kind identifier.
+            /// # Returns
+            /// Original identifier, preserving synthetic/designed/ordinary distinctions.
+            #[getter]
+            fn source_kind(&self) -> &str {
+                self.0.source_kind()
+            }
             /// Read grid from the native Rust snapshot.
             /// # Returns
             /// An independent JSON snapshot of the exact original Hz/index grid.
@@ -463,7 +470,7 @@ pub(crate) fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
 /// The immutable native value named by this read-only property.
 /// # Errors
 /// Preserves structured Rust validation errors and Python conversion failures.
-fn named_input(name: &str, data: &[u8]) -> PyResult<api::NamedCapture> {
+pub(crate) fn named_input(name: &str, data: &[u8]) -> PyResult<api::NamedCapture> {
     if data.len() > api::MAX_CAPTURE_BYTES || name.len() > 4096 {
         return Err(error(api::ApiError::new(
             api::ErrorCode::ResourceLimit,
@@ -564,6 +571,42 @@ impl PyComplexResponse {
 }
 #[pymethods]
 impl PyChannelEstimate {
+    /// Measures this existing Rust owner without copying or advancing its data.
+    ///
+    /// # Returns
+    /// Immutable target-layout payload, ordered-entry and shared-root quantities,
+    /// including private caches and spare capacity; excludes Python projections
+    /// and temporary execution storage. This is not a future-product bound.
+    ///
+    /// # Errors
+    /// Preserves Rust ResourceLimit on checked overflow; releases the interpreter.
+    fn retained_footprint(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        py.detach(|| self.0.retained_footprint())
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
+    /// Copies the admitted original-grid channel frame through the public Rust operation.
+    /// # Returns
+    /// Owned bounded key/epoch/decoded-source/I/Q dictionary. Native edits cannot
+    /// mutate the input; exact original capture provenance remains available separately.
+    /// # Errors
+    /// Preserves structured transport and Python allocation failures.
+    fn frame(&self, py: Python<'_>) -> PyResult<Py<PyAny>> {
+        let text = py
+            .detach(|| serde_json::to_string(self.0.frame()))
+            .map_err(|cause| {
+                error(api::ApiError::new(
+                    api::ErrorCode::InvalidInput,
+                    cause.to_string(),
+                ))
+            })?;
+        object_from_json(py, &text)
+    }
+
     /// Read response from the native Rust snapshot.
     /// # Returns
     /// An immutable tuple of original complex H values or None for missing samples.

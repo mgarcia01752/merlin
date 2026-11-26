@@ -15,6 +15,8 @@ and assumptions are explained alongside the workflow.
 | [Rust explicit CM channel estimate](rust/run_single_capture_cm_chan_est.rs) | Same inputs, explicit channel/receiver settings and actual FEC outcomes as Python. |
 | [Saved WB in Python](python/run_multi_rxmer_cmce_workbench.py) | Load embedded captures and saved settings directly through Rust; run selected profiles without duplicate scientific constants. |
 | [Saved WB in Rust](rust/run_multi_rxmer_cmce_workbench.rs) | Use the same native loader and print owned per-profile batch reports. |
+| [Saved full-loop request in Rust](rust/run_saved_full_loop.rs) | Prepare saved file/fill or PRBS and measurement playback settings as an idle public sweep, then explicitly run a request; see the [paired Rust/Python guide](../../docs/user/api/saved-full-loop.md). |
+| [Direction projects in Rust](rust/run_project.rs) | Round-trip legacy downstream and original upstream configuration/measured documents through the shared native project adapter and execute owned requests/sessions; see the [paired facade/Python guide](../../docs/user/api/projects.md). |
 | [Rust workflow](rust/run_single_capture.rs) | Import a profile, derive OCD settings, add RxMER and a channel estimate independently, select one capture and inspect simulated results. |
 | [Python workflow](python/run_single_capture.py) | Perform the same fixture-backed workflow using the installed native Python extension and print FEC counts and BER. |
 | [Python multi-RxMER collection](python/run_multi_rxmer_mce.py) | Discover all profiles in the channel-193 capture and load its 132 RxMER binaries; run independent profile experiments using a Rust residual-power average, unity physical response and MCE receiver. |

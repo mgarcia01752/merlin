@@ -15,6 +15,9 @@ Return to the [documentation index](../README.md) for other guides.
 
 | Public module | Responsibility |
 | --- | --- |
+| `merlin::upstream::inputs::{UcdCapture,RxmerCapture,PreEqCapture}` | Existing native binary inspection plus bounded `from_source_json`/`to_source_json` lossless source transport; immutable originals, unchanged inspection JSON and explicit association remain separate ([measurement contract](../user/upstream/measurements.md)) |
+| `merlin::common::RetainedFootprint` | [Passive retained-resource metadata](../user/api/retained-resources.md) from downstream inputs/Designer/controls/previews/requests/sweeps/results/archives and upstream controls/sessions/reports; payload bytes plus independent ordered-entry/shared-root counts, excluding private allocator/tree/refcount bookkeeping |
+| `merlin::downstream::{FullLoopReceiverArchivePolicy,FullLoopReceiverArchive}` | [Detached finite receiver histories](../user/api/full-loop-cells.md#detached-independent-histories), original cell/decoder context, compatible scientific queries and exact preflight/bounded-copy operations; no full job/input retention |
 | `signal_processing::receiver::channel_estimation::{MceSettings,ReliabilityEstimator,ReceiverReliability}` | Received-only MCE reliability policy, bounded continuous-pilot differences and training/tracking summary; no supplied H or exact simulator noise inputs |
 | `signal_processing::channel::composition::{prepare_channel,PreparedChannel}` | Shared admission/execution/preview planning, total gain and separate pre-filter synthesis response |
 | `signal_processing::channel::filter::{ChannelFilterSettings,ChannelFilterPlan,StreamingChannelFilter}` | Bounded static echo/CM reconstruction plans, coefficient/response/fit getters and persistent sample filtering |
@@ -172,6 +175,22 @@ linear-power averaging. `PowerSpectrum` retains full normalized density and
 frequency metadata; `buckets` supplies at most 2048 contiguous min/max spans.
 `density_db` keeps zero/unavailable density distinct from finite power.
 
+The high-level `TransmissionConfiguration::spectrum_average_capacity(max_samples)`
+plans complete analysis windows within a sample budget through that same owner.
+Its native Python method is `spectrum_average_capacity(max_samples)`. Both retain
+the existing work cap and reject budgets smaller than the accepted FFT without
+reading samples or starting a run. Use the count with existing spectrum query
+fields; retained availability remains separate. See the paired
+[sample-budget examples](../user/api/full-loop.md#spectrum-sample-budgets).
+
+`FullLoopResult::calibrated_spectrum_sequence(query)` provides paired normalized
+ordered-frame metadata and calibrated ChannelSpectrum through the existing
+sequence/calibration owners. Native Python exposes the matching method with
+stage/snapshot/average/viewport arguments. Original gaps, overlaps and explicit
+contiguity remain in the returned `sequence`; `power` carries electrical or
+relative units and zoom-independent occupied-band power. See
+[ordered-frame diagnostics](../user/api/full-loop.md#calibrated-ordered-frame-diagnostics).
+
 `simulation::transmitter_preview::TransmitterPreviewRequest` freezes accepted
 transmission settings, captured Profile A and immutable source configuration.
 `generate` reuses production TX stages with cooperative cancellation and scalar
@@ -210,6 +229,13 @@ copies the bounded recovered original prefix. Job results own that same optional
 `ChannelSummary.file_source` contains segment/completion accounting, absent for
 continuous PRBS. See [file source design](../user/simulation/file-source/README.md)
 for cursor, padding, truth and partial-export contracts.
+
+`SourceInput::file_limits`, `file_info` and `with_fill` expose authoritative
+finite-source budgets, constant-size original/fill metadata and immutable append
+replacement. SourceFileLimits and SourceFileInfo retain explicit octet/bit units
+and optional independently seeded policy. Replacement shares the validated
+original byte buffer; native Python mirrors these operations with owned results.
+See [source admission semantics](../user/api/input-admission.md#finite-source-limits-and-immutable-fill-editing).
 
 ## Downstream FEC shortening
 
@@ -350,6 +376,13 @@ sign decisions. Shortened decoding excludes restored synthetic coordinates.
 whole-contained observation words, including their completion during drain.
 Both use the same type and getters. UFEC is a union of failed decoder stages;
 undetected source mismatches remain separate.
+
+`FullLoopResult::fec_recovery() -> FullLoopFecRecovery` exposes the existing
+whole-run source-verified recovery projection through the accepted API. Native
+Python `FullLoopResult.fec_recovery()` returns the matching owned dictionary.
+The five generated/recovered/rejected/mismatched/unrecovered counts preserve
+actual complete/partial scope and remain independent of retained word details.
+See the [recovery semantics](../user/api/full-loop.md#source-verified-whole-run-recovery).
 
 ```rust
 // `result` is a completed or partial ChannelJobResult.

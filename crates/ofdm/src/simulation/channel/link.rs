@@ -398,7 +398,44 @@ impl WaveformLink {
         let plc = frame
             .symbol_iq(index)
             .ok_or_else(|| invalid("Missing reference PLC column."))?;
-        let physical = assemble(&self.layout, index, reduced, plc, 1.0)?;
+        let physical = if probe.may_request(
+            crate::simulation::test_points::TestPointId::ContinuousPilots,
+            phase,
+        ) || probe.may_request(
+            crate::simulation::test_points::TestPointId::ScatteredPilots,
+            phase,
+        ) {
+            let mut pilot_context = self.context(phase);
+            pilot_context.channel_symbol_index = Some(index);
+            pilot_context.plc_phase = Some((index % PLC_FRAME_SYMBOLS) as u8);
+            pilot_context.physical_grid = Some(crate::simulation::test_points::PhysicalProbeGrid {
+                spacing: self.layout.subcarrier_spacing(),
+                zero_frequency_hz: self
+                    .layout
+                    .frequency_hz(0)
+                    .ok_or_else(|| invalid("Missing physical FFT origin"))?,
+            });
+            crate::transmission::frame::assembly::assemble_with_pilots(
+                &self.layout,
+                index,
+                reduced,
+                plc,
+                1.0,
+                |continuous, scattered| {
+                    crate::simulation::pilots::observe_values(
+                        continuous,
+                        scattered,
+                        1.0,
+                        &pilot_context,
+                        probe,
+                        observer,
+                    )?;
+                    Ok(())
+                },
+            )?
+        } else {
+            assemble(&self.layout, index, reduced, plc, 1.0)?
+        };
         if let Some(reference) = &mut self.reference_bins {
             reference.clone_from(&physical.bins);
         }

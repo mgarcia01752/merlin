@@ -47,6 +47,16 @@ macro_rules! fec_getter {
     };
 }
 impl FecReport {
+    /// Projects existing counters into one explicitly declared report scope.
+    /// # Arguments
+    /// * `counters` - Actual completed outcomes or an empty unavailable-window snapshot.
+    /// * `scope` - Existing scientific counter scope, independent of source verification.
+    /// # Returns
+    /// Owned immutable report; no decoder/classification or source operation executes.
+    pub(in crate::api) fn from_counters(counters: FecCounters, scope: MetricScope) -> Self {
+        Self { scope, counters }
+    }
+
     /// Reads the scientific counter scope.
     /// # Returns
     /// Observation-window or separately labeled all-completed scope.
@@ -118,6 +128,27 @@ pub struct CarrierMer {
     mer: Option<MerDb>,
 }
 impl CarrierMer {
+    /// Projects actual same-bin power sums without fitting or averaging dB values.
+    /// # Arguments
+    /// * `subcarrier` - Validated physical FFT bin, independent of source array offset.
+    /// * `observation` - Actual accumulator, or None for an unmeasured source carrier.
+    /// # Returns
+    /// Existing typed observation-cell report; empty samples/powers and optional MER
+    /// remain explicit. No received samples, reference or simulation is generated.
+    pub(in crate::api) fn from_observation(
+        subcarrier: SubcarrierIndex,
+        observation: Option<&crate::simulation::channel::performance::CarrierMer>,
+    ) -> Self {
+        Self {
+            subcarrier,
+            scope: MetricScope::ObservationCells,
+            samples: SampleCount(observation.map_or(0, |value| value.samples())),
+            signal_power: LinearPower(observation.map_or(0.0, |value| value.signal_power())),
+            error_power: LinearPower(observation.map_or(0.0, |value| value.error_power())),
+            mer: observation.and_then(|value| value.mer_db()).map(MerDb),
+        }
+    }
+
     getter!(subcarrier, SubcarrierIndex, "Reads the physical FFT bin.");
     getter!(scope, MetricScope, "Reads observation-cell scope.");
     getter!(samples, SampleCount, "Reads valid matched-cell count.");
@@ -178,10 +209,7 @@ impl PerformanceReport {
         let fec = engine
             .as_ref()
             .and_then(|e| e.summary.window.as_ref())
-            .map(|w| FecReport {
-                scope: MetricScope::ObservationWindow,
-                counters: w.fec,
-            });
+            .map(|window| FecReport::from_counters(window.fec, MetricScope::ObservationWindow));
         let profile = engine
             .as_ref()
             .and_then(|e| e.summary.window.as_ref())
@@ -205,13 +233,8 @@ impl PerformanceReport {
                 e.carrier_mer
                     .iter()
                     .enumerate()
-                    .map(|(bin, m)| CarrierMer {
-                        subcarrier: SubcarrierIndex(bin as u16),
-                        scope: MetricScope::ObservationCells,
-                        samples: SampleCount(m.samples()),
-                        signal_power: LinearPower(m.signal_power()),
-                        error_power: LinearPower(m.error_power()),
-                        mer: m.mer_db().map(MerDb),
+                    .map(|(bin, observation)| {
+                        CarrierMer::from_observation(SubcarrierIndex(bin as u16), Some(observation))
                     })
                     .collect()
             })
@@ -437,5 +460,56 @@ impl BatchReport {
     /// Reports serialization errors; no file writes occur.
     pub fn to_json(&self) -> ApiResult<String> {
         serde_json::to_string(self).map_err(|e| super::error::invalid(e.to_string()))
+    }
+}
+
+#[cfg(test)]
+mod projection_tests {
+    use super::*;
+    use crate::simulation::channel::{performance, results::FecOutcome};
+
+    #[test]
+    fn typed_carrier_projection_preserves_independent_power_and_missing_zero_error_states() {
+        let bin = SubcarrierIndex::new(7).unwrap(); // Independent physical-bin identity.
+        let missing = CarrierMer::from_observation(bin, None);
+        assert_eq!(missing.samples().value(), 0);
+        assert_eq!(missing.signal_power().value(), 0.0);
+        assert!(missing.mer().is_none());
+        let mut actual = performance::CarrierMer::default();
+
+        // Unit reference and an I error of 0.1 independently imply 20 dB MER.
+        actual.observe([1.0, 0.0], [1.1, 0.0]);
+        let projected = CarrierMer::from_observation(bin, Some(&actual));
+        assert_eq!(projected.subcarrier().value(), 7);
+        assert_eq!(projected.scope(), MetricScope::ObservationCells);
+        assert_eq!(projected.samples().value(), 1);
+        assert_eq!(projected.signal_power().value(), 1.0);
+        assert!((projected.error_power().value() - 0.01).abs() < 1e-12);
+        assert!((projected.mer().unwrap().value() - 20.0).abs() < 1e-12);
+        let mut exact = performance::CarrierMer::default();
+        exact.observe([1.0, 0.0], [1.0, 0.0]);
+        let projected = CarrierMer::from_observation(bin, Some(&exact));
+        assert_eq!(projected.samples().value(), 1);
+        assert_eq!(projected.error_power().value(), 0.0);
+        assert!(projected.mer().is_none());
+    }
+
+    #[test]
+    fn typed_fec_projection_preserves_scope_and_independent_decoder_source_partitions() {
+        let mut counters = FecCounters::new();
+        counters.record(FecOutcome::Clean, false);
+        counters.record(FecOutcome::Corrected, true);
+        counters.record(FecOutcome::Uncorrectable, true);
+        let report = FecReport::from_counters(counters, MetricScope::ObservationWindow);
+        assert_eq!(report.scope(), MetricScope::ObservationWindow);
+        assert_eq!(report.total_codewords().value(), 3);
+        assert_eq!(report.clean_codewords().value(), 1);
+        assert_eq!(report.corrected_codewords().value(), 1);
+        assert_eq!(report.uncorrectable_codewords().value(), 1);
+        assert_eq!(report.undetected_errors().value(), 1);
+        assert_eq!(
+            serde_json::to_value(report).unwrap()["counters"],
+            serde_json::to_value(counters).unwrap()
+        );
     }
 }

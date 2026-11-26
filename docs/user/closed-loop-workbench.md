@@ -87,7 +87,7 @@ atomically. Save As selects a new destination. Use a `*.merlin.json` filename;
 a missing suffix is appended for a new destination. Existing-file replacement
 uses the native chooser's confirmation. Imported original paths are protected.
 
-The version-1 JSON stores:
+A downstream project stores:
 
 - Accepted OCD, DPD/profile selection, PRBS/file/fill source, RxMER mode/order/
   symbol intervals, channel response/default and association tolerances.
@@ -104,6 +104,17 @@ accepted state, then reloads all editors. It never starts a run automatically.
 Cancel or malformed data preserves the current project. Cross-input incompatibilities are
 restored as editable readiness diagnostics. Open/Save are disabled while a worker
 is active; Stop and wait for completion before changing projects.
+
+New and Open ask about unsaved changes to the actual target direction. Save,
+Discard and Cancel apply only to that captured project. Closing the application
+resolves both dirty projects before closing; cancelling either prompt keeps the
+application available.
+
+Runnable downstream projects use direction-tagged schema 3. Incomplete downstream
+editors retain schema 2, and existing schema-1/2 projects remain supported. Native
+instruments require their supported default observation policy; Open reports an
+explicit error for other public API policies instead of replacing their settings.
+Those projects remain usable through the public Rust/Python Project APIs.
 
 Draft edits, previous run results and transient instrument selections are not
 saved. The project limit is 144 MiB, with original per-file/combined measurement

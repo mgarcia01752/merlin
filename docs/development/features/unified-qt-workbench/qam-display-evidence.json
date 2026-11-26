@@ -1,0 +1,469 @@
+{
+  "schema_version": 1,
+  "task": "UIU-API-04",
+  "unit": "QAM/pairing and received response display",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-12",
+    "REQ-UIU-16",
+    "REQ-UIU-18",
+    "REQ-UIU-24"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-api-04",
+  "base_commit": "189bae5e88228bf459e78f3e17d2785d9085acb1",
+  "tested_files": [
+    {
+      "path": "bindings/python/python/merlin/upstream.pyi",
+      "sha256": "4bb846e9a14814881f3b45a60b13222d46c6653860a7f8b288d66aa9fd810094"
+    },
+    {
+      "path": "bindings/python/src/upstream/reports.rs",
+      "sha256": "68bb560bfe114713ea95c6c59e53d46e7d427f8828645b83a5be2a86495c15e1"
+    },
+    {
+      "path": "bindings/python/src/upstream/reports/qam_views.rs",
+      "sha256": "c3122488d13eb04d9ded89969c9ab5f402033c1821a6daaaa4498707d1026c76"
+    },
+    {
+      "path": "bindings/python/tests/test_upstream_qam_views.py",
+      "sha256": "97726f36e282ab33fc1f6c781af5b244aa01a21e4428fee15bcfeaa6818281eb"
+    },
+    {
+      "path": "crates/merlin/tests/namespaces.rs",
+      "sha256": "e2b477ddae41f5c927d0e7a27ed09f04e63294c15642756c64e3559abc066dd1"
+    },
+    {
+      "path": "crates/ofdma/examples/upstream_qam_views.rs",
+      "sha256": "39ee3e296e605d6c30b88a8c36df98cc751ef6b1d49809fbae7488888211d32e"
+    },
+    {
+      "path": "crates/ofdma/src/api/mod.rs",
+      "sha256": "23ff45aabe0325c347e04cfb7c4083bd3e7b2b0e18543238e91d41b886eb61f5"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/constellation.rs",
+      "sha256": "31cc24af1bc8a0b7573e48fe0d6ec8aea84ecd2d16da262ff3d13e5565671fe5"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/mod.rs",
+      "sha256": "d5063004d6e8fe1e7a344ae7b373dbba13ce3f077af2082b7bb60df8a7936e3e"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/observer.rs",
+      "sha256": "e7100912523ff160e577f5a7f90e77073bc99d015c7270d71cf6b200d34877cd"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/pairing.rs",
+      "sha256": "e2fbe54f06a3e4723d4c42789cee9e2f6cc0ffb0b6e1ca18c0cd94bdc2ee6ff6"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/receiver.rs",
+      "sha256": "b5a6af50138bd33e3d98186a447aef64ce8ad274fe9b90ae4f3735a0f92087de"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/response.rs",
+      "sha256": "071596f2b42ac1899cd845bbf5e0180d8d33aff8a68697a99d77586167c7c106"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/transfer.rs",
+      "sha256": "635709d5c61d29813299d8a762bdae68cea034a8b0166cb7139aff0facb51ce4"
+    },
+    {
+      "path": "crates/ofdma/tests/api_qam_views.rs",
+      "sha256": "0d87f826f3658db7af964d5902f3064e2c9ea3d1b9853dd737cafab0b7f4c43d"
+    },
+    {
+      "path": "tools/testing/native_api.py",
+      "sha256": "2f14d63584e89e41dcde023d08d038d437dbbe0f36ec52b6464ea973f8b65e44"
+    }
+  ],
+  "scope": "Scoped local Rust and installed Linux CPython 3.10 actual display acceptance; final full API-04 integration gate pending.",
+  "executed_cases": {
+    "upstream": 22,
+    "new_upstream": 6,
+    "facade": 19,
+    "new_facade": 1,
+    "native": 19,
+    "new_native": 4
+  },
+  "native_acceptance": {
+    "status": "passed",
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "run",
+          "-p",
+          "docsis-ofdma",
+          "--example",
+          "upstream_qam_views",
+          "--locked"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin",
+        "exit_code": 0,
+        "label": "qam_views",
+        "elapsed_seconds": 4.12717203500506
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "run",
+          "-p",
+          "docsis-ofdma",
+          "--example",
+          "upstream_receiver_estimates",
+          "--locked"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin",
+        "exit_code": 0,
+        "label": "receiver_estimates",
+        "elapsed_seconds": 1.1120010269951308
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "run",
+          "-p",
+          "docsis-ofdma",
+          "--example",
+          "upstream_configured_response",
+          "--locked"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin",
+        "exit_code": 0,
+        "label": "configured_response",
+        "elapsed_seconds": 0.993778026997461
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "pip",
+          "install",
+          "--no-index",
+          "--no-deps",
+          "/home/dev01/Projects/merlin/local/python-wheels-unified-ui-qam-views/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final",
+        "exit_code": 0,
+        "label": "install",
+        "elapsed_seconds": 0.4895809339941479
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_upstream_qam_views.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final",
+        "exit_code": 0,
+        "label": "qam-view-tests",
+        "elapsed_seconds": 0.2713956759980647
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_upstream_receiver_estimates.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final",
+        "exit_code": 0,
+        "label": "receiver-tests",
+        "elapsed_seconds": 0.26568719001079444
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_upstream_configured_response.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final",
+        "exit_code": 0,
+        "label": "configured-response-tests",
+        "elapsed_seconds": 0.5080416040000273
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_namespaces.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final",
+        "exit_code": 0,
+        "label": "namespace-tests",
+        "elapsed_seconds": 0.13639473599323537
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/installed/bin/python",
+          "-I",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/native-exports.json"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final",
+        "exit_code": 0,
+        "label": "native-inventory",
+        "elapsed_seconds": 0.18144754999957513
+      }
+    ],
+    "cases": [
+      {
+        "test_file": "bindings/python/tests/test_upstream_qam_views.py",
+        "qualified_test_case": "UpstreamQamViews.test_bounds_unsupported_raw_planes_empty_failure_and_passive_noisy_outcomes"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_qam_views.py",
+        "qualified_test_case": "UpstreamQamViews.test_installed_defaults_actual_labels_recorded_gain_and_received_phase_both_modes"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_qam_views.py",
+        "qualified_test_case": "UpstreamQamViews.test_pairing_original_coordinates_whole_counts_caps_and_owned_data"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_qam_views.py",
+        "qualified_test_case": "UpstreamQamViews.test_separate_rust_process_full_observations_labels_pairs_and_received_display_match"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+        "qualified_test_case": "UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+        "qualified_test_case": "UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+        "qualified_test_case": "UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+        "qualified_test_case": "UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+        "qualified_test_case": "UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+        "qualified_test_case": "UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_configured_response.py",
+        "qualified_test_case": "UpstreamConfiguredResponse.test_busy_session_guard_preserves_the_same_configured_generation_after_cancel"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_configured_response.py",
+        "qualified_test_case": "UpstreamConfiguredResponse.test_literal_two_tap_transfer_phase_periodic_inverse_and_installed_defaults"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_configured_response.py",
+        "qualified_test_case": "UpstreamConfiguredResponse.test_missing_bounds_zero_transfer_cfo_and_never_started_identity_states"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_configured_response.py",
+        "qualified_test_case": "UpstreamConfiguredResponse.test_original_c_replay_excluded_zeros_zoom_and_owned_frozen_report_data"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_configured_response.py",
+        "qualified_test_case": "UpstreamConfiguredResponse.test_separate_rust_process_planes_units_full_periodic_values_and_metadata_match"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+      }
+    ],
+    "wheel": "/home/dev01/Projects/merlin/local/python-wheels-unified-ui-qam-views/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "wheel_sha256": "72d7a7610723602928ca090ee79926c5af0048c78379c22654eabd2d6e0db3c0",
+    "scope": "Targeted installed Linux CPython 3.10 QAM/receiver/response and namespace acceptance. Full native/Rust/Qt regression remains the final integration gate.",
+    "reference_outputs": {
+      "QAM_VIEWS": {
+        "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/qam_views.stdout",
+        "sha256": "fb79cded38c20a6d8b27baa73942b7333925b2b6140cec233bcbe134fa5a5447"
+      },
+      "RECEIVER_ESTIMATES": {
+        "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/receiver_estimates.stdout",
+        "sha256": "2c85269225d528133eb3a5e6aa4f97f734e917bb0b9239a9a6fae576ea6b7ad9"
+      },
+      "CONFIGURED_RESPONSE": {
+        "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-display-native-final/configured_response.stdout",
+        "sha256": "df66121d1a05add0918125be8ef3aca008468048caa4dfd46163688988825fd9"
+      }
+    },
+    "passed": 19,
+    "elapsed_seconds": 10.572580585998367
+  },
+  "checks": [
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-display-rust.log",
+      "sha256": "5ea7ed19c200ee7f6f5cdc9d9cd9a0e5aee905a527b4d047367712d16b9e8010"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-display-facade.log",
+      "sha256": "0f5b36939e063c1088699ff1bf70c3f887258f796c1a87eeeb775dacdc36125f"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-display-clippy.log",
+      "sha256": "95c448960bfe28bd1fd2a4eb63be8c75b7b9d8a54b28bbc51638a919755fcea9"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-display-native-clippy.log",
+      "sha256": "3bb19a4e0d2beccd141ed485babb0f65c47d08dd66b681d8b56833105be904f4"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-display-wheel.log",
+      "sha256": "e1dd6e1f5098cee25f8e35d446329995980dce1e907e9bc4090eadd024927b8b"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-display-rustdoc.log",
+      "sha256": "b4e09f04014bff1217af9b50343dfd6c824f34efe7010628349c85951e6fa6f7"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-display-rust-final.log",
+      "sha256": "0f826f6ec9427957af11726048bb5fe64406b6fda991e8aab82503783dec1ad6"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-display-wheel-final.log",
+      "sha256": "1e7ad3b0371514de5b29fe382872577a2f7a0c9c0e58b895c090508f67505d40"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-display-clippy-final.log",
+      "sha256": "7717744c2aaf7a9df483efd636aacf76b3f465f6892f215e9c719199d1003609"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-display-docs.log",
+      "sha256": "9530bc9b5bb96b71932ac39019a71066af44de8f0382ade3b2d844112f32da8b"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-display-trace.log",
+      "sha256": "4815641791db39aa3e4d48e76217eb7aff10013ebbb24fc256295cd48506621f"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-display-tools.log",
+      "sha256": "488ca77d68a917058462a862c3c9f48d8f4055442b631120b9aa3b96401cceb5"
+    }
+  ],
+  "independent_acceptance": "Upstream 16-QAM labels 0/7/10 are (3,3)/(1,-1)/(-1,3) divided by sqrt(10). Boosted pilot raw power3 and recorded sqrt(3) gain yield unit power without relabelling zero payload bits. Both modes preserve all original actual coordinates and exact 112/240 retained TX/RX matches with16 unpaired TX pilots; capping preserves whole counts and left order. Actual -1+2j received transfer gives6.989700043360188 dB and2.0344439357957027 rad; missing/zero estimates retain absent log/phase. Existing configured transfer/impulse/phase corner cases pass unchanged.",
+  "limits": {
+    "copied_actual_points": 4096,
+    "copied_reference_points": 4096,
+    "copied_pairs": 4096,
+    "default_payload_loading": 4
+  },
+  "compatibility": {
+    "previous_rust_rows": 539,
+    "previous_native_rows": 522,
+    "new_rust_rows": 2,
+    "new_native_rows": 2,
+    "current_rust_rows": 541,
+    "current_native_rows": 524,
+    "only_previous_rows_revised": [
+      "merlin.upstream.BatchReport.receiver_estimate",
+      "merlin::upstream::BatchReport::receiver_estimate"
+    ],
+    "prior_revised_rows_archived": 2,
+    "all_prior_ids_assertions_and_alias_history_preserved": true,
+    "qt_source_files_unchanged": 178,
+    "original_raw_qam_and_default_json_preserved": true
+  },
+  "provenance": "Actual canonical Cell.gain is retained privately beside existing points and omitted from serialization. Unit geometry reuses upstream map_symbol. Original coordinate association uses actual bounded histories; shared transfer projection reuses existing configured mathematics with distinct error contexts. No source truth into RX, new mapper/estimator, unsafe code, native science dependency or Qt algorithm.",
+  "remaining": [
+    "Final full API-04 Rust/native integration gate before checking parent",
+    "Qt adoption through public facade in later tasks"
+  ],
+  "limitations": [
+    "Unit-reference overlay supports TxGrid and RxEqualized; raw TxPreEq/RxFft remain available without an incompatible overlay",
+    "Pair counts describe selected retained available histories, not FEC/source coverage or inferred waveform alignment",
+    "Unknown spectral support is not converted into a full-band impulse; configured periodic diagnostic remains separate",
+    "Prior pause-timing failure remains recorded; no claim it was fixed",
+    "No hosted, installer, hardware or external interoperability acceptance"
+  ],
+  "preceding_passed_native_candidate": {
+    "wheel_sha256": "6773ec226c43b7378bec0483a151732c9b4b8f68e956ec26a8d115f7a4e5bbe8",
+    "result_directory": "docs/development/local/unified-qt-workbench/api-04-display-native",
+    "status": "passed",
+    "passed": 19,
+    "reason": "Final source-order/style review moved Default implementations after type declarations and made serializer type naming/documentation explicit; no scientific algorithm or public signature changed."
+  },
+  "source_order_style_review": [
+    {
+      "path": "crates/ofdma/src/instruments/constellation.rs",
+      "before_sha256": "eae36a4c0fcbe707548e2f2ce9949d1607693d89014818cf588f1ef261c713a5",
+      "after_sha256": "31cc24af1bc8a0b7573e48fe0d6ec8aea84ecd2d16da262ff3d13e5565671fe5"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/pairing.rs",
+      "before_sha256": "86a9d3fc26e0bee46e2b0437c6315b0a256849bac813c4a1898224e1e973ae05",
+      "after_sha256": "e2fbe54f06a3e4723d4c42789cee9e2f6cc0ffb0b6e1ca18c0cd94bdc2ee6ff6"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/receiver.rs",
+      "before_sha256": "2b90935ba9892c32c311257fe578e928583c17ade0307c283dacdd85f219d641",
+      "after_sha256": "b5a6af50138bd33e3d98186a447aef64ce8ad274fe9b90ae4f3735a0f92087de"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/transfer.rs",
+      "before_sha256": "b3b6084a9d09474c940a50a99ad85bb2555add1a2aabe2b779bb7a6b84970f90",
+      "after_sha256": "635709d5c61d29813299d8a762bdae68cea034a8b0166cb7139aff0facb51ce4"
+    }
+  ],
+  "metadata_tool_cases": 33,
+  "formatting": {
+    "workspace": "cargo fmt --all -- --check passed",
+    "native": "cargo fmt --manifest-path bindings/python/Cargo.toml -- --check passed"
+  },
+  "strict_operation_audit": {
+    "rust_rows": 541,
+    "native_rows": 524,
+    "all_historical_execution_records_checked": true,
+    "result": "passed"
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "exit_code": 0,
+      "passed": 6,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_sequence.rs",
+          "qualified_test_case": "idle_capacity_has_literal_strict_boundaries_without_profile_or_captures"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_sequence.rs",
+          "qualified_test_case": "residual_power_conversion_has_independent_db_and_unavailable_anchors"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_sequence.rs",
+          "qualified_test_case": "explicit_unity_and_captured_h_keep_original_epoch_tolerance_and_inputs"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_sequence.rs",
+          "qualified_test_case": "average_names_every_original_with_equal_linear_power_weight"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_sequence.rs",
+          "qualified_test_case": "admission_rejects_duplicate_mode_epoch_coverage_counts_and_overflow_atomically"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_measurement_sequence.rs",
+          "qualified_test_case": "temporal_queries_use_physical_symbol_clock_power_interpolation_and_last_hold"
+        }
+      ],
+      "receipt": "ds-01-idle-capacity-rust.log"
+    },
+    {
+      "exit_code": 0,
+      "passed": 5,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_measurement_sequence.py",
+          "qualified_test_case": "MeasurementSequenceTests.test_average_names_every_original_and_retains_owned_copies"
+        },
+        {
+          "test_file": "bindings/python/tests/test_measurement_sequence.py",
+          "qualified_test_case": "MeasurementSequenceTests.test_idle_capacity_literal_clock_boundaries_need_no_admitted_sequence"
+        },
+        {
+          "test_file": "bindings/python/tests/test_measurement_sequence.py",
+          "qualified_test_case": "MeasurementSequenceTests.test_rejections_preserve_accepted_sequences_and_options"
+        },
+        {
+          "test_file": "bindings/python/tests/test_measurement_sequence.py",
+          "qualified_test_case": "MeasurementSequenceTests.test_response_admission_distinguishes_unity_original_h_and_epoch_window"
+        },
+        {
+          "test_file": "bindings/python/tests/test_measurement_sequence.py",
+          "qualified_test_case": "MeasurementSequenceTests.test_temporal_clock_literal_powers_last_hold_and_parallel_queries"
+        }
+      ],
+      "receipt": "ds-01-idle-capacity-native/measurement-sequence.stderr"
+    },
+    {
+      "exit_code": 0,
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_empty_eof_and_continuous_seed_remain_distinct"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_exact_byte_file_source_fill_bounds_and_lifetime"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_transmission_literal_timing_and_owned_settings"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_transmission_rejection_and_original_profile_compatibility"
+        }
+      ],
+      "receipt": "ds-01-idle-capacity-native/admission.stderr"
+    },
+    {
+      "exit_code": 0,
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ],
+      "receipt": "ds-01-idle-capacity-native/namespaces.stderr"
+    }
+  ]
+}

@@ -3,6 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Bounded numeric receiver diagnostics; none are production decoder inputs.
+#[cfg(all(feature = "simulation", feature = "pnm-input"))]
+pub(crate) mod decisions;
+#[cfg(all(feature = "simulation", feature = "pnm-input"))]
+pub(crate) mod soft_view;
+use crate::common::constants::{
+    DOWNSTREAM_SAMPLES_PER_MICROSECOND, METRES_PER_FOOT, SECONDS_PER_MICROSECOND,
+    SPEED_OF_LIGHT_METRES_PER_SECOND,
+};
 use crate::{error::invalid, transmission::SubcarrierSpacing, types::IqPair, SimulationError};
 use serde::Serialize;
 
@@ -71,11 +79,14 @@ pub fn response_diagnostics(
         .max_by(|a, b| a.1.total_cmp(b.1))
         .ok_or_else(|| invalid("Empty impulse response."))?;
     let delay_microseconds: Vec<_> = (0..count)
-        .map(|i| (i as f64 - count as f64 / 2.0) / 204.8)
+        .map(|i| (i as f64 - count as f64 / 2.0) / DOWNSTREAM_SAMPLES_PER_MICROSECOND)
         .collect();
     let peak_delay_microseconds = delay_microseconds[peak_index];
-    let peak_extra_path_feet =
-        peak_delay_microseconds * 1e-6 * 299_792_458.0 * velocity_factor / 0.3048;
+    let peak_extra_path_feet = peak_delay_microseconds
+        * SECONDS_PER_MICROSECOND
+        * SPEED_OF_LIGHT_METRES_PER_SECOND
+        * velocity_factor
+        / METRES_PER_FOOT;
     Ok(ResponseDiagnostics {
         gain_db: response
             .iter()

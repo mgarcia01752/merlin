@@ -1,0 +1,445 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Paired worker runtime-budget and backend notification-age prerequisites",
+  "status": "Scoped API prerequisite accepted; Qt worker and parent incomplete",
+  "base_commit": "85955b0439ca934cbe4d9328a6db9a5fab6f7da8",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-07",
+    "REQ-UIU-08",
+    "REQ-UIU-09",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-source-ownership",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "crates/ofdm/src/api/full_loop/request.rs",
+      "sha256": "c2642ac9dc4e8af15fe4ba73b9654b60d6dfc38c5a05ce20e89821321fc791e9"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop/control.rs",
+      "sha256": "20326359114f8ebe3a9a9ed35bc1d63c98a03714d8b6dbd7714dfe5787c2ac0a"
+    },
+    {
+      "path": "crates/ofdm/tests/api_full_loop.rs",
+      "sha256": "3915d0537f6b66788f5c7c41816556636d5d3563d754270dec14b68a4a6859fb"
+    },
+    {
+      "path": "bindings/python/src/full_loop/request.rs",
+      "sha256": "53c487ec6b5416372a17248ca0db8a5c35884586529841192ed5f4a9e52a65c8"
+    },
+    {
+      "path": "bindings/python/src/full_loop/control.rs",
+      "sha256": "178570ae223878b74657d227f57c48df2c010a1c9716965e0007ffedd45c00c2"
+    },
+    {
+      "path": "bindings/python/tests/test_full_loop.py",
+      "sha256": "6e95df5036cb9c5dbca7dd15ede7ea52ce02fa421e7df2856ee6526cc4b8e0f5"
+    },
+    {
+      "path": "bindings/python/python/merlin/__init__.pyi",
+      "sha256": "8e7f93036b892fa8281abb2db39fa7accf2fccfe80297b3940e1822e9290a6f3"
+    }
+  ],
+  "operations": {
+    "FullLoopRequest::with_runtime_limit": "Independent idle narrowed host budget; existing FullLoopOptions validation, no widening or source/RNG/input/settings/policy mutation. Python has the same named method and checked integer conversion.",
+    "FullLoopControl::last_progress_age_ms": "Backend Instant notification timestamp under the same private progress mutex. None before notification; actual wall age through pause/terminal states. No public progress field or serialized shape change. Native method directly returns Rust Option as int/None."
+  },
+  "numeric_ownership": {
+    "production_runtime_domain": "Existing FullLoopOptions/ChannelJobLimits validator, unchanged endpoints and scientific owner. No duplicate domain bound introduced.",
+    "production_clock_representation": "std Instant/Duration; checked u128 milliseconds to u64 with primitive maximum saturation only. No application timeout or sample-clock constant substituted.",
+    "independent_fixtures": "Named 5ms terminal-age and 30ms pause observation delays. Explained 30000/60000ms budget narrowing, zero/60001/300001/u64 boundary anchors, and separate one-second simulated observation with a one-ms host budget; native u64 conversion tests remain distinct.",
+    "final_audit": "UIU-QA-01 line-by-line numeric audit remains pending."
+  },
+  "validation": {
+    "rust_passed": 6,
+    "native_passed": 12,
+    "metadata_passed": 38,
+    "exact_cases": "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
+    "cargo_checks": [
+      {
+        "label": "fmt",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.9694669239979703
+      },
+      {
+        "label": "facade",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "-p",
+          "merlin",
+          "--test",
+          "namespaces",
+          "--locked",
+          "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "--",
+          "--exact"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.437353054003324
+      },
+      {
+        "label": "control",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "-p",
+          "docsis-ofdm-fec",
+          "--features",
+          "high-level-api",
+          "--locked",
+          "--test",
+          "api_full_loop",
+          "--",
+          "--exact",
+          "complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "runtime_limit_narrows_immutably_and_preserves_admission_and_retention",
+          "runtime_limit_returns_actual_partial_outcome_without_mutating_parent"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 32.081820899999
+      },
+      {
+        "label": "clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "clippy",
+          "-p",
+          "docsis-ofdm-fec",
+          "-p",
+          "merlin",
+          "--features",
+          "merlin/native-input",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 13.324108180007897
+      },
+      {
+        "label": "python-clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "clippy",
+          "--manifest-path",
+          "bindings/python/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.014092543002334
+      },
+      {
+        "label": "wheel",
+        "command": [
+          "/home/dev01/Projects/merlin/local/api-python-build/bin/python",
+          "-m",
+          "maturin",
+          "build",
+          "--manifest-path",
+          "bindings/python/Cargo.toml",
+          "--release",
+          "--locked",
+          "--compatibility",
+          "linux",
+          "--interpreter",
+          "/usr/bin/python3",
+          "--out",
+          "local/python-wheels-ds-progress-phase"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 42.87312236300204
+      },
+      {
+        "label": "rustdoc",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "doc",
+          "--workspace",
+          "--no-deps",
+          "--locked",
+          "--features",
+          "merlin/native-input"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 9.994580798011157
+      },
+      {
+        "label": "rust-inventory",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/rust_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-final-rust-exports.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.969241451995913
+      }
+    ],
+    "final_test_shape_and_clippy_recheck": [
+      {
+        "label": "control",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "-p",
+          "docsis-ofdm-fec",
+          "--features",
+          "high-level-api",
+          "--locked",
+          "--test",
+          "api_full_loop",
+          "--",
+          "--exact",
+          "complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact",
+          "runtime_limit_narrows_immutably_and_preserves_admission_and_retention",
+          "runtime_limit_returns_actual_partial_outcome_without_mutating_parent"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 21.02457969399984
+      },
+      {
+        "label": "clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "clippy",
+          "-p",
+          "docsis-ofdm-fec",
+          "-p",
+          "merlin",
+          "--features",
+          "merlin/native-input",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.4220986680011265
+      }
+    ],
+    "installed": {
+      "status": "passed",
+      "wheel": "/home/dev01/Projects/merlin/local/python-wheels-ds-worker-budget/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+      "wheel_sha256": "1ee9af3c0ac1f328fde36fc286679c0e11b10c5a081eff46d6ca7f0fa5d6c7ef",
+      "archive_native_sha256": "8d23b654be16ea417d5b29d26af0577a3670fb4cc01c56b18d47a73d28afd305",
+      "commands": [
+        {
+          "label": "install",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "--no-deps",
+            "/home/dev01/Projects/merlin/local/python-wheels-ds-worker-budget/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final",
+          "exit_code": 0,
+          "elapsed_seconds": 0.6242325389903272
+        },
+        {
+          "label": "artifact-preflight",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/installed/bin/python",
+            "-I",
+            "-B",
+            "-c",
+            "import hashlib,json,sys\nfrom pathlib import Path\nimport merlin._native as native\nimport merlin.downstream as downstream\npath=Path(native.__file__).resolve()\nassert path.is_relative_to(Path(sys.prefix).resolve())\nassert hashlib.sha256(path.read_bytes()).hexdigest()==sys.argv[1]\nassert callable(downstream.FullLoopRequest.with_runtime_limit)\nassert callable(downstream.FullLoopControl.last_progress_age_ms)\nprint(json.dumps({'native_artifact':str(path),'native_sha256':sys.argv[1],'exact_archive_match':True,'required_operations_present':True}))\n",
+            "8d23b654be16ea417d5b29d26af0577a3670fb4cc01c56b18d47a73d28afd305"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final",
+          "exit_code": 0,
+          "elapsed_seconds": 0.06983368399960455
+        },
+        {
+          "label": "full-loop",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_full_loop.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final",
+          "exit_code": 0,
+          "elapsed_seconds": 5.40521435100527
+        },
+        {
+          "label": "namespaces",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_namespaces.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final",
+          "exit_code": 0,
+          "elapsed_seconds": 0.18353663600282744
+        },
+        {
+          "label": "native-inventory",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/installed/bin/python",
+            "-I",
+            "-B",
+            "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+            "--output",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/native-exports.json"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final",
+          "exit_code": 0,
+          "elapsed_seconds": 0.17562126599659678
+        }
+      ],
+      "reused_reference": {
+        "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-full-loop-reference.stdout",
+        "sha256": "9635eb71a761244faea67852c547f92ca91b9605c9f4fc0ee117a0924a501714",
+        "scope": "Historical direct Rust full-loop process reference reused for unchanged normal-run settings/science. New runtime narrowing and notification ages have separate current executed cases."
+      }
+    },
+    "archive_to_installed_preflight": {
+      "native_artifact": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/installed/lib/python3.10/site-packages/merlin/_native.cpython-310-x86_64-linux-gnu.so",
+      "native_sha256": "8d23b654be16ea417d5b29d26af0577a3670fb4cc01c56b18d47a73d28afd305",
+      "exact_archive_match": true,
+      "required_operations_present": true
+    },
+    "runtime_limited_report_is_actual": true,
+    "original_control_fec_and_file_assertions_retained": true,
+    "snapshot_shape_explicitly_checked_in_both_languages": true,
+    "matrix": {
+      "rust_rows": 569,
+      "native_rows": 542,
+      "all_prior_rows_exact": true,
+      "all_prior_types_exact": true,
+      "prior_root_namespace_operation_instances_preserved": 944,
+      "native_class_exports": 112
+    }
+  },
+  "preserved_files": [
+    "apps/qt/Cargo.toml",
+    "apps/qt/Cargo.lock",
+    "Cargo.lock",
+    "docs/development/features/unified-qt-workbench/legacy-qt-boundary.json",
+    "docs/development/features/unified-qt-workbench/legacy-qt-boundary-initial.json",
+    "crates/ofdm/src/simulation/channel/job.rs"
+  ],
+  "artifact_provenance_corrections": {
+    "earlier_phase_record": "docs/development/features/unified-qt-workbench/progress-phase-evidence.json",
+    "actual_earlier_native_archive": "local/python-wheels-ds-unnamed-file/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "earlier_phase_fresh_source_claim": "Incorrect; original ten-case run used the prior unchanged runtime wheel. Historical results remain compatibility evidence, with no retrospective fresh source run claimed.",
+    "new_fresh_revalidation": "This exact archive-matched twelve-case run includes the existing finished-phase assertion and snapshot-shape contract.",
+    "wheel_output_path_correction": {
+      "new_wheel": "local/python-wheels-ds-worker-budget/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+      "sha256": "1ee9af3c0ac1f328fde36fc286679c0e11b10c5a081eff46d6ca7f0fa5d6c7ef",
+      "build_output_directory_mistakenly_reused": "local/python-wheels-ds-progress-phase",
+      "historical_progress_phase_archive": "The generated wheel archive at the prior path was overwritten by this new build. Historical test receipts and the exact prior installed native artifact remain intact; no old archive restoration is claimed.",
+      "prior_installed_artifact": "docs/development/local/unified-qt-workbench/ds-01-progress-phase-native/installed/lib/python3.10/site-packages/merlin/_native.cpython-310-x86_64-linux-gnu.so",
+      "prior_recorded_sha256": "806f23f7ede0affd833c75b71af630c4ea2fc585997242fec9e8508266978cc4",
+      "prior_installed_sha256_verified": "806f23f7ede0affd833c75b71af630c4ea2fc585997242fec9e8508266978cc4"
+    },
+    "earlier_phase_record_field": "validation_correction"
+  },
+  "failures_resolved": [
+    {
+      "scope": "Initial Rust compile",
+      "reason": "Incorrect std::sync::time::Instant import; corrected to std::time::Instant before final Rust/native builds.",
+      "receipt": "docs/development/local/unified-qt-workbench/ds-01-worker-budget-facade.stderr"
+    },
+    {
+      "scope": "Initial native runner",
+      "reason": "Copied runner selected the older unnamed-file wheel; five missing-method errors left paused test threads. The owned subprocess was terminated with SIGTERM. Final runner checks exact archive/module checksum and operation presence before bounded tests.",
+      "receipt": "docs/development/local/unified-qt-workbench/ds-01-worker-budget-native/results.json"
+    }
+  ],
+  "scope_limits": [
+    "Normal-run direct Rust reference is reused with its retained hash; narrowed runtime and notification-age behavior have current actual Rust/native cases.",
+    "No full historical workspace/Qt/QML suite repeated. Qt consumer, parent DS-01, later direction integration and final numeric audit stay incomplete.",
+    "No scientific algorithm, dependency, saved schema, Qt source or frozen boundary change; no installed desktop/Windows/remote publication claim."
+  ],
+  "local_evidence": [
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-worker-budget-verified-control.stdout",
+      "sha256": "ca437ba52fb4f6af0fc82841b33228908e7a269104b679b105b6cfec4162ccd9"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-worker-budget-verified-checks.json",
+      "sha256": "aca222f10334461bb7a43f30140839faed50ed35ce8ca1e84ad9b7aad2d33d4c"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-worker-budget-final-checks.json",
+      "sha256": "a74f7c5998358f3cae9755d1fe00540b2d05a3a55c0785f972c98dae6e908bdc"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/results.json",
+      "sha256": "29a58c28ed7d7799c056f442db09cf43086418c72e46b2685eb974ba9771ebbc"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/artifact-preflight.stdout",
+      "sha256": "e80a84b7b48cffee4b1e8efeb4235dfb2acbec0fedcb54c7d73d463660afd8ca"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-worker-budget-native-final/native-exports.json",
+      "sha256": "1d467b1d27e923425509dfbf137014576c7eca6d2cc0796e057529a041aeb11b"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-worker-budget-strict-matrix.log",
+      "sha256": "e00f44334698a7ad4545cd59481ed3cc78eae076b055fd69b29a320e092779c7"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-worker-budget-metadata.log",
+      "sha256": "97cdaa4d2bf06d29fa1ad4ef10d6b3464f03bbacfa929dc32f5d0c1a4b38fdde"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-worker-budget-python-fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-worker-budget-analysis.log",
+      "sha256": "329928e1b14079fcb0fe8f6d0453fa42b9162d960e0410e911afd305eebd1265"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-worker-budget-wheel-location.json",
+      "sha256": "9c65764d62e9d853713c58236675270a0be63c7f4d4a2af1d4a5472404942a5b"
+    }
+  ]
+}

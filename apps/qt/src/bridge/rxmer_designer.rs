@@ -3,12 +3,23 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! Designer batch lifecycle; the GUI adopts only a complete, current draft.
+mod worker_inputs;
 use super::measurement_input::bridge;
-use crate::help::AdmissionError;
-use crate::inputs::measurement_input::{
+use super::worker_failure::WorkerFailure;
+use crate::downstream::common::constants::{
+    DESIGNER_CAPTURE_QUEUE_CAPACITY, MAX_DESIGNER_PLAYBACK_DOCUMENT_BYTES,
+    MAX_DESIGNER_RECIPE_DOCUMENT_BYTES,
+};
+use crate::downstream::help::AdmissionError;
+use crate::downstream::inputs::measurement_input::document::Capture;
+use crate::downstream::inputs::measurement_input::{
     designer::{Request, Session},
-    document::Capture,
     model::{Model, Options},
+};
+use crate::shared::{presentation::constants::WORKER_TRANSPORT_ADMISSION_MESSAGE, worker_controls};
+use crate::shell::{
+    admit_task, bounded_channel, run_task, DeliveryReceiver, Retained, RetainedResources,
+    RetentionReservation,
 };
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
@@ -21,17 +32,21 @@ use std::{
     },
 };
 pub(super) struct Work {
-    receiver: mpsc::Receiver<Result<Vec<Capture>, AdmissionError>>,
-    cancel: Arc<AtomicBool>,
-    completed: Arc<AtomicUsize>,
-    hashes: Vec<String>,
-    profile_hash: String,
-    options: Options,
-    imported: bool,
+    receiver: DeliveryReceiver<Result<Box<Retained<Vec<Capture>>>, WorkerFailure>>,
+    cancel: Arc<Retained<AtomicBool>>,
+    completed: Arc<Retained<AtomicUsize>>,
+    selection: Box<Retained<worker_inputs::SelectionSnapshot>>,
+    _fixed_guard: Retained<()>,
+}
+
+// Preserve the source charge until the independently admitted editor owns the data.
+struct StagedBatch {
+    metadata: Value,
+    _source: Option<RetentionReservation>,
 }
 fn request(document: &QString) -> Result<Request, String> {
     let text = document.to_string();
-    if text.len() > 24 * 1024 {
+    if text.len() > MAX_DESIGNER_RECIPE_DOCUMENT_BYTES {
         return Err("Designer recipe exceeds 24 KiB.".into());
     }
     serde_json::from_str(&text).map_err(|error| error.to_string())
@@ -52,13 +67,23 @@ impl bridge::MeasurementInputs {
             if self.rust().designer_work.is_some() {
                 return Err("Wait for the previous Designer operation to stop.".into());
             }
-            let profile = crate::workbench::session::snapshot()
+            let inputs = crate::downstream::workbench::session::snapshot(&self.rust().context);
+            let profile = inputs
                 .profile
+                .as_ref()
                 .ok_or("Apply a modulation profile before opening RxMER Designer.")?;
-            let session = Session::begin(&self.rust().model.draft_rx, Arc::new(profile))?;
+            let session = Session::begin(
+                &self.rust().model.draft_rx,
+                Arc::new(profile.clone()),
+                inputs
+                    .profile_capture
+                    .as_ref()
+                    .ok_or("Apply the original modulation-profile capture.")?
+                    .clone(),
+            )?;
             let grid = &session.profile.key.grid;
-            let value = json!({"request":session.request,"imported_count":session.hashes.len(),"first_hz":grid.frequency(0).map_err(|error|error.to_string())?,"last_hz":grid.frequency(grid.sample_count-1).map_err(|error|error.to_string())?,"spacing_hz":grid.spacing_hz});
-            self.as_mut().rust_mut().designer = Some(session);
+            let value = json!({"request":session.request,"imported_count":session.hashes.len(),"first_hz":grid.frequency(0).map_err(|error|error.to_string())?,"last_hz":grid.frequency(grid.sample_count-1).map_err(|error|error.to_string())?,"spacing_hz":grid.spacing_hz,"limits":merlin::downstream::inputs::RxMerDesign::limits()});
+            self.as_mut().rust_mut().replace_designer(session)?;
             Ok(value)
         })();
         response(result)
@@ -82,6 +107,7 @@ impl bridge::MeasurementInputs {
                 .designer
                 .as_ref()
                 .ok_or("Open Designer first.")?
+                .value()
                 .preview_window(
                     &request(document)?,
                     usize::try_from(position).map_err(|_| "Invalid capture position.")?,
@@ -106,39 +132,75 @@ impl bridge::MeasurementInputs {
                 return Err("Designer is already running.".into());
             }
             let request = request(document)?;
-            let session = self.rust().designer.clone().ok_or("Open Designer first.")?;
-            let total = session.preview(&request, 1)?["capture_count"]
+            if self.rust().designer.is_none() {
+                return Err("Open Designer first.".into());
+            }
+            let session = Box::new(self.rust().designer_copy()?);
+            let budget = self.rust().context.application.budget().clone();
+            let request = Box::new(worker_inputs::admit_request(request, &budget)?);
+            let total = session.value().preview(request.value(), 1)?["capture_count"]
                 .as_u64()
                 .unwrap_or(0);
             let text = options.to_string();
-            if text.len() > 24 * 1024 {
+            if text.len() > MAX_DESIGNER_PLAYBACK_DOCUMENT_BYTES {
                 return Err("Selection exceeds 24 KiB.".into());
             }
             let options: Options =
                 serde_json::from_str(&text).map_err(|error| error.to_string())?;
-            let cancel = Arc::new(AtomicBool::new(false));
-            let completed = Arc::new(AtomicUsize::new(0));
-            let (sender, receiver) = mpsc::channel();
+            let cancel = worker_controls::cancellation(&budget)
+                .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+            let completed = worker_controls::completed(&budget)
+                .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+            let (sender, receiver) = bounded_channel(&budget, DESIGNER_CAPTURE_QUEUE_CAPACITY)
+                .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+            let delivery = sender
+                .reserve()
+                .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
+            drop(sender);
+            let selection = Box::new(
+                worker_inputs::SelectionSnapshot {
+                    hashes: session.value().hashes.clone(),
+                    profile_hash: session.value().profile.source.sha256.clone(),
+                    options,
+                    imported: request.value().source == "imported",
+                }
+                .admit(&budget)?,
+            );
+            let fixed = budget
+                .reserve_resources(RetainedResources {
+                    payload_bytes: std::mem::size_of::<Work>(),
+                    ..Default::default()
+                })
+                .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
             let work = Work {
                 receiver,
                 cancel: cancel.clone(),
                 completed: completed.clone(),
-                hashes: session.hashes.clone(),
-                profile_hash: session.profile.source.sha256.clone(),
-                options,
-                imported: request.source == "imported",
+                selection,
+                _fixed_guard: fixed.retain(()),
             };
-            log::debug!(
-                "rxmer-designer stage_started captures={total} imported={}",
-                work.imported
-            );
+            let task = admit_task(&budget.clone(), move || {
+                let worker_session = session;
+                let worker_request = request;
+                let result = worker_inputs::generate(
+                    *worker_session,
+                    *worker_request,
+                    cancel.value(),
+                    completed.value(),
+                    &budget,
+                )
+                .map(Box::new);
+                let _ = delivery.send(result);
+            })
+            .map_err(|_| WORKER_TRANSPORT_ADMISSION_MESSAGE)?;
             std::thread::Builder::new()
                 .name("rxmer-designer".into())
-                .spawn(move || {
-                    let result = session.build(&request, &cancel, &completed);
-                    let _ = sender.send(result);
-                })
+                .spawn(move || run_task(task))
                 .map_err(|error| error.to_string())?;
+            log::debug!(
+                "rxmer-designer stage_started captures={total} imported={}",
+                work.selection.value().imported
+            );
             self.as_mut().rust_mut().designer_work = Some(work);
             Ok(json!({"running":true}))
         })())
@@ -151,22 +213,46 @@ impl bridge::MeasurementInputs {
             return response(Ok(json!({"running":false})));
         };
         let result = match work.receiver.try_recv() {
-            Ok(result) => result,
+            Ok(result) => Some(result),
             Err(mpsc::TryRecvError::Empty) => {
                 return response(Ok(
-                    json!({"running":true,"completed":work.completed.load(Ordering::Relaxed)}),
+                    json!({"running":true,"completed":work.completed.value().load(Ordering::Relaxed)}),
                 ))
             }
-            Err(_) => Err("Designer worker ended unexpectedly.".into()),
+            Err(_) => None,
+        };
+        // Declare the guard first so a cancelled, unconsumed payload drops first.
+        let _delivery_guard;
+        let result = match result {
+            Some(delivery) => {
+                let (value, guard) = delivery.into_parts();
+                _delivery_guard = Some(guard);
+                Some(value)
+            }
+            None => {
+                _delivery_guard = None;
+                None
+            }
         };
         let work = self.as_mut().rust_mut().designer_work.take().unwrap();
-        let profile = crate::workbench::session::snapshot().profile;
-        let result = adopt(
-            work,
-            result,
-            &mut self.as_mut().rust_mut().model,
-            profile.as_ref(),
-        );
+        let result = if work.cancel.value().load(Ordering::Relaxed) {
+            // The original cancellation branch ignores completion contents.
+            Err("Designer cancelled.".into())
+        } else {
+            match result {
+                Some(Ok(captures)) => Ok(*captures),
+                Some(Err(failure)) => {
+                    return QString::from(
+                        json!({"error":failure.message(),"diagnostic":failure.diagnostic()})
+                            .to_string(),
+                    );
+                }
+                None => Err("Designer worker ended unexpectedly.".into()),
+            }
+        };
+        let inputs = crate::downstream::workbench::session::snapshot(&self.rust().context);
+        let profile = inputs.profile.as_ref();
+        let result = adopt_to_owner(self.as_mut().rust_mut().get_mut(), work, result, profile);
         response(result)
     }
     /// Cancels pending generation; already accepted captures are never modified.
@@ -174,23 +260,52 @@ impl bridge::MeasurementInputs {
     /// Unit; polling reaps the worker and discards cancelled completion.
     pub fn designer_cancel(self: Pin<&mut Self>) {
         if let Some(work) = &self.rust().designer_work {
-            work.cancel.store(true, Ordering::Relaxed)
+            work.cancel.value().store(true, Ordering::Relaxed)
         }
     }
 }
 
+#[cfg(test)]
+#[path = "rxmer_designer/retention_tests.rs"]
+mod retention_tests;
+
+#[cfg(test)]
+#[path = "rxmer_designer/capture_batch_tests.rs"]
+mod capture_batch_tests;
+
+#[cfg(test)]
+#[path = "rxmer_designer/worker_input_tests.rs"]
+mod worker_input_tests;
+
+fn adopt_to_owner(
+    owner: &mut super::measurement_input::MeasurementInputsRust,
+    work: Work,
+    result: Result<Retained<Vec<Capture>>, AdmissionError>,
+    profile: Option<&merlin::downstream::SourceProfileFrame>,
+) -> Result<Value, AdmissionError> {
+    let mut candidate = owner.model.clone();
+    let staged = adopt(work, result, &mut candidate, profile)?;
+    if staged.metadata["staged"] == true {
+        owner.replace_model(candidate)?;
+    }
+    Ok(staged.metadata)
+}
+
 fn adopt(
     work: Work,
-    result: Result<Vec<Capture>, AdmissionError>,
+    result: Result<Retained<Vec<Capture>>, AdmissionError>,
     model: &mut Model,
-    profile: Option<&docsis_ofdm_fec::profile::candidate::CapturedProfile>,
-) -> Result<Value, AdmissionError> {
-    if work.cancel.load(Ordering::Relaxed) {
+    profile: Option<&merlin::downstream::SourceProfileFrame>,
+) -> Result<StagedBatch, AdmissionError> {
+    if work.cancel.value().load(Ordering::Relaxed) {
         log::debug!(
             "rxmer-designer stage_cancelled completed={}",
-            work.completed.load(Ordering::Relaxed)
+            work.completed.value().load(Ordering::Relaxed)
         );
-        return Ok(json!({"cancelled":true,"running":false}));
+        return Ok(StagedBatch {
+            metadata: json!({"cancelled":true,"running":false}),
+            _source: None,
+        });
     }
     let captures = result?;
     let current = model
@@ -198,33 +313,36 @@ fn adopt(
         .iter()
         .map(|capture| capture.hash.clone())
         .collect::<Vec<_>>();
-    if current != work.hashes
+    let selection = work.selection.value();
+    if current != selection.hashes
         || profile
             .as_ref()
-            .is_none_or(|profile| profile.source.sha256 != work.profile_hash)
+            .is_none_or(|profile| profile.source.sha256 != selection.profile_hash)
     {
         return Err("Inputs changed during design; reopen Designer and retry.".into());
     }
-    let mut options = work.options;
-    if work.imported {
+    // The finite metadata candidate is separate from the retained worker snapshot.
+    let mut options = selection.options.clone();
+    if selection.imported {
         options.selected_captures = options.selected_captures.map(|selected| {
             let selected = selected
                 .into_iter()
                 .collect::<std::collections::HashSet<_>>();
-            work.hashes
+            selection
+                .hashes
                 .iter()
-                .zip(&captures)
+                .zip(captures.value())
                 .filter(|(hash, _)| selected.contains(*hash))
                 .map(|(_, capture)| capture.hash.clone())
                 .collect()
         });
     } else {
         options.selected_captures = None;
-        if captures.len() > 1 {
-            options.mode =
-                docsis_ofdm_fec::simulation::channel::measurement_playback::PlaybackMode::Hold;
+        if captures.value().len() > 1 {
+            options.mode = merlin::downstream::MeasurementMode::Hold;
         }
     }
+    let (captures, source) = captures.into_parts();
     let mut checked = Model::default();
     checked.stage(captures, true)?;
     model.draft_rx = checked.draft_rx;
@@ -234,34 +352,100 @@ fn adopt(
     );
     let mut metadata = json!({"files":model.files(true,profile),"flat":false});
     metadata["options"] = json!(options);
-    Ok(json!({"running":false,"staged":true,"metadata":metadata}))
+    Ok(StagedBatch {
+        metadata: json!({"running":false,"staged":true,"metadata":metadata}),
+        _source: Some(source),
+    })
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    fn fixture() -> (Session, Model) {
-        let project: crate::workbench::project_file::Project = serde_json::from_slice(
+
+    /// Reuses the original bounded two-capture Designer/editor fixture.
+    /// # Returns
+    /// A validated Session and the existing model with untouched accepted captures.
+    /// # Panics
+    /// Panics if the checked sample workbench or original association no longer loads.
+    pub(super) fn fixture() -> (Session, Model) {
+        let project: crate::downstream::workbench::project_file::Project = serde_json::from_slice(
             include_bytes!("../../../../examples/workbench/multi-rxmer-2/workbench.merlin.json"),
         )
         .unwrap();
         let (inputs, editors) = project.prepare().unwrap();
         let mut model = editors.measurements;
         model.draft_rx.truncate(2);
-        let session = Session::begin(&model.draft_rx, Arc::new(inputs.profile.unwrap())).unwrap();
+        let session = Session::begin(
+            &model.draft_rx,
+            Arc::new(inputs.profile.unwrap()),
+            inputs.profile_capture.unwrap(),
+        )
+        .unwrap();
         (session, model)
     }
-    fn work(session: &Session, options: Options) -> Work {
-        let (_, receiver) = mpsc::channel();
+    /// Creates the original completed-worker fixture without launching a thread.
+    /// # Arguments
+    /// * `session` - Original baseline identities used by stale-completion checks.
+    /// * `options` - Existing playback and selection settings.
+    /// # Returns
+    /// A disconnected worker fixture with unchanged progress and baseline fields.
+    pub(super) fn work(session: &Session, options: Options) -> Work {
+        let budget = test_budget();
+        let (_, receiver) = bounded_channel(&budget, DESIGNER_CAPTURE_QUEUE_CAPACITY).unwrap();
+        let cancel = worker_controls::cancellation(&budget).unwrap();
+        let completed = worker_controls::completed(&budget).unwrap();
+        completed.value().store(2, Ordering::Relaxed);
+        let selection = Box::new(
+            worker_inputs::SelectionSnapshot {
+                hashes: session.hashes.clone(),
+                profile_hash: session.profile.source.sha256.clone(),
+                options,
+                imported: true,
+            }
+            .admit(&budget)
+            .unwrap(),
+        );
+        let fixed = budget
+            .reserve_resources(RetainedResources {
+                payload_bytes: std::mem::size_of::<Work>(),
+                ..Default::default()
+            })
+            .unwrap();
         Work {
             receiver,
-            cancel: Arc::new(AtomicBool::new(false)),
-            completed: Arc::new(AtomicUsize::new(2)),
-            hashes: session.hashes.clone(),
-            profile_hash: session.profile.source.sha256.clone(),
-            options,
-            imported: true,
+            cancel,
+            completed,
+            selection,
+            _fixed_guard: fixed.retain(()),
         }
+    }
+
+    fn test_budget() -> crate::shell::RetentionBudget {
+        crate::shell::RetentionBudget::with_limits(crate::shell::RetainedResources {
+            payload_bytes: usize::MAX,
+            ordered_entries: usize::MAX,
+            shared_roots: usize::MAX,
+            channel_count: usize::MAX,
+            slot_count: usize::MAX,
+            presentation_utf16_bytes: 0,
+            presentation_entries: 0,
+            retained_views: 0,
+            open_views: 0,
+        })
+    }
+    fn batch(captures: Vec<Capture>) -> Retained<Vec<Capture>> {
+        let budget = crate::shell::RetentionBudget::with_limits(crate::shell::RetainedResources {
+            payload_bytes: usize::MAX,
+            ordered_entries: usize::MAX,
+            shared_roots: usize::MAX,
+            channel_count: usize::MAX,
+            slot_count: usize::MAX,
+            presentation_utf16_bytes: 0,
+            presentation_entries: 0,
+            retained_views: 0,
+            open_views: 0,
+        });
+        Model::admit_capture_batch(captures, &budget).unwrap()
     }
     #[test]
     fn adoption_is_atomic_remaps_selection_and_rejects_stale_completion() {
@@ -280,13 +464,13 @@ mod tests {
         let selected = captures[1].hash.clone();
         let result = adopt(
             work(&session, options),
-            Ok(captures),
+            Ok(batch(captures)),
             &mut model,
             Some(&session.profile),
         )
         .unwrap();
         assert_eq!(
-            result["metadata"]["options"]["selected_captures"],
+            result.metadata["metadata"]["options"]["selected_captures"],
             json!([selected])
         );
         assert_eq!(model.accepted_rx.len(), 132);
@@ -300,7 +484,7 @@ mod tests {
             .unwrap();
         assert!(adopt(
             work(&session, Options::default()),
-            Ok(captures),
+            Ok(batch(captures)),
             &mut model,
             Some(&session.profile)
         )
@@ -318,21 +502,21 @@ mod tests {
             )
             .unwrap();
         let work = work(&session, Options::default());
-        work.cancel.store(true, Ordering::Relaxed);
+        work.cancel.value().store(true, Ordering::Relaxed);
         let result = adopt(
             work,
-            Ok(captures.clone()),
+            Ok(batch(captures.clone())),
             &mut model,
             Some(&session.profile),
         )
         .unwrap();
-        assert_eq!(result["cancelled"], true);
+        assert_eq!(result.metadata["cancelled"], true);
         assert_eq!(model.draft_rx[0].hash, session.hashes[0]);
         let mut profile = (*session.profile).clone();
         profile.source.sha256 = "f".repeat(64);
         assert!(adopt(
             super::tests::work(&session, Options::default()),
-            Ok(captures),
+            Ok(batch(captures)),
             &mut model,
             Some(&profile)
         )

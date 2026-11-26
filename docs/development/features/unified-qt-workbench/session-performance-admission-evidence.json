@@ -1,0 +1,684 @@
+{
+  "schema_version": 1,
+  "task": "UIU-SESSION-01",
+  "requirements": [
+    "REQ-UIU-03",
+    "REQ-UIU-06",
+    "REQ-UIU-07"
+  ],
+  "status": "Focused Level1 stored Entry and real Model closure; parent unchecked",
+  "source": {
+    "source": "89a6938a7c0de1d1e749737217da6aad7ba5d007",
+    "source_base": "5bc84c125b2c7c823d8ca07605695f6974b7153d",
+    "integration_base": "a38e9d1d6092e3b28fbb168c75bd2f54fc217e4d",
+    "exact_paths": [
+      {
+        "path": "apps/qt/src/downstream/instruments/receiver/performance.rs",
+        "sha256": "8a2b1e56075eb7bd6a3b9af67281d4d9c2eda70d0f017836730b4082ac30071e"
+      },
+      {
+        "path": "apps/qt/src/downstream/instruments/receiver/performance/retention.rs",
+        "sha256": "35d3bac3fa298d3903ac705965ef7e67730dee098d8ccb98e2b8cbd3559d5756"
+      },
+      {
+        "path": "apps/qt/src/downstream/instruments/receiver/performance/retention_tests.rs",
+        "sha256": "20808b40101c34b1666f0509506c02d0111cbc8c4b1871d3f33dc45118e812d4"
+      },
+      {
+        "path": "docs/development/features/unified-qt-workbench/agent-handoffs/receiver-performance-admission.md",
+        "sha256": "88fa219b8cd0d785adcf54419407fca71528769fafc24f0e61ececa5ab105b4c"
+      }
+    ],
+    "runtime_evidence": "Unexecuted at adoption; root Model wiring/acceptance required"
+  },
+  "integration_base": "a38e9d1d6092e3b28fbb168c75bd2f54fc217e4d",
+  "implementation": [
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/performance.rs",
+      "sha256": "4952eb91c4e3d507816d9b604d96a770fde725cc4a7507da6085259859232d46",
+      "matches_source": false
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/performance/retention.rs",
+      "sha256": "35d3bac3fa298d3903ac705965ef7e67730dee098d8ccb98e2b8cbd3559d5756",
+      "matches_source": true
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/performance/retention_tests.rs",
+      "sha256": "c7e0920f771dcba220d6375a10b7526e494822d1bc35b96b7391970815552f8a",
+      "matches_source": false
+    },
+    {
+      "path": "docs/development/features/unified-qt-workbench/agent-handoffs/receiver-performance-admission.md",
+      "sha256": "88fa219b8cd0d785adcf54419407fca71528769fafc24f0e61ececa5ab105b4c",
+      "matches_source": true
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/qam_history.rs",
+      "sha256": "eaa97bc66be4580180ffe9d28961ec3cce00227cdab138d860e4c53c2691bfaa",
+      "matches_source": false
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop.rs",
+      "sha256": "78db497ea7b14e46ac39b7261e5bc16426f24f434bea01939fdb72fe6deaf2e2",
+      "matches_source": false
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop/session_tests.rs",
+      "sha256": "fd1fdf86226e107a88772652c2bef079c0e8d0a19c912e0403e1c3fd23d314ab",
+      "matches_source": false
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop/request_retention/tests.rs",
+      "sha256": "4c1cf3b8a5b30bed33ff596e4e00b776f2739dd03ad02b0b67f11943643f29d8",
+      "matches_source": false
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop/result_retention/tests.rs",
+      "sha256": "8e8ced87bee7af87d2d4ea26db717a7221e9c1f5cae3ed084726198b4ccf75ca",
+      "matches_source": false
+    },
+    {
+      "path": "apps/qt/src/shell/retention.rs",
+      "sha256": "0a9861f4c82cf1447298943264b43493d3b2aa48d926874911993e6812010536",
+      "matches_source": false
+    }
+  ],
+  "root_changes": [
+    "Model returns genuine acquired lease on begin rejection before token/timing/history mutation or dispatch.",
+    "Model still publishes completed science and reports performance admission failure; original setup error stays primary.",
+    "Actual Model test proves no dispatch/active lease and unchanged accepted scientific report/history/generation/token under initial Entry pressure.",
+    "Correct source test import to explicit crate path.",
+    "Test-only assigned-reservation readers and actual initial-entry fixtures include newly charged stored histories; independent scientific/layout assertions unchanged.",
+    "Result-target test explicitly clears independent caches before final backend-alias isolation."
+  ],
+  "design": "design.md#uiu-session-01-copied-receiver-performance-admission",
+  "architecture": "docs/architecture.md#unified-qt-session-and-file-lifecycle",
+  "independent_review": "QA found no source/wiring/fixture-correction defect; no QA builds/tests executed.",
+  "validation": {
+    "initial_compile": {
+      "records": [
+        {
+          "label": "format-request-admission",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "fmt",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.43250436700327555
+        },
+        {
+          "label": "rust-request-admission",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "--",
+            "--test-threads=2",
+            "downstream::instruments::receiver::",
+            "downstream::workbench::session::tests::",
+            "downstream::workbench::project_load::tests::",
+            "downstream::simulation::closed_loop::"
+          ],
+          "exit_code": 101,
+          "elapsed_seconds": 4.685700238995196
+        }
+      ],
+      "result": "Failed before runtime: invalid fixture relative module import; corrected to explicit crate path."
+    },
+    "initial_wider_run": {
+      "records": [
+        {
+          "label": "format-request-admission-import-corrected",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "fmt",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.5548174830037169
+        },
+        {
+          "label": "rust-request-admission-import-corrected",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "--",
+            "--test-threads=2",
+            "downstream::instruments::receiver::",
+            "downstream::workbench::session::tests::",
+            "downstream::workbench::project_load::tests::",
+            "downstream::simulation::closed_loop::"
+          ],
+          "exit_code": 101,
+          "elapsed_seconds": 213.62262168999587
+        }
+      ],
+      "passed": 68,
+      "failed_cases": [
+        "downstream::simulation::closed_loop::request_retention::tests::actual_worker_retains_old_owners_while_a_new_candidate_is_accepted",
+        "downstream::simulation::closed_loop::request_retention::tests::every_real_candidate_dimension_preserves_accepted_science_generation_and_report",
+        "downstream::simulation::closed_loop::result_retention::tests::rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension"
+      ],
+      "result": "Failed; three existing fixture budgets/expectations omitted actual initial Entry reservations."
+    },
+    "corrected_run": {
+      "commands": [
+        {
+          "label": "format-request-admission-fixture-corrected",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "fmt",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.43755985899770167
+        },
+        {
+          "label": "rust-request-admission-fixture-corrected",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "--",
+            "--test-threads=2",
+            "downstream::simulation::closed_loop::request_retention::tests::",
+            "downstream::simulation::closed_loop::result_retention::tests::",
+            "rejected_initial_performance_admission_returns_the_lease_without_dispatch_or_history_loss"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 86.1185007210006
+        },
+        {
+          "label": "clippy-request-admission-fixture-corrected",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "clippy",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--all-targets",
+            "--locked",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 5.601430282004003
+        },
+        {
+          "label": "format-request-check-fixture-corrected",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "fmt",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.47854111500055296
+        },
+        {
+          "label": "boundary-request-admission-fixture-corrected",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/qt_api_boundary.py",
+            "--final"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.25677541400364134
+        },
+        {
+          "label": "build-request-admission-fixture-corrected",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/qt-desktop.sh",
+            "build"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 18.724571193000884
+        }
+      ],
+      "passed": 15,
+      "cases": [
+        "downstream::simulation::closed_loop::request_retention::tests::actual_worker_retains_old_owners_while_a_new_candidate_is_accepted",
+        "downstream::simulation::closed_loop::request_retention::tests::exact_public_quantities_and_cross_budget_aliases_cover_both_real_roots",
+        "downstream::simulation::closed_loop::request_retention::tests::execution_tests::insufficient_execution_input_rejects_its_owned_dimensions_before_control_and_preserves_source",
+        "downstream::simulation::closed_loop::request_retention::tests::execution_tests::narrowed_execution_owner_keeps_exact_public_charge_and_independent_source_until_final_drop",
+        "downstream::simulation::closed_loop::request_retention::tests::rebind_reserves_both_target_roots_before_replacing_source_ownership",
+        "downstream::simulation::closed_loop::request_retention::tests::wrapper_layout_adds_scientific_root_once_and_checks_every_arithmetic_boundary",
+        "downstream::simulation::closed_loop::result_retention::tests::every_actual_result_dimension_rejects_before_public_control_or_source_advance",
+        "downstream::simulation::closed_loop::result_retention::tests::exact_complete_and_precancelled_science_retain_the_preexecution_target",
+        "downstream::simulation::closed_loop::result_retention::tests::fixed_result_layout_counts_the_embedded_retained_reservation_once_and_checks_overflow",
+        "downstream::simulation::closed_loop::request_retention::tests::every_real_candidate_dimension_preserves_accepted_science_generation_and_report",
+        "downstream::simulation::closed_loop::result_retention::tests::genuine_worker_queue_and_final_result_alias_keep_the_target_after_terminal_disposal",
+        "downstream::simulation::closed_loop::result_retention::tests::projection_tests::actual_worker_preserves_completed_science_and_static_warning_when_projection_admission_rejects",
+        "downstream::simulation::closed_loop::result_retention::tests::public_busy_failure_releases_only_the_new_target_and_preserves_old_aliases",
+        "downstream::simulation::closed_loop::session_tests::rejected_initial_performance_admission_returns_the_lease_without_dispatch_or_history_loss",
+        "downstream::simulation::closed_loop::result_retention::tests::rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension"
+      ],
+      "result": "Passed; 200 filtered cases not counted."
+    },
+    "unique_rust_passed": 71,
+    "unique_cases": [
+      "downstream::instruments::receiver::fec::tests::allocations_keep_failures_distinct_and_empty_denominators_finite",
+      "downstream::instruments::receiver::fec::tests::histogram_preserves_internal_gaps_and_trims_unused_range",
+      "downstream::instruments::receiver::performance::retention::tests::admitted_candidate_overlap_replacement_clear_and_context_drop_release_concrete_storage",
+      "downstream::instruments::receiver::performance::retention::tests::begin_admits_every_initial_entry_before_clearing_either_accepted_history",
+      "downstream::instruments::receiver::performance::retention::tests::each_positive_target_dimension_rejects_without_replacing_history_and_zero_roots_are_exact",
+      "downstream::instruments::receiver::performance::retention::tests::final_capacity_and_nested_map_population_replace_the_wrapper_once_with_checked_overflow",
+      "downstream::instruments::receiver::performance::retention::tests::real_complete_and_precancelled_entries_preserve_science_nulls_coordinates_and_fec_json",
+      "downstream::instruments::receiver::performance::retention::tests::rejected_setup_preserves_the_full_error_and_host_failure_keeps_its_prior_entry",
+      "downstream::instruments::receiver::performance::tests::plc_band_uses_selected_profile_centers_and_clips_without_decimation",
+      "downstream::instruments::receiver::qam_history::retention_tests::each_positive_target_dimension_rejects_before_copy_without_changing_the_same_source",
+      "downstream::instruments::receiver::qam_history::retention_tests::exact_source_target_overlap_preserves_legacy_queries_and_archive_is_independent_after_source_drop",
+      "downstream::instruments::receiver::qam_history::retention_tests::host_rejection_keeps_the_same_accepted_entry_status_and_scientific_history",
+      "downstream::instruments::receiver::qam_history::retention_tests::real_precancelled_empty_archive_preserves_absence_and_original_legacy_errors",
+      "downstream::instruments::receiver::qam_history::retention_tests::registry_replacement_clear_and_context_drop_keep_selected_old_aliases_until_final_drop",
+      "downstream::instruments::receiver::qam_history::retention_tests::snapshot_layout_replaces_the_scientific_handle_once_and_checks_each_overflow",
+      "downstream::instruments::receiver::qam_history::tests::archive_reduction_preserves_real_identity_and_missing_runs_never_fall_back",
+      "downstream::instruments::receiver::selection::tests::mer_uses_selected_cells_beyond_display_cap_and_separate_reference_planes",
+      "downstream::instruments::receiver::selection::tests::selector_translation_preserves_open_bounds_raw_ids_and_domain_rejections",
+      "downstream::instruments::receiver::soft_display::tests::decision_region_contains_only_nearest_reference_for_square_and_cross_qam",
+      "downstream::instruments::receiver::soft_display::tests::histogram_conserves_limits_and_zero_and_sequence_extrema",
+      "downstream::instruments::receiver::soft_display::tests::invalid_reference_selectors_return_empty_geometry",
+      "downstream::instruments::receiver::verification::tests::zero_counts_and_mixed_outcomes_keep_honest_coordinates",
+      "downstream::simulation::closed_loop::observations::queries::tests::individual_slots_and_same_event_paging_keep_their_separate_reservations",
+      "downstream::simulation::closed_loop::observations::queries::tests::slot_arithmetic_and_zero_policy_reject_without_mutating_the_real_source",
+      "downstream::simulation::closed_loop::observations::tests::exact_overlap_and_dimension_rejection_preserve_source_ownership",
+      "downstream::simulation::closed_loop::observations::tests::precancelled_public_result_keeps_its_actual_empty_projection_without_fabricated_values",
+      "downstream::simulation::closed_loop::observations::tests::presentation_selection_fixture_preserves_first_contiguous_phase_frame_and_decoder_rules",
+      "downstream::simulation::closed_loop::observations::tests::queued_current_and_old_aliases_keep_dynamic_projection_charge_until_final_drop",
+      "downstream::simulation::closed_loop::observations::tests::real_projection_matches_planned_final_storage_and_keeps_original_science_and_coordinates",
+      "downstream::simulation::closed_loop::request_retention::tests::actual_worker_retains_old_owners_while_a_new_candidate_is_accepted",
+      "downstream::simulation::closed_loop::request_retention::tests::every_real_candidate_dimension_preserves_accepted_science_generation_and_report",
+      "downstream::simulation::closed_loop::request_retention::tests::exact_public_quantities_and_cross_budget_aliases_cover_both_real_roots",
+      "downstream::simulation::closed_loop::request_retention::tests::execution_tests::insufficient_execution_input_rejects_its_owned_dimensions_before_control_and_preserves_source",
+      "downstream::simulation::closed_loop::request_retention::tests::execution_tests::narrowed_execution_owner_keeps_exact_public_charge_and_independent_source_until_final_drop",
+      "downstream::simulation::closed_loop::request_retention::tests::rebind_reserves_both_target_roots_before_replacing_source_ownership",
+      "downstream::simulation::closed_loop::request_retention::tests::wrapper_layout_adds_scientific_root_once_and_checks_every_arithmetic_boundary",
+      "downstream::simulation::closed_loop::result_retention::tests::every_actual_result_dimension_rejects_before_public_control_or_source_advance",
+      "downstream::simulation::closed_loop::result_retention::tests::exact_complete_and_precancelled_science_retain_the_preexecution_target",
+      "downstream::simulation::closed_loop::result_retention::tests::fixed_result_layout_counts_the_embedded_retained_reservation_once_and_checks_overflow",
+      "downstream::simulation::closed_loop::result_retention::tests::genuine_worker_queue_and_final_result_alias_keep_the_target_after_terminal_disposal",
+      "downstream::simulation::closed_loop::result_retention::tests::projection_tests::actual_worker_preserves_completed_science_and_static_warning_when_projection_admission_rejects",
+      "downstream::simulation::closed_loop::result_retention::tests::public_busy_failure_releases_only_the_new_target_and_preserves_old_aliases",
+      "downstream::simulation::closed_loop::result_retention::tests::rejected_new_targets_preserve_the_same_old_backend_report_in_every_dimension",
+      "downstream::simulation::closed_loop::session_tests::actual_engines_share_paused_and_cancelling_admission_without_overwriting_results",
+      "downstream::simulation::closed_loop::session_tests::canonical_generation_rejects_an_old_model_and_rebound_projects_use_the_target_host",
+      "downstream::simulation::closed_loop::session_tests::destroyed_downstream_adapter_cancels_its_actual_worker_before_releasing_admission",
+      "downstream::simulation::closed_loop::session_tests::rejected_host_metadata_preserves_the_accepted_real_report_and_request",
+      "downstream::simulation::closed_loop::session_tests::rejected_initial_performance_admission_returns_the_lease_without_dispatch_or_history_loss",
+      "downstream::simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+      "downstream::simulation::closed_loop::tests::accepted_originals_reject_mismatched_seed_metadata_and_capture_identity",
+      "downstream::simulation::closed_loop::tests::channel193_rxmer_controls_tx_reference_mer_while_nearest_points_are_optimistic",
+      "downstream::simulation::closed_loop::tests::independent_sweep_preserves_each_profile_and_legacy_run_options",
+      "downstream::simulation::closed_loop::tests::invalidated_paused_worker_never_publishes_a_late_result",
+      "downstream::simulation::closed_loop::tests::mce_settings_persist_and_actual_rx_ignores_calibrated_reference_variance",
+      "downstream::simulation::closed_loop::tests::response_admission_honors_its_independent_accepted_epoch_tolerance",
+      "downstream::simulation::closed_loop::tests::selected_profiles_are_ordered_validated_and_persisted_without_running",
+      "downstream::simulation::closed_loop::tests::tx_spectra_keep_independent_frame_output_budgets_and_authoritative_calibrated_power",
+      "downstream::simulation::closed_loop::tests::unnamed_file_source_retains_bytes_and_ignores_its_dormant_continuous_seed",
+      "downstream::simulation::closed_loop::worker::tests::destroyed_worker_requests_cancel_but_waits_for_real_closure_termination",
+      "downstream::simulation::closed_loop::worker::tests::error_and_panic_terminals_keep_the_worker_lease_until_disposed",
+      "downstream::simulation::closed_loop::worker::tests::finished_data_keeps_real_completion_busy_until_terminal_disposal",
+      "downstream::simulation::closed_loop::worker::tests::paused_public_worker_cancels_and_retains_its_actual_partial_report",
+      "downstream::workbench::project_load::tests::bounded_stream_preserves_bytes_limits_and_cancellation",
+      "downstream::workbench::project_load::tests::command_line_file_preserves_destination_and_rejects_invalid_json",
+      "downstream::workbench::project_load::tests::errors_and_cancelled_success_do_not_publish_partial_inputs",
+      "downstream::workbench::project_load::tests::polling_does_not_wait_and_cancel_retains_single_worker_guard",
+      "downstream::workbench::project_load::tests::real_multi_capture_workbench_prepares_editors_off_thread",
+      "downstream::workbench::session::tests::actual_results_and_archives_never_fall_back_to_another_context",
+      "downstream::workbench::session::tests::context_handles_transfer_owned_application_state_between_threads",
+      "downstream::workbench::session::tests::explicit_contexts_isolate_accepted_sources_sections_and_clone_ownership",
+      "downstream::workbench::session::tests::prepared_adoption_is_targeted_and_unconsumed_models_never_form_owner_cycles"
+    ],
+    "duplicate_passes_excluded": 12,
+    "qml": {
+      "commands": [
+        {
+          "label": "qml-consumers",
+          "command": [
+            "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+            "-input",
+            "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+            "Workbench::test_transmitter_readiness_analyzer_zoom_and_invalidation",
+            "Workbench::test_receiver_configuration_comparison_and_run_controls",
+            "Workbench::test_verification_partial_results_running_and_empty_state",
+            "Workbench::test_receiver_retained_filters_response_soft_and_fec_navigation"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.2254993069946067
+        }
+      ],
+      "behavior_passed": 4,
+      "hooks": 2,
+      "warnings": "Two existing unsuppressed activeFocusOnTab warnings."
+    },
+    "native_desktop": {
+      "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+      "sha256": "6d5ef7f6bd7e499e7524b6ca2674d36a77532e23d0cf2be9711a7bb98aa67dc4",
+      "display": ":0",
+      "display_dimensions": [
+        "dimensions:    1280x800 pixels (338x211 millimeters)"
+      ],
+      "qt_sdk_version": "6.8.3",
+      "commands": [
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.04983897299825912,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.06091634500626242,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.5066295790020376,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.03775564499665052,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.9063915099977748,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test",
+            "--workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.9013475489991833,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        }
+      ]
+    },
+    "documentation_checks": [
+      {
+        "label": "final-boundary",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.27525692299968796
+      },
+      {
+        "label": "strict-matrix",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/api_operation_matrix.py",
+          "--exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-query-envelope/rust-exports.json",
+          "--native-exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-query-envelope-native/native-exports.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/namespace-test-results.json",
+          "--executed-record",
+          "docs/development/features/pnm-measurement-inputs/decoder-test-results.json",
+          "--executed-record",
+          "docs/development/features/pnm-measurement-inputs/association-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/python-test-results.json",
+          "--executed-record",
+          "docs/development/features/high-level-api/python-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-estimate-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-soft-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-resource-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-downstream-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-input-metadata-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-archive-bound-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-output-bound-operation-test-results.json",
+          "--executed-record",
+          "docs/development/features/unified-qt-workbench/session-query-envelope-operation-test-results.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 9.542201937001664
+      },
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.259852856004727
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 8.782860242004972
+      },
+      {
+        "label": "uiu-history",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/audit_foundation_uiu_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.08804310800042003
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.04604330899746856
+      },
+      {
+        "label": "guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.06733411300228909
+      },
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.4883018210020964
+      },
+      {
+        "label": "diff",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.15419249400292756
+      },
+      {
+        "label": "staged-diff",
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.006431850000808481
+      }
+    ]
+  },
+  "reused": {
+    "backend_native": "42d177e exact linked backend wheel/25 installed-native cases; backend/binding and public API unchanged.",
+    "api_inventory": "42d177e623Rust/594native exports; strict operation tracing rerun."
+  },
+  "not_required": [
+    {
+      "checks": "Another wheel build or unrelated full scientific/workspace/CLI/packaging suites",
+      "reason": "Concrete Qt performance and existing Model admission/result delivery only. All affected receiver/closed-loop/project/context/shared lifecycle and actual QML/native consumers covered. No backend/signature/science/schema/registration/dependency change."
+    }
+  ],
+  "deferred": [
+    "Accepted input/editor/Designer/saved project ownership and atomic adoption",
+    "Outer registry spare capacity, QAM status/catalog, independently escaping query/display/transport",
+    "Outer host/control/channel/accounting metadata",
+    "Complete SESSION Level2 and applicable milestone/finalLevel3"
+  ],
+  "preservation": {
+    "all_checkboxes_unchanged": true,
+    "previous_receipts_unchanged": true,
+    "original_scientific_assertions_and_values_preserved": true,
+    "test_ledger_getters_not_independent_footprint_oracles": true
+  },
+  "no_push_merge_release_or_system_install": true
+}

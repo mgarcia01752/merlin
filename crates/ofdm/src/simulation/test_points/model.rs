@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Borrowed typed stage observations; registered IDs describe implemented producers.
@@ -13,6 +14,7 @@ use crate::{
     types::{IqPair, ProfileId, PLC_FRAME_SYMBOLS},
     SimulationError,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 const MAX_PROBE_ID_BYTES: usize = 128;
 /// Registered observation stage; additional stages can be added without a closed API.
@@ -486,4 +488,265 @@ pub struct ProbeEvent<'event> {
     /// One-dimensional record shape; pilot records each contain their own I/Q pair.
     pub shape: [usize; 1],
     pub data: ProbeData<'event>,
+}
+
+impl RetainedPayload for PlcProbeGrid {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            spacing,
+            symbols,
+            subcarriers_per_symbol,
+        } = self;
+        merlin_api::retention_support::sum([
+            spacing.retained_children(),
+            symbols.retained_children(),
+            subcarriers_per_symbol.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for PhysicalProbeGrid {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            spacing,
+            zero_frequency_hz,
+        } = self;
+        merlin_api::retention_support::sum([
+            spacing.retained_children(),
+            zero_frequency_hz.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for WaveformProbeGrid {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            geometry,
+            sample_rate_hz,
+        } = self;
+        merlin_api::retention_support::sum([
+            geometry.retained_children(),
+            sample_rate_hz.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for CellProbeGrid {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            settings,
+            origin_symbol,
+            ncp_modulation,
+        } = self;
+        merlin_api::retention_support::sum([
+            settings.retained_children(),
+            origin_symbol.retained_children(),
+            ncp_modulation.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ProbeContext {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            run_id,
+            configuration_id,
+            phase,
+            source_symbol_index,
+            channel_symbol_index,
+            sample_start_index,
+            codeword_index,
+            profile_id,
+            plc_phase,
+            reference,
+            plc_grid,
+            physical_grid,
+            waveform_grid,
+            cell_grid,
+            transmit_cell_roles,
+        } = self;
+        merlin_api::retention_support::sum([
+            run_id.retained_children(),
+            configuration_id.retained_children(),
+            phase.retained_children(),
+            source_symbol_index.retained_children(),
+            channel_symbol_index.retained_children(),
+            sample_start_index.retained_children(),
+            codeword_index.retained_children(),
+            profile_id.retained_children(),
+            plc_phase.retained_children(),
+            reference.retained_children(),
+            plc_grid.retained_children(),
+            physical_grid.retained_children(),
+            waveform_grid.retained_children(),
+            cell_grid.retained_children(),
+            transmit_cell_roles.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for TestPointId {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::SourcePayload => Some(RetainedFootprint::default()),
+            Self::LegacyNoiseOutput => Some(RetainedFootprint::default()),
+            Self::PilotSequence => Some(RetainedFootprint::default()),
+            Self::ContinuousPilots => Some(RetainedFootprint::default()),
+            Self::ScatteredPilots => Some(RetainedFootprint::default()),
+            Self::PilotPower => Some(RetainedFootprint::default()),
+            Self::PlcCodedNibbles => Some(RetainedFootprint::default()),
+            Self::PlcInterleaved => Some(RetainedFootprint::default()),
+            Self::PlcMessage => Some(RetainedFootprint::default()),
+            Self::PlcCodedBits => Some(RetainedFootprint::default()),
+            Self::PlcRandomized => Some(RetainedFootprint::default()),
+            Self::PlcPreamble => Some(RetainedFootprint::default()),
+            Self::PlcIq => Some(RetainedFootprint::default()),
+            Self::PhysicalBins => Some(RetainedFootprint::default()),
+            Self::TxIfft => Some(RetainedFootprint::default()),
+            Self::TxPrefix => Some(RetainedFootprint::default()),
+            Self::TxWindow => Some(RetainedFootprint::default()),
+            Self::TxOverlap => Some(RetainedFootprint::default()),
+            Self::ChannelInput => Some(RetainedFootprint::default()),
+            Self::ChannelOutput => Some(RetainedFootprint::default()),
+            Self::RxFramed => Some(RetainedFootprint::default()),
+            Self::RxUseful => Some(RetainedFootprint::default()),
+            Self::RxFft => Some(RetainedFootprint::default()),
+            Self::RxChannelEstimate => Some(RetainedFootprint::default()),
+            Self::RxEqualized => Some(RetainedFootprint::default()),
+            Self::RxPlc => Some(RetainedFootprint::default()),
+            Self::RxPilots => Some(RetainedFootprint::default()),
+            Self::RxReduced => Some(RetainedFootprint::default()),
+            Self::PayloadCoded => Some(RetainedFootprint::default()),
+            Self::PayloadInterleavedBits => Some(RetainedFootprint::default()),
+            Self::PayloadLabels => Some(RetainedFootprint::default()),
+            Self::PayloadMapped => Some(RetainedFootprint::default()),
+            Self::PayloadInterleaved => Some(RetainedFootprint::default()),
+            Self::PayloadRestored => Some(RetainedFootprint::default()),
+            Self::NcpSoft => Some(RetainedFootprint::default()),
+            Self::NcpAccepted => Some(RetainedFootprint::default()),
+            Self::DataSoft => Some(RetainedFootprint::default()),
+            Self::PayloadLdpcInput => Some(RetainedFootprint::default()),
+            Self::PayloadDecoded => Some(RetainedFootprint::default()),
+        }
+    }
+}
+
+impl RetainedPayload for SignalDirection {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Transmit => Some(RetainedFootprint::default()),
+            Self::Receive => Some(RetainedFootprint::default()),
+        }
+    }
+}
+
+impl RetainedPayload for RunPhase {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Warmup => Some(RetainedFootprint::default()),
+            Self::Observation => Some(RetainedFootprint::default()),
+            Self::Drain => Some(RetainedFootprint::default()),
+        }
+    }
+}
+
+impl RetainedPayload for SignalDomain {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::PhysicalFftBin => Some(RetainedFootprint::default()),
+            Self::ReducedCarrier => Some(RetainedFootprint::default()),
+            Self::CodewordBit => Some(RetainedFootprint::default()),
+            Self::MessageByte => Some(RetainedFootprint::default()),
+            Self::ControlMessage => Some(RetainedFootprint::default()),
+            Self::CodewordCell => Some(RetainedFootprint::default()),
+            Self::PlcCell => Some(RetainedFootprint::default()),
+            Self::TimeSample => Some(RetainedFootprint::default()),
+            Self::Parameter => Some(RetainedFootprint::default()),
+            Self::CellBit => Some(RetainedFootprint::default()),
+        }
+    }
+}
+
+impl RetainedPayload for SignalReference {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::NotApplicable => Some(RetainedFootprint::default()),
+            Self::OtherSubcarrierRms { rms } => {
+                merlin_api::retention_support::sum([rms.retained_children()])
+            }
+        }
+    }
+}
+
+impl RetainedPayload for ProbeUnits {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Binary => Some(RetainedFootprint::default()),
+            Self::Octet => Some(RetainedFootprint::default()),
+            Self::NormalizedIq => Some(RetainedFootprint::default()),
+            Self::DimensionlessGain => Some(RetainedFootprint::default()),
+            Self::TypedRecord => Some(RetainedFootprint::default()),
+            Self::QamLabel => Some(RetainedFootprint::default()),
+            Self::LogLikelihood => Some(RetainedFootprint::default()),
+        }
+    }
+}
+
+impl RetainedPayload for TransmitCellRole {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Data => Some(RetainedFootprint::default()),
+            Self::Ncp => Some(RetainedFootprint::default()),
+            Self::Filler => Some(RetainedFootprint::default()),
+            Self::Pilot => Some(RetainedFootprint::default()),
+        }
+    }
 }

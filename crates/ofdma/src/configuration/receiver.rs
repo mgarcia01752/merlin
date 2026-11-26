@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -7,6 +8,10 @@
  */
 //! Explicit receiver engineering policies, without injected truth or target noise.
 use crate::{error::invalid, PhyResult};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::{Deserialize, Serialize};
 
 /// Frame-stationary received-pilot estimator policy.
@@ -87,5 +92,39 @@ impl ReceiverConfig {
     /// Actual iterations are retained separately in each decoder result.
     pub fn iterations(&self) -> usize {
         self.iterations
+    }
+}
+
+impl RetainedPayload for ReceiverConfig {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            estimator,
+            variance,
+            power_floor,
+            iterations,
+        } = self;
+        sum([
+            estimator.retained_children(),
+            variance.retained_children(),
+            power_floor.retained_children(),
+            iterations.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for Estimator {
+    /// Audits the complete inline estimator policy without running estimation.
+    ///
+    /// # Returns
+    /// Checked dynamic children; current variants own only fixed scalar values.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::FrameFlatLs => Some(RetainedFootprint::default()),
+            Self::FramePilotLinear { maximum_gap } => maximum_gap.retained_children(),
+        }
     }
 }

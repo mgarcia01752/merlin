@@ -1,0 +1,226 @@
+{
+  "task": "UIU-SESSION-01",
+  "status": "Level1 explicit edit/cancel transition accepted; actual direction wiring and aggregate acceptance pending",
+  "integration_base": "2ed5a1eccb6e5578697eed0ba34cafb9e04e6c8f",
+  "requirements": [
+    "REQ-UIU-03",
+    "REQ-UIU-06",
+    "REQ-UIU-07"
+  ],
+  "implementation": [
+    {
+      "path": "apps/qt/src/shell/mod.rs",
+      "sha256": "3d7fcca551d4a44ad520590826b065daa3e5ec77678da30f5eae9406b72c7cc3"
+    },
+    {
+      "path": "apps/qt/src/shell/tests.rs",
+      "sha256": "d9e994ee7b92c4965eb7f4889f8d58ff33ffbd9e01d8c13c410739571f20156f"
+    }
+  ],
+  "testing": {
+    "level": 1,
+    "executed": [
+      {
+        "label": "compile-owner",
+        "command": [
+          "/home/dev01/Projects/merlin/local/toolchains/rust-1.85.1-ylt882zx/bin/rustc",
+          "--edition=2021",
+          "--test",
+          "-D",
+          "warnings",
+          "apps/qt/src/shell/mod.rs",
+          "-o",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-edit-cancel-final/session-tests"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.7305573189987626
+      },
+      {
+        "label": "owner-tests",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-edit-cancel-final/session-tests",
+          "--test-threads=4"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.017126423001172952
+      },
+      {
+        "label": "clippy-owner",
+        "command": [
+          "/home/dev01/Projects/merlin/local/toolchains/rust-1.85.1-ylt882zx/bin/clippy-driver",
+          "--edition=2021",
+          "--test",
+          "-D",
+          "warnings",
+          "-D",
+          "clippy::all",
+          "apps/qt/src/shell/mod.rs",
+          "-o",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-edit-cancel-final/session-clippy"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.9117469310003798
+      },
+      {
+        "label": "format-owner",
+        "command": [
+          "/home/dev01/Projects/merlin/local/toolchains/rust-1.85.1-ylt882zx/bin/rustfmt",
+          "--edition",
+          "2021",
+          "--check",
+          "apps/qt/src/shell/mod.rs",
+          "apps/qt/src/shell/dispatch.rs",
+          "apps/qt/src/shell/identity.rs",
+          "apps/qt/src/shell/retention.rs",
+          "apps/qt/src/shell/worker.rs",
+          "apps/qt/src/shell/tests.rs",
+          "apps/qt/src/shell/worker/tests.rs"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.07571790499787312
+      },
+      {
+        "label": "final-boundary",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.2185025910002878
+      }
+    ],
+    "owner_cases_passed": 27,
+    "new_transition_cases": 5,
+    "cases": [
+      "dispatch::tests::duplicate_or_stale_terminal_does_not_release_newer_run",
+      "identity::tests::process_identity_exhaustion_never_wraps",
+      "tests::callbacks_require_direction_session_generation_and_run_identity",
+      "tests::byte_limits_are_inclusive_shared_and_checked_without_large_allocations",
+      "tests::accepted_upstream_edit_cancels_only_its_old_generation_until_terminal",
+      "tests::cancel_while_paused_is_once_and_holds_slot_until_partial_terminal_report",
+      "tests::cancelling_edit_of_idle_direction_never_touches_the_other_active_control",
+      "tests::cancelling_edit_revision_exhaustion_preserves_configuration_and_active_work",
+      "tests::destruction_requests_once_and_worker_lease_prevents_successor_overlap",
+      "tests::closing_or_wrong_direction_terminal_rejection_still_consumes_lease",
+      "tests::dirty_guard_rechecks_actual_target_and_save_does_not_clean_newer_edits",
+      "tests::distinct_typed_directions_keep_configuration_results_and_dirty_state",
+      "tests::dropped_unacknowledged_lease_cancels_but_never_reopens_gate",
+      "tests::generation_revision_and_run_exhaustion_preserve_state_without_wrap",
+      "tests::foreign_owner_destruction_never_cancels_another_sessions_worker",
+      "tests::failed_terminal_and_rejected_candidate_preserve_previous_accepted_report",
+      "tests::invalid_cancelling_edits_preserve_active_owners_before_any_cancel_request",
+      "tests::running_and_paused_runs_reject_second_start_and_keep_scoped_controls",
+      "tests::queue_old_run_replacement_and_owner_drop_keep_byte_charges",
+      "tests::retained_payload_is_destroyed_before_its_byte_reservation_is_released",
+      "worker::tests::deterministic_os_spawn_failure_returns_the_unstarted_original_lease",
+      "worker::tests::invalid_static_thread_label_returns_the_unstarted_lease",
+      "worker::tests::destroyed_gui_owner_cannot_release_admission_before_the_operation_returns",
+      "worker::tests::errors_and_panics_deliver_known_completion_without_abandoning_the_lease",
+      "tests::accepted_downstream_edits_cancel_once_and_keep_busy_until_stale_terminal",
+      "worker::tests::queued_payload_charges_follow_actual_release_when_the_gui_disappears",
+      "worker::tests::successful_direction_callbacks_keep_the_original_identity_until_host_finish"
+    ],
+    "not_required": [
+      {
+        "checks": "Qt executable/QML/core/native-Python/CLI/package rebuilds or complete regressions",
+        "reason": "Only unregistered std-only ownership transitions and their tests change; scientific/API/Qt consumer/registration/schema sources and accepted6446f46 executable remain unchanged."
+      }
+    ],
+    "deferred": [
+      "Actual direction callback/control/accepted-edit integration",
+      "Pending user retention-contract clarification and public memory metadata prerequisites",
+      "Conservative aggregate admission and complete UIU-SESSION-01 Level2"
+    ],
+    "executed_metadata": [
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.60495782200087
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 8.285463699001411
+      },
+      {
+        "label": "uiu-history",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/audit_foundation_uiu_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.29846015599832754
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.04181532400252763
+      },
+      {
+        "label": "guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03792287599935662
+      },
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.4295358529998339
+      },
+      {
+        "label": "diff",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.11561840800277423
+      },
+      {
+        "label": "staged-diff",
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.00773518099958892
+      }
+    ]
+  },
+  "pending_decision": "retention-contract-decision.md remains proposed; current accepted accounting wording is unchanged",
+  "no_push_merge_release_or_install": true
+}

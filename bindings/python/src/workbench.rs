@@ -27,7 +27,7 @@ pub(crate) struct PyWorkbench {
     busy: Mutex<()>,
 }
 impl PyWorkbench {
-    fn from_native(value: pnm_input::Workbench) -> Self {
+    fn from_native(value: merlin::downstream::inputs::Workbench) -> Self {
         let ids = value
             .controllers()
             .iter()
@@ -66,6 +66,23 @@ impl PyWorkbench {
 }
 #[pymethods]
 impl PyWorkbench {
+    /// Prepares saved settings through the public downstream full-loop owners.
+    /// # Arguments
+    /// * `data` - Complete bounded legacy project, retaining file/Designer/timeline choices.
+    /// # Returns
+    /// Owned idle sweep plan; preparation releases the GIL and starts no source or worker.
+    /// # Errors
+    /// Preserves Rust schema, integrity, resource and scientific admission categories.
+    #[staticmethod]
+    fn prepare_full_loop(
+        py: Python<'_>,
+        data: &[u8],
+    ) -> PyResult<crate::full_loop::PyFullLoopSweepPlan> {
+        py.detach(|| merlin::downstream::inputs::Workbench::prepare_full_loop(data))
+            .map(crate::full_loop::PyFullLoopSweepPlan::from_native)
+            .map_err(error)
+    }
+
     /// Loads the saved WB and embedded originals through native Rust preflight.
     /// # Arguments
     /// * `path` - Existing self-contained workbench JSON path.
@@ -75,7 +92,7 @@ impl PyWorkbench {
     /// Structured Rust I/O, integrity, unsupported-capability or validation errors.
     #[staticmethod]
     fn from_file(py: Python<'_>, path: PathBuf) -> PyResult<Self> {
-        py.detach(|| pnm_input::Workbench::from_file(path))
+        py.detach(|| merlin::downstream::inputs::Workbench::from_file(path))
             .map(Self::from_native)
             .map_err(error)
     }
@@ -88,7 +105,7 @@ impl PyWorkbench {
     /// Preserves structured Rust size, schema, integrity and capability errors.
     #[staticmethod]
     fn from_bytes(py: Python<'_>, data: &[u8]) -> PyResult<Self> {
-        py.detach(|| pnm_input::Workbench::from_bytes(data))
+        py.detach(|| merlin::downstream::inputs::Workbench::from_bytes(data))
             .map(Self::from_native)
             .map_err(error)
     }

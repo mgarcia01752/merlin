@@ -38,7 +38,7 @@ impl PrbsVerifier {
     ///
     /// Returns idle state; rejects zero/out-of-range seed without source access.
     pub fn new(seed: u16) -> PhyResult<Self> {
-        if seed == 0 || seed > 32767 {
+        if seed == 0 || seed > merlin_dsp::common::constants::PRBS15_MAX_SEED {
             return Err(invalid("verifier.seed"));
         }
         let history = std::array::from_fn(|index| ((seed >> index) & 1) as u8);

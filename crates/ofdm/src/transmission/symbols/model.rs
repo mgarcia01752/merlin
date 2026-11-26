@@ -1,9 +1,11 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Cell values carry scientific roles, never transmitter codeword identities to RX.
 use crate::{transmission::ncp::EncodedNcpField, types::IqPair};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 /// Supported payload constellation; mode expansion must verify coding and placement first.
 pub const PAYLOAD_ORDER: crate::types::ofdm_modulation::ConstellationOrder =
     1 << crate::transmission::settings::DATA_BITS_PER_CELL;
@@ -23,4 +25,17 @@ pub struct AssembledSymbol {
     pub local_symbol_index: u64,
     pub ncp: EncodedNcpField,
     pub cells: Vec<Option<TransportCell>>,
+}
+
+impl RetainedPayload for TransportCell {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::PilotPlaceholder => Some(RetainedFootprint::default()),
+            Self::Sample(value) => value.retained_children(),
+        }
+    }
 }

@@ -37,7 +37,9 @@ all modifications remain in MERLIN. Do not require a local RAVEN or former
 PNM Viewer Toolkit checkout. Follow coding-style for reuse and licensing.
 
 Preserve the implemented downstream OFDM and upstream OFDMA backend scopes in
-`docs/architecture.md`. Upstream Qt remains deferred. Downstream simulation modes are the
+`docs/architecture.md`. The approved unified Qt phase follows the UIU tasks in
+`docs/development/checklist.md`; both direction adapters use the `merlin` facade.
+Downstream simulation modes are the
 ideal/reference experiment and measurement-driven analysis using RxMER, downstream
 channel estimates and an applied modulation profile. Support is developed against
 pinned DOCSIS3.1/4.0 evidence up to16384-QAM; do not equate a recognized order with
@@ -48,9 +50,10 @@ adds integration guidance under the existing signal-processing, scientific-testi
 and public-API skills. Use their upstream references for explicitly scoped work.
 That guidance migration is historical; subsequent backend acceptance belongs to
 the unified checklist. Source-repository permissions and pass states do not transfer.
-The current backend execution authorization is retained in
-`docs/development/backend-execution-authorization.md`; it authorizes focused local
-commits and continuation for this integration, without pushes or Qt expansion.
+The historical backend execution authorization is retained in
+`docs/development/backend-execution-authorization.md`; it records the earlier backend-only phase. Current user authorization permits
+focused local commits and continuation of the approved unified Qt tasks; pushes,
+merges, releases and system installation still require separate authorization.
 
 The minimum engine is a MERLIN-only closed loop: source → MERLIN TX → channel
 model → MERLIN RX → compare recovered bits against the original source. Another
@@ -59,8 +62,9 @@ prerequisite. Preserve normative/source-table checks and honest decoder outcomes
 do not describe closed-loop results as external interoperability evidence.
 
 The CLI functional MVP is complete within its documented supported scope.
-The existing native Qt UI is presentation only; upstream Qt is outside this backend
-phase. Follow
+The native Qt UI remains presentation only. Upstream Qt was excluded from the
+historical backend-only phase; the approved unified Qt phase now includes its
+native configuration, lifecycle, instruments, files and restart recovery. Follow
 the UI section in docs/architecture.md and docs/development/ui-checklist.md,
 starting left to right with OFDM Channel Descriptor (OCD). The Qt workbench
 shell, Rust-validated timing/interleaving editor, PRBS-TX source editor and DPD
@@ -136,6 +140,18 @@ No setup invocation or system package installation is implied by ordinary UI wor
 
 Validation scope:
 
+Unified Qt integration follows the [three-level risk-based testing strategy](docs/development/features/unified-qt-workbench/testing-strategy.md):
+Level 1 uses targeted functionality tests, formatting, relevant Clippy and API
+boundary checks for each focused commit. Level 2 runs complete relevant feature/
+crate, affected Qt/QML, compatibility and traceability checks before checking an
+official UIU task. Level 3 runs full applicable workspace/Qt/Python/CLI/project/
+packaging regressions at major integration milestones and final acceptance.
+Shared science, API compatibility, CXX-Qt registration, project serialization
+and cross-direction lifecycle changes expand testing to all affected consumers
+at every level. Record executed checks, not-required checks with reasons, and
+deferred acceptance gates separately. Do not label an unexecuted suite passed.
+Existing tests, vectors, acceptance, push/release and hosted gates remain intact.
+
 Apply skills/ui-design for Qt editor actions and layout.
 For UI-only work, use scripts/qt-desktop.sh build/check and targeted Qt tests.
 Do not rebuild or retest the non-Qt workspace on every UI iteration. Broaden
@@ -145,7 +161,8 @@ Preserve Cargo target artifacts and the stable build profile so unchanged code
 is ready for reuse/linking; do not routinely clean or delete build outputs.
 Keep the Qt executable built for the latest UI changes before handing off.
 
-Simulation/shared-code validation when applicable:
+Full simulation/shared-code validation when applicable at the task/milestone
+gate; focused commits select affected checks under the strategy above:
 
 ```bash
 scripts/cargo-local.sh fmt --all -- --check

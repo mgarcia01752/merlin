@@ -1,0 +1,170 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "scope": "Level 1: six Rust and ten exact-archive installed native source/namespace cases for additive file limits/info/shared-buffer fill editing. No simulation run is required by these source observations.",
+  "runs": [
+    {
+      "label": "admission",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--locked",
+        "--features",
+        "high-level-api",
+        "--test",
+        "api_admission",
+        "--",
+        "--exact",
+        "unnamed_file_preserves_exact_bytes_empty_label_bounds_and_named_validation",
+        "source_admission_preserves_arbitrary_original_bytes_and_independent_fill",
+        "source_admission_distinguishes_empty_file_eof_and_continuous_prbs15",
+        "source_file_info_limits_and_fill_metadata_are_passive_and_owned",
+        "source_fill_replacement_shares_originals_and_preserves_error_atomicity"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.14862127600008535,
+      "language": "rust",
+      "passed": 5,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "source_admission_distinguishes_empty_file_eof_and_continuous_prbs15"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "source_fill_replacement_shares_originals_and_preserves_error_atomicity"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "source_admission_preserves_arbitrary_original_bytes_and_independent_fill"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "source_file_info_limits_and_fill_metadata_are_passive_and_owned"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "unnamed_file_preserves_exact_bytes_empty_label_bounds_and_named_validation"
+        }
+      ]
+    },
+    {
+      "label": "facade",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "merlin",
+        "--locked",
+        "--test",
+        "namespaces",
+        "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+        "--",
+        "--exact"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 9.456951467999716,
+      "language": "rust",
+      "passed": 1,
+      "cases": [
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior"
+        }
+      ]
+    },
+    {
+      "label": "admission",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-c",
+        "import importlib.util,sys,unittest\nspec=importlib.util.spec_from_file_location('test_admission',sys.argv[1]);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)\nsuite=unittest.defaultTestLoader.loadTestsFromNames(['NativeAdmissionTests.'+name for name in sys.argv[2:]],module)\nresult=unittest.TextTestRunner(verbosity=2).run(suite);assert result.testsRun==6 and not result.skipped\nraise SystemExit(not result.wasSuccessful())\n",
+        "/home/dev01/Projects/merlin/bindings/python/tests/test_admission.py",
+        "test_source_file_info_limits_partial_targets_and_owned_snapshots",
+        "test_source_file_info_matches_the_direct_rust_process",
+        "test_source_fill_replacement_preserves_original_and_rejects_atomic_changes",
+        "test_exact_byte_file_source_fill_bounds_and_lifetime",
+        "test_empty_eof_and_continuous_seed_remain_distinct",
+        "test_unnamed_file_preserves_original_bytes_fill_and_named_rejection"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.238051379999888,
+      "stdout_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-native/admission.stdout",
+      "stderr_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-native/admission.stderr",
+      "language": "python",
+      "passed": 6,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_source_file_info_limits_partial_targets_and_owned_snapshots"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_source_file_info_matches_the_direct_rust_process"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_source_fill_replacement_preserves_original_and_rejects_atomic_changes"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_exact_byte_file_source_fill_bounds_and_lifetime"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_empty_eof_and_continuous_seed_remain_distinct"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_unnamed_file_preserves_original_bytes_fill_and_named_rejection"
+        }
+      ]
+    },
+    {
+      "label": "namespaces",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_namespaces.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.1183107129995733,
+      "stdout_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-native/namespaces.stdout",
+      "stderr_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-native/namespaces.stderr",
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ]
+    }
+  ]
+}

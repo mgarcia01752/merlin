@@ -55,8 +55,9 @@ a selected profile, all-green blocks and an idle worker.
 LDPC iteration limit. They remain part of the same accepted WB configuration;
 editing either dialog preserves the other settings.
 
-Save and Save As write schema-2 self-contained WB JSON, including selected IDs
-and original inputs. Open accepts schema1 with its original all/applied semantics;
+Save and Save As write direction-tagged schema-3 JSON for runnable workbenches
+and schema-2 JSON for incomplete downstream editors, including selected IDs and
+original inputs. Open accepts schema 1/2 with their original all/applied semantics;
 unsupported versions and invalid/duplicate/missing profile IDs are rejected
 before changing the current WB. Update recovery uses the same saved settings.
 Run results and unapplied editor drafts are not configuration.

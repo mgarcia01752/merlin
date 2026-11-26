@@ -1,0 +1,431 @@
+/*
+ * Copyright 2026 MERLIN contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+//! Independent timing anchors and immutable byte/source admission through public APIs.
+#![cfg(all(feature = "simulation", feature = "pnm-input"))]
+use docsis_ofdm_fec::api::{
+    ApiError, Dpd, ErrorCode, FileFillPolicy, FullLoopOptions, NamedCapture, ObservationDuration,
+    PrbsSeed, SourceInput, SubcarrierSpacing, TransmissionConfiguration, TransmissionSettings,
+};
+use serde_json::json;
+
+#[test]
+fn spectrum_average_capacity_uses_independent_fft_boundaries_without_running() {
+    // Independent half-overlap anchors: N=8192/hop=4096 or N=4096/hop=2048.
+    // The old 32768-sample UI window admits seven/fifteen complete windows.
+    for (spacing, cases) in [
+        (
+            SubcarrierSpacing::Khz25,
+            vec![
+                (8192, 1),
+                (12287, 1),
+                (12288, 2),
+                (32768, 7),
+                (135168, 32),
+                (usize::MAX, 32),
+            ],
+        ),
+        (
+            SubcarrierSpacing::Khz50,
+            vec![
+                (4096, 1),
+                (6143, 1),
+                (6144, 2),
+                (32768, 15),
+                (67584, 32),
+                (usize::MAX, 32),
+            ],
+        ),
+    ] {
+        let settings = TransmissionSettings {
+            subcarrier_spacing: spacing,
+            ..Default::default()
+        };
+        let accepted = TransmissionConfiguration::new(settings.clone()).unwrap();
+        for (samples, expected) in cases {
+            assert_eq!(
+                accepted.spectrum_average_capacity(samples).unwrap(),
+                expected
+            );
+            assert_eq!(accepted.settings(), &settings);
+        }
+        let below = match spacing {
+            SubcarrierSpacing::Khz25 => 8191,
+            SubcarrierSpacing::Khz50 => 4095,
+        };
+        for budget in [0, 1, below] {
+            let error = accepted.spectrum_average_capacity(budget).unwrap_err();
+            assert_eq!(error.code(), ErrorCode::InvalidInput);
+            assert_eq!(error.engine_code(), Some("InvalidLabInput"));
+            assert_eq!(accepted.settings(), &settings);
+        }
+    }
+}
+
+#[test]
+fn original_engine_code_is_optional_typed_and_preserves_error_ownership() {
+    // Zero is the existing invalid active-runtime boundary, not a simulated duration.
+    let failure = FullLoopOptions {
+        max_runtime_ms: 0,
+        ..Default::default()
+    }
+    .validate()
+    .unwrap_err();
+    let message = failure.message().to_owned();
+    let serialized = serde_json::to_value(&failure).unwrap();
+    let cloned = failure.clone();
+    assert_eq!(failure.engine_code(), Some("InvalidLabInput"));
+    assert_eq!(failure.code(), ErrorCode::InvalidInput);
+    assert_eq!(
+        failure.message(),
+        "Invalid channel runtime or retained-word budget."
+    );
+    assert_eq!(failure.message(), message);
+    assert_eq!(serde_json::to_value(&failure).unwrap(), serialized);
+    drop(failure);
+    assert_eq!(cloned.engine_code(), Some("InvalidLabInput"));
+    assert_eq!(serde_json::to_value(&cloned).unwrap(), serialized);
+    let adapter = ApiError::new(
+        ErrorCode::InvalidInput,
+        "InvalidLabInput is only display text here.",
+    );
+    assert!(adapter.engine_code().is_none());
+    assert_eq!(adapter.code(), ErrorCode::InvalidInput);
+}
+
+#[test]
+fn transmission_admission_uses_literal_sample_clock_accounting_without_running() {
+    let original = TransmissionSettings::default();
+    let accepted = TransmissionConfiguration::new(original.clone()).unwrap();
+    let timing = accepted
+        .timing(ObservationDuration::new(1).unwrap())
+        .unwrap();
+    assert_eq!(timing.sample_rate_hz, 204_800_000);
+    assert_eq!(timing.fft_samples, 8192);
+    assert_eq!(timing.symbol_period_samples, 8704);
+    assert_eq!(timing.windowed_symbol_samples, 8832);
+    assert_eq!(timing.observation_samples, 204800);
+    assert_eq!(timing.complete_symbols, 23);
+    assert_eq!(timing.unused_samples, 4608);
+    assert_eq!(accepted.settings(), &original);
+    let mut changed = original.clone();
+    changed.subcarrier_spacing = SubcarrierSpacing::Khz50;
+    let other = TransmissionConfiguration::new(changed).unwrap();
+    let timing = other.timing(ObservationDuration::new(1).unwrap()).unwrap();
+    assert_eq!(timing.fft_samples, 4096);
+    assert_eq!(timing.symbol_period_samples, 4608);
+    assert_eq!(timing.complete_symbols, 44);
+    assert_eq!(timing.unused_samples, 2048);
+    assert_eq!(accepted.settings(), &original);
+}
+
+#[test]
+fn unnamed_file_preserves_exact_bytes_empty_label_bounds_and_named_validation() {
+    // Independent original/fill anchors: eight bytes ->64 bits, then a finite80-bit target.
+    let mut bytes = b"\0exact\r\n".to_vec();
+    let source = SourceInput::unnamed_file(&bytes, None).unwrap();
+    bytes[0] = 255; // Caller mutation must not replace retained original zero.
+    assert_eq!(source.name(), Some(""));
+    assert_eq!(source.kind(), "file");
+    assert_eq!(source.original_bytes(), Some(b"\0exact\r\n".as_slice()));
+    assert_eq!(source.target_bits(), Some(64));
+    assert!(source.prbs_seed().is_none());
+    assert_eq!(
+        source.original_sha256(),
+        Some("541070fc2b7aa44069811cafe1c6810b607e696dc92792089c0fd88789bb8797")
+    );
+    let seed = PrbsSeed::new(7).unwrap(); // Independent finite-fill recurrence choice.
+    let filled =
+        SourceInput::unnamed_file(b"\0exact\r\n", Some(FileFillPolicy::new(80, seed).unwrap()))
+            .unwrap();
+    assert_eq!(filled.target_bits(), Some(80));
+    assert_eq!(filled.original_bytes(), source.original_bytes());
+    assert_eq!(filled.original_sha256(), source.original_sha256());
+    assert!(
+        SourceInput::unnamed_file(b"\0exact\r\n", Some(FileFillPolicy::new(8, seed).unwrap()),)
+            .is_err()
+    );
+    // Independent one-past existing16-MiB file admission boundary.
+    assert!(SourceInput::unnamed_file(&vec![0; 16 * 1024 * 1024 + 1], None).is_err());
+    let empty = SourceInput::unnamed_file(&[], None).unwrap();
+    assert_eq!(empty.name(), Some(""));
+    assert_eq!(empty.target_bits(), Some(0));
+    assert_eq!(empty.original_bytes(), Some(b"".as_slice()));
+    assert_eq!(
+        NamedCapture::new("", vec![]).unwrap_err().code(),
+        ErrorCode::ResourceLimit
+    );
+    assert_eq!(source.target_bits(), Some(64));
+}
+
+#[test]
+fn minimum_observation_rounds_complete_periods_and_reports_over_policy_thresholds() {
+    // Independent rational-clock anchors: a 512-sample CP gives 17/400 ms
+    // periods at 25 kHz and 9/400 ms at 50 kHz; a 1024-sample CP gives 45 us.
+    // Index 399 completes 400 periods at exactly 17/9 ms, testing exact rounding.
+    for (last, spacing, prefix, expected) in [
+        (0, SubcarrierSpacing::Khz25, 512, 1),
+        (399, SubcarrierSpacing::Khz25, 512, 17),
+        (399, SubcarrierSpacing::Khz50, 512, 9),
+        (1000, SubcarrierSpacing::Khz25, 512, 43),
+        (400, SubcarrierSpacing::Khz25, 512, 18),
+        (2000, SubcarrierSpacing::Khz25, 512, 86),
+        (1000, SubcarrierSpacing::Khz50, 512, 23),
+        (1000, SubcarrierSpacing::Khz25, 1024, 46),
+        (100000, SubcarrierSpacing::Khz25, 512, 4251),
+    ] {
+        let settings = TransmissionSettings {
+            subcarrier_spacing: spacing,
+            cyclic_prefix_samples: prefix,
+            ..Default::default()
+        };
+        let configuration = TransmissionConfiguration::new(settings.clone()).unwrap();
+        assert_eq!(
+            configuration
+                .minimum_observation_milliseconds_after(last)
+                .unwrap(),
+            expected
+        );
+        assert!(
+            configuration
+                .timing(ObservationDuration::new(expected).unwrap())
+                .unwrap()
+                .complete_symbols
+                > last
+        );
+        if expected > 1 {
+            assert!(
+                configuration
+                    .timing(ObservationDuration::new(expected - 1).unwrap())
+                    .unwrap()
+                    .complete_symbols
+                    <= last
+            );
+        }
+        assert_eq!(configuration.settings(), &settings);
+    }
+    let configuration = TransmissionConfiguration::new(TransmissionSettings::default()).unwrap();
+    // Independent wide arithmetic: ceil(2^64 * 17/400) milliseconds. This reports
+    // a threshold, not admission to the existing one-hour observation domain.
+    assert_eq!(
+        configuration
+            .minimum_observation_milliseconds_after(u64::MAX)
+            .unwrap(),
+        783_986_623_132_655_944
+    );
+    assert!(ObservationDuration::new(783_986_623_132_655_944).is_err());
+}
+
+#[test]
+fn transmission_json_admission_rejects_corruption_unknown_fields_and_limits() {
+    let accepted = TransmissionConfiguration::new(TransmissionSettings::default()).unwrap();
+    let text = serde_json::to_vec(&accepted).unwrap();
+    assert_eq!(
+        TransmissionConfiguration::from_json(&text)
+            .unwrap()
+            .settings(),
+        accepted.settings()
+    );
+    for bytes in [b"{bad".as_slice(), b"{}".as_slice()] {
+        assert_eq!(
+            TransmissionConfiguration::from_json(bytes)
+                .err()
+                .unwrap()
+                .code(),
+            ErrorCode::InvalidInput
+        );
+    }
+    let mut extra: serde_json::Value = serde_json::from_slice(&text).unwrap();
+    extra["unrecognized"] = serde_json::json!(true);
+    assert!(TransmissionConfiguration::from_json(&serde_json::to_vec(&extra).unwrap()).is_err());
+    assert_eq!(
+        TransmissionConfiguration::from_json(&vec![b' '; 4097])
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::ResourceLimit
+    );
+    let bad = TransmissionSettings {
+        roll_off_samples: 512,
+        ..TransmissionSettings::default()
+    };
+    assert!(TransmissionConfiguration::new(bad).is_err());
+    assert_eq!(serde_json::to_vec(&accepted).unwrap(), text);
+}
+
+#[test]
+fn profile_editor_compatibility_is_separate_from_full_execution_readiness() {
+    let input = NamedCapture::new(
+        "original.json",
+        include_bytes!("../../../examples/measurements/single-channel/modulation_profile.json")
+            .to_vec(),
+    )
+    .unwrap();
+    let profile =
+        Dpd::from_bytes(&input, docsis_ofdm_fec::api::ProfileId::new(0).unwrap()).unwrap();
+    let accepted = TransmissionConfiguration::new(TransmissionSettings::default()).unwrap();
+    accepted.check_profile(&profile).unwrap();
+    let mismatched = TransmissionConfiguration::new(TransmissionSettings {
+        subcarrier_spacing: SubcarrierSpacing::Khz50,
+        ..TransmissionSettings::default()
+    })
+    .unwrap();
+    assert_eq!(
+        mismatched.check_profile(&profile).unwrap_err().code(),
+        ErrorCode::IncompatibleGrid
+    );
+    let narrow = TransmissionConfiguration::new(TransmissionSettings {
+        occupied_bandwidth_hz: 24_000_000,
+        ..TransmissionSettings::default()
+    })
+    .unwrap();
+    assert_eq!(
+        narrow.check_profile(&profile).unwrap_err().code(),
+        ErrorCode::IncompatibleGrid
+    );
+    accepted.check_profile(&profile).unwrap();
+    assert_eq!(profile.sources()[0].original_bytes(), input.bytes());
+}
+
+#[test]
+fn source_admission_preserves_arbitrary_original_bytes_and_independent_fill() {
+    let bytes = vec![0xef, 0xbb, 0xbf, 0, b'\r', b'\n', 0xff, 1];
+    let input = NamedCapture::new("unaltered.dat", bytes.clone()).unwrap();
+    let fill = FileFillPolicy::new(80, PrbsSeed::new(7).unwrap()).unwrap();
+    let accepted = SourceInput::file(input, Some(fill)).unwrap();
+    assert_eq!(accepted.kind(), "file");
+    assert_eq!(accepted.name(), Some("unaltered.dat"));
+    assert_eq!(accepted.original_bytes(), Some(bytes.as_slice()));
+    assert_eq!(accepted.target_bits(), Some(80));
+    assert_eq!(accepted.prbs_seed(), None);
+    assert_eq!(accepted.original_sha256().unwrap().len(), 64);
+    let retained = accepted.clone();
+    drop(accepted);
+    assert_eq!(retained.original_bytes(), Some(bytes.as_slice()));
+    assert_eq!(retained.target_bits(), Some(80));
+    let too_short = FileFillPolicy::new(63, PrbsSeed::new(7).unwrap()).unwrap();
+    assert!(SourceInput::file(NamedCapture::new("same", bytes).unwrap(), Some(too_short)).is_err());
+    assert_eq!(retained.target_bits(), Some(80));
+}
+
+#[test]
+fn source_admission_distinguishes_empty_file_eof_and_continuous_prbs15() {
+    let empty = SourceInput::file(NamedCapture::new("empty", Vec::new()).unwrap(), None).unwrap();
+    assert_eq!(empty.original_bytes(), Some([].as_slice()));
+    assert_eq!(empty.target_bits(), Some(0));
+    assert_eq!(
+        empty.original_sha256(),
+        Some("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
+    );
+    let continuous = SourceInput::prbs15(PrbsSeed::new(32767).unwrap());
+    assert_eq!(continuous.kind(), "prbs15");
+    assert_eq!(continuous.prbs_seed().unwrap().value(), 32767);
+    assert!(continuous.original_bytes().is_none());
+    assert!(continuous.target_bits().is_none());
+    assert!(continuous.name().is_none());
+    assert!(PrbsSeed::new(0).is_err());
+    assert!(PrbsSeed::new(32768).is_err());
+    assert!(FileFillPolicy::new(134_217_729, PrbsSeed::new(1).unwrap()).is_err());
+}
+
+#[test]
+fn source_file_info_limits_and_fill_metadata_are_passive_and_owned() {
+    let limits = SourceInput::file_limits();
+
+    // Independent existing 16-MiB input and 128-Mibit finite-work ceilings.
+    assert_eq!(limits.max_original_bytes, 16_777_216);
+    assert_eq!(limits.max_total_bits, 134_217_728);
+    let continuous = SourceInput::prbs15(PrbsSeed::new(1).unwrap());
+    assert!(continuous.file_info().is_none());
+    let empty = SourceInput::unnamed_file(&[], None).unwrap();
+    assert_eq!(
+        serde_json::to_value(empty.file_info()).unwrap(),
+        json!({
+            "original_bytes":0,"original_bits":0,"target_bits":0,"fill_bits":0,"fill":null
+        })
+    );
+
+    // One actual octet and independent 11-bit target leave three meaningful fill bits.
+    let fill = FileFillPolicy::new(11, PrbsSeed::new(7).unwrap()).unwrap();
+    let source = SourceInput::unnamed_file(&[0x80], Some(fill)).unwrap();
+    let hash = source.original_sha256().unwrap().to_owned();
+    let mut info = source.file_info().unwrap();
+    assert_eq!(
+        serde_json::to_value(info).unwrap(),
+        json!({
+            "original_bytes":1,"original_bits":8,"target_bits":11,"fill_bits":3,
+            "fill":{"target_bits":11,"seed":7}
+        })
+    );
+    info.target_bits = 999;
+    assert_eq!(info.target_bits, 999);
+    assert_eq!(source.file_info().unwrap().target_bits, 11);
+    assert_eq!(source.original_bytes(), Some([0x80].as_slice()));
+    assert_eq!(source.original_sha256(), Some(hash.as_str()));
+    assert_eq!(source.name(), Some(""));
+
+    // Explicit zero-length append remains distinguishable from an absent fill policy.
+    let equal = SourceInput::file(
+        NamedCapture::new("named", vec![0x80]).unwrap(),
+        Some(FileFillPolicy::new(8, PrbsSeed::new(1).unwrap()).unwrap()),
+    )
+    .unwrap();
+    assert_eq!(equal.file_info().unwrap().fill_bits, 0);
+    assert!(equal.file_info().unwrap().fill.is_some());
+    assert!(SourceInput::unnamed_file(&[0x80], None)
+        .unwrap()
+        .file_info()
+        .unwrap()
+        .fill
+        .is_none());
+}
+
+#[test]
+fn source_fill_replacement_shares_originals_and_preserves_error_atomicity() {
+    let original = SourceInput::unnamed_file(&[0x80], None).unwrap();
+    let fill = FileFillPolicy::new(11, PrbsSeed::new(7).unwrap()).unwrap();
+    let extended = original.with_fill(Some(fill)).unwrap();
+    assert_eq!(original.target_bits(), Some(8));
+    assert_eq!(extended.target_bits(), Some(11));
+    assert_eq!(
+        original.original_bytes().unwrap().as_ptr(),
+        extended.original_bytes().unwrap().as_ptr()
+    );
+    assert_eq!(original.original_sha256(), extended.original_sha256());
+    assert_eq!(original.name(), extended.name());
+    let reset = extended.with_fill(None).unwrap();
+    assert_eq!(reset.target_bits(), Some(8));
+    assert!(reset.file_info().unwrap().fill.is_none());
+    assert_eq!(
+        reset.original_bytes().unwrap().as_ptr(),
+        original.original_bytes().unwrap().as_ptr()
+    );
+
+    // One below an actual octet, one above the existing finite-work ceiling, zero seed.
+    for invalid in [
+        FileFillPolicy {
+            target_bits: 7,
+            seed: PrbsSeed::new(1).unwrap(),
+        },
+        FileFillPolicy {
+            target_bits: 134_217_729,
+            seed: PrbsSeed::new(1).unwrap(),
+        },
+    ] {
+        assert!(extended.with_fill(Some(invalid)).is_err());
+    }
+    assert!(PrbsSeed::new(0).is_err());
+    assert_eq!(extended.target_bits(), Some(11));
+    assert_eq!(extended.original_bytes(), Some([0x80].as_slice()));
+    assert_eq!(
+        SourceInput::prbs15(PrbsSeed::new(1).unwrap())
+            .with_fill(None)
+            .err()
+            .unwrap()
+            .code(),
+        ErrorCode::InvalidInput
+    );
+    drop(original);
+    assert_eq!(extended.original_bytes(), Some([0x80].as_slice()));
+}

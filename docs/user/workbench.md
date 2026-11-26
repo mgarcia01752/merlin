@@ -18,13 +18,52 @@ configure a partial WB while blocks are yellow; Start still requires all green
 and a nonempty compatible profile selection. See
 [WB configuration](workbench-configuration.md).
 
+Opening a project prepares its editors independently while the current project
+remains available. Both sets of retained data share the application's resource
+limits. If preparation cannot fit, Open preserves the accepted project, results
+and Save destination; cancelling a load also preserves them. The application's
+own retained storage also uses part of these limits. During cancellation, the
+active run keeps its slot until its worker has actually finished.
+
+Simulation and transmitter-preview controls also consume retained-data capacity.
+If a control cannot fit, the current accepted configuration and results remain
+available. Closing a view or receiving a result does not release storage still
+used by its finishing worker. Starting another run also needs room for its timing
+history while the previous timing is still retained. If this preparation cannot
+fit, the previous results, timing and configuration stay available.
+
+## Presentation limits
+
+If a new plot, selector or help view cannot fit, MERLIN displays **Presentation
+limits reached; previous view preserved.** The previously displayed observation
+and its selection stay together. Native Stop, Pause and completion remain live;
+a successfully applied configuration or saved export remains successful even
+when its optional display details cannot be replaced. Start waits for a valid
+current presentation.
+
+Closing a window frees its open-view slot. Its hidden data may still be retained;
+closing alone does not promise that a larger replacement will fit. Try a smaller
+inspection or clear the relevant inputs through their normal controls. Save the
+accepted project before restarting if you need to release all retained views.
+A rejected optional display does not change the scientific simulation limits.
+
+![Presentation limit notice on the actual dark workbench](../images/workbench/presentation-limit-dark.png)
+
 Actions throughout the workbench and its windows share rounded buttons with
 consistent spacing and visible keyboard focus. Apply accepts an editor's draft;
 Cancel or X discards it. Close dismisses a viewer. Tabs, diagram symbols and
 capture-tree arrows retain their own shapes. See
 [workbench configuration](workbench-configuration.md) for the shared controls.
 
-The native Qt workbench starts with the single-channel system diagram. Click
+The native Qt workbench has persistent **Downstream** and **Upstream**
+folder-style tabs below the shared menus. The tabs fit their labels and share an
+edge with the canvas; the selected tab joins its page.
+Switching tabs preserves each direction's work. One simulation can run at a time;
+a paused run still owns that slot. The lower-right controls always address the
+selected direction. To stop or resume a downstream run while viewing Upstream,
+return to Downstream. The other tab displays which direction is active.
+
+Downstream opens the existing single-channel system diagram. Click
 OFDM Channel Descriptor (OCD), PRBS-TX, Transmitter, Channel Simulator, Receiver, PRBS-RX or one
 of the measurement-input blocks to open its section dialog. Close the dialog
 or press Escape to return. Use **Settings → Global → Light/Dark mode** to change the palette and icon
@@ -34,22 +73,35 @@ Use the [curated workbench examples](workbench-examples.md) for single or multip
 RxMER inputs on a matching OFDM grid. Native Open begins in that examples root;
 future installed desktop packages must ship the same portable WB bundles.
 
-The left icon/WB gutter has been removed so the diagram uses the available width.
-Menus and the branded header remain at the top. PRBS-RX opens a structured
+The left icon/WB gutter and large internal branding header are removed so the
+diagram uses the available space. Shared File, Settings, About and update actions
+remain above the tabs. PRBS-RX opens a structured
 [comparison summary with payload graphs](closed-loop-workbench.md#inspect-actual-results).
 
-The heading displays the full toolkit title and logo; the small MERLIN label
-above the title is removed. The secondary subtitle has
-been removed to keep the header compact.
+![Downstream workbench with its selected folder tab](../images/workbench/unified-downstream-dark.png)
 
-![Workbench header and system diagram](../images/workbench/workbench-header-dark.png)
+The Upstream tab shows **CMTS Receiver ← Channel Simulator ← CM Transmitter**
+with the same canvas framing as Downstream. Samples travel from the CM on the
+right to the CMTS on the left. The separate CMTS Configuration group connects
+directly to CMTS Receiver. Both diagrams share solid arrows, block sizing, row
+spacing, dotted grids and accented configuration groups. Upstream keeps scrolling
+in narrow windows. Its [configuration editors](upstream-workbench.md) load a native upstream
+JSON document and apply supported settings through Rust validation. The shared
+controls run upstream simulation; PRBS-RX shows its actual independent recovery
+and partial-report coverage. See [upstream execution](upstream-workbench.md#run-and-inspect-results)
+and the [QAM, spectrum, response and original RxMER instruments](upstream/instruments.md).
+Missing data is shown as unavailable. File Save and Save As use the active
+direction's project. Open detects the file's direction and guards that tab's
+unsaved changes; each direction retains its own destination. Settings and About
+remain available from either tab.
+
+![Upstream workbench with its selected folder tab](../images/workbench/unified-upstream-dark.png)
 
 The revised diagram groups **OCD** and **DPD** inside **Transmitter Configuration**
 at the left. Click either card to open its own editor. Their shared connector
 feeds Transmitter; their status stripes still reflect independent validation.
 PRBS-TX, RxMER and PRBS-RX align above Transmitter, Channel Simulator and Receiver.
-The MERLIN logo and accent divider complete the header. All cards retain the
-same keyboard, hover and light/dark behavior.
+All cards retain the same keyboard, hover and light/dark behavior.
 
 OCD/DPD merge at the center of their two cards; DS Channel Estimate branches
 equally into the centers of Channel Simulator and Receiver. The old supplied-H
@@ -111,7 +163,14 @@ The [Receiver Workbench](receiver-workbench.md) adds NCP/PLC/data-profile
 QAM selection and an independent SA test-point selector.
 DPD and measurement blocks support capture input. Configure Receiver and enable
 PRBS-RX independent comparison to complete next-run readiness. The lower-right
-Start, Stop and Pause/Resume controls now drive a bounded Rust closed-loop worker.
+Start, Stop and Pause/Resume controls drive the accepted public downstream Rust
+API through a bounded serial worker. Each run retains its accepted original
+inputs and actual backend observations. Pause and cancellation preserve that
+session; changing accepted inputs invalidates old views and prevents a late
+worker result from replacing them. Independent response and RxMER epoch
+association tolerances remain separate. Pause and Stop keep the execution slot
+until the worker has stopped. If Receiver Apply cannot admit a changed
+configuration, the accepted receiver choices and previous result remain available.
 Receiver instruments read real retained observations, including matched NCP
 constellations and bounded profile/bin/symbol selection.
 
@@ -238,7 +297,7 @@ contents, not the extension.
 Expand File information, Channel information and Profiles. Choose a profile from
 the dropdown or its tree row; inspect numbered **Range** entries and select rows
 for details. Input provenance is separately expandable. Values are read-only.
-**View Profile…** opens the PNM Viewer layout with profile overlays, dB/bit-loading
+**View Profile…** opens MERLIN’s profile viewer with profile overlays, dB/bit-loading
 selection, carrier filters/lanes, gross Profile BW, mouse zoom and **Full Span**.
 Profile toggles only change the viewed traces;
 it does not apply a profile or run the simulation. Filenames are hidden here;
@@ -255,6 +314,20 @@ See [supported profile files and limits](measurement-inputs/modulation-profile.m
 ## Workbench configuration files
 
 Use **File → Open**, **Save** or **Save As** for self-contained JSON workbenches.
+Save and Save As write the active direction's accepted project. Each direction
+keeps its own destination and unsaved state; normal Save does not combine both
+projects. New clears only the selected direction. A blank upstream project must
+be configured before it can be saved.
+
+Open detects the file's direction and asks about that target's unsaved changes,
+even when the other tab is selected. Save/Discard/Cancel preserves the unrelated
+project. A successful Open selects its direction; cancellation or failure keeps
+the current tab and accepted data. Closing asks about both dirty projects before
+shutting down. Save runs in the background; wait for an atomic write already in
+progress to finish before closing.
+
+![Native Save/Discard/Cancel prompt for the actual target project](../images/workbench/directional-file-dirty-dark.png)
+
 The main Open chooser filters to **MERLIN Workbenches (*.merlin.json)**,
 so example PNM files and metadata are hidden while folders stay navigable.
 Individual input-block pickers keep their own selection behavior.
@@ -262,6 +335,25 @@ Open shows a loading window with the current step and an animated activity bar w
 validating embedded captures. The application remains responsive. **Cancel**
 keeps the current workbench; an active preparation stage finishes in the
 background before the loader closes. Opening a file never starts a simulation.
+
+Source, profile and measurement Apply accepts the matching simulation inputs and
+saved section together. A retained-data limit error keeps the previous accepted
+configuration; the staged edit remains available for correction or cancellation.
+Open rejects a prepared input replacement if its target changed during loading.
+It also checks the prepared receiver and transmitter against the destination's
+retained-data limits before replacing the current project or Save destination.
+If that admission fails, the previous configuration and results remain available.
+The same protection applies to New: a failed blank-workbench admission preserves
+the current project, editor state and Save destination. Opening or modifying an
+input editor can also report a retained-data limit; its previous accepted input
+remains available. New keeps the current light/dark appearance choice.
+Original-input protection belongs to this application host. Save protects originals
+still owned by either direction; successful Open/New releases only the replaced
+direction's protection after self-contained project adoption succeeds.
+RxMER export preparation also keeps its previous ready snapshot when replacement
+admission or worker startup fails; cancelled replacement work restores it after
+the worker stops.
+Save continues to use the accepted original input bytes and hashes.
 
 The bar indicates activity, not a completion percentage. Timing is hidden during
 normal loading. Launch with **--debug-ui** to show **Time since Open**, which
@@ -291,11 +383,44 @@ unchanged. Read-only instruments use Close.
 See the [FEC Monitor](fec-monitor.md) for decoder outcomes, recovery and retained
 codeword records.
 
+Designer-generated capture batches now retain their admitted storage while waiting
+for completion polling and editor staging. Cancelling, changing a baseline or
+rejecting a replacement because of the shared resource limit preserves the existing
+editor captures. Successful generation still stages a draft; use the existing
+parent Apply action to accept it. Parsed generation/export recipes and selection
+snapshots also remain admitted until their worker completes; cancellation keeps
+those charges while the worker is still finishing. Queued failure details are
+also admitted. If those details cannot fit, MERLIN reports a fixed retained-data
+limit message and preserves the previous accepted editor or ready export.
+A completed export also retains its queued path/summary status. If those details
+cannot fit after a successful write, the message explicitly says **Export saved**;
+the output remains intact, and the unavailable path is not displayed. Cancelled
+and failed exports have distinct messages. Existing destinations remain protected
+from overwrite. This change does not alter the recipe, measured source data or
+export formats. Simulation and transmitter-preview
+workers also admit queued failure details. If details cannot fit, a fixed message
+is used; previous accepted results remain protected. The unified sessions preserve independent direction state under one active-run
+slot; retained-data and presentation limits remain separate.
+
+Receiver Apply help also retains admitted error details. If those details cannot
+fit, the existing fixed limit message appears without generated help; accepted
+receiver settings and results remain available.
+
+Updater restart recovery is separate from File → Save. It preserves both projects,
+their independent destinations and unsaved-change flags, the active tab and theme.
+Installation waits for the private bundle to finish writing. See the
+[Ubuntu update flow](install/ubuntu-desktop.md) and
+[Windows update flow](install/windows.md) for retry paths and platform limits.
+Unapplied drafts and simulation results are excluded.
+
+![Upstream run after restoring both projects](../images/workbench/workbench-dual-project-recovery-dark.png)
+
 ## Help and chart details
 
 Hover or focus a known workbench
 message for its suggested fix; click or press Enter/Space/F1 for the offline
-[FAQ](faq.md). About → FAQ opens the offline index. Duration suggestions
+[FAQ](faq.md). About → FAQ opens the offline index. Help lookup uses the
+bounded bundled catalog without keeping a permanent parsed copy. Duration suggestions
 use the current playback settings.
 Spectrum acquisition details appear below the axes and can be hidden with
 **Details**, independently of warnings and power readings.
@@ -333,7 +458,9 @@ unchanged and shows an error; opening never starts a simulation. Do not combine
 `--workbench` with automatic update recovery (`--restore-update`).
 
 Add `--debug-ui` for loading timing. Use `--help` for startup usage or
-`--check-workbench FILE` to validate without a desktop.
+`--check-workbench FILE` to validate a current downstream or upstream project
+without a desktop or simulation run. Legacy downstream files retain their
+existing complete-receiver check and diagnostics.
 
 The [receiver-mode guide](receiver-estimation/modes.md) compares all three
 Receiver Configuration choices and their channel/noise sources.

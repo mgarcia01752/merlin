@@ -145,8 +145,8 @@ behavior when implemented. This persistence extension is implemented by UI-RF-01
 
 ## Shared instrument organization proposal
 
-Use `apps/qt/qml/instruments/` for shared instrument windows/charts and
-`apps/qt/src/instruments/` for their Qt-facing Rust adapters. Group by instrument:
+Use `apps/qt/qml/downstream/instruments/` for shared instrument windows/charts and
+`apps/qt/src/downstream/instruments/` for their Qt-facing Rust adapters. Group by instrument:
 `spectrum`, `qam`, `response`, `slicer` and `fec`; keep each window in its own QML
 file. Workbench dialogs own tap selection/navigation and pass a typed source
 selection to the instrument, rather than copying windows or calculations for each

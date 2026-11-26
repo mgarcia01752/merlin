@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -8,6 +9,9 @@
 //! Explicit finite ReferenceVariance MaxLog; not measured noise or field RxMER.
 use super::{map_symbol, reference_energy};
 use crate::{error::invalid, types::Iq, PhyResult};
+
+/// Existing max-log confidence clipping policy, shared with actual soft-view metadata.
+pub(crate) const MAX_LOG_LLR_MAGNITUDE: f64 = 50.0;
 
 /// Computes ordered finite natural-log P(0)/P(1) metrics for one received cell.
 ///
@@ -44,7 +48,7 @@ pub fn max_log(bits: u8, value: Option<Iq>, variance: f64) -> PhyResult<Vec<f64>
             if !metric.is_finite() {
                 return Err(invalid("demapping.metric"));
             }
-            Ok(metric.clamp(-50.0, 50.0))
+            Ok(metric.clamp(-MAX_LOG_LLR_MAGNITUDE, MAX_LOG_LLR_MAGNITUDE))
         })
         .collect()
 }

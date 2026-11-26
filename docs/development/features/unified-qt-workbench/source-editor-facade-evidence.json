@@ -1,0 +1,481 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Source editor admission facade",
+  "status": "Level 1 consumer accepted; official parent Level 2 and milestone/final Level 3 remain pending",
+  "base_commit": "80c9fc47dd99447bd1a32106f4ab4f751673b704",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-08",
+    "REQ-UIU-20",
+    "REQ-UIU-22",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/src/bridge/source_input.rs",
+      "sha256": "ffff7c0db075556344ba19ccb40191389c25e902715575260a457486b68ff08b"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/source_input/model.rs",
+      "sha256": "81e7f6d2153f1b87fa920b15349e3ce7c3b654205a7972aaaf543efa02bc5ed1"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/session.rs",
+      "sha256": "4e6520606c7664ee9a52c16f5cdfbf39c193009e59a5db1d35d450723193f2f2"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop/request.rs",
+      "sha256": "e9ff658453c7b532421f3ab68a7998744a3cc20a73898d65b2b7c8fb84c9ca92"
+    },
+    {
+      "path": "apps/qt/src/downstream/common/constants.rs",
+      "sha256": "30279324a22e0f41a96504935bedf5d1ceff824d41d8d820d14f034165c96c42"
+    }
+  ],
+  "ownership": [
+    "Public SourceInput, PrbsSeed, FileFillPolicy and file_limits/file_info/with_fill own admission, finite counts and original buffer sharing. Qt owns unvalidated drafts/accepted references, established JSON/display/state and native chooser dispatch. No Qt generator, private source config serialization or scientific fill subtraction remains.",
+    "The legacy session source snapshot stores SourceInput; every other session byte is exact. The worker compares bounded public admitted-source metadata before/after ownership transfer, preserving old seed and source-mismatch checks without accessing private request fields. Direction session ownership/lifecycle remains UIU-SESSION-01.",
+    "Original export uses the same saved fields and exact original bytes/hash/name, excluding generated fill/padding. No project schema/default/embedded representation changes. REQ-UIU-22 scope here is legacy compatibility; direction-aware UI Save/Open remains UIU-FILE-01 acceptance."
+  ],
+  "preservation": {
+    "before": {
+      "files": 23,
+      "sites": 88
+    },
+    "after": {
+      "files": 21,
+      "sites": 85
+    },
+    "scientific_dependencies": 3,
+    "retired": [
+      {
+        "entry": {
+          "path": "apps/qt/src/bridge/source_input.rs",
+          "sha256": "08782a51209dbf4339932646c85bd7da4bda2102024ff24a20487a4abb175ecd",
+          "sites": [
+            {
+              "line": 98,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sunset_task": "UIU-DS-01"
+        },
+        "task": "UIU-DS-01",
+        "unit": "Source editor admission facade",
+        "reason": "Public SourceInput/PrbsSeed/FileFillPolicy own passive source admission, meaningful-bit metadata and shared-buffer fill replacement. The chooser uses authoritative public source limits; original source/export behavior remains compatible.",
+        "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-source-editor-admission-facade-accepted"
+      },
+      {
+        "entry": {
+          "path": "apps/qt/src/downstream/inputs/source_input/model.rs",
+          "sha256": "cd749e45a92804507a7d12c84b780c41a19deb767ca845c83fb5758f820a5aa4",
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 245,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sunset_task": "UIU-DS-01"
+        },
+        "task": "UIU-DS-01",
+        "unit": "Source editor admission facade",
+        "reason": "Public SourceInput/PrbsSeed/FileFillPolicy own passive source admission, meaningful-bit metadata and shared-buffer fill replacement. The chooser uses authoritative public source limits; original source/export behavior remains compatible.",
+        "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-source-editor-admission-facade-accepted"
+      }
+    ],
+    "focused_source_type_only_session_review": {
+      "entry": {
+        "path": "apps/qt/src/downstream/workbench/session.rs",
+        "sha256": "439f869b04539487f831fe53bddb1ec4568215e413d840ca060b4174c170750d",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 19,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 24,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 25,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 27,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 90,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 98,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 148,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 157,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/workbench/session.rs",
+        "sha256": "4e6520606c7664ee9a52c16f5cdfbf39c193009e59a5db1d35d450723193f2f2",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 18,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 23,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 24,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 26,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 89,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 97,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 147,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 156,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Only the legacy accepted source type/import becomes public SourceInput. Every other session byte, thread-local owner and operation is exact; no direction lifecycle or remaining scientific owner is migrated here. Its nine remaining private root-reference sites stay frozen.",
+      "all_bytes_except_source_type_import_exact": true,
+      "exact_at_base_commit": "80c9fc47dd99447bd1a32106f4ab4f751673b704",
+      "evidence": "docs/development/features/unified-qt-workbench/source-editor-facade-evidence.json"
+    },
+    "all_other_frozen_entries_dependencies_initial_and_prior_history_exact": true,
+    "official_checkbox_states_unchanged": true,
+    "original_source_assertions_preserved_via_public_accessors_and_limits": true,
+    "cxx_declarations_exact": {
+      "prefix_sha256": "4a58e7e378cea69791607c1c192ed885eb20bc99bbf75c6b21bb19ca5dc08791",
+      "byte_length": 2348,
+      "scope": "Whole source QObject bridge declarations/use preamble remain exact; only chooser implementation limit changes."
+    }
+  },
+  "testing": {
+    "level": 1,
+    "risk": "Qt source model/chooser/worker input typing plus export getter. Expand to affected Qt source/project and current Rust/native saved-file/fill compatibility, while backend/schema/CXX registration/lifecycle contracts remain unchanged.",
+    "executed": {
+      "qt-rust": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "--",
+          "--exact",
+          "downstream::inputs::source_input::model::tests::acceptance_rejection_cancel_and_modes_preserve_source_snapshot",
+          "downstream::inputs::source_input::model::tests::finite_fill_bounds_empty_equal_and_partial_byte_targets",
+          "downstream::inputs::source_input::model::tests::public_source_snapshot_shares_bytes_and_preserves_exact_saved_section",
+          "downstream::simulation::closed_loop::tests::accepted_originals_reject_mismatched_seed_metadata_and_capture_identity",
+          "downstream::simulation::closed_loop::tests::unnamed_file_source_retains_bytes_and_ignores_its_dormant_continuous_seed",
+          "downstream::workbench::project_file::tests::self_contained_project_roundtrip_preserves_originals_and_rejects_corruption",
+          "--nocapture"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 14.055683973999749,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "qml": {
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+          "Workbench::test_source_options_and_accepted_readiness"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.7059401899996374,
+        "behavior_cases": 1
+      },
+      "clippy": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 78.4928314509998,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "format": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.325689441999657,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "release": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "build",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--release",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 138.73437315699994,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "metadata": [
+        {
+          "label": "boundary",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/qt_api_boundary.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.2390188509998552
+        },
+        {
+          "label": "documents",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/feature_documentation.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 12.79547084900014
+        },
+        {
+          "label": "traceability",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/integration_traceability.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 10.193748695000068
+        },
+        {
+          "label": "python-guide",
+          "command": [
+            "python3",
+            "-B",
+            "tools/python/update_integration_doc.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.03318034300036743
+        },
+        {
+          "label": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.08045842599995012
+        }
+      ]
+    },
+    "expanded_persistence": {
+      "reused_native_artifact": {
+        "receipt": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-native/results.json",
+        "archive_native_sha256": "10cad90727628baa6b2cbd3d768736ef8546405afa709554044fb0e8d81414a5",
+        "reason": "No backend/binding/package source changed since accepted API prerequisite 80c9fc47. Only Qt consumer/export getter changes; tests execute now against the identical installed artifact."
+      },
+      "checks": [
+        {
+          "label": "rust-persistence",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "test",
+            "-p",
+            "pnm-input",
+            "--locked",
+            "--test",
+            "workbench_full_loop",
+            "--",
+            "--exact",
+            "unnamed_saved_file_preserves_original_label_bytes_fill_and_capture_name_validation",
+            "file_and_fill_keep_exact_bytes_and_dormant_fields_do_not_replace_selection"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin",
+          "exit_code": 0,
+          "elapsed_seconds": 18.085040496000147
+        },
+        {
+          "label": "native-preflight",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-c",
+            "import hashlib,sys\nfrom pathlib import Path\nimport merlin._native as native\npath=Path(native.__file__).resolve();assert path.is_relative_to(Path(sys.prefix).resolve());assert hashlib.sha256(path.read_bytes()).hexdigest()==sys.argv[1]\nprint('Exact previously accepted installed native artifact confirmed')\n",
+            "10cad90727628baa6b2cbd3d768736ef8546405afa709554044fb0e8d81414a5"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.15081977299996652
+        },
+        {
+          "label": "native-persistence",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-c",
+            "import sys,unittest\nsys.path.insert(0,sys.argv[1])\nimport test_workbench_full_loop as tests\nsuite=unittest.defaultTestLoader.loadTestsFromNames(['WorkbenchFullLoopTests.'+name for name in sys.argv[2:]],tests)\nresult=unittest.TextTestRunner(verbosity=2).run(suite);assert result.testsRun==2 and not result.skipped\nraise SystemExit(not result.wasSuccessful())\n",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "test_unnamed_saved_file_keeps_original_label_recovery_and_capture_names",
+            "test_saved_file_fill_and_timeline_settings_and_legacy_behavior"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-file-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.8470468929999697
+        }
+      ]
+    },
+    "actual_qt_rust_cases": [
+      "downstream::inputs::source_input::model::tests::acceptance_rejection_cancel_and_modes_preserve_source_snapshot",
+      "downstream::inputs::source_input::model::tests::public_source_snapshot_shares_bytes_and_preserves_exact_saved_section",
+      "downstream::inputs::source_input::model::tests::finite_fill_bounds_empty_equal_and_partial_byte_targets",
+      "downstream::simulation::closed_loop::tests::accepted_originals_reject_mismatched_seed_metadata_and_capture_identity",
+      "downstream::workbench::project_file::tests::self_contained_project_roundtrip_preserves_originals_and_rejects_corruption",
+      "downstream::simulation::closed_loop::tests::unnamed_file_source_retains_bytes_and_ignores_its_dormant_continuous_seed"
+    ],
+    "qt_rust_case_count": 6,
+    "root_rust_persistence_case_count": 2,
+    "reused_artifact_native_case_count": 2,
+    "qml_behavior_cases": 1,
+    "qml_harness_total": 3,
+    "compile_failure_history": {
+      "receipt": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-editor-rust.json",
+      "log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-source-editor-rust.log",
+      "exit_code": 101,
+      "cause": "The first adapter compile used an unavailable FullLoopRequest.inputs getter. The immutable public source descriptor is now captured before ownership transfer and compared after request admission. No private bypass, API extension or assertion change."
+    },
+    "not_required": [
+      {
+        "scope": "Fresh Python wheel, unrelated root/scientific/native or complete Qt suites",
+        "reason": "No backend/binding/API implementation changes since accepted 80c9fc47. The exact unchanged installed artifact is preflight-verified, then affected public persistence cases execute now; current Qt tests cover actual editor/worker/project behavior. Full relevant task suites remain Level 2."
+      },
+      {
+        "scope": "Native startup/chooser/installed-platform execution and unrelated CLI/package suites",
+        "reason": "CXX declarations/resources, picker dispatch, CLI interfaces, dependencies and packaging are unchanged. CLI does not consume this UI SourceModel export implementation; shared saved-project admission is tested in Rust/native. No new native startup/installed-platform pass is claimed."
+      },
+      {
+        "scope": "Unchanged validation-tool unit suites or full API export inventory refresh",
+        "reason": "Validators/backend exports/bindings/signatures are unchanged. Actual source/dependency and documentation traceability audits apply instead."
+      }
+    ],
+    "deferred": [
+      {
+        "gate": "Level 2 UIU-DS-01",
+        "scope": "Complete relevant feature/crate, Qt/QML, compatibility and traceability before checking the parent."
+      },
+      {
+        "gate": "UIU-FILE-01",
+        "scope": "Direction-aware UI Save/Open and dirty guards remain future acceptance; only legacy source persistence is validated here."
+      },
+      {
+        "gate": "Level 3 milestones/UIU-QA-01",
+        "scope": "Full applicable workspace/Qt/native/CLI/persistence/packaging regressions, zero scientific exceptions and final numeric audit."
+      }
+    ],
+    "boundary": {
+      "errors": [],
+      "scientific_dependencies": 3,
+      "frozen_legacy_files": 21,
+      "final": false
+    }
+  },
+  "numeric_review": "Independent initial continuous and file-fill seeds are named and documented as separate all-ones 15-bit editor defaults, never a mask/period/validator. Source-options message cap has a separate owner. Scientific source limits/counts/append differences come from the accepted public API. Independent source, fill, byte/hash and golden export test anchors remain explicit.",
+  "executable": {
+    "path": "apps/qt/target/release/merlin-qt",
+    "sha256": "581ef53d54a4ee747e52b63036414501a6cc414f8abb17ce2f94c7598121c33f",
+    "scope": "Current optimized Linux Qt build; no new native startup or installed-platform run claimed."
+  }
+}

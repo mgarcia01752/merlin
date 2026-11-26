@@ -1,8 +1,10 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Per-carrier post-equalization MER against an independent diagnostic reference.
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 /// Constant-space power sums for one physical FFT bin during source observation.
 /// The reference is diagnostic TX truth, never a decoder input or slicer decision.
@@ -65,5 +67,24 @@ impl CarrierMer {
     /// Linear error-power sum over samples; zero with samples denotes exact agreement.
     pub fn error_power(&self) -> f64 {
         self.error_power
+    }
+}
+
+impl RetainedPayload for CarrierMer {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            samples,
+            signal_power,
+            error_power,
+        } = self;
+        merlin_api::retention_support::sum([
+            samples.retained_children(),
+            signal_power.retained_children(),
+            error_power.retained_children(),
+        ])
     }
 }

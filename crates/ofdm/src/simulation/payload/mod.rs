@@ -14,4 +14,6 @@ pub use transmitter::{
 
 pub mod reference;
 
+#[cfg(feature = "pnm-input")]
+pub(crate) mod role_projection;
 pub mod shortened;

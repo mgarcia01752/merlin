@@ -20,7 +20,15 @@ sys.path.insert(0, str(ROOT / 'tools/python'))
 from smoke_wheel import inspect_wheel
 
 REFERENCES = (
+    ('PROJECT', 'pnm-input', 'run_project', ()),
+    ('SAVED_FULL_LOOP', 'pnm-input', 'run_saved_full_loop', ()),
     ('REFERENCE', 'docsis-ofdma', 'upstream_loop', ()),
+    ('RESOURCE_GRID', 'docsis-ofdma', 'upstream_resource_grid', ()),
+    ('RECOVERY', 'docsis-ofdma', 'upstream_recovery_views', ()),
+    ('CONFIGURED_RESPONSE', 'docsis-ofdma', 'upstream_configured_response', ()),
+    ('RECEIVER_ESTIMATES', 'docsis-ofdma', 'upstream_receiver_estimates', ()),
+    ('SOFT_OBSERVATIONS', 'docsis-ofdma', 'upstream_soft_observations', ()),
+    ('QAM_VIEWS', 'docsis-ofdma', 'upstream_qam_views', ()),
     ('MEASUREMENTS', 'docsis-ofdma', 'upstream_measurements', ()),
     ('DOCUMENT', 'docsis-ofdma', 'upstream_document', ()),
     ('SYNTHETIC', 'docsis-ofdma', 'upstream_document', ('synthetic',)),
@@ -28,6 +36,21 @@ REFERENCES = (
     ('RXMER', 'pnm-input', 'inspect_rxmer', ()),
     ('CAPTURES', 'pnm-input', 'upstream_captures', ()),
     ('CAPTURES25', 'pnm-input', 'upstream_captures', ('25',)),
+)
+
+# Focused optional and required control references are mandatory in complete acceptance.
+DOWNSTREAM_REFERENCES = (
+    ('MERLIN_SOURCE_FILE_INFO_REFERENCE', 'docsis-ofdm-fec', 'api_source_file_info'),
+    ('MERLIN_SPECTRUM_BUDGET_REFERENCE', 'docsis-ofdm-fec', 'api_spectrum_average_capacity'),
+    ('MERLIN_CALIBRATED_SEQUENCE_REFERENCE', 'docsis-ofdm-fec', 'api_calibrated_sequence'),
+    ('MERLIN_PROFILE_PERFORMANCE_REFERENCE', 'pnm-input', 'profile_performance'),
+    ('MERLIN_MEASURED_INPUT_VIEW_REFERENCE', 'pnm-input', 'measured_input_views'),
+    ('MERLIN_RETAINED_FOOTPRINT_REFERENCE', 'docsis-ofdma', 'upstream_retained_footprint'),
+    ('MERLIN_BOUNDED_SESSION_REFERENCE', 'pnm-input', 'bounded_session_outputs'),
+    ('MERLIN_INPUT_RETAINED_REFERENCE', 'pnm-input', 'input_retained_footprint'),
+    ('MERLIN_BOUNDED_ARCHIVE_REFERENCE', 'pnm-input', 'bounded_receiver_archive'),
+    ('MERLIN_DOWNSTREAM_RETAINED_REFERENCE', 'pnm-input', 'downstream_retained_footprint'),
+    ('MERLIN_CONTROL_FOOTPRINT_REFERENCE', 'ofdm-fec-cli', 'control_footprints'),
 )
 
 
@@ -143,6 +166,23 @@ def main():
                 report['commands'])
             json.loads(reference.read_text())
         environment['MERLIN_SYNTHETIC_RXMER_RUST_OUTPUT'] = str(generated)
+        for key, package, example in DOWNSTREAM_REFERENCES:
+            command = [*cargo, 'run', '-p', package, '--example', example, '--locked']
+            if package == 'docsis-ofdm-fec':
+                command += ['--features', 'high-level-api']
+            path = run(command, output, environment, example, report['commands'])
+            json.loads(path.read_text())
+            environment[key] = str(path)
+        transmitter = run([*cargo, 'run', '-p', 'docsis-ofdm-fec', '--example',
+                           'api_transmitter_preview', '--features', 'high-level-api', '--locked'],
+                          output, environment, 'transmitter', report['commands'])
+        json.loads(transmitter.read_text())
+        environment['MERLIN_TRANSMITTER_PARITY'] = str(transmitter)
+        full_loop = run([*cargo, 'run', '-p', 'docsis-ofdm-fec', '--example',
+                         'api_full_loop', '--features', 'high-level-api', '--locked'],
+                        output, environment, 'full-loop', report['commands'])
+        json.loads(full_loop.read_text())
+        environment['MERLIN_FULL_LOOP_PARITY'] = str(full_loop)
         policies = output / 'policies'
         run([*cargo, 'run', '-p', 'pnm-input', '--example', 'run_rxmer_selection_parity',
              '--locked', '--', str(policies)], output, environment, 'policies', report['commands'])
@@ -159,6 +199,16 @@ def main():
             output, environment, 'designer', report['commands'])
         environment.pop('MERLIN_DESIGNER_PARITY_OUT')
         environment['MERLIN_DESIGNER_PARITY'] = str(designer)
+        options = output / 'accepted-options.json'
+        environment['MERLIN_OPTIONS_RUST_REFERENCE_JSON'] = str(options)
+        run([*cargo, 'test', '-p', 'docsis-ofdma', '--test', 'api_options', '--locked'],
+            output, environment, 'accepted-options', report['commands'])
+        json.loads(options.read_text())
+        edited_project = output / 'edited-configuration-projects.json'
+        environment['MERLIN_PROJECT_EDITS_RUST_REFERENCE_JSON'] = str(edited_project)
+        run([*cargo, 'test', '-p', 'pnm-input', '--test', 'project_configuration_edits', '--locked'],
+            output, environment, 'edited-configuration-projects', report['commands'])
+        json.loads(edited_project.read_text())
         venv.EnvBuilder(with_pip=True).create(output / 'installed')
         executable = output / ('installed/Scripts/python.exe' if sys.platform == 'win32' else 'installed/bin/python')
         run([str(executable), '-I', '-B', '-m', 'pip', 'install', '--no-index', '--no-deps', str(wheel)],
@@ -173,9 +223,8 @@ def main():
              '--output', str(output / 'native-exports.json')], output, environment,
             'native-inventory', report['commands'], cwd=output)
         report['reference_environment'] = {key: value for key, value in environment.items()
-            if key.startswith('MERLIN_UPSTREAM_RUST_') or key in
-            ('MERLIN_API_PARITY', 'MERLIN_WB_PARITY', 'MERLIN_DESIGNER_PARITY',
-             'MERLIN_SYNTHETIC_RXMER_RUST_OUTPUT')}
+            if key.startswith('MERLIN_UPSTREAM_RUST_') or key in {row[0] for row in DOWNSTREAM_REFERENCES} or key in
+            ('MERLIN_API_PARITY', 'MERLIN_WB_PARITY', 'MERLIN_DESIGNER_PARITY', 'MERLIN_TRANSMITTER_PARITY', 'MERLIN_FULL_LOOP_PARITY', 'MERLIN_OPTIONS_RUST_REFERENCE_JSON', 'MERLIN_PROJECT_EDITS_RUST_REFERENCE_JSON', 'MERLIN_SYNTHETIC_RXMER_RUST_OUTPUT')}
         report['status'] = 'passed'
         print(f"Installed native API: {report['passed']} cases pass", flush=True)
     finally:

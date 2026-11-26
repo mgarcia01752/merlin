@@ -17,11 +17,17 @@ use std::{
     io::{Read, Write},
     path::Path,
 };
-mod common;
+pub mod common;
+pub mod project;
 pub mod rxmer_export;
 pub mod upstream;
 pub mod workbench;
-pub use workbench::Workbench;
+pub use docsis_ofdm_fec::signal_processing::rxmer_designer::{
+    CaptureScope, Notch, RandomVariation, Ripple, RippleSpacing, RxmerRecipe, Tilt, ValueEdit,
+};
+pub use workbench::{
+    RxMerDesign, RxMerDesignLimits, RxMerDesignPosition, Workbench, MAX_RXMER_RECIPE_BYTES,
+};
 
 /// Stateless native decoder dispatch; classification is based only on contents.
 pub struct CaptureLoader;
@@ -58,6 +64,18 @@ fn decode(input: &NamedCapture, kind: u8) -> ApiResult<(NamedCapture, Option<Dec
     ))
 }
 impl CaptureLoader {
+    /// Loads a complete read-only source profile catalog for scientific inspection.
+    /// # Arguments
+    /// * `input` - Exact bounded binary PNM or decoder JSON; filename never selects format.
+    /// # Returns
+    /// Immutable source catalog/header/schemes, retaining byte-sized source identities.
+    /// # Errors
+    /// Preserves existing native decoder/contract/profile/grid/resource failures.
+    pub fn profile_capture(input: &NamedCapture) -> ApiResult<ProfileCapture> {
+        let (decoded, contract) = decode(input, 10)?;
+        ProfileCapture::from_decoded(input, &decoded, contract)
+    }
+
     /// Discovers captured profile identities through native binary/JSON decoding.
     ///
     /// # Arguments

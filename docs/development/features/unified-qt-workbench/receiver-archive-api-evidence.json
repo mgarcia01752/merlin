@@ -1,0 +1,1088 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Detached bounded receiver archive prerequisite",
+  "base_commit": "4b26ec43f9a4af96f8b539010a01d8ba901fdfb5",
+  "status": "Level1 paired receiver-archive prerequisite accepted; Qt adoption, parent Level2 and downstream/final Level3 remain incomplete",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-07",
+    "REQ-UIU-09",
+    "REQ-UIU-16",
+    "REQ-UIU-17",
+    "REQ-UIU-18",
+    "REQ-UIU-19",
+    "REQ-UIU-20",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "design": "docs/development/features/unified-qt-workbench/design.md#uiu-ds-01-bounded-receiver-archive-prerequisite",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "bindings/python/python/merlin/__init__.py",
+      "sha256": "795f9cbcd04556041161af40b11b5dba45211404b61e48f73e32018f3e6c4ca3"
+    },
+    {
+      "path": "bindings/python/python/merlin/__init__.pyi",
+      "sha256": "beb54ca94e9a7fb0a59317eae22da90bb9aa6532595f97279e9ab020861d1d7b"
+    },
+    {
+      "path": "bindings/python/python/merlin/downstream.py",
+      "sha256": "65625bc8812c1dde0f02e6f987dc13e6038162592d21b869e92f33da15f85860"
+    },
+    {
+      "path": "bindings/python/python/merlin/downstream.pyi",
+      "sha256": "53546c95ad2dacae483d812755e041439b6b3706a538ac6bdc5556c6762d7153"
+    },
+    {
+      "path": "bindings/python/python/merlin/merlin.py",
+      "sha256": "2774f1ad8cb27b5269242c2da4525ad6eb065dc213b4d256c9b8c3cdd6288cc3"
+    },
+    {
+      "path": "bindings/python/python/merlin/merlin.pyi",
+      "sha256": "53546c95ad2dacae483d812755e041439b6b3706a538ac6bdc5556c6762d7153"
+    },
+    {
+      "path": "bindings/python/src/full_loop.rs",
+      "sha256": "1c7743bdfaf22dc84376534c8393851b45e4d824d28b10729f01ae223e32658d"
+    },
+    {
+      "path": "bindings/python/src/full_loop/receiver_archive.rs",
+      "sha256": "a984ea8d2d8a9a33f418145d6a54f462bf373cdaef585381a304d94b163dbcdf"
+    },
+    {
+      "path": "bindings/python/tests/test_receiver_archive.py",
+      "sha256": "88afd95743c89465c67c57b6e585b7512c5dd19874a67a6e8b6a433da4742a16"
+    },
+    {
+      "path": "crates/merlin/tests/namespaces.rs",
+      "sha256": "0f406083fe4066b4a1fbb3fd17203cecb28db61f1cd45901b496674fade6f745"
+    },
+    {
+      "path": "crates/ofdm/examples/api_full_loop.rs",
+      "sha256": "62866752460f0c2ce8892ecc6f2d2316001615f0dc8e5235f1996141f92ddc68"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop.rs",
+      "sha256": "72f1630284081cb78a00ec75b4a1616168d2e4c6fdc61e4ea6018eb72ed4b17f"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop/cells.rs",
+      "sha256": "0a6406c3edbb64d1cad4557196b39a0fa8fa8dcd2a804d82fcf5a325314cd02d"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop/cells/queries.rs",
+      "sha256": "09e2e6bfaaa33230ad963ff5811d504a313291893330015048ab4bac6c489db5"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop/cells/soft.rs",
+      "sha256": "04eb395e3abb04da41536a0010002d065228cf2caaae10d8502ab55fc41bc176"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs",
+      "sha256": "92c65668b1bd49919bcfb25c8a4c609af44f7127af216bafd4f848f45ab6aa05"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop/receiver_archive/mod.rs",
+      "sha256": "844f0dd5a62a643a4d0bfe84147ce8975301261cf7b0f1afbbc035522105db32"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop/receiver_archive/policy.rs",
+      "sha256": "b9d0dd34622576404f38aa8420d0f6baacf69b3b33eda3fd3cbf342e55b34480"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs",
+      "sha256": "e564fc73c0df273597a5c722f677543b99b7f2210b7924cffdd763f4c79ae794"
+    },
+    {
+      "path": "crates/ofdm/src/common/constants.rs",
+      "sha256": "7738581eb621b9910d3115154557f7b56a39eb626c242cedff0280c34d5adce0"
+    }
+  ],
+  "ownership": [
+    "The existing Qt independent-history consumer requires finite detached data; FullLoopResult clones retain complete job/input/stage owners. No speculative instrument API or new public engine path.",
+    "Public policy admission bounds independently reducible payload/NCP/protected/decoder counts and a separate byte ceiling; checked fixed/nested likelihood/context accounting precedes observation copies. Wider index arithmetic preserves exact original uniform positions.",
+    "Archive clones share only detached immutable observations. Protected copies use the existing empty validated constructor, avoiding hidden pilot-sequence state and full report/vector clones. First actual nonempty decoder context/offset/total remain distinct from physical-cell LLRs.",
+    "Live and archived QAM/MER/decisions/soft observations share existing private numerical helpers. Their unchanged 2048-cell/128-decision limits receive common purpose-specific names. Native wrappers perform immutable ownership, selector and JSON conversion only; legacy aliases/stubs mirror the same classes."
+  ],
+  "testing": {
+    "level": 1,
+    "risk_expansion": "New public Rust/native types/operations and factored live observation helpers expand to independent original-index/MER/role/soft/byte/lifetime cases, affected existing live API observations, legacy/facade type identity, exact installed native compatibility/parity and actual complete compiler/native inventories. No scientific algorithm/schema/lifecycle change.",
+    "executed": {
+      "rust_distinct_cases": 19,
+      "native_distinct_cases": 16,
+      "case_record": "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json",
+      "case_runs": [
+        {
+          "command": [
+            "docs/development/local/unified-qt-workbench/cargo.sh",
+            "test",
+            "--locked",
+            "-p",
+            "docsis-ofdm-fec",
+            "--features",
+            "high-level-api",
+            "--lib",
+            "api::full_loop::",
+            "--",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 18.140049129000545,
+          "label": "core",
+          "language": "rust",
+          "passed": 14,
+          "cases": [
+            {
+              "test_file": "crates/ofdm/src/api/full_loop/cells/queries.rs",
+              "qualified_test_case": "all_selected_mer_includes_errors_after_display_cap_and_keeps_reference_planes_separate"
+            },
+            {
+              "test_file": "crates/ofdm/src/api/full_loop/cells/queries.rs",
+              "qualified_test_case": "missing_references_empty_filters_and_output_ownership_remain_explicit"
+            },
+            {
+              "test_file": "crates/ofdm/src/api/full_loop/cells/queries.rs",
+              "qualified_test_case": "strict_query_admission_and_per_operation_windows_reject_without_changing_originals"
+            },
+            {
+              "test_file": "crates/ofdm/src/api/full_loop/messages.rs",
+              "qualified_test_case": "fixed_packet_fields_offsets_and_exact_transmission_end_are_independent_anchors"
+            },
+            {
+              "test_file": "crates/ofdm/src/api/full_loop/messages.rs",
+              "qualified_test_case": "gaps_truncation_and_invalid_bytes_stop_without_erasing_prior_packets"
+            },
+            {
+              "test_file": "crates/ofdm/src/api/full_loop/messages.rs",
+              "qualified_test_case": "repeated_valid_frames_obey_packet_and_frame_work_budgets"
+            },
+            {
+              "test_file": "crates/ofdm/src/api/full_loop/observations/store.rs",
+              "qualified_test_case": "stage_retention_preserves_missing_explicit_zero_and_original_offset_as_owned_data"
+            },
+            {
+              "test_file": "crates/ofdm/src/api/full_loop/receiver_archive/copy.rs",
+              "qualified_test_case": "byte_preflight_rejects_addition_and_product_overflow"
+            },
+            {
+              "test_file": "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs",
+              "qualified_test_case": "actual_archive_releases_job_stage_store_and_original_profile_bytes"
+            },
+            {
+              "test_file": "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs",
+              "qualified_test_case": "all_selected_mer_uses_errors_beyond_the_display_page"
+            },
+            {
+              "test_file": "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs",
+              "qualified_test_case": "decoder_prefix_preserves_original_context_offset_and_total"
+            },
+            {
+              "test_file": "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs",
+              "qualified_test_case": "empty_roles_zero_caps_policy_errors_and_byte_rejection_remain_explicit"
+            },
+            {
+              "test_file": "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs",
+              "qualified_test_case": "protected_and_ncp_roles_keep_separate_coordinates_amplitudes_and_soft_planes"
+            },
+            {
+              "test_file": "crates/ofdm/src/api/full_loop/receiver_archive/tests.rs",
+              "qualified_test_case": "uniform_reduction_keeps_original_coordinates_and_exact_default_caps"
+            }
+          ]
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "test",
+            "--locked",
+            "-p",
+            "docsis-ofdm-fec",
+            "--features",
+            "high-level-api",
+            "--test",
+            "api_full_loop_observations",
+            "--",
+            "receiver_cell_queries_preserve_actual_pairings",
+            "empty_and_invalid_cell_views",
+            "static_reference_and_actual_soft_views",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 50.62187590499889,
+          "label": "live-consumers",
+          "language": "rust",
+          "passed": 3,
+          "cases": [
+            {
+              "test_file": "crates/ofdm/tests/api_full_loop_observations.rs",
+              "qualified_test_case": "empty_and_invalid_cell_views_preserve_retained_availability_and_original_ownership"
+            },
+            {
+              "test_file": "crates/ofdm/tests/api_full_loop_observations.rs",
+              "qualified_test_case": "receiver_cell_queries_preserve_actual_pairings_all_selected_metrics_and_diagnostic_soft_values"
+            },
+            {
+              "test_file": "crates/ofdm/tests/api_full_loop_observations.rs",
+              "qualified_test_case": "static_reference_and_actual_soft_views_reuse_owned_science_without_advancing_inputs"
+            }
+          ]
+        },
+        {
+          "label": "facade",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "test",
+            "-p",
+            "merlin",
+            "--features",
+            "native-input",
+            "--locked",
+            "--test",
+            "namespaces",
+            "--",
+            "receiver_archive_policy_and_owner",
+            "downstream_exports_keep_exact_legacy_nominal_types",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 10.775444762002735,
+          "language": "rust",
+          "passed": 2,
+          "cases": [
+            {
+              "test_file": "crates/merlin/tests/namespaces.rs",
+              "qualified_test_case": "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior"
+            },
+            {
+              "test_file": "crates/merlin/tests/namespaces.rs",
+              "qualified_test_case": "receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity"
+            }
+          ]
+        },
+        {
+          "label": "receiver_archive",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_receiver_archive.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+          "exit_code": 0,
+          "elapsed_seconds": 3.3558486250003625,
+          "language": "python",
+          "passed": 4,
+          "cases": [
+            {
+              "test_file": "bindings/python/tests/test_receiver_archive.py",
+              "qualified_test_case": "ReceiverArchiveTests.test_actual_roles_reduction_and_lifetime_are_independent_of_live_results"
+            },
+            {
+              "test_file": "bindings/python/tests/test_receiver_archive.py",
+              "qualified_test_case": "ReceiverArchiveTests.test_fresh_direct_rust_process_archive_fields_and_scientific_views_match"
+            },
+            {
+              "test_file": "bindings/python/tests/test_receiver_archive.py",
+              "qualified_test_case": "ReceiverArchiveTests.test_omitted_decoder_zero_roles_byte_rejection_and_invalid_queries_stay_explicit"
+            },
+            {
+              "test_file": "bindings/python/tests/test_receiver_archive.py",
+              "qualified_test_case": "ReceiverArchiveTests.test_policy_domains_exports_and_dictionary_isolation"
+            }
+          ]
+        },
+        {
+          "label": "full_loop_cells",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_full_loop_cells.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+          "exit_code": 0,
+          "elapsed_seconds": 4.983145232999959,
+          "language": "python",
+          "passed": 4,
+          "cases": [
+            {
+              "test_file": "bindings/python/tests/test_full_loop_cells.py",
+              "qualified_test_case": "FullLoopCellTests.test_absent_filtered_invalid_and_bounded_views_never_create_history"
+            },
+            {
+              "test_file": "bindings/python/tests/test_full_loop_cells.py",
+              "qualified_test_case": "FullLoopCellTests.test_actual_pairings_all_selected_metrics_and_owned_query_parameters"
+            },
+            {
+              "test_file": "bindings/python/tests/test_full_loop_cells.py",
+              "qualified_test_case": "FullLoopCellTests.test_all_actual_roles_decisions_and_cell_soft_values_keep_reference_coordinates"
+            },
+            {
+              "test_file": "bindings/python/tests/test_full_loop_cells.py",
+              "qualified_test_case": "FullLoopCellTests.test_direct_rust_process_selected_cells_metrics_and_decisions_match"
+            }
+          ]
+        },
+        {
+          "label": "slicer_views",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_slicer_views.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+          "exit_code": 0,
+          "elapsed_seconds": 2.7968210710023413,
+          "language": "python",
+          "passed": 3,
+          "cases": [
+            {
+              "test_file": "bindings/python/tests/test_slicer_views.py",
+              "qualified_test_case": "SlicerViewTests.test_actual_cell_and_decoder_soft_sequences_keep_distinct_original_extents"
+            },
+            {
+              "test_file": "bindings/python/tests/test_slicer_views.py",
+              "qualified_test_case": "SlicerViewTests.test_direct_rust_process_reference_region_and_actual_soft_views_match"
+            },
+            {
+              "test_file": "bindings/python/tests/test_slicer_views.py",
+              "qualified_test_case": "SlicerViewTests.test_static_reference_labels_scaling_region_and_finite_limits"
+            }
+          ]
+        },
+        {
+          "label": "namespaces",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_namespaces.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+          "exit_code": 0,
+          "elapsed_seconds": 0.13670355999784078,
+          "language": "python",
+          "passed": 4,
+          "cases": [
+            {
+              "test_file": "bindings/python/tests/test_namespaces.py",
+              "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+            },
+            {
+              "test_file": "bindings/python/tests/test_namespaces.py",
+              "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+            },
+            {
+              "test_file": "bindings/python/tests/test_namespaces.py",
+              "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+            },
+            {
+              "test_file": "bindings/python/tests/test_namespaces.py",
+              "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+            }
+          ]
+        },
+        {
+          "label": "legacy-result",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-c",
+            "import sys,unittest\nsys.path.insert(0,sys.argv[1])\nfrom test_full_loop import FullLoopTests\nresult=unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite([FullLoopTests('test_complete_real_fec_original_ownership_and_immutable_requests')]))\nassert result.testsRun==1 and not result.skipped\nraise SystemExit(not result.wasSuccessful())",
+            "/home/dev01/Projects/merlin/bindings/python/tests"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+          "exit_code": 0,
+          "elapsed_seconds": 2.2942423570020765,
+          "language": "python",
+          "passed": 1,
+          "cases": [
+            {
+              "test_file": "bindings/python/tests/test_full_loop.py",
+              "qualified_test_case": "FullLoopTests.test_complete_real_fec_original_ownership_and_immutable_requests"
+            }
+          ]
+        }
+      ],
+      "final_contract_checks": [
+        {
+          "label": "consumers",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "test",
+            "--locked",
+            "-p",
+            "docsis-ofdm-fec",
+            "--features",
+            "high-level-api",
+            "--test",
+            "api_full_loop_observations",
+            "--",
+            "receiver_cell_queries_preserve_actual_pairings",
+            "empty_and_invalid_cell_views",
+            "static_reference_and_actual_soft_views",
+            "--test-threads=1"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 50.62187590499889
+        },
+        {
+          "label": "clippy",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "clippy",
+            "--locked",
+            "-p",
+            "docsis-ofdm-fec",
+            "-p",
+            "pnm-input",
+            "-p",
+            "merlin",
+            "--features",
+            "merlin/native-input",
+            "--all-targets",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 12.266875876997801
+        },
+        {
+          "label": "binding-clippy",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "clippy",
+            "--manifest-path",
+            "bindings/python/Cargo.toml",
+            "--all-targets",
+            "--locked",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 10.557848352000292
+        },
+        {
+          "label": "format",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.9605761589991744
+        },
+        {
+          "label": "binding-format",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "fmt",
+            "--manifest-path",
+            "bindings/python/Cargo.toml",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.10905888300112565
+        },
+        {
+          "label": "wheel",
+          "command": [
+            "/home/dev01/Projects/merlin/local/api-python-build/bin/python",
+            "-m",
+            "maturin",
+            "build",
+            "--manifest-path",
+            "bindings/python/Cargo.toml",
+            "--release",
+            "--locked",
+            "--compatibility",
+            "linux",
+            "--interpreter",
+            "/usr/bin/python3",
+            "--out",
+            "/home/dev01/Projects/merlin/local/python-wheels-ds-receiver-archive-final"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 39.523671223996644
+        },
+        {
+          "label": "rustdoc",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "doc",
+            "--workspace",
+            "--no-deps",
+            "--locked",
+            "--features",
+            "merlin/native-input"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 8.147858868000185
+        },
+        {
+          "label": "rust-inventory",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/rust_api_inventory.py",
+            "--output",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-final-rust-exports.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.772073566000472
+        },
+        {
+          "label": "reference",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "run",
+            "-p",
+            "docsis-ofdm-fec",
+            "--features",
+            "high-level-api",
+            "--locked",
+            "--example",
+            "api_full_loop"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 51.2187423510004
+        }
+      ],
+      "earlier_additional_scope_checks": [
+        {
+          "label": "cli",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "check",
+            "-p",
+            "ofdm-fec-cli",
+            "--locked"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 5.834849553997628
+        },
+        {
+          "label": "analysis",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "check",
+            "-p",
+            "docsis-ofdm-fec",
+            "--no-default-features",
+            "--locked"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.8857581859992933
+        },
+        {
+          "label": "facade-rustdoc",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "rustdoc",
+            "-p",
+            "merlin",
+            "--features",
+            "native-input",
+            "--locked",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 6.897598106999794
+        }
+      ],
+      "exact_native_artifact": {
+        "status": "passed",
+        "wheel": "/home/dev01/Projects/merlin/local/python-wheels-ds-receiver-archive-final/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+        "wheel_sha256": "0a6c40d0a9a0513e9e1ad735367fcacf15b63f6a9a27fc01c08db41e5585d52a",
+        "archive_native_sha256": "8ce69dfb7e8a3232d7c77b3a013361ec953855326090efcc37ec0f46767137b0",
+        "reference_sha256": "b2ad62464c2ce6e13b7ed41cc2aa04e9842695f71482c0fad118c462d1a85e2b",
+        "commands": [
+          {
+            "label": "install",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+              "-I",
+              "-B",
+              "-m",
+              "pip",
+              "install",
+              "--no-index",
+              "--no-deps",
+              "--force-reinstall",
+              "/home/dev01/Projects/merlin/local/python-wheels-ds-receiver-archive-final/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+            "exit_code": 0,
+            "elapsed_seconds": 0.590045854998607
+          },
+          {
+            "label": "artifact-preflight",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+              "-I",
+              "-B",
+              "-c",
+              "import hashlib,sys\nfrom pathlib import Path\nimport merlin,merlin.downstream as m,merlin._native as native\npath=Path(native.__file__).resolve();assert path.is_relative_to(Path(sys.prefix).resolve());assert hashlib.sha256(path.read_bytes()).hexdigest()==sys.argv[1]\nassert merlin.FullLoopReceiverArchive is m.FullLoopReceiverArchive\nassert merlin.FullLoopReceiverArchivePolicy is m.FullLoopReceiverArchivePolicy\nassert merlin.Simulation is m.Simulation\nprint(path)\n",
+              "8ce69dfb7e8a3232d7c77b3a013361ec953855326090efcc37ec0f46767137b0"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+            "exit_code": 0,
+            "elapsed_seconds": 0.03596813300100621
+          },
+          {
+            "label": "receiver_archive",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+              "-I",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "/home/dev01/Projects/merlin/bindings/python/tests",
+              "-p",
+              "test_receiver_archive.py",
+              "-v"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+            "exit_code": 0,
+            "elapsed_seconds": 3.3558486250003625
+          },
+          {
+            "label": "full_loop_cells",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+              "-I",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "/home/dev01/Projects/merlin/bindings/python/tests",
+              "-p",
+              "test_full_loop_cells.py",
+              "-v"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+            "exit_code": 0,
+            "elapsed_seconds": 4.983145232999959
+          },
+          {
+            "label": "slicer_views",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+              "-I",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "/home/dev01/Projects/merlin/bindings/python/tests",
+              "-p",
+              "test_slicer_views.py",
+              "-v"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+            "exit_code": 0,
+            "elapsed_seconds": 2.7968210710023413
+          },
+          {
+            "label": "namespaces",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+              "-I",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "/home/dev01/Projects/merlin/bindings/python/tests",
+              "-p",
+              "test_namespaces.py",
+              "-v"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+            "exit_code": 0,
+            "elapsed_seconds": 0.13670355999784078
+          },
+          {
+            "label": "legacy-result",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+              "-I",
+              "-B",
+              "-c",
+              "import sys,unittest\nsys.path.insert(0,sys.argv[1])\nfrom test_full_loop import FullLoopTests\nresult=unittest.TextTestRunner(verbosity=2).run(unittest.TestSuite([FullLoopTests('test_complete_real_fec_original_ownership_and_immutable_requests')]))\nassert result.testsRun==1 and not result.skipped\nraise SystemExit(not result.wasSuccessful())",
+              "/home/dev01/Projects/merlin/bindings/python/tests"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+            "exit_code": 0,
+            "elapsed_seconds": 2.2942423570020765
+          },
+          {
+            "label": "inventory",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+              "-I",
+              "-B",
+              "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+              "--output",
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final/native-exports.json"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final",
+            "exit_code": 0,
+            "elapsed_seconds": 0.17730302300333278
+          }
+        ]
+      },
+      "reference": {
+        "path": "docs/development/local/unified-qt-workbench/ds-01-receiver-archive-final-contract-reference.stdout",
+        "sha256": "b2ad62464c2ce6e13b7ed41cc2aa04e9842695f71482c0fad118c462d1a85e2b",
+        "scope": "Fresh independent actual full-loop producer matches every archived info/QAM/decision/cell-soft/decoder-soft field and existing live-query outputs."
+      },
+      "metadata": [
+        {
+          "label": "final-format",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.9914404670016665
+        },
+        {
+          "label": "strict-matrix",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/api_operation_matrix.py",
+            "--exports",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-final-rust-exports.json",
+            "--native-exports",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native-final/native-exports.json",
+            "--executed-record",
+            "docs/development/features/high-level-api/namespace-test-results.json",
+            "--executed-record",
+            "docs/development/features/pnm-measurement-inputs/decoder-test-results.json",
+            "--executed-record",
+            "docs/development/features/pnm-measurement-inputs/association-test-results.json",
+            "--executed-record",
+            "docs/development/features/high-level-api/operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/high-level-api/python-test-results.json",
+            "--executed-record",
+            "docs/development/features/high-level-api/python-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-estimate-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-soft-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 7.954502325999783
+        },
+        {
+          "label": "documents",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/feature_documentation.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 9.559334399000363
+        },
+        {
+          "label": "traceability",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/integration_traceability.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 7.263426227000309
+        },
+        {
+          "label": "versions",
+          "command": [
+            "python3",
+            "-B",
+            "tools/release/versions.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.04382310299843084
+        },
+        {
+          "label": "python-guide",
+          "command": [
+            "python3",
+            "-B",
+            "tools/python/update_integration_doc.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.03418056399823399
+        },
+        {
+          "label": "qt-boundary",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/qt_api_boundary.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.17703714100207435
+        },
+        {
+          "label": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.052206258002115646
+        }
+      ]
+    },
+    "failed_attempts": [
+      {
+        "label": "ds-01-receiver-archive-api-check",
+        "command": [
+          "docs/development/local/unified-qt-workbench/cargo.sh",
+          "check",
+          "--locked",
+          "-p",
+          "docsis-ofdm-fec",
+          "--features",
+          "high-level-api",
+          "--lib"
+        ],
+        "exit_code": 101,
+        "elapsed_seconds": 4.345061062998866
+      },
+      {
+        "label": "ds-01-receiver-archive-core-final",
+        "command": [
+          "docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "--locked",
+          "-p",
+          "docsis-ofdm-fec",
+          "--features",
+          "high-level-api",
+          "--lib",
+          "api::full_loop::",
+          "--",
+          "--test-threads=1"
+        ],
+        "exit_code": 101,
+        "elapsed_seconds": 5.183894412999507
+      },
+      {
+        "label": "ds-01-receiver-archive-clippy",
+        "command": [
+          "docs/development/local/unified-qt-workbench/cargo.sh",
+          "clippy",
+          "--locked",
+          "-p",
+          "docsis-ofdm-fec",
+          "-p",
+          "pnm-input",
+          "-p",
+          "merlin",
+          "--features",
+          "merlin/native-input",
+          "--all-targets",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 101,
+        "elapsed_seconds": 8.852297481000278
+      }
+    ],
+    "additional_failure_history": [
+      {
+        "scope": "Initial namespace run",
+        "result": "Three module cases passed but new aliases were absent from merlin.merlin. Corrected alias/stub, verified compatibility-only repack, then final named-query candidate reruns all16 native cases. Original failing wheel/logs remain local.",
+        "receipt": "docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/results.json"
+      },
+      {
+        "scope": "Premature local final-native reference preflight",
+        "result": "Started before the producer JSON completed; parsing rejected the incomplete file before installing/running tests. Recreated only the verified empty temporary output directory after the producer exited zero; final16-case receipt is complete."
+      }
+    ],
+    "corrections": "Initial default-feature check did not compile high-level API and is not API acceptance. Explicit high-level compilation corrected one diagnostic-owner path; a fixture-relative include path and redundant iterator bound were corrected. The final code passes every relevant scoped check; failed attempts are not passes.",
+    "not_required": [
+      {
+        "checks": "Fresh Qt/QML tests or optimized Qt build",
+        "reason": "No Qt/CXX/QML/registration source changes, archive not consumed yet. Existing Qt exe remains current for its unchanged UI; consumer acceptance is separate."
+      },
+      {
+        "checks": "Unrelated full workspace/upstream/FEC/analysis execution, complete native/CLI/package regressions",
+        "reason": "No numerical kernel, saved schema, cross-direction lifecycle or dependency changes. Actual scientific API and native consumers execute; CLI/analysis compile compatibility is checked. Full DS and final gates stay pending."
+      }
+    ],
+    "deferred": [
+      "Qt bounded history/QAM/soft consumer migration and matcher-invisible numerical removal",
+      "Three direct scientific dependency removals and zero-exception guard",
+      "UIU-DS-01 Level2 and downstream milestone Level3 before session/shell integration",
+      "Prepared agent integration, final Level3 and complete numeric/common-constant audit"
+    ]
+  },
+  "preservation": {
+    "previous_rust_rows": 591,
+    "current_rust_rows": 600,
+    "previous_native_rows": 560,
+    "current_native_rows": 570,
+    "prior_rows_and_all_historical_records_exact": true,
+    "prior_compiled_methods_and_native_members_preserved": true,
+    "new_native_classes": [
+      "FullLoopReceiverArchive",
+      "FullLoopReceiverArchivePolicy"
+    ],
+    "root_classes": 82,
+    "namespace_classes": {
+      "downstream": 81,
+      "upstream": 30,
+      "common": 3
+    },
+    "all_official_task_states_unchanged": true,
+    "final_16_native_cases_execute_against_current_exact_wheel": true,
+    "final_compiled_native_sha256": "8ce69dfb7e8a3232d7c77b3a013361ec953855326090efcc37ec0f46767137b0",
+    "compatibility_only_alias_repack_verified_before_final_named_query_constants": true
+  },
+  "unchanged_manifests_locks_and_boundary": [
+    "Cargo.toml",
+    "Cargo.lock",
+    "apps/qt/Cargo.toml",
+    "apps/qt/Cargo.lock",
+    "bindings/python/Cargo.toml",
+    "bindings/python/Cargo.lock",
+    "docs/development/ui-checklist.md",
+    "docs/development/features/unified-qt-workbench/legacy-qt-boundary.json"
+  ],
+  "boundary": {
+    "frozen_files": 3,
+    "sites": 12,
+    "scientific_dependencies": 3,
+    "changed": false
+  },
+  "numeric_review": "History payload8192, NCP1024, protected1024/role and decoder16200 limits preserve the current consumer policy; equal-valued NCP/protected policies stay separately named. Independent new8MiB archive and4096-byte policy transport ceilings are explicit application bounds. Live QAM/soft2048 and decisions128 bounds share named constants only where semantically identical. Original scientific vectors and independent literal expectations stay unchanged; the final whole-integration audit remains open.",
+  "qt_executable_unchanged": {
+    "path": "apps/qt/target/release/merlin-qt",
+    "sha256": "3058061fbe34d9df9c271b610c877e1ccf7281ace9a08d5adcfae0809e82b009"
+  },
+  "rust_acceptance_before_native_artifact_and_qt_adoption": true,
+  "no_push_merge_release_system_install_or_parent_acceptance": true
+}

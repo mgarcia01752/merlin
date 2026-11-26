@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Validated finite selection; no waveform or scientific computation is duplicated.
@@ -12,6 +13,7 @@ use crate::{
     types::{FrequencyHz, ProfileId},
     SimulationError,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 /// Default number of actual paired QAM observations, not full OFDM symbols.
 pub const DEFAULT_CONSTELLATION_PAIRS: usize = 8_192;
@@ -99,5 +101,28 @@ impl ConstellationSelection {
     pub(super) fn contains(&self, frequency: FrequencyHz) -> bool {
         self.start_hz.is_none_or(|start| frequency >= start)
             && self.stop_hz.is_none_or(|stop| frequency <= stop)
+    }
+}
+
+impl RetainedPayload for ConstellationSelection {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            requested_pairs,
+            profile_id,
+            start_hz,
+            stop_hz,
+            capture_ncp,
+        } = self;
+        merlin_api::retention_support::sum([
+            requested_pairs.retained_children(),
+            profile_id.retained_children(),
+            start_hz.retained_children(),
+            stop_hz.retained_children(),
+            capture_ncp.retained_children(),
+        ])
     }
 }

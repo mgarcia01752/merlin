@@ -1,0 +1,948 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "c87006fae0a2b78bf8859403f9f3d0e6ffde79d8",
+  "owner_task": "UIU-BOUND-01",
+  "policy": "Exact initial scientific dependency records and unchanged whole-file hashes only. No automatic refresh. Every legacy entry sunsets in UIU-DS-01; final acceptance requires zero.",
+  "dependencies": [
+    {
+      "package": "docsis-ofdm-fec",
+      "declared_package": "docsis-ofdm-fec",
+      "rename": null,
+      "kind": null,
+      "target": null,
+      "path": "crates/ofdm",
+      "source": null,
+      "requirement": "*",
+      "features": [
+        "pnm-input",
+        "simulation",
+        "source-input"
+      ],
+      "default_features": false,
+      "optional": false
+    },
+    {
+      "package": "pnm",
+      "declared_package": "pnm",
+      "rename": null,
+      "kind": null,
+      "target": null,
+      "path": null,
+      "source": "git+https://github.com/PyPNMApps/PNM-Viewer-Toolkit.git?rev=5fbd5561f3e06b73486546b5ffa520279080a5eb",
+      "requirement": "=0.3.6",
+      "features": [],
+      "default_features": true,
+      "optional": false
+    },
+    {
+      "package": "pnm-input",
+      "declared_package": "pnm-input",
+      "rename": null,
+      "kind": null,
+      "target": null,
+      "path": "crates/pnm-input",
+      "source": null,
+      "requirement": "*",
+      "features": [],
+      "default_features": true,
+      "optional": false
+    }
+  ],
+  "files": [
+    {
+      "path": "apps/qt/src/bridge/closed_loop.rs",
+      "sha256": "a25df73430ced76176462646ce6bdd593c8276c90aba022432ea271c09b66404",
+      "sites": [
+        {
+          "line": 143,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/bridge/measurement_input.rs",
+      "sha256": "b10fcfa45e011614dfa85563409e019e7327649d09e471ed2e91d3c5d87679c4",
+      "sites": [
+        {
+          "line": 9,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 262,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 297,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 298,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 386,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 396,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 396,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 400,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 677,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/bridge/ofdm_settings.rs",
+      "sha256": "1707490db07900bf2ee8f060f38059ff0ca6f97c41eab7c4f3d196a1b25f6b98",
+      "sites": [
+        {
+          "line": 8,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/bridge/receiver_instruments.rs",
+      "sha256": "9db740aa78778e5520a3536a1c87ca0204ce1676c78d3c3f95d792927e4efc9f",
+      "sites": [
+        {
+          "line": 9,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/bridge/rxmer_designer.rs",
+      "sha256": "da36549cb20f6e37a58b1756d80fba669ed167cf79eee01d43a972abbbcc79ac",
+      "sites": [
+        {
+          "line": 186,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 225,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/bridge/rxmer_export.rs",
+      "sha256": "c9e2a29f709c7d893018a095292cf41bec1b23365e6b8542aafea9e523837063",
+      "sites": [
+        {
+          "line": 10,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 11,
+          "root": "pnm_input"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/bridge/source_input.rs",
+      "sha256": "1a172eeab7ec64493c6039ddc56e12206bd94485be6e9f25f948cfb264141131",
+      "sites": [
+        {
+          "line": 97,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/bridge/workbench_file.rs",
+      "sha256": "dea500fb6e7ecc49a972d19c8f288ff6ee0a9250a9b07e2abf34669bdae67066",
+      "sites": [
+        {
+          "line": 147,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/help.rs",
+      "sha256": "acc63121799801502e19985ecfc63bc5721f98e0e9cc50f2125b564bb7404754",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 269,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 387,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/inputs/channel_model.rs",
+      "sha256": "fa5b96b80524ad12e9e3661de97ec9af027c2b3b00dc3a3ac1f5bedbaa2b452b",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 183,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 185,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 250,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 255,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 273,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 281,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 284,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/inputs/measurement_input/designer.rs",
+      "sha256": "0980d220a25db83613230ed06251aad9e92788f1a3863376bec69633e8cc756c",
+      "sites": [
+        {
+          "line": 8,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 494,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 494,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 562,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 585,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 618,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 637,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 638,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 675,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 799,
+          "root": "pnm_input"
+        },
+        {
+          "line": 801,
+          "root": "pnm_input"
+        },
+        {
+          "line": 810,
+          "root": "pnm_input"
+        },
+        {
+          "line": 812,
+          "root": "pnm_input"
+        },
+        {
+          "line": 816,
+          "root": "pnm_input"
+        },
+        {
+          "line": 818,
+          "root": "pnm_input"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/inputs/measurement_input/document.rs",
+      "sha256": "318a1513704161370baa9abc0806c1c16f7773e82692702a1d408822cd64aa80",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 13,
+          "root": "pnm"
+        },
+        {
+          "line": 13,
+          "root": "pnm"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/inputs/measurement_input/mod.rs",
+      "sha256": "e7b1730bb592aadad2db50aa7a06fd88d942b7d67209dcd18a1a3dc09fff9860",
+      "sites": [
+        {
+          "line": 14,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 15,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/inputs/measurement_input/model.rs",
+      "sha256": "709915ed9d776ae5ae567593ec53f7fb169589885534c73fe4078053765bd0dd",
+      "sites": [
+        {
+          "line": 7,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 265,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 555,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/inputs/measurement_input/plc.rs",
+      "sha256": "922f02813f8a4c66bbd5b98ef16faa4bd055cdf3f2f2fb776055ab4aed3fd1d7",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 67,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 68,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/inputs/measurement_input/preview.rs",
+      "sha256": "81f0f6032b4cb37c9905c92598fccd750ffd15c200a4a0dd672228b0dc0da74b",
+      "sites": [
+        {
+          "line": 10,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/inputs/profile_input/document.rs",
+      "sha256": "43e2795e53c04b92a530c18287471230a4e08b01f02165ad5bcba64c73d1b482",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 12,
+          "root": "pnm"
+        },
+        {
+          "line": 12,
+          "root": "pnm"
+        },
+        {
+          "line": 242,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/inputs/profile_input/mod.rs",
+      "sha256": "19588f871ff459c629816f41361ad744cb44b6472b322142ad0d8c12c7ba0bd1",
+      "sites": [
+        {
+          "line": 8,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 191,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 217,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/inputs/profile_input/plot.rs",
+      "sha256": "af9efc4bd433e241745629a0ac8158bbbe3d6b022cce7e86b9648e26a1c433ac",
+      "sites": [
+        {
+          "line": 7,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 136,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/inputs/source_input/model.rs",
+      "sha256": "8c037d3bd76ac2538ea11d1816fc2072fb056616556f8b307cc031f0714ef351",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 245,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/channel/mod.rs",
+      "sha256": "71d3db52d4506cc2559edaa7011aace00330646992518a43de5f9ea7da082c7d",
+      "sites": [
+        {
+          "line": 7,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 183,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 189,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/diagnostics.rs",
+      "sha256": "6987638a192508dd6e91f1477f5f47bb5e4f5affeb090d115eb044924babf629",
+      "sites": [
+        {
+          "line": 8,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 145,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/fec.rs",
+      "sha256": "dc339e82ae92667089f867599f86e0927d3742bdb426efa58a1178993bde8c89",
+      "sites": [
+        {
+          "line": 30,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 113,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/performance.rs",
+      "sha256": "fa2776c102efc2176db25313168df55a53163e75d4183ed9cae3977a32453ff6",
+      "sites": [
+        {
+          "line": 7,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 26,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/qam_history.rs",
+      "sha256": "2e35d3baca08efb43f102219bd9c7065a348b495ef3260fd69246a5b2887e9b1",
+      "sites": [
+        {
+          "line": 7,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 21,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 151,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/selection.rs",
+      "sha256": "cec25646b4e9d757d1c1756d845da6f575a27b9514f97039508a830a8c7da2d4",
+      "sites": [
+        {
+          "line": 7,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 18,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 20,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 128,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 130,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 265,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 280,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 329,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/soft_display.rs",
+      "sha256": "d4be913c06a242898401b6b7677b7205dad0965e744fa8cbaaa5d8d76ac253c9",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/verification.rs",
+      "sha256": "fceeed06ad8f860f887167c9ab01cb69c3dcaac388debba2155c7cc1e8525648",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/receiver/views.rs",
+      "sha256": "f016f76536b00224eb971a47a2e0bd7fa9de4f79a493a293138452cd698fa280",
+      "sites": [
+        {
+          "line": 7,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 35,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/spectrum/mod.rs",
+      "sha256": "47cea86ad53db7b81f6499e5d52394fc1aa5504aeabdcd9856183ca08510d5aa",
+      "sites": [
+        {
+          "line": 8,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/spectrum/plc.rs",
+      "sha256": "b76c2e17ef8f87486ebdfcd3a59a5b04b1a716861d05bebe0c670b3fcfbe610a",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 44,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/spectrum/symbol_timing.rs",
+      "sha256": "8d45c5f3e0c219525a2371e7ad9c87c8c4131eb7f565339da6284f241b4634f7",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 140,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/capture.rs",
+      "sha256": "7449f43b85007f65d1adfbec906f76329b8f2ddd1f67a295084e55c3891dd940",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/channel_input.rs",
+      "sha256": "0a76dcedfd703cc04ec0669bac83b47007fe06bd800e9cb09b8689758da80e73",
+      "sites": [
+        {
+          "line": 7,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/graphs/mod.rs",
+      "sha256": "04ff0b5b90685ce4b3beb8f53cbde16cfd00b0cc2e7a3a3dfe4477d65ab49b68",
+      "sites": [
+        {
+          "line": 25,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/graphs/physical.rs",
+      "sha256": "836a25a11a68186fe8bc1287b05b76c6d2ac01c08a5a85eb22c1c4c313e31fc0",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 98,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 99,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/messages.rs",
+      "sha256": "c2fb517f9afd5b3eead6963c54b7b54330eedce196c11e475fe0d7ddbccf0e81",
+      "sites": [
+        {
+          "line": 7,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/preview.rs",
+      "sha256": "32850ff76a746fe4b76d3873dc683ce3ee8d088ce86add4890bca2db91ce92f4",
+      "sites": [
+        {
+          "line": 7,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 228,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 281,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 312,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/qam_points.rs",
+      "sha256": "61349f7f52bd7815bf4ece1144a864354468130cae0ac428625804702bcd60cf",
+      "sites": [
+        {
+          "line": 7,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 131,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/tlv_fields.rs",
+      "sha256": "6929e413fb4d8fe6b60885e4beb19211a5148505d01df6fa6e5fc74d4b76f4e5",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/instruments/transmitter/views.rs",
+      "sha256": "707ef817678d59b33c95421d99699563a2f1a8af593274312f1cead12a229325",
+      "sites": [
+        {
+          "line": 7,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 189,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/simulation/closed_loop.rs",
+      "sha256": "e83a517f3969ff30caae9618411e4af9c1cde81c87fb97e5c56ab97d0b297914",
+      "sites": [
+        {
+          "line": 9,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 44,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 45,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 131,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 200,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 209,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 452,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 459,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 580,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 580,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 715,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 716,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 719,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 752,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 789,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 1018,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 1022,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 1136,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 1137,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/simulation/run_timing.rs",
+      "sha256": "3c7ba9f75e99546bff9213288c4e74f1eab06979961a31a72100cff5a629617c",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/workbench/project_file.rs",
+      "sha256": "985fdead4ff07756f5b4f06cc152a8cc36c8259871520ac596c85b0e69b2dc85",
+      "sites": [
+        {
+          "line": 17,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 330,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 336,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 463,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    },
+    {
+      "path": "apps/qt/src/workbench/session.rs",
+      "sha256": "439f869b04539487f831fe53bddb1ec4568215e413d840ca060b4174c170750d",
+      "sites": [
+        {
+          "line": 6,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 19,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 24,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 25,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 27,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 90,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 98,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 148,
+          "root": "docsis_ofdm_fec"
+        },
+        {
+          "line": 157,
+          "root": "docsis_ofdm_fec"
+        }
+      ],
+      "sunset_task": "UIU-DS-01"
+    }
+  ]
+}

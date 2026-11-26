@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "exit_code": 0,
+      "passed": 6,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_profile_capture.rs",
+          "qualified_test_case": "requests_reject_bad_identity_windows_pages_and_resources_without_mutation"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_profile_capture.rs",
+          "qualified_test_case": "role_capacity_and_bounded_scientific_extrema_have_independent_literals"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_profile_capture.rs",
+          "qualified_test_case": "complete_source_catalog_and_compact_schemes_preserve_codes_order_and_header"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_profile_capture.rs",
+          "qualified_test_case": "legacy_import_and_opt_in_metadata_have_equal_scientific_profiles_and_errors"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_profile_capture.rs",
+          "qualified_test_case": "source_catalog_ocd_compatibility_preserves_byte_ids_without_run_admission"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_profile_capture.rs",
+          "qualified_test_case": "accepted_dpd_summary_and_view_keep_existing_identity_and_bounded_originals"
+        }
+      ],
+      "receipt": "ds-01-source-compat-rust-accepted.log"
+    },
+    {
+      "exit_code": 0,
+      "passed": 5,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "source_admission_distinguishes_empty_file_eof_and_continuous_prbs15"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "source_admission_preserves_arbitrary_original_bytes_and_independent_fill"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "transmission_admission_uses_literal_sample_clock_accounting_without_running"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "transmission_json_admission_rejects_corruption_unknown_fields_and_limits"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "profile_editor_compatibility_is_separate_from_full_execution_readiness"
+        }
+      ],
+      "receipt": "ds-01-source-compat-admission.log"
+    },
+    {
+      "exit_code": 0,
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_empty_eof_and_continuous_seed_remain_distinct"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_exact_byte_file_source_fill_bounds_and_lifetime"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_transmission_literal_timing_and_owned_settings"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_transmission_rejection_and_original_profile_compatibility"
+        }
+      ],
+      "receipt": "ds-01-source-compat-native-final/admission.stderr"
+    },
+    {
+      "exit_code": 0,
+      "passed": 5,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_profile_capture.py",
+          "qualified_test_case": "ProfileCaptureTests.test_binary_json_inventory_schemes_science_and_original_hashes_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_profile_capture.py",
+          "qualified_test_case": "ProfileCaptureTests.test_complete_source_ids_and_literal_role_capacity_shannon_and_coordinates"
+        },
+        {
+          "test_file": "bindings/python/tests/test_profile_capture.py",
+          "qualified_test_case": "ProfileCaptureTests.test_existing_dpd_view_and_summary_share_the_same_scientific_owner"
+        },
+        {
+          "test_file": "bindings/python/tests/test_profile_capture.py",
+          "qualified_test_case": "ProfileCaptureTests.test_request_page_identity_and_output_bounds_reject_without_mutation"
+        },
+        {
+          "test_file": "bindings/python/tests/test_profile_capture.py",
+          "qualified_test_case": "ProfileCaptureTests.test_source_catalog_ocd_geometry_preserves_byte_ids_and_run_id_limits"
+        }
+      ],
+      "receipt": "ds-01-source-compat-native-final/profile-capture-style-accepted.stderr"
+    },
+    {
+      "exit_code": 0,
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ],
+      "receipt": "ds-01-source-compat-native-final/namespaces.stderr"
+    }
+  ]
+}

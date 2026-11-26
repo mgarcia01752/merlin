@@ -58,6 +58,7 @@ jobs:
           python -m unittest discover -s tools/git/tests -p 'test_*.py'
           python -m unittest discover -s tools/packaging -p 'test_*.py'
           python -m unittest discover -s tools/validation -p 'test_*.py'
+          python tools/validation/qt_api_boundary.py
           python -m unittest discover -s tools/development/tests -p 'test_*.py'
           bash -n scripts/check-before-push.sh
           shellcheck scripts/*.sh tools/git/*.sh tools/bump-version.sh

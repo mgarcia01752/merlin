@@ -1,0 +1,238 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "scope": "Thirteen focused Rust and thirteen exact-archive installed native cases: passive capacity, actual retained prefix, original PSD anchors and namespace/legacy contracts.",
+  "runs": [
+    {
+      "label": "admission",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--locked",
+        "--features",
+        "high-level-api",
+        "--test",
+        "api_admission"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.2457741679972969,
+      "language": "rust",
+      "passed": 9,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "source_admission_preserves_arbitrary_original_bytes_and_independent_fill"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "source_admission_distinguishes_empty_file_eof_and_continuous_prbs15"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "minimum_observation_rounds_complete_periods_and_reports_over_policy_thresholds"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "transmission_admission_uses_literal_sample_clock_accounting_without_running"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "unnamed_file_preserves_exact_bytes_empty_label_bounds_and_named_validation"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "original_engine_code_is_optional_typed_and_preserves_error_ownership"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "transmission_json_admission_rejects_corruption_unknown_fields_and_limits"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "spectrum_average_capacity_uses_independent_fft_boundaries_without_running"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "profile_editor_compatibility_is_separate_from_full_execution_readiness"
+        }
+      ]
+    },
+    {
+      "label": "owner",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--locked",
+        "--features",
+        "high-level-api",
+        "--test",
+        "waveform_spectrum"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.8698998430045322,
+      "language": "rust",
+      "passed": 2,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/waveform_spectrum.rs",
+          "qualified_test_case": "silence_and_nonfinite_inputs_remain_explicit"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_spectrum.rs",
+          "qualified_test_case": "hann_psd_has_independent_tone_frequency_integral_and_bandwidth_at_both_spacings"
+        }
+      ]
+    },
+    {
+      "label": "facade",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "merlin",
+        "--locked",
+        "--test",
+        "namespaces",
+        "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+        "--",
+        "--exact"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.261374931011233,
+      "language": "rust",
+      "passed": 1,
+      "cases": [
+        {
+          "test_file": "crates/merlin/tests/namespaces.rs",
+          "qualified_test_case": "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior"
+        }
+      ]
+    },
+    {
+      "label": "retained-prefix",
+      "command": [
+        "docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--locked",
+        "--features",
+        "high-level-api",
+        "--test",
+        "api_full_loop_observations",
+        "sample_budget_capacity_preserves_the_actual_long_cp_legacy_spectrum_prefix"
+      ],
+      "exit_code": 0,
+      "language": "rust",
+      "passed": 1,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_full_loop_observations.rs",
+          "qualified_test_case": "sample_budget_capacity_preserves_the_actual_long_cp_legacy_spectrum_prefix"
+        }
+      ]
+    },
+    {
+      "label": "admission",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_admission.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.11775094699987676,
+      "language": "python",
+      "passed": 9,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_empty_eof_and_continuous_seed_remain_distinct"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_engine_code_is_structured_optional_and_preserves_existing_error_fields"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_exact_byte_file_source_fill_bounds_and_lifetime"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_minimum_observation_has_exact_period_rounding_and_wide_thresholds"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_spectrum_average_capacity_is_bounded_idle_and_immutable"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_spectrum_average_capacity_matches_the_direct_rust_process"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_transmission_literal_timing_and_owned_settings"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_transmission_rejection_and_original_profile_compatibility"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_unnamed_file_preserves_original_bytes_fill_and_named_rejection"
+        }
+      ]
+    },
+    {
+      "label": "namespaces",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_namespaces.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-spectrum-budget-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.15815420899889432,
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ]
+    }
+  ]
+}

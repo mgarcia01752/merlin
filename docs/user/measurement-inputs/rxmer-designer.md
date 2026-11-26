@@ -8,6 +8,10 @@ an association anchor; it is not a measured acquisition time.
 ![RxMER Designer with seeded random variation and PLC shading](../../images/workbench/rxmer-designer-dark.png)
 
 The preview shows the Designer's starting-variation and frequency-effect controls.
+The controls obtain recipe limits from the public Rust backend. If that report is
+unavailable, Apply, Save, value-edit addition and effect stepping are disabled.
+Rust validates all typed values before generating or staging captures. Reopening
+and changing a recipe always derives from its original baseline.
 
 ## Starting values and random variation
 
@@ -192,3 +196,11 @@ capture and explicitly run each one. They use the encoded values directly;
 they neither reapply the recipe nor start simulation while loading. Native
 binary loading does not automatically read the sidecar, so keep it alongside
 the binary to preserve the synthetic-origin declaration and design settings.
+
+The Basic Rust API exposes `RxMerDesign::limits() -> RxMerDesignLimits` through
+`merlin::downstream::inputs`; the Basic Python API mirrors it as
+`merlin.downstream.RxMerDesign.limits() -> dict`. This passive report names the
+existing MER, collection/value/edit, variation, tilt/ripple/notch and echo-distance
+bounds, with units in the field names. It starts no design or simulation and
+changes no validation rule. Returned native dictionaries are independent copies.
+The Designer collection-value ceiling is separate from playback and UI budgets.

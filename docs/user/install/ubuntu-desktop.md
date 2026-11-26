@@ -63,13 +63,25 @@ to start downloading and verifying it. Ubuntu asks for administrator approval;
 after installation MERLIN restarts automatically as your normal desktop user.
 You do not need to download a DEB manually or click Update a second time.
 
-Accepted workbench settings and embedded inputs are saved in a private recovery
-WB before updating and restored after restart. Unapplied editor changes and
-simulation results are not restored. The recovery file is
+Accepted downstream and upstream projects are saved together in a private
+recovery bundle before installation starts. Restart restores both projects,
+their independent Save destinations and unsaved-change flags, the selected tab
+and theme. Blank upstream and incomplete downstream editor state are supported.
+Unapplied drafts and simulation results are not restored. Recovery is separate
+from normal File → Save, which still saves only the active direction.
+
+The private bundle is
 `$XDG_STATE_HOME/merlin/update-recovery/workbench.merlin.json`, normally under
-`~/.local/state/`. It remains available to open manually if restart fails.
-Save may ask for a destination after restart. Updating is disabled during a simulation. Source builds show update information
-but cannot install system packages.
+`~/.local/state/`. Keep it if restart fails; restart MERLIN with `--restore-update`
+to retry recovery. It is not a normal project file for File → Open. A rejected
+bundle leaves the current projects unchanged and shows the failure. Earlier
+single-downstream recovery files remain supported; their unavailable Save path
+is left unset and their downstream project remains marked unsaved.
+
+Updating waits for successful recovery writing and is disabled during a
+simulation or pending file operation. Source builds show update information
+but cannot install system packages. Native source-build restart testing does
+not establish the installed APT/authentication lifecycle.
 
 **About → About MERLIN → Check For Updates** or `merlin --check-updates` opens the separate
 status/preferences dialog. It offers **Check For Updates**, **Update** and

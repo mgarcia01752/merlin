@@ -7,17 +7,27 @@ mod capture;
 mod configuration;
 mod document;
 mod measurements;
+mod receiver_observations;
 mod reports;
+mod response;
 mod simulation;
 mod synthetic_rxmer;
 use pyo3::prelude::*;
+pub(crate) use simulation::PySimulation;
 
 mod api {
+    pub use merlin::upstream::inputs::{
+        MeasuredExperiment, PreEqCapture, RxmerCapture, UcdCapture,
+    };
     pub use merlin::upstream::*;
-    pub use pnm_input::upstream::{MeasuredExperiment, PreEqCapture, RxmerCapture, UcdCapture};
 }
 
-fn error(value: impl Into<api::ApiError>) -> PyErr {
+/// Preserves original upstream structured causes in the shared native exception.
+/// # Arguments
+/// * `value` - Owned error convertible to the existing public upstream failure.
+/// # Returns
+/// Exception retaining category, original engine code, legacy code and available field/offset.
+pub(crate) fn error(value: impl Into<api::ApiError>) -> PyErr {
     let value = value.into();
     Python::attach(|py| {
         let exception = crate::ApiError::new_err(value.to_string());
@@ -25,6 +35,7 @@ fn error(value: impl Into<api::ApiError>) -> PyErr {
         let _ = instance.setattr("code", crate::PyErrorCode::from(value.category()));
         let _ = instance.setattr("message", value.to_string());
         let _ = instance.setattr("legacy_code", value.code());
+        let _ = instance.setattr("engine_code", value.code());
         let field = match &value {
             api::ApiError::Domain(
                 api::PhyError::InvalidInput { field }
@@ -66,6 +77,8 @@ pub(crate) fn register(parent: &Bound<'_, PyModule>) -> PyResult<()> {
     synthetic_rxmer::register(&module)?;
     simulation::register(&module)?;
     reports::register(&module)?;
+    module.add_class::<receiver_observations::PyReceiverObservationPolicy>()?;
+    module.add_class::<receiver_observations::PySoftObservationPolicy>()?;
     measurements::register(&module)?;
     parent.add("_upstream", module)?;
     Ok(())

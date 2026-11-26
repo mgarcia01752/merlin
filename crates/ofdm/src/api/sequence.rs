@@ -1,0 +1,342 @@
+/*
+ * Copyright 2026 MERLIN contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+//! Immutable measured-sequence admission over existing residual-power planning.
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
+mod queries;
+use super::{
+    ApiError, ApiResult, AssociationTolerance, CaptureProvenance, ChannelEstimate, Dpd, ErrorCode,
+    MeasurementView, MeasurementViewport, ObservationDuration, RxMer, TransmissionConfiguration,
+    Weight,
+};
+use crate::{
+    scenario::{measurement_view::measurement_view, FrequencyGrid},
+    signal_processing::noise::residual_power_mer,
+    simulation::channel::measurement_playback::{
+        validate_response, MeasurementPlayback, MAX_PLAYBACK_FRAMES, MAX_PLAYBACK_VALUES,
+    },
+};
+use serde::Serialize;
+use std::{collections::BTreeSet, sync::Arc};
+
+pub use crate::simulation::channel::measurement_playback::PlaybackMode as MeasurementMode;
+
+/// Maximum original captures, shared with the existing playback owner.
+pub const MAX_SEQUENCE_CAPTURES: usize = MAX_PLAYBACK_FRAMES;
+
+/// Maximum original residual values admitted before frame cloning.
+pub const MAX_SEQUENCE_VALUES: usize = MAX_PLAYBACK_VALUES;
+
+/// Existing desktop aggregate original-byte ceiling.
+pub const MAX_SEQUENCE_ORIGINAL_BYTES: usize = 96 * 1024 * 1024;
+
+/// Explicit synthetic playback clock; original capture epochs remain unchanged.
+#[derive(Clone, Copy, Serialize)]
+pub struct MeasurementSequenceOptions {
+    /// Single, equal-capture-weight power average, hold or power interpolation.
+    pub mode: MeasurementMode,
+    /// Physical OFDM-symbol interval; temporal modes require a positive value.
+    pub interval_symbols: u64,
+    /// Maximum original epoch distance from the accepted profile.
+    pub tolerance: AssociationTolerance,
+}
+
+/// One actual contributor to an immutable residual snapshot.
+#[derive(Serialize)]
+pub struct MeasurementContribution {
+    /// Original zero-based position in this sequence's admitted order.
+    pub index: usize,
+    /// Dimensionless linear-power weight, never a dB weight.
+    pub weight: Weight,
+    /// Exact original source identity, epoch and byte/hash ownership.
+    pub provenance: CaptureProvenance,
+}
+
+/// One equivalent residual query; no fabricated combined capture epoch.
+#[derive(Serialize)]
+pub struct MeasurementResidual {
+    /// Requested zero-based synthetic observation symbol.
+    pub symbol: u64,
+    /// Per-original-carrier normalized residual powers, with explicit missing values.
+    pub normalized_power: Vec<Option<f64>>,
+    /// Every actual contributor and its linear-power weight.
+    pub contributors: Vec<MeasurementContribution>,
+}
+
+/// Bounded equivalent RxMER view, distinct from a captured RxMER observation.
+#[derive(Serialize)]
+pub struct MeasurementSequencePreview {
+    /// Existing bounded min/max view with explicit dB units and missing samples.
+    pub view: MeasurementView,
+    /// Unchanged original carrier grid.
+    pub grid: FrequencyGrid,
+    /// Requested synthetic symbol, independent of original epochs.
+    pub symbol: u64,
+    /// Original contributors without a fabricated average timestamp.
+    pub contributors: Vec<MeasurementContribution>,
+}
+
+/// Accepted clock metadata; durations use the existing integer sample cadence.
+#[derive(Serialize)]
+pub struct MeasurementSequenceInfo {
+    pub mode: MeasurementMode,
+    pub source_count: usize,
+    pub interval_symbols: u64,
+    pub interval_milliseconds: f64,
+    pub last_transition_symbol: u64,
+    pub last_transition_milliseconds: f64,
+}
+
+/// Frozen reusable measurements; no live source, RNG, simulation job or UI state.
+#[derive(Clone)]
+pub struct MeasurementSequence {
+    captures: Arc<Vec<RxMer>>,
+    plan: MeasurementPlayback,
+    transmission: TransmissionConfiguration,
+    options: MeasurementSequenceOptions,
+}
+
+impl MeasurementSequence {
+    pub(crate) fn full_loop_playback(
+        &self,
+        transmission: &TransmissionConfiguration,
+        profile: &Dpd,
+    ) -> ApiResult<crate::simulation::channel::measurement_playback::PlaybackConfiguration> {
+        if self.transmission.settings() != transmission.settings() {
+            return Err(ApiError::new(
+                ErrorCode::IncompatibleGrid,
+                "Measurement sequence timing differs from the full-loop request",
+            ));
+        }
+        let playback = crate::simulation::channel::measurement_playback::PlaybackConfiguration {
+            profile: profile.profile.clone(),
+            frames: self
+                .captures
+                .iter()
+                .map(|capture| capture.frame.clone())
+                .collect(),
+            mode: self.options.mode,
+            interval_symbols: self.options.interval_symbols,
+            tolerance_seconds: self.options.tolerance.value(),
+        };
+        playback.prepare(transmission.settings())?;
+        Ok(playback)
+    }
+
+    /// Admits exact ordered originals through the existing physical measurement planner.
+    ///
+    /// # Arguments
+    /// * `profile` - Accepted device/channel/grid and required carrier roles.
+    /// * `transmission` - Immutable admitted numerology.
+    /// * `captures` - Unique original identities in explicit caller-selected order.
+    /// * `options` - Mode, synthetic interval and original association tolerance.
+    ///
+    /// # Returns
+    /// Immutable sequence; originals stay unchanged and no simulation starts.
+    ///
+    /// # Errors
+    /// Rejects duplicate hashes, aggregate limits and existing grid/epoch/coverage/mode errors.
+    pub fn new(
+        profile: &Dpd,
+        transmission: &TransmissionConfiguration,
+        captures: Vec<RxMer>,
+        options: MeasurementSequenceOptions,
+    ) -> ApiResult<Self> {
+        Self::admit_profile(&profile.profile, transmission, captures, options)
+    }
+
+    /// Admits measurements against original source roles without admitting a run profile.
+    /// # Arguments
+    /// * `capture`, `profile_id` - Immutable catalog and original byte-sized identity.
+    /// * `transmission` - Accepted physical numerology.
+    /// * `captures` - Unique originals in explicit caller order, subject to existing bounds.
+    /// * `options` - Synthetic mode/clock and original epoch tolerance.
+    /// # Returns
+    /// Immutable sequence with unchanged original measurements; no simulation starts.
+    /// Successful admission does not widen the checked simulation ProfileId domain.
+    /// # Errors
+    /// InvalidIdentifier for a missing source; existing resource, duplicate, grid,
+    /// epoch, coverage and playback-mode errors otherwise.
+    pub fn from_capture(
+        capture: &super::ProfileCapture,
+        profile_id: u8,
+        transmission: &TransmissionConfiguration,
+        captures: Vec<RxMer>,
+        options: MeasurementSequenceOptions,
+    ) -> ApiResult<Self> {
+        Self::admit_profile(capture.frame(profile_id)?, transmission, captures, options)
+    }
+
+    fn admit_profile(
+        profile: &super::SourceProfileFrame,
+        transmission: &TransmissionConfiguration,
+        captures: Vec<RxMer>,
+        options: MeasurementSequenceOptions,
+    ) -> ApiResult<Self> {
+        if captures.is_empty() || captures.len() > MAX_PLAYBACK_FRAMES {
+            return Err(ApiError::new(
+                ErrorCode::ResourceLimit,
+                "Measurement capture count exceeds bounds",
+            ));
+        }
+        let values = captures
+            .iter()
+            .map(|v| v.frame.mer_db.len())
+            .try_fold(0usize, usize::checked_add);
+        let bytes = captures
+            .iter()
+            .map(|v| v.provenance.original_bytes().len())
+            .try_fold(0usize, usize::checked_add);
+        if values.is_none_or(|n| n > MAX_PLAYBACK_VALUES)
+            || bytes.is_none_or(|n| n > MAX_SEQUENCE_ORIGINAL_BYTES)
+        {
+            return Err(ApiError::new(
+                ErrorCode::ResourceLimit,
+                "Measurement sequence exceeds original/value/capture bounds",
+            ));
+        }
+        let identities = captures
+            .iter()
+            .map(|v| v.provenance.original_sha256())
+            .collect::<BTreeSet<_>>();
+        if identities.len() != captures.len() {
+            return Err(ApiError::new(
+                ErrorCode::InvalidInput,
+                "Duplicate original measurement identity",
+            ));
+        }
+        transmission.check_profile_grid(&profile.key.grid)?;
+        let plan = MeasurementPlayback::new(
+            transmission.settings(),
+            profile,
+            captures.iter().map(|v| v.frame.clone()).collect(),
+            options.mode,
+            options.interval_symbols,
+            options.tolerance.value(),
+        )?;
+        Ok(Self {
+            captures: Arc::new(captures),
+            plan,
+            transmission: transmission.clone(),
+            options,
+        })
+    }
+
+    /// Borrows an exact original without rewriting epochs or advancing playback.
+    /// # Arguments
+    /// * `index` - Zero-based position in the admitted order.
+    /// # Returns
+    /// Immutable capture tied to this sequence's lifetime.
+    /// # Errors
+    /// InvalidIdentifier for a position outside the retained collection.
+    pub fn capture(&self, index: usize) -> ApiResult<&RxMer> {
+        self.captures.get(index).ok_or_else(|| {
+            ApiError::new(
+                ErrorCode::InvalidIdentifier,
+                "Measurement position is outside the sequence",
+            )
+        })
+    }
+}
+
+impl TransmissionConfiguration {
+    /// Validates explicit unity or original H with profile/grid/epoch/coverage checks.
+    /// # Arguments
+    /// * `profile` - Accepted spatial identity and physical carrier roles.
+    /// * `response` - Original H, or None for explicit synthetic unity.
+    /// * `tolerance` - Maximum original epoch distance from the profile.
+    /// # Returns
+    /// Unit on compatibility without starting a job or inferring equalizer gain.
+    /// # Errors
+    /// Preserves physical admission and returns AssociationFailed for epoch mismatch.
+    pub fn check_response(
+        &self,
+        profile: &Dpd,
+        response: Option<&ChannelEstimate>,
+        tolerance: AssociationTolerance,
+    ) -> ApiResult<()> {
+        self.check_response_profile(&profile.profile, response, tolerance)
+    }
+
+    /// Validates a response against original source roles without admitting a run ID.
+    /// # Arguments
+    /// * `capture`, `profile_id` - Immutable catalog and original byte-sized identity.
+    /// * `response` - Original H, or None for explicit synthetic unity.
+    /// * `tolerance` - Maximum original epoch distance from the source profile.
+    /// # Returns
+    /// Unit on the same physical admission as check_response, without sample generation.
+    /// # Errors
+    /// InvalidIdentifier for an absent source; existing physical/epoch errors otherwise.
+    pub fn check_response_capture(
+        &self,
+        capture: &super::ProfileCapture,
+        profile_id: u8,
+        response: Option<&ChannelEstimate>,
+        tolerance: AssociationTolerance,
+    ) -> ApiResult<()> {
+        self.check_response_profile(capture.frame(profile_id)?, response, tolerance)
+    }
+
+    pub(crate) fn check_response_profile(
+        &self,
+        profile: &crate::profile::candidate::CapturedProfile,
+        response: Option<&ChannelEstimate>,
+        tolerance: AssociationTolerance,
+    ) -> ApiResult<()> {
+        self.check_profile_grid(&profile.key.grid)?;
+        if response.is_some_and(|v| {
+            v.frame.capture_time.abs_diff(profile.capture_time) > tolerance.value()
+        }) {
+            return Err(ApiError::new(
+                ErrorCode::AssociationFailed,
+                "Channel response exceeds profile epoch tolerance",
+            ));
+        }
+        Ok(validate_response(
+            self.settings(),
+            profile,
+            response.map(|v| &v.frame),
+        )?)
+    }
+}
+
+impl RetainedPayload for MeasurementSequenceOptions {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            mode,
+            interval_symbols,
+            tolerance,
+        } = self;
+        merlin_api::retention_support::sum([
+            mode.retained_children(),
+            interval_symbols.retained_children(),
+            tolerance.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for MeasurementSequence {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            captures,
+            plan,
+            transmission,
+            options,
+        } = self;
+        merlin_api::retention_support::sum([
+            captures.retained_children(),
+            plan.retained_children(),
+            transmission.retained_children(),
+            options.retained_children(),
+        ])
+    }
+}

@@ -4,7 +4,9 @@
  */
 //! Thin bindings over the same Rust PNM encoder used by Designer.
 use crate::{api, error, inputs::PyRxMer, object_from_json};
-use pnm_input::rxmer_export::{self, ExportDestination, ExportError, ExportFormat, RangePolicy};
+use merlin::downstream::inputs::rxmer_export::{
+    self, ExportDestination, ExportError, ExportFormat, RangePolicy,
+};
 use pyo3::{prelude::*, types::PyBytes};
 use std::{
     path::PathBuf,

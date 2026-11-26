@@ -1,0 +1,1213 @@
+{
+  "task": "UIU-US-04",
+  "status": "accepted",
+  "validation_level": 2,
+  "accepted_base": "b339873f8a1e7e3057cd38d0be4c6dc922816b39",
+  "requirements": [
+    "REQ-UIU-14"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-upstream-scientific-presentation",
+  "design": "design.md#uiu-us-04-native-configured-resource-grid-integration",
+  "raw_evidence": "docs/development/local/unified-qt-workbench/us-04/",
+  "source_sha256": {
+    "apps/qt/build.rs": "c7429f04fc3fd73a8d5974b576eb409f83ec77746e1f9387dd6538cca010dc74",
+    "apps/qt/qml/Main.qml": "07f3530f2a741426dbc0e4bedec1bd74b7374d67cbe4c8b6d6a09cc458a2c6c2",
+    "apps/qt/qml/shell/directions/DirectionShellHost.qml": "3e1dc71374574c46a134a0cffc55a734d725b8519e54129065cb23b6753b0501",
+    "apps/qt/qml/upstream/ResourceGridDialog.qml": "81b71ab8a77198dc305c5e1572e7037482f30583a3af61d2bdd9fa73f5bb9574",
+    "apps/qt/qml/upstream/ResourceGridView.qml": "d87822581ed5bf0fe602ce2063ce8c005a3e9c51bb9c21956d921f32053ca045",
+    "apps/qt/qml/upstream/TransmitterDialog.qml": "b31a895b9c8b9b24fa53c5fb972dcd58482e1dfe84e5e24a70c565948047d638",
+    "apps/qt/qml/upstream/UpstreamWorkbench.qml": "afcfbbe9a0153e573cca5dddf26447b8b60550e332d535151469041015301c27",
+    "apps/qt/qml/validation/UpstreamResourceGridProbe.qml": "1abcb1023d054f2a1bc8c953b77a12894fb47f13bca77e0e3ac0b724c00a859d",
+    "apps/qt/src/bridge/upstream_session.rs": "d8f80f59c2118b27e10ae2a4cfb116200d9e463eac6c7b00f7ca07e83e9fc7fc",
+    "apps/qt/src/upstream/workbench/grid.rs": "368cff27bca58580e558a7fbb6bb22f6cd6cf65208071f7b1dc6b0d24e2514a9",
+    "apps/qt/src/upstream/workbench/grid/presentation.rs": "926ff12321dc97f2f388bc136a825f9b70ecb83f4e6be909720a88e5e0a5383e",
+    "apps/qt/src/upstream/workbench/grid/tests.rs": "d058dff281a2f5881c662996082c8b33d15f61e7322030221791f16bde09cc28",
+    "apps/qt/src/upstream/workbench/grid_view.rs": "f70cb62853637a3e67ca18bd22b541941979edbcfc24bbc0b568f1386b122678",
+    "apps/qt/src/upstream/workbench/grid_view/tests.rs": "8cb5bbac1584cdc2aee3892e11ab268f02b54292667cad8f779d37d52d09ca3b",
+    "apps/qt/src/upstream/workbench/mod.rs": "f6d6b001eecd4dd9504399908237be900416361247e80d8c9f302fc928a13219",
+    "apps/qt/src/upstream/workbench/preparation.rs": "69108dd8eb1b181fdf2849b926fcc2983b53e216286a1fa8068ed84377d29c7c",
+    "apps/qt/src/upstream/workbench/preparation/grid.rs": "f8e854863780aed519721f8ade462a5f4e52e9aa1bf9130c8c38f9cba12af241",
+    "apps/qt/src/upstream/workbench/presentation.rs": "1a6320e75e15d08d21e517b5424193eb940d7b720afe855de18f46d023344df2",
+    "apps/qt/tests/upstream/fixtures/README.md": "0f10f702a27073f294effa2c6c9ffa34fca82c3987726650671f2584b2c2ccbe",
+    "apps/qt/tests/upstream/fixtures/ResourceGridFixture.js": "e527493ed9bcfe45bbe85c407e22928db32f9ed946ad7563f4aa01c90e3f344c",
+    "apps/qt/tests/upstream/tst_resource_grid.qml": "ad4987180827f6bf9a9650bd0b2d1d1352fdea117fe3f0acc079e52c3e13e361",
+    "apps/qt/tests/upstream/tst_upstream_host_drafts.qml": "737371c9ae2dc13f8c10fcc79863e24d22d64b37cb93f6ea2043fc79e2a60db6"
+  },
+  "ownership": {
+    "science": "Existing public Simulation::resource_grid; no scientific or public API change.",
+    "query": "Existing admitted controller-slot worker; configuration/source/report/run ownership unchanged.",
+    "transport": "Original cells, nulls, roles and metadata, eight explicit wide identity/timing fields represented as decimal strings.",
+    "presentation": "One Canvas, original frame-symbol X and physical-carrier Y, finite host/instrument owners; polling preserves unchanged admitted envelopes.",
+    "grant_scope": "One configured base grant, truthfully selected; no fabricated later batch grant.",
+    "viewport_policy": {
+      "qt_maximum_cells": 4096,
+      "public_maximum_cells_unchanged": 16384,
+      "rationale": "Native larger viewport exceeded simultaneous old/new host/instrument logical entry admission; smaller independent Qt policy preserves existing aggregate limits."
+    }
+  },
+  "validation": {
+    "qt_rust": {
+      "records": [
+        {
+          "label": "qt-rust-consumers",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "--",
+            "--test-threads=2"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 362.44542669800285
+        }
+      ],
+      "passed": 493,
+      "failed": 0,
+      "ignored": 0,
+      "reuse_scope": "Full493 precedes only a test assertion refinement required by Clippy: compare the actual returned viewport budget with the public ceiling rather than assert a compile-time constant. All84 affected upstream cases execute again afterward; production/Qt artifact unchanged."
+    },
+    "focused": [
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.848071553002228
+      },
+      {
+        "label": "upstream-rust",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "--",
+          "upstream::workbench::",
+          "--test-threads=2"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 19.084348514996236
+      }
+    ],
+    "qml": [
+      {
+        "label": "upstream/tst_resource_grid.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_resource_grid.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.85227704999852,
+        "pass_records": 24
+      },
+      {
+        "label": "upstream/tst_upstream_host_drafts.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_host_drafts.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.38128455000696704,
+        "pass_records": 14
+      },
+      {
+        "label": "upstream/tst_upstream_workbench.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_workbench.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 21.803157715010457,
+        "pass_records": 13
+      },
+      {
+        "label": "upstream/tst_upstream_drafts.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_drafts.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 76.66646188699815,
+        "pass_records": 49
+      },
+      {
+        "label": "upstream/tst_upstream_captures.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_captures.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.3723782540037064,
+        "pass_records": 20
+      },
+      {
+        "label": "tst_presentation_owner.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_presentation_owner.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.11945674500020687,
+        "pass_records": 11
+      },
+      {
+        "label": "tst_presentation_footprint.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_presentation_footprint.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.2286117710027611,
+        "pass_records": 45
+      },
+      {
+        "label": "shell/tst_direction_tabs.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/shell/tst_direction_tabs.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.0571840469929157,
+        "pass_records": 12
+      },
+      {
+        "label": "tst_measurement_presentation.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_measurement_presentation.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.183616294991225,
+        "pass_records": 6
+      },
+      {
+        "label": "tst_rxmer_designer.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_rxmer_designer.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 4.885515841000597,
+        "pass_records": 20
+      },
+      {
+        "label": "tst_workbench.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 13.287807037995663,
+        "pass_records": 55
+      },
+      {
+        "label": "tst_buttons.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_buttons.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.16987885799608193,
+        "pass_records": 5
+      },
+      {
+        "label": "tst_control_palette.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_control_palette.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.0881922819971805,
+        "pass_records": 4
+      },
+      {
+        "label": "tst_tooltips.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_tooltips.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 4.982988657997339,
+        "pass_records": 4
+      },
+      {
+        "label": "tst_response_view.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_response_view.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.4196134689991595,
+        "pass_records": 3
+      },
+      {
+        "label": "tst_soft_diagnostics.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_soft_diagnostics.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.7220292160054669,
+        "pass_records": 3
+      },
+      {
+        "label": "tst_updates.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_updates.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.47096984200470615,
+        "pass_records": 7
+      },
+      {
+        "label": "shell/tst_shell_host.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/shell/tst_shell_host.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.11741867099772207,
+        "pass_records": 10
+      }
+    ],
+    "checks": [
+      {
+        "label": "clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.551149209000869
+      },
+      {
+        "label": "format-check",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.624090684010298
+      },
+      {
+        "label": "boundary",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.4073851819994161
+      }
+    ],
+    "optimized_build": [
+      {
+        "label": "build",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/qt-desktop.sh",
+          "build"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 108.41974469900015
+      }
+    ],
+    "native_grid": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--upstream-grid-probe",
+        "--upstream-grid-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-04/native-viewport-budget/resource-grid-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 31.25927168900671,
+      "executable_sha256": "c2bc166a0126a66c078ac8c89956429aa86f01ac2cd7f250a992eb344951e243",
+      "source_sha256": {
+        "grid-50": "499d7d8109e1ef91efc3615994374cee19779e365d7b004abc838eabd30652e0",
+        "grid-25": "782df1978cb08f140af70a6d2aa878b46877ba43baef530633f0e4f332bc2ac4"
+      },
+      "source_fixture": "Existing synthetic 50/25 kHz configuration documents; passive configured allocation, not observed waveform.",
+      "picker_actions": [
+        {
+          "action": "grid-50",
+          "owned_window": 14680071,
+          "picker_pid": 576601,
+          "seconds": 2.788842010006192
+        },
+        {
+          "action": "grid-25",
+          "owned_window": 14680071,
+          "picker_pid": 576663,
+          "seconds": 14.977520202010055
+        }
+      ],
+      "full_window_capture": {
+        "window": 12582919,
+        "pid": 576581,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-04/native-viewport-budget/upstream-resource-grid-main-dark.png",
+        "sha256": "31585527ab3c41b96610b7e2e4721724065d53d55c334818f113a3bbd5c2db69",
+        "size": [
+          1210,
+          736
+        ],
+        "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+      },
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-04/native-viewport-budget/resource-grid-dark.png",
+      "image_sha256": "e07153218c0412a8224032065a160b817c34320531d35822991449ffe51a9614"
+    },
+    "native_reference_comparison": {
+      "executable_sha256": "c2bc166a0126a66c078ac8c89956429aa86f01ac2cd7f250a992eb344951e243",
+      "installed_reference_interpreter": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/native/installed/bin/python",
+      "views_compared": 12,
+      "all_original_cells_and_metadata_match": true,
+      "observations": [
+        {
+          "tag": "grid-50",
+          "action": "initial",
+          "request": null,
+          "context": null,
+          "painted_cells": 2048,
+          "visual_items": 71,
+          "canvas_count": 1,
+          "metadata": "Generation 1 \u00b7 Grant 1 \u00b7 Epoch sample 0 \u00b7 First frame 0 \u00b7 Grant frames 2\nProfile 5 \u00b7 IUC 5 \u00b7 Relative frame 0 \u00b7 Absolute frame 0 \u00b7 Frame prefix sample 0\nFFT samples 2048 \u00b7 Sample rate Hz 102400000 \u00b7 Spacing Hz 50000 \u00b7 Prefix samples 192 \u00b7 Roll-off samples 64 \u00b7 Stride samples 2240\nWindow first symbol 0 / count 1 \u00b7 First physical carrier 0 / count 2048\nFull-frame coded bits 1410 \u00b7 Full-grant coded bits 2820 \u00b7 Full-frame visits 384 \u00b7 Transmission planned true\nReference plane configured_cm_transmit_resources",
+          "query_ms": null,
+          "render_ms": null,
+          "heartbeat_ticks": null,
+          "maximum_query_heartbeat_gap_ms": null,
+          "snapshot_sha256": "1b9aa43d8914b0572e63b14830498f500dac592e861b20fba32f97548d8e4f9a",
+          "role_counts": {
+            "complementary": 0,
+            "data": 55,
+            "excluded": 1648,
+            "known_pilot": 9,
+            "unallocated": 336,
+            "zero_loaded": 0
+          }
+        },
+        {
+          "tag": "grid-50",
+          "action": "resourceZoomIn",
+          "request": {
+            "frame_index": 0,
+            "first_symbol": 0,
+            "symbol_count": 1,
+            "first_carrier": 512,
+            "carrier_count": 1024,
+            "max_cells": 4096
+          },
+          "context": {
+            "session_token": "upstream/2/1",
+            "configuration_generation": "1"
+          },
+          "painted_cells": 1024,
+          "visual_items": 71,
+          "canvas_count": 1,
+          "metadata": "Generation 1 \u00b7 Grant 1 \u00b7 Epoch sample 0 \u00b7 First frame 0 \u00b7 Grant frames 2\nProfile 5 \u00b7 IUC 5 \u00b7 Relative frame 0 \u00b7 Absolute frame 0 \u00b7 Frame prefix sample 0\nFFT samples 2048 \u00b7 Sample rate Hz 102400000 \u00b7 Spacing Hz 50000 \u00b7 Prefix samples 192 \u00b7 Roll-off samples 64 \u00b7 Stride samples 2240\nWindow first symbol 0 / count 1 \u00b7 First physical carrier 512 / count 1024\nFull-frame coded bits 1410 \u00b7 Full-grant coded bits 2820 \u00b7 Full-frame visits 384 \u00b7 Transmission planned true\nReference plane configured_cm_transmit_resources",
+          "query_ms": 130,
+          "render_ms": 215,
+          "heartbeat_ticks": 2,
+          "maximum_query_heartbeat_gap_ms": 516,
+          "snapshot_sha256": "4e53d396913947ec329c3e0d13d590ac15bf8f84b19a2850cae1c903a27709a2",
+          "role_counts": {
+            "complementary": 0,
+            "data": 0,
+            "excluded": 1008,
+            "known_pilot": 0,
+            "unallocated": 16,
+            "zero_loaded": 0
+          }
+        },
+        {
+          "tag": "grid-50",
+          "action": "resourceZoomOut",
+          "request": {
+            "frame_index": 0,
+            "first_symbol": 0,
+            "symbol_count": 2,
+            "first_carrier": 0,
+            "carrier_count": 2048,
+            "max_cells": 4096
+          },
+          "context": {
+            "session_token": "upstream/2/1",
+            "configuration_generation": "1"
+          },
+          "painted_cells": 4096,
+          "visual_items": 71,
+          "canvas_count": 1,
+          "metadata": "Generation 1 \u00b7 Grant 1 \u00b7 Epoch sample 0 \u00b7 First frame 0 \u00b7 Grant frames 2\nProfile 5 \u00b7 IUC 5 \u00b7 Relative frame 0 \u00b7 Absolute frame 0 \u00b7 Frame prefix sample 0\nFFT samples 2048 \u00b7 Sample rate Hz 102400000 \u00b7 Spacing Hz 50000 \u00b7 Prefix samples 192 \u00b7 Roll-off samples 64 \u00b7 Stride samples 2240\nWindow first symbol 0 / count 2 \u00b7 First physical carrier 0 / count 2048\nFull-frame coded bits 1410 \u00b7 Full-grant coded bits 2820 \u00b7 Full-frame visits 384 \u00b7 Transmission planned true\nReference plane configured_cm_transmit_resources",
+          "query_ms": 310,
+          "render_ms": 634,
+          "heartbeat_ticks": 2,
+          "maximum_query_heartbeat_gap_ms": 531,
+          "snapshot_sha256": "9768548972faba4a394ebb8e7a53fef0864a0c5e41283647c83a572a399d8aa6",
+          "role_counts": {
+            "complementary": 0,
+            "data": 119,
+            "excluded": 3296,
+            "known_pilot": 9,
+            "unallocated": 672,
+            "zero_loaded": 0
+          }
+        },
+        {
+          "tag": "grid-50",
+          "action": "resourcePanRight",
+          "request": {
+            "frame_index": 0,
+            "first_symbol": 2,
+            "symbol_count": 2,
+            "first_carrier": 0,
+            "carrier_count": 2048,
+            "max_cells": 4096
+          },
+          "context": {
+            "session_token": "upstream/2/1",
+            "configuration_generation": "1"
+          },
+          "painted_cells": 4096,
+          "visual_items": 71,
+          "canvas_count": 1,
+          "metadata": "Generation 1 \u00b7 Grant 1 \u00b7 Epoch sample 0 \u00b7 First frame 0 \u00b7 Grant frames 2\nProfile 5 \u00b7 IUC 5 \u00b7 Relative frame 0 \u00b7 Absolute frame 0 \u00b7 Frame prefix sample 0\nFFT samples 2048 \u00b7 Sample rate Hz 102400000 \u00b7 Spacing Hz 50000 \u00b7 Prefix samples 192 \u00b7 Roll-off samples 64 \u00b7 Stride samples 2240\nWindow first symbol 2 / count 2 \u00b7 First physical carrier 0 / count 2048\nFull-frame coded bits 1410 \u00b7 Full-grant coded bits 2820 \u00b7 Full-frame visits 384 \u00b7 Transmission planned true\nReference plane configured_cm_transmit_resources",
+          "query_ms": 347,
+          "render_ms": 608,
+          "heartbeat_ticks": 2,
+          "maximum_query_heartbeat_gap_ms": 1134,
+          "snapshot_sha256": "d6119a55260b1faceee9956568b424a9856dde8d08ad33558e7bafe13b121189",
+          "role_counts": {
+            "complementary": 9,
+            "data": 110,
+            "excluded": 3296,
+            "known_pilot": 9,
+            "unallocated": 672,
+            "zero_loaded": 0
+          }
+        },
+        {
+          "tag": "grid-50",
+          "action": "resourceFullCarriers",
+          "request": {
+            "frame_index": 0,
+            "first_symbol": 0,
+            "symbol_count": 2,
+            "first_carrier": 0,
+            "carrier_count": 2048,
+            "max_cells": 4096
+          },
+          "context": {
+            "session_token": "upstream/2/1",
+            "configuration_generation": "1"
+          },
+          "painted_cells": 4096,
+          "visual_items": 71,
+          "canvas_count": 1,
+          "metadata": "Generation 1 \u00b7 Grant 1 \u00b7 Epoch sample 0 \u00b7 First frame 0 \u00b7 Grant frames 2\nProfile 5 \u00b7 IUC 5 \u00b7 Relative frame 0 \u00b7 Absolute frame 0 \u00b7 Frame prefix sample 0\nFFT samples 2048 \u00b7 Sample rate Hz 102400000 \u00b7 Spacing Hz 50000 \u00b7 Prefix samples 192 \u00b7 Roll-off samples 64 \u00b7 Stride samples 2240\nWindow first symbol 0 / count 2 \u00b7 First physical carrier 0 / count 2048\nFull-frame coded bits 1410 \u00b7 Full-grant coded bits 2820 \u00b7 Full-frame visits 384 \u00b7 Transmission planned true\nReference plane configured_cm_transmit_resources",
+          "query_ms": 384,
+          "render_ms": 667,
+          "heartbeat_ticks": 2,
+          "maximum_query_heartbeat_gap_ms": 1045,
+          "snapshot_sha256": "9768548972faba4a394ebb8e7a53fef0864a0c5e41283647c83a572a399d8aa6",
+          "role_counts": {
+            "complementary": 0,
+            "data": 119,
+            "excluded": 3296,
+            "known_pilot": 9,
+            "unallocated": 672,
+            "zero_loaded": 0
+          }
+        },
+        {
+          "tag": "grid-50",
+          "action": "frame",
+          "request": {
+            "frame_index": 1,
+            "first_symbol": 0,
+            "symbol_count": 2,
+            "first_carrier": 0,
+            "carrier_count": 2048,
+            "max_cells": 4096
+          },
+          "context": {
+            "session_token": "upstream/2/1",
+            "configuration_generation": "1"
+          },
+          "painted_cells": 4096,
+          "visual_items": 71,
+          "canvas_count": 1,
+          "metadata": "Generation 1 \u00b7 Grant 1 \u00b7 Epoch sample 0 \u00b7 First frame 0 \u00b7 Grant frames 2\nProfile 5 \u00b7 IUC 5 \u00b7 Relative frame 1 \u00b7 Absolute frame 1 \u00b7 Frame prefix sample 13440\nFFT samples 2048 \u00b7 Sample rate Hz 102400000 \u00b7 Spacing Hz 50000 \u00b7 Prefix samples 192 \u00b7 Roll-off samples 64 \u00b7 Stride samples 2240\nWindow first symbol 0 / count 2 \u00b7 First physical carrier 0 / count 2048\nFull-frame coded bits 1410 \u00b7 Full-grant coded bits 2820 \u00b7 Full-frame visits 384 \u00b7 Transmission planned true\nReference plane configured_cm_transmit_resources",
+          "query_ms": 340,
+          "render_ms": 588,
+          "heartbeat_ticks": 2,
+          "maximum_query_heartbeat_gap_ms": 1022,
+          "snapshot_sha256": "be38876d1b02ebf4d44d70bd7fa14f8ab9b28377913ceed8b98c6e68272ccaac",
+          "role_counts": {
+            "complementary": 0,
+            "data": 119,
+            "excluded": 3296,
+            "known_pilot": 9,
+            "unallocated": 672,
+            "zero_loaded": 0
+          }
+        },
+        {
+          "tag": "grid-25",
+          "action": "initial",
+          "request": null,
+          "context": null,
+          "painted_cells": 4096,
+          "visual_items": 71,
+          "canvas_count": 1,
+          "metadata": "Generation 2 \u00b7 Grant 1 \u00b7 Epoch sample 0 \u00b7 First frame 0 \u00b7 Grant frames 2\nProfile 5 \u00b7 IUC 5 \u00b7 Relative frame 0 \u00b7 Absolute frame 0 \u00b7 Frame prefix sample 0\nFFT samples 4096 \u00b7 Sample rate Hz 102400000 \u00b7 Spacing Hz 25000 \u00b7 Prefix samples 192 \u00b7 Roll-off samples 64 \u00b7 Stride samples 4288\nWindow first symbol 0 / count 1 \u00b7 First physical carrier 0 / count 4096\nFull-frame coded bits 2558 \u00b7 Full-grant coded bits 5116 \u00b7 Full-frame visits 576 \u00b7 Transmission planned true\nReference plane configured_cm_transmit_resources",
+          "query_ms": null,
+          "render_ms": null,
+          "heartbeat_ticks": null,
+          "maximum_query_heartbeat_gap_ms": null,
+          "snapshot_sha256": "3479c8e6f135b4566b6678166f02c059b612a77d22c1f76f8a89168d899126bd",
+          "role_counts": {
+            "complementary": 0,
+            "data": 88,
+            "excluded": 3296,
+            "known_pilot": 8,
+            "unallocated": 672,
+            "zero_loaded": 32
+          }
+        },
+        {
+          "tag": "grid-25",
+          "action": "resourceZoomIn",
+          "request": {
+            "frame_index": 0,
+            "first_symbol": 0,
+            "symbol_count": 1,
+            "first_carrier": 1024,
+            "carrier_count": 2048,
+            "max_cells": 4096
+          },
+          "context": {
+            "session_token": "upstream/2/2",
+            "configuration_generation": "2"
+          },
+          "painted_cells": 2048,
+          "visual_items": 71,
+          "canvas_count": 1,
+          "metadata": "Generation 2 \u00b7 Grant 1 \u00b7 Epoch sample 0 \u00b7 First frame 0 \u00b7 Grant frames 2\nProfile 5 \u00b7 IUC 5 \u00b7 Relative frame 0 \u00b7 Absolute frame 0 \u00b7 Frame prefix sample 0\nFFT samples 4096 \u00b7 Sample rate Hz 102400000 \u00b7 Spacing Hz 25000 \u00b7 Prefix samples 192 \u00b7 Roll-off samples 64 \u00b7 Stride samples 4288\nWindow first symbol 0 / count 1 \u00b7 First physical carrier 1024 / count 2048\nFull-frame coded bits 2558 \u00b7 Full-grant coded bits 5116 \u00b7 Full-frame visits 576 \u00b7 Transmission planned true\nReference plane configured_cm_transmit_resources",
+          "query_ms": 205,
+          "render_ms": 377,
+          "heartbeat_ticks": 2,
+          "maximum_query_heartbeat_gap_ms": 958,
+          "snapshot_sha256": "5630c56c1a3b44afa27c9d503b11ff97c4f504da3ebd6726241d93265eefd4d8",
+          "role_counts": {
+            "complementary": 0,
+            "data": 0,
+            "excluded": 2016,
+            "known_pilot": 0,
+            "unallocated": 32,
+            "zero_loaded": 0
+          }
+        },
+        {
+          "tag": "grid-25",
+          "action": "resourceZoomOut",
+          "request": {
+            "frame_index": 0,
+            "first_symbol": 0,
+            "symbol_count": 1,
+            "first_carrier": 0,
+            "carrier_count": 4096,
+            "max_cells": 4096
+          },
+          "context": {
+            "session_token": "upstream/2/2",
+            "configuration_generation": "2"
+          },
+          "painted_cells": 4096,
+          "visual_items": 71,
+          "canvas_count": 1,
+          "metadata": "Generation 2 \u00b7 Grant 1 \u00b7 Epoch sample 0 \u00b7 First frame 0 \u00b7 Grant frames 2\nProfile 5 \u00b7 IUC 5 \u00b7 Relative frame 0 \u00b7 Absolute frame 0 \u00b7 Frame prefix sample 0\nFFT samples 4096 \u00b7 Sample rate Hz 102400000 \u00b7 Spacing Hz 25000 \u00b7 Prefix samples 192 \u00b7 Roll-off samples 64 \u00b7 Stride samples 4288\nWindow first symbol 0 / count 1 \u00b7 First physical carrier 0 / count 4096\nFull-frame coded bits 2558 \u00b7 Full-grant coded bits 5116 \u00b7 Full-frame visits 576 \u00b7 Transmission planned true\nReference plane configured_cm_transmit_resources",
+          "query_ms": 353,
+          "render_ms": 639,
+          "heartbeat_ticks": 2,
+          "maximum_query_heartbeat_gap_ms": 714,
+          "snapshot_sha256": "3479c8e6f135b4566b6678166f02c059b612a77d22c1f76f8a89168d899126bd",
+          "role_counts": {
+            "complementary": 0,
+            "data": 88,
+            "excluded": 3296,
+            "known_pilot": 8,
+            "unallocated": 672,
+            "zero_loaded": 32
+          }
+        },
+        {
+          "tag": "grid-25",
+          "action": "resourcePanRight",
+          "request": {
+            "frame_index": 0,
+            "first_symbol": 1,
+            "symbol_count": 1,
+            "first_carrier": 0,
+            "carrier_count": 4096,
+            "max_cells": 4096
+          },
+          "context": {
+            "session_token": "upstream/2/2",
+            "configuration_generation": "2"
+          },
+          "painted_cells": 4096,
+          "visual_items": 71,
+          "canvas_count": 1,
+          "metadata": "Generation 2 \u00b7 Grant 1 \u00b7 Epoch sample 0 \u00b7 First frame 0 \u00b7 Grant frames 2\nProfile 5 \u00b7 IUC 5 \u00b7 Relative frame 0 \u00b7 Absolute frame 0 \u00b7 Frame prefix sample 0\nFFT samples 4096 \u00b7 Sample rate Hz 102400000 \u00b7 Spacing Hz 25000 \u00b7 Prefix samples 192 \u00b7 Roll-off samples 64 \u00b7 Stride samples 4288\nWindow first symbol 1 / count 1 \u00b7 First physical carrier 0 / count 4096\nFull-frame coded bits 2558 \u00b7 Full-grant coded bits 5116 \u00b7 Full-frame visits 576 \u00b7 Transmission planned true\nReference plane configured_cm_transmit_resources",
+          "query_ms": 434,
+          "render_ms": 749,
+          "heartbeat_ticks": 2,
+          "maximum_query_heartbeat_gap_ms": 1193,
+          "snapshot_sha256": "676fcf731b01710994ec6055ff4a6d788532d4b0d673978cebcba081bcbf67fe",
+          "role_counts": {
+            "complementary": 0,
+            "data": 96,
+            "excluded": 3296,
+            "known_pilot": 0,
+            "unallocated": 672,
+            "zero_loaded": 32
+          }
+        },
+        {
+          "tag": "grid-25",
+          "action": "resourceFullCarriers",
+          "request": {
+            "frame_index": 0,
+            "first_symbol": 0,
+            "symbol_count": 1,
+            "first_carrier": 0,
+            "carrier_count": 4096,
+            "max_cells": 4096
+          },
+          "context": {
+            "session_token": "upstream/2/2",
+            "configuration_generation": "2"
+          },
+          "painted_cells": 4096,
+          "visual_items": 71,
+          "canvas_count": 1,
+          "metadata": "Generation 2 \u00b7 Grant 1 \u00b7 Epoch sample 0 \u00b7 First frame 0 \u00b7 Grant frames 2\nProfile 5 \u00b7 IUC 5 \u00b7 Relative frame 0 \u00b7 Absolute frame 0 \u00b7 Frame prefix sample 0\nFFT samples 4096 \u00b7 Sample rate Hz 102400000 \u00b7 Spacing Hz 25000 \u00b7 Prefix samples 192 \u00b7 Roll-off samples 64 \u00b7 Stride samples 4288\nWindow first symbol 0 / count 1 \u00b7 First physical carrier 0 / count 4096\nFull-frame coded bits 2558 \u00b7 Full-grant coded bits 5116 \u00b7 Full-frame visits 576 \u00b7 Transmission planned true\nReference plane configured_cm_transmit_resources",
+          "query_ms": 362,
+          "render_ms": 647,
+          "heartbeat_ticks": 2,
+          "maximum_query_heartbeat_gap_ms": 1103,
+          "snapshot_sha256": "3479c8e6f135b4566b6678166f02c059b612a77d22c1f76f8a89168d899126bd",
+          "role_counts": {
+            "complementary": 0,
+            "data": 88,
+            "excluded": 3296,
+            "known_pilot": 8,
+            "unallocated": 672,
+            "zero_loaded": 32
+          }
+        },
+        {
+          "tag": "grid-25",
+          "action": "frame",
+          "request": {
+            "frame_index": 1,
+            "first_symbol": 0,
+            "symbol_count": 1,
+            "first_carrier": 0,
+            "carrier_count": 4096,
+            "max_cells": 4096
+          },
+          "context": {
+            "session_token": "upstream/2/2",
+            "configuration_generation": "2"
+          },
+          "painted_cells": 4096,
+          "visual_items": 71,
+          "canvas_count": 1,
+          "metadata": "Generation 2 \u00b7 Grant 1 \u00b7 Epoch sample 0 \u00b7 First frame 0 \u00b7 Grant frames 2\nProfile 5 \u00b7 IUC 5 \u00b7 Relative frame 1 \u00b7 Absolute frame 1 \u00b7 Frame prefix sample 25728\nFFT samples 4096 \u00b7 Sample rate Hz 102400000 \u00b7 Spacing Hz 25000 \u00b7 Prefix samples 192 \u00b7 Roll-off samples 64 \u00b7 Stride samples 4288\nWindow first symbol 0 / count 1 \u00b7 First physical carrier 0 / count 4096\nFull-frame coded bits 2558 \u00b7 Full-grant coded bits 5116 \u00b7 Full-frame visits 576 \u00b7 Transmission planned true\nReference plane configured_cm_transmit_resources",
+          "query_ms": 371,
+          "render_ms": 672,
+          "heartbeat_ticks": 2,
+          "maximum_query_heartbeat_gap_ms": 1102,
+          "snapshot_sha256": "3beb3a7c85111c7c665c3aacadf04f132231c54516a42fa1b7bfef8341232eeb",
+          "role_counts": {
+            "complementary": 0,
+            "data": 88,
+            "excluded": 3296,
+            "known_pilot": 8,
+            "unallocated": 672,
+            "zero_loaded": 32
+          }
+        }
+      ],
+      "plans": [
+        {
+          "tag": "grid-50",
+          "identity": "upstream/2/1",
+          "key": "{\"session\":\"2\",\"generation\":\"1\"}",
+          "executionBefore": "{\"has_result\":false,\"result\":null,\"progress\":null}",
+          "executionAfter": "{\"has_result\":false,\"result\":null,\"progress\":null}",
+          "minimumCells": 1024,
+          "maximumCells": 4096,
+          "visualItems": 71,
+          "tabIsolation": true
+        },
+        {
+          "tag": "grid-25",
+          "identity": "upstream/2/2",
+          "key": "{\"session\":\"2\",\"generation\":\"2\"}",
+          "executionBefore": "{\"has_result\":false,\"result\":null,\"progress\":null}",
+          "executionAfter": "{\"has_result\":false,\"result\":null,\"progress\":null}",
+          "minimumCells": 2048,
+          "maximumCells": 4096,
+          "visualItems": 71,
+          "tabIsolation": true
+        }
+      ],
+      "inspections": [
+        {
+          "tag": "grid-50",
+          "cell": {
+            "amplitude_gain": null,
+            "cell_loading": null,
+            "configured_data_loading": null,
+            "frame_bit_offset": null,
+            "frame_symbol": 0,
+            "grant_bit_offset": null,
+            "grant_selected": false,
+            "grant_symbol": 6,
+            "minislot_index": null,
+            "physical_carrier": 0,
+            "pilot_pattern": null,
+            "prefix_start_sample": "13440",
+            "role": "excluded",
+            "useful_start_sample": "13632",
+            "visit_index": null
+          },
+          "context": {
+            "session_token": "upstream/2/1",
+            "configuration_generation": "1"
+          },
+          "text": "{\n  \"amplitude_gain\": null,\n  \"cell_loading\": null,\n  \"configured_data_loading\": null,\n  \"frame_bit_offset\": null,\n  \"frame_symbol\": 0,\n  \"grant_bit_offset\": null,\n  \"grant_selected\": false,\n  \"grant_symbol\": 6,\n  \"minislot_index\": null,\n  \"physical_carrier\": 0,\n  \"pilot_pattern\": null,\n  \"prefix_start_sample\": \"13440\",\n  \"role\": \"excluded\",\n  \"useful_start_sample\": \"13632\",\n  \"visit_index\": null\n}"
+        },
+        {
+          "tag": "grid-25",
+          "cell": {
+            "amplitude_gain": null,
+            "cell_loading": null,
+            "configured_data_loading": null,
+            "frame_bit_offset": null,
+            "frame_symbol": 0,
+            "grant_bit_offset": null,
+            "grant_selected": false,
+            "grant_symbol": 6,
+            "minislot_index": null,
+            "physical_carrier": 0,
+            "pilot_pattern": null,
+            "prefix_start_sample": "25728",
+            "role": "excluded",
+            "useful_start_sample": "25920",
+            "visit_index": null
+          },
+          "context": {
+            "session_token": "upstream/2/2",
+            "configuration_generation": "2"
+          },
+          "text": "{\n  \"amplitude_gain\": null,\n  \"cell_loading\": null,\n  \"configured_data_loading\": null,\n  \"frame_bit_offset\": null,\n  \"frame_symbol\": 0,\n  \"grant_bit_offset\": null,\n  \"grant_selected\": false,\n  \"grant_symbol\": 6,\n  \"minislot_index\": null,\n  \"physical_carrier\": 0,\n  \"pilot_pattern\": null,\n  \"prefix_start_sample\": \"25728\",\n  \"role\": \"excluded\",\n  \"useful_start_sample\": \"25920\",\n  \"visit_index\": null\n}"
+        }
+      ],
+      "maximum_heartbeat_gap_including_pickers_ms": 1860
+    },
+    "native_configuration_regression": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--upstream-configuration-probe",
+        "--upstream-configuration-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us04-regression/receiver-configuration-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 7.3732058229943505,
+      "executable_sha256": "c2bc166a0126a66c078ac8c89956429aa86f01ac2cd7f250a992eb344951e243",
+      "source_sha256": "ba39970338d18e741c0c17362298dc9a71ad39a3a5f2022d8390e128e053e41d",
+      "source_fixture": "Existing us-50khz.json plus explicit synthetic unity Pre-Eq plan; not captured field input.",
+      "picker_actions": [
+        {
+          "action": "cancel",
+          "owned_window": 14680071,
+          "picker_pid": 579007,
+          "seconds": 2.195546833987464
+        },
+        {
+          "action": "load",
+          "owned_window": 14680071,
+          "picker_pid": 579031,
+          "seconds": 2.8298358079919126
+        }
+      ],
+      "full_window_capture": {
+        "window": 12582919,
+        "pid": 578987,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us04-regression/upstream-configuration-main-dark.png",
+        "sha256": "f45b60b81bd1cd73782a99cfb7161dcad3dd7c7e82d985c1019d0fda6e838fb4",
+        "size": [
+          1210,
+          736
+        ],
+        "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+      },
+      "probe_output": [
+        "{\"probe\":\"upstream-configuration\",\"success\":true,\"phase\":\"capture-grace\",\"error\":\"\",\"sections\":[{\"section\":\"ucd\",\"field\":\"randomization_seed\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"1\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"1\",\"generationAfter\":\"2\"},{\"section\":\"profiles\",\"field\":\"modulation_index\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"2\",\"generationAfter\":\"3\"},{\"section\":\"grants\",\"field\":\"grant_id\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"9007199254740993\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"3\",\"generationAfter\":\"4\"},{\"section\":\"source\",\"field\":\"source_seed\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"4\",\"generationAfter\":\"5\"},{\"section\":\"channel\",\"field\":\"phase_radians\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"0.1\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"5\",\"generationAfter\":\"6\"},{\"section\":\"preEqualization\",\"field\":\"initial_id\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"6\",\"generationAfter\":\"7\"},{\"section\":\"receiver\",\"field\":\"ldpc_iterations\",\"cancelPreserved\":true,\"applied\":true,\"acceptedValue\":\"2\",\"invalidPreserved\":true,\"originalDiagnosticPreserved\":true,\"generationBefore\":\"7\",\"generationAfter\":\"8\"}],\"chooserCancelAndLoad\":true,\"invalidPreservation\":true,\"tabIsolation\":true,\"downstreamIdentity\":\"downstream/1/3\",\"downstreamAcceptedOptionsPreserved\":true,\"upstreamGeneration\":\"8\",\"upstreamIdentity\":\"upstream/2/8\",\"screenshot\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us04-regression/receiver-configuration-dark.png\",\"captureTarget\":\"receiver-contentItem\",\"fullWindowCaptureMarker\":true,\"dark\":true}"
+      ],
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/us04-regression/receiver-configuration-dark.png",
+      "image_sha256": "94d38362eb6d0a26ce1f55b09471d3730425dfc9d6ccb683614c3d3b002ba8e6"
+    },
+    "native_downstream_shell": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--direction-shell-probe",
+        "--direction-shell-downstream-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-04-grid/downstream-dark.png",
+        "--direction-shell-upstream-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-04-grid/upstream-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.852524485992035,
+      "executable_sha256": "c2bc166a0126a66c078ac8c89956429aa86f01ac2cd7f250a992eb344951e243",
+      "display": ":0",
+      "probe_output": [
+        "{\"probe\":\"direction-shell\",\"success\":true,\"phase\":\"terminal\",\"error\":\"\",\"loadingProject\":false,\"hasProject\":true,\"controlsContextCurrent\":true,\"controlDirection\":\"downstream\",\"controlIdentity\":\"downstream/1/5\",\"shellMetadata\":{\"applicationBusy\":false,\"downstreamDirty\":true,\"downstreamIdentity\":\"downstream/1/5\",\"executionDirection\":null,\"executionStatus\":\"\",\"selectedDirection\":\"downstream\",\"upstreamDirty\":false,\"upstreamIdentity\":\"upstream/2/0\"},\"shellPresentationRejected\":false,\"controlsPresentationRejected\":false,\"fileMessage\":\"Opened /home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json\",\"persistentChildren\":true,\"nativeCursor\":true,\"sharedSettingsOnUpstream\":true,\"sharedAboutOnUpstream\":true,\"fileRejectedOnUpstream\":true,\"configureRouted\":true,\"pausedLeaseAcrossSwitch\":true,\"foreignControlsRejected\":true,\"genuineTerminalObserved\":true,\"idleSwitchObserved\":true,\"runningSwitchObserved\":true,\"dark\":true,\"downstreamImage\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-04-grid/downstream-dark.png\",\"upstreamImage\":\"/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-04-grid/upstream-dark.png\"}"
+      ],
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-04-grid/downstream-dark.png",
+      "upstream_image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/us-04-grid/upstream-dark.png",
+      "upstream_image_sha256": "486345a60178f2af414739e4b00471b874fa84532bb96ef9af9f0c6e6af15494",
+      "image_sha256": "3f4dd220f6173ed9b281d50c555910a399b67b974b4c23e49016eba155a4d5ff"
+    },
+    "native_startup_project": {
+      "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+      "sha256": "c2bc166a0126a66c078ac8c89956429aa86f01ac2cd7f250a992eb344951e243",
+      "display": ":0",
+      "display_dimensions": [
+        "dimensions:    1280x800 pixels (338x211 millimeters)"
+      ],
+      "qt_sdk_version": "6.8.3",
+      "commands": [
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.03731505500036292,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.04995395100559108,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.4255237309989752,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.029219935997389257,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.9159427969862008,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test",
+            "--workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.8734877520037116,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        }
+      ]
+    },
+    "packaging": {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/packaging",
+        "-v"
+      ],
+      "passed": 25,
+      "exit_code": 0
+    },
+    "documentation": [
+      {
+        "label": "strict-matrix",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/api_operation_matrix.py",
+          "--exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/rust-exports.json",
+          "--native-exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/native/native-exports.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.468835870997282
+      },
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.962067789994762
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 9.533199167010025
+      },
+      {
+        "label": "uiu-history",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/audit_upstream_grid_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.12015881000843365
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.06703224800003227
+      },
+      {
+        "label": "guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.07462661100726109
+      },
+      {
+        "label": "diff",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03311241199844517
+      },
+      {
+        "label": "staged-diff",
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.0057748550025280565
+      }
+    ]
+  },
+  "reuse_and_not_required": {
+    "unchanged_backend": {
+      "base": "b339873f8a1e7e3057cd38d0be4c6dc922816b39",
+      "scope": [
+        "crates",
+        "bindings",
+        "Cargo.toml",
+        "Cargo.lock"
+      ],
+      "verified_files": 856,
+      "diff_empty": true,
+      "untracked_files": []
+    },
+    "native_reference": "Existing installed source-JSON-prerequisite wheel independently queries all twelve actual Qt viewports; no new wheel for Qt-only code.",
+    "reused_evidence": "Previously accepted downstream and measured/synthetic upstream recovery, shared scientific vectors and full native/CLI/project milestone evidence remain scoped to unchanged backend sources.",
+    "reason": "No scientific algorithms, Rust/Python public API, schemas, persistence writers, manifests or dependencies changed. Relevant Qt consumers and actual native controls execute; unrelated complete workspace/wheel/CLI rebuilds are unnecessary.",
+    "deferred": "Final full applicable regression and remaining shared instruments/project/recovery tasks retain their official gates."
+  },
+  "evidence_boundaries": {
+    "fixtures": "Synthetic configured-resource observations, not waveform/capture/field/interoperability evidence.",
+    "timings": "Observed native query/render/heartbeat durations; no newly asserted latency guarantee.",
+    "platforms": "Actual native Linux Qt6.8.3 XCB/software/Fusion only; installed MSI/DEB/hosted updater claims are not established."
+  },
+  "earlier_attempts": [
+    "Final Clippy rejected an assert on two compile-time constants in a test. Compare the actual returned budget instead; no suppression or production behavior change. Re-run all84 affected upstream cases and final checks.",
+    "Initial QML cache generation rejected a duplicate textFormat property; corrected before final checks.",
+    "Real host test exposed inspection reset on an unchanged binding notification; preserve identical admitted envelopes.",
+    "Pressure regression exposed a frame control mismatch; restore its accepted value binding on local rejection.",
+    "Initial native 25 kHz largest viewport rejected presentation admission and the finite probe failed its original watchdog after eleven views. Reduce only the Qt viewport policy to4096 cells; keep public/aggregate/scientific limits unchanged.",
+    "An ad-hoc boundary command lacked pinned toolchain PATH and failed Cargo metadata; the final configured runner executes the actual boundary check successfully."
+  ]
+}

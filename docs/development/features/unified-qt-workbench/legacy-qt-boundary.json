@@ -1,0 +1,3434 @@
+{
+  "schema_version": 1,
+  "baseline_commit": "c87006fae0a2b78bf8859403f9f3d0e6ffde79d8",
+  "owner_task": "UIU-BOUND-01",
+  "policy": "Exact initial scientific dependency records and unchanged whole-file hashes only. No automatic refresh. Every legacy entry sunsets in UIU-DS-01; final acceptance requires zero.",
+  "dependencies": [],
+  "files": [],
+  "initial_record": {
+    "path": "docs/development/features/unified-qt-workbench/legacy-qt-boundary-initial.json",
+    "sha256": "1be86c5bd5fedd6e5542646477da14d6368489a08f103bd6d958fe07f9b20eae",
+    "scope": "Verbatim original BOUND-01 baseline, preserved before approved DS-01 path-only relocations."
+  },
+  "relocations": [
+    {
+      "task": "UIU-DS-01",
+      "base_commit": "15b16a4aad7bef5aecd29e7716115c126830e76e",
+      "scope": "Approved namespace/module/include path-only relocations. Every scientific source canonically matches its original after reversing only those paths. No operation or dependency expansion; every current whole-file hash remains frozen.",
+      "files": [
+        {
+          "original": "apps/qt/src/bridge/closed_loop.rs",
+          "destination": "apps/qt/src/bridge/closed_loop.rs",
+          "original_sha256": "a25df73430ced76176462646ce6bdd593c8276c90aba022432ea271c09b66404",
+          "sha256": "26a6aec55ed8c63af892633a73272f7768f2147c7c219b6aa694aa4ae70cb3b3",
+          "original_sites": [
+            {
+              "line": 143,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 144,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/bridge/measurement_input.rs",
+          "destination": "apps/qt/src/bridge/measurement_input.rs",
+          "original_sha256": "b10fcfa45e011614dfa85563409e019e7327649d09e471ed2e91d3c5d87679c4",
+          "sha256": "3d14e4b9cf784cef228bd6466552f54ab1997330079e2e44fcee16cee92807af",
+          "original_sites": [
+            {
+              "line": 9,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 262,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 297,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 298,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 386,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 396,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 396,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 400,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 677,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 9,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 262,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 297,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 298,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 386,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 396,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 396,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 400,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 688,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/bridge/ofdm_settings.rs",
+          "destination": "apps/qt/src/bridge/ofdm_settings.rs",
+          "original_sha256": "1707490db07900bf2ee8f060f38059ff0ca6f97c41eab7c4f3d196a1b25f6b98",
+          "sha256": "1707490db07900bf2ee8f060f38059ff0ca6f97c41eab7c4f3d196a1b25f6b98",
+          "original_sites": [
+            {
+              "line": 8,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 8,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/bridge/receiver_instruments.rs",
+          "destination": "apps/qt/src/bridge/receiver_instruments.rs",
+          "original_sha256": "9db740aa78778e5520a3536a1c87ca0204ce1676c78d3c3f95d792927e4efc9f",
+          "sha256": "63b3ba1fef522fa1ec2dd01f17ef22104d8e0379766e0e22158710b74b4d52b3",
+          "original_sites": [
+            {
+              "line": 9,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 9,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/bridge/rxmer_designer.rs",
+          "destination": "apps/qt/src/bridge/rxmer_designer.rs",
+          "original_sha256": "da36549cb20f6e37a58b1756d80fba669ed167cf79eee01d43a972abbbcc79ac",
+          "sha256": "e92b66bacf06b74c67baddcd75f3f1fe3488d5ac57af276e4f3507bb6a308c98",
+          "original_sites": [
+            {
+              "line": 186,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 225,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 186,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 225,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/bridge/rxmer_export.rs",
+          "destination": "apps/qt/src/bridge/rxmer_export.rs",
+          "original_sha256": "c9e2a29f709c7d893018a095292cf41bec1b23365e6b8542aafea9e523837063",
+          "sha256": "4b3cf78f815588359f8957edaabc8a95bb4df7b2aa1917030aa250cdc06fff8d",
+          "original_sites": [
+            {
+              "line": 10,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 11,
+              "root": "pnm_input"
+            }
+          ],
+          "sites": [
+            {
+              "line": 10,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 11,
+              "root": "pnm_input"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/bridge/source_input.rs",
+          "destination": "apps/qt/src/bridge/source_input.rs",
+          "original_sha256": "1a172eeab7ec64493c6039ddc56e12206bd94485be6e9f25f948cfb264141131",
+          "sha256": "08782a51209dbf4339932646c85bd7da4bda2102024ff24a20487a4abb175ecd",
+          "original_sites": [
+            {
+              "line": 97,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 98,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/bridge/workbench_file.rs",
+          "destination": "apps/qt/src/bridge/workbench_file.rs",
+          "original_sha256": "dea500fb6e7ecc49a972d19c8f288ff6ee0a9250a9b07e2abf34669bdae67066",
+          "sha256": "bf191542686a08ab27e8b6b74f117ce43db22aa1a1e45166a801ed2dac481c70",
+          "original_sites": [
+            {
+              "line": 147,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 147,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/help.rs",
+          "destination": "apps/qt/src/downstream/help.rs",
+          "original_sha256": "acc63121799801502e19985ecfc63bc5721f98e0e9cc50f2125b564bb7404754",
+          "sha256": "7ce0afe841d8c02efa9a230770ff106b847f85d30185a3442681c684bb3e9ad6",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 269,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 387,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 269,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 387,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/inputs/channel_model.rs",
+          "destination": "apps/qt/src/downstream/inputs/channel_model.rs",
+          "original_sha256": "fa5b96b80524ad12e9e3661de97ec9af027c2b3b00dc3a3ac1f5bedbaa2b452b",
+          "sha256": "c6492bc7acdd955855aff8c1587b2c125505f6e7d4fbf25f48004a703847497f",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 183,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 185,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 250,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 255,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 273,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 281,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 284,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 187,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 189,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 254,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 259,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 277,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 285,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 288,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/inputs/measurement_input/designer.rs",
+          "destination": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+          "original_sha256": "0980d220a25db83613230ed06251aad9e92788f1a3863376bec69633e8cc756c",
+          "sha256": "ed5e4e559916656e660dfb0d47824285d73c555d616e7edd3176b9da0c2a6339",
+          "original_sites": [
+            {
+              "line": 8,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 494,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 494,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 562,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 585,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 618,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 637,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 638,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 675,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 799,
+              "root": "pnm_input"
+            },
+            {
+              "line": 801,
+              "root": "pnm_input"
+            },
+            {
+              "line": 810,
+              "root": "pnm_input"
+            },
+            {
+              "line": 812,
+              "root": "pnm_input"
+            },
+            {
+              "line": 816,
+              "root": "pnm_input"
+            },
+            {
+              "line": 818,
+              "root": "pnm_input"
+            }
+          ],
+          "sites": [
+            {
+              "line": 8,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 494,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 494,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 563,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 586,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 619,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 638,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 639,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 676,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 801,
+              "root": "pnm_input"
+            },
+            {
+              "line": 803,
+              "root": "pnm_input"
+            },
+            {
+              "line": 812,
+              "root": "pnm_input"
+            },
+            {
+              "line": 814,
+              "root": "pnm_input"
+            },
+            {
+              "line": 818,
+              "root": "pnm_input"
+            },
+            {
+              "line": 820,
+              "root": "pnm_input"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/inputs/measurement_input/document.rs",
+          "destination": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+          "original_sha256": "318a1513704161370baa9abc0806c1c16f7773e82692702a1d408822cd64aa80",
+          "sha256": "318a1513704161370baa9abc0806c1c16f7773e82692702a1d408822cd64aa80",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 13,
+              "root": "pnm"
+            },
+            {
+              "line": 13,
+              "root": "pnm"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 13,
+              "root": "pnm"
+            },
+            {
+              "line": 13,
+              "root": "pnm"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/inputs/measurement_input/mod.rs",
+          "destination": "apps/qt/src/downstream/inputs/measurement_input/mod.rs",
+          "original_sha256": "e7b1730bb592aadad2db50aa7a06fd88d942b7d67209dcd18a1a3dc09fff9860",
+          "sha256": "e7b1730bb592aadad2db50aa7a06fd88d942b7d67209dcd18a1a3dc09fff9860",
+          "original_sites": [
+            {
+              "line": 14,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 15,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 14,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 15,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/inputs/measurement_input/model.rs",
+          "destination": "apps/qt/src/downstream/inputs/measurement_input/model.rs",
+          "original_sha256": "709915ed9d776ae5ae567593ec53f7fb169589885534c73fe4078053765bd0dd",
+          "sha256": "7f43afe35d8561a2c2b8c62ceb10cc6f1ed46c0ee602113013994b3e95b54f55",
+          "original_sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 265,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 555,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 266,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 556,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/inputs/measurement_input/plc.rs",
+          "destination": "apps/qt/src/downstream/inputs/measurement_input/plc.rs",
+          "original_sha256": "922f02813f8a4c66bbd5b98ef16faa4bd055cdf3f2f2fb776055ab4aed3fd1d7",
+          "sha256": "4a92b802177e31afa36779b24cc2933573cdd3ba0e0cbb4b1e26c6a9058abcf5",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 67,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 68,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 67,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 68,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/inputs/measurement_input/preview.rs",
+          "destination": "apps/qt/src/downstream/inputs/measurement_input/preview.rs",
+          "original_sha256": "81f0f6032b4cb37c9905c92598fccd750ffd15c200a4a0dd672228b0dc0da74b",
+          "sha256": "8ccfd28aae358e93407f1164c4d4ca8f73942fe9376e2a6dc9121730c3f7ab64",
+          "original_sites": [
+            {
+              "line": 10,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 10,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/inputs/profile_input/document.rs",
+          "destination": "apps/qt/src/downstream/inputs/profile_input/document.rs",
+          "original_sha256": "43e2795e53c04b92a530c18287471230a4e08b01f02165ad5bcba64c73d1b482",
+          "sha256": "43e2795e53c04b92a530c18287471230a4e08b01f02165ad5bcba64c73d1b482",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 12,
+              "root": "pnm"
+            },
+            {
+              "line": 12,
+              "root": "pnm"
+            },
+            {
+              "line": 242,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 12,
+              "root": "pnm"
+            },
+            {
+              "line": 12,
+              "root": "pnm"
+            },
+            {
+              "line": 242,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/inputs/profile_input/mod.rs",
+          "destination": "apps/qt/src/downstream/inputs/profile_input/mod.rs",
+          "original_sha256": "19588f871ff459c629816f41361ad744cb44b6472b322142ad0d8c12c7ba0bd1",
+          "sha256": "d3201357eb959101d0c1e9e8da299376424a51f2e9c9bc4ff591a7ce2b38c05e",
+          "original_sites": [
+            {
+              "line": 8,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 191,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 217,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 8,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 191,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 217,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/inputs/profile_input/plot.rs",
+          "destination": "apps/qt/src/downstream/inputs/profile_input/plot.rs",
+          "original_sha256": "af9efc4bd433e241745629a0ac8158bbbe3d6b022cce7e86b9648e26a1c433ac",
+          "sha256": "af9efc4bd433e241745629a0ac8158bbbe3d6b022cce7e86b9648e26a1c433ac",
+          "original_sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 136,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 136,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/inputs/source_input/model.rs",
+          "destination": "apps/qt/src/downstream/inputs/source_input/model.rs",
+          "original_sha256": "8c037d3bd76ac2538ea11d1816fc2072fb056616556f8b307cc031f0714ef351",
+          "sha256": "cd749e45a92804507a7d12c84b780c41a19deb767ca845c83fb5758f820a5aa4",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 245,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 245,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/channel/mod.rs",
+          "destination": "apps/qt/src/downstream/instruments/channel/mod.rs",
+          "original_sha256": "71d3db52d4506cc2559edaa7011aace00330646992518a43de5f9ea7da082c7d",
+          "sha256": "1d9fc006c24c42b2f52e7fece5179e59b3672f0e374e759ed7e6c8cbb08fcd1f",
+          "original_sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 183,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 189,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 185,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 191,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/receiver/diagnostics.rs",
+          "destination": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
+          "original_sha256": "6987638a192508dd6e91f1477f5f47bb5e4f5affeb090d115eb044924babf629",
+          "sha256": "0a30767c77340c499dc259baf9b530a7b8186c33f9a8e5af7009361931ac6482",
+          "original_sites": [
+            {
+              "line": 8,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 145,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 8,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 145,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/receiver/fec.rs",
+          "destination": "apps/qt/src/downstream/instruments/receiver/fec.rs",
+          "original_sha256": "dc339e82ae92667089f867599f86e0927d3742bdb426efa58a1178993bde8c89",
+          "sha256": "939b06152646797e5e0a31fc0f4a71a9222dd6c6fb107d677b8a9f86cca348a9",
+          "original_sites": [
+            {
+              "line": 30,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 113,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 30,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 113,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/receiver/performance.rs",
+          "destination": "apps/qt/src/downstream/instruments/receiver/performance.rs",
+          "original_sha256": "fa2776c102efc2176db25313168df55a53163e75d4183ed9cae3977a32453ff6",
+          "sha256": "4226fd5315c90493ae002ab836a89e043bbbe73cd917e5fa7bc7ca4a85289f76",
+          "original_sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 26,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 26,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/receiver/qam_history.rs",
+          "destination": "apps/qt/src/downstream/instruments/receiver/qam_history.rs",
+          "original_sha256": "2e35d3baca08efb43f102219bd9c7065a348b495ef3260fd69246a5b2887e9b1",
+          "sha256": "0d9912772744fd131614ae43b42dbd150183aab4d6839ea0e34c84dc17c93483",
+          "original_sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 21,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 151,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 21,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 151,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/receiver/selection.rs",
+          "destination": "apps/qt/src/downstream/instruments/receiver/selection.rs",
+          "original_sha256": "cec25646b4e9d757d1c1756d845da6f575a27b9514f97039508a830a8c7da2d4",
+          "sha256": "14182c1a7192f45c3de50b2e3d2c0fd46476696aee2e585fc9961b589acef563",
+          "original_sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 18,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 20,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 128,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 130,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 265,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 280,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 329,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 18,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 20,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 128,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 130,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 265,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 280,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 329,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/receiver/soft_display.rs",
+          "destination": "apps/qt/src/downstream/instruments/receiver/soft_display.rs",
+          "original_sha256": "d4be913c06a242898401b6b7677b7205dad0965e744fa8cbaaa5d8d76ac253c9",
+          "sha256": "d4be913c06a242898401b6b7677b7205dad0965e744fa8cbaaa5d8d76ac253c9",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/receiver/verification.rs",
+          "destination": "apps/qt/src/downstream/instruments/receiver/verification.rs",
+          "original_sha256": "fceeed06ad8f860f887167c9ab01cb69c3dcaac388debba2155c7cc1e8525648",
+          "sha256": "fceeed06ad8f860f887167c9ab01cb69c3dcaac388debba2155c7cc1e8525648",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/receiver/views.rs",
+          "destination": "apps/qt/src/downstream/instruments/receiver/views.rs",
+          "original_sha256": "f016f76536b00224eb971a47a2e0bd7fa9de4f79a493a293138452cd698fa280",
+          "sha256": "b1038df7e26d87c1c9b9fedaec376dc0654b7a259b36312ed1f9e77cd751a604",
+          "original_sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 35,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 35,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/spectrum/mod.rs",
+          "destination": "apps/qt/src/downstream/instruments/spectrum/mod.rs",
+          "original_sha256": "47cea86ad53db7b81f6499e5d52394fc1aa5504aeabdcd9856183ca08510d5aa",
+          "sha256": "47cea86ad53db7b81f6499e5d52394fc1aa5504aeabdcd9856183ca08510d5aa",
+          "original_sites": [
+            {
+              "line": 8,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 8,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/spectrum/plc.rs",
+          "destination": "apps/qt/src/downstream/instruments/spectrum/plc.rs",
+          "original_sha256": "b76c2e17ef8f87486ebdfcd3a59a5b04b1a716861d05bebe0c670b3fcfbe610a",
+          "sha256": "b76c2e17ef8f87486ebdfcd3a59a5b04b1a716861d05bebe0c670b3fcfbe610a",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 44,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 44,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/spectrum/symbol_timing.rs",
+          "destination": "apps/qt/src/downstream/instruments/spectrum/symbol_timing.rs",
+          "original_sha256": "8d45c5f3e0c219525a2371e7ad9c87c8c4131eb7f565339da6284f241b4634f7",
+          "sha256": "8d45c5f3e0c219525a2371e7ad9c87c8c4131eb7f565339da6284f241b4634f7",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 140,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 140,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/transmitter/capture.rs",
+          "destination": "apps/qt/src/downstream/instruments/transmitter/capture.rs",
+          "original_sha256": "7449f43b85007f65d1adfbec906f76329b8f2ddd1f67a295084e55c3891dd940",
+          "sha256": "7449f43b85007f65d1adfbec906f76329b8f2ddd1f67a295084e55c3891dd940",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/transmitter/channel_input.rs",
+          "destination": "apps/qt/src/downstream/instruments/transmitter/channel_input.rs",
+          "original_sha256": "0a76dcedfd703cc04ec0669bac83b47007fe06bd800e9cb09b8689758da80e73",
+          "sha256": "9ef3cd7b47fc6f066c710fc35e806b19d9f3b4976f3da50f96e860779173126a",
+          "original_sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/transmitter/graphs/mod.rs",
+          "destination": "apps/qt/src/downstream/instruments/transmitter/graphs/mod.rs",
+          "original_sha256": "04ff0b5b90685ce4b3beb8f53cbde16cfd00b0cc2e7a3a3dfe4477d65ab49b68",
+          "sha256": "04ff0b5b90685ce4b3beb8f53cbde16cfd00b0cc2e7a3a3dfe4477d65ab49b68",
+          "original_sites": [
+            {
+              "line": 25,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 25,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/transmitter/graphs/physical.rs",
+          "destination": "apps/qt/src/downstream/instruments/transmitter/graphs/physical.rs",
+          "original_sha256": "836a25a11a68186fe8bc1287b05b76c6d2ac01c08a5a85eb22c1c4c313e31fc0",
+          "sha256": "836a25a11a68186fe8bc1287b05b76c6d2ac01c08a5a85eb22c1c4c313e31fc0",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 98,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 99,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 98,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 99,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/transmitter/messages.rs",
+          "destination": "apps/qt/src/downstream/instruments/transmitter/messages.rs",
+          "original_sha256": "c2fb517f9afd5b3eead6963c54b7b54330eedce196c11e475fe0d7ddbccf0e81",
+          "sha256": "8e5a1da5964070d45a9dd588ee31580c075a5e91a9bf8e066cfaa8cdbc9b851d",
+          "original_sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/transmitter/preview.rs",
+          "destination": "apps/qt/src/downstream/instruments/transmitter/preview.rs",
+          "original_sha256": "32850ff76a746fe4b76d3873dc683ce3ee8d088ce86add4890bca2db91ce92f4",
+          "sha256": "aa62a767fa9aed8bc4098da71e47ee9b1e5e655dfcf6600675abd2ca8a0eea7f",
+          "original_sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 228,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 281,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 312,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 228,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 281,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 312,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/transmitter/qam_points.rs",
+          "destination": "apps/qt/src/downstream/instruments/transmitter/qam_points.rs",
+          "original_sha256": "61349f7f52bd7815bf4ece1144a864354468130cae0ac428625804702bcd60cf",
+          "sha256": "61349f7f52bd7815bf4ece1144a864354468130cae0ac428625804702bcd60cf",
+          "original_sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 131,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 131,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/transmitter/tlv_fields.rs",
+          "destination": "apps/qt/src/downstream/instruments/transmitter/tlv_fields.rs",
+          "original_sha256": "6929e413fb4d8fe6b60885e4beb19211a5148505d01df6fa6e5fc74d4b76f4e5",
+          "sha256": "39e3291a4677c2faa9ebfc635fdfb1643dc5fbaf3507a7a29dc3ad50d68d363a",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/instruments/transmitter/views.rs",
+          "destination": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+          "original_sha256": "707ef817678d59b33c95421d99699563a2f1a8af593274312f1cead12a229325",
+          "sha256": "7dfffc3502bfa20788897fd6382950c2916ba1bed2df925f82c8244839d31e69",
+          "original_sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 189,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 7,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 189,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/simulation/closed_loop.rs",
+          "destination": "apps/qt/src/downstream/simulation/closed_loop.rs",
+          "original_sha256": "e83a517f3969ff30caae9618411e4af9c1cde81c87fb97e5c56ab97d0b297914",
+          "sha256": "2e0b32b4150fb405f4abd9b2bd48f67522c8223d1730e2893234c5e3ade616b6",
+          "original_sites": [
+            {
+              "line": 9,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 44,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 45,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 131,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 200,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 209,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 452,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 459,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 580,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 580,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 715,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 716,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 719,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 752,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 789,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 1018,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 1022,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 1136,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 1137,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 9,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 44,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 45,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 131,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 200,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 209,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 452,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 459,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 580,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 580,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 720,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 721,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 724,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 757,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 794,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 1033,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 1037,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 1155,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 1156,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/simulation/run_timing.rs",
+          "destination": "apps/qt/src/downstream/simulation/run_timing.rs",
+          "original_sha256": "3c7ba9f75e99546bff9213288c4e74f1eab06979961a31a72100cff5a629617c",
+          "sha256": "65c02f34f43415720e6c6a3c0714d89d1af984711b5cff0ff4a01ba18383e082",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/workbench/project_file.rs",
+          "destination": "apps/qt/src/downstream/workbench/project_file.rs",
+          "original_sha256": "985fdead4ff07756f5b4f06cc152a8cc36c8259871520ac596c85b0e69b2dc85",
+          "sha256": "b09096855d35825e23fe574b5d04ff9f69b638e859c5f0b1fb869c8cdae6d193",
+          "original_sites": [
+            {
+              "line": 17,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 330,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 336,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 463,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 17,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 336,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 342,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 471,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        },
+        {
+          "original": "apps/qt/src/workbench/session.rs",
+          "destination": "apps/qt/src/downstream/workbench/session.rs",
+          "original_sha256": "439f869b04539487f831fe53bddb1ec4568215e413d840ca060b4174c170750d",
+          "sha256": "439f869b04539487f831fe53bddb1ec4568215e413d840ca060b4174c170750d",
+          "original_sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 19,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 24,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 25,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 27,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 90,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 98,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 148,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 157,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "sites": [
+            {
+              "line": 6,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 19,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 24,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 25,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 27,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 90,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 98,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 148,
+              "root": "docsis_ofdm_fec"
+            },
+            {
+              "line": 157,
+              "root": "docsis_ofdm_fec"
+            }
+          ],
+          "canonical_source_equal_after_reversing_only_approved_paths": true
+        }
+      ]
+    }
+  ],
+  "retired_files": [
+    {
+      "entry": {
+        "path": "apps/qt/src/bridge/ofdm_settings.rs",
+        "sha256": "1707490db07900bf2ee8f060f38059ff0ca6f97c41eab7c4f3d196a1b25f6b98",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "OFDM settings facade",
+      "reason": "Public facade owns configuration admission and symbol timing; no direct scientific crate access remains.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-ofdm-settings-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/soft_display.rs",
+        "sha256": "d4be913c06a242898401b6b7677b7205dad0965e744fa8cbaaa5d8d76ac253c9",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Receiver decision-region facade",
+      "reason": "Nearest-reference geometry comes from the accepted public query; no direct scientific crate access remains. Existing confidence histogram still awaits coupled result-backed adoption.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-decision-region-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/bridge/closed_loop.rs",
+        "sha256": "26a6aec55ed8c63af892633a73272f7768f2147c7c219b6aa694aa4ae70cb3b3",
+        "sites": [
+          {
+            "line": 144,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Lifecycle and receiver contract facade",
+      "reason": "Adapter configuration/stage types use accepted facade contracts; existing guarded direction providers remain separate migration debt.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-adapter-contracts-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/bridge/receiver_instruments.rs",
+        "sha256": "63b3ba1fef522fa1ec2dd01f17ef22104d8e0379766e0e22158710b74b4d52b3",
+        "sites": [
+          {
+            "line": 9,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Lifecycle and receiver contract facade",
+      "reason": "Adapter configuration/stage types use accepted facade contracts; existing guarded direction providers remain separate migration debt.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-adapter-contracts-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/verification.rs",
+        "sha256": "fceeed06ad8f860f887167c9ab01cb69c3dcaac388debba2155c7cc1e8525648",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Recovered-data chart contract facade",
+      "reason": "Chart consumes the accepted public report type and supplied comparison counts; no direct scientific crate access remains.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-verification-contract-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/spectrum/symbol_timing.rs",
+        "sha256": "8d45c5f3e0c219525a2371e7ad9c87c8c4131eb7f565339da6284f241b4634f7",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 140,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Idle transmitter preview facade",
+      "reason": "Public preview/control/spectrum/physical-layout and timing/window queries replace direct private scientific imports; Qt retains coordinate/label projection only.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/preview.rs",
+        "sha256": "aa62a767fa9aed8bc4098da71e47ee9b1e5e655dfcf6600675abd2ca8a0eea7f",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 228,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 281,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 312,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Idle transmitter preview facade",
+      "reason": "Public preview/control/spectrum/physical-layout and timing/window queries replace direct private scientific imports; Qt retains coordinate/label projection only.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/simulation/run_timing.rs",
+        "sha256": "65c02f34f43415720e6c6a3c0714d89d1af984711b5cff0ff4a01ba18383e082",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Wall-time adapter facade",
+      "reason": "Actual progress matches the same public ChannelPhase enum; elapsed-time display uses standard Duration and named shared clock units. No private scientific import remains.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-wall-time-adapter-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/help.rs",
+        "sha256": "7ce0afe841d8c02efa9a230770ff106b847f85d30185a3442681c684bb3e9ad6",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 269,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 387,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Controlled downstream worker facade",
+      "reason": "All direct scientific crate paths removed; typed public admission, control, timing and observations replace legacy engine calls.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-controlled-worker-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/capture.rs",
+        "sha256": "7449f43b85007f65d1adfbec906f76329b8f2ddd1f67a295084e55c3891dd940",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Controlled downstream worker facade",
+      "reason": "All direct scientific crate paths removed; typed public admission, control, timing and observations replace legacy engine calls.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-controlled-worker-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/simulation/closed_loop.rs",
+        "sha256": "2e0b32b4150fb405f4abd9b2bd48f67522c8223d1730e2893234c5e3ade616b6",
+        "sites": [
+          {
+            "line": 9,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 44,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 45,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 131,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 200,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 209,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 452,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 459,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 580,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 580,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 720,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 721,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 724,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 757,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 794,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1033,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1037,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1155,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 1156,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Controlled downstream worker facade",
+      "reason": "All direct scientific crate paths removed; typed public admission, control, timing and observations replace legacy engine calls.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-controlled-worker-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/workbench/project_file.rs",
+        "sha256": "b09096855d35825e23fe574b5d04ff9f69b638e859c5f0b1fb869c8cdae6d193",
+        "sites": [
+          {
+            "line": 17,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 336,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 342,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 471,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Controlled downstream worker facade",
+      "reason": "All direct scientific crate paths removed; typed public admission, control, timing and observations replace legacy engine calls.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-controlled-worker-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/messages.rs",
+        "sha256": "8e5a1da5964070d45a9dd588ee31580c075a5e91a9bf8e066cfaa8cdbc9b851d",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Transmitted PLC message viewer facade",
+      "reason": "Public result supplies CRC-validated packets, scientific meanings, offsets and transmission coverage. Qt only formats exact bytes/labels; old last-sample and overflow oracles remain in the existing backend owner tests.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-transmitted-plc-message-viewer-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/tlv_fields.rs",
+        "sha256": "39e3291a4677c2faa9ebfc635fdfb1643dc5fbaf3507a7a29dc3ad50d68d363a",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Transmitted PLC message viewer facade",
+      "reason": "Public result supplies CRC-validated packets, scientific meanings, offsets and transmission coverage. Qt only formats exact bytes/labels; old last-sample and overflow oracles remain in the existing backend owner tests.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-transmitted-plc-message-viewer-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/channel_input.rs",
+        "sha256": "9ef3cd7b47fc6f066c710fc35e806b19d9f3b4976f3da50f96e860779173126a",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Pre-channel physical-bin scatter facade",
+      "reason": "Public actual physical-bin and carrier metadata replace private CarrierLayout construction/frequency queries. SubcarrierIndex owns explicit selector admission; plot scaling remains presentation-only.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-pre-channel-physical-bin-scatter-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/graphs/mod.rs",
+        "sha256": "04ff0b5b90685ce4b3beb8f53cbde16cfd00b0cc2e7a3a3dfe4477d65ab49b68",
+        "sites": [
+          {
+            "line": 25,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Retained TX stage and physical-power facade",
+      "reason": "Public actual physical powers/layout spans and transported cell roles replace private scientific reconstruction; graph coordinates only remain in Qt.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-retained-transmitter-views-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/graphs/physical.rs",
+        "sha256": "836a25a11a68186fe8bc1287b05b76c6d2ac01c08a5a85eb22c1c4c313e31fc0",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 98,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 99,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Retained TX stage and physical-power facade",
+      "reason": "Public actual physical powers/layout spans and transported cell roles replace private scientific reconstruction; graph coordinates only remain in Qt.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-retained-transmitter-views-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/qam_points.rs",
+        "sha256": "61349f7f52bd7815bf4ece1144a864354468130cae0ac428625804702bcd60cf",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 131,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Retained TX stage and physical-power facade",
+      "reason": "Public actual physical powers/layout spans and transported cell roles replace private scientific reconstruction; graph coordinates only remain in Qt.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-retained-transmitter-views-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+        "sha256": "18dcb54538c9748162553ec1e8cd5337ae1a7909a7e598c2b5a36f2448f5f582",
+        "sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 185,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "TX spectrum facade adoption",
+      "reason": "Public calibrated sequence/continuous queries and configured PLC metadata replace the remaining private estimator/layout calls. Separate named frame/output prefixes preserve original analysis windows; Qt reuses the shared drawing-only viewport.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-tx-spectrum-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/preview.rs",
+        "sha256": "8ccfd28aae358e93407f1164c4d4ca8f73942fe9376e2a6dc9121730c3f7ab64",
+        "sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "RxMER animation preview facade",
+      "reason": "Selected original capture/name and immutable decoded frame use public NamedCapture, RxMer.from_frame and RxMer.preview. Sparse ordering, provenance and bounded output are preserved without Qt measurement algorithms.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-rxmer-animation-preview-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/fec.rs",
+        "sha256": "939b06152646797e5e0a31fc0f4a71a9222dd6c6fb107d677b8a9f86cca348a9",
+        "sites": [
+          {
+            "line": 30,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 113,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "FEC monitor recovery facade",
+      "reason": "The chart formats the independently accepted FullLoopFecRecovery result; the backend retains the original five-word classification oracle. No private FecCounters import or Qt recovery subtraction remains.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-fec-monitor-recovery-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/profile_input/plot.rs",
+        "sha256": "af9efc4bd433e241745629a0ac8158bbbe3d6b022cce7e86b9648e26a1c433ac",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 136,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Profile plot inspection facade",
+      "reason": "Public original-capture admission and ProfileCapture.inspect supply all raw role/loading/Shannon/capacity/extrema/coordinate data; Qt retains only existing drawing, selection and text formatting.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-profile-plot-inspection-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/bridge/source_input.rs",
+        "sha256": "08782a51209dbf4339932646c85bd7da4bda2102024ff24a20487a4abb175ecd",
+        "sites": [
+          {
+            "line": 98,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Source editor admission facade",
+      "reason": "Public SourceInput/PrbsSeed/FileFillPolicy own passive source admission, meaningful-bit metadata and shared-buffer fill replacement. The chooser uses authoritative public source limits; original source/export behavior remains compatible.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-source-editor-admission-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/source_input/model.rs",
+        "sha256": "cd749e45a92804507a7d12c84b780c41a19deb767ca845c83fb5758f820a5aa4",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 245,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Source editor admission facade",
+      "reason": "Public SourceInput/PrbsSeed/FileFillPolicy own passive source admission, meaningful-bit metadata and shared-buffer fill replacement. The chooser uses authoritative public source limits; original source/export behavior remains compatible.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-source-editor-admission-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/profile_input/document.rs",
+        "sha256": "43e2795e53c04b92a530c18287471230a4e08b01f02165ad5bcba64c73d1b482",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 12,
+            "root": "pnm"
+          },
+          {
+            "line": 12,
+            "root": "pnm"
+          },
+          {
+            "line": 242,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Profile input owner facade",
+      "reason": "Public CaptureLoader/ProfileCapture and TransmissionConfiguration own decoding, raw source catalog/assignment interpretation and geometry checks. Original source bytes/catalog are shared; Qt only adapts metadata/tree/plot/session DTO ownership.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-profile-input-owner-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/profile_input/mod.rs",
+        "sha256": "98db6aa27d8cc68a5a15d2b719cefd34d12882afd3e710e452786872a7156a89",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 240,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Profile input owner facade",
+      "reason": "Public CaptureLoader/ProfileCapture and TransmissionConfiguration own decoding, raw source catalog/assignment interpretation and geometry checks. Original source bytes/catalog are shared; Qt only adapts metadata/tree/plot/session DTO ownership.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-profile-input-owner-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/performance.rs",
+        "sha256": "4226fd5315c90493ae002ab836a89e043bbbe73cd917e5fa7bc7ca4a85289f76",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 26,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Profile performance viewer facade",
+      "reason": "Public FullLoopResult.profile_performance supplies every exact source coordinate/role and scientific observation. Qt retains scalar projections and presentation-only grouping/labels; shared FEC report getters preserve existing JSON. QAM history is unchanged and remains frozen.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-profile-performance-viewer-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/channel/mod.rs",
+        "sha256": "1d9fc006c24c42b2f52e7fece5179e59b3672f0e374e759ed7e6c8cbb08fcd1f",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 185,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 191,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Channel and receiver observations facade",
+      "reason": "Existing accepted public PSD/calibration/amplifier/physical-layout observations replace private numerical owners. Qt only groups/formats authoritative values and physical PLC bounds. Original PLC vectors use public admission with the same independent source geometry/pilots. No backend API extension or scientific implementation.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-channel-and-receiver-observations-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/views.rs",
+        "sha256": "b1038df7e26d87c1c9b9fedaec376dc0654b7a259b36312ed1f9e77cd751a604",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 35,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Channel and receiver observations facade",
+      "reason": "Existing accepted public PSD/calibration/amplifier/physical-layout observations replace private numerical owners. Qt only groups/formats authoritative values and physical PLC bounds. Original PLC vectors use public admission with the same independent source geometry/pilots. No backend API extension or scientific implementation.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-channel-and-receiver-observations-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/spectrum/mod.rs",
+        "sha256": "47cea86ad53db7b81f6499e5d52394fc1aa5504aeabdcd9856183ca08510d5aa",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Channel and receiver observations facade",
+      "reason": "Existing accepted public PSD/calibration/amplifier/physical-layout observations replace private numerical owners. Qt only groups/formats authoritative values and physical PLC bounds. Original PLC vectors use public admission with the same independent source geometry/pilots. No backend API extension or scientific implementation.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-channel-and-receiver-observations-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/spectrum/plc.rs",
+        "sha256": "b76c2e17ef8f87486ebdfcd3a59a5b04b1a716861d05bebe0c670b3fcfbe610a",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 44,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Channel and receiver observations facade",
+      "reason": "Existing accepted public PSD/calibration/amplifier/physical-layout observations replace private numerical owners. Qt only groups/formats authoritative values and physical PLC bounds. Original PLC vectors use public admission with the same independent source geometry/pilots. No backend API extension or scientific implementation.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-channel-and-receiver-observations-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/bridge/measurement_input.rs",
+        "sha256": "3d14e4b9cf784cef228bd6466552f54ab1997330079e2e44fcee16cee92807af",
+        "sites": [
+          {
+            "line": 9,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 262,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 297,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 298,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 386,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 396,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 396,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 400,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 688,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Measured-input and configured-channel facade",
+      "reason": "Existing public source catalog/sequence/response/unity/channel APIs replace private numerical calls. Passive editor DTO/options storage preserves incomplete projects and exact originals; public scientific admission remains separate. PLC source geometry and existing assertion tails are preserved.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-measured-input-and-channel-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/bridge/workbench_file.rs",
+        "sha256": "bf191542686a08ab27e8b6b74f117ce43db22aa1a1e45166a801ed2dac481c70",
+        "sites": [
+          {
+            "line": 147,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Measured-input and configured-channel facade",
+      "reason": "Existing public source catalog/sequence/response/unity/channel APIs replace private numerical calls. Passive editor DTO/options storage preserves incomplete projects and exact originals; public scientific admission remains separate. PLC source geometry and existing assertion tails are preserved.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-measured-input-and-channel-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/channel_model.rs",
+        "sha256": "c6492bc7acdd955855aff8c1587b2c125505f6e7d4fbf25f48004a703847497f",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 187,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 189,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 254,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 259,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 277,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 285,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 288,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Measured-input and configured-channel facade",
+      "reason": "Existing public source catalog/sequence/response/unity/channel APIs replace private numerical calls. Passive editor DTO/options storage preserves incomplete projects and exact originals; public scientific admission remains separate. PLC source geometry and existing assertion tails are preserved.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-measured-input-and-channel-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/mod.rs",
+        "sha256": "e7b1730bb592aadad2db50aa7a06fd88d942b7d67209dcd18a1a3dc09fff9860",
+        "sites": [
+          {
+            "line": 14,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 15,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Measured-input and configured-channel facade",
+      "reason": "Existing public source catalog/sequence/response/unity/channel APIs replace private numerical calls. Passive editor DTO/options storage preserves incomplete projects and exact originals; public scientific admission remains separate. PLC source geometry and existing assertion tails are preserved.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-measured-input-and-channel-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/model.rs",
+        "sha256": "7f43afe35d8561a2c2b8c62ceb10cc6f1ed46c0ee602113013994b3e95b54f55",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 266,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 556,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Measured-input and configured-channel facade",
+      "reason": "Existing public source catalog/sequence/response/unity/channel APIs replace private numerical calls. Passive editor DTO/options storage preserves incomplete projects and exact originals; public scientific admission remains separate. PLC source geometry and existing assertion tails are preserved.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-measured-input-and-channel-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/plc.rs",
+        "sha256": "4a92b802177e31afa36779b24cc2933573cdd3ba0e0cbb4b1e26c6a9058abcf5",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 67,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 68,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Measured-input and configured-channel facade",
+      "reason": "Existing public source catalog/sequence/response/unity/channel APIs replace private numerical calls. Passive editor DTO/options storage preserves incomplete projects and exact originals; public scientific admission remains separate. PLC source geometry and existing assertion tails are preserved.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-measured-input-and-channel-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/workbench/session.rs",
+        "sha256": "4e6520606c7664ee9a52c16f5cdfbf39c193009e59a5db1d35d450723193f2f2",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 18,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 23,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 24,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 26,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 89,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 97,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 147,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 156,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Measured-input and configured-channel facade",
+      "reason": "Existing public source catalog/sequence/response/unity/channel APIs replace private numerical calls. Passive editor DTO/options storage preserves incomplete projects and exact originals; public scientific admission remains separate. PLC source geometry and existing assertion tails are preserved.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-measured-input-and-channel-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/bridge/rxmer_designer.rs",
+        "sha256": "e92b66bacf06b74c67baddcd75f3f1fe3488d5ac57af276e4f3507bb6a308c98",
+        "sites": [
+          {
+            "line": 186,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 225,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Designer and export facade",
+      "reason": "Immutable public RxMerDesign admits/evaluates source-catalog flat/imported recipes and original envelopes. Public materialized/preview values and native-input export replace private kernels; QML consumes the public limits report. Transport/control restoration and screen projection stay application-owned.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-designer-and-export-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/bridge/rxmer_export.rs",
+        "sha256": "4b3cf78f815588359f8957edaabc8a95bb4df7b2aa1917030aa250cdc06fff8d",
+        "sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 11,
+            "root": "pnm_input"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Designer and export facade",
+      "reason": "Immutable public RxMerDesign admits/evaluates source-catalog flat/imported recipes and original envelopes. Public materialized/preview values and native-input export replace private kernels; QML consumes the public limits report. Transport/control restoration and screen projection stay application-owned.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-designer-and-export-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+        "sha256": "10f150e416b4b368c7fcd63f012c3ea783099410fe159bebbf199dec002be2be",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 563,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 586,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 619,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 638,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 639,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 799,
+            "root": "pnm_input"
+          },
+          {
+            "line": 801,
+            "root": "pnm_input"
+          },
+          {
+            "line": 810,
+            "root": "pnm_input"
+          },
+          {
+            "line": 812,
+            "root": "pnm_input"
+          },
+          {
+            "line": 816,
+            "root": "pnm_input"
+          },
+          {
+            "line": 818,
+            "root": "pnm_input"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Designer and export facade",
+      "reason": "Immutable public RxMerDesign admits/evaluates source-catalog flat/imported recipes and original envelopes. Public materialized/preview values and native-input export replace private kernels; QML consumes the public limits report. Transport/control restoration and screen projection stay application-owned.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-designer-and-export-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+        "sha256": "bb65a9ce780ec36f09c4c683bb7ec443a7149ea56a3ef97e6bab37bb479bae27",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Designer and export facade",
+      "reason": "Immutable public RxMerDesign admits/evaluates source-catalog flat/imported recipes and original envelopes. Public materialized/preview values and native-input export replace private kernels; QML consumes the public limits report. Transport/control restoration and screen projection stay application-owned.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-designer-and-export-facade-accepted"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
+        "sha256": "4e314389c700c4b7b2edb4a448f9c950d83bd88fe96889113dc9cb1f49990c20",
+        "sites": [
+          {
+            "line": 15,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Receiver public API and dependency exit",
+      "reason": "Public detached archives and live QAM/decision/soft queries own selection, matched/nearest MER, slicer scaling, actual likelihood histograms/extrema and decoder context. Qt retains only run routing and screen/label formatting; no private imports or scientific algorithms.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/qam_history.rs",
+        "sha256": "0d9912772744fd131614ae43b42dbd150183aab4d6839ea0e34c84dc17c93483",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 21,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 151,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Receiver public API and dependency exit",
+      "reason": "Public detached archives and live QAM/decision/soft queries own selection, matched/nearest MER, slicer scaling, actual likelihood histograms/extrema and decoder context. Qt retains only run routing and screen/label formatting; no private imports or scientific algorithms.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/selection.rs",
+        "sha256": "14182c1a7192f45c3de50b2e3d2c0fd46476696aee2e585fc9961b589acef563",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 18,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 20,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 128,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 130,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 265,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 280,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 329,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "Receiver public API and dependency exit",
+      "reason": "Public detached archives and live QAM/decision/soft queries own selection, matched/nearest MER, slicer scaling, actual likelihood histograms/extrema and decoder context. Qt retains only run routing and screen/label formatting; no private imports or scientific algorithms.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit"
+    }
+  ],
+  "reviewed_updates": [
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+        "sha256": "ed5e4e559916656e660dfb0d47824285d73c555d616e7edd3176b9da0c2a6339",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 563,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 586,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 619,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 638,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 639,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 676,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 801,
+            "root": "pnm_input"
+          },
+          {
+            "line": 803,
+            "root": "pnm_input"
+          },
+          {
+            "line": 812,
+            "root": "pnm_input"
+          },
+          {
+            "line": 814,
+            "root": "pnm_input"
+          },
+          {
+            "line": 818,
+            "root": "pnm_input"
+          },
+          {
+            "line": 820,
+            "root": "pnm_input"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+        "sha256": "0c0e955114891f8bf77f97a5d2080fc606f8d61ce039583e03dc099a52458093",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 563,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 586,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 619,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 638,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 639,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 793,
+            "root": "pnm_input"
+          },
+          {
+            "line": 795,
+            "root": "pnm_input"
+          },
+          {
+            "line": 804,
+            "root": "pnm_input"
+          },
+          {
+            "line": 806,
+            "root": "pnm_input"
+          },
+          {
+            "line": 810,
+            "root": "pnm_input"
+          },
+          {
+            "line": 812,
+            "root": "pnm_input"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Only designed_flat_mer_drives_residual_power_and_real_fec moves its engine invocation to the public request; every production byte and other test remains exact. The remaining scientific debt stays frozen.",
+      "evidence": "docs/development/features/unified-qt-workbench/downstream-worker-evidence.json"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+        "sha256": "7dfffc3502bfa20788897fd6382950c2916ba1bed2df925f82c8244839d31e69",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 189,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+        "sha256": "18dcb54538c9748162553ec1e8cd5337ae1a7909a7e598c2b5a36f2448f5f582",
+        "sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 185,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Only stage view public identifiers/callers and named page policies change. The spectrum_state and spectrum functions remain byte-for-byte exact; their two remaining science sites stay frozen pending a separate calibrated ordered-frame API prerequisite.",
+      "retained_spectrum_functions": {
+        "sha256": "5248c0e8d6679a897be8e3cd3c7252861442289bd2724ed0d89cb3ecad4f5ae4",
+        "byte_length": 2814,
+        "exact_at_base_commit": "b7146e94c595b344b81694e6473942d27f6211d9"
+      },
+      "evidence": "docs/development/features/unified-qt-workbench/transmitter-views-evidence.json"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/profile_input/mod.rs",
+        "sha256": "d3201357eb959101d0c1e9e8da299376424a51f2e9c9bc4ff591a7ce2b38c05e",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 191,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 217,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/inputs/profile_input/mod.rs",
+        "sha256": "98db6aa27d8cc68a5a15d2b719cefd34d12882afd3e710e452786872a7156a89",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 240,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Only the first-carrier-exclusion regression fixture preparation changes from private in-memory mutation to an admitted decoded capture with the same source role/loading. Every original assertion, all production bytes and every other test byte are exact. Remaining private production/test sites stay frozen, without introducing a new science call.",
+      "preserved_production_prefix": {
+        "sha256": "14194e15788d2bcdde0560ddb0de64956345d4066f1299552a3bfc62ef8f0173",
+        "byte_length": 5263,
+        "exact_at_base_commit": "d85efab1fa1b182af39c4dcc2bee2b3902729e5b"
+      },
+      "all_original_marker_assertions_and_other_test_bytes_exact": true,
+      "evidence": "docs/development/features/unified-qt-workbench/profile-plot-facade-evidence.json"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/workbench/session.rs",
+        "sha256": "439f869b04539487f831fe53bddb1ec4568215e413d840ca060b4174c170750d",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 19,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 24,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 25,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 27,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 90,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 98,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 148,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 157,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/workbench/session.rs",
+        "sha256": "4e6520606c7664ee9a52c16f5cdfbf39c193009e59a5db1d35d450723193f2f2",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 18,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 23,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 24,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 26,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 89,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 97,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 147,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 156,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Only the legacy accepted source type/import becomes public SourceInput. Every other session byte, thread-local owner and operation is exact; no direction lifecycle or remaining scientific owner is migrated here. Its nine remaining private root-reference sites stay frozen.",
+      "all_bytes_except_source_type_import_exact": true,
+      "exact_at_base_commit": "80c9fc47dd99447bd1a32106f4ab4f751673b704",
+      "evidence": "docs/development/features/unified-qt-workbench/source-editor-facade-evidence.json"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+        "sha256": "318a1513704161370baa9abc0806c1c16f7773e82692702a1d408822cd64aa80",
+        "sites": [
+          {
+            "line": 6,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 13,
+            "root": "pnm"
+          },
+          {
+            "line": 13,
+            "root": "pnm"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+        "sha256": "7f9f799c5731f80aaa80a7163c6c36139fbde9c5dd512bc5ea9b6abad9aa3678",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Ordinary RxMER/H decoding and scientific imports move to public CaptureLoader and nominal API frame DTOs. Exact old Designer detection/dispatch fragment remains; only its coarse input-format import stays frozen. No private decoder/import or scientific algorithm is added. Original metadata projection is applied only to independent legacy DTO copies. Full Designer and measurement-model acceptance remains pending.",
+      "evidence": "docs/development/features/unified-qt-workbench/measurement-owner-facade-evidence.json",
+      "preserved_legacy_designer_dispatch": {
+        "sha256": "b641952729952520bb333a63652630037f77d760a9186a571a97cd04a3f71b01",
+        "byte_length": 204,
+        "exact_at_base_commit": "1820cdff5a562e021385626155a40ff6ec1c4450"
+      }
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
+        "sha256": "0a30767c77340c499dc259baf9b530a7b8186c33f9a8e5af7009361931ac6482",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 145,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/instruments/receiver/diagnostics.rs",
+        "sha256": "4e314389c700c4b7b2edb4a448f9c950d83bd88fe96889113dc9cb1f49990c20",
+        "sites": [
+          {
+            "line": 15,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Configured/estimated response and impulse calculations move to the existing public FullLoopResult.response operation, original layout observations and retained stage metadata. Exact slicer/FEC tail and its remaining private slice/LLR imports stay frozen for bounded receiver-history migration.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-channel-and-receiver-observations-facade-accepted",
+      "preserved_legacy_tail_sha256": "e3e75b165c330fe21e38acfd183ce5da24cbf0ef49356df95325390e80eea3f9"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+        "sha256": "0c0e955114891f8bf77f97a5d2080fc606f8d61ce039583e03dc099a52458093",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 563,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 586,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 619,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 638,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 639,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 793,
+            "root": "pnm_input"
+          },
+          {
+            "line": 795,
+            "root": "pnm_input"
+          },
+          {
+            "line": 804,
+            "root": "pnm_input"
+          },
+          {
+            "line": 806,
+            "root": "pnm_input"
+          },
+          {
+            "line": 810,
+            "root": "pnm_input"
+          },
+          {
+            "line": 812,
+            "root": "pnm_input"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/designer.rs",
+        "sha256": "10f150e416b4b368c7fcd63f012c3ea783099410fe159bebbf199dec002be2be",
+        "sites": [
+          {
+            "line": 8,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 494,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 563,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 586,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 619,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 638,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 639,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 799,
+            "root": "pnm_input"
+          },
+          {
+            "line": 801,
+            "root": "pnm_input"
+          },
+          {
+            "line": 810,
+            "root": "pnm_input"
+          },
+          {
+            "line": 812,
+            "root": "pnm_input"
+          },
+          {
+            "line": 816,
+            "root": "pnm_input"
+          },
+          {
+            "line": 818,
+            "root": "pnm_input"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Test-only adaptation to Model.playback returning the public sequence: pass the retained exact catalog and read normalized_power. All Designer production bytes, original independent residual-power/FEC assertions and fourteen private sites remain frozen for the next owner migration.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-measured-input-and-channel-facade-accepted",
+      "preserved_production_sha256": "5ffd3386bced5f7ee3a365c6aca2d86c44c8ea23927af9fdcaa4e5e995fcde7d"
+    },
+    {
+      "entry": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+        "sha256": "7f9f799c5731f80aaa80a7163c6c36139fbde9c5dd512bc5ea9b6abad9aa3678",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "replacement": {
+        "path": "apps/qt/src/downstream/inputs/measurement_input/document.rs",
+        "sha256": "bb65a9ce780ec36f09c4c683bb7ec443a7149ea56a3ef97e6bab37bb479bae27",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "reason": "Add only immutable original-byte/public-frame adapters Capture.rxmer and Capture.response used by the migrated model. Removing precisely those added methods reproduces the exact previous file; decoding/metadata and the remaining Designer transport helper import stay unchanged and frozen.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-measured-input-and-channel-facade-accepted",
+      "preserved_legacy_file_sha256": "7f9f799c5731f80aaa80a7163c6c36139fbde9c5dd512bc5ea9b6abad9aa3678"
+    }
+  ],
+  "retired_dependencies": [
+    {
+      "entry": {
+        "package": "docsis-ofdm-fec",
+        "declared_package": "docsis-ofdm-fec",
+        "rename": null,
+        "kind": null,
+        "target": null,
+        "path": "crates/ofdm",
+        "source": null,
+        "requirement": "*",
+        "features": [
+          "pnm-input",
+          "simulation",
+          "source-input"
+        ],
+        "default_features": false,
+        "optional": false
+      },
+      "task": "UIU-DS-01",
+      "unit": "Receiver public API and dependency exit",
+      "reason": "The existing merlin facade/native-input feature supplies every public simulation/input contract; the Qt adapter no longer directly depends on a scientific engine or decoder.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit"
+    },
+    {
+      "entry": {
+        "package": "pnm",
+        "declared_package": "pnm",
+        "rename": null,
+        "kind": null,
+        "target": null,
+        "path": null,
+        "source": "git+https://github.com/PyPNMApps/PNM-Viewer-Toolkit.git?rev=5fbd5561f3e06b73486546b5ffa520279080a5eb",
+        "requirement": "=0.3.6",
+        "features": [],
+        "default_features": true,
+        "optional": false
+      },
+      "task": "UIU-DS-01",
+      "unit": "Receiver public API and dependency exit",
+      "reason": "The existing merlin facade/native-input feature supplies every public simulation/input contract; the Qt adapter no longer directly depends on a scientific engine or decoder.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit"
+    },
+    {
+      "entry": {
+        "package": "pnm-input",
+        "declared_package": "pnm-input",
+        "rename": null,
+        "kind": null,
+        "target": null,
+        "path": "crates/pnm-input",
+        "source": null,
+        "requirement": "*",
+        "features": [],
+        "default_features": true,
+        "optional": false
+      },
+      "task": "UIU-DS-01",
+      "unit": "Receiver public API and dependency exit",
+      "reason": "The existing merlin facade/native-input feature supplies every public simulation/input contract; the Qt adapter no longer directly depends on a scientific engine or decoder.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit"
+    }
+  ]
+}

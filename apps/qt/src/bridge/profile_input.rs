@@ -3,12 +3,50 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! DPD input lifecycle and filesystem adapter; all scientific validation is Rust.
-use crate::inputs::profile_input::document;
-pub use crate::inputs::profile_input::ProfileModel as ProfileInputRust;
+use crate::downstream::inputs::profile_input::{document, ProfileModel};
+use crate::downstream::workbench::session::Context;
+use crate::shell::{Retained, RetentionReservation};
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 use document::MAX_INPUT_BYTES;
 use serde_json::{json, Value};
+
+/// GUI ownership of independently admitted profile draft and accepted snapshots.
+#[derive(Default)]
+pub struct ProfileInputRust {
+    pub(super) context: Context,
+    model: ProfileModel,
+    // Model payload must drop before its covering reservation.
+    model_guard: Option<RetentionReservation>,
+}
+
+impl ProfileInputRust {
+    fn apply_profile(&mut self, profile_id: i32, settings: &str) -> Result<(), String> {
+        let mut candidate = self.model.clone();
+        candidate.context = self.context.clone();
+        let guard = candidate.apply_transactional(profile_id, settings)?;
+        self.model = candidate;
+        self.model_guard = Some(guard);
+        Ok(())
+    }
+
+    fn replace_model(&mut self, mut model: ProfileModel) -> Result<(), String> {
+        model.context = self.context.clone();
+        let admitted = model.admit(self.context.application.budget())?;
+        self.adopt_model(admitted)
+    }
+
+    fn adopt_model(&mut self, admitted: Retained<ProfileModel>) -> Result<(), String> {
+        if !self.context.application.budget().owns(&admitted) {
+            return Err("Prepared profile belongs to another application host.".into());
+        }
+        let (mut model, guard) = admitted.into_parts();
+        model.context = self.context.clone();
+        self.model = model;
+        self.model_guard = Some(guard);
+        Ok(())
+    }
+}
 
 #[cxx_qt::bridge]
 pub mod bridge {
@@ -107,11 +145,15 @@ impl bridge::ProfileInput {
     pub fn inspect(&self, request: &QString) -> QString {
         response(
             self.rust()
+                .model
                 .draft
                 .as_ref()
                 .ok_or_else(|| "Open a profile file first.".into())
                 .and_then(|capture| {
-                    crate::inputs::profile_input::plot::inspect(capture, &request.to_string())
+                    crate::downstream::inputs::profile_input::plot::inspect(
+                        capture,
+                        &request.to_string(),
+                    )
                 }),
         )
     }
@@ -126,10 +168,11 @@ impl bridge::ProfileInput {
         response((|| {
             let capture = self
                 .rust()
+                .model
                 .draft
                 .as_ref()
                 .ok_or("Open a profile file first.")?;
-            crate::inputs::profile_input::plot::viewport(
+            crate::downstream::inputs::profile_input::plot::viewport(
                 capture,
                 u8::try_from(profile_id).map_err(|_| "Invalid profile ID.")?,
                 usize::try_from(start).map_err(|_| "Invalid start offset.")?,
@@ -139,36 +182,58 @@ impl bridge::ProfileInput {
     }
     /// Adopts already validated project captures without a file-picker round trip.
     pub fn reload(mut self: core::pin::Pin<&mut Self>) {
-        let model = crate::workbench::project_load::take(|prepared| prepared.profile.take())
-            .map(Ok)
-            .unwrap_or_else(|| {
-                ProfileInputRust::from_saved(&crate::workbench::session::saved("profile"))
+        let prepared =
+            crate::downstream::workbench::project_load::take(&self.rust().context, |models| {
+                models.profile.take().map(|model| *model)
             });
-        if let Ok(model) = model {
-            self.as_mut().rust_mut().draft = model.draft;
-            self.as_mut().rust_mut().accepted = model.accepted;
+        if let Some(model) = prepared {
+            let _ = self.as_mut().rust_mut().adopt_model(model);
+        } else {
+            let saved =
+                crate::downstream::workbench::session::saved(&self.rust().context, "profile");
+            if let Ok(model) = ProfileModel::from_saved(&saved) {
+                let _ = self.as_mut().rust_mut().replace_model(model);
+            }
         }
     }
 
-    /// Restores a draft from the accepted snapshot; accepted input stays unchanged.
+    /// Restores a draft only after admitting its full independent editor owner.
     /// # Returns
-    /// A bounded preview of the accepted selection or an empty tree.
+    /// A bounded preview, or an admission error preserving previous editor state.
     pub fn begin(mut self: core::pin::Pin<&mut Self>) -> QString {
-        let accepted = self.rust().accepted.clone();
-        self.as_mut().rust_mut().draft = accepted.as_ref().map(|(capture, _)| capture.clone());
-        response(match accepted {
-            Some((capture, id)) => capture.preview(id),
+        let mut candidate = self.rust().model.clone();
+        candidate.draft = candidate
+            .accepted
+            .as_ref()
+            .map(|(capture, _)| capture.clone());
+        let preview = match &candidate.accepted {
+            Some((capture, id)) => capture.preview(*id),
             None => Ok(empty()),
-        })
+        };
+        response(preview.and_then(|preview| {
+            self.as_mut().rust_mut().replace_model(candidate)?;
+            Ok(preview)
+        }))
     }
+
     /// Reads and stages only a bounded local regular file.
     /// # Arguments
     /// * `url` - Native picker URL; non-local schemes are rejected.
     /// # Returns
     /// Preview JSON or a diagnostic preserving the previous draft and accepted input.
     pub fn stage(mut self: core::pin::Pin<&mut Self>, url: &QString) -> QString {
-        let result = crate::platform::input_file::read_local(&url.to_string(), MAX_INPUT_BYTES)
-            .and_then(|(name, bytes)| self.as_mut().rust_mut().stage_bytes(name, bytes));
+        let result = crate::platform::input_file::read_local(
+            &self.rust().context.application,
+            crate::shell::Direction::Downstream,
+            &url.to_string(),
+            MAX_INPUT_BYTES,
+        )
+        .and_then(|(name, bytes)| {
+            let mut candidate = self.rust().model.clone();
+            let preview = candidate.stage_bytes(name, bytes)?;
+            self.as_mut().rust_mut().replace_model(candidate)?;
+            Ok(preview)
+        });
         response(result)
     }
     /// Opens the OS picker without a Qt fallback; cancellation keeps the draft.
@@ -191,6 +256,7 @@ impl bridge::ProfileInput {
     pub fn preview(&self, profile_id: i32) -> QString {
         response(
             self.rust()
+                .model
                 .draft
                 .as_ref()
                 .ok_or_else(|| "Open a profile file first.".to_string())
@@ -203,8 +269,14 @@ impl bridge::ProfileInput {
     /// # Returns
     /// An empty preview document.
     pub fn clear_draft(mut self: core::pin::Pin<&mut Self>) -> QString {
-        self.as_mut().rust_mut().draft = None;
-        response(Ok(empty()))
+        let mut candidate = self.rust().model.clone();
+        candidate.draft = None;
+        response(
+            self.as_mut()
+                .rust_mut()
+                .replace_model(candidate)
+                .map(|()| empty()),
+        )
     }
     /// Accepts only a profile compatible with the accepted OCD configuration.
     /// # Arguments
@@ -220,43 +292,30 @@ impl bridge::ProfileInput {
         let result = self
             .as_mut()
             .rust_mut()
-            .accept(profile_id, &settings.to_string());
-        if result.is_ok() {
-            let selected = self
-                .rust()
-                .accepted
-                .as_ref()
-                .and_then(|(capture, id)| capture.profile(*id).ok())
-                .cloned();
-            crate::workbench::session::set_profile(selected);
-            crate::workbench::session::set_profiles(
-                self.rust()
-                    .accepted
-                    .as_ref()
-                    .map(|(capture, _)| capture.profiles.as_ref().clone())
-                    .unwrap_or_default(),
-            );
-            let section=self.rust().accepted.as_ref().map(|(c,id)|json!({"file":crate::workbench::project_file::encode(&c.name,&c.original),"profile_id":id})).unwrap_or(Value::Null);
-            crate::workbench::session::put_saved("profile", section);
-        }
+            .apply_profile(profile_id, &settings.to_string());
         QString::from(result.err().unwrap_or_default())
     }
-    /// Discards draft input and restores the accepted snapshot without I/O.
+    /// Discards a draft only after admitting the restored accepted editor.
     pub fn cancel(mut self: core::pin::Pin<&mut Self>) {
-        let draft = self
-            .rust()
+        let mut candidate = self.rust().model.clone();
+        candidate.draft = candidate
             .accepted
             .as_ref()
             .map(|(capture, _)| capture.clone());
-        self.as_mut().rust_mut().draft = draft;
+        let _ = self.as_mut().rust_mut().replace_model(candidate);
     }
+
     /// Reports readiness without inferring selection from defaults or filenames.
     /// # Arguments
     /// * `settings` - Accepted transmission configuration JSON.
     /// # Returns
     /// State JSON used by the workbench and OCD profile summary.
     pub fn state(&self, document: &QString) -> QString {
-        let value = self.rust().state(&document.to_string());
+        let value = self.rust().model.state(&document.to_string());
         QString::from(value.to_string())
     }
 }
+
+#[cfg(test)]
+#[path = "profile_input/retention_tests.rs"]
+mod retention_tests;

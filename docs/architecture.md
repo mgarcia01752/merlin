@@ -123,7 +123,7 @@ Delivery gates: [INT-LICENSE-01](development/checklist.md#int-license-01).
 | Component | Current owner | Integration design and compatibility |
 | --- | --- | --- |
 | Unified Rust root | `crates/merlin`, Cargo/library `merlin` | Implemented thin facade; only re-export direction APIs and common contracts. No scientific implementation or core dependency back to this facade. |
-| Common API contracts | `crates/phy-api`, Cargo `merlin-api` / library `merlin_api` | Implemented leaf; shared cancellation query/control and existing error categories only. Directional limits/reports/errors remain directional. |
+| Common API contracts | `crates/phy-api`, Cargo `merlin-api` / library `merlin_api` | Implemented leaf; shared cancellation query/control, existing error categories and retained-resource quantities. Directional limits/reports/errors remain directional; ownership walker support stays outside the facade. |
 | Downstream PHY | `crates/ofdm`, Cargo `docsis-ofdm-fec` | Retain package, public imports, control channels, interleavers, waveform, received configuration and report schemas. |
 | Common FEC | `crates/fec-codec` | `src/upstream_ldpc/` now owns upstream definitions/codec and independent source tests; existing BCH, downstream LDPC, shortening, NCP and PLC remain. |
 | Generic DSP | `crates/dsp`, Cargo `merlin-dsp`; existing directional numerical owners retained | Shared centered unitary 2K/4K/8K FFT and one-step PRBS15 recurrence; downstream wrappers preserve geometry/errors/state. Independent/frozen equivalence and hot-path measurements precede consumer rewiring; INT-DSP-01 now has passing consumer acceptance. No generic channel/QAM/measurement state extraction. |
@@ -133,10 +133,13 @@ Delivery gates: [INT-LICENSE-01](development/checklist.md#int-license-01).
 | Native Python | `bindings/python`, package `merlin` | One private `_native` extension and real downstream/upstream/common modules; existing imports/exports retain identity. No second distribution or Python science. |
 | Qt | `apps/qt` | Existing downstream presentation stays unchanged; upstream UI implementation is outside this backend integration. |
 
-**Current dependency direction:** CLI/native Python → facade and `pnm-input`;
-the CLI also retains its direct downstream dependency for existing handlers.
+**Current dependency direction:** native Python → facade with optional
+`native-input` → `pnm-input`; CLI → facade and `pnm-input`. The CLI also retains
+its direct downstream dependency for existing handlers. Base facade defaults and
+independent direction features are unchanged. Native input enables both PHY
+adapters and re-exports existing contracts without scientific implementation.
 Both independent PHYs → common API/DSP/FEC leaves;
-`pnm-input` → downstream/upstream APIs and exact pinned `pnm`.
+`pnm-input` → downstream/upstream APIs, common API contracts and exact pinned `pnm`.
 The independent Qt adapter retains its current dependencies.
 The downstream `pnm-input` Cargo feature is not a dependency back to the adapter.
 
@@ -152,10 +155,11 @@ flowchart TD
     ROOT --> API[merlin-api contracts]
     DS --> API
     US --> API
-    PY --> INPUT[Native PNM input adapter]
+    ROOT -->|optional native-input| INPUT[Native PNM input adapter]
     CLI --> INPUT
     INPUT --> DS
     INPUT --> US
+    INPUT --> API
     INPUT --> PNM[Exact pinned PNM decoder]
     DS --> FEC[Common FEC mechanisms and separate code definitions]
     US --> FEC
@@ -904,7 +908,1372 @@ See [component guides](user/qam-processing/README.md) and the
 [External interoperability](development/features/qam-completion/external-vectors.md)
 is optional future scope.
 
+## Unified Qt Workbench
+
+This is the accepted architecture for a separate UI delivery after accepted
+backend checkpoint `23f63c9`. The user's [continuous execution authorization](development/features/unified-qt-workbench/execution-authorization.md)
+accepts planning and authorizes task commits. [REQ-UIU-01 through REQ-UIU-27](requirements.md#unified-qt-workbench-requirements)
+and the [UIU delivery tasks](development/checklist.md#unified-qt-workbench-delivery)
+define its obligations and acceptance; no new UI functionality is accepted here.
+See the [design and master-clause map](development/features/unified-qt-workbench/design.md),
+[complete source inventory](development/features/unified-qt-workbench/source-inventory.json)
+and [API gaps](development/features/unified-qt-workbench/api-gap-matrix.md).
+This new UI scope supersedes the backend phase's upstream-UI deferral only;
+completed backend/FEC gates and wider PHY deferrals are unchanged.
+
+Requirements: [REQ-UIU-01](requirements.md#req-uiu-01).
+Delivery: [UIU-PLAN-01](development/checklist.md#task-uiu-plan-01), [UIU-BASE-01](development/checklist.md#task-uiu-base-01).
+
+### Unified Qt public API boundary
+
+```mermaid
+flowchart TB
+    SHELL["One Qt application: shared menu and persistent direction tabs"]
+    SHELL --> DS["Downstream QML and session adapter"]
+    SHELL --> US["Upstream QML and session adapter"]
+    DS --> BRIDGE["Thin QObject entry files together in src/bridge"]
+    US --> BRIDGE
+    BRIDGE --> FACADE["merlin::downstream / upstream / common"]
+    FACADE --> DAPI["docsis-ofdm-fec::api"]
+    FACADE --> UAPI["docsis-ofdma::api"]
+    FACADE --> INPUT["Optional native-input re-exports: pnm-input"]
+    INPUT --> DAPI
+    INPUT --> UAPI
+    DAPI --> LEAF["Common API / DSP / FEC leaves"]
+    UAPI --> LEAF
+    SHELL --> PLATFORM["Platform I/O, updates, ownership and UI state"]
+```
+
+All new Qt scientific calls use the accepted high-level facade API. Neither QML
+nor QObject/direction adapters invoke internal PHY engines, DSP, FEC, native PNM
+decoders or private science directly. QObject code translates requests, owns UI
+session references, dispatches bounded asynchronous jobs and maps public errors,
+progress and results. Configuration admission, previews, waveform/resource
+construction, scientific measurements and results remain in backend owners.
+The facade adds re-exports/optional feature wiring, never scientific code.
+The implemented optional `native-input` feature exposes existing directional
+admission under `downstream::inputs` and `upstream::inputs`. Passive downstream
+`TransmissionConfiguration` and `SourceInput` validate timing/profile and exact-byte
+source choices without executing or mutating sessions; see the
+[typed contracts and parity](user/api/input-admission.md). Editor, Designer and
+idle-preview operations below pass UIU-API-01 acceptance; Qt adoption is separate.
+Original-capture `RxMer::preview` and `ChannelEstimate::preview` reuse the existing
+bounded measurement-view/projection owner, retaining exact full grids, provenance,
+nulls and explicit original H/RxMER units without source or session advancement.
+`MeasurementSequence` adds immutable bounded admission of ordered unique original
+RxMER inputs through the existing residual-power planner. All actual contributor
+weights/epochs remain explicit for static averages and synthetic hold/interpolation.
+Equivalent views use the numerical residual-power owner; `check_response` admits
+explicit unity or captured H with the existing spatial/epoch/coverage contracts.
+Optional native `inputs::RxMerDesign` wraps the existing version-1 saved Designer
+evaluator with immutable typed flat/imported baselines and noncompounding recipe
+replacement. Exact envelopes, original roles/grid/epochs and backend source-kind
+labels remain explicit; Python is bounded transport/ownership only.
+Read-only `ProfileCapture` retains the complete encoded source profile catalog,
+compact schemes and original header/order without widening legacy simulation
+`ProfileId`. Its bounded raw metrics and `Dpd::summary`/`view` reuse the existing
+assignment, ideal Shannon and useful-symbol-rate owners. The shared parser omits
+inspection arrays for legacy scientific callers; see
+[profile contracts and parity](user/api/profile-inspection.md).
+`ChannelConfiguration` freezes the existing loss/power/filter parameters and uses
+the same spatial/epoch/coverage and channel-composition owners as execution.
+Its [configured transfer preview](user/api/channel-preview.md) retains full original
+grids and inputs, actual filter diagnostics and bounded before-receiver views;
+it creates no waveform/filter stream or simulation state.
+`TransmitterPreviewRequest` freezes accepted source/profile/timing admission and
+explicitly generates a bounded private TX snapshot through the existing owner.
+Its one-shot public control reports cancellation/progress without global result
+storage. [Idle TX contracts](user/api/transmitter-preview.md) preserve actual
+post-overlap/pre-channel samples/PSD and expose authoritative symbol timing/window
+coefficients for presentation. Full-loop controls and retained stages belong to
+the separate API-02 contracts below.
+UIU-API-02 adds immutable [typed full-loop requests](user/api/full-loop.md) under
+`crates/ofdm/src/api/full_loop` over the existing controlled job, with independent
+safe-boundary pause/cancel/progress and owned actual partial reports. Native
+conversions under `bindings/python/src/full_loop` release the interpreter lock and
+map interrupts to cooperative cancellation. Existing evaluation Simulation/Merlin
+operations remain compatible. Physical-spectrum/role, channel-calibration and
+complete source-catalog/sweep extensions have focused backend acceptance below.
+The [final API-02 acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-02-public-full-loop-and-observations-accepted)
+precedes the separate UIU-DS-01 Qt consumer migration.
+`api/full_loop/observations` owns validated opt-in selection and finite typed copies
+of core test-point events, with bounded queries and frozen policy/provenance.
+The [stage contract](user/api/full-loop-observations.md) keeps actual phases,
+grids, references, unavailable history and explicit zeros distinct. A private
+frame-assembly notification exposes its original computed pilot vectors through
+the existing dispatcher; the original public assembly/no-op path and scientific
+outputs remain compatible. `api/full_loop/instruments` adds passive PSD, response
+and actual LDPC-input statistics through the existing waveform spectrum, channel
+composition/layout and receiver diagnostic owners. Exact contiguous sample origins
+bound PSD accumulation; missing history stops the span. Configured H and retained
+receiver H-hat use explicit separate sources/reference planes and original excluded
+gaps. Python converts owned results and releases the interpreter lock during work;
+neither adapter introduces scientific calculations. Calibrated spectrum, scalar
+amplifier-boundary and complete catalog/sweep operations below retain the same
+scientific owners and now have integrated Rust/native acceptance.
+`api/full_loop/messages` inspects actual retained TX PLC frames through the existing
+frame parser, CRC-validated MAC reassembler and descriptor owner. Typed TLV meanings
+reuse decoded receiver settings and accepted modulation metadata; adapters only
+format labels/hex. The bounded report retains exact bytes, offsets, final carrying
+context and checked sample coverage, distinguishing construction from completed
+transmission. Missing/invalid segments stop with an explicit issue and preserve
+earlier complete packets; no messages are regenerated from current configuration.
+`api/full_loop/cells` selects original payload/NCP and protected report pairs with
+typed role/profile/order/coordinate filters and finite owned output windows.
+Existing modulation owners compute raw/corrected nearest-point and actual matched-TX
+MER across all selected retained cells before pagination. Receiver diagnostic
+normalization delegates to the original slicer; actual cell LLR statistics stay
+separate from coding-order decoder input. The [cell contract](user/api/full-loop-cells.md)
+preserves original wire/source identities, known pilot amplitude, unavailable
+references and honest empty selections. Native queries own their results and
+release the interpreter lock; no Qt/Python scientific calculation is introduced.
+`api/references` exposes finite labelled reference pages and center-relative
+nearest-reference regions through the existing table/slicing owner. The backend
+intersects every reference constraint with an explicit finite viewport, preserving
+original labels, known amplitude and lowest-label tie semantics. Receiver diagnostic
+`soft_view` supplies bounded histograms and original-index extrema over actual cell
+or coding-order LDPC values, kept as separate planes. [Reference/soft contracts](user/api/slicer-views.md)
+return scientific geometry/statistics only; adapters own pixel coordinates, labels
+and colors. Direct bin-edge comparisons preserve tiny signed likelihood values;
+no probabilities, empirical BER or decoder changes are inferred.
+
+`api/physical` inspects configured full-FFT roles through existing captured-layout
+admission and the physical layout owner, preserving original source identity/grid.
+`api/full_loop/physical` queries actual retained TX bins or raw RX FFT bins and
+uses the waveform owner for instantaneous squared magnitude, without another FFT
+or per-Hz PSD scaling. Known zero and unavailable history remain distinct.
+`api/full_loop/transmit_cells` preserves typed mapped/interleaved values and
+actual optional packing roles. A separate metadata-only interleaver projects
+roles only for the first proven aligned source symbol; later history stays
+unknown. All queries are bounded to 8192 bins/cells, retain original context and
+reuse backend role geometry. Qt retains screen coordinates, labels and colors.
+See the [physical view contract](user/api/physical-views.md). The calibrated channel
+and catalog/sweep operations below complete the accepted API-02 backend scope;
+Qt adoption remains a separate delivery task.
+
+`api/full_loop/instruments/sequence` adds an explicitly ordered frame-stage
+spectrum diagnostic over actual retained IFFT, prefix, window or RX useful frames.
+A focused waveform owner preserves each original channel symbol/sample interval,
+checks consecutive symbols and physical stride, and stops at incompatible or
+incomplete history. It reports diagnostic sequence positions separately from
+physical origins and true contiguity; no prefix gap is filled or overlap added.
+The existing Welch owner and one unchanged PSD viewport projection supply bounded
+normalized values. The original contiguous `spectrum` operation and retention
+defaults remain compatible. See the [sampling-basis contract](user/api/full-loop-observations.md#ordered-frame-stage-spectrum).
+
+`signal_processing/channel/spectrum` projects the existing full-resolution PSD
+and full-band ChannelPower into explicit normalized or millivolt-squared units,
+using the existing power owner and original physical roles. Calibration does not
+apply gain or run a channel. `api/full_loop/instruments/channel` exposes actual
+calibrated time-stage spectra, fixed channel taps and amplifier-only physical-bin
+views. After-amplifier observations explicitly derive from the same retained TX
+samples/bins through the accepted gain, excluding CPA/H/noise; receiver input
+always uses actual modeled output. Original source contexts and derived reference
+planes remain separate. `api/transmitter/calibrated` supplies the same electrical
+projection for actual idle TX PSD without applying configured channel effects.
+The full occupied-band integral includes internal holes and is independent of
+viewport reduction. Original normalized methods and retention defaults remain
+compatible. Native Python delegates these operations and releases the GIL.
+See the [channel spectrum contract](user/api/channel-spectrum.md) and the
+[accepted API-02 evidence](development/features/unified-qt-workbench/validation.md#uiu-api-02-public-full-loop-and-observations-accepted).
+
+`api/full_loop/sweep` owns complete-catalog sweep admission, reusing single-request
+preparation and independently controlled execution. It retains raw source IDs
+separately from checked run IDs, preflights every selected original profile,
+preserves current edited requests, and constructs one per-profile request at a
+time over shared original inputs. `ProfileCapture::simulation_profile` preserves
+original loading/provenance while exposing the existing checked run-ID subset;
+the complete source catalog remains unchanged. Native Python mirrors these
+operations and owns its plan/request handles. See the
+[exact contract and owner map](development/features/unified-qt-workbench/design.md#uiu-api-02-complete-catalog-and-bounded-sweep-unit)
+and [serial plan guide](user/api/full-loop-sweep.md). Backend API-02 acceptance is
+complete; Qt's serial dispatcher and aggregate retained-result budgets remain
+UIU-DS-01/UIU-SESSION-01 responsibilities.
+
+
+The [source-verified recovery prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-source-verified-fec-recovery-prerequisite)
+keeps whole-run payload accounting in simulation/channel/results. The public
+FullLoopResult.fec_recovery operation and FullLoopFecRecovery type project the
+actual generated, recovered, rejected, source-mismatched and unrecovered totals.
+Native Python delegates that same constant-size query. It changes no decoder,
+receiver input, original report serialization, observation window or retained
+word policy. Qt adoption remains a separate UIU-DS-01 unit after paired acceptance.
+
+The [source-file admission prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-source-file-admission-metadata-prerequisite)
+adds passive file_limits/file_info and immutable with_fill operations in
+api/admission/source_info. Existing FilePayload owns byte/work validation and
+shared original storage; the high-level report preserves original/fill counts,
+independent fill policy and empty-versus-continuous identity. Fill replacement
+retains original bytes/name/hash without another large copy. Native Python is
+conversion only. Qt source/editor/worker consumption remains separate UIU-DS-01
+work after the paired prerequisite; schema and source-stream behavior do not change.
+
+The [raw source-catalog prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-raw-source-catalog-admission-prerequisite)
+adds source-catalog variants for measured sequence/response admission and Designer
+creation/association. ProfileCapture.frame borrows the existing source-data DTO;
+SourceProfileFrame is a nominal alias, not a scientific engine export. Original
+byte IDs, source order and decoded-source provenance remain separate from checked
+run IDs and original capture provenance. Existing planner/evaluator owners supply
+all validation and calculations. Native Python returns an owned frame dictionary
+and delegates the same admission/design operations. Qt adoption remains a separate
+UIU-DS-01 consumer unit; no simulation-ID domain or scientific behavior changes.
+
+The [profile input owner](development/features/unified-qt-workbench/design.md#uiu-ds-01-profile-input-owner-facade)
+retains one immutable public source catalog and its shared exact original bytes.
+Tree rows use authoritative scheme/metadata results; original display text remains
+in a read-only view of already validated decoder JSON. Profile plots borrow the
+same catalog. Existing session publication explicitly copies sorted source DTOs;
+source order and original/decoded provenance stay separate. Public admission owns
+geometry and supported input/name bounds, with existing saved-project contracts
+preserved. This replaces the earlier per-view catalog admission in this owner.
+
+The [original measurement-frame prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-original-measurement-frame-prerequisite)
+adds a borrowed ChannelEstimate.frame operation and nominal channel/RxMER source
+DTO re-exports. Native Python returns an owned channel-frame dictionary. Original
+capture bytes/hash and decoder lineage stay in CaptureProvenance; decoded-frame
+source metadata, exact device/channel/grid, epoch, I/Q and nulls remain unchanged.
+No scientific algorithm, existing observation or admission behavior changes.
+Qt measured-input adoption remains a separate UIU-DS-01 consumer unit.
+
+The [ordinary measured-input owner](development/features/unified-qt-workbench/design.md#uiu-ds-01-ordinary-measurement-admission-facade)
+uses public native loaders and read-only frame observations for ordinary RxMER/H
+admission. A compatibility DTO copy preserves legacy editor original-file source
+metadata without mutating public decoded-source frames/provenance. Existing editor
+storage and its independent 64-MiB collection policy remain; Designer detection,
+recipe evaluation and measured-model planning retain explicit frozen migration
+debt. This partial owner migration does not establish parent/final acceptance.
+
+The [profile-performance observation](development/features/unified-qt-workbench/design.md#uiu-ds-01-profile-performance-observation-prerequisite)
+projects each original source carrier through existing typed CarrierMer/FecReport
+owners. FullLoopResult.profile_performance returns original key/identity, exact
+frequency/role and diagnostic post-equalization power/count/MER, independent ideal
+Shannon capacity, observation-window FEC/BER and whole-run unfinished totals.
+Private report projection helpers are shared with the classic report path; no
+scientific algorithm, reference plane or public classic schema changes. Native
+Python returns the same owned dictionary. The downstream performance viewer now
+consumes that accepted observation and public FecReport getters, preserving its
+existing curve/counter JSON, source-frequency selection and partial states.
+Only presentation grouping/axis policies remain in Qt; its independent QAM-history
+migration and parent acceptance remain open.
+
+Channel/amplifier and RX time-stage spectra consume the existing public calibrated
+spectrum operations; raw RX FFT plots consume physical_bins power observations.
+Qt performs no gain, PSD, logarithmic power or electrical integration. Configured
+H and received H-hat/impulse views use FullLoopResult.response, with missing
+estimates remaining unavailable. Physical PLC bounds come from public layout
+observations. Existing shared renderers retain presentation only; receiver
+QAM/soft-history and measurement/session migration remain explicit downstream debt.
+
+The [measured-input prerequisites](development/features/unified-qt-workbench/design.md#uiu-ds-01-measured-input-prerequisite-gaps)
+add only a typed source-catalog synthetic-unity response preview and an immutable
+Designer limits report. The OFDM API reuses existing response projection/view
+owners without claiming a measured capture; native-input reports existing Designer
+domains from their constants, including its distinct aggregate-value guard. Native
+Python mirrors both operations. Paired acceptance precedes the Qt consumers
+described below; no scientific algorithm, domain value or saved schema changes.
+
+The [measured-input/channel adapter adoption](development/features/unified-qt-workbench/design.md#uiu-ds-01-measured-input-and-configured-channel-adoption)
+retains the original public source catalog with the selected source-frame snapshot.
+Accepted Qt input storage holds passive public RxMER frame DTOs/options and an
+immutable public channel capture; incomplete saved projects still load without
+claiming cross-input scientific readiness. Public sequence, response/unity and
+configured-channel operations own admission, projections, residual conversion,
+physical planning and gain. Response association retains its independently accepted
+tolerance. Qt formats bounded authoritative views and preserves selector/axis labels,
+original bytes/hashes, PLC overlays and safe project adoption. The [Designer/export adoption](development/features/unified-qt-workbench/design.md#uiu-ds-01-designer-and-export-owner-adoption)
+uses immutable public RxMerDesign admission, source-catalog flat/imported creation,
+recipe replacement, materialization and previews, plus native-input export. Qt
+retains only envelope transport/control restoration, immutable original identities,
+PLC overlays and common-axis screen projection. QML button/count/edit guards read
+the public limits report; unavailable limits disable scientific actions. Existing
+recipe domains, saved envelopes and noncompounding behavior remain compatible.
+The final receiver consumer below adopts bounded archives and authoritative
+soft/QAM projections; complete downstream milestone acceptance passes below.
+
+The [bounded receiver archive prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-bounded-receiver-archive-prerequisite)
+provides FullLoopReceiverArchive with finite actual cells and one original decoder
+observation, releasing full jobs, inputs and stage stores. Validated independent
+history count/byte policies preserve original physical/coding coordinates and
+reuse the live public selection/MER/decision/soft implementations. Native Python
+mirrors the same owner, including existing compatibility import paths. The
+[paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-bounded-receiver-archive-api-accepted)
+precedes the [receiver consumer and dependency exit](development/features/unified-qt-workbench/design.md#uiu-ds-01-receiver-consumer-and-dependency-exit).
+Qt history stores only detached public archives with application run identity.
+Live/archive QAM queries supply all-selected metrics and bounded original cells;
+decision/soft queries supply slicing, endpoint counts, histograms and contiguous
+coding-order extrema. Qt only translates selectors and formats labels/geometry.
+Missing decoder observations stay unavailable, independent of physical-cell soft
+data. Archive failures do not discard completed FEC/performance outcomes.
+The Qt manifest now reaches all scientific/native-input owners through `merlin`;
+the three direct scientific dependencies and final frozen sites are removed.
+[Consumer/milestone evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit)
+owns acceptance; session isolation remains a separate task.
+
+Independent PHYs do not depend on Qt, Python, the facade or each other.
+
+The [operation/parity matrix](development/features/unified-qt-workbench/api-gap-matrix.md#operation-and-parity-matrix)
+records exact existing lower-level call owners and missing public observations.
+Each gap gets a typed public operation, Rust/Python parity, independent scientific
+and API tests and a focused validated commit before Qt adopts it. Do not solve a
+gap by exposing whole internal modules. Existing downstream API imports and
+Python `merlin.Simulation` retain behavior. An automated Cargo/source boundary
+check initially permits only reviewed pre-existing migration sites with sunset
+tasks; final acceptance requires zero scientific migration entries. The implemented
+[Cargo/source guard](../tools/validation/qt_api_boundary.py) uses exact dependency
+records and whole-file hashes from the [legacy record](development/features/unified-qt-workbench/legacy-qt-boundary.json).
+It rejects new/unreviewed direct package identities, including aliases, and is
+called by Qt checks and Master preflight. Infrastructure packages carry explicit
+non-simulation roles; this lexical gate does not replace scientific-owner review.
+
+Requirements: [REQ-UIU-02](requirements.md#req-uiu-02), [REQ-UIU-03](requirements.md#req-uiu-03), [REQ-UIU-09](requirements.md#req-uiu-09), [REQ-UIU-24](requirements.md#req-uiu-24).
+Delivery: [UIU-BOUND-01](development/checklist.md#task-uiu-bound-01), [UIU-API-01](development/checklist.md#task-uiu-api-01), [UIU-API-02](development/checklist.md#task-uiu-api-02), [UIU-API-03](development/checklist.md#task-uiu-api-03), [UIU-API-04](development/checklist.md#task-uiu-api-04), [UIU-API-05](development/checklist.md#task-uiu-api-05).
+
+UIU-API-03 implements a bounded idle upstream resource grid. The focused
+`crates/ofdma/src/resources/view.rs` projection reuses ResourcePlan visits and
+original configuration metadata, retaining pilots/data/complementary, exclusions,
+zero-loaded minislots and unallocated physical positions. The public session
+operation returns owned original frame/sample coordinates and unchanged
+configuration generation, with Rust/native Python parity and finite cell/JSON
+budgets. It introduces no pilot placement or Qt scientific algorithm. See the
+[resource-grid owner/signature design](development/features/unified-qt-workbench/design.md#uiu-api-03-idle-upstream-resource-grid-observation).
+The [backend acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-03-idle-upstream-resource-grid-accepted)
+passes upstream/facade and installed-wheel checks; its [native Qt viewer](development/features/unified-qt-workbench/validation.md#uiu-us-04-integrated-native-resource-grid-acceptance) has separate integrated acceptance.
+
+UIU-API-04's [instrument audit and report-view design](development/features/unified-qt-workbench/design.md#uiu-api-04-upstream-instrument-gaps-and-report-views)
+reuses upstream actual QAM/PSD and existing decoded/verification reports. The
+implemented `crates/ofdma/src/instruments/recovery.rs` owner supplies typed scalar
+verification/FEC summaries and bounded original completed-word paging. Its
+[focused acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-bounded-recovery-view-unit)
+preserves independent source versus decoder outcomes and avoids whole-report UI
+copies or adapter calculations. The response, actual receiver-estimate, soft and
+display units below complete the identified instrument contracts.
+
+The implemented [configured response unit](development/features/unified-qt-workbench/design.md#uiu-api-04-configured-response-and-periodic-impulse-unit)
+exposes admitted corrective C, deterministic physical H and their composite
+through the existing idle session and frozen report. The focused
+`crates/ofdma/src/instruments/response.rs` owner reuses upstream C replay,
+channel settings and the shared transform; explicit time-varying H rejects static
+queries. Optional impulse data is a complete periodic diagnostic with explicit
+aliasing and units, independent of frequency zoom. Actual received-pilot estimates
+remain separate through the implemented receiver retention described below.
+The [unit evidence](development/features/unified-qt-workbench/validation.md#uiu-api-04-configured-response-and-periodic-impulse-unit)
+records local core/native acceptance and the retained initial pause-test timeout
+followed by successful unchanged-case checks and complete installed-suite retry.
+
+The implemented [received-pilot retention unit](development/features/unified-qt-workbench/design.md#uiu-api-04-received-pilot-estimate-retention-unit)
+retains completed normal receiver estimates with opt-in aggregate frame/scalar
+budgets, preserving default behavior and transactional/cancellation boundaries.
+Its typed report views keep missing bins and actual C×H estimates separate from
+configured-response diagnostics. Its [scoped Rust/native acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-actual-received-pilot-estimate-unit)
+preserves existing science/defaults. The complete instrument contracts also pass
+the final backend integration gate linked below.
+
+The implemented [soft-metric retention unit](development/features/unified-qt-workbench/design.md#uiu-api-04-actual-receiver-soft-metric-retention-unit)
+exposes actual normal-receiver demapper/derandomized cells and completed LDPC-input
+words through independent opt-in aggregate budgets. Its
+[scoped Rust/native acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-actual-receiver-soft-observation-unit)
+preserves default behavior, estimate limits and completed decoder outcomes.
+Decoded decisions do not substitute for missing soft observations.
+
+The implemented [upstream display contracts](development/features/unified-qt-workbench/design.md#uiu-api-04-constellation-pairing-and-received-response-display-unit)
+expose backend-normalized compatible QAM references, exact actual-stage
+pairings and amplitude/phase of retained received-pilot estimates. Raw stage
+planes stay distinct; unsupported overlays never substitute configured truth.
+[Scoped acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-qam-pairing-and-received-response-display-unit)
+passes. The [final API-04 backend acceptance](development/features/unified-qt-workbench/validation.md#uiu-api-04-upstream-instrument-backend-accepted)
+passes the full Rust and installed native suites, completing the backend task.
+Qt adoption and rendering remain separate delivery tasks.
+
+### Unified Qt source ownership
+
+Current downstream migration status is recorded by the
+[receiver/dependency exit](development/features/unified-qt-workbench/validation.md#uiu-ds-01-receiver-public-api-and-dependency-exit).
+The incremental checkpoints below preserve their original scope and evidence;
+their earlier pending-consumer/frontier counts are historical. The official
+checklist owns completion of the complete downstream gate and later sessions.
+
+One native executable, `Merlin.Workbench` URI and current Main resource entry URL
+are retained. QML has shared shell/theme/components and separate downstream and
+upstream subtrees. Registered QObject entry files all remain in `src/bridge/`
+for pinned CXX-Qt 0.7.3; direction adapter implementation lives in separate Rust
+subtrees. Platform/update/I/O code remains application infrastructure. Exact
+first destinations and consumers/tests are in the inventory and
+[migration plan](development/features/unified-qt-workbench/migration-plan.md#destination-layout).
+Preserve UI-ORG-01/02 acceptance, copyrights, notices and working presentation;
+no unused symmetric placeholder trees or blanket scientific shared modules.
+The initial ORG-01 move places the fifteen existing generic components, theme and
+About/help QML files under `apps/qt/qml/shared/{components,theme,about}` with exact
+original contents. Coupled menu/settings/update shell views remain in their
+current `qml/shell` location until UIU-SHELL-01; scientific views remain directional
+migration work. The [organization design](development/features/unified-qt-workbench/design.md#uiu-org-01-shared-presentation-organization)
+owns the focused relocation; [ORG-01 acceptance](development/features/unified-qt-workbench/validation.md#uiu-org-01-generic-presentation-accepted) records passing Qt/native evidence.
+The [DS-01 placement prerequisite](development/features/unified-qt-workbench/validation.md#uiu-ds-01-downstream-placement-prerequisite-accepted)
+now places existing downstream Rust owners in `apps/qt/src/downstream/` and views
+in `apps/qt/qml/downstream/`, including `DownstreamWorkbench.qml`. Current scientific
+calls remain unchanged behind the explicit relocated legacy guard until DS-01's
+public-API adoption units remove them. The first settings adapter now uses
+`merlin::downstream::TransmissionConfiguration` for admission and symbol timing;
+its sample-rate display uses the named SI conversion under
+`src/shared/presentation/constants.rs`. Receiver nearest-symbol display geometry
+also comes from `Simulation::decision_region`; Qt maps its owned display fields.
+Lifecycle adapter OCD admission uses `TransmissionConfiguration`, while receiver
+tap identities use the public `FullLoopStage` re-export. The receiver-options
+transport ceiling has its own owner under `src/downstream/common/constants.rs`,
+independent of the equally valued OCD limit.
+Recovered-data charts consume the public `FullLoopReport` and supplied comparison
+counts. Their shared word-bar cap belongs to the same downstream constants owner
+and remains independent of backend codeword retention.
+At this earlier checkpoint confidence histograms and further scientific consumers
+still awaited adoption. The receiver/dependency exit above supersedes that
+frontier; session-isolation acceptance remains separate.
+
+Before source-profile editor adoption, the
+[DS-01 compatibility prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-source-catalog-ocd-compatibility-api-prerequisite)
+now provides a passive public OCD/source-catalog check with
+[paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-source-profile-compatibility-api-accepted).
+Original byte-sized source IDs remain separate from checked run IDs. The operation
+reuses existing backend geometry validation; its Qt consumer remains pending.
+The next [idle replay-capacity prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-idle-replay-capacity-api-prerequisite)
+now exposes the existing clock query on immutable sequence options before profile/
+capture admission, with [paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-replay-capacity-api-accepted).
+Admitted sequences share that backend query without narrowing their duration
+domain. Qt's selection-status consumer remains pending.
+The [minimum-window prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-minimum-observation-timing-api-prerequisite)
+adds an inverse complete-symbol clock query for existing timing help. Its minimum
+whole-millisecond threshold is backend-owned, independent of UI run budgets;
+[paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-minimum-observation-timing-api-accepted)
+now covers both sample clocks, exact rounding and maximum source indices.
+Generic integer SI scales share the DSP common constants owner. Qt help adoption
+remains pending after this focused API prerequisite.
+
+The [relative channel-power prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-relative-channel-power-api-prerequisite)
+adds a backend-owned logarithmic normalized-power observation to the existing
+non-exhaustive `ChannelSpectrum` result. This preserves the idle SA's relative
+power readout without a logarithmic calculation in Qt. Linear integration,
+electrical calibration and waveform processing retain their existing owners;
+[paired API acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-relative-channel-power-api-accepted)
+now passes before preview adoption. A common power-ratio factor serves integrated
+power and existing power-density conversion, independently of amplitude scaling.
+
+The [unnamed file-source prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-unnamed-file-source-compatibility-api-prerequisite)
+preserves legacy finite file payloads whose saved display label is empty. Add an
+explicit `SourceInput::unnamed_file` operation and native equivalent, using the
+same source/fill owner and returning the original empty label. Keep named-capture
+validation and profile/measurement provenance requirements unchanged. The saved
+full-loop adapter admits that file-only case through the same public source API.
+[Scoped paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-unnamed-file-source-api-accepted)
+now passes before resuming the preserved Qt preview consumer.
+
+The [idle TX facade unit](development/features/unified-qt-workbench/design.md#uiu-ds-01-idle-transmitter-preview-facade)
+now uses public preview admission/execution, progress/cancellation, PSD and symbol
+timing/window observations. Qt translates accepted self-contained original source/
+profile sections into public inputs; it performs no source, FFT, window-generation,
+calibration or logarithmic power calculations. A shared presentation owner formats
+public spectrum buckets and physical PLC bounds. Existing legacy run/instrument
+providers remain separate migration debt until their own facade adoption.
+[Scoped consumer acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-idle-transmitter-preview-facade-accepted)
+passes with the optimized Qt executable; subsequent scoped migration leaves 30
+frozen legacy files.
+
+The [resource build-cache correction](development/features/unified-qt-workbench/validation.md#uiu-ds-01-resource-build-cache-accepted)
+keeps branding resource generation in the Qt build adapter. Existing pinned
+`qt-build-utils`/`cc` build dependencies generate/link the same RCC initializer
+with explicit nonempty resource-file watches. Do not vendor/modify the SDK or
+dependencies, watch build outputs, suppress real source changes or clean targets
+to recover freshness. Runtime/API/scientific ownership remains unchanged.
+
+The downstream public control contract names the existing ChannelPhase enum
+alongside ChannelProgress and ChannelJobStatus. Native Python control snapshots
+retain their existing snake-case phase strings. This is the same engine-owned
+type/serialization, not a separate Qt phase model; see the
+[progress phase prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-public-progress-phase-prerequisite).
+RunTiming now consumes that public enum for the unchanged status labels and
+uses standard Duration conversion plus shared, unit-named clock constants for
+elapsed-time formatting. Its wall clock remains independent of simulation time;
+see [scoped timing acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-wall-time-adapter-facade-accepted).
+
+The [worker budget/progress-age prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-worker-budget-and-progress-age-prerequisite)
+adds immutable narrowing of a prepared request's active runtime budget and a
+control query for actual backend notification age. The existing runtime validator
+owns admission; a private timestamp shares the scalar progress mutex. Preserve
+the public snapshot shape and distinguish notification wall age, paused time,
+active host budget and simulated duration. Rust owns both operations; native
+Python only converts them. [Scoped paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-worker-budget-and-progress-age-accepted)
+passes; worker consumption is traced in the controlled consumer below.
+
+The [typed engine diagnostic prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-structured-engine-diagnostic-prerequisite)
+exposes the retained original code through downstream ApiError.engine_code()
+and optional native exception metadata. The native upstream converter uses its
+existing public source-code getter. Generic categories and original messages
+retain their meaning; Qt help selects only registered codes. This is passive
+diagnostic observation: [scoped paired acceptance](development/features/unified-qt-workbench/validation.md#uiu-ds-01-structured-engine-diagnostic-accepted)
+passes; the worker/help consumer below now adopts it.
+
+The [controlled worker consumer](development/features/unified-qt-workbench/design.md#uiu-ds-01-controlled-worker-facade-migration)
+uses public FullLoopRequest/SweepPlan/Control for serial downstream execution.
+Accepted source/profile originals, actual RxMER frames and original H are paired
+explicitly during GUI edits and independent background Open. Scientific admission,
+per-profile controls, active runtime and actual stage retention remain backend
+owned. The Qt adapter projects bounded public stage pages into existing instrument
+containers and retains the immutable public result as their authoritative owner.
+Public notification age drives the separate UI wall clock without treating polls
+as progress. H/profile tolerance remains independent of RxMER/profile tolerance.
+The [scoped acceptance record](development/features/unified-qt-workbench/validation.md#uiu-ds-01-controlled-worker-facade-accepted)
+tracks this consumer; remaining legacy input/instrument providers and the final
+numeric audit keep UIU-DS-01 open. The later Designer/export consumer above now
+uses public operations; earlier freeze records remain historical evidence.
+
+The [transmitted PLC viewer](development/features/unified-qt-workbench/design.md#uiu-ds-01-transmitted-plc-message-viewer-facade)
+now obtains packets, typed descriptor meanings, original offsets, pending/issue
+state and actual transmission coverage from FullLoopResult.plc_messages(). Qt
+formats the existing labels/tree and exact byte rows through a shared presentation
+formatter; it no longer reassembles/decodes frames or duplicates completion timing.
+Known labels, raw unsupported states and NCP-versus-data-profile identity remain
+separate from backend capability admission. The existing backend tests retain the
+old last-sample/overflow anchors; [consumer evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-transmitted-plc-message-viewer-facade-accepted)
+tracks both those checks and actual Qt instrument compatibility. That viewer unit retires two whole legacy source exceptions.
+
+The [pre-channel scatter consumer](development/features/unified-qt-workbench/design.md#uiu-ds-01-pre-channel-physical-bin-scatter-facade)
+uses public actual physical-bin I/Q and carrier metadata rather than rebuilding
+CarrierLayout in Qt. SubcarrierIndex owns explicit selector admission; the -1
+open-bound convention and original invalid-range ordering remain UI policy.
+Qt only filters visible points and draws unchanged values with named display
+caps/margins. Physical Data remains distinct from proven payload/NCP provenance.
+[Scoped evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-pre-channel-physical-bin-scatter-facade-accepted)
+tracks its acceptance. Power graphs and waveform-spectrum views remain separate
+frozen work; the current boundary retains 30 files/102 sites/three scientific
+dependencies, and the parent task/final numeric audit remain open.
+
+The [spectrum sample-budget prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-spectrum-sample-budget-prerequisite)
+adds a passive TransmissionConfiguration.spectrum_average_capacity operation.
+The existing waveform-spectrum owner computes complete overlapping windows for
+the accepted FFT and caps them at its existing work policy. Rust/native Python
+share the same validation and integer result; neither Qt nor Python reconstructs
+Welch cadence. This preserves a caller's retained-sample budget through existing
+spectrum query fields without changing their schema/defaults or scientific
+processing. Actual retained availability remains separate. The supported
+1024-sample-CP compatibility case and [paired evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-spectrum-sample-budget-api-accepted)
+precede Qt spectrum adoption; no remaining frozen entry is retired here.
+
+The [retained TX stage/physical-power unit](development/features/unified-qt-workbench/design.md#uiu-ds-01-retained-transmitter-views-facade-unit)
+uses public actual bin power/frequency/role spans and transported-cell metadata.
+These TX views retain graph reduction, axis coordinates and bounded role-color
+groups; they no longer construct an interleaver or compute bin power. Three
+whole-file exceptions retire after scoped acceptance, leaving 27 frozen files/
+96 sites/three scientific dependencies. The two unchanged TX spectrum functions
+remain frozen: ordered-frame electrical calibration requires a separate public
+API prerequisite before their migration. Parent/final numeric acceptance stays open.
+
+The [calibrated ordered-frame prerequisite](development/features/unified-qt-workbench/design.md#uiu-ds-01-calibrated-ordered-frame-api-prerequisite)
+adds FullLoopResult.calibrated_spectrum_sequence through the existing sequence
+and electrical owners. Its typed report pairs unchanged normalized sequence
+metadata with calibrated/relative power from one estimate; original physical
+gaps/overlaps remain explicit. Rust and native Python share the operation and
+bounded result. [Focused paired evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-calibrated-ordered-frame-api-accepted)
+precedes Qt adoption. No query/default/schema or frozen Qt record changes here.
+
+The [TX spectrum facade adoption](development/features/unified-qt-workbench/design.md#uiu-ds-01-tx-spectrum-facade-adoption)
+now consumes those public operations for retained IFFT/prefix/window diagnostics
+and continuous output. Distinct named 16384/32768-sample presentation policies
+reuse the public capacity planner. Readiness uses public inventory, PLC shading
+uses configured public layout and graphs reuse the shared drawing viewport.
+[Scoped consumer evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-tx-spectrum-facade-accepted)
+preserves actual prefix/average/power/zoom semantics and retires one whole source
+exception: 26 frozen files/94 sites/three dependencies remain. Parent task and
+final numeric acceptance stay open.
+
+The [RxMER animation preview unit](development/features/unified-qt-workbench/design.md#uiu-ds-01-rxmer-animation-preview-facade)
+uses public NamedCapture/RxMer.from_frame admission and RxMer.preview for each
+selected immutable original. Qt retains selection and display metadata, without
+constructing a scientific replay plan or measurement viewport. Sparse ordering,
+source/decoded hashes, original bytes and timestamps are preserved. Its
+[Level 1 evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-rxmer-animation-preview-facade-accepted)
+retires only preview.rs; 25 frozen files/93 sites/three dependencies remain.
+Measurement admission/editors and parent/final acceptance remain separate work.
+
+The [FEC monitor consumer](development/features/unified-qt-workbench/design.md#uiu-ds-01-fec-monitor-recovery-facade)
+formats the accepted public whole-run recovery projection instead of subtracting
+private counters in Qt. Histogram/segment geometry remains presentation only;
+observation-window categories, compared bits/BER and partial/retained-word states
+remain separate. The original independent classification oracle lives in the
+backend. [Consumer evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-fec-monitor-recovery-facade-accepted)
+retires receiver/fec.rs, leaving 24 frozen files/91 sites/three dependencies.
+Parent and final acceptance remain open.
+
+The [profile plot consumer](development/features/unified-qt-workbench/design.md#uiu-ds-01-profile-plot-inspection-facade)
+uses original-preserving public capture admission and ProfileCapture.inspect.
+Authoritative loading/role/coordinate/extrema, ideal Shannon and useful-rate
+values replace Qt scientific reconstruction; the adapter only draws existing
+single/overlay axes, lanes and labels. Single-view columns, overlay work bounds,
+independent axis extents and rate/frequency units retain their distinct owners.
+[Scoped evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-profile-plot-inspection-facade-accepted)
+retires plot.rs. A narrowly reviewed test-only fixture preparation preserves
+all profile model production/assertion bytes and its remaining private sites.
+The boundary now retains 23 files/88 sites/three dependencies; the parent stays open.
+
+The [source editor consumer](development/features/unified-qt-workbench/design.md#uiu-ds-01-source-editor-admission-facade)
+uses public SourceInput/PrbsSeed/FileFillPolicy, file_limits/file_info and shared
+fill replacement for admission and counts. Source snapshots in the existing
+session store now hold the public source; the worker compares its bounded public
+metadata with the admitted original input. All other session state/operations
+remain unchanged, pending UIU-SESSION-01. Original source export, independent
+widget seeds, dormant choices and readiness remain compatible.
+[Scoped consumer evidence](development/features/unified-qt-workbench/validation.md#uiu-ds-01-source-editor-admission-facade-accepted)
+includes affected Rust/native saved-project checks using the unchanged accepted
+wheel. Source model/bridge entries retire; only the source field/import changes
+in the still-frozen session owner. The boundary retains 21 files/85 sites/three
+dependencies. Parent and final acceptance stay open.
+
+Requirements: [REQ-UIU-04](requirements.md#req-uiu-04), [REQ-UIU-08](requirements.md#req-uiu-08), [REQ-UIU-25](requirements.md#req-uiu-25).
+Delivery: [UIU-ORG-01](development/checklist.md#task-uiu-org-01), [UIU-DS-01](development/checklist.md#task-uiu-ds-01).
+
+### Unified Qt session and file lifecycle
+
+**Current status:** [SESSION integrated acceptance](development/features/unified-qt-workbench/validation.md#uiu-session-01-integrated-acceptance)
+closes the frozen C1–C6 conditions with actual native direction/lifecycle,
+retention and compatibility evidence. Earlier focused-unit frontier descriptions
+below are checkpoint history. The native owners are implemented; persistent
+visible tabs and direction-scoped shell actions now pass
+[SHELL acceptance](development/features/unified-qt-workbench/validation.md#uiu-shell-01-persistent-tabs-and-scoped-actions).
+Both view instances persist through idle, running and paused selection changes;
+the existing native cursor and exact opaque direction keys guard each action.
+Shared Settings/About remain available from either direction. Native directional
+File adapters and dirty transactions now pass [UIU-FILE-01 acceptance](development/features/unified-qt-workbench/validation.md#uiu-file-01-native-routing-and-dirty-transactions), including actual Main/picker interactions and independent public API consumers.
+Source preparation remains distinct from that executed acceptance. Recovery and final platform/numeric gates retain their
+separate official tasks.
+
+Accepted user choices: **one active run across both tabs initially** and
+**Save the active direction's project**. Each direction owns configuration,
+inputs, accepted generation, session, run identity, worker control, results,
+instrument selections, path and dirty state. Replace current implicit latest
+result/input singletons with explicit session-owned state. Callbacks carry
+direction/session/generation/run identity; stale results cannot overwrite another
+session. Tab switching preserves work and does not stop execution. A paused run
+retains the shared execution slot. Controls target the selected tab's own session;
+another active direction is indicated and a second Start is rejected visibly.
+Future concurrent dispatch requires aggregate resource admission and isolation
+tests, not shared scientific configuration or a different API architecture.
+
+The [explicit ownership foundation](development/features/unified-qt-workbench/design.md#uiu-session-01-explicit-ownership-foundation)
+under `apps/qt/src/shell/` provides separate typed configuration/result owners,
+checked callback identities, a shared terminal-acknowledged run lease and retained
+resource reservations. Its [focused acceptance](development/features/unified-qt-workbench/validation.md#uiu-session-01-explicit-ownership-foundation)
+tests the pure application contracts. The [actual downstream host adoption](development/features/unified-qt-workbench/validation.md#uiu-session-01-actual-downstream-host-and-terminal-adoption)
+now registers these Rust application components in the existing native binary,
+binds Context/Model to canonical direction generations and uses the common worker
+terminal. The [upstream QObject consumer](development/features/unified-qt-workbench/validation.md#uiu-session-01-upstream-qobject-and-background-preparation) now delegates configuration and report-target preparation
+off-GUI to the public upstream controller on the same host. Actual direction
+adapters must reserve
+all reachable payload ownership and container/shared-root populations, retain the lease outside panic unwinding and consume a
+real terminal envelope before reopening admission. Source-only primitive tests
+do not establish direction-session or aggregate-memory runtime acceptance.
+
+The [explicit downstream context migration](development/features/unified-qt-workbench/design.md#uiu-session-01-explicit-downstream-context-migration)
+replaces the six input/section/result/history/prepared-model data singletons with
+owner-scoped handles. Every scientific data operation receives its context;
+QObject construction alone shares a fixed downstream bootstrap handle. Prepared
+models use an isolated candidate and rebind after removal from the target's
+transfer store, avoiding retained-owner cycles. Existing public queries, worker
+semantics and project bytes remain unchanged. Its
+[consumer evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-explicit-downstream-context-migration)
+is the historical context-only checkpoint. The later host adoption establishes
+downstream dispatch and identity wiring; the subsequent upstream adapter adds
+canonical GUI adoption. Complete aggregate admission remains pending.
+
+Downstream Context now couples accepted Inputs and saved sections in one
+immutable admitted owner. Read handles retain that owner across replacement;
+source/profile/measurement/power/loss Apply prepares a complete candidate and
+matching saved document before publication. Rejection preserves accepted editor
+and input state. Save/recovery borrows the charged section map through the
+existing project validator/serializer and atomic write, preserving legacy JSON.
+Queued Open inputs use the target budget, captured downstream key and original
+accepted snapshot; a compare/swap checks owner identity under one store lock,
+covering intervening Apply before generation refresh. Adoption
+rejects stale/foreign targets before replacing inputs, transfer storage or the
+native Save path. Receiver requests/plans and idle transmitter inputs now admit
+against that target budget during background preparation. Adoption holds the
+accepted-owner lock through the guarded canonical readiness transition, then
+stamps the genuine key and publishes the project. GUI attachment reuses those
+owners without a new reservation or generation change. Successful Apply/New
+discards unconsumed older transfers; rejected edits preserve them. Other
+application metadata, control/transport infrastructure and persistent presentation
+closure remain open under UIU-SESSION-01. See the
+[target preflight design](development/features/unified-qt-workbench/design.md#uiu-session-01-prepared-project-target-preflight).
+See the [focused design](development/features/unified-qt-workbench/design.md#uiu-session-01-atomic-accepted-inputs-and-prepared-projects).
+
+Source/profile/measurement editor models now carry independent actual-capacity
+reservations. Begin/stage/edit/cancel/Apply prepare and admit a finite candidate
+before replacing the GUI model; coupled Apply admits both model and accepted
+Inputs/documents before committing. Queued Open/New transfers hold these guards
+and use the existing target check. New preflights every reset before changing
+inputs or the Save destination, preserving appearance and old snapshot aliases.
+Untouched measurement defaults borrow static decimal text; parsed text retains
+its own capacity charge. The thin profile QObject owns its Context and admitted
+model independently, preserving existing invokables. See the
+[editor ownership design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-editor-candidates-and-prepared-transfer).
+Designer Origin children retained by captures are counted here. Retained QML
+presentation and outer infrastructure still require closure before
+UIU-SESSION-01 acceptance.
+
+Receiver QAM registries admit their actual Vec slot and status-string capacities
+before replacement; selected immutable Snapshot aliases retain their original
+scientific guards. Performance registries normalize retained buffers to occupied
+slots already covered by each Entry, and clear drops the full buffer. Initial
+catalog preparation admits both registries before replacing either old history.
+Fixed Store/Context admission is recorded in the
+[canonical Store unit](development/features/unified-qt-workbench/design.md#uiu-session-01-canonical-fixed-downstream-stores). See the
+[registry storage design](development/features/unified-qt-workbench/design.md#uiu-session-01-receiver-registry-storage).
+
+The GUI RxMER Designer Session and independently cloned generation/export Session
+inputs use the same actual-capacity admission. Begin preserves its previous owner
+on rejection; workers keep their input guard through actual completion even after
+GUI replacement or destruction. Existing preview/build/export operations borrow
+these owners. Control/closure/channel/fixed infrastructure and retained presentation
+remain distinct pending owners. See the
+[Designer input design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-designer-session-copies).
+
+Immutable export Prepared products admit complete frame/JSON/error capacities
+before terminal queue publication. A charged shared root keeps the product alive
+across Ready/save-worker aliases. Working retains previous Ready until known
+completion, restoring it on rejection/cancellation/disconnection; failed spawn
+does not consume it. Thin QObject calls delegate the existing public-API lifecycle
+to `bridge/rxmer_export/lifecycle.rs`. Outer worker infrastructure and retained presentation remain pending. See the
+[export-product design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-export-products-and-ready-state-rollback).
+
+Generated Designer capture batches admit their actual original/frame/Origin
+storage before entering a single-slot completion queue. A concrete staging handoff
+keeps the source reservation until independent editor admission succeeds; rejected,
+cancelled or stale completions preserve the old model and dispose the guarded
+batch. Existing mapping, selection and scientific staging behavior is preserved.
+Control/closure/channel/fixed infrastructure and retained presentation remain pending. See the
+[capture-batch design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-designer-capture-batches).
+
+Generation workers independently admit parsed recipe requests and GUI work
+selection snapshots, including actual hash, profile-text and playback capacities.
+Export preparation admits its parsed Request and fixed Selection together. These
+input guards survive detached execution and overlap final output admission;
+input rejection and spawn failure preserve prior accepted/Ready data. Child
+traversals are reused from the existing Session/Model owners, without a new
+accounting framework. Outer control/closure/channel infrastructure and retained
+presentation remain pending. See the
+[worker-input design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-designer-worker-inputs).
+
+Designer generation/export terminal errors now carry admitted actual message and
+optional private diagnostic storage. Detailed guards survive queueing and borrowed
+response construction. If metadata or admission rejects that error, its owned
+payload drops before a fixed rejection variant is published; no uncharged dynamic
+error is retained as a fallback. Existing cancellation/disconnection text remains
+static, and admitted original error text/help remains unchanged. Fixed transport/
+control infrastructure and persistent QML remain pending.
+See the [error-completion design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-worker-error-completions).
+
+Export save completions independently admit their actual Value/JSON storage before
+queueing. The guard survives response construction; normal path/summary/cancel/
+error fields remain unchanged. If status details cannot fit after publication, a
+payload-free Copy status preserves whether export succeeded, was cancelled or
+failed. Its static message reports that actual outcome without an unavailable
+saved/path pair. The original Ready product remains guarded. A narrow picker seam
+exercises real public-API JSON publication and no-overwrite behavior without
+changing production native selection. Fixed control/transport/closure infrastructure
+and retained presentation remain pending. See the
+[save-completion design](development/features/unified-qt-workbench/design.md#uiu-session-01-retained-save-completion-data).
+
+The shared [terminal transport](development/features/unified-qt-workbench/design.md#uiu-session-01-terminal-worker-transport)
+under `shell/worker.rs` keeps genuine run leases outside worker unwinding and
+tags queued callbacks explicitly. Known completion can release admission after
+GUI disposal; cancellation alone cannot. OS spawn failure returns its unstarted
+lease. [Transport evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-terminal-worker-transport)
+initially validated this source-only component. Its [real downstream consumer](development/features/unified-qt-workbench/validation.md#uiu-session-01-actual-downstream-host-and-terminal-adoption)
+now preserves the genuine lease through Profile/Rejected/Finished data until the
+common terminal. A concrete `shell/application.rs` host owns canonical readiness
+and callback generations; actual scientific configurations/results remain in
+their direction owners. Reconfiguration cancels only its old generation, and
+prepared projects rebind to their actual target host. Aggregate scientific and
+application owner admission remains required; readiness metadata charges do not
+establish that closure.
+
+The [canonical fixed downstream Stores](development/features/unified-qt-workbench/design.md#uiu-session-01-canonical-fixed-downstream-stores)
+admit each actual `Arc<Retained<Mutex<T>>>` pointee and one shared root before
+allocation. The five Stores share their reservations through Context aliases;
+dynamic children retain their separate existing guards. Detached project loading
+creates independent Stores against the target application's same counter and
+passes only that host across the worker boundary. Explicit-context editor,
+receiver and preview construction avoids unused worker bootstrap hosts. Three
+queued editor wrappers are boxed, keeping their already charged storage separate
+from the fixed PreparedModels Store. Take-before-attach preserves acyclic target
+ownership. The fixed application/gate/accounting graph is now covered by the
+[canonical host unit](development/features/unified-qt-workbench/design.md#uiu-session-01-canonical-fixed-application-host).
+Worker infrastructure and persistent presentation admission remain separate gates.
+
+The canonical host admits its three fixed shared pointees: Accounting, GateStorage
+and Sessions. Application-only counter construction checks its exact baseline
+before allocation and retains it until final counter disposal, without a strong
+reservation back to itself. Generic counters retain their zero baseline. Gate
+state drops before its covering guard; lease aliases keep that guard alive after
+host destruction, through genuine terminal acknowledgement or disposal. The
+Sessions complement subtracts the two already charged inline readiness layouts,
+so the idle total counts each fixed pointee once. Readiness candidate admission
+and all dispatch transitions remain unchanged. Scientific controls, concrete
+worker/transport owners, other retained metadata and persistent presentation
+remain separate pending closure; this fixed graph does not establish SESSION
+acceptance or total heap/RSS bounds.
+
+The [downstream request/plan admission](development/features/unified-qt-workbench/validation.md#uiu-session-01-downstream-request-and-plan-owner-admission)
+uses actual public root metadata with concrete wrapper storage and two added Arc
+roots. Model and Worker share immutable charged owners. Cross-host prepared-project
+rebind admits complete target coverage before aliasing the same scientific roots;
+original aliases retain their source charge. The
+[backend result target](development/features/unified-qt-workbench/validation.md#uiu-session-01-downstream-backend-result-target-admission)
+is reserved before execution and retains its charge through queued/current/old
+aliases. Its fixed root is replaced once with the actual ResultData wrapper and
+final shared root. Rejected targets preserve accepted science.
+[Per-profile execution requests](development/features/unified-qt-workbench/validation.md#uiu-session-01-per-profile-execution-request-admission)
+finish finite selection/runtime preparation, release the intermediate candidate,
+and admit the final actual public footprint before execution. Their charged
+immutable owners survive until that call returns; accepted sources remain charged.
+The [stored observation/capture graph](development/features/unified-qt-workbench/validation.md#uiu-session-01-stored-observation-and-capture-admission)
+now reserves individual query overlap and its exact normalized display target.
+Projection rejection retains backend science with empty display buffers and a
+static Receiver diagnostic. Display fields/guards drop before the enclosing
+backend/fixed-layout reservation. Independently requested instrument/transport
+outputs and other application owners still require separate admission.
+
+The [idle transmitter preview](development/features/unified-qt-workbench/validation.md#uiu-session-01-idle-transmitter-preview-owner-admission)
+shares an admitted immutable prepared request/layout with its worker and reserves
+the public preview target before generation. The reservation follows the actual
+queued/current product until disposal. Prepared-project transfer admits target
+coverage before cancelling or replacing the live analyzer; old source aliases
+keep their own charge. Control, diagnostic and independently requested display
+owners remain separate from these prepared/product charges.
+
+[Detached receiver histories](development/features/unified-qt-workbench/validation.md#uiu-session-01-detached-receiver-history-admission)
+reserve the public archive target plus the actual Snapshot wrapper and outer Arc
+before copying. The archive moves into that wrapper; its last reservation follows
+registry and selected old aliases through replacement, clearing and final drop.
+Host rejection preserves the prior entry and scientific result. Entry diagnostics,
+registry capacity and independently returned instrument views remain separate owners.
+
+[Stored profile performance](development/features/unified-qt-workbench/validation.md#uiu-session-01-copied-receiver-performance-admission)
+uses finite public query/FEC preparation, then admits actual normalized Entry
+storage before registry adoption. All initial entries must fit before Start
+clears history; rejection returns the unstarted global lease and preserves the
+accepted report. A later display admission failure still publishes completed
+science. Outer registry capacity and independently returned views remain separate.
+
+Explicit [accepted-edit cancellation transitions](development/features/unified-qt-workbench/design.md#uiu-session-01-accepted-edits-during-cancellation)
+preflight immutable candidates and checked revisions before cancelling the old
+generation. They preserve the legacy downstream edit/invalidation contract while
+retaining Busy until old-worker termination; ordinary reject-while-Busy configure
+operations remain available. Real downstream adapter adoption now uses the canonical host and terminal transport;
+the upstream QObject uses the same host with independent preparation/control
+state. The separate
+[approved retention accounting contract](development/features/unified-qt-workbench/retention-contract-decision.md)
+bounds retained payload bytes, ordered-container entries and shared allocation
+roots independently. Payload bytes include fixed owned values, requested storage
+capacity and nested/cached/shared payloads; shared roots may be conservatively
+counted repeatedly. Allocator, private tree-node and reference-count bookkeeping
+are excluded from bytes; this is not a total-heap or RSS guarantee. Each dimension
+uses checked aggregate admission before allocation/copy, and reservations survive
+queued, replaced and aliased ownership until final drop. Scientific roots must
+provide typed footprint metadata and pre-production bounds through public APIs;
+Qt must not inspect private storage or infer bounds from serialized JSON.
+The approved output-construction boundary includes simultaneously retained copy
+source/target and candidate owners. Temporary backend builders and numerical
+scratch use separate finite execution limits; no aggregate scratch-byte or RSS
+guarantee is claimed. Final retained capacities still require pre-production
+enforcement and admission.
+
+The [frozen SESSION closure list](development/features/unified-qt-workbench/session-closure.md)
+limits remaining work to six existing acceptance conditions. Functional dispatch
+is implemented; complete its concrete ownership gaps and current acceptance,
+then proceed to the persistent-tab shell without adding unrelated infrastructure.
+
+The user-approved [presentation/channel clarification](development/features/unified-qt-workbench/retention-contract-decision.md#approved-presentation-and-channel-boundaries)
+adds explicit logical UTF-16 bytes, array/object entries and open/retained-view
+limits for persistent QML, while Rust keeps actual-capacity accounting. Standard
+channels charge message data plus channel/slot populations and exclude private
+synchronization bookkeeping. Existing bounded transport remains appropriate;
+hidden data and queued/worker aliases remain covered until disposal. The existing
+application counter now also admits persistent presentation through the thin
+`bridge/presentation_retention.rs` QObject, `shared/presentation/retention.rs`
+state and QML `shared/presentation/PresentationOwner.qml`. The named desktop
+policies independently allow 64 MiB logical UTF-16, 1,000,000 array/object entries,
+256 retained owners and 32 open views. The retained-view ceiling accommodates
+both persistent direction trees; the earlier single-canvas ceiling of 128
+exhausted during actual shell startup. They are application policies, separate
+from Rust storage and scientific execution limits; no JavaScript capacity or
+heap/RSS guarantee is claimed. `LogicalFootprint.js` counts ordinary JSON-shaped
+values and derived copies before publication. Old/candidate reservations overlap;
+parent-bound child plots share their witness, while independent derived models
+and actual editable-text capacities retain a complement. Explicit QML properties
+avoid eagerly creating an orphan Qt Dialog contentItem. Hidden/closed DTOs retain
+coverage; clear/disposal releases it only after their aliases end. A rejected
+candidate preserves its observation and context. Native lifecycle controls remain
+live, successful Apply/Save remains successful, and indexed native actions wait
+for a fresh synchronized catalog after rejected staging. See the [C5 owner map](development/features/unified-qt-workbench/design.md#uiu-session-01-c5-existing-persistent-presentation-owners)
+and [consumer validation](development/features/unified-qt-workbench/validation.md#uiu-session-01-persistent-presentation-admission).
+The [C6 integrated receipt](development/features/unified-qt-workbench/validation.md#uiu-session-01-integrated-acceptance) closes SESSION acceptance; visible shell adoption remains separate.
+
+The [retained-root metadata prerequisite](development/features/unified-qt-workbench/design.md#uiu-session-01-public-retained-root-metadata-prerequisite)
+uses a typed `RetainedFootprint` in the independent `merlin-api` leaf, re-exported
+through `merlin::common`. Each scientific owner audits its own private/cached
+children. Downstream FullLoopRequest, FullLoopSweepPlan, FullLoopResult and
+FullLoopReceiverArchive, and upstream Simulation and BatchReport expose passive
+metadata through their existing public API and native Python wrappers; walker implementation
+support is excluded from the facade. This does not change scientific algorithms,
+project schemas, historical archive statistics or existing downstream exports.
+The [scientific control metadata prerequisite](development/features/unified-qt-workbench/design.md#uiu-session-01-scientific-control-allocation-metadata-prerequisite)
+exposes passive retained_footprint operations for the three existing
+FullLoopControl, TransmitterPreviewControl and upstream RunControl consumers.
+Their scientific owners audit private shared allocations and optional common
+cancellation children; the facade remains re-export-only. Paired native methods
+reuse existing common quantities and error categories. The
+[integrated evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-scientific-control-allocation-metadata)
+validates Rust/native parity and affected consumers. Concrete Qt admission is
+described below; complete SESSION acceptance remains pending.
+
+The [concrete control admission unit](development/features/unified-qt-workbench/design.md#uiu-session-01-concrete-scientific-control-admission)
+shares admitted scientific controls across Qt GUI, dispatch and execution aliases,
+with separate concrete directional adapter charges before Start. The upstream
+controller rejects a foreign-budget control before claiming the backend or lease.
+Reservations survive final execution aliases, including cancelled or stale jobs;
+product receipt alone does not prove worker termination. The
+[focused integrated evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-concrete-scientific-control-admission)
+preserves existing host ownership and scientific outcomes. Outer workers,
+transport and remaining presentation owners still require separate admission;
+this does not establish complete aggregate SESSION acceptance.
+
+The [run-timing owner](development/features/unified-qt-workbench/design.md#uiu-session-01-concrete-run-timing-admission)
+reserves its final guarded pointee and exact bounded profile-timing capacity before
+Start. A single-use prepared token starts no clock; construction keeps the original
+clock epoch after successful host admission. GUI/execution aliases share one
+reservation until final drop. The
+[focused evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-concrete-run-timing-admission)
+preserves timing/progress and scientific behavior. Remaining application owners
+and complete SESSION acceptance stay pending.
+
+The [worker failure payload owner](development/features/unified-qt-workbench/design.md#uiu-session-01-admitted-worker-failure-payloads)
+reuses admitted message/Diagnostic pointees across affected worker queues.
+Upstream terminal errors retain the original public category and bounded Qt text,
+dropping opaque backend errors before publication. Scientific error APIs remain
+unchanged. [Focused primary evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-admitted-worker-failure-payloads)
+covers queued/stale/disconnected disposal; enclosing transport and later GUI
+copies remain separate pending owners.
+
+The [offline help catalog](development/features/unified-qt-workbench/design.md#uiu-session-01-offline-help-catalog-lifetime)
+uses bounded temporary owned parsing/lookup instead of a permanent parsed heap
+cache. Embedded source data and existing message/Diagnostic contracts remain
+unchanged, with [focused evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-offline-help-catalog-lifetime).
+Returned diagnostics and persistent GUI copies remain separate owners.
+
+The [original-path registry](development/features/unified-qt-workbench/design.md#uiu-session-01-original-source-path-ownership)
+scopes source protection to the canonical host and charges actual path records.
+Its guarded shared registry is a fourth host root, separate from the unchanged
+counter/gate/Sessions core. Save checks both direction flags; successful guarded
+downstream Open/New clears only downstream ownership. Existing inputs, project
+encoding and atomic writes remain compatible, with [primary evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-original-source-path-ownership).
+Other loader/project path copies now have the separate C4 evidence below;
+complete SESSION acceptance remains pending.
+
+The [persistent model metadata unit](development/features/unified-qt-workbench/design.md#uiu-session-01-persistent-direction-model-metadata)
+reuses admitted application failures for persistent GUI error/Diagnostic pointees
+and charges receiver options' actual dynamic children. Every configured Options
+has an exact target-host witness, including zero-child options. Strict foreign
+transfer reserves actual copies before mutating the source; same-host queued
+failures move without readmission. Static notices borrow text. The separate
+bridge Apply-help owner remains independently charged. [Primary C1 evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-persistent-direction-model-metadata)
+preserves scientific/status/target-adoption behavior. Subsequent C2/C3 evidence
+below closes those conditions; C4 is separately closed below. Complete SESSION
+acceptance and persistent QML stay open.
+
+The [concrete fixed runtime owners](development/features/unified-qt-workbench/session-closure.md#c2-concrete-fixed-layout-implementation)
+admit DS Model, preview Analyzer and upstream workbench Model layouts before their
+Box allocations. Each last nonoptional witness covers its inline worker/controller
+storage once; separately guarded children keep their original charges. Prepared
+Stores and GUI adapters hold Box handles, taking prepared owners before fresh
+construction and preserving same-host attachment without readmission. Failed
+construction leaves minimal unavailable controls and retries on the same host.
+The preview product keeps its already admitted Box. Upstream preparation admits
+its actual retained Mutex/controller slot and one root before publication; final
+worker aliases retain that guard. [C2 primary evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-fixed-runtime-owners)
+closes this fixed-layout condition. The subsequent C3 evidence is separate;
+C4 closes separately below; C5/C6 remain required. No new scientific API or
+framework is introduced.
+
+The [concrete worker transport](development/features/unified-qt-workbench/session-closure.md#c3-concrete-transport-integration)
+uses the same application counter for actual retained task/frame bytes, channel
+owners and configured slots. Named desktop limits are 64 live channels and 256
+configured slots; scientific footprint contracts retain their three quantities.
+Each channel's actual shared witness and each independently held delivery remain
+charged through final disposal. Finite inventories reserve DATA and terminal
+frames before science; requested permit buffers are admitted before allocation.
+Actual closure measurement includes its task wrapper. Separately guarded inputs
+move through Box handles, while concrete atomic/control/recovery pointees and
+Work/State/Job complements retain their own guards. Existing std transport,
+original timing, scientific calls, partial results and lease acknowledgement
+semantics remain. Rejection precedes dispatch/accepted-owner mutation. [C3 primary
+evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-concrete-worker-transport)
+closes this condition. The separate C4 evidence below closes paths/metadata.
+C5 persistent QML and C6 complete SESSION acceptance remain required.
+
+The [project-path/metadata unit](development/features/unified-qt-workbench/design.md#uiu-session-01-c4-project-paths-and-metadata)
+admits actual PathBuf capacity and its boxed retained pointee before startup
+storage, loader capture or Save candidate adoption. Startup uses the same
+main-thread canonical host as GUI adapters. PreparedProject independently guards
+its JSON metadata and fixed inline complement, preserving existing scientific,
+editor, snapshot and C3 guards. Witness validation precedes the original atomic
+accepted-state transition. Open/New move guarded products to the bridge; New's
+flags finalize before admission. Existing Save borrows its destination; normalized
+Save candidates overlap the previous path until the unchanged atomic writer
+succeeds. Schema, original-source protection and scientific semantics remain.
+[C4 primary evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-project-paths-and-metadata)
+includes current UI-saved bytes through Rust and cached installed Python. C5/C6
+remain required; SESSION stays unchecked.
+
+The [pre-production archive pair](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-detached-archive-bounds)
+computes exact detached target quantities and checks every limit before copying.
+It preserves the legacy archive operation/statistic and scientific queries.
+Native Python can construct immutable common quantities, matching Rust's existing
+public struct literal. The [session-output pairs](development/features/unified-qt-workbench/validation.md#uiu-session-01-pre-production-session-output-bounds)
+now preflight and enforce final downstream full-loop, upstream report and idle TX
+preview targets before scientific execution. Existing run/generate operations
+remain compatible. Actual Qt consumer charges and aggregate host admission remain
+required before session acceptance. The [downstream Qt adoption](development/features/unified-qt-workbench/validation.md#uiu-session-01-downstream-qt-retained-target-adoption)
+uses these bounded calls in the existing full-loop/preview workers and detached
+history copy; supplying the backend target bound does not reserve host resources.
+
+The existing downstream observation queries also provide a
+[per-copy storage envelope](development/features/unified-qt-workbench/validation.md#uiu-session-01-existing-observation-query-copy-envelope).
+Exact final text/vector capacities make either individual `stage` or
+`stage_inventory` Rust return fit within the immutable source result's retained
+payload quantity, with no ordered entries/shared roots. The scientific owner
+enforces this without changing signatures, values or errors. Applications must
+reserve each simultaneously live copy and independently admit concatenated
+observations, plotting containers and JSON/native-Python transport storage.
+
+The [independent input/idle-preview owner closure](development/features/unified-qt-workbench/design.md#independent-input-and-idle-preview-owner-closure)
+tracks partial input, draft, Designer and preview ownership outside those four
+downstream roots. Its standalone metadata operations and paired native consumers have
+[focused acceptance](development/features/unified-qt-workbench/validation.md#uiu-session-01-independent-input-and-preview-metadata);
+public DTO/JSON/presentation copies still require separate application charges. The native-input adapter directly reuses the common
+leaf for Designer ownership metadata, without a dependency on the facade.
+
+The [upstream application controller](development/features/unified-qt-workbench/design.md#uiu-session-01-actual-upstream-controller-preparation)
+under `apps/qt/src/upstream/` owns a real public `Simulation` and actual retained
+reports. It uses the shared terminal transport, exact-token controls and charged
+shared owners; an unwind guard restores its exclusively executing scientific
+session. [Initial primary-checkout evidence](development/features/unified-qt-workbench/validation.md#uiu-session-01-actual-upstream-controller-preparation)
+includes real public runs. The [controller admission update](development/features/unified-qt-workbench/validation.md#uiu-session-01-upstream-controller-target-admission)
+uses actual public session metadata and prepared report bounds, checked concrete
+wrapper charges and exact session-bound targets before bounded dispatch. Prepare
+potentially expensive targets off-GUI before acquiring a global lease. Outer
+application/control/transport/DTO owners and complete aggregate admission remain
+pending. A registered UpstreamSession QObject now owns a direction model with
+background preparation, exact-token controls, canonical callback validation and
+genuine terminal acknowledgement. Main creates the independent adapter on the
+fixed desktop host. The initial outer-owner/aggregate frontier above is historical;
+[C6](development/features/unified-qt-workbench/validation.md#uiu-session-01-integrated-acceptance)
+now accepts complete SESSION. Upstream controls/layout retain their separate gates.
+
+The [US01 configuration integration](development/features/unified-qt-workbench/design.md#uiu-us-01-native-configuration-integration)
+reuses the current UpstreamSession model. Its native acquisition action selects
+a real local public configuration document, protects the original source path,
+and queues existing bounded background parsing/admission. Picker cancellation
+does not create a default document or alter either direction. Configuration
+drafts now use immutable opaque field destinations and exact token/base identities.
+Typed changed-only candidates are prepared through the existing public API and
+adopted under the canonical configuration lock. Cancel targets only its original
+draft, preserving source provenance, accepted configuration and the other
+direction. Seven native configuration editors and the approved startup layout
+have [UIU-US-01 acceptance](development/features/unified-qt-workbench/validation.md#uiu-us-01-integrated-configuration-acceptance).
+Upstream execution reuses that same accepted public controller. Its private
+`workbench/execution_view.rs` reads original progress and public report
+verification/FEC summaries into bounded scalar labels. PRBS-RX remains independent
+source comparison; lifecycle completion and full recovery are distinct. Original
+run tokens identify retained previous results, including the interval between
+current report delivery and terminal acknowledgement. The upstream elapsed label
+uses the backend active clock, which excludes acknowledged pauses.
+[UIU-US-02 native acceptance](development/features/unified-qt-workbench/validation.md#uiu-us-02-integrated-execution-acceptance)
+now covers actual pause/resume, cancellation with completed work, full recovered
+source comparison and downstream isolation. Measured-input import and scientific
+instruments keep separate gates.
+
+The shared shell uses `qml/shell/directions/PersistentDirectionTabs.qml` with
+two persistent Loaders. Direction navigation uses content-sized folder tabs
+labelled Downstream and Upstream on a shared content edge; the selected tab
+joins the canvas without a bottom seam.
+[UI-TABS-01](development/checklist.md#task-ui-tabs-01) owns this presentation
+refinement and its [design](development/features/unified-qt-workbench/design.md#ui-tabs-01-folder-style-direction-tabs).
+Main polls both real adapters regardless of selected tab.
+The thin `bridge/direction_shell.rs` projects canonical scalar keys, dirty flags,
+selection and dispatch phase through `shell/presentation.rs`; opaque identity
+text preserves native integers without JavaScript numeric conversion. Selection
+never redirects a run or releases its slot. DirectionShellHost rechecks captured
+origin immediately before dispatch to the existing direction adapter. Shared
+DirectionRunControls retain the established diagnostic/F1 Help, elapsed/activity
+semantics and lower-right controls; rejected optional text cannot redirect Stop
+or Pause. Existing presentation owners admit coherent display replacements.
+The [shell design](development/features/unified-qt-workbench/design.md#uiu-shell-01-persistent-tabs-and-scoped-actions)
+maps these owners and acceptance. Upstream editing/instrument bindings now pass
+their direction-specific US tasks. Native New/Save target the captured active
+direction; Open detects its direction before a guarded native handoff and dirty
+decision. A foreign project never falls through to downstream scientific state.
+Private restart recovery now prepares both direction projects off the GUI thread
+and atomically adopts the pair. An accepted upstream configuration no longer
+blocks update preparation; installation waits for the completed private write.
+
+Normal project files remain direction-specific. Open validates/detects direction
+and guards that target tab's dirty state before mutation. Schema 1/2 retain DS
+interpretation; the [selected schema 3 contract](development/features/unified-qt-workbench/design.md#uiu-api-05-direction-aware-public-project-admission) explicitly tags direction. Its public backend is [accepted under API-05](development/features/unified-qt-workbench/validation.md#uiu-api-05-project-backend-accepted). Backend/native
+input owners admit and serialize scientific project contents through the public
+API with Rust/Python parity. The additive [saved downstream full-loop operation](user/api/saved-full-loop.md) already prepares legacy file/fill, playback and independent response-tolerance settings through those owners; the direction-tagged envelope now admits both directions. Qt retains chooser, safe filesystem replacement,
+dirty prompts and presentation state. The implemented native
+[`Project`](user/api/projects.md) owner lives in `crates/pnm-input/src/project/`
+and is re-exported as `merlin::common::Project` only with `native-input`. It
+retains original documents and returns the existing separate downstream sweep or
+upstream session types. `ProjectError` preserves directional causes and the shared
+error category. The neutral `merlin-api` leaf remains independent of either PHY.
+The [direction-project evidence](development/features/unified-qt-workbench/validation.md#uiu-api-05-direction-project-unit)
+records scoped Rust/native acceptance and the passing full backend gate;
+UIU-FILE-01/UIU-RECOVERY-01 own Qt adoption. The [native file task design](development/features/unified-qt-workbench/design.md#uiu-file-01-direction-projects-and-guarded-native-file-operations)
+retains complete measured inputs, independent destinations and captured native
+revisions; it preserves the stricter distinction between executable public
+project admission and incomplete legacy editor loading. The [edited-configuration
+prerequisite](development/features/unified-qt-workbench/design.md#uiu-file-01-edited-configuration-provenance-prerequisite)
+keeps current accepted configuration JSON separate from optional exact original
+source text through configuration input `original_document`; public admission
+validates both and preserves source hashes without restoring pre-edit values.
+The native source/export unit now lives in `upstream/session/source.rs` and
+`session/project.rs`: exact measured-plan bytes share the existing session
+budget, while current configuration fields and original provenance remain
+separate. Canonical string comparison preserves signed-zero edits. The shared
+`shared/project_file.rs` owns bounded sibling writing only; directional callers
+retain public validation and host-wide original-input protection. Its
+[focused evidence](development/features/unified-qt-workbench/validation.md#uiu-file-01-native-source-and-safe-write-unit)
+does not establish native file routing or dirty-prompt acceptance.
+The [native routing unit](development/features/unified-qt-workbench/design.md#uiu-file-01-native-direction-routing-and-dirty-transactions)
+uses the existing downstream file worker, upstream preparation slot and canonical
+project guards. Typed GUI-thread QObject handoff transfers the actual admitted
+upstream product; project documents/revisions remain native. Each accepted edit
+admits its dirty revision before publication, while project attachment remains
+clean. Close resolves both exact targets before atomic shutdown. Downstream
+native instruments explicitly reject schema-3 observation policies they cannot
+apply; public Rust/Python consumers continue to support those policies.
+Update recovery uses `shared/update_recovery.rs` for a strict, bounded private
+transport, `bridge/workbench_file/recovery.rs` for the existing worker/public
+preparation owners, and `shell/recovery.rs` for guarded pair publication. It
+preserves independently admitted project bytes, normal destinations, dirty flags,
+active tab, theme and actual original-input protection records. Runnable nested
+documents retain public API admission; partial downstream editors and blank
+upstream remain explicit native states. Relative normal destinations become
+absolute only in the recovery copy, so a changed restart directory cannot
+redirect Save. The private file cannot become either normal Save destination.
+The previous downstream-only private format migrates explicitly with an unset
+normal destination and unsaved state. No result data or unapplied draft is
+persisted. The [recovery design](development/features/unified-qt-workbench/design.md#uiu-recovery-01-dual-project-restart-transaction)
+defines transport limits, owner preflight and failure retention. All file/capture, viewport,
+worker, retained-result and aggregate-memory budgets remain bounded; errors or
+cancellation preserve accepted inputs/completed trials. See the
+[compatibility matrix](development/features/unified-qt-workbench/compatibility-matrix.md).
+
+Requirements: [REQ-UIU-05](requirements.md#req-uiu-05), [REQ-UIU-06](requirements.md#req-uiu-06), [REQ-UIU-07](requirements.md#req-uiu-07), [REQ-UIU-22](requirements.md#req-uiu-22), [REQ-UIU-23](requirements.md#req-uiu-23).
+Delivery: [UIU-SESSION-01](development/checklist.md#task-uiu-session-01), [UIU-SHELL-01](development/checklist.md#task-uiu-shell-01), [UIU-FILE-01](development/checklist.md#task-uiu-file-01), [UIU-RECOVERY-01](development/checklist.md#task-uiu-recovery-01).
+
+### Unified Qt upstream scientific presentation
+
+The upstream data path is **CM transmitter → physical channel → CMTS receiver**.
+CMTS UCD/numerology/IUC/MAP/grant/resource settings are a distinct control path.
+CM pre-equalization C acts at TX; H, C and C×H remain separately labelled at
+their actual reference planes. CMTS RxMER is a measured observation admitted to
+the supported residual model, not a physical response or arbitrary correction.
+Synthetic and measured modes expose the backend's real combination restrictions.
+The configuration/TX/channel/RX/PNM/verification drill-ins use direction-specific
+models and authoritative stage observations. The user approved the
+[startup layout](development/features/unified-qt-workbench/upstream-startup-layout.md)
+on 2026-11-22 for REQ-UIU-10 and UIU-US-01. Its three main rounded blocks run
+horizontally: **CMTS Receiver ← Channel Simulator ← CM Transmitter**. Upstream
+samples still originate at the CM transmitter and reach the CMTS receiver. A visually
+separate CMTS Configuration group on the left contains clickable UCD / OFDMA
+Configuration, IUC / Burst Profiles and MAP / Grants blocks. The visible control
+route ends at CMTS Receiver, adjacent to its CMTS Configuration group; matching
+transmitter/session configuration remains backend-owned. Both directions reuse
+named canvas margins from the shared Theme, introduced by
+[UI-US-LAYOUT-01](development/checklist.md#task-ui-us-layout-01).
+[UI-US-LAYOUT-02](development/checklist.md#task-ui-us-layout-02) records the
+[orientation and receiver-control refinement](development/features/unified-qt-workbench/design.md#ui-us-layout-02-reversed-canvas-and-receiver-side-control).
+[UI-US-LAYOUT-03](development/checklist.md#task-ui-us-layout-03) then aligns both
+directions' block geometry, canvas grid and configuration-group styling through
+the shared Theme. Upstream uses the same plain solid, muted arrows as Downstream,
+with an internal CMTS configuration junction connecting directly to the adjacent
+receiver at its center line. There is no route around the receiver, separate
+connector legend or decorative line markers. Compact upstream windows retain
+scrolling; normal windows fit the diagram using Downstream's scale policy.
+Control configuration never enters the sample-data path. Separate PRBS-TX,
+RxMER, CM Pre-Eq and PRBS-RX blocks attach to
+their actual source, impairment, transmit-correction and recovered-output planes.
+All startup connectors use the shared solid-arrow renderer. Configuration-group
+placement and block labels distinguish control, measurement and verification
+meanings, with balanced, noncrossing routing. Scientific C/H/C×H details remain
+in the stage windows and technical documentation; the startup canvas omits the
+three inline reference-plane notes under
+[UI-US-LAYOUT-04](development/checklist.md#task-ui-us-layout-04).
+
+Reuse the downstream dark theme, dotted canvas, WorkbenchBlock, Connection,
+status/focus/hover behavior, WorkbenchDialog and shared run controls. Preserve
+File, Settings and About, persistent direction tabs and bottom Configure, Start,
+Stop, Pause and status controls. Remove the large internal MERLIN header.
+Keep plots, resource grids and FEC tables in separate drill-in windows, with new
+upstream windows under `apps/qt/qml/upstream/`. Direction-specific thin Rust
+adapters call `merlin::upstream`; Qt never uses Python or reconstructs science.
+The approved layout and seven configuration editors now have primary Qt/native
+[rendering and lifecycle acceptance](development/features/unified-qt-workbench/validation.md#uiu-us-01-integrated-configuration-acceptance).
+`upstream/workbench/drafts/{fields,constants}.rs` owns typed projection, immutable
+field bindings and independent transport policies; `preparation/edit.rs` reuses
+the current controller slot and bounded completion path. QML only renders exact
+strings/choices and requests native Apply/Cancel. The existing public validator
+owns supported numerology, IUC, grant, receiver, channel and Pre-Eq semantics.
+Absent explicit correction remains native unity; resource-grid instruments retain
+their existing delivery task.
+
+The [US03 input design](development/features/unified-qt-workbench/design.md#uiu-us-03-native-input-integration)
+reuses native capture and measured-plan admission. Its independently validated
+[capture-source JSON adapter](development/features/unified-qt-workbench/upstream-capture-source-json.md)
+transports exact original binary octets through the existing typed capture owners,
+with paired Rust/Python validation before Qt adoption. Existing inspection-only
+JSON remains distinct. Applications retain outer source-file bytes separately,
+and measured context must survive later configuration operations.
+
+The existing configuration loader also admits complete measured-experiment JSON
+through `MeasuredExperiment` and `Simulation::configure_measured` on the finite
+preparation worker. Atomic adoption retains the original plan and its explicit
+association, residual restrictions and replay context. Generic scalar drafts are
+read-only for these captured inputs; replacing the complete plan is explicit.
+`upstream/workbench/captures` independently inspects UCD, RxMER and Pre-Eq binary
+or source JSON through the public capture owners. The original delivery and decoded
+binary bytes remain separately retained. `UpstreamCaptureDialog` renders metadata
+and at most 64 original records per page; Rust supplies physical coordinates,
+unavailable values and page origins. Inspection neither associates captures nor
+changes simulation readiness. Existing native picker/path protection, bounded
+preparation, stale-generation rejection and presentation admission are reused.
+[Integrated native input acceptance](development/features/unified-qt-workbench/validation.md#uiu-us-03-integrated-native-input-acceptance)
+covers actual source pickers, independent inspection and both measured runs.
+
+The OFDMA resource-grid viewer has symbol index on X and physical subcarrier
+index on Y. The accepted bounded idle upstream API observation exposes authoritative
+allocation/pilot coordinates and actual roles, grant/IUC/pattern metadata and
+counts. `upstream/workbench/grid` queries this public owner on the existing finite
+controller-slot worker; `grid_view` validates canonical context and manages the
+bounded presentation sequence. Backend generation and wide timing/identity fields
+remain lossless strings, distinct from the application key. The Qt viewer renders
+and inspects these results with bounded batched drawing, zoom/pan, relative-frame
+and configured-base-grant selection. Ordinary polling retains the same admitted
+envelope so local inspection survives. Its independent 4096-cell Qt viewport
+policy fits simultaneous old/new presentation copies without changing the public
+16384-cell or aggregate admission limits. [Integrated native acceptance](development/features/unified-qt-workbench/validation.md#uiu-us-04-integrated-native-resource-grid-acceptance)
+covers both numerologies, exact API comparisons, controls, object population and
+downstream compatibility. No pilot placement/allocation or one-object-per-cell
+grid belongs in QML. Preserve accepted operating modes and normative evidence in the
+backend; no wider PHY capability is implied by a visible control.
+
+Requirements: [REQ-UIU-10](requirements.md#req-uiu-10), [REQ-UIU-11](requirements.md#req-uiu-11), [REQ-UIU-12](requirements.md#req-uiu-12), [REQ-UIU-13](requirements.md#req-uiu-13), [REQ-UIU-14](requirements.md#req-uiu-14).
+Delivery: [UIU-US-01](development/checklist.md#task-uiu-us-01), [UIU-US-02](development/checklist.md#task-uiu-us-02), [UIU-US-03](development/checklist.md#task-uiu-us-03), [UIU-US-04](development/checklist.md#task-uiu-us-04).
+
+### Unified Qt shared instruments
+
+Shared scatter/axes/zoom/navigation, spectrum/response plots, FEC tables/charts,
+verification and provenance widgets consume typed public API data. Numerical
+FFT/PSD, MER/EVM, reference points, response/echo, LLR, bit ordering, resource
+mapping, FEC outcomes and physical metadata remain backend-owned. Pure screen
+transforms, clipping and layout remain presentation. Extract a scientific
+instrument only after two real direction consumers and their tests demonstrate
+compatible semantics. Keep DS PLC/NCP/profile labels, DS H and US H/C/C×H,
+upstream LDPC versus downstream BCH/control chains, missing data and partial
+outcomes explicit. Detailed candidate decisions are in the migration plan.
+
+The compatible drawing owners are `apps/qt/qml/shared/instruments/QamPlot.qml`,
+`SpectrumPlot.qml` and `MeasurementPlot.qml`. Downstream adapters retain their
+existing signal selectors, electrical calibration, PLC overlays and H/Ĥ labels.
+Upstream QAM/spectrum/response dialogs consume independently admitted original
+observations from `upstream/workbench/instruments`; the capture inspector supplies
+original RxMER dB/null readings and physical-carrier coordinates. No unit conversion
+or scientific reconstruction is hidden in the renderers. Screen transforms and
+bounded original-coordinate queries are the only shared navigation behavior.
+
+`instrument_view` validates the exact native session, backend generation, report
+and query sequence before queueing/adoption. Grid and instruments reuse the same
+finite passive controller-slot worker in `preparation/query`; neither executes a
+simulation or mutates its source. Newly admitted native upstream sessions request
+one complete actual received-pilot estimate through the existing public retention
+policy, without changing public API defaults or scientific recovery. Missing or
+partial history remains explicit. [Integrated instrument acceptance](development/features/unified-qt-workbench/validation.md#uiu-shared-01-integrated-shared-instrument-acceptance)
+closes UIU-SHARED-01 with actual consumers in both directions.
+
+FEC/verification integration reuses original public decoder/recovery and optional
+soft observations through that same passive transport. The [SHARED-02 owner design](development/features/unified-qt-workbench/design.md#uiu-shared-02-actual-decoder-and-independent-verification-consumers)
+owns common `ObservationTable` and `CountBarChart` drawing with separate DS
+BCH/control and US LDPC semantics. DS wrappers retain their original preparation,
+filters and payload/error wording; the whole-run iteration histogram stays separate.
+Private upstream `instruments/fec.rs` and `soft.rs` project original public decoder
+outcomes and soft metrics into finite scalar tables. Raw demapper, derandomized
+and completed-word input metrics remain separate; independent source comparison
+alone owns BER and recovery claims. The native policy retains at most 64 actual
+cells and two completed-word inputs under a separate 65536-LLR ceiling; public
+defaults remain unchanged. Old absent history is never replayed. Each dialog page
+retains at most eight cells or 256 input-bit rows under existing aggregate
+admission. Wide original identities/frame/source offsets remain decimal strings.
+The [decoder acceptance record](development/features/unified-qt-workbench/validation.md#uiu-shared-02-integrated-decoder-and-verification-acceptance)
+links actual direction consumers, independent comparisons and native captures.
+
+Requirements: [REQ-UIU-15](requirements.md#req-uiu-15), [REQ-UIU-16](requirements.md#req-uiu-16), [REQ-UIU-17](requirements.md#req-uiu-17), [REQ-UIU-18](requirements.md#req-uiu-18), [REQ-UIU-19](requirements.md#req-uiu-19), [REQ-UIU-20](requirements.md#req-uiu-20), [REQ-UIU-21](requirements.md#req-uiu-21).
+Delivery: [UIU-SHARED-01](development/checklist.md#task-uiu-shared-01), [UIU-SHARED-02](development/checklist.md#task-uiu-shared-02).
+
+### Unified Qt acceptance
+
+The [final local acceptance](development/features/unified-qt-workbench/validation.md#uiu-qa-01-final-unified-acceptance)
+closes all 21 authorized UIU tasks. The [commit/validation report](development/features/unified-qt-workbench/completion-report.md)
+retains each task’s evidence and historical checkpoint context. Platform gates
+below remain separately scoped.
+
+All new delivery tasks remain unchecked until matching tests pass in MERLIN.
+The accepted backend evidence is historical context, not a new UI baseline run.
+Establish fresh Qt baseline evidence before code moves. Validate each API extension
+before its Qt consumer; preserve downstream tests/imports/project behavior and
+scientific vectors. Final acceptance requires both direction runs, installed-wheel
+parity, a zero-exception scientific boundary, two-consumer instrument evidence,
+bounded lifecycle/persistence/recovery, Qt Rust/QML checks, native build/launch,
+resolved links/registration and an accurate owner/evidence report. Record actual
+platform and installed-lifecycle limits. Preserve build caches; this phase does
+not authorize pushes, releases, system installs or unsupported wider PHY work.
+
+The [risk-based testing strategy](development/features/unified-qt-workbench/testing-strategy.md)
+schedules targeted checks for focused commits, complete relevant tests before
+official UIU task acceptance and full applicable regressions at major milestones/
+final acceptance. Shared scientific/API, CXX-Qt registration, serialization and
+cross-direction lifecycle changes expand to every affected consumer at each
+level. Record executed, not-required and deferred checks with their reasons;
+cache reuse preserves stable build inputs and never implies an unexecuted pass.
+This changes validation scheduling, not architecture, task IDs or acceptance gates.
+
+The existing native `--check-workbench` file owner dispatches current direction
+projects through `merlin::common::Project` admission without starting a simulation.
+Legacy downstream editor documents retain complete receiver preparation and their
+established diagnostics. Bounded regular-file input and public schema validation
+remain authoritative; Qt-specific presentation limits are separate.
+
+The [final compatibility/numeric reconciliation](development/features/unified-qt-workbench/design.md#uiu-qa-01-final-compatibility-and-numeric-reconciliation)
+records final ownership and review method. Its [source destinations](development/features/unified-qt-workbench/final-source-inventory.json)
+retain the original planning inventory, and its [numeric review](development/features/unified-qt-workbench/final-numeric-review.json)
+names shared policies at existing domain owners while preserving independent
+policies, mathematical identities, representation anchors and test vectors.
+
+Requirements: [REQ-UIU-26](requirements.md#req-uiu-26), [REQ-UIU-27](requirements.md#req-uiu-27).
+Delivery: [UIU-QA-01](development/checklist.md#task-uiu-qa-01).
+
 ## UI: MERLIN Simulation Workbench
+
+The opening scheduling statements below describe the historical downstream UI
+milestone. Python/backend delivery has since completed within its accepted scope;
+the proposed unified UI phase above does not reset this downstream history.
 
 The CLI functional MVP is complete for its documented closed-loop configurations.
 The next major phase is the native Qt Quick/QML workbench, initially targeting
@@ -1303,7 +2672,7 @@ UI-ORG-01 groups QML under `shell`, `theme`, `components`, `about`, `inputs`,
 `workbenches` and `instruments`; Main.qml remains the embedded bootstrap.
 Instrument windows/charts are grouped by spectrum, QAM, response, slicer, FEC,
 messages and stages. Input directories use the corresponding Rust owner names.
-Qt-facing instrument providers now live under `apps/qt/src/instruments/`, with
+Qt-facing instrument providers now live under `apps/qt/src/downstream/instruments/`, with
 cohesive transmitter/receiver and shared spectrum modules. Existing root Rust
 paths are retained through re-exports or the existing QObject bridges. Pinned
 CXX-Qt requires those bridge files to stay together for this QML module.
@@ -2980,7 +4349,11 @@ See the [design](development/features/qam-run-results/design.md) for resource ca
 ### RXMER-DESIGN-01: designed RxMER and profile PLC overlays
 
 `signal_processing::rxmer_designer` owns the bounded, deterministic dB editing
-recipe. It preserves exact frequency grids and absent values and does not model
+recipe. Its synthetic-value domain bounds are shared with native flat-baseline
+admission; independent edit-effect limits remain separately named. Existing
+[domain/default ownership](development/features/domain-limits/design.md) preserves
+all numerical values, errors and source behavior. It preserves exact frequency
+grids and absent values and does not model
 RF phase, infer VSWR-to-MER depth, consume RNG draws or replace playback rules.
 The Qt Rust measurement adapter retains immutable imported baselines, or an
 explicit flat template derived from the accepted profile. A version1 MERLIN

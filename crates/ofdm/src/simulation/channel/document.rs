@@ -5,6 +5,7 @@
 //! Versioned channel request shared by CLI and future adapters; all math stays in Rust.
 use super::{ChannelJobLimits, ChannelRunSettings};
 use crate::{
+    common::constants::DEFAULT_CONTINUOUS_PRBS15_SEED,
     error::invalid,
     simulation::{source::PrbsSeed, test_points::ProbeConfig},
     transmission::{layout::CarrierLayoutSettings, packing::NcpModulation, TransmissionSettings},
@@ -58,7 +59,7 @@ fn default_duration_ms() -> u64 {
     1000
 }
 fn default_seed() -> PrbsSeed {
-    0x7fff
+    DEFAULT_CONTINUOUS_PRBS15_SEED
 }
 fn default_ncp() -> NcpModulation {
     NcpModulation::Qpsk

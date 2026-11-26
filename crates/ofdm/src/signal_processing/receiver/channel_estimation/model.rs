@@ -1,8 +1,10 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 use crate::types::{IqPair, SubcarrierIdx};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 /// Explicit receiver correction source; pilot mode never consumes supplied H.
 #[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -44,4 +46,70 @@ pub struct ChannelEstimate {
     pub pilots: Vec<PilotEstimate>,
     /// Full physical grid; excluded bins carry unity solely for shape consistency.
     pub response: Vec<IqPair>,
+}
+
+impl RetainedPayload for PilotEstimate {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            bin,
+            scattered,
+            reference,
+            received,
+            response,
+            prior_prediction,
+        } = self;
+        merlin_api::retention_support::sum([
+            bin.retained_children(),
+            scattered.retained_children(),
+            reference.retained_children(),
+            received.retained_children(),
+            response.retained_children(),
+            prior_prediction.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ChannelEstimate {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            channel_symbol_index,
+            ready,
+            observed_bins,
+            maximum_age_symbols,
+            phase_slope_radians_per_bin,
+            pilots,
+            response,
+        } = self;
+        merlin_api::retention_support::sum([
+            channel_symbol_index.retained_children(),
+            ready.retained_children(),
+            observed_bins.retained_children(),
+            maximum_age_symbols.retained_children(),
+            phase_slope_radians_per_bin.retained_children(),
+            pilots.retained_children(),
+            response.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ReceiverMode {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::CmChannelEstimated => Some(RetainedFootprint::default()),
+            Self::PilotEstimated => Some(RetainedFootprint::default()),
+            Self::MerlinChannelEstimated => Some(RetainedFootprint::default()),
+        }
+    }
 }

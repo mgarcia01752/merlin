@@ -1,11 +1,14 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Explicit PRBS15 experiment source; unrelated to the PHY cell randomizer.
 use crate::{error::invalid, SimulationError};
 #[cfg(feature = "simulation")]
 use fec_codec::parameters::BCH_INPUT_BITS;
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
+use merlin_dsp::common::constants::{PRBS15_MAX_SEED, PRBS15_PERIOD_BITS, PRBS15_REGISTER_BITS};
 use serde::Serialize;
 
 /// Fifteen initial bits; bit zero is emitted first. Zero is forbidden.
@@ -15,9 +18,9 @@ pub type SourceBitIndex = u64;
 /// Experiment allocation/work bound per operation, not a DOCSIS limit.
 pub const MAX_PRBS_CHUNK_BITS: usize = 1_048_576;
 /// Degree of the explicitly defined sequence polynomial x^15 + x^14 + 1.
-pub const PRBS15_DEGREE: u32 = 15;
-/// Maximum nonzero 15-bit seed and maximal sequence period.
-pub const PRBS15_PERIOD: PrbsSeed = (1 << PRBS15_DEGREE) - 1;
+pub const PRBS15_DEGREE: u32 = PRBS15_REGISTER_BITS;
+/// Maximal sequence period in bits; independent of the chosen source default.
+pub const PRBS15_PERIOD: PrbsSeed = PRBS15_PERIOD_BITS;
 
 /// Owned continuous source with no host entropy or automatic reseeding.
 #[derive(Debug, Clone)]
@@ -36,7 +39,7 @@ impl Prbs15 {
     /// # Errors
     /// Rejects zero and seeds with bits outside the 15-bit register.
     pub fn new(seed: PrbsSeed) -> Result<Self, SimulationError> {
-        if seed == 0 || seed > PRBS15_PERIOD {
+        if seed == 0 || seed > PRBS15_MAX_SEED {
             return Err(invalid("PRBS15 requires a nonzero 15-bit seed."));
         }
         Ok(Self {
@@ -176,6 +179,27 @@ impl PrbsVerifier {
     /// Totals from source bit zero through the last accepted comparison.
     pub fn totals(&self) -> &PrbsComparison {
         &self.totals
+    }
+}
+
+impl RetainedPayload for PrbsComparison {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            first_bit,
+            bits_tested,
+            bit_errors,
+            first_error_bit,
+        } = self;
+        merlin_api::retention_support::sum([
+            first_bit.retained_children(),
+            bits_tested.retained_children(),
+            bit_errors.retained_children(),
+            first_error_bit.retained_children(),
+        ])
     }
 }
 

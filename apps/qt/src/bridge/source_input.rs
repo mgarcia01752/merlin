@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 //! PRBS-TX source editing; generators and scientific validation remain in the core.
-use crate::inputs::source_input::model;
+use crate::downstream::inputs::source_input::model;
+use crate::shell::{Retained, RetentionReservation};
 use cxx_qt::CxxQtType;
 use cxx_qt_lib::QString;
 use model::SourceModel;
@@ -60,28 +61,66 @@ pub mod bridge {
 /// GUI-thread adapter retaining immutable files and a separate accepted snapshot.
 #[derive(Default)]
 pub struct SourceInputRust {
+    pub(super) context: crate::downstream::workbench::session::Context,
     model: SourceModel,
+    // Drop model data before releasing its actual retained-owner reservation.
+    model_reservation: Option<RetentionReservation>,
+}
+
+impl SourceInputRust {
+    fn replace_model(&mut self, candidate: Retained<SourceModel>) -> Result<(), String> {
+        if !self.context.application.budget().owns(&candidate) {
+            return Err("Prepared source editor belongs to another application host.".into());
+        }
+        let (model, reservation) = candidate.into_parts();
+        self.model = model;
+        drop(self.model_reservation.replace(reservation));
+        Ok(())
+    }
+
+    fn begin_admitted(&mut self) -> Result<serde_json::Value, String> {
+        let (candidate, metadata) = self
+            .model
+            .begin_admitted(self.context.application.budget())?;
+        self.replace_model(candidate)?;
+        Ok(metadata)
+    }
 }
 
 impl bridge::SourceInput {
-    /// Adopts already validated project source state on the GUI thread.
+    /// Transfers an admitted project source or admits a reconstructed fallback.
+    ///
+    /// # Returns
+    /// Unit after same-host model/guard replacement without scientific copies.
+    /// Rejection preserves the previous editor and logs its existing-style diagnostic.
     pub fn reload(mut self: core::pin::Pin<&mut Self>) {
-        if let Some(model) = crate::workbench::project_load::take(|prepared| prepared.source.take())
+        let context = self.rust().context.clone();
+        let candidate = crate::downstream::workbench::project_load::take(&context, |prepared| {
+            prepared.source.take().map(|model| *model)
+        })
+        .map(Ok)
+        .unwrap_or_else(|| {
+            model::SourceModel::from_saved(&crate::downstream::workbench::session::saved(
+                &context, "source",
+            ))
+            .and_then(|model| model.admit(context.application.budget()))
+        });
+        if let Err(error) =
+            candidate.and_then(|model| self.as_mut().rust_mut().replace_model(model))
         {
-            self.as_mut().rust_mut().model = model;
-        } else if let Ok(model) =
-            model::SourceModel::from_saved(&crate::workbench::session::saved("source"))
-        {
-            self.as_mut().rust_mut().model = model;
+            log::warn!("Cannot reload source editor: {error}");
         }
     }
 
     /// Copies accepted file/options into the edit session, without generating bits.
     /// # Returns
-    /// Initial options and compact original-file metadata.
+    /// Initial options/file metadata after admission, or a JSON error preserving the draft.
     pub fn begin(mut self: core::pin::Pin<&mut Self>) -> QString {
-        let model = &mut self.as_mut().rust_mut().model;
-        QString::from(model.begin().to_string())
+        let result = self.as_mut().rust_mut().begin_admitted();
+        QString::from(match result {
+            Ok(value) => value.to_string(),
+            Err(error) => serde_json::json!({"error":error}).to_string(),
+        })
     }
 
     /// Uses GTK's native chooser; successful selection stages a bounded local file.
@@ -93,10 +132,17 @@ impl bridge::SourceInput {
                 .and_then(|url| {
                     if let Some(url) = url {
                         let (name, bytes) = crate::platform::input_file::read_local(
+                            &self.rust().context.application,
+                            crate::shell::Direction::Downstream,
                             &url,
-                            docsis_ofdm_fec::simulation::source::file::MAX_FILE_BYTES,
+                            merlin::downstream::SourceInput::file_limits().max_original_bytes,
                         )?;
-                        self.as_mut().rust_mut().model.stage(name, bytes)?;
+                        let candidate = self.rust().model.stage_admitted(
+                            self.rust().context.application.budget(),
+                            name,
+                            bytes,
+                        )?;
+                        self.as_mut().rust_mut().replace_model(candidate)?;
                     }
                     Ok(self.rust().model.file_summary())
                 });
@@ -126,17 +172,35 @@ impl bridge::SourceInput {
     /// # Returns
     /// Empty on success; error text otherwise.
     pub fn apply(mut self: core::pin::Pin<&mut Self>, document: &QString) -> QString {
-        let result = self.as_mut().rust_mut().model.accept(&document.to_string());
-        if result.is_ok() {
-            crate::workbench::session::set_source(self.rust().model.snapshot());
-            crate::workbench::session::put_saved("source", self.rust().model.export());
+        let context = self.rust().context.clone();
+        let result = self
+            .as_mut()
+            .rust_mut()
+            .model
+            .apply_transactional(&context, &document.to_string());
+        match result {
+            Ok(reservation) => {
+                drop(
+                    self.as_mut()
+                        .rust_mut()
+                        .model_reservation
+                        .replace(reservation),
+                );
+                QString::from("")
+            }
+            Err(error) => QString::from(error),
         }
-        QString::from(result.err().unwrap_or_default())
     }
 
-    /// Restores the accepted file; QML discards its transient options on close.
+    /// Restores an admitted accepted-file candidate when QML closes the editor.
+    ///
+    /// # Returns
+    /// Unit after model/guard replacement. Admission rejection preserves the staged
+    /// model and prior guard and logs a diagnostic; accepted Inputs stay unchanged.
     pub fn cancel(mut self: core::pin::Pin<&mut Self>) {
-        self.as_mut().rust_mut().model.begin();
+        if let Err(error) = self.as_mut().rust_mut().begin_admitted() {
+            log::warn!("Cannot restore source draft: {error}");
+        }
     }
 
     /// Reports explicit acceptance without requiring a simulation result.
@@ -144,5 +208,96 @@ impl bridge::SourceInput {
     /// Status and accessible reason for the PRBS-TX block.
     pub fn state(&self) -> QString {
         QString::from(self.rust().model.state().to_string())
+    }
+}
+
+#[cfg(test)]
+mod admission_tests {
+    use super::*;
+    use crate::downstream::workbench::session::Context;
+    use crate::shell::{ApplicationSessions, RetainedResources};
+
+    // Explicit fixture ceilings; saturation below uses actual retained charges.
+    const FIXTURE_LIMIT: RetainedResources = RetainedResources {
+        payload_bytes: usize::MAX,
+        ordered_entries: usize::MAX,
+        shared_roots: usize::MAX,
+        channel_count: usize::MAX,
+        slot_count: usize::MAX,
+        presentation_utf16_bytes: 0,
+        presentation_entries: 0,
+        retained_views: 0,
+        open_views: 0,
+    };
+
+    fn context() -> Context {
+        Context::for_application(ApplicationSessions::new(FIXTURE_LIMIT).unwrap()).unwrap()
+    }
+
+    fn candidate(context: &Context, name: &str) -> Retained<SourceModel> {
+        let mut model = SourceModel::default();
+        // Exact null/newline original payload; staging alone never accepts it.
+        model.stage(name.into(), b"\0original\n".to_vec()).unwrap();
+        model.admit(context.application.budget()).unwrap()
+    }
+
+    #[test]
+    fn prepared_transfer_checks_host_and_moves_existing_charge_under_full_pressure() {
+        let target = context();
+        let foreign = context();
+        let budget = target.application.budget();
+        let baseline = budget.usage();
+        let mut editor = SourceInputRust {
+            context: target.clone(),
+            ..Default::default()
+        };
+        let original = candidate(&target, "old.bin");
+        let original_charge = original.fixture_reserved_resources();
+        editor.replace_model(original).unwrap();
+        let current = editor.model.file_summary();
+        let before = budget.usage();
+        let foreign_baseline = foreign.application.budget().usage();
+        assert!(editor
+            .replace_model(candidate(&foreign, "foreign.bin"))
+            .is_err());
+        assert_eq!(editor.model.file_summary(), current);
+        assert!(editor.model_reservation.is_some());
+        assert_eq!(budget.usage(), before);
+        assert_eq!(foreign.application.budget().usage(), foreign_baseline);
+
+        let prepared = candidate(&target, "prepared.bin");
+        let prepared_charge = prepared.fixture_reserved_resources();
+        let usage = budget.usage();
+        let pressure = budget
+            .reserve_resources(RetainedResources {
+                payload_bytes: usize::MAX - usage.payload_bytes,
+                ordered_entries: usize::MAX - usage.ordered_entries,
+                shared_roots: usize::MAX - usage.shared_roots,
+                ..Default::default()
+            })
+            .unwrap();
+        editor.replace_model(prepared).unwrap();
+        assert_eq!(editor.model.file_summary()["name"], "prepared.bin");
+        assert_eq!(
+            budget.usage(),
+            RetainedResources {
+                payload_bytes: usize::MAX - original_charge.payload_bytes,
+                ordered_entries: usize::MAX - original_charge.ordered_entries,
+                shared_roots: usize::MAX - original_charge.shared_roots,
+                ..Default::default()
+            }
+        );
+        drop(pressure);
+        assert_eq!(
+            budget.usage(),
+            RetainedResources {
+                payload_bytes: baseline.payload_bytes + prepared_charge.payload_bytes,
+                ordered_entries: baseline.ordered_entries + prepared_charge.ordered_entries,
+                shared_roots: baseline.shared_roots + prepared_charge.shared_roots,
+                ..Default::default()
+            }
+        );
+        drop(editor);
+        assert_eq!(budget.usage(), baseline);
     }
 }

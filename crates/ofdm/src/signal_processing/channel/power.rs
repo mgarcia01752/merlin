@@ -4,6 +4,7 @@
  */
 //! Electrical references and scalar channel conditioning; no device capability inference.
 use crate::{error::invalid, transmission::settings::SAMPLE_RATE_HZ, SimulationError};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 
 /// Explicit conditioning, independent of captured relative channel response.
@@ -162,4 +163,27 @@ pub fn channel_power(
         first_bin: first,
         last_bin: last,
     })
+}
+
+impl RetainedPayload for PowerConditioning {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            amplifier_gain_db,
+            cpa_attenuation_db,
+            input_data_level_dbmv_per_6mhz,
+            amplifier_target_dbmv_per_6mhz,
+            receiver_noise_dbmv_hz,
+        } = self;
+        merlin_api::retention_support::sum([
+            amplifier_gain_db.retained_children(),
+            cpa_attenuation_db.retained_children(),
+            input_data_level_dbmv_per_6mhz.retained_children(),
+            amplifier_target_dbmv_per_6mhz.retained_children(),
+            receiver_noise_dbmv_hz.retained_children(),
+        ])
+    }
 }

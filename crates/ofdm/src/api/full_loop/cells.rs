@@ -1,0 +1,81 @@
+/*
+ * Copyright 2026 MERLIN contributors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+//! Bounded immutable selections over actual paired receiver report owners.
+mod models;
+pub(super) mod queries;
+mod selection;
+pub(super) mod soft;
+use super::*;
+use crate::common::constants::{
+    MAX_RECEIVER_CELL_QUERY_BYTES, MAX_RECEIVER_CELL_VIEW_ROWS, MAX_RECEIVER_DECISION_VIEW_ROWS,
+};
+pub use crate::signal_processing::{
+    modulation::{
+        mer::MerResult as FullLoopCellMer, slicing::HardDecision as FullLoopHardDecision,
+    },
+    receiver::diagnostics::decisions::ScaledDecision as FullLoopCellDecision,
+};
+pub use models::*;
+use selection::{Cell, Selected};
+pub use soft::*;
+
+impl FullLoopCellQuery {
+    /// Admits a strict bounded receiver selection without touching any report or source.
+    /// # Arguments
+    /// * `bytes` - At most 4096 UTF-8 JSON bytes with known fields and registered stream names.
+    /// # Returns
+    /// Owned editable selection; result queries revalidate typed edits before any work.
+    /// # Errors
+    /// Rejects malformed/unknown fields, unsupported orders, ranges and common query limits.
+    pub fn from_json(bytes: &[u8]) -> ApiResult<Self> {
+        if bytes.len() > MAX_RECEIVER_CELL_QUERY_BYTES {
+            return Err(ApiError::new(
+                ErrorCode::ResourceLimit,
+                "Cell query exceeds 4096 bytes",
+            ));
+        }
+        let query: Self = serde_json::from_slice(bytes)
+            .map_err(|cause| super::super::error::invalid(cause.to_string()))?;
+        query.validate()?;
+        Ok(query)
+    }
+
+    fn validate(&self) -> ApiResult<()> {
+        if self.count > MAX_RECEIVER_CELL_VIEW_ROWS {
+            return Err(ApiError::new(
+                ErrorCode::ResourceLimit,
+                "Cell view exceeds 2048 rows",
+            ));
+        }
+        if self
+            .first_bin
+            .is_some_and(|value| SubcarrierIndex::new(value).is_err())
+            || self
+                .last_bin
+                .is_some_and(|value| SubcarrierIndex::new(value).is_err())
+            || self
+                .first_bin
+                .zip(self.last_bin)
+                .is_some_and(|(first, last)| first > last)
+            || self
+                .first_symbol
+                .zip(self.last_symbol)
+                .is_some_and(|(first, last)| first > last)
+        {
+            return Err(super::super::error::invalid(
+                "Cell coordinate bounds are reversed or outside the physical grid",
+            ));
+        }
+        if self.modulation_order.is_some_and(|order| {
+            crate::signal_processing::modulation::reference_for_order(usize::from(order)).is_none()
+        }) {
+            return Err(ApiError::new(
+                ErrorCode::UnsupportedCapability,
+                "Unsupported cell reference order",
+            ));
+        }
+        Ok(())
+    }
+}

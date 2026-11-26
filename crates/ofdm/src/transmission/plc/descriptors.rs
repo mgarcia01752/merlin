@@ -1,8 +1,12 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Fixed OCD/ProfileA/NCP DPD, MULPI I25 §6.4.40–41, Tables69/70.
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
+#[cfg(all(feature = "simulation", feature = "pnm-input"))]
+pub(crate) mod inspection;
 use super::mac_packets::{ManagementPacket, DPD_MESSAGE_TYPE, OCD_MESSAGE_TYPE};
 use crate::{
     error::invalid,
@@ -308,4 +312,27 @@ pub fn parse(packet: &ManagementPacket) -> Result<ParsedDescriptor, SimulationEr
         profile_id: if fixed == 3 { Some(body[1]) } else { None },
         tlvs,
     })
+}
+
+impl RetainedPayload for DescriptorIdentity {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            channel_id,
+            change_count,
+            source_mac,
+            primary_capable,
+            ncp_bits,
+        } = self;
+        merlin_api::retention_support::sum([
+            channel_id.retained_children(),
+            change_count.retained_children(),
+            source_mac.retained_children(),
+            primary_capable.retained_children(),
+            ncp_bits.retained_children(),
+        ])
+    }
 }

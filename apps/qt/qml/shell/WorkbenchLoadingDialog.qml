@@ -5,21 +5,21 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
-import "../components"
+import "../shared/components"
 
 WorkbenchDialog {
     id: dialog
     objectName: "workbenchLoadingDialog"
     property var loadState: ({phase:"",elapsed_ms:0,cancelling:false})
     signal cancelRequested()
-    title: "Open Workbench"
+    title: loadState.saving ? "Save Workbench" : "Open Workbench"
     width: Math.min(500, parent ? parent.width - 32 : 500)
     height: loadState.debug_ui ? 230 : 180
     x: parent ? (parent.width-width)/2 : 0
     y: parent ? (parent.height-height)/2 : 0
     modal: true
     closePolicy: Popup.NoAutoClose
-    Shortcut { sequence:"Escape";enabled:dialog.visible && !dialog.loadState.cancelling;onActivated:dialog.cancelRequested() }
+    Shortcut { sequence:"Escape";enabled:dialog.visible && !dialog.loadState.cancelling && !dialog.loadState.saving;onActivated:dialog.cancelRequested() }
     header: Label { text: dialog.title; color: dialog.theme.text; font.bold:true; padding:12 }
     background: Rectangle { color:dialog.theme.background; border.color:dialog.theme.line; radius:12 }
     contentItem: ColumnLayout {
@@ -40,7 +40,7 @@ WorkbenchDialog {
         Label {
             visible: !!dialog.loadState.debug_ui
             objectName: "loadElapsed"
-            text: "Time since Open: " + ((dialog.loadState.elapsed_ms || 0) / 1000).toFixed(1) + " s"
+            text: (dialog.loadState.saving ? "Time since Save: " : "Time since Open: ") + ((dialog.loadState.elapsed_ms || 0) / 1000).toFixed(1) + " s"
             color: dialog.theme.muted
             Layout.fillWidth: true
         }
@@ -54,7 +54,7 @@ WorkbenchDialog {
         Item { Layout.fillHeight:true }
         WorkbenchActionButton {
             objectName:"cancelLoadButton"; theme:dialog.theme; text:"Cancel"
-            Layout.alignment:Qt.AlignRight; enabled:!dialog.loadState.cancelling
+            Layout.alignment:Qt.AlignRight; enabled:!dialog.loadState.cancelling && !dialog.loadState.saving
             onClicked:dialog.cancelRequested()
         }
     }

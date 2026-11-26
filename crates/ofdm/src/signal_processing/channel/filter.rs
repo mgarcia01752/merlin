@@ -9,6 +9,7 @@ use crate::{
     types::IqPair,
     SimulationError,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 
 /// Maximum memory is ten microseconds at the fixed 204.8 MHz sample clock.
@@ -397,5 +398,71 @@ impl StreamingChannelFilter {
         let tail = self.transfer(&zeros)?;
         self.finished = true;
         Ok(tail)
+    }
+}
+
+impl RetainedPayload for EchoPath {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            delay_samples,
+            gain,
+        } = self;
+        merlin_api::retention_support::sum([
+            delay_samples.retained_children(),
+            gain.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for FilterDiagnostics {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            taps,
+            causal_shift_samples,
+            rms_complex_error,
+            maximum_complex_error,
+            discarded_energy_fraction,
+        } = self;
+        merlin_api::retention_support::sum([
+            taps.retained_children(),
+            causal_shift_samples.retained_children(),
+            rms_complex_error.retained_children(),
+            maximum_complex_error.retained_children(),
+            discarded_energy_fraction.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ChannelFilterSettings {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Diagonal => Some(RetainedFootprint::default()),
+            Self::Echoes { paths } => {
+                merlin_api::retention_support::sum([paths.retained_children()])
+            }
+            Self::CapturedFir {
+                max_delay_samples,
+                causal_shift_samples,
+                maximum_rms_error,
+                maximum_bin_error,
+            } => merlin_api::retention_support::sum([
+                max_delay_samples.retained_children(),
+                causal_shift_samples.retained_children(),
+                maximum_rms_error.retained_children(),
+                maximum_bin_error.retained_children(),
+            ]),
+        }
     }
 }

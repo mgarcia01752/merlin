@@ -3,7 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Explicit synthetic RxMER profile edits; never infers channel phase or RF noise.
+use crate::common::constants::{
+    MAX_DESIGNED_RXMER_DB, MAX_DESIGN_ABSOLUTE_TILT_DB, MAX_DESIGN_ECHO_DISTANCE_METRES,
+    MAX_DESIGN_NOTCH_DEPTH_DB, MAX_DESIGN_RANDOM_STANDARD_DEVIATION_DB,
+    MAX_DESIGN_RIPPLE_PEAK_TO_PEAK_DB, MIN_DESIGNED_RXMER_DB, MIN_DESIGN_ECHO_DISTANCE_METRES,
+    SPEED_OF_LIGHT_METRES_PER_SECOND,
+};
 use crate::{scenario::FrequencyGrid, types::FrequencyHz, SimulationError};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use rand::SeedableRng;
 use rand_chacha::ChaCha8Rng;
 use rand_distr::{Distribution, StandardNormal};
@@ -81,14 +88,15 @@ impl RippleSpacing {
                 velocity_factor,
             } => {
                 if !distance_metres.is_finite()
-                    || !(0.001..=10000.0).contains(&distance_metres)
+                    || !(MIN_DESIGN_ECHO_DISTANCE_METRES..=MAX_DESIGN_ECHO_DISTANCE_METRES)
+                        .contains(&distance_metres)
                     || !velocity_factor.is_finite()
                     || velocity_factor <= 0.0
                     || velocity_factor > 1.0
                 {
                     return Err(fail("Distance must be 0.001–10000 m and velocity factor greater than 0 and at most 1."));
                 }
-                299_792_458.0 * velocity_factor / (2.0 * distance_metres)
+                SPEED_OF_LIGHT_METRES_PER_SECOND * velocity_factor / (2.0 * distance_metres)
             }
         };
         if !hz.is_finite() || hz.round() < 1.0 || hz.round() > f64::from(u32::MAX) {
@@ -173,7 +181,11 @@ impl RxmerRecipe {
         grid.validate()?;
         CaptureScope::All.validate(count)?;
         if let Some(rule) = &self.random_variation {
-            if !bounded(rule.standard_deviation_db, 0.0, 20.0) {
+            if !bounded(
+                rule.standard_deviation_db,
+                0.0,
+                MAX_DESIGN_RANDOM_STANDARD_DEVIATION_DB,
+            ) {
                 return Err(fail(
                     "Random variation standard deviation must be finite within 0–20 dB.",
                 ));
@@ -183,14 +195,22 @@ impl RxmerRecipe {
         let high = grid.frequency(grid.sample_count - 1)?;
         if let Some(tilt) = &self.tilt {
             tilt.scope.validate(count)?;
-            if !bounded(tilt.tilt_db, -60.0, 60.0) {
+            if !bounded(
+                tilt.tilt_db,
+                -MAX_DESIGN_ABSOLUTE_TILT_DB,
+                MAX_DESIGN_ABSOLUTE_TILT_DB,
+            ) {
                 return Err(fail("RxMER tilt must be finite within ±60 dB."));
             }
         }
         if let Some(ripple) = &self.ripple {
             ripple.scope.validate(count)?;
             ripple.spacing.frequency_hz()?;
-            if !bounded(ripple.peak_to_peak_db, 0.0, 60.0) {
+            if !bounded(
+                ripple.peak_to_peak_db,
+                0.0,
+                MAX_DESIGN_RIPPLE_PEAK_TO_PEAK_DB,
+            ) {
                 return Err(fail("Ripple peak-to-peak depth must be 0–60 dB."));
             }
         }
@@ -198,7 +218,7 @@ impl RxmerRecipe {
             notch.scope.validate(count)?;
             let half = f64::from(notch.bandwidth_hz) / 2.0;
             if notch.bandwidth_hz == 0
-                || !bounded(notch.depth_db, 0.0, 60.0)
+                || !bounded(notch.depth_db, 0.0, MAX_DESIGN_NOTCH_DEPTH_DB)
                 || f64::from(notch.edge_hz) > half
                 || f64::from(notch.center_hz) - half < f64::from(low)
                 || f64::from(notch.center_hz) + half > f64::from(high)
@@ -216,7 +236,7 @@ impl RxmerRecipe {
                 || edit.first_hz > edit.last_hz
                 || (edit.first_hz - low) % grid.spacing_hz != 0
                 || (edit.last_hz - low) % grid.spacing_hz != 0
-                || !bounded(edit.value_db, -30.0, 120.0)
+                || !bounded(edit.value_db, MIN_DESIGNED_RXMER_DB, MAX_DESIGNED_RXMER_DB)
             {
                 return Err(fail("Value edits need ordered exact carrier centers inside the grid and MER within −30 to 120 dB."));
             }
@@ -320,11 +340,198 @@ impl RxmerRecipe {
             }) {
                 value = edit.value_db;
             }
-            if !bounded(value, -30.0, 120.0) {
+            if !bounded(value, MIN_DESIGNED_RXMER_DB, MAX_DESIGNED_RXMER_DB) {
                 return Err(fail("Designed RxMER exceeds −30 to 120 dB; reduce the edits. Values are never clipped."));
             }
             result.push(Some(value));
         }
         Ok(result)
+    }
+}
+
+impl RetainedPayload for RxmerRecipe {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            random_variation,
+            tilt,
+            ripple,
+            notch,
+            edits,
+        } = self;
+        merlin_api::retention_support::sum([
+            random_variation.retained_children(),
+            tilt.retained_children(),
+            ripple.retained_children(),
+            notch.retained_children(),
+            edits.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for RandomVariation {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            standard_deviation_db,
+            seed,
+        } = self;
+        merlin_api::retention_support::sum([
+            standard_deviation_db.retained_children(),
+            seed.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for Tilt {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { scope, tilt_db } = self;
+        merlin_api::retention_support::sum([scope.retained_children(), tilt_db.retained_children()])
+    }
+}
+
+impl RetainedPayload for Ripple {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            scope,
+            peak_to_peak_db,
+            spacing,
+        } = self;
+        merlin_api::retention_support::sum([
+            scope.retained_children(),
+            peak_to_peak_db.retained_children(),
+            spacing.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for Notch {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            scope,
+            center_hz,
+            bandwidth_hz,
+            depth_db,
+            edge_hz,
+        } = self;
+        merlin_api::retention_support::sum([
+            scope.retained_children(),
+            center_hz.retained_children(),
+            bandwidth_hz.retained_children(),
+            depth_db.retained_children(),
+            edge_hz.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ValueEdit {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            scope,
+            first_hz,
+            last_hz,
+            value_db,
+        } = self;
+        merlin_api::retention_support::sum([
+            scope.retained_children(),
+            first_hz.retained_children(),
+            last_hz.retained_children(),
+            value_db.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for CaptureScope {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::All => Some(RetainedFootprint::default()),
+            Self::Range { first, last } => merlin_api::retention_support::sum([
+                first.retained_children(),
+                last.retained_children(),
+            ]),
+        }
+    }
+}
+
+impl RetainedPayload for RippleSpacing {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Frequency { spacing_hz } => {
+                merlin_api::retention_support::sum([spacing_hz.retained_children()])
+            }
+            Self::EchoDistance {
+                distance_metres,
+                velocity_factor,
+            } => merlin_api::retention_support::sum([
+                distance_metres.retained_children(),
+                velocity_factor.retained_children(),
+            ]),
+        }
+    }
+}
+
+#[cfg(test)]
+mod input_retained_footprint_tests {
+    use super::{CaptureScope, RxmerRecipe, ValueEdit};
+    use merlin_api::retention_support::retained_footprint;
+    use std::mem::size_of;
+
+    #[test]
+    fn recipe_edit_spares_are_passive_and_have_no_shared_or_ordered_children() {
+        const EDIT_SLOTS: usize = 7; // Requested storage distinct from one initialized edit.
+        let mut edits = Vec::with_capacity(EDIT_SLOTS);
+        edits.push(ValueEdit {
+            scope: CaptureScope::Range { first: 1, last: 1 },
+
+            // Storage-only coordinates/value; no grid validation or numerical work.
+            first_hz: 0,
+            last_hz: 0,
+            value_db: 0.0,
+        });
+        let capacity_bytes = edits.capacity() * size_of::<ValueEdit>();
+        let recipe = RxmerRecipe {
+            edits,
+            ..Default::default()
+        };
+        let serialized = serde_json::to_value(&recipe).unwrap();
+        let footprint = retained_footprint(&recipe).unwrap();
+        assert_eq!(
+            footprint.payload_bytes,
+            size_of::<RxmerRecipe>() + capacity_bytes
+        );
+        assert_eq!(footprint.shared_roots, 0);
+        assert_eq!(footprint.ordered_entries, 0);
+        assert_eq!(retained_footprint(&recipe).unwrap(), footprint);
+        assert_eq!(serde_json::to_value(&recipe).unwrap(), serialized);
     }
 }

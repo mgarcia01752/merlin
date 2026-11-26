@@ -11,6 +11,167 @@ use std::{
 };
 const UPSTREAM: &[u8] = include_bytes!("../../../examples/cli/upstream/us-50khz.json");
 
+#[cfg(feature = "native-input")]
+#[test]
+fn bounded_session_outputs_preserve_legacy_direction_types_and_common_limits() {
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopRequest,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::FullLoopRequest::result_retained_bound;
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopRequest,
+        &docsis_ofdm_fec::api::FullLoopControl,
+        common::RetainedFootprint,
+    ) -> downstream::ApiResult<docsis_ofdm_fec::api::FullLoopResult> =
+        downstream::FullLoopRequest::run_bounded;
+    let _: fn(
+        &docsis_ofdm_fec::api::TransmitterPreviewRequest,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::TransmitterPreviewRequest::preview_retained_bound;
+    let _: fn(
+        &docsis_ofdm_fec::api::TransmitterPreviewRequest,
+        &docsis_ofdm_fec::api::TransmitterPreviewControl,
+        common::RetainedFootprint,
+    ) -> downstream::ApiResult<docsis_ofdm_fec::api::TransmitterPreview> =
+        downstream::TransmitterPreviewRequest::generate_bounded;
+    let _: fn(&docsis_ofdma::api::Simulation) -> upstream::ApiResult<common::RetainedFootprint> =
+        upstream::Simulation::batch_report_retained_bound;
+    let _: fn(
+        &mut docsis_ofdma::api::Simulation,
+        &docsis_ofdma::api::RunControl,
+        common::RetainedFootprint,
+    ) -> upstream::ApiResult<docsis_ofdma::api::BatchReport> =
+        upstream::Simulation::run_with_control_bounded;
+}
+
+#[test]
+fn retained_metadata_keeps_shared_contract_and_independent_upstream_ownership() {
+    assert_eq!(
+        TypeId::of::<common::RetainedFootprint>(),
+        TypeId::of::<merlin_api::RetainedFootprint>()
+    );
+    let mut simulation = upstream::Simulation::new(Default::default()).unwrap();
+    let idle: common::RetainedFootprint = simulation.retained_footprint().unwrap();
+    simulation.configure_json(UPSTREAM).unwrap();
+    let accepted = simulation.retained_footprint().unwrap();
+    assert!(accepted.payload_bytes > idle.payload_bytes);
+    let control = upstream::RunControl::new();
+    control.cancel();
+    let report = simulation.run_with_control(&control).unwrap();
+    let partial: common::RetainedFootprint = report.retained_footprint().unwrap();
+    assert!(partial.payload_bytes > 0);
+    assert_eq!(simulation.retained_footprint().unwrap(), accepted);
+    assert_eq!(report.status, upstream::RunStatus::Cancelled);
+}
+
+#[test]
+fn downstream_retained_operations_keep_legacy_types_and_common_result_contract() {
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopRequest,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::FullLoopRequest::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopSweepPlan,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::FullLoopSweepPlan::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopResult,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::FullLoopResult::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopReceiverArchive,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::FullLoopReceiverArchive::retained_footprint;
+}
+
+#[cfg(feature = "native-input")]
+#[test]
+fn bounded_receiver_history_preserves_legacy_types_and_common_limit_contract() {
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopResult,
+        &docsis_ofdm_fec::api::FullLoopReceiverArchivePolicy,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::FullLoopResult::receiver_archive_retained_bound;
+    let _: fn(
+        &docsis_ofdm_fec::api::FullLoopResult,
+        docsis_ofdm_fec::api::FullLoopReceiverArchivePolicy,
+        common::RetainedFootprint,
+    ) -> downstream::ApiResult<docsis_ofdm_fec::api::FullLoopReceiverArchive> =
+        downstream::FullLoopResult::receiver_archive_bounded;
+}
+
+#[cfg(feature = "native-input")]
+#[test]
+fn independent_input_and_preview_metadata_preserve_owner_types() {
+    let _: fn(
+        &docsis_ofdm_fec::api::SourceInput,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::SourceInput::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::NamedCapture,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::NamedCapture::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::CaptureProvenance,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::CaptureProvenance::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::ProfileCapture,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::ProfileCapture::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::ChannelEstimate,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::ChannelEstimate::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::TransmitterPreviewRequest,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::TransmitterPreviewRequest::retained_footprint;
+    let _: fn(
+        &docsis_ofdm_fec::api::TransmitterPreview,
+    ) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::TransmitterPreview::retained_footprint;
+    let _: fn(&pnm_input::RxMerDesign) -> downstream::ApiResult<common::RetainedFootprint> =
+        downstream::inputs::RxMerDesign::retained_footprint;
+}
+
+#[cfg(feature = "native-input")]
+#[test]
+fn facade_common_projects_return_the_exact_directional_public_types() {
+    let project = common::Project::from_bytes(include_bytes!(
+        "../../../examples/workbench/single/workbench.merlin.json"
+    ))
+    .unwrap();
+    assert_eq!(project.direction(), common::ProjectDirection::Downstream);
+    let plan: downstream::FullLoopSweepPlan = project.downstream_plan().unwrap();
+    assert!(!plan.info().selected_profile_ids.is_empty());
+    let upstream_factory: fn(
+        &common::Project,
+    ) -> Result<upstream::Simulation, common::ProjectError> = common::Project::upstream_simulation;
+    assert_eq!(
+        upstream_factory(&project).err().unwrap().code(),
+        common::ErrorCode::InvalidInput
+    );
+    assert_eq!(
+        common::Project::collection_info(&[&project])
+            .unwrap()
+            .projects,
+        1
+    );
+}
+
+#[cfg(feature = "native-input")]
+#[test]
+fn facade_saved_downstream_preparation_returns_existing_idle_public_plan() {
+    let plan: downstream::FullLoopSweepPlan = downstream::inputs::Workbench::prepare_full_loop(
+        include_bytes!("../../../examples/workbench/single/workbench.merlin.json"),
+    )
+    .unwrap();
+    let request: downstream::FullLoopRequest = plan.request(0).unwrap();
+    assert_eq!(request.options().duration_ms, 1);
+    assert!(request.observation_policy().is_none());
+}
+
 #[test]
 fn downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior() {
     assert_eq!(
@@ -21,6 +182,95 @@ fn downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior() {
         TypeId::of::<downstream::Merlin>(),
         TypeId::of::<docsis_ofdm_fec::api::Merlin>()
     );
+    assert_eq!(
+        TypeId::of::<downstream::ChannelPhase>(),
+        TypeId::of::<docsis_ofdm_fec::simulation::channel::ChannelPhase>()
+    );
+    let phase: fn(&downstream::ChannelProgress) -> downstream::ChannelPhase =
+        |progress| progress.phase;
+    // Compile the public field projection without constructing fake engine progress.
+    let _ = phase;
+    let capacity: fn(
+        &downstream::TransmissionConfiguration,
+        usize,
+    ) -> downstream::ApiResult<usize> =
+        downstream::TransmissionConfiguration::spectrum_average_capacity;
+    let transmission =
+        downstream::TransmissionConfiguration::new(downstream::TransmissionSettings::default())
+            .unwrap();
+    // Independent old 32768-sample presentation prefix: seven complete 8K windows.
+    assert_eq!(capacity(&transmission, 32768).unwrap(), 7);
+    let calibrated_sequence: fn(
+        &downstream::FullLoopResult,
+        downstream::FullLoopSpectrumQuery,
+    ) -> downstream::ApiResult<
+        downstream::FullLoopCalibratedSequenceSpectrum,
+    > = downstream::FullLoopResult::calibrated_spectrum_sequence;
+    let _ = calibrated_sequence;
+    let recovery: fn(&downstream::FullLoopResult) -> downstream::FullLoopFecRecovery =
+        downstream::FullLoopResult::fec_recovery;
+    let legacy_recovery: fn(
+        &docsis_ofdm_fec::api::FullLoopResult,
+    ) -> docsis_ofdm_fec::api::FullLoopFecRecovery = recovery;
+    let _ = legacy_recovery;
+    assert_eq!(
+        TypeId::of::<downstream::SourceProfileFrame>(),
+        TypeId::of::<docsis_ofdm_fec::profile::candidate::CapturedProfile>()
+    );
+    let source_frame: for<'a> fn(
+        &'a downstream::ProfileCapture,
+        u8,
+    ) -> downstream::ApiResult<&'a downstream::SourceProfileFrame> =
+        downstream::ProfileCapture::frame;
+    let _ = source_frame;
+    let unity: fn(
+        &downstream::ProfileCapture,
+        u8,
+        downstream::MeasurementViewport,
+        downstream::ChannelResponseMetric,
+    ) -> downstream::ApiResult<downstream::ConfiguredResponsePreview> =
+        downstream::ProfileCapture::unity_response_preview;
+    let legacy_unity: fn(
+        &docsis_ofdm_fec::api::ProfileCapture,
+        u8,
+        docsis_ofdm_fec::api::MeasurementViewport,
+        docsis_ofdm_fec::api::ChannelResponseMetric,
+    ) -> docsis_ofdm_fec::api::ApiResult<
+        docsis_ofdm_fec::api::ConfiguredResponsePreview,
+    > = unity;
+    let _ = legacy_unity;
+    assert_eq!(
+        TypeId::of::<downstream::ChannelEstimateFrame>(),
+        TypeId::of::<docsis_ofdm_fec::scenario::ChannelFrame>()
+    );
+    assert_eq!(
+        TypeId::of::<downstream::RxMerFrame>(),
+        TypeId::of::<docsis_ofdm_fec::scenario::RxMerFrame>()
+    );
+    let channel_frame: for<'a> fn(
+        &'a downstream::ChannelEstimate,
+    ) -> &'a downstream::ChannelEstimateFrame = downstream::ChannelEstimate::frame;
+    let _ = channel_frame;
+    let profile_performance: fn(
+        &downstream::FullLoopResult,
+    )
+        -> downstream::ApiResult<downstream::FullLoopProfilePerformance> =
+        downstream::FullLoopResult::profile_performance;
+    let legacy_profile_performance: fn(
+        &docsis_ofdm_fec::api::FullLoopResult,
+    ) -> docsis_ofdm_fec::api::ApiResult<
+        docsis_ofdm_fec::api::FullLoopProfilePerformance,
+    > = profile_performance;
+    let _ = legacy_profile_performance;
+    let source_limits: fn() -> downstream::SourceFileLimits = downstream::SourceInput::file_limits;
+    let source_info: fn(&downstream::SourceInput) -> Option<downstream::SourceFileInfo> =
+        downstream::SourceInput::file_info;
+    let _ = (source_limits, source_info);
+    let with_fill: fn(
+        &downstream::SourceInput,
+        Option<downstream::FileFillPolicy>,
+    ) -> downstream::ApiResult<downstream::SourceInput> = downstream::SourceInput::with_fill;
+    let _ = with_fill;
     assert_eq!(
         TypeId::of::<common::RunControl>(),
         TypeId::of::<downstream::RunControl>()
@@ -44,6 +294,20 @@ fn downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior() {
         current.run().err().unwrap().code(),
         common::ErrorCode::InvalidInput
     );
+}
+
+#[test]
+fn source_error_codes_remain_distinct_from_shared_categories_through_facade() {
+    let upstream = upstream::Simulation::new(upstream::ExperimentOptions::default()).unwrap();
+    let original = upstream.preview().err().unwrap();
+    assert_eq!(original.category(), common::ErrorCode::MissingSetting);
+    assert_eq!(original.code(), "MissingSetting");
+    let adapter = downstream::ApiError::new(
+        common::ErrorCode::MissingSetting,
+        "MissingSetting is only display text in this API-only diagnostic.",
+    );
+    assert_eq!(adapter.code(), original.category());
+    assert!(adapter.engine_code().is_none());
 }
 
 #[test]
@@ -517,4 +781,148 @@ fn upstream_error_categories_keep_offsets_and_original_domain_causes() {
         assert_eq!(error.category(), expected);
         assert!(std::error::Error::source(&error).is_some());
     }
+}
+
+#[test]
+fn upstream_facade_retains_actual_receiver_estimates_through_independent_owner() {
+    const RETAINED_FRAME_BUDGET: usize = 1;
+    const RETENTION_SCALAR_BUDGET: usize = 4096;
+    const EXPECTED_FFT_SAMPLES: usize = 2048;
+    let policy =
+        upstream::ReceiverObservationPolicy::new(RETAINED_FRAME_BUDGET, RETENTION_SCALAR_BUDGET)
+            .unwrap();
+    assert_eq!(
+        TypeId::of::<upstream::ReceiverObservationPolicy>(),
+        TypeId::of::<docsis_ofdma::api::ReceiverObservationPolicy>()
+    );
+    let mut simulation = upstream::Simulation::new(Default::default()).unwrap();
+    simulation
+        .configure_json(include_bytes!(
+            "../../../examples/cli/upstream/us-50khz.json"
+        ))
+        .unwrap();
+    simulation.set_receiver_observation_policy(policy).unwrap();
+    assert_eq!(simulation.receiver_observation_policy(), policy);
+    let report = simulation.run().unwrap();
+    assert!(report.reference_recovered);
+    assert_eq!(
+        report.receiver_observations().retained_frames,
+        RETAINED_FRAME_BUDGET
+    );
+    let estimate = report
+        .receiver_estimate(upstream::ReceiverEstimateRequest::default())
+        .unwrap();
+    assert_eq!(estimate.points.len(), EXPECTED_FFT_SAMPLES);
+    assert_eq!(
+        estimate.reference_plane,
+        "received_pilot_effective_c_times_h"
+    );
+}
+
+#[test]
+fn upstream_facade_exposes_actual_soft_metrics_without_requiring_estimate_retention() {
+    const RETAINED_CELL_BUDGET: usize = 3;
+    const RETAINED_WORD_BUDGET: usize = 1;
+    const FIRST_WORD_INPUT_LLRS: usize = 1120;
+    let soft = upstream::SoftObservationPolicy::new(
+        RETAINED_CELL_BUDGET,
+        RETAINED_WORD_BUDGET,
+        FIRST_WORD_INPUT_LLRS,
+    )
+    .unwrap();
+    let mut simulation = upstream::Simulation::new(Default::default()).unwrap();
+    simulation
+        .configure_json(include_bytes!(
+            "../../../examples/cli/upstream/us-50khz.json"
+        ))
+        .unwrap();
+    simulation
+        .set_receiver_observation_policy(
+            upstream::ReceiverObservationPolicy::default().with_soft_metrics(soft),
+        )
+        .unwrap();
+    let report = simulation.run().unwrap();
+    assert!(report.reference_recovered);
+    assert_eq!(report.receiver_observations().retained_frames, 0);
+    assert_eq!(
+        report.soft_observations().retained_cells,
+        RETAINED_CELL_BUDGET
+    );
+    assert_eq!(
+        report.soft_cells(Default::default()).unwrap().cells.len(),
+        RETAINED_CELL_BUDGET
+    );
+    assert_eq!(
+        report
+            .soft_word(Default::default())
+            .unwrap()
+            .input_llrs
+            .len(),
+        FIRST_WORD_INPUT_LLRS
+    );
+}
+
+#[test]
+fn upstream_facade_exposes_compatible_qam_references_and_original_stage_pairs() {
+    const RETAINED_POINT_BUDGET: usize = 8192;
+    let mut simulation = upstream::Simulation::new(Default::default()).unwrap();
+    simulation
+        .configure_json(include_bytes!(
+            "../../../examples/cli/upstream/us-50khz.json"
+        ))
+        .unwrap();
+    simulation
+        .set_options(upstream::ExperimentOptions {
+            retained_points: RETAINED_POINT_BUDGET,
+            retained_taps: vec![upstream::Tap::TxGrid, upstream::Tap::RxEqualized],
+            ..Default::default()
+        })
+        .unwrap();
+    let report = simulation.run().unwrap();
+    let view = report
+        .qam_constellation(upstream::QamConstellationRequest::default())
+        .unwrap();
+    assert_eq!(
+        view.normalization,
+        upstream::QamNormalization::ReceiverUnitReference
+    );
+    assert!(!view.references.is_empty());
+    let pairs = report
+        .qam_pairing(upstream::QamPairRequest::default())
+        .unwrap();
+    assert!(pairs.matched_total > 0);
+    assert_eq!(pairs.pairs[0].left.identity, pairs.pairs[0].right.identity);
+    assert_eq!(
+        TypeId::of::<upstream::CellRole>(),
+        TypeId::of::<docsis_ofdma::resources::CellRole>()
+    );
+}
+
+#[cfg(feature = "native-input")]
+#[test]
+fn native_designer_limits_keep_exact_owner_type_through_facade() {
+    let limits: fn() -> downstream::inputs::RxMerDesignLimits =
+        downstream::inputs::RxMerDesign::limits;
+    let original: fn() -> pnm_input::RxMerDesignLimits = limits;
+    assert_eq!(original().maximum_values, 4_000_000);
+    assert_eq!(original().maximum_captures, 256);
+}
+
+#[test]
+#[cfg(feature = "downstream")]
+fn receiver_archive_policy_and_owner_preserve_legacy_downstream_type_identity() {
+    let policy = merlin::downstream::FullLoopReceiverArchivePolicy::new(
+        merlin::downstream::FullLoopReceiverArchiveInput::default(),
+    )
+    .unwrap();
+    let legacy: &docsis_ofdm_fec::api::FullLoopReceiverArchivePolicy = &policy;
+
+    // Independent existing historical payload budget, separate from live capture retention.
+    assert_eq!(legacy.settings().payload_cells, 8192);
+    let _operation: fn(
+        &docsis_ofdm_fec::api::FullLoopResult,
+        docsis_ofdm_fec::api::FullLoopReceiverArchivePolicy,
+    ) -> docsis_ofdm_fec::api::ApiResult<
+        merlin::downstream::FullLoopReceiverArchive,
+    > = merlin::downstream::FullLoopResult::receiver_archive;
 }

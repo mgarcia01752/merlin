@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -12,8 +13,15 @@ use crate::{
     types::{Identity, Iq, SampleBlock},
     PhyError, PhyResult,
 };
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
+
+/// Copied actual QAM-point application ceiling shared by raw and normalized queries.
+pub const MAX_QAM_QUERY_POINTS: usize = 4096;
 
 /// Stable scientific test point; time samples and frequency cells stay distinct.
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Serialize, Deserialize)]
@@ -71,7 +79,10 @@ pub(crate) struct Trace {
     pub(crate) origin: Option<u64>,
     pub(crate) identity: Option<Identity>,
     pub(crate) samples: Vec<Iq>,
-    points: Vec<QamPoint>,
+    pub(super) points: Vec<QamPoint>,
+    // Actual ResourcePlan role gains stay paired with points without changing report JSON.
+    #[serde(skip)]
+    pub(super) role_gains: Vec<f64>,
 }
 
 /// Immutable after-run retention owner; recording is passive and crate-private.
@@ -79,6 +90,8 @@ pub(crate) struct Trace {
 pub struct ObservationStore {
     limit: usize,
     traces: BTreeMap<Tap, Trace>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub(crate) receiver_estimates: Option<super::receiver::ReceiverEstimateStore>,
 }
 
 impl ObservationStore {
@@ -100,6 +113,7 @@ impl ObservationStore {
                         identity: None,
                         samples: Vec::new(),
                         points: Vec::new(),
+                        role_gains: Vec::new(),
                     },
                 )
             })
@@ -114,6 +128,7 @@ impl ObservationStore {
                 limit / taps.len()
             },
             traces,
+            receiver_estimates: None,
         })
     }
     /// Returns an owned bounded QAM snapshot for `tap` and optional `loading`.
@@ -121,7 +136,7 @@ impl ObservationStore {
     /// `maximum` is 1..4096. Missing/unretained data is a typed unavailable result,
     /// never a replay. Filtering and query frequency cannot alter scientific state.
     pub fn qam(&self, tap: Tap, loading: Option<u8>, maximum: usize) -> PhyResult<QamSnapshot> {
-        if !(1..=4096).contains(&maximum) {
+        if !(1..=MAX_QAM_QUERY_POINTS).contains(&maximum) {
             return Err(invalid("qam_query.maximum"));
         }
         let trace = self.traces.get(&tap).ok_or(PhyError::Unsupported {
@@ -205,5 +220,189 @@ impl ObservationStore {
             loading: cell.loading,
             value,
         });
+        trace.role_gains.push(cell.gain);
+    }
+}
+
+impl RetainedPayload for QamPoint {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            identity,
+            frame,
+            symbol,
+            carrier,
+            role,
+            loading,
+            value,
+        } = self;
+        sum([
+            identity.retained_children(),
+            frame.retained_children(),
+            symbol.retained_children(),
+            carrier.retained_children(),
+            role.retained_children(),
+            loading.retained_children(),
+            value.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for Trace {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            origin,
+            identity,
+            samples,
+            points,
+            role_gains,
+        } = self;
+        sum([
+            origin.retained_children(),
+            identity.retained_children(),
+            samples.retained_children(),
+            points.retained_children(),
+            role_gains.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for ObservationStore {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            limit,
+            traces,
+            receiver_estimates,
+        } = self;
+        sum([
+            limit.retained_children(),
+            traces.retained_children(),
+            receiver_estimates.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for Tap {
+    /// Audits every inline variant without counting borrowed or fixed data twice.
+    ///
+    /// # Returns
+    /// Zero dynamic children; the enclosing root/container owns the fixed bytes.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::TxGrid
+            | Self::TxPreEq
+            | Self::TxUseful
+            | Self::TxOutput
+            | Self::ChannelInput
+            | Self::ChannelOutput
+            | Self::RxInput
+            | Self::RxFft
+            | Self::RxEqualized => Some(RetainedFootprint::default()),
+        }
+    }
+}
+
+impl ObservationStore {
+    /// Bounds future trace payload under the already admitted aggregate point policy.
+    ///
+    /// # Returns
+    /// Checked extra storage beyond the prebuilt empty map; each tap conservatively
+    /// allows samples, cells and private gains without assuming vector growth.
+    pub(crate) fn report_retained_extra(limit: usize, taps: &[Tap]) -> Option<RetainedFootprint> {
+        let slots = if taps.is_empty() {
+            0
+        } else {
+            (limit / taps.len()).checked_mul(taps.len())?
+        };
+        sum([
+            merlin_api::retention_support::capacity_bytes::<Iq>(slots),
+            merlin_api::retention_support::capacity_bytes::<QamPoint>(slots),
+            merlin_api::retention_support::capacity_bytes::<f64>(slots),
+        ])
+    }
+
+    /// Moves every actual trace and private cache into exact final capacities.
+    ///
+    /// # Returns
+    /// Unit; values, missing history, keys and recording order remain unchanged.
+    pub(crate) fn compact_report_payload(&mut self) {
+        let Self {
+            limit: _,
+            traces,
+            receiver_estimates,
+        } = self;
+        for trace in traces.values_mut() {
+            let Trace {
+                origin: _,
+                identity: _,
+                samples,
+                points,
+                role_gains,
+            } = trace;
+            *samples = std::mem::take(samples).into_boxed_slice().into_vec();
+            *points = std::mem::take(points).into_boxed_slice().into_vec();
+            *role_gains = std::mem::take(role_gains).into_boxed_slice().into_vec();
+        }
+        if let Some(store) = receiver_estimates {
+            store.compact_report_payload();
+        }
+    }
+}
+
+#[cfg(test)]
+mod retained_footprint_tests {
+    use super::*;
+    use merlin_api::retention_support::retained_footprint;
+    use std::mem::size_of;
+
+    #[test]
+    fn ordered_trace_payload_and_serialization_skipped_role_gains_are_complete() {
+        const SPARE_ROLE_GAINS: usize = 7;
+        let mut store = ObservationStore::new(0, &[Tap::RxEqualized]).unwrap();
+        let before = retained_footprint(&store).unwrap();
+        assert_eq!(before.ordered_entries, 1);
+        assert_eq!(
+            before.payload_bytes,
+            size_of::<ObservationStore>() + size_of::<Tap>() + size_of::<Trace>()
+        );
+        let json = serde_json::to_vec(&store).unwrap();
+        let trace = store.traces.get_mut(&Tap::RxEqualized).unwrap();
+        trace.role_gains.reserve_exact(SPARE_ROLE_GAINS);
+        let requested = trace.role_gains.capacity() * size_of::<f64>();
+        assert_eq!(
+            retained_footprint(&store).unwrap().payload_bytes - before.payload_bytes,
+            requested
+        );
+        assert_eq!(serde_json::to_vec(&store).unwrap(), json);
+    }
+    #[test]
+    fn report_normalization_preserves_json_and_removes_private_gain_spare_capacity() {
+        const SPARE_GAIN_SLOTS: usize = 29;
+        let mut store = ObservationStore::new(0, &[Tap::RxEqualized]).unwrap();
+        store
+            .traces
+            .get_mut(&Tap::RxEqualized)
+            .unwrap()
+            .role_gains
+            .reserve_exact(SPARE_GAIN_SLOTS);
+        let before = retained_footprint(&store).unwrap();
+        let json = serde_json::to_vec(&store).unwrap();
+        store.compact_report_payload();
+        let after = retained_footprint(&store).unwrap();
+        assert!(before.payload_bytes > after.payload_bytes);
+        assert_eq!(before.ordered_entries, after.ordered_entries);
+        assert_eq!(serde_json::to_vec(&store).unwrap(), json);
+        assert_eq!(store.traces[&Tap::RxEqualized].role_gains.capacity(), 0);
     }
 }

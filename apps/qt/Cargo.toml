@@ -8,13 +8,12 @@ license = "GPL-3.0-only"
 [workspace]
 
 [dependencies]
-pnm-input = { path = "../../crates/pnm-input" }
+merlin = { path = "../../crates/merlin", default-features = false, features = ["native-input"] }
 base64 = "=0.22.1"
 cxx = "=1.0.195"
 cxx-qt = "=0.7.3"
 cxx-qt-lib = { version = "=0.7.3", features = ["qt_gui", "qt_qml"] }
 
-docsis-ofdm-fec = { path = "../../crates/ofdm", default-features = false, features = ["pnm-input", "source-input", "simulation"] }
 serde_json = "=1.0.145"
 serde = { version = "=1.0.228", features = ["derive"] }
 sha2 = "=0.10.9"
@@ -22,8 +21,9 @@ url = "=2.5.9"
 log = "=0.4.35"
 env_logger = { version = "=0.11.11", default-features = false }
 ureq = { version = "=2.12.1", default-features = false, features = ["tls"] }
-pnm = { path = "../../third-party/pnm/crates/core", version = "=0.3.6" }
 
 [build-dependencies]
+cc = "=1.11.1"
 cxx-gen = "=0.7.195"
 cxx-qt-build = "=0.7.3"
+qt-build-utils = "=0.7.3"

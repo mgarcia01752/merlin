@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Frozen frequency-diagonal response/noise plans at explicit equalized reference planes.
@@ -14,6 +15,7 @@ use crate::{
     types::IqPair,
     SimulationError,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 
 /// Exclusive residual source: no implicit thermal floor and no AWGN+RxMER sum.
@@ -297,4 +299,45 @@ pub(crate) fn offset(
         ));
     }
     Ok(offset)
+}
+
+impl RetainedPayload for ChannelImpairments {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            seed,
+            noise,
+            response,
+            additional_loss,
+            power,
+        } = self;
+        merlin_api::retention_support::sum([
+            seed.retained_children(),
+            noise.retained_children(),
+            response.retained_children(),
+            additional_loss.retained_children(),
+            power.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for NoiseModel {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Noiseless => Some(RetainedFootprint::default()),
+            Self::Awgn { sample_power } => {
+                merlin_api::retention_support::sum([sample_power.retained_children()])
+            }
+            Self::Rxmer { frame } => {
+                merlin_api::retention_support::sum([frame.retained_children()])
+            }
+        }
+    }
 }

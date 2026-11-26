@@ -1,0 +1,102 @@
+{
+  "scope": "Four new Rust storage-envelope cases and four existing installed-native observation cases executed on linked candidate. Other executed compatibility tests are in the separate receipt. No new operation, signature or native object-storage bound.",
+  "runs": [
+    {
+      "label": "private",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--lib",
+        "--locked",
+        "api::full_loop::observations::"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.751055269000062,
+      "language": "rust",
+      "passed": 2,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/observations/query_storage_tests.rs",
+          "qualified_test_case": "all_eight_query_variants_fit_the_source_without_changing_values_or_source_capacities"
+        },
+        {
+          "test_file": "crates/ofdm/src/api/full_loop/observations/query_storage_tests.rs",
+          "qualified_test_case": "inventory_fixed_layout_and_empty_copy_fit_the_source_root"
+        }
+      ]
+    },
+    {
+      "label": "api",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--features",
+        "high-level-api",
+        "--locked",
+        "--test",
+        "api_result_retained_bound",
+        "--test",
+        "api_full_loop_observations"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 96.51797785300005,
+      "language": "rust",
+      "passed": 2,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_result_retained_bound.rs",
+          "qualified_test_case": "actual_owned_query_copies_fit_the_source_envelope_and_keep_original_coordinates"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_result_retained_bound.rs",
+          "qualified_test_case": "capture_disabled_inventory_has_exact_empty_storage_and_preserves_missing_coverage"
+        }
+      ]
+    },
+    {
+      "label": "full_loop_observations",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-receiver-archive-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_full_loop_observations.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/session-01-query-envelope-native",
+      "exit_code": 0,
+      "elapsed_seconds": 13.107361185997433,
+      "language": "python",
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_full_loop_observations.py",
+          "qualified_test_case": "FullLoopObservationTests.test_direct_rust_process_source_pilot_and_actual_waveform_windows_match"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop_observations.py",
+          "qualified_test_case": "FullLoopObservationTests.test_policy_missing_and_query_limits_reject_without_changing_originals"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop_observations.py",
+          "qualified_test_case": "FullLoopObservationTests.test_real_capture_keeps_science_source_pilots_grids_phases_and_owned_results"
+        },
+        {
+          "test_file": "bindings/python/tests/test_full_loop_observations.py",
+          "qualified_test_case": "FullLoopObservationTests.test_retention_byte_exhaustion_is_explicit_and_science_continues"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,478 @@
+{
+  "task": "UIU-FILE-01",
+  "unit": "Native source/export and shared byte writer",
+  "base": "09671cb854da7c3a4b2d542812271ebdfecf646c",
+  "requirements": [
+    "REQ-UIU-22",
+    "REQ-UIU-24"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-session-and-file-lifecycle",
+  "design": "design.md#uiu-file-01-project-source-and-byte-write-unit",
+  "status": "Focused native source/write unit accepted; FILE01 routing and task acceptance remain pending.",
+  "validation_level": 1,
+  "source_sha256": {
+    "apps/qt/src/downstream/workbench/project_file.rs": "8a226ca3a0e51e058d09c8ab1c46d72aeae7d1a47ec2bbc1ac61cee7f952141e",
+    "apps/qt/src/shared/mod.rs": "8c35e1d545d6169f5efaf537b56e9da13764836121cb6c88fbf098ed287dea43",
+    "apps/qt/src/shared/project_file.rs": "e7b809411b57726009b0c5b854390733a6ee1a143ff74830a466274bcdeecae7",
+    "apps/qt/src/shared/project_file_tests.rs": "1060e7ce9d982cc368d6ae3ff0320fb8a6e45e91c1b0e9f8b71c3f29fce01d9b",
+    "apps/qt/src/upstream/session.rs": "aa99e1e84f2bf0751640080a533a5af1ef1dec15721eb5014d5554c82d79ced2",
+    "apps/qt/src/upstream/session/project.rs": "e46a56072e4deef7b39aa89d1300c079719bb2cbbbf629cd4813b70751d57faf",
+    "apps/qt/src/upstream/session/project_tests.rs": "a756bfba19c9077e094a221a28c8867dc9cb5be30d89b30d79724360480a62be",
+    "apps/qt/src/upstream/session/source.rs": "9adaf5153b661c04bf4cd2fe365ff725e7c289b60b195f4d18aa984d6908f7a6",
+    "apps/qt/src/upstream/session/source_tests.rs": "cb017a0c9d279958af48e8c52bda569b5b76f1aed7e497e73b7849dfa6b9f5d7",
+    "apps/qt/src/upstream/workbench/drafts/tests.rs": "6488bb38ac8cf368940cae371670cde7fc918cb8b0791128dc7f64a3533c6b6a",
+    "apps/qt/tests/project_api_parity.py": "5b9f83c2dc920892e93f82497198987efc91b78b4b89044068ec09d7dfc829c3"
+  },
+  "raw_evidence": "docs/development/local/unified-qt-workbench/file-01-source",
+  "executed": [
+    {
+      "label": "source-fmt",
+      "command": [
+        "scripts/cargo-local.sh",
+        "fmt",
+        "--manifest-path",
+        "apps/qt/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.6946135879989015
+    },
+    {
+      "label": "source-regression",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "native_apply_project_export"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 17.798737406003056,
+      "passed": 1
+    },
+    {
+      "label": "source-runtime",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "upstream::session::source::"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 4.651679756003432,
+      "passed": 5
+    },
+    {
+      "label": "source-serializer",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "upstream::session::project::"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.5854472189967055,
+      "passed": 17
+    },
+    {
+      "label": "source-writer",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "shared::project_file::"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.16724676899320912,
+      "passed": 16
+    },
+    {
+      "label": "final-format",
+      "command": [
+        "scripts/cargo-local.sh",
+        "fmt",
+        "--manifest-path",
+        "apps/qt/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.7752100350044202
+    },
+    {
+      "label": "final-upstream",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "upstream::"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 20.97690824099118,
+      "passed": 155
+    },
+    {
+      "label": "final-legacy-file",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "bridge::workbench_file::"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.829488884002785,
+      "passed": 7
+    },
+    {
+      "label": "final-legacy-loader",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "downstream::workbench::project_load::"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 15.5571627770114,
+      "passed": 23
+    },
+    {
+      "label": "final-input-protection",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "platform::input_file::"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.16235067299567163,
+      "passed": 2
+    },
+    {
+      "label": "final-clippy",
+      "command": [
+        "scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.907197691994952
+    },
+    {
+      "label": "final-build",
+      "command": [
+        "scripts/qt-desktop.sh",
+        "build"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 39.74342572000751
+    },
+    {
+      "label": "installed-native-qt-project-parity",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/native/installed/bin/python",
+        "-I",
+        "/home/dev01/Projects/merlin/apps/qt/tests/project_api_parity.py",
+        "--references",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-source/references",
+        "--output",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-source/native-project-parity",
+        "--native-sha256",
+        "d3a6638b50d8fde1dfae9ffdbdf6692a2498e8cee56d6ea520d78ceaa19be907"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.6803667310014134
+    }
+  ],
+  "native_results": {
+    "exit_code": 0,
+    "native_sha256": "d3a6638b50d8fde1dfae9ffdbdf6692a2498e8cee56d6ea520d78ceaa19be907",
+    "passed": 5,
+    "cases": [
+      {
+        "case": "configuration-0.json",
+        "source_sha256": "ca274d63175530deec92583bad7e25063dbf9bb33df04cbbf98faa6330baca26",
+        "status": "Completed",
+        "bits": 3952,
+        "bit_errors": 0,
+        "recovered": true
+      },
+      {
+        "case": "configuration-1.json",
+        "source_sha256": "fd3431efa6492d517523fc510333040cd7b4faf14623089a9caba7bb67e86530",
+        "status": "Completed",
+        "bits": 8432,
+        "bit_errors": 0,
+        "recovered": true
+      },
+      {
+        "case": "measured-0.json",
+        "source_sha256": "ecd54541688759712547afbbc9440e4aa30521bef9e2ab6186625a0a22887b89",
+        "status": "Completed",
+        "bits": 1976,
+        "bit_errors": 0,
+        "recovered": true
+      },
+      {
+        "case": "measured-1.json",
+        "source_sha256": "ea8e64191f3b755372400dfb70011cb2a1d770e866429ce29a56e2380e738cf0",
+        "status": "Completed",
+        "bits": 4216,
+        "bit_errors": 0,
+        "recovered": true
+      },
+      {
+        "case": "native-edited-source.json",
+        "source_sha256": "8b727a99c506ce66d3044a00553a17023e18a5f2886752e4b639a624f4fcb77f",
+        "status": "Completed",
+        "bits": 1976,
+        "bit_errors": 0,
+        "recovered": true
+      }
+    ],
+    "scope": "Qt adapter exports through installed native Rust; no external interoperability claim."
+  },
+  "executable_sha256": "c7a4c32465b0a53b9f124eddbfb88110d68ab857a41b9070e1a12e2f72ebc975",
+  "reviews": [
+    {
+      "owner": "QA/audit agent",
+      "scope": "Read-only source/export/writer review, including canonical signed-zero comparison and original accounting",
+      "result": "No concrete new defects; no agent tests/builds."
+    }
+  ],
+  "not_required": [
+    {
+      "suite": "Fresh Python wheel, full workspace/Python/CLI/package regressions",
+      "reason": "Qt-only source/export/writer adapter, no scientific/public API/binding/dependency/package changes; existing09671 fresh wheel consumed by real Qt-produced project parity."
+    },
+    {
+      "suite": "QML suites and new native visual interaction",
+      "reason": "No QML presentation or bridge registration changes; upcoming native file/dirty routing owns actual menu/picker/dialog acceptance."
+    }
+  ],
+  "deferred": [
+    {
+      "gate": "FILE01 Level2",
+      "reason": "Direction file routing, captured revisions, dirty dialogs and complete relevant task acceptance still pending."
+    },
+    {
+      "gate": "Final Level3",
+      "reason": "Full unchanged workspace/Qt/QML/native/CLI/project/package regressions and line-by-line numeric audit remain mandatory."
+    }
+  ],
+  "pre_fix_regression": {
+    "case": "upstream::workbench::drafts::tests::native_apply_project_export_preserves_accepted_fields_and_exact_original_provenance",
+    "raw": "native-edit-regression-before-results.json",
+    "exit_code": 101,
+    "failure": "Accepted source_seed2 exported as original source_seed1 before public prerequisite/native fix."
+  },
+  "documentation_checks": [
+    {
+      "label": "matrix",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/api_operation_matrix.py",
+        "--exports",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/rust-exports.json",
+        "--native-exports",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/native/native-exports.json",
+        "--executed-record",
+        "docs/development/features/high-level-api/namespace-test-results.json",
+        "--executed-record",
+        "docs/development/features/pnm-measurement-inputs/decoder-test-results.json",
+        "--executed-record",
+        "docs/development/features/pnm-measurement-inputs/association-test-results.json",
+        "--executed-record",
+        "docs/development/features/high-level-api/operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/high-level-api/python-test-results.json",
+        "--executed-record",
+        "docs/development/features/high-level-api/python-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-estimate-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-soft-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-resource-metadata-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-downstream-metadata-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-input-metadata-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-archive-bound-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-output-bound-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-query-envelope-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-control-metadata-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/us-03-source-json-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/file-options-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/project-configuration-edits-operation-test-results.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.315285157994367
+    },
+    {
+      "label": "boundary",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/qt_api_boundary.py",
+        "--final"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.33361844399769325
+    },
+    {
+      "label": "feature-documents",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/feature_documentation.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 9.511262361993431
+    },
+    {
+      "label": "traceability",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/integration_traceability.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 7.728058688007877
+    },
+    {
+      "label": "task-history",
+      "command": [
+        "python3",
+        "-B",
+        "docs/development/local/unified-qt-workbench/audit_foundation_uiu_traceability.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.0910721980035305
+    },
+    {
+      "label": "versions",
+      "command": [
+        "python3",
+        "-B",
+        "tools/release/versions.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.034932946000481024
+    },
+    {
+      "label": "guide",
+      "command": [
+        "python3",
+        "-B",
+        "tools/python/update_integration_doc.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.03047048600274138
+    },
+    {
+      "label": "diff",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.02559652600029949
+    }
+  ]
+}

@@ -39,6 +39,16 @@ impl ApiError {
     pub fn message(&self) -> &str {
         &self.message
     }
+
+    /// Borrows the retained original backend diagnostic code without parsing display text.
+    ///
+    /// # Returns
+    /// Original machine-readable code for this error's lifetime, or None when
+    /// the error originated in the public API adapter without an engine cause.
+    /// Reading preserves the generic category, message, cause and serialized form.
+    pub fn engine_code(&self) -> Option<&str> {
+        self.engine.as_ref().map(|engine| engine.code)
+    }
 }
 impl std::fmt::Display for ApiError {
     /// Formats stable category and human-readable context without exiting the process.

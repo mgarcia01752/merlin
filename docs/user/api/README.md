@@ -5,9 +5,34 @@ The Basic Rust API configures MERLIN's existing single-channel source → transm
 second simulator. Loading and preparation never run the experiment; only explicit run methods
 start simulation. Existing low-level APIs, CLI and Qt remain available.
 
-Enable the core's `high-level-api` feature. Add optional `pnm-input` for native
-binary/JSON and file conveniences; it directly uses pinned Apache-2.0 `pnm`
-0.3.6. Neither crate needs Qt or Python.
+Use the `merlin` facade; enable optional `native-input` for directional binary/JSON
+and file conveniences through the existing pinned native adapter. Independent
+core consumers may still enable `high-level-api` and use `pnm-input` directly.
+Neither route needs Qt or Python. See [passive input admission](input-admission.md)
+for timing/source contracts and Rust/Python parity.
+[Original profile inspection](profile-inspection.md) covers complete source
+catalogs, compact schemes and bounded scientific views.
+[Configured channel preview](channel-preview.md) documents immutable loss/power/
+filter admission and authoritative transfer observations.
+[Idle TX previews](transmitter-preview.md) provide explicit bounded generation,
+controls, owned actual samples/PSD and symbol/window timing.
+[Downstream full-loop requests](full-loop.md) describe independent controlled
+execution and owned complete/partial scientific reports.
+[Original catalog run plans](full-loop-sweep.md) add explicit bounded serial
+selection while preserving checked run IDs and complete source provenance.
+[Retained stage observations](full-loop-observations.md) add opt-in actual
+TX/RX data with explicit phase/reference/grid metadata and finite budgets,
+plus passive PSD, response, actual LDPC-input statistics and retained TX PLC messages.
+[Receiver cell observations](full-loop-cells.md) preserve actual matched QAM,
+all-selected MER and bounded physical decisions across payload/control/pilot roles.
+[Reference and soft-value views](slicer-views.md) provide original labelled
+constellations, finite decision regions and actual bounded likelihood summaries.
+[Physical and transmitted-cell views](physical-views.md) preserve original FFT
+coordinates, actual bin power and proven optional packing roles.
+[Channel spectrum and electrical power](channel-spectrum.md) distinguish actual
+calibrated observations, scalar amplifier views and full-band integration.
+[Retained resource metadata](retained-resources.md) describes passive directional
+owner payload quantities and their explicit accounting limits.
 
 For searchable class/method documentation generated from the actual APIs, see
 the [generated Rust/Python reference](../../reference/api-reference.md).
@@ -20,16 +45,28 @@ features are enabled by default; either can be selected independently. Existing
 `docsis_ofdm_fec::api::{Simulation, Merlin}` imports remain valid and refer to the
 same downstream types. No new published Cargo artifact is implied.
 
-`merlin::common` contains shared error categories and cooperative cancellation.
+`merlin::common` contains shared error categories, cooperative cancellation and
+retained payload metadata.
 The downstream RunControl is the common type. The upstream RunControl retains
 its own pause/progress state and can share a common token through
 `RunControl::with_cancellation`. Configuration, limits and reports remain
 direction-specific. The [upstream guide](../upstream/README.md) describes supported
 synthetic and capture-backed models.
 
-The existing Python `merlin.Simulation` retains downstream behavior. Real native
-direction modules and their installed-wheel acceptance are still being integrated;
-the new Rust paths do not imply that those Python imports are already available.
+The existing Python `merlin.Simulation` retains downstream behavior. Installed
+wheels expose genuine `merlin.downstream`, `merlin.upstream` and `merlin.common`
+modules through one native extension/distribution; compatibility imports retain
+their nominal type identity.
+
+Downstream Rust `ApiError::code()` returns the shared category, while
+`engine_code()` optionally borrows the retained original backend diagnostic code.
+API-only errors return `None`; display text never supplies a missing code.
+Upstream Rust retains its existing `category()` and original-code `code()` methods.
+Python exceptions expose the shared category as `.code`, the original message as
+`.message` and optional original Rust code as `.engine_code` in both namespaces.
+Existing `.legacy_code`, `.field` and `.offset` values keep their behavior.
+Use categories for general routing and only explicitly supported original codes
+for specialized help; unknown or absent codes remain unclassified.
 
 ## Rust workflow
 
@@ -227,6 +264,15 @@ retains `merlin_estimated` for compatibility; input also accepts
 `merlin_channel_estimated`. This is a naming change only.
 
 ## Load a saved workbench
+
+The [direction-specific Project API](projects.md) admits legacy downstream and
+schema-3 downstream/upstream projects through `merlin::common` and native Python's
+`merlin.common`, preserving original inputs and explicit direction-specific runs.
+
+The [saved full-loop preparation operation](saved-full-loop.md) additionally
+preserves UI file/fill sources, temporal playback and independent H/RxMER
+association policies through the public controlled request/sweep APIs. Loading
+stays idle. The legacy loader below retains its existing behavior.
 
 Use `pnm_input::Workbench::from_file(path)` to load embedded captures and saved
 settings directly, without restating scientific constants. Loading preflights

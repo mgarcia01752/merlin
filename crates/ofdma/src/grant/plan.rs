@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -7,6 +8,10 @@
  */
 //! Immutable bit-role lengths and stream offsets, without source bits.
 use fec_codec::upstream_ldpc::DocsisLdpcCode;
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::Serialize;
 
 /// One ordered transmitted word with trailing-zero mother-code shortening.
@@ -41,4 +46,53 @@ pub struct GrantPlan {
     pub grant_pad_bits: usize,
     /// Capacity not emitted in a no-transmission outcome.
     pub unused_capacity_bits: usize,
+}
+
+impl RetainedPayload for CodewordPlan {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            code: _,
+            information_bits,
+            transmitted_bits,
+            coded_offset,
+            information_offset,
+        } = self;
+        sum([
+            information_bits.retained_children(),
+            transmitted_bits.retained_children(),
+            coded_offset.retained_children(),
+            information_offset.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for GrantPlan {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            capacity_bits,
+            transmit,
+            codewords,
+            source_bits,
+            information_fill_bits,
+            grant_pad_bits,
+            unused_capacity_bits,
+        } = self;
+        sum([
+            capacity_bits.retained_children(),
+            transmit.retained_children(),
+            codewords.retained_children(),
+            source_bits.retained_children(),
+            information_fill_bits.retained_children(),
+            grant_pad_bits.retained_children(),
+            unused_capacity_bits.retained_children(),
+        ])
+    }
 }

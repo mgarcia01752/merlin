@@ -4,18 +4,21 @@
  */
 //! Bounded saved-workbench import into existing Qt-independent API controllers.
 mod designer;
+mod full_loop;
+use crate::common::constants::{
+    CHANNEL_MODEL_SCHEMA_VERSION, CHANNEL_POWER_SCHEMA_VERSION, MAX_CAPTURES, MAX_EMBEDDED_BYTES,
+    MAX_TOTAL_ORIGINAL_BYTES, WORKBENCH_SCHEMA_V1, WORKBENCH_SCHEMA_V2,
+};
 use crate::CaptureLoader;
 use base64::{engine::general_purpose::STANDARD, Engine};
+pub use designer::{RxMerDesign, RxMerDesignLimits, RxMerDesignPosition, MAX_RXMER_RECIPE_BYTES};
 use docsis_ofdm_fec::{api::*, transmission::TransmissionSettings};
-use serde::Deserialize;
+pub(crate) use full_loop::{original_byte_count, prepare};
+use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{collections::BTreeSet, io::Read, path::Path, sync::Arc};
 
-/// Maximum complete saved WB JSON size, matching the desktop file budget.
-pub const MAX_WORKBENCH_BYTES: usize = 144 * 1024 * 1024;
-const MAX_EMBEDDED_BYTES: usize = 16 * 1024 * 1024;
-const MAX_TOTAL_ORIGINAL_BYTES: usize = 96 * 1024 * 1024;
-const MAX_CAPTURES: usize = 256;
+pub use crate::common::constants::MAX_WORKBENCH_BYTES;
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -37,13 +40,34 @@ struct Sections {
     channel_model: Option<Loss>,
     channel_power: Option<Power>,
 }
-#[derive(Deserialize)]
+#[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Stored {
     name: String,
     byte_length: usize,
     sha256: String,
     base64: String,
+}
+impl merlin_api::retention_support::RetainedPayload for Stored {
+    /// Counts the original saved-input strings beyond their fixed inline fields.
+    ///
+    /// # Returns
+    /// Requested name, digest and base64 capacities, or None on checked overflow.
+    fn retained_children(&self) -> Option<merlin_api::RetainedFootprint> {
+        use merlin_api::retention_support::sum;
+        let Self {
+            name,
+            byte_length,
+            sha256,
+            base64,
+        } = self;
+        sum([
+            name.retained_children(),
+            byte_length.retained_children(),
+            sha256.retained_children(),
+            base64.retained_children(),
+        ])
+    }
 }
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -135,9 +159,13 @@ fn unsupported(message: &str) -> ApiError {
 }
 impl Stored {
     fn decode(&self, total: &mut usize) -> ApiResult<NamedCapture> {
-        if self.name.len() > 1024
+        NamedCapture::new(&self.name, self.decode_bytes(total)?)
+    }
+
+    fn decode_bytes(&self, total: &mut usize) -> ApiResult<Vec<u8>> {
+        if self.name.len() > crate::common::constants::MAX_EMBEDDED_NAME_BYTES
             || self.byte_length > MAX_EMBEDDED_BYTES
-            || self.base64.len() > 24 * 1024 * 1024
+            || self.base64.len() > crate::common::constants::MAX_EMBEDDED_BASE64_BYTES
         {
             return Err(ApiError::new(
                 ErrorCode::ResourceLimit,
@@ -160,7 +188,7 @@ impl Stored {
         {
             return Err(invalid("Embedded WB capture length or SHA-256 mismatch"));
         }
-        NamedCapture::new(&self.name, bytes)
+        Ok(bytes)
     }
 }
 /// Validated saved WB, retaining exact JSON and one independent controller per selected profile.
@@ -216,7 +244,9 @@ impl Workbench {
             ));
         }
         let doc: Document = serde_json::from_slice(bytes).map_err(|e| invalid(e.to_string()))?;
-        if ![1, 2].contains(&doc.schema_version) || doc.application != "MERLIN" {
+        if ![WORKBENCH_SCHEMA_V1, WORKBENCH_SCHEMA_V2].contains(&doc.schema_version)
+            || doc.application != "MERLIN"
+        {
             return Err(unsupported("Unsupported WB schema/application"));
         }
         doc.transmission.validate()?;
@@ -228,7 +258,7 @@ impl Workbench {
                 "WB has no accepted receiver settings",
             )
         })?;
-        if doc.schema_version == 1 && receiver.selected_profile_ids.is_some() {
+        if doc.schema_version == WORKBENCH_SCHEMA_V1 && receiver.selected_profile_ids.is_some() {
             return Err(invalid("Explicit profile selection requires WB schema 2"));
         }
         if !(1..=1000).contains(&receiver.duration_ms)
@@ -336,13 +366,13 @@ impl Workbench {
             ..Default::default()
         };
         if let Some(loss) = doc.sections.channel_model {
-            if loss.schema_version != 1 {
+            if loss.schema_version != CHANNEL_MODEL_SCHEMA_VERSION {
                 return Err(unsupported("Unsupported WB channel model version"));
             }
             processing.additional_loss = loss.additional_loss;
         }
         if let Some(power) = doc.sections.channel_power {
-            if power.schema_version != 1 {
+            if power.schema_version != CHANNEL_POWER_SCHEMA_VERSION {
                 return Err(unsupported("Unsupported WB channel power version"));
             }
             processing.power = power.conditioning;

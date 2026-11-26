@@ -333,7 +333,7 @@ impl PyBatchReport {
     /// # Errors
     /// Preserves structured Rust validation errors and Python conversion failures.
     fn save_json(&self, path: std::path::PathBuf) -> PyResult<()> {
-        pnm_input::save_json(path, &self.to_json()?).map_err(error)
+        merlin::downstream::inputs::save_json(path, &self.to_json()?).map_err(error)
     }
 }
 /// Bounded iterator over owned experiment entries.

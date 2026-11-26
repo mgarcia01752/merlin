@@ -1,0 +1,612 @@
+{
+  "task": "UIU-FILE-01",
+  "unit": "Edited configuration and original provenance public project prerequisite",
+  "status": "Scoped backend input prerequisite accepted; native Qt consumption and FILE01 remain incomplete.",
+  "accepted_base": "89a080cb978c68c2f1644edb6a435687bc462e46",
+  "requirements": [
+    "REQ-UIU-22",
+    "REQ-UIU-24"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-session-and-file-lifecycle",
+  "design": "design.md#uiu-file-01-edited-configuration-provenance-prerequisite",
+  "validation_level": 1,
+  "source_sha256": {
+    "crates/pnm-input/src/project/upstream.rs": "82c60dbb91c329761fd207bd94b43f84b406c6679e675dbf172f18ccaea213a4",
+    "crates/pnm-input/tests/project_configuration_edits.rs": "1618b4b8807d69cbd2a5a60749e8c030d39b7fe2007af0eb26a6895f3b61648e",
+    "bindings/python/tests/test_project_configuration_edits.py": "c0320a6239902e68a9e75a4255813e7210d3168538a38f253bb0a76bffb62983",
+    "tools/testing/native_api.py": "cc04b0b0f6d45c070d71d0b29aefc83663de77f8d7f4d9662a34cad54db8374c"
+  },
+  "raw_evidence": "docs/development/local/unified-qt-workbench/file-01-edited-configuration/",
+  "original_failure": {
+    "record": "docs/development/local/unified-qt-workbench/file-01-source/native-edit-regression-before-results.json",
+    "native_work_stash": "91963467de2960e40fcd01d0bf457ccac3004969",
+    "observed": "Real native Apply accepts seed2; old project export reloads seed1. No acceptance was claimed for that unfinished Qt unit."
+  },
+  "contract": {
+    "optional_wire_field": "contents.input.original_document for configuration only",
+    "document": "Complete accepted current configuration values.",
+    "original_document": "Exact earlier source text, independently parsed and bounded; private original Arc/hash retained while current public fields are restored.",
+    "compatibility": "Omitted old fields keep previous input/output semantics; measured inputs remain unchanged and reject this configuration-only field. No public method/signature/export or scientific algorithm changes.",
+    "limits": "Both documents reuse the existing independent16MiB decoder bound; outer144MiB transport bound covers both strings. Original-input totals count original text when supplied."
+  },
+  "wheel": {
+    "path": "/home/dev01/Projects/merlin/local/python-wheels-project-configuration-edits/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "sha256": "c50195f710e0f57c31abd01a189ed6daf5f51a5fc8c37ca18798d549f3aa94b6",
+    "native_sha256": "d3a6638b50d8fde1dfae9ffdbdf6692a2498e8cee56d6ea520d78ceaa19be907",
+    "all_previous_installed_exports_signatures_and_members_identical": true
+  },
+  "executed": [
+    {
+      "label": "format",
+      "command": [
+        "scripts/cargo-local.sh",
+        "fmt",
+        "--all"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.3254658030054998
+    },
+    {
+      "label": "rust-project-edits",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "-p",
+        "pnm-input",
+        "--test",
+        "project_configuration_edits",
+        "--test",
+        "project",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 15.234988053009147
+    },
+    {
+      "label": "facade",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "-p",
+        "merlin",
+        "--features",
+        "native-input",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 3.1751613060041564
+    },
+    {
+      "label": "clippy",
+      "command": [
+        "scripts/cargo-local.sh",
+        "clippy",
+        "-p",
+        "pnm-input",
+        "-p",
+        "merlin",
+        "--features",
+        "merlin/native-input",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.6249739730119472
+    },
+    {
+      "label": "cli-check",
+      "command": [
+        "scripts/cargo-local.sh",
+        "check",
+        "-p",
+        "ofdm-fec-cli",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.1173917690030066
+    },
+    {
+      "label": "wheel",
+      "command": [
+        "/home/dev01/Projects/merlin/local/api-python-build/bin/python",
+        "-m",
+        "maturin",
+        "build",
+        "--manifest-path",
+        "bindings/python/Cargo.toml",
+        "--release",
+        "--locked",
+        "--compatibility",
+        "linux",
+        "--interpreter",
+        "/usr/bin/python3",
+        "--out",
+        "/home/dev01/Projects/merlin/local/python-wheels-project-configuration-edits"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 29.22116819000803
+    },
+    {
+      "label": "project-reference",
+      "command": [
+        "scripts/cargo-local.sh",
+        "run",
+        "-p",
+        "pnm-input",
+        "--example",
+        "run_project",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 11.947202416995424
+    },
+    {
+      "label": "install",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "pip",
+        "install",
+        "--no-index",
+        "--no-deps",
+        "/home/dev01/Projects/merlin/local/python-wheels-project-configuration-edits/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.5437884030106943
+    },
+    {
+      "label": "project_configuration_edits",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_project_configuration_edits.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.13635449499997776
+    },
+    {
+      "label": "project",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_project.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.905203883012291
+    },
+    {
+      "label": "namespaces",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_namespaces.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.12671562600007746
+    },
+    {
+      "label": "upstream_options",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_upstream_options.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.15403983699798118
+    },
+    {
+      "label": "inventory",
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/native/installed/bin/python",
+        "-I",
+        "-B",
+        "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+        "--output",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/native/native-exports.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.15550589699705597
+    },
+    {
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_project_configuration_edits.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.13427082399721257
+    },
+    {
+      "label": "native-clippy",
+      "command": [
+        "scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "bindings/python/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 5.4261282440129435
+    },
+    {
+      "label": "rustdoc",
+      "command": [
+        "scripts/cargo-local.sh",
+        "doc",
+        "--workspace",
+        "--no-deps",
+        "--locked",
+        "--features",
+        "merlin/native-input"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.9113718400039943
+    },
+    {
+      "label": "rust-inventory",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/rust_api_inventory.py",
+        "--output",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/rust-exports.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 2.8447004379995633
+    },
+    {
+      "label": "format-check",
+      "command": [
+        "scripts/cargo-local.sh",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.1020850850036368
+    },
+    {
+      "label": "runner-tests",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/testing",
+        "-p",
+        "test_native_api.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.10227007599314675
+    },
+    {
+      "label": "matrix",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/api_operation_matrix.py",
+        "--exports",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/rust-exports.json",
+        "--native-exports",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/file-01-edited-configuration/native/native-exports.json",
+        "--executed-record",
+        "docs/development/features/high-level-api/namespace-test-results.json",
+        "--executed-record",
+        "docs/development/features/pnm-measurement-inputs/decoder-test-results.json",
+        "--executed-record",
+        "docs/development/features/pnm-measurement-inputs/association-test-results.json",
+        "--executed-record",
+        "docs/development/features/high-level-api/operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/high-level-api/python-test-results.json",
+        "--executed-record",
+        "docs/development/features/high-level-api/python-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-estimate-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-soft-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-fec-recovery-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-source-file-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-source-catalog-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-measurement-frame-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-profile-performance-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-measured-input-api-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/ds-01-receiver-archive-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-resource-metadata-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-downstream-metadata-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-input-metadata-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-archive-bound-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-output-bound-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-query-envelope-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/session-control-metadata-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/us-03-source-json-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/file-options-operation-test-results.json",
+        "--executed-record",
+        "docs/development/features/unified-qt-workbench/project-configuration-edits-operation-test-results.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 8.676671595996595
+    },
+    {
+      "label": "boundary",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/qt_api_boundary.py",
+        "--final"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.3392736459936714
+    },
+    {
+      "label": "feature-documents",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/feature_documentation.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 9.675851987005444
+    },
+    {
+      "label": "traceability",
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/integration_traceability.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 7.217605336001725
+    },
+    {
+      "label": "task-history",
+      "command": [
+        "python3",
+        "-B",
+        "docs/development/local/unified-qt-workbench/audit_foundation_uiu_traceability.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.10203996799828019
+    },
+    {
+      "label": "versions",
+      "command": [
+        "python3",
+        "-B",
+        "tools/release/versions.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.02924147500016261
+    },
+    {
+      "label": "guide",
+      "command": [
+        "python3",
+        "-B",
+        "tools/python/update_integration_doc.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.0264067849930143
+    },
+    {
+      "label": "diff",
+      "command": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.08099855299224146
+    },
+    {
+      "label": "staged-diff",
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.004331967997131869
+    }
+  ],
+  "not_required": [
+    {
+      "suite": "Full workspace, full native, complete Qt/QML and packaging regressions",
+      "reason": "Targeted project/scientific session/import consumers cover the changed private project-input path; no scientific algorithm, dependency, public export, Qt registration, UI presentation or package layout change. Native wheel rebuilt because shared input behavior changed."
+    }
+  ],
+  "deferred": [
+    {
+      "gate": "Native FILE01 consumer",
+      "reason": "Restore guarded unfinished Qt source/write unit, fix its export to include accepted fields and exact original, pass actual native Apply/export/reload/run regression, then file routing and complete task acceptance."
+    },
+    {
+      "gate": "Major milestone/final acceptance",
+      "reason": "Full unchanged required workspace/Qt/Python/CLI/project/packaging gates remain mandatory; this is focused Level1 acceptance."
+    }
+  ],
+  "native_cases": [
+    {
+      "test_file": "bindings/python/tests/test_project_configuration_edits.py",
+      "qualified_test_case": "ProjectConfigurationEdits.test_edited_projects_preserve_values_originals_and_independent_rust_parity"
+    },
+    {
+      "test_file": "bindings/python/tests/test_project_configuration_edits.py",
+      "qualified_test_case": "ProjectConfigurationEdits.test_old_shape_and_invalid_original_are_compatible_and_structured"
+    },
+    {
+      "test_file": "bindings/python/tests/test_project.py",
+      "qualified_test_case": "ProjectTests.test_25khz_original_configuration_and_measured_lineage_survive_round_trip"
+    },
+    {
+      "test_file": "bindings/python/tests/test_project.py",
+      "qualified_test_case": "ProjectTests.test_invalid_envelopes_policies_duplicate_fields_and_collections_are_atomic"
+    },
+    {
+      "test_file": "bindings/python/tests/test_project.py",
+      "qualified_test_case": "ProjectTests.test_readonly_file_limits_and_nonregular_inputs"
+    },
+    {
+      "test_file": "bindings/python/tests/test_project.py",
+      "qualified_test_case": "ProjectTests.test_real_common_namespace_legacy_originals_idle_ownership_and_precancel"
+    },
+    {
+      "test_file": "bindings/python/tests/test_project.py",
+      "qualified_test_case": "ProjectTests.test_saved_downstream_actual_fec_observations_and_separate_rust_parity"
+    },
+    {
+      "test_file": "bindings/python/tests/test_project.py",
+      "qualified_test_case": "ProjectTests.test_saved_upstream_configuration_measured_sources_actual_run_and_rust_parity"
+    },
+    {
+      "test_file": "bindings/python/tests/test_namespaces.py",
+      "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+    },
+    {
+      "test_file": "bindings/python/tests/test_namespaces.py",
+      "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+    },
+    {
+      "test_file": "bindings/python/tests/test_namespaces.py",
+      "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+    },
+    {
+      "test_file": "bindings/python/tests/test_namespaces.py",
+      "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+    },
+    {
+      "test_file": "bindings/python/tests/test_upstream_options.py",
+      "qualified_test_case": "UpstreamOptions.test_busy_during_acknowledged_pause_and_restored_after_cancel"
+    },
+    {
+      "test_file": "bindings/python/tests/test_upstream_options.py",
+      "qualified_test_case": "UpstreamOptions.test_passive_owned_snapshot_atomic_rejection_and_independent_rust_parity"
+    }
+  ],
+  "public_rust_contracts_identical": true
+}

@@ -15,6 +15,14 @@ TX Output can generate its independent preview; **Run simulation** regenerates
 that preview from frozen source settings. This does not start the full closed
 loop. Opening the SA while the main run is busy never starts another preview.
 
+IFFT, cyclic-prefix and window selections analyze consecutive retained frame
+samples, using at most 16,384 samples. This ordered frame diagnostic preserves
+frames that can have physical gaps or overlaps. TX Output instead uses up to
+32,768 actual continuous output samples. The displayed average count reflects
+the complete analysis windows available within the selected prefix. Both views
+use the backend's authoritative spectrum and electrical/relative calibration;
+switching taps or zooming starts no new simulation.
+
 **Run simulation** is at the lower left; **Close** stays at the lower right.
 **Cancel preview** appears only while the separate TX preview is running. It
 cancels that preview, preserving accepted inputs and any previous completed
@@ -165,7 +173,9 @@ records the PHY derivation and manufacturer VF references.
 Time-domain SA views integrate the fixed occupied channel band independently of
 mouse zoom. The readout includes the integration bandwidth; pilot energy, internal
 gaps and noise remain in the integral. A transmitter-only preview reports relative
-power. Completed-run TX/RX and channel TP views use the run's optional TX electrical
+power in dB re one normalized sample unit squared over that whole band. This
+differs from the trace's per-Hz density; zero power has no finite dB reading.
+Completed-run TX/RX and channel TP views use the run's optional TX electrical
 reference to report rms dBmV and a separate band-average dBmV/6 MHz level. FFT-bin
 views remain separately labeled bin power. See [channel conditioning](channel-measurements.md#launch-amplifier-attenuator-and-tappoints)
 for calibration, noise and saved settings. Plotting capture frequencies does not

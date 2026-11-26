@@ -101,3 +101,23 @@ required-features = ["simulation"]
 name = "prepare_channel_widths"
 path = "examples/channel_widths/main.rs"
 required-features = ["simulation"]
+
+[[example]]
+name = "api_transmitter_preview"
+required-features = ["high-level-api"]
+
+[[example]]
+name = "api_full_loop"
+required-features = ["high-level-api"]
+
+[[example]]
+name = "api_spectrum_average_capacity"
+required-features = ["high-level-api"]
+
+[[example]]
+name = "api_calibrated_sequence"
+required-features = ["high-level-api"]
+
+[[example]]
+name = "api_source_file_info"
+required-features = ["high-level-api"]

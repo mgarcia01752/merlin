@@ -5,17 +5,19 @@
 //! Current pnm-decode JSON adapter, independent of paths and decoder subprocesses.
 pub mod contract;
 mod measurements;
+pub mod profile_metadata;
+mod profiles;
 pub use measurements::{import_channel, import_rxmer};
+pub use profiles::{import_profile_capture, import_profiles};
 mod decoded;
 use crate::{
     error::invalid,
-    profile::candidate::{AssignmentOrigin, CapturedProfile, CarrierAssignment},
     scenario::{document::ScenarioDocument, ChannelFrame, RxMerFrame, SourceProvenance},
-    types::{modulation::ModulationAssignment, ProtocolScope},
+    types::ProtocolScope,
     SimulationError,
 };
 pub use contract::DecoderContract;
-use decoded::{Channel, ProfileDocument, Rxmer};
+use decoded::{Channel, Rxmer};
 use sha2::{Digest, Sha256};
 
 /// Borrowed decoded JSON bytes and a caller-supplied display identity.
@@ -127,91 +129,6 @@ pub fn import(
     };
     scenario.validate()?;
     Ok(scenario)
-}
-
-/// Imports a standalone decoded modulation-profile capture through the shared contract.
-///
-/// # Arguments
-/// * `source` - Named decoder JSON bytes, at most 16 MiB; originals stay unchanged.
-/// # Returns
-/// Bounded profiles retaining exact device/channel/grid identity and JSON provenance.
-/// # Errors
-/// Rejects unsupported format/schemes, duplicate IDs, invalid grids or contradictory
-/// assignment codes/names/roles. Other captures are not needed for inspection.
-pub fn import_profiles(source: JsonCapture<'_>) -> Result<Vec<CapturedProfile>, SimulationError> {
-    let captured: ProfileDocument = parse(&source)?;
-    captured.header.check(10)?;
-    if captured.num_profiles != captured.profiles.len()
-        || captured.profiles.is_empty()
-        || captured.profiles.len() > 256
-    {
-        return Err(invalid("Invalid modulation-profile count."));
-    }
-    let count = captured.profiles[0]
-        .schemes
-        .iter()
-        .try_fold(0usize, |total, scheme| {
-            total
-                .checked_add(scheme.num_subcarriers)
-                .ok_or_else(|| invalid("Profile size overflow."))
-        })?;
-    let key = captured.grid.key(count)?;
-    let mut decoded_profiles = Vec::new();
-    let mut expanded_total = key.grid.sample_count * 2;
-    let mut seen = std::collections::BTreeSet::new();
-    for profile in captured.profiles {
-        if !seen.insert(profile.profile_id) || profile.schemes.len() > key.grid.sample_count {
-            return Err(invalid("Duplicate profile ID or excessive scheme count."));
-        }
-        let mut assignments = Vec::new();
-        for scheme in profile.schemes {
-            expanded_total = expanded_total
-                .checked_add(scheme.num_subcarriers)
-                .ok_or_else(|| invalid("Expanded profile size overflow."))?;
-            if expanded_total > 4_000_000 {
-                return Err(invalid("Expanded scenario exceeds the carrier work limit."));
-            }
-            if scheme.schema_type != "range"
-                || scheme.num_subcarriers == 0
-                || assignments
-                    .len()
-                    .checked_add(scheme.num_subcarriers)
-                    .is_none_or(|count| count > key.grid.sample_count)
-            {
-                return Err(invalid("Unsupported profile scheme or invalid coverage."));
-            }
-            let assignment = ModulationAssignment::from_code(scheme.modulation_order_code);
-            if scheme.modulation_order != assignment.modulation_order
-                || scheme.bit_loading != assignment.bit_loading
-                || scheme.carrier_type != assignment.carrier_type
-            {
-                return Err(invalid(
-                    "Profile text/bit-loading contradicts encoded assignment.",
-                ));
-            }
-            assignments.extend(std::iter::repeat_n(
-                CarrierAssignment {
-                    carrier_type: assignment.carrier_type,
-                    bit_loading: assignment.bit_loading,
-                    origin: AssignmentOrigin::Captured,
-                },
-                scheme.num_subcarriers,
-            ));
-        }
-        if captured.grid.key(assignments.len())? != key {
-            return Err(invalid(
-                "Profile frequency grid or coverage differs from RxMER.",
-            ));
-        }
-        decoded_profiles.push(CapturedProfile {
-            key: key.clone(),
-            source: provenance(&source, &captured.header, "decoded_json_modulation_profile"),
-            capture_time: captured.header.capture_time,
-            profile_id: profile.profile_id,
-            assignments,
-        });
-    }
-    Ok(decoded_profiles)
 }
 
 fn parse<Model: serde::de::DeserializeOwned>(

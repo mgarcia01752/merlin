@@ -1,0 +1,609 @@
+{
+  "schema_version": 1,
+  "task": "UIU-API-05",
+  "unit": "Saved downstream full-loop admission",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-22",
+    "REQ-UIU-24"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-session-and-file-lifecycle",
+  "checklist": "docs/development/checklist.md#task-uiu-api-05",
+  "base_commit": "a2c6342dd78732b9d73042394f4f39d223aab9f8",
+  "tested_files": [
+    {
+      "path": "bindings/python/python/merlin/__init__.pyi",
+      "sha256": "b74a48768b358987905d70a0f3a1d56db5379211d97e255bb07f51c250bc9068"
+    },
+    {
+      "path": "bindings/python/src/full_loop.rs",
+      "sha256": "31d72b6e3d525dc1f507957277d7bef51fada8891f1bd344dc4f44d21c851cd4"
+    },
+    {
+      "path": "bindings/python/src/full_loop/request.rs",
+      "sha256": "a22f75e0d33de631658fd9aa607b37472476c4dd501a5d4d0c6477af8a7d0b89"
+    },
+    {
+      "path": "bindings/python/src/full_loop/sweep.rs",
+      "sha256": "eff8a0a8d04a0a1480bd10f0332bf0b595286a8a9fcca74c28ee2b019081e25f"
+    },
+    {
+      "path": "bindings/python/src/workbench.rs",
+      "sha256": "c9030b1fcdf864bf1ce512831de1ee6d0e887f59ff382dc76fa577f573c7d0dd"
+    },
+    {
+      "path": "bindings/python/tests/test_workbench_full_loop.py",
+      "sha256": "7cb6e0609719bc07b24ccc0b1e3d8ed4bc954fe6435b7398fae07236da16dac4"
+    },
+    {
+      "path": "crates/merlin/tests/namespaces.rs",
+      "sha256": "c215162d980c631361b549c0a48ef65e4517eca82374fca3be264a4cb8de8b6e"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop.rs",
+      "sha256": "a55b158297e75eb86f693988a7337f8237155f472478e677c9d3bdc07accda54"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop/request.rs",
+      "sha256": "79d17417bf78720d3bd7666c65a72afd20a67e2c55b6254b37dcba9910e2e43b"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop/sweep.rs",
+      "sha256": "84bb890d83e91208a6cb1db89d0384588afdeb2e664befc6f0da3a6d680c6818"
+    },
+    {
+      "path": "crates/ofdm/tests/api_full_loop.rs",
+      "sha256": "8d0aba2a25b16f183164533fe01f552382141fbe5cd226dc4611650fd6e17b3e"
+    },
+    {
+      "path": "crates/pnm-input/Cargo.toml",
+      "sha256": "71bfd11285c68057229424d484473bff3e4c3d1731fb0ad965fa21b91e00f060"
+    },
+    {
+      "path": "crates/pnm-input/src/common/constants.rs",
+      "sha256": "ed02c76ad36cdb619902084e657c6c9471e7a268db3667eeb102ce1d327de9b4"
+    },
+    {
+      "path": "crates/pnm-input/src/common/mod.rs",
+      "sha256": "0f547de8e57b05745ef10cf0d27a00655985dd942eea7ff88778f3035059a43c"
+    },
+    {
+      "path": "crates/pnm-input/src/lib.rs",
+      "sha256": "e4768de4e601e5059cbfcb455e387e8bdece3e9e5a7fddb64aa71daa6d28a772"
+    },
+    {
+      "path": "crates/pnm-input/src/workbench.rs",
+      "sha256": "75b79e29b5cc95138d674688900ad7386a30be4e4c16b227eee5672d1cb4486b"
+    },
+    {
+      "path": "crates/pnm-input/src/workbench/full_loop.rs",
+      "sha256": "cbd069df178df3f03715aaa726115f640397433c7b948eaefcf2af72379561c2"
+    },
+    {
+      "path": "crates/pnm-input/tests/workbench_full_loop.rs",
+      "sha256": "79bf73c695f34950b39c08a4c1af118f37baf5aacd28ced496780b75e8e48742"
+    },
+    {
+      "path": "examples/api/rust/run_saved_full_loop.rs",
+      "sha256": "b417f651c20a8a53043ee4933468b3ab12ca03de57f6299ec0bd672eddceab50"
+    },
+    {
+      "path": "tools/testing/native_api.py",
+      "sha256": "51268953ca435025ce5dd2eeafebeffe480c09fb9b51565fabe32114b12dd40c"
+    }
+  ],
+  "scope": "Focused local Rust and installed Linux CPython 3.10 acceptance; schema3/upstream/aggregate and Qt gates remain pending.",
+  "executed_cases": {
+    "saved_projects": 7,
+    "full_loop": 8,
+    "facade": 10,
+    "native": 9
+  },
+  "native_acceptance": {
+    "status": "passed",
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "run",
+          "-p",
+          "pnm-input",
+          "--example",
+          "run_saved_full_loop",
+          "--locked"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin",
+        "exit_code": 0,
+        "label": "saved-full-loop-reference",
+        "elapsed_seconds": 12.802357592998305
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native-current/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "pip",
+          "install",
+          "--no-index",
+          "--no-deps",
+          "/home/dev01/Projects/merlin/local/python-wheels-unified-ui-saved-full-loop-current/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native-current",
+        "exit_code": 0,
+        "label": "install",
+        "elapsed_seconds": 2.024145749004674
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native-current/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_workbench_full_loop.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native-current",
+        "exit_code": 0,
+        "label": "saved-project-tests",
+        "elapsed_seconds": 2.624249721004162
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native-current/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_namespaces.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native-current",
+        "exit_code": 0,
+        "label": "namespace-tests",
+        "elapsed_seconds": 0.26323417099774815
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native-current/installed/bin/python",
+          "-I",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native-current/native-exports.json"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native-current",
+        "exit_code": 0,
+        "label": "native-inventory",
+        "elapsed_seconds": 0.1898077180085238
+      }
+    ],
+    "cases": [
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_installed_idle_preparation_settings_ownership_and_precancel"
+      },
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_invalid_project_rejection_preserves_accepted_plan"
+      },
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_response_tolerance_is_independent_and_original_constructor_is_compatible"
+      },
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_saved_file_fill_and_timeline_settings_and_legacy_behavior"
+      },
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+      }
+    ],
+    "wheel": "/home/dev01/Projects/merlin/local/python-wheels-unified-ui-saved-full-loop-current/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "wheel_sha256": "6ce98a4a0fd35ee6cbe798807cdf2bf185cf36477aadaa54ddebbdcc75e9a636",
+    "scope": "Focused installed Linux CPython 3.10 saved full-loop and namespace acceptance. Parent API-05 and final Qt acceptance remain separate.",
+    "reference": {
+      "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native-current/saved-full-loop-reference.stdout",
+      "sha256": "fa28da35df3fdadf658da023e121d3f60d75513cc6d611525c2b2e8a018b5e12"
+    },
+    "passed": 9,
+    "elapsed_seconds": 23.701311322001857
+  },
+  "initial_reference_acceptance": {
+    "status": "passed",
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "run",
+          "-p",
+          "pnm-input",
+          "--example",
+          "run_saved_full_loop",
+          "--locked"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin",
+        "exit_code": 0,
+        "label": "saved-full-loop-reference",
+        "elapsed_seconds": 11.549903803999769
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "pip",
+          "install",
+          "--no-index",
+          "--no-deps",
+          "/home/dev01/Projects/merlin/local/python-wheels-unified-ui-saved-full-loop/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native",
+        "exit_code": 0,
+        "label": "install",
+        "elapsed_seconds": 0.5205573200073559
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_workbench_full_loop.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native",
+        "exit_code": 0,
+        "label": "saved-project-tests",
+        "elapsed_seconds": 1.6783730949973688
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_namespaces.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native",
+        "exit_code": 0,
+        "label": "namespace-tests",
+        "elapsed_seconds": 0.12313745100982487
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native/installed/bin/python",
+          "-I",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native/native-exports.json"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native",
+        "exit_code": 0,
+        "label": "native-inventory",
+        "elapsed_seconds": 0.16606663299899083
+      }
+    ],
+    "cases": [
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_installed_idle_preparation_settings_ownership_and_precancel"
+      },
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_invalid_project_rejection_preserves_accepted_plan"
+      },
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_response_tolerance_is_independent_and_original_constructor_is_compatible"
+      },
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_saved_file_fill_and_timeline_settings_and_legacy_behavior"
+      },
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+      }
+    ],
+    "wheel": "/home/dev01/Projects/merlin/local/python-wheels-unified-ui-saved-full-loop/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "wheel_sha256": "f4c1db12605ae6cd98e0a5021a9214282cbc7cde11259985f9f2344b43cee21a",
+    "scope": "Focused installed Linux CPython 3.10 saved full-loop and namespace acceptance. Parent API-05 and final Qt acceptance remain separate.",
+    "reference": {
+      "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native/saved-full-loop-reference.stdout",
+      "sha256": "fa28da35df3fdadf658da023e121d3f60d75513cc6d611525c2b2e8a018b5e12"
+    },
+    "passed": 9,
+    "elapsed_seconds": 16.579318838994368
+  },
+  "checks": [
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-workbench-complete-scoped-rust.log",
+      "sha256": "5598c794047aa26e0a2f59f9389bf8bfd8e240643bb208c3d249f1f7d879a673"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-workbench-accepted-rust-final.log",
+      "sha256": "8dc453840765b788c86151507ecbfbde9d7fdc71045daf84e968d5e1c0fe5a9b"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-workbench-facade.log",
+      "sha256": "7d5c71e6f709c965aa9fcad5cc238cfc6c828ac3c0b212d586fa4bdcd794d707"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-workbench-clippy.log",
+      "sha256": "f9c2071795a99fd9098af319726249b2c8271f974bbee4916c1a795bd4f475ba"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-workbench-native-clippy.log",
+      "sha256": "7ffe8c6ce6e90430841fabb8987b320bd339f2845523ca9b592ccce28a912b51"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-workbench-wheel-final.log",
+      "sha256": "58f84932f0f8f0e4e7edf94a21d9df6c012dbf3c75cd5b7aa135178f335ea68f"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-workbench-rustdoc.log",
+      "sha256": "d4f9516a3421546bc32f3225dfdd7d20a0ed7ab8d00cab7facdff37b9dd639f7"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-current-saved-rust.log",
+      "sha256": "191b47bd732bc4db33b7efc89c679f8d7877b84eaad4a57afbba650c98146923"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-current-response-rust.log",
+      "sha256": "1b8abbd9587434329e79d3f85402f8113239e8380ae276c26b169d402dbeaa79"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-current-facade.log",
+      "sha256": "83951fb60a3741103a1be0c2d47a434a5e88fe42c9414f74688a0f01dd151ad6"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-current-clippy.log",
+      "sha256": "a3c6c54343f09df7f68a4f79810dff375c09808a9989584f71d960b1e3d222f8"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-current-native-clippy.log",
+      "sha256": "feafc1059800a87d8ad14834c8962c8f7bf78dd56cd0d1291c889f7ef352e025"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-current-wheel.log",
+      "sha256": "b68ea4deafaa4abc903df13c35b955fa3d4242ce910b245390fa8b94331cf139"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-current-rustdoc.log",
+      "sha256": "07ad2b9e0a57ffddc83060c213ee214b990196722c6b6f1e6627e96763c89c3d"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-current-strict-matrix-final.log",
+      "sha256": "8ab7ff5cf8d82fda2017d16812e27336ffe5a7c6604cad164d3d56c9e3fdd0a9"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-current-docs.log",
+      "sha256": "037185ca2dbcac08288000a5e6984f17b1c07e856735a82fd4c8fa001cbf2b33"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-current-trace.log",
+      "sha256": "4815641791db39aa3e4d48e76217eb7aff10013ebbb24fc256295cd48506621f"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-current-metadata-tests.log",
+      "sha256": "7da45757ce7842d90f59e9be3ce1e9a992d897000bebf41e87eef84d023ce1b0"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-current-versions.log",
+      "sha256": "7b61879f1cb4b977cc3d3404d0ecfcefc8c021a25ae4834bdf03315749a172fd"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-current-guide.log",
+      "sha256": "e723e8bfc25c24b2cc62f0ef7ef61a1e048449cc3d681f1fbfbdee1009de8e8c"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-05-current-format.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "failures_preserved": {
+    "fixture_corrections": "Initial fixture selected profile4 from a catalog lacking it, and compared a binary original hash with decoded-frame provenance. Final tests use the independently established 0/3/4 catalog and verify original and decoded identities separately. Production bounds and scientific assertions were not weakened.",
+    "admission_correction": "The explicit tolerance regression exposed a lower MeasurementSelection check that still coupled H to first RxMER. Explicit independent-H admission now validates H/profile separately and delegates final composed planning to the existing channel validator. Legacy constructor and sweep paths retain the original checks. No channel algorithm changed.",
+    "logs": [
+      {
+        "path": "docs/development/local/unified-qt-workbench/api-05-workbench-tests-fixed.log",
+        "sha256": "4d8483f07a4e729cf28b2378a3fd4fcd2b92217de3442f4afb3d7211c85fb8d6"
+      },
+      {
+        "path": "docs/development/local/unified-qt-workbench/api-05-response-tests.log",
+        "sha256": "ccf88a51fb3ba933da22bcdb18dd0cdd9030162a75d0bd336d3eb9699e66d706"
+      },
+      {
+        "path": "docs/development/local/unified-qt-workbench/api-05-workbench-wheel.log",
+        "sha256": "8147b5f5653bd061dad7d682533a2aa33fd80e6c329b82b4253645c023d2e558"
+      }
+    ]
+  },
+  "independent_acceptance": "Saved original file bytes [0x81,0x00,0x5a] recover exactly with a finite64-bit target and fill seed7 while dormant continuous seed0 remains irrelevant. Literal17-second H/profile difference admits independently of zero-second RxMER/profile tolerance, including sweeps;16 rejects. Stored capture order, exact physical-symbol interval and duration capacity remain explicit. Saved Designer samples match the existing shared materialization, and actual PRBS/FEC summaries match a separate Rust process.",
+  "compatibility": {
+    "previous_rust_rows_preserved": 541,
+    "previous_native_rows_preserved": 524,
+    "current_rust_rows": 545,
+    "current_native_rows": 528,
+    "all_previous_rows_assertions_and_alias_history_preserved": true,
+    "qt_source_files_unchanged": 178,
+    "old_workbench_and_constructor_behavior_preserved": true
+  },
+  "remaining": [
+    "Direction-tagged schema3 Project and upstream source/observation persistence",
+    "Aggregate two-direction project-input admission",
+    "Final API-05 backend gate",
+    "Qt file/recovery adoption"
+  ],
+  "limitations": [
+    "Legacy Workbench.from_bytes/from_file keep their original static PRBS contract; the additive preparation method uses the public full loop",
+    "No Qt changes, hosted jobs, installer lifecycle, hardware or external interoperability acceptance"
+  ],
+  "prior_native_acceptance": {
+    "wheel": "/home/dev01/Projects/merlin/local/python-wheels-unified-ui-saved-full-loop/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "wheel_sha256": "f4c1db12605ae6cd98e0a5021a9214282cbc7cde11259985f9f2344b43cee21a",
+    "scope": "Focused installed Linux CPython 3.10 saved full-loop and namespace acceptance. Parent API-05 and final Qt acceptance remain separate.",
+    "reference": {
+      "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native/saved-full-loop-reference.stdout",
+      "sha256": "fa28da35df3fdadf658da023e121d3f60d75513cc6d611525c2b2e8a018b5e12"
+    },
+    "status": "passed",
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_workbench_full_loop.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native-final",
+        "exit_code": 0,
+        "label": "saved-project-tests",
+        "elapsed_seconds": 2.0166671629995108
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_namespaces.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native-final",
+        "exit_code": 0,
+        "label": "namespace-tests",
+        "elapsed_seconds": 0.11878893400717061
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native/installed/bin/python",
+          "-I",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native-final/native-exports.json"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native-final",
+        "exit_code": 0,
+        "label": "native-inventory",
+        "elapsed_seconds": 0.17291802899853792
+      }
+    ],
+    "cases": [
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_installed_idle_preparation_settings_ownership_and_precancel"
+      },
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_invalid_project_rejection_preserves_accepted_plan"
+      },
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_response_tolerance_is_independent_and_original_constructor_is_compatible"
+      },
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_saved_file_fill_and_timeline_settings_and_legacy_behavior"
+      },
+      {
+        "test_file": "bindings/python/tests/test_workbench_full_loop.py",
+        "qualified_test_case": "WorkbenchFullLoopTests.test_separate_rust_process_saved_settings_actual_fec_and_original_inputs_match"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+      }
+    ],
+    "prior_installed_environment": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-05-workbench-native/installed",
+    "reference_reused_without_owner_changes": true,
+    "passed": 9,
+    "elapsed_seconds": 2.309271873004036
+  },
+  "current_scoped_rust_cases": 19,
+  "metadata_cases": 33,
+  "evidence_corrections": [
+    "Initial strict matrix check detected the new nested pnm_input::workbench alias copied the root namespace; only that new row was corrected to its compiler-derived namespace. The successful final strict receipt is recorded; previous rows are unchanged."
+  ]
+}

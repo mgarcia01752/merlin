@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Typed pilot outputs and common selection/scaling, never frame assembly.
@@ -11,6 +12,7 @@ use crate::{
     types::{IqPair, SubcarrierIdx},
     SimulationError,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 /// One actual pilot signal at a physical FFT bin, in increasing-bin output order.
 #[derive(Debug, Clone, PartialEq, Serialize)]
@@ -53,4 +55,23 @@ pub(super) fn select_values(
         }
     }
     Ok(output)
+}
+
+impl RetainedPayload for PilotValue {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            bin,
+            sequence_bit,
+            iq,
+        } = self;
+        merlin_api::retention_support::sum([
+            bin.retained_children(),
+            sequence_bit.retained_children(),
+            iq.retained_children(),
+        ])
+    }
 }

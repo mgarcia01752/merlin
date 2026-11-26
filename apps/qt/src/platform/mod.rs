@@ -4,6 +4,8 @@
  */
 //! Local file access, desktop integration and installed example discovery.
 pub(crate) mod application_style;
+#[cfg(target_os = "linux")]
+pub(crate) mod constants;
 pub(crate) mod example_directory;
 pub(crate) mod input_file;
 pub(crate) mod native_file_picker;

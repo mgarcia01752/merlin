@@ -34,7 +34,7 @@ current exports; complete Rust operation coverage is recorded in the matrix acce
 | `merlin-api` (implemented) | `merlin_api`, `crates/phy-api` | Small dependency leaf for genuinely common cancellation/error categories. Safe Rust plus existing pinned serde only; no DSP, engine, FEC, input, adapter or facade dependencies. |
 | `merlin-dsp` (INT-DSP-01 delivery) | `merlin_dsp`, `crates/dsp` | Bounded shared numerical primitives; no API/PHY/adapter dependency. This is separate from the public namespace facade. |
 | `fec-codec` (existing) | `fec_codec`, `crates/fec-codec` | Existing shared mechanisms and separate normative code families. No new facade/API dependency. |
-| `pnm-input` (existing) | `pnm_input`, `crates/pnm-input` | Native file/capture adapter; existing downstream and pinned parser, implemented upstream; neither PHY points back here. |
+| `pnm-input` (existing) | `pnm_input`, `crates/pnm-input` | Native file/capture adapter; downstream/upstream APIs, common API contracts and pinned parser; neither PHY points back here. |
 | `ofdm-fec-cli` (existing) | Existing `ofdm-fec` binary, `crates/cli` | Adapter uses public direction APIs/facade and native input; retains syntax/output/exit statuses. |
 | `merlin-python` (existing) | Implemented private extension `_native`, `bindings/python` | One PyO3 extension, depends on facade plus native input. Distribution metadata remains `merlin-ofdm`; public Python import root remains `merlin`. Internal library/module rename is tested as a packaging change, not a second extension/distribution. |
 
@@ -65,11 +65,13 @@ name = "merlin"
 default = ["downstream", "upstream"]
 downstream = ["dep:docsis-ofdm-fec"]
 upstream = ["dep:docsis-ofdma"]
+native-input = ["downstream", "upstream", "dep:pnm-input"]
 
 [dependencies]
 docsis-ofdm-fec = { path = "../ofdm", default-features = false, features = ["high-level-api"], optional = true }
 docsis-ofdma = { path = "../ofdma", default-features = false, optional = true }
 merlin-api = { path = "../phy-api" }
+pnm-input = { path = "../pnm-input", optional = true }
 ```
 
 The upstream crate exports its typed `api` without a separate runtime
@@ -92,7 +94,7 @@ flowchart TD
     USER[External Rust application] --> ROOT[merlin facade]
     PY[merlin Python package / one private extension] --> ROOT
     CLI[Existing CLI] --> ROOT
-    PY --> INPUT[pnm-input]
+    ROOT -->|optional native-input| INPUT[pnm-input]
     CLI --> INPUT
     ROOT --> DS[docsis-ofdm-fec]
     ROOT --> US[docsis-ofdma]
@@ -101,6 +103,7 @@ flowchart TD
     US --> API
     INPUT --> DS
     INPUT --> US
+    INPUT --> API
     INPUT --> PNM[Pinned pnm decoder]
     DS --> DSP[merlin-dsp]
     US --> DSP
@@ -109,7 +112,11 @@ flowchart TD
 ```
 
 The facade never becomes a dependency of either PHY, shared leaf or PNM adapter.
-CLI/Python can depend on both facade and input adapter without introducing a cycle.
+The CLI retains direct input access; native Python now enables facade
+`native-input` and uses directional input re-exports. This optional feature brings
+both existing PHY adapters without changing base/default direction builds.
+[Typed passive admission](../../../user/api/input-admission.md) adds no engine or
+scientific facade implementation.
 Qt retains its existing direct downstream dependencies and receives no upstream UI
 or dependency migration in this phase. Direct consumers may continue importing
 either engine without installing/linking a facade, Python or Qt.

@@ -49,7 +49,7 @@ def local_source(root=ROOT):
             if (not original.resolve().is_relative_to(source.resolve())
                     or hashlib.sha256(original.read_bytes()).hexdigest() != record["upstream_sha256"]):
                 raise ValueError(f"PNM original documentation changed: {record['path']}")
-    for name in ("apps/qt/Cargo.toml", "crates/pnm-input/Cargo.toml"):
+    for name in ("crates/pnm-input/Cargo.toml",):
         consumer = root / name
         dependency = re.search(r'^pnm = (\{[^\n]+\})$', consumer.read_text(), re.MULTILINE)
         fields = dict(re.findall(r'(path|version) = "([^"\n]+)"', dependency[1])) if dependency else {}
@@ -58,6 +58,15 @@ def local_source(root=ROOT):
                 or (consumer.parent / fields["path"]).resolve() != manifest.parent.resolve()
                 or fields["version"] != "=" + origin["version"]):
             raise ValueError(f"Consumer must use the local pinned PNM source: {name}")
+    # Full-line Cargo dependency declaration, e.g. merlin = { path = "../../crates/merlin", ... }.
+    # Capture the table contents only; unrelated dependencies and comments do not match.
+    desktop = root / "apps/qt/Cargo.toml"
+    facade = re.search(r'^merlin = (\{[^\n]+\})$', desktop.read_text(), re.MULTILINE)
+    path = re.search(r'\bpath = "([^"\n]+)"', facade[1]) if facade else None
+    if (path is None or (desktop.parent / path[1]).resolve() != root / "crates/merlin"
+            or '"native-input"' not in facade[1]
+            or re.search(r'^pnm\s*=', desktop.read_text(), re.MULTILINE)):
+        raise ValueError("Qt must use MERLIN facade native-input, not a direct PNM dependency")
     return manifest.parent
 
 

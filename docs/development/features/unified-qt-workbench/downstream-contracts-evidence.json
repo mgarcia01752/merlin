@@ -1,0 +1,267 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Lifecycle and receiver contract facade",
+  "status": "accepted adapter-contract unit; parent and direction providers incomplete",
+  "base_commit": "e4370994c1efb4848f51c7d6af51065e349eec1e",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-08",
+    "REQ-UIU-09"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/src/bridge/closed_loop.rs",
+      "sha256": "72f721c8ba33b1c9a2f4bf9cf7fed869d843a70fd291d9e6a249c8ded41c5b11"
+    },
+    {
+      "path": "apps/qt/src/bridge/receiver_instruments.rs",
+      "sha256": "90597b3e6650f53b12407e0c050ef3ba6823f09597ce4a9428787ec50a3b73a1"
+    },
+    {
+      "path": "apps/qt/src/downstream/mod.rs",
+      "sha256": "31c23a564456f3f2913caebcf115e9e8eb774be13034760399c6e7436acf475c"
+    },
+    {
+      "path": "apps/qt/src/downstream/common/mod.rs",
+      "sha256": "ca50ce79f9ea59b6f137dc302b6cb7428823dce47bc4f09bb56285ec5ffed9dd"
+    },
+    {
+      "path": "apps/qt/src/downstream/common/constants.rs",
+      "sha256": "fea0a37898bb7ef79c2a62dbe9200f2c8e7c6569e10feac298ed6281fc32f5e3"
+    }
+  ],
+  "operations": [
+    "merlin::downstream::TransmissionConfiguration::from_json",
+    "merlin::downstream::TransmissionConfiguration::settings",
+    "merlin::downstream::FullLoopStage (same nominal serialized stage identity)"
+  ],
+  "preservation": {
+    "qobject_contracts_unchanged": true,
+    "receiver_body_identical_after_public_alias_reversal": true,
+    "configure_invalidation_timing_unchanged": true,
+    "apply_atomicity_and_original_messages_retained": true,
+    "worker_providers_unchanged": true,
+    "backend_python_saved_schema_and_qml_unchanged": true,
+    "other_guard_and_dependency_records_exact": true
+  },
+  "numeric_owners": {
+    "ocd": "merlin::downstream::MAX_TRANSMISSION_DOCUMENT_BYTES",
+    "receiver_options": "apps/qt/src/downstream/common/constants.rs::MAX_RECEIVER_OPTIONS_DOCUMENT_BYTES",
+    "relationship": "Independent inclusive UTF-8 byte ceilings, both historically 4096; receiver policy does not derive from OCD or waveform limits.",
+    "final_line_by_line_review": "pending UIU-QA-01"
+  },
+  "boundary": {
+    "scientific_dependencies": 3,
+    "frozen_files": 41,
+    "scientific_sites": 141,
+    "retired_paths": [
+      "apps/qt/src/bridge/closed_loop.rs",
+      "apps/qt/src/bridge/receiver_instruments.rs"
+    ],
+    "parent_complete": false
+  },
+  "validation": [
+    {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "downstream::simulation::closed_loop::tests"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 115.115339690994,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      },
+      "passed": 5,
+      "receipt": "ds-01-contracts-rust.json"
+    },
+    {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "bridge::ofdm_settings::tests"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 84.67639673600206,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      },
+      "passed": 3,
+      "receipt": "ds-01-contracts-settings.json"
+    },
+    {
+      "command": "qmltestrunner -input apps/qt/tests/tst_workbench.qml",
+      "passed": 49,
+      "exit_code": 0,
+      "receipt": "ds-01-contracts-qml.log"
+    },
+    {
+      "command": "python3 -B tools/validation/qt_api_boundary.py",
+      "exit_code": 0,
+      "receipt": "ds-01-contracts-boundary.log"
+    },
+    {
+      "command": "python3 -B -m unittest discover -s tools/validation -p test_qt_api_boundary.py -v",
+      "passed": 16,
+      "exit_code": 0,
+      "receipt": "ds-01-contracts-boundary-tests.log"
+    },
+    {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 194.36005711200414,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      },
+      "receipt": "ds-01-contracts-clippy.json"
+    },
+    {
+      "command": "cargo fmt --manifest-path apps/qt/Cargo.toml -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "scripts/qt-desktop.sh build",
+      "exit_code": 0,
+      "receipt": "ds-01-contracts-build.log"
+    },
+    {
+      "command": "run_native_ui_smokes.py ds-01-contracts",
+      "exit_code": 0,
+      "passed": 6,
+      "receipt": "ds-01-contracts-native-results.json"
+    },
+    {
+      "command": "python3 -B tools/validation/feature_documentation.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -B tools/validation/integration_traceability.py",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  ],
+  "limitations": [
+    "Legacy directional worker and instrument providers remain migration debt",
+    "No complete unified Qt or session-isolation acceptance",
+    "Existing science/native-Python evidence remains unchanged; no non-Qt rerun",
+    "Final numeric/zero-exception and hosted/installed gates remain separate"
+  ],
+  "native_smokes": {
+    "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+    "sha256": "bc70762f74d5b5bc307654759e0988f415b7bfa411eb6ab78455ca17807446df",
+    "display": ":0",
+    "display_dimensions": [
+      "dimensions:    1280x800 pixels (338x211 millimeters)"
+    ],
+    "qt_sdk_version": "6.8.3",
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.05847892101155594,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/multi-rxmer/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.1439688840036979,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.0114348349889042,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--check-workbench",
+          "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.07616287301061675,
+        "stdout": "Workbench inputs accepted.\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--smoke-test"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 3.8074840049957857,
+        "stdout": "MERLIN_QT_STYLE=Fusion\n",
+        "stderr": ""
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--smoke-test",
+          "--workbench",
+          "examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 3.0977552569966065,
+        "stdout": "MERLIN_QT_STYLE=Fusion\n",
+        "stderr": ""
+      }
+    ]
+  }
+}

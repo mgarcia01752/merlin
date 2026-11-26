@@ -1,9 +1,11 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Whole-codeword accounting in source time, independent of delayed receive arrival.
 use crate::{error::invalid, transmission::DurationTiming, SimulationError};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 /// Half-open source-symbol and sample observation coordinates, not host time.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
@@ -193,5 +195,89 @@ impl WindowTotals {
             self.compared_bits as f64 * f64::from(timing.sample_rate_hz)
                 / timing.observation_samples as f64,
         );
+    }
+}
+
+impl RetainedPayload for ObservationWindow {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            first_source_symbol,
+            end_source_symbol,
+            first_sample,
+            end_sample,
+            symbol_period_samples,
+        } = self;
+        merlin_api::retention_support::sum([
+            first_source_symbol.retained_children(),
+            end_source_symbol.retained_children(),
+            first_sample.retained_children(),
+            end_sample.retained_children(),
+            symbol_period_samples.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for WindowTotals {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            fec,
+            coordinates,
+            contained_words,
+            crossing_start_words,
+            crossing_end_words,
+            crossing_both_words,
+            outside_words,
+            announced_starts_within,
+            completed_starts_within,
+            incomplete_starts_within,
+            contained_words_recovered_during_drain,
+            compared_bits,
+            bit_errors,
+            excluded_recovered_bits,
+            ber,
+            payload_rate_bps,
+        } = self;
+        merlin_api::retention_support::sum([
+            merlin_api::retention_support::fixed_children(fec),
+            coordinates.retained_children(),
+            contained_words.retained_children(),
+            crossing_start_words.retained_children(),
+            crossing_end_words.retained_children(),
+            crossing_both_words.retained_children(),
+            outside_words.retained_children(),
+            announced_starts_within.retained_children(),
+            completed_starts_within.retained_children(),
+            incomplete_starts_within.retained_children(),
+            contained_words_recovered_during_drain.retained_children(),
+            compared_bits.retained_children(),
+            bit_errors.retained_children(),
+            excluded_recovered_bits.retained_children(),
+            ber.retained_children(),
+            payload_rate_bps.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for WordPlacement {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Contained => Some(RetainedFootprint::default()),
+            Self::CrossesStart => Some(RetainedFootprint::default()),
+            Self::CrossesEnd => Some(RetainedFootprint::default()),
+            Self::CrossesBoth => Some(RetainedFootprint::default()),
+            Self::Outside => Some(RetainedFootprint::default()),
+        }
     }
 }

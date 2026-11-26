@@ -1,0 +1,585 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Calibrated ordered-frame API prerequisite",
+  "status": "Level 1 paired calibrated ordered-frame API accepted; Qt adoption, Level 2 parent and Level 3 final gates remain incomplete",
+  "base_commit": "ca20cdc9a950b7951c4e4ca4ff9cca8f2c211579",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-09",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "bindings/python/python/merlin/__init__.pyi",
+      "sha256": "c9789789c2841028018f9128d0686d26ab26a97a8a086f1cba5a8d9c4a3a2def"
+    },
+    {
+      "path": "bindings/python/src/full_loop/sequence.rs",
+      "sha256": "074db29b57c49d0ab3ac2514bd4e0e2618ea52a536befe476558cdee38ea9040"
+    },
+    {
+      "path": "bindings/python/tests/test_spectrum_sequence.py",
+      "sha256": "47aa06a245bd195624f5377572a4899ba54aa21cff0c75e5b9f4374d34049ec1"
+    },
+    {
+      "path": "crates/merlin/tests/namespaces.rs",
+      "sha256": "0adc3b672fa3135c75e0f8e66bbea94ee17120bf28ea889951da3bfdd68956bb"
+    },
+    {
+      "path": "crates/ofdm/Cargo.toml",
+      "sha256": "1315a6f3a262c86b609d64340bec07eba584b0db8ce23cd9c9caaf979c151a5d"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop/instruments/channel.rs",
+      "sha256": "ab6aef7d8285712aa48c01c7c9aae1a56305554a6fcad8e9a9ace4ffb907c416"
+    },
+    {
+      "path": "crates/ofdm/src/api/full_loop/instruments/sequence.rs",
+      "sha256": "a83b947bdd83b463171d5f47155f92227620f937de9e4d741224cf8d7d98b344"
+    },
+    {
+      "path": "crates/ofdm/tests/api_full_loop_observations.rs",
+      "sha256": "28de0a450d37ade255104553133e8aff99413c08dc531e69ae0e0b56fb0dedfd"
+    },
+    {
+      "path": "crates/ofdm/examples/api_calibrated_sequence.rs",
+      "sha256": "91752eae91b33a7c88c317fd2b08e744de9593d8283a48bb7b76070ff12fb2ee"
+    }
+  ],
+  "public_contract": {
+    "rust": "FullLoopResult::calibrated_spectrum_sequence(&self, query: FullLoopSpectrumQuery) -> ApiResult<FullLoopCalibratedSequenceSpectrum>",
+    "python": "FullLoopResult.calibrated_spectrum_sequence(self, stage=\"tx.ifft.samples\", snapshot=0, max_averages=32, start=0, count=0) -> dict",
+    "result": "New Rust report { sequence: FullLoopSequenceSpectrum, power: ChannelSpectrum }, projected to an owned native dictionary. Original normalized view, segment origins/gaps/overlaps/stop/contiguity and scientific calibration are composed from one existing estimate.",
+    "compatibility": "No old query/struct fields, defaults, errors, serialization, stage assembly, numerical algorithm or public import changes. Existing normalized/continuous/channel operations preserve their behavior. No Qt or Python scientific algorithm."
+  },
+  "testing": {
+    "level": 1,
+    "risk_expansion": "Public API and shared API composition: current Rust sequence/channel regressions, original independent PSD/sequence vectors, legacy/facade imports, native shared calibration/sequence/owned/default/conversion/parity cases, complete compiler/native export and operation tracing.",
+    "executed": {
+      "rust_cases": 10,
+      "native_cases": 11,
+      "operation_record": "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json",
+      "checks": [
+        {
+          "label": "channel-regression",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "test",
+            "-p",
+            "docsis-ofdm-fec",
+            "--locked",
+            "--features",
+            "high-level-api",
+            "--test",
+            "api_full_loop_observations",
+            "calibrated_channel_taps_preserve_actual_sources_full_band_power_and_distinct_amplifier_planes",
+            "--",
+            "--exact"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 19.00462407201121
+        },
+        {
+          "label": "sequence-owner",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "test",
+            "-p",
+            "docsis-ofdm-fec",
+            "--locked",
+            "--features",
+            "high-level-api",
+            "--lib",
+            "--",
+            "signal_processing::waveform::stage_sequence::tests"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 16.021595658996375
+        },
+        {
+          "label": "psd-owner",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "test",
+            "-p",
+            "docsis-ofdm-fec",
+            "--locked",
+            "--features",
+            "high-level-api",
+            "--test",
+            "waveform_spectrum"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.3040071710129268
+        },
+        {
+          "label": "facade",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "test",
+            "-p",
+            "merlin",
+            "--locked",
+            "--test",
+            "namespaces",
+            "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+            "--",
+            "--exact"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 11.769482395990053
+        },
+        {
+          "label": "clippy",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "clippy",
+            "-p",
+            "docsis-ofdm-fec",
+            "-p",
+            "merlin",
+            "--features",
+            "merlin/native-input",
+            "--all-targets",
+            "--locked",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 15.565786036007921
+        },
+        {
+          "label": "binding-clippy",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "clippy",
+            "--manifest-path",
+            "bindings/python/Cargo.toml",
+            "--all-targets",
+            "--locked",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 11.58402953100449
+        },
+        {
+          "label": "analysis",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "check",
+            "-p",
+            "docsis-ofdm-fec",
+            "--no-default-features",
+            "--locked"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.1249577869893983
+        },
+        {
+          "label": "reference",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "run",
+            "-p",
+            "docsis-ofdm-fec",
+            "--locked",
+            "--features",
+            "high-level-api",
+            "--example",
+            "api_calibrated_sequence"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 21.500076469004853
+        },
+        {
+          "label": "rustdoc",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "doc",
+            "--workspace",
+            "--no-deps",
+            "--locked",
+            "--features",
+            "merlin/native-input"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 10.502655749005498
+        },
+        {
+          "label": "rust-inventory",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/rust_api_inventory.py",
+            "--output",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-rust-exports.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 3.066531609001686
+        }
+      ],
+      "wheel_build": {
+        "command": [
+          "/home/dev01/Projects/merlin/local/api-python-build/bin/python",
+          "-m",
+          "maturin",
+          "build",
+          "--manifest-path",
+          "bindings/python/Cargo.toml",
+          "--release",
+          "--locked",
+          "--compatibility",
+          "linux",
+          "--interpreter",
+          "/usr/bin/python3",
+          "--out",
+          "/home/dev01/Projects/merlin/local/python-wheels-ds-calibrated-sequence"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 54.34545144200092,
+        "reason": "New public/native operation requires testing an artifact containing changed Rust/binding code; not an unrelated wheel rebuild."
+      },
+      "native": {
+        "status": "passed",
+        "wheel": "/home/dev01/Projects/merlin/local/python-wheels-ds-calibrated-sequence/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+        "wheel_sha256": "19b3e9ea17e500ab795aba83aa33464f6186b555820bb916a29f2c80c86e92ee",
+        "native_sha256": "21c9ad1b61b50d849597d2c018840a9bca1c9e42ee7dc3735c73023d12484324",
+        "no_rebuild_or_reinstall": true,
+        "original_preflight": {
+          "label": "artifact-preflight",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-c",
+            "import json,hashlib,sys\nfrom pathlib import Path\nimport merlin,merlin.downstream as downstream,merlin._native as native\npath=Path(native.__file__).resolve()\nassert path.is_relative_to(Path(sys.prefix).resolve())\nassert hashlib.sha256(path.read_bytes()).hexdigest()==sys.argv[1]\nassert merlin.TransmissionConfiguration is downstream.TransmissionConfiguration\nassert merlin.FullLoopResult is downstream.FullLoopResult\nassert callable(merlin.FullLoopResult.calibrated_spectrum_sequence)\nprint(json.dumps({'native_artifact':str(path),'native_sha256':sys.argv[1],'exact_archive_match':True,'root_downstream_identity':True,'new_calibrated_sequence_method':True}))\n",
+            "21c9ad1b61b50d849597d2c018840a9bca1c9e42ee7dc3735c73023d12484324"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.0717421919980552
+        },
+        "accepted_commands": [
+          {
+            "label": "sequence",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-native/installed/bin/python",
+              "-I",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "/home/dev01/Projects/merlin/bindings/python/tests",
+              "-p",
+              "test_spectrum_sequence.py",
+              "-v"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-native",
+            "exit_code": 0,
+            "elapsed_seconds": 10.86589178298891,
+            "stderr_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-native/sequence.stderr"
+          },
+          {
+            "label": "channel",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-native/installed/bin/python",
+              "-I",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "/home/dev01/Projects/merlin/bindings/python/tests",
+              "-p",
+              "test_channel_spectrum.py",
+              "-v"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-native",
+            "exit_code": 0,
+            "elapsed_seconds": 3.9475787470000796,
+            "stderr_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-native/channel-current-reference.stderr"
+          },
+          {
+            "label": "namespaces",
+            "command": [
+              "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-native/installed/bin/python",
+              "-I",
+              "-B",
+              "-m",
+              "unittest",
+              "discover",
+              "-s",
+              "/home/dev01/Projects/merlin/bindings/python/tests",
+              "-p",
+              "test_namespaces.py",
+              "-v"
+            ],
+            "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-native",
+            "exit_code": 0,
+            "elapsed_seconds": 0.1672783160029212,
+            "stderr_log": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-native/namespaces-current-reference.stderr"
+          }
+        ],
+        "current_references": [
+          {
+            "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-reference.stdout",
+            "sha256": "b3f5f2d475d6bc7b8c8b1ae89509b5684753c70ab1dc0026236f31315d4f68de"
+          },
+          {
+            "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-current-full-loop.stdout",
+            "sha256": "9635eb71a761244faea67852c547f92ca91b9605c9f4fc0ee117a0924a501714"
+          },
+          {
+            "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-current-transmitter.stdout",
+            "sha256": "08ca0f3aaa3863a9f034262f92ab432d13fda67e2a879fa1e531b9b971ab8dd1"
+          }
+        ],
+        "failure_history": "Prior failed channel expected JSON predates the accepted normalized_power_db field. Original files and failure logs remain intact; current separate Rust references resolve it without changing code, assertions, tolerances or the wheel."
+      },
+      "current_reference_refresh": [
+        {
+          "label": "full-loop",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "run",
+            "-p",
+            "docsis-ofdm-fec",
+            "--locked",
+            "--features",
+            "high-level-api",
+            "--example",
+            "api_full_loop"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 49.4463988810021
+        },
+        {
+          "label": "transmitter",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+            "run",
+            "-p",
+            "docsis-ofdm-fec",
+            "--locked",
+            "--features",
+            "high-level-api",
+            "--example",
+            "api_transmitter_preview"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 4.18785248399945
+        }
+      ],
+      "format_checks": [
+        "Root fmt --all -- --check",
+        "Bindings fmt --manifest-path bindings/python/Cargo.toml -- --check"
+      ],
+      "metadata": [
+        {
+          "label": "strict-matrix",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/api_operation_matrix.py",
+            "--exports",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-rust-exports.json",
+            "--native-exports",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-calibrated-sequence-native/native-exports.json",
+            "--executed-record",
+            "docs/development/features/high-level-api/namespace-test-results.json",
+            "--executed-record",
+            "docs/development/features/pnm-measurement-inputs/decoder-test-results.json",
+            "--executed-record",
+            "docs/development/features/pnm-measurement-inputs/association-test-results.json",
+            "--executed-record",
+            "docs/development/features/high-level-api/operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/high-level-api/python-test-results.json",
+            "--executed-record",
+            "docs/development/features/high-level-api/python-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-01-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-request-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-retention-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-instrument-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-message-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-cell-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-slicer-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-physical-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-sequence-spectrum-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-channel-spectrum-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-02-sweep-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-03-resource-grid-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-recovery-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-response-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-estimate-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-soft-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-04-display-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-05-workbench-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/api-05-project-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-source-compat-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-idle-capacity-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-relative-power-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-unnamed-file-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-worker-budget-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-engine-diagnostic-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-spectrum-budget-operation-test-results.json",
+            "--executed-record",
+            "docs/development/features/unified-qt-workbench/ds-01-calibrated-sequence-operation-test-results.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 8.214112433997798
+        },
+        {
+          "label": "documents",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/feature_documentation.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 10.301284837012645
+        },
+        {
+          "label": "traceability",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/integration_traceability.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 8.324784667987842
+        },
+        {
+          "label": "versions",
+          "command": [
+            "python3",
+            "-B",
+            "tools/release/versions.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.06585639099648688
+        },
+        {
+          "label": "python-guide",
+          "command": [
+            "python3",
+            "-B",
+            "tools/python/update_integration_doc.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.03619812200486194
+        },
+        {
+          "label": "qt-boundary",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/qt_api_boundary.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.2002839339984348
+        },
+        {
+          "label": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.07844954800384585
+        }
+      ]
+    },
+    "not_required": [
+      {
+        "scope": "Qt/QML/desktop rebuild and startup",
+        "reason": "No Qt source, CXX/QML/resource registration, dependencies, project or lifecycle changes. Existing Qt uses public bin/cell observations and a separate TransmitterPreview calibration owner, with legacy full-run spectra still frozen; no Qt call path into the changed FullLoopResult spectrum helpers exists. Its actual adoption requires the following focused Qt unit."
+      },
+      {
+        "scope": "CLI, upstream and project/packaging regressions",
+        "reason": "No affected caller into these directional retained-spectrum helpers was found in CLI/pnm-input/upstream; no dependency, project schema, package/import layout or lifecycle changes. Full applicable regressions remain scheduled gates."
+      },
+      {
+        "scope": "Complete validation-tool unit suites",
+        "reason": "No validator source changes. Strict checks run against the actual fresh export inventories and all execution records; unrelated tool unit suites are deferred to their appropriate complete gate."
+      }
+    ],
+    "deferred": [
+      {
+        "scope": "Complete relevant downstream crate/feature and affected Qt/compatibility integration suites",
+        "gate": "Level 2 UIU-DS-01 acceptance; parent remains unchecked."
+      },
+      {
+        "scope": "Full workspace/doctest/example/analysis, full Qt/QML, complete installed native parity, CLI/project/persistence/packaging regressions as applicable",
+        "gate": "Level 3 major milestones and UIU-QA-01; no full-suite pass claimed."
+      }
+    ],
+    "artifact_reuse": "One newly built wheel was installed and hash-verified. Its exact installed module was retained through reference refresh/retry; no rebuild or reinstall. Existing target/cache/profile/SDK inputs were preserved."
+  },
+  "preservation": {
+    "prior_rust_rows": 571,
+    "current_rust_rows": 572,
+    "prior_native_rows": 545,
+    "current_native_rows": 546,
+    "prior_rows_and_types_preserved": true,
+    "additive_rust_type": {
+      "export": "merlin::downstream::FullLoopCalibratedSequenceSpectrum",
+      "kind": "struct"
+    },
+    "old_native_operation_instances": 953,
+    "prior_native_members_exact_after_removing_only_new_method": true,
+    "root_class_exports": 80,
+    "namespace_class_exports": {
+      "downstream": 79,
+      "upstream": 30,
+      "common": 3
+    }
+  },
+  "numeric_review": "Existing MAX_SPECTRUM_AVERAGES, half-overlap/FFT geometry, electrical conversion and sequence limits remain authoritative and unchanged. New reference/expected values are independent explained fixtures. No UI policy is hardcoded in production backend; final line-by-line numeric audit remains pending.",
+  "failure_history": [
+    "The first four-name Rust filter selected three actual cases; the omitted old-channel case was run successfully with its correct exact name and only actual discovered cases are counted.",
+    "Initial native sequence cases all passed. Existing channel parity failed because a historical Rust expected JSON omitted the already accepted normalized_power_db field. Historical logs/expected files remain untouched. Separate current Rust full-loop/transmitter reference outputs and rerunning the affected channel suite resolve the comparison without code/assertion/tolerance or wheel changes."
+  ],
+  "qt_boundary": "Unchanged at 27 frozen files/96 sites/three scientific dependencies; API prerequisite retires no Qt entry.",
+  "licensing": "Existing Apache Rust/native owners and original notices; no new third-party material or dependencies."
+}

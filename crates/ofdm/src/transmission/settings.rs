@@ -1,9 +1,11 @@
 /*
  * Copyright 2026 DOCSIS OFDM FEC Toolkit contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! PHY I20 Tables38–40 and section7.5.6.1; fixed per-session numerology.
 use crate::{error::invalid, types::FrequencyHz, SimulationError};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 
 /// Fixed downstream sample clock, in samples per second (PHY I20 section7.5.7).
@@ -132,5 +134,41 @@ impl TransmissionSettings {
             ));
         }
         Ok(())
+    }
+}
+
+impl RetainedPayload for TransmissionSettings {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            occupied_bandwidth_hz,
+            subcarrier_spacing,
+            cyclic_prefix_samples,
+            roll_off_samples,
+            time_interleaver_depth,
+        } = self;
+        merlin_api::retention_support::sum([
+            occupied_bandwidth_hz.retained_children(),
+            subcarrier_spacing.retained_children(),
+            cyclic_prefix_samples.retained_children(),
+            roll_off_samples.retained_children(),
+            time_interleaver_depth.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for SubcarrierSpacing {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Khz25 => Some(RetainedFootprint::default()),
+            Self::Khz50 => Some(RetainedFootprint::default()),
+        }
     }
 }

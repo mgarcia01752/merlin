@@ -25,9 +25,13 @@ the current instruction source to canonical requirements and tasks. Its
 session operations and proposed namespaces; final operation/runtime coverage remains
 with the open API and backend acceptance gates.
 
-Future upstream Qt design remains deferred; existing downstream workbench ownership
-is retained. The [source UI design](unified-backend/references/extension-designs-ui.md)
-is historical guidance, not authorization to create a second application.
+The [unified Qt Workbench](unified-qt-workbench/design.md) now owns the authorized
+UI phase, including its [public-API boundary](unified-qt-workbench/api-gap-matrix.md)
+and [official UIU tasks](../checklist.md#unified-qt-workbench-delivery).
+Its [testing strategy](unified-qt-workbench/testing-strategy.md) distinguishes
+focused commits, task acceptance and full integration gates.
+Existing downstream history is retained. The [source UI design](unified-backend/references/extension-designs-ui.md)
+is historical guidance; the unified phase still delivers one native application.
 
 Reference navigation: [development status](../status.md),
 [subordinate UI checklist](../ui-checklist.md),
@@ -176,6 +180,8 @@ record the approved execution and its documentation-only acceptance.
 - **security-checks**: [design.md](security-checks/design.md).
 - **ubuntu-desktop**: [design.md](ubuntu-desktop/design.md) · [local-validation.md](ubuntu-desktop/local-validation.md).
 - **windows-desktop**: [design.md](windows-desktop/design.md) · [validation.md](windows-desktop/validation.md).
+
+- **domain-limits**: [design and acceptance](domain-limits/design.md).
 
 ## Historical source evidence archive
 

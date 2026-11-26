@@ -1,0 +1,148 @@
+# Retained resource metadata
+
+Downstream inputs, controls, requests, sweep plans, results and detached receiver
+archives, and upstream controls, sessions and reports expose passive Rust-owned
+metadata through
+`retained_footprint()`. Rust returns the shared `merlin::common::RetainedFootprint`;
+native Python returns an immutable `merlin.common.RetainedFootprint`. The operation
+does not run simulation, serialize a report or allocate copies of its payload.
+
+This metadata describes one existing Rust owner. It helps an application account
+for accepted inputs, retained results and replaced or queued owners that remain
+alive. It does not reserve resources or provide a bound for a future result.
+The existing downstream `stage` and `stage_inventory` queries additionally
+promise a conservative per-copy envelope: after exact final-capacity normalization,
+each returned Rust payload fits the source result's payload quantity, with zero
+ordered entries/shared roots. See [stage observations](full-loop-observations.md).
+Reserve simultaneous source/query/consumer copies separately; native Python and
+JSON allocations remain outside this Rust envelope.
+Unified Qt aggregate admission remains under implementation.
+
+```mermaid
+flowchart LR
+    Root[Existing directional owner] --> Owner[Read-only Rust ownership walk]
+    Owner --> Bytes[Payload bytes]
+    Owner --> Entries[Ordered-container entries]
+    Owner --> Roots[Shared allocation roots]
+```
+
+| Quantity | Meaning |
+| --- | --- |
+| `payload_bytes` | Fixed owned values and reachable payload storage, including unused Vec/String capacity, cached data and shared pointees. |
+| `ordered_entries` | Ordered-container entries, counted independently of the standard library's private tree-node layout. |
+| `shared_roots` | Shared allocation owner edges; repeated aliases conservatively repeat their pointee payloads and root counts. |
+
+Payload bytes exclude allocator, private tree-node and reference-count bookkeeping.
+They are neither total heap allocation bytes nor process RSS. Quantities depend on
+the compiled target's layout. They exclude temporary execution storage, the Python
+interpreter/wrapper and independently copied consumer projections. Do not use JSON
+length, a process-memory reading or another platform's measurements as a substitute.
+
+Rust users can query an already configured `merlin::upstream::Simulation` or an
+owned `BatchReport`. The independent `docsis_ofdma::api` entry points expose the
+same operations. The report includes retained provenance, configuration, grant
+decisions and private observation caches, including data omitted from serialization.
+Session metadata includes accepted configuration/document and cached playback data.
+
+Downstream users query `FullLoopRequest`, `FullLoopSweepPlan`, `FullLoopResult`
+or `FullLoopReceiverArchive` through `merlin::downstream` or the preserved
+`docsis_ofdm_fec::api` exports. The same native classes are available through
+`merlin.downstream` and their existing root aliases. Metadata includes original
+input/provenance ownership, cached measurement powers, retained stage contexts
+and the private protected pilot cache. Complete and cancelled results retain
+their actual quantities; an absent observation is not fabricated.
+
+Independent downstream `SourceInput`, `NamedCapture`, `CaptureProvenance`,
+`ProfileCapture`, `ChannelEstimate`, `TransmitterPreviewRequest` and
+`TransmitterPreview` owners also expose the operation. The native-input adapter's
+`pnm_input::RxMerDesign` includes its original envelope, typed baseline/recipe and
+cached materialized observation. These quantities cover independently retained
+inputs and idle previews before a full-loop request exists.
+
+Downstream `FullLoopControl` and `TransmitterPreviewControl`, and upstream
+`RunControl`, also expose `retained_footprint()`. Each downstream control includes
+its private shared state and separate common cancellation atomic, with two shared
+roots and no ordered entries. The upstream control includes its private shared
+state with one root; `with_cancellation` additionally includes the common atomic
+and one root. Inline handles and synchronization fields are counted once.
+Clones report the same conservative quantities regardless of the number of aliases.
+Queries preserve idle, pause-request, running and terminal state and never claim a
+job, read a clock or change cancellation. Upstream progress/pause locks are short
+and taken separately. The common stop token has no new inherent operation.
+
+For example, Rust calls
+`merlin::downstream::FullLoopControl::new().retained_footprint()?`; Python calls
+`merlin.downstream.FullLoopControl().retained_footprint()` and reads the same three
+properties. The existing native classes and legacy root aliases are preserved.
+The [direct Rust control example](../../../crates/cli/examples/control_footprints.rs)
+compares all three directional controls without adding dependencies to the facade.
+
+Python exposes the method on its existing source, profile, response, preview and
+Designer classes. Rust's `NamedCapture` is represented by name/bytes arguments in
+Python; `CaptureProvenance` becomes a copied dictionary. There are no separate
+Python owner classes for those two Rust types. Charge application dictionaries,
+JSON documents, source bytes and view copies separately.
+
+Receiver archive metadata is separate from the existing
+`archive.info().retained_bytes` statistic (Python `archive.info['retained_bytes']`).
+That historical statistic and its copy policy retain their length-based scope.
+Cloning an owner may shrink Vec/String spare capacity, so equal scientific
+contents do not guarantee equal resource quantities after an arbitrary clone.
+
+Python users call `simulation.retained_footprint()` or
+`report.retained_footprint()` and read the three properties. These are copies of
+Rust-computed quantities; Python performs no sizing. Native measurement releases
+the interpreter lock. A session executing in another thread raises the existing
+structured `Busy` error; its immutable reports remain independently measurable.
+Checked arithmetic overflow raises the existing `ResourceLimit` category instead
+of returning an underestimated footprint. A returned metadata value remains valid
+after its source session/report is released.
+
+Existing downstream exports, root Python `merlin.Simulation`, saved project bytes,
+scientific limits and historical archive statistics retain their meaning.
+Aggregate retention includes simultaneous copy source/target and candidate
+owners. Temporary backend builders and numerical scratch have separate finite
+execution limits, without an aggregate scratch-byte/RSS guarantee.
+The downstream archive has a paired preflight and capacity-controlled copy:
+`result.receiver_archive_retained_bound(policy)` and
+`result.receiver_archive_bounded(...)`. They use the same common quantities;
+see [detached histories](full-loop-cells.md#detached-independent-histories) for
+Rust/Python argument order and the caller's independent reservation obligation.
+Native Python's immutable constructor mirrors the existing Rust struct literal.
+Negative or oversized target-usize constructor arguments reject during native
+conversion; constructing a value performs no measurement or reservation.
+
+## Admit future simulation outputs
+
+An existing-owner footprint cannot reserve an output that has not been produced.
+The paired operations below freeze finite destination snapshots, compute checked
+bounds and check all three caller limits before control admission or source/RNG
+progress. They retain the existing scientific execution, cancellation and partial
+results. Final retained buffers have enforced capacities; completed science is
+not discarded by a late oversized-result error.
+
+| Owner | Rust preflight / bounded operation | Native Python |
+| --- | --- | --- |
+| Downstream `FullLoopRequest` | `result_retained_bound()` / `run_bounded(&control, limit)` | `result_retained_bound()` / `run_bounded(limit, control=None)` |
+| Upstream `Simulation` | `batch_report_retained_bound()` / `run_with_control_bounded(&control, limit)` | `batch_report_retained_bound()` / `run_with_control_bounded(control, limit)` |
+| Downstream `TransmitterPreviewRequest` | `preview_retained_bound()` / `generate_bounded(&control, limit)` | `preview_retained_bound()` / `generate_bounded(limit, control=None)` |
+
+For example, after the application reserves the quantities returned by the
+request, Rust calls `request.run_bounded(&control, required)?`; Python calls
+`request.run_bounded(required, control)`. Insufficient limits return structured
+`ResourceLimit` before the token starts. Rejection preserves accepted settings,
+original bytes and old results. Upstream native calls retain the existing
+short-held session lease and Busy behavior; long work releases the interpreter.
+Legacy `run`, `run_with_control` and `generate` retain their behavior.
+
+The preflight itself may allocate bounded preparation snapshots and source
+exports. Those builders and numerical scratch use separate finite execution
+policies. A bound is target-layout metadata, not an application reservation.
+Charge accepted inputs/requests, old outputs, queued results and simultaneous
+copy source/target owners independently until their final release. Consumer
+JSON, dictionaries and view copies are separate owners as well. Recompute the
+bound if an upstream session's accepted configuration/options change.
+
+Actual aggregate Qt host admission remains integration work. See the [API guide](README.md),
+[upstream sessions](../upstream/session.md) and
+[approved retention contract](../../development/features/unified-qt-workbench/retention-contract-decision.md).

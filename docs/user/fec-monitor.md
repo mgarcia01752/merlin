@@ -26,6 +26,9 @@ independent source comparison. BER uses scientific notation (for example
 `5.314e-4`), with zero shown as `0` and unavailable BER as a dash. Formatting
 preserves the full underlying numeric value. These totals
 can differ from the observation counters because their counting scopes differ.
+The public Rust recovery result supplies these counts; the monitor only formats
+the bar and labels. Inspecting or selecting a profile does not recalculate FEC
+or change the retained result.
 A decoder-accepted payload without compared source bits is not proof of matching
 source data; inspect compared bits and BER alongside the recovery bar.
 

@@ -1,9 +1,11 @@
 /*
  * Copyright 2026 DOCSIS OFDM Channel Sim contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Explicit producer compatibility, independent of binary PNM format revisions.
 use crate::SimulationError;
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 
 /// Decoder compatibility revision implemented by this adapter.
@@ -39,5 +41,24 @@ impl DecoderContract {
             ));
         }
         Ok(())
+    }
+}
+
+impl RetainedPayload for DecoderContract {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            revision,
+            producer,
+            producer_version,
+        } = self;
+        merlin_api::retention_support::sum([
+            revision.retained_children(),
+            producer.retained_children(),
+            producer_version.retained_children(),
+        ])
     }
 }

@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -10,6 +11,10 @@ use crate::{
     error::{invalid, limit},
     types::Iq,
     PhyResult,
+};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
 };
 use serde::Serialize;
 
@@ -66,6 +71,38 @@ impl MatchedMer {
             MerValue::ZeroError
         } else {
             MerValue::FiniteDb(10.0 * (self.reference_energy.log10() - self.error_energy.log10()))
+        }
+    }
+}
+
+impl RetainedPayload for MatchedMer {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            pairs,
+            reference_energy,
+            error_energy,
+        } = self;
+        sum([
+            pairs.retained_children(),
+            reference_energy.retained_children(),
+            error_energy.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for MerValue {
+    /// Audits every inline availability state without recomputing any metric.
+    ///
+    /// # Returns
+    /// Zero dynamic children for the current fixed-value variants.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Unavailable | Self::ZeroError => Some(RetainedFootprint::default()),
+            Self::FiniteDb(value) => value.retained_children(),
         }
     }
 }

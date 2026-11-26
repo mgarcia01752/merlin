@@ -4,6 +4,7 @@
  */
 //! Explicit magnitude-only additional loss; measured observations remain immutable.
 use crate::{error::invalid, types::FrequencyHz, SimulationError};
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 
 /// Cable-distance entry units; the serialized value retains the user's selection.
@@ -141,5 +142,54 @@ impl AdditionalLoss {
             ));
         }
         Ok(gain)
+    }
+}
+
+impl RetainedPayload for AdditionalLoss {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Off => Some(RetainedFootprint::default()),
+            Self::Manual { tilt_db } => {
+                merlin_api::retention_support::sum([tilt_db.retained_children()])
+            }
+            Self::Cable {
+                cable,
+                length,
+                unit,
+            } => merlin_api::retention_support::sum([
+                cable.retained_children(),
+                length.retained_children(),
+                unit.retained_children(),
+            ]),
+        }
+    }
+}
+
+impl RetainedPayload for CableModel {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Belden1694aV1 => Some(RetainedFootprint::default()),
+        }
+    }
+}
+
+impl RetainedPayload for LengthUnit {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Feet => Some(RetainedFootprint::default()),
+            Self::Metres => Some(RetainedFootprint::default()),
+        }
     }
 }

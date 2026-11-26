@@ -114,7 +114,13 @@ class WorkbenchTests(unittest.TestCase):
 
     def test_other_python_thread_can_cancel_and_later_profiles_are_not_started(self):
         """GIL release lets a caller cancel native work and retain all profile entries."""
-        wb = m.Workbench.from_file(WB)
+        # The bundled 1 ms experiment may finish before the 50 ms
+        # cancellation request. Keep real work pending, with a 1 s safety
+        # deadline if cancellation/GIL handling regresses.
+        document = json.loads(WB.read_bytes())
+        document["receiver"]["duration_ms"] = 1000
+        document["receiver"]["max_runtime_ms"] = 1000
+        wb = m.Workbench.from_bytes(json.dumps(document).encode())
         control = m.RunControl()
         def stop():
             time.sleep(0.05)

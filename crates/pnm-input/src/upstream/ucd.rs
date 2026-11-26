@@ -9,16 +9,20 @@
 //!
 //! Bytes start at DA and stop before CRC. Structural admission does not prove
 //! channel conformance, associate a CM or supply an executable configuration.
-use super::{bounded_json, ApiError, ApiResult, CaptureFailure};
+use super::{
+    bounded_json,
+    constants::{MAX_CAPTURE_SOURCE_BYTES, UCD_LENGTH_ORIGIN},
+    ApiError, ApiResult, CaptureFailure,
+};
 use serde::Serialize;
 use sha2::{Digest, Sha256};
 use std::sync::Arc;
 
 // Figure 30: DA + SA + length precede the message-length-covered region.
-const LENGTH_ORIGIN: usize = 14;
+const LENGTH_ORIGIN: usize = UCD_LENGTH_ORIGIN;
 const HEADER_BYTES: usize = 20;
 const UCD_FIXED_END: usize = HEADER_BYTES + 4;
-const MAX_CAPTURE_BYTES: usize = LENGTH_ORIGIN + u16::MAX as usize;
+const MAX_CAPTURE_BYTES: usize = MAX_CAPTURE_SOURCE_BYTES;
 // Application allocation policy, counting burst wrappers and nested attributes.
 const MAX_TLVS: usize = 1024;
 const OFDMA_BURST_TYPE: u8 = 23;
@@ -226,6 +230,41 @@ impl UcdCapture {
             channel_parameters,
             bursts,
         })
+    }
+
+    /// Imports a lossless source envelope through the original binary decoder.
+    ///
+    /// Loading never associates or executes a capture. The returned snapshot owns
+    /// the original binary bytes; callers retain outer delivery JSON separately.
+    ///
+    /// # Arguments
+    /// * `bytes` - Complete UTF-8 capture-source JSON, at most 1 MiB.
+    ///
+    /// # Returns
+    /// An immutable capture with the same original bytes and observations as
+    /// direct binary admission, independent of the caller's input buffer.
+    ///
+    /// # Errors
+    /// Rejects malformed/versioned/wrong-family envelopes, resource excess and
+    /// count/hash mismatches at the envelope boundary. Binary errors retain their
+    /// original category, field and offset. Inspection-only JSON is not accepted.
+    pub fn from_source_json(bytes: &[u8]) -> ApiResult<Self> {
+        let original = super::source_json::decode(bytes, super::source_json::CaptureKind::Ucd)?;
+        Self::from_mac_management(&original)
+    }
+
+    /// Exports the exact binary snapshot in a versioned lossless source envelope.
+    ///
+    /// The existing inspection-only `to_json` output remains separate and unchanged.
+    /// No configuration, association or scientific result is fabricated.
+    ///
+    /// # Returns
+    /// Owned JSON text containing the original bytes, byte count and SHA-256.
+    ///
+    /// # Errors
+    /// Returns a structured capture error if transport bounds or serialization fail.
+    pub fn to_source_json(&self) -> ApiResult<String> {
+        super::source_json::encode(self.original_bytes(), super::source_json::CaptureKind::Ucd)
     }
 
     /// Borrows exact original management-message bytes for this snapshot's life.

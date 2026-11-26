@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -11,12 +12,17 @@ use crate::{
     configuration::{ReceiverConfig, UsConfiguration},
     error::{invalid, limit},
     grant::{select, GrantPlan},
+    instruments::soft::store::{SoftCellMetrics, SoftFrameContext},
     resources::{Cell, CellRole, ResourcePlan},
     signal_processing::{equalize, estimate, max_log, Transform},
     types::{Identity, Iq, SampleBlock},
     PhyError, PhyResult,
 };
 use fec_codec::upstream_ldpc::{DecodeResult, LdpcCodec, LdpcSettings};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::Serialize;
 use std::sync::Arc;
 
@@ -69,6 +75,7 @@ pub struct Receiver {
     last_grid: Option<Vec<Iq>>,
     last_corrected: Vec<Iq>,
     last_cells: Vec<(Cell, Option<Iq>)>,
+    receiver_estimates: Option<crate::instruments::receiver::ReceiverEstimateStore>,
 }
 
 impl Receiver {
@@ -121,6 +128,7 @@ impl Receiver {
             last_grid: None,
             last_corrected: Vec::new(),
             last_cells: Vec::new(),
+            receiver_estimates: None,
         })
     }
     /// Accepts an explicit finite receive observation interval independently of B.
@@ -247,6 +255,18 @@ impl Receiver {
         &self.last_cells
     }
 
+    /// Transfers the optional bounded observer without changing scientific receiver state.
+    /// # Arguments
+    /// * `store` - Aggregate retained history from earlier grants, or None to detach it.
+    /// # Returns
+    /// Previously attached history, including completed frames before cancellation or failure.
+    pub(crate) fn replace_estimate_store(
+        &mut self,
+        store: Option<crate::instruments::receiver::ReceiverEstimateStore>,
+    ) -> Option<crate::instruments::receiver::ReceiverEstimateStore> {
+        std::mem::replace(&mut self.receiver_estimates, store)
+    }
+
     fn total_symbols(&self) -> usize {
         if self.plan.transmit {
             self.config.grant().frames * self.config.waveform().frame_symbols()
@@ -350,8 +370,29 @@ impl Receiver {
                 self.last_corrected.push(value);
             }
             self.last_cells.push((cell.clone(), corrected));
-            let soft = max_log(cell.loading, corrected, self.policy.variance())?;
-            let soft = self.mask.apply_llrs(&soft)?;
+            let demapper_llrs = max_log(cell.loading, corrected, self.policy.variance())?;
+            let soft = self.mask.apply_llrs(&demapper_llrs)?;
+            let soft_context = SoftFrameContext {
+                identity: self.identity,
+                frame: self.config.grant().first_frame + self.frames as u64,
+                reference_variance: self.policy.variance(),
+            };
+            if let Some(observer) = self
+                .receiver_estimates
+                .as_mut()
+                .and_then(|store| store.soft.as_mut())
+            {
+                observer.record_cell(
+                    soft_context,
+                    cell,
+                    self.coded_offset,
+                    corrected,
+                    SoftCellMetrics {
+                        demapper: &demapper_llrs,
+                        descrambled: &soft,
+                    },
+                );
+            }
             for llr in soft {
                 if let Some(word) = self.plan.codewords.get(self.next_word) {
                     self.word_llrs.push(llr);
@@ -373,19 +414,41 @@ impl Receiver {
                         let fill_valid = decoded.information_bits[payload_count..]
                             .iter()
                             .all(|bit| *bit == 1);
-                        output.push(DecodedWord {
+                        let decoded_word = DecodedWord {
                             ordinal: self.next_word,
                             payload_offset: word.information_offset,
                             payload: decoded.information_bits[..payload_count].to_vec(),
                             information_fill_valid: fill_valid,
                             decoded,
-                        });
+                        };
+                        if let Some(observer) = self
+                            .receiver_estimates
+                            .as_mut()
+                            .and_then(|store| store.soft.as_mut())
+                        {
+                            observer.record_word(
+                                soft_context,
+                                word,
+                                &decoded_word,
+                                &self.word_llrs,
+                            );
+                        }
+                        output.push(decoded_word);
                         self.next_word += 1;
                         self.word_llrs.clear();
                     }
                 }
                 self.coded_offset += 1;
             }
+        }
+        if let Some(store) = &mut self.receiver_estimates {
+            store.record(
+                &self.config,
+                self.identity,
+                self.config.grant().first_frame + self.frames as u64,
+                self.policy.estimator(),
+                estimates,
+            );
         }
         self.frames += 1;
         self.frame.clear();
@@ -394,5 +457,44 @@ impl Receiver {
             return Err(invalid("receiver.capacity"));
         }
         Ok(false)
+    }
+}
+
+impl RetainedPayload for DecodedWord {
+    /// Visits payload and external codec decisions without decoding or cloning.
+    ///
+    /// # Returns
+    /// Checked complete vector capacities; the foreign codec result's fixed bytes
+    /// are already inline in this word and its enclosing root/container.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            ordinal,
+            payload_offset,
+            payload,
+            information_fill_valid,
+            decoded,
+        } = self;
+        let DecodeResult {
+            information_bits,
+            mother_codeword,
+            iterations,
+            converged,
+            parity_valid,
+            shortened_zeros_valid,
+            hard_decision_changes,
+        } = decoded;
+        sum([
+            ordinal.retained_children(),
+            payload_offset.retained_children(),
+            payload.retained_children(),
+            information_fill_valid.retained_children(),
+            information_bits.retained_children(),
+            mother_codeword.retained_children(),
+            iterations.retained_children(),
+            converged.retained_children(),
+            parity_valid.retained_children(),
+            shortened_zeros_valid.retained_children(),
+            hard_decision_changes.retained_children(),
+        ])
     }
 }

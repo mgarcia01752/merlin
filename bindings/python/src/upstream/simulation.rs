@@ -1,11 +1,15 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
  * Changes: local facade/input ownership and public namespace.
  */
 //! Short-held session slot, Rust worker and cooperative interpreter signal stop.
+mod grid;
+mod receiver_observations;
+mod response;
 use super::{
     api,
     configuration::{PyConfig, PyOptions},
@@ -40,6 +44,25 @@ impl PyControl {
         };
         Self(control)
     }
+    /// Measures the existing Rust control and optional common cancellation child.
+    ///
+    /// # Returns
+    /// Immutable payload/entry/root quantities; releases the interpreter while
+    /// Rust takes short separate progress/pause locks without advancing state.
+    /// Python projections and private allocator/refcount bookkeeping are excluded.
+    ///
+    /// # Errors
+    /// Preserves structured Rust ResourceLimit and its retained_footprint field
+    /// through the existing upstream domain-to-ApiError conversion.
+    fn retained_footprint(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        py.detach(|| self.0.retained_footprint())
+            .map(crate::retention::PyRetainedFootprint)
+            .map_err(error)
+    }
+
     /// Requests cooperative cancellation without discarding completed science.
     ///
     /// Returns None immediately; the Rust worker observes a safe boundary.
@@ -101,6 +124,16 @@ impl Drop for SessionLease {
 }
 
 impl PySimulation {
+    /// Owns an already configured idle public session without executing or rebuilding it.
+    /// # Arguments
+    /// * `session` - Independent public Rust session admitted by the project adapter.
+    /// # Returns
+    /// Native session slot with the existing Busy, cancellation and worker behavior.
+    pub(crate) fn from_native(session: api::Simulation) -> Self {
+        Self {
+            state: Arc::new(Mutex::new(Some(session))),
+        }
+    }
     fn access<T>(
         &self,
         operation: impl FnOnce(&mut api::Simulation) -> api::ApiResult<T>,
@@ -118,7 +151,12 @@ impl PySimulation {
         let session = slot.as_mut().ok_or_else(|| error(busy()))?;
         py.detach(|| operation(session)).map_err(error)
     }
-    fn execute(&self, py: Python<'_>, control: api::RunControl) -> PyResult<PyBatchReport> {
+    fn execute(
+        &self,
+        py: Python<'_>,
+        control: api::RunControl,
+        limit: Option<merlin::common::RetainedFootprint>,
+    ) -> PyResult<PyBatchReport> {
         let session = {
             self.state
                 .try_lock()
@@ -135,7 +173,10 @@ impl PySimulation {
         let worker_control = control.clone();
         let worker = std::thread::spawn(move || {
             let result = match lease.session.as_mut() {
-                Some(session) => session.run_with_control(&worker_control),
+                Some(session) => match limit {
+                    Some(limit) => session.run_with_control_bounded(&worker_control, limit),
+                    None => session.run_with_control(&worker_control),
+                },
                 None => Err(api::ApiError::AdapterFailure("native session unavailable")),
             };
             drop(lease);
@@ -146,7 +187,9 @@ impl PySimulation {
                 receiver
                     .lock()
                     .unwrap_or_else(|poison| poison.into_inner())
-                    .recv_timeout(Duration::from_millis(20))
+                    .recv_timeout(Duration::from_millis(
+                        crate::constants::WORKER_SIGNAL_POLL_MS,
+                    ))
             }) {
                 Ok(result) => {
                     let joined = py.detach(|| worker.join());
@@ -188,6 +231,22 @@ impl PySimulation {
             })
             .map_err(error)
     }
+    /// Measures the idle Rust session's actual retained payload without execution.
+    ///
+    /// # Returns
+    /// Immutable target-layout metadata; excludes Python and allocator bookkeeping.
+    ///
+    /// # Errors
+    /// Preserves Busy while another operation owns the session, and the Rust
+    /// ResourceLimit category if checked footprint arithmetic overflows.
+    fn retained_footprint(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        self.access_long(py, |session| session.retained_footprint())
+            .map(crate::retention::PyRetainedFootprint)
+    }
+
     /// Atomically accepts `config` through the public Rust API while idle.
     ///
     /// Returns None; rejection preserves settings and competing runs report Busy.
@@ -225,6 +284,13 @@ impl PySimulation {
     fn set_options(&self, options: PyRef<'_, PyOptions>) -> PyResult<()> {
         self.access(|session| session.set_options(options.0.clone()))
     }
+    /// Returns an owned immutable snapshot of the actual accepted runtime options.
+    ///
+    /// The snapshot can configure another session and survives later changes or
+    /// disposal. No source is advanced; competing native runs report Busy.
+    fn options(&self) -> PyResult<PyOptions> {
+        self.access(|session| Ok(PyOptions(session.options().clone())))
+    }
     /// Returns an owned accepted configuration or None while unconfigured.
     ///
     /// Competing runs return Busy; the immutable snapshot survives later calls.
@@ -248,7 +314,7 @@ impl PySimulation {
     /// Returns BatchReport. SIGINT requests cooperative stop and returns its partial
     /// report; session ownership is restored before this operation returns.
     fn run(&self, py: Python<'_>) -> PyResult<PyBatchReport> {
-        self.execute(py, api::RunControl::new())
+        self.execute(py, api::RunControl::new(), None)
     }
     /// Runs using independently shareable `control`, releasing the interpreter.
     ///
@@ -259,12 +325,58 @@ impl PySimulation {
         py: Python<'_>,
         control: PyRef<'_, PyControl>,
     ) -> PyResult<PyBatchReport> {
-        self.execute(py, control.0.clone())
+        self.execute(py, control.0.clone(), None)
+    }
+
+    /// Bounds the future report without claiming a run ID or advancing science.
+    ///
+    /// # Returns
+    /// Immutable Rust payload/entry/root reservation. Accepted session, old and
+    /// queued owners remain separate; temporary builders/scratch have finite policies.
+    ///
+    /// # Errors
+    /// Preserves Busy, configuration and checked ResourceLimit categories.
+    fn batch_report_retained_bound(
+        &self,
+        py: Python<'_>,
+    ) -> PyResult<crate::retention::PyRetainedFootprint> {
+        self.access_long(py, |session| session.batch_report_retained_bound())
+            .map(crate::retention::PyRetainedFootprint)
+    }
+
+    /// Admits retained target dimensions before the original upstream execution.
+    ///
+    /// # Arguments
+    /// * `control` - Existing shareable direction-specific lifecycle token.
+    /// * `limit` - Caller-reserved payload bytes, ordered entries and shared roots.
+    ///
+    /// # Returns
+    /// Actual complete/partial report with capacity-controlled final storage;
+    /// existing session lease, GIL release and interpreter cancellation are reused.
+    ///
+    /// # Errors
+    /// Rust ResourceLimit before run-ID/control claim for insufficient quantities;
+    /// preserves Busy, configuration and native transport errors.
+    fn run_with_control_bounded(
+        &self,
+        py: Python<'_>,
+        control: PyRef<'_, PyControl>,
+        limit: &crate::retention::PyRetainedFootprint,
+    ) -> PyResult<PyBatchReport> {
+        self.execute(py, control.0.clone(), Some(limit.0))
     }
 }
 
+/// Registers direction controls, owned resource snapshots and the existing native session.
+/// # Arguments
+/// * `module` - Existing private upstream conversion namespace; registration starts no work.
+/// # Returns
+/// Unit after real native types are registered.
+/// # Errors
+/// Propagates Python type/module allocation and registration failures.
 pub(crate) fn register(module: &Bound<'_, PyModule>) -> PyResult<()> {
     module.add_class::<PyControl>()?;
+    module.add_class::<grid::PyResourceGridSnapshot>()?;
     module.add_class::<PySimulation>()?;
     Ok(())
 }

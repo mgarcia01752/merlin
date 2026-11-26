@@ -14,6 +14,20 @@ flowchart LR
     Context --> PHY[Typed upstream configuration]
 ```
 
+Each typed capture also supports `from_source_json` and `to_source_json` for a
+lossless source envelope. This transport includes the original binary bytes, their
+exact byte count and SHA-256. It is separate from the existing inspection-only
+`to_json`, which cannot be imported as an original capture. The source format is
+`merlin.upstream.capture-source`, schema 1, with an exact `capture_kind` of `ucd`,
+`rxmer` or `pre_eq`. The typed importer checks the envelope before invoking the
+same binary decoder. Text is bounded to 1 MiB; the binary family limits remain
+unchanged. Duplicate/unknown fields, wrong identities and inconsistent counts or
+hashes fail explicitly. Loading still supplies no association or executable plan.
+
+The returned snapshot owns decoded original **binary** bytes. Applications keep
+an imported JSON file's delivery bytes and delivery hash separately when source
+formatting is evidence. Neither representation replaces the other.
+
 UCD inspection accepts management envelopes starting at DA and excluding CRC.
 Multipart reassembly requires a complete ordered set with consistent identity;
 its canonical assembled view is derived data. Callers retain each physical

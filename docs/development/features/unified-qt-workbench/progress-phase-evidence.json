@@ -1,0 +1,305 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Public downstream progress phase reachability",
+  "status": "API prerequisite accepted; Qt consumer and parent incomplete",
+  "base_commit": "ea6e2c7b66d73e019ad33ebe846a30b7e70eaa5c",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-07",
+    "REQ-UIU-09",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-source-ownership",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "crates/ofdm/src/api/full_loop/control.rs",
+      "sha256": "99dc0276af8f15d67392f7ab61fd228cdf903ccc58cab66d2aa2f5a578c3d4b1"
+    },
+    {
+      "path": "crates/merlin/tests/namespaces.rs",
+      "sha256": "cf1c1f571f6a5c1343b4106515767d7796778ec406ff43ec729f63b3d3088c3a"
+    },
+    {
+      "path": "bindings/python/tests/test_full_loop.py",
+      "sha256": "2b700b74a6c00ceaec438ebfd6640a20218235de2f2995156259f470da65ca79"
+    }
+  ],
+  "contract": {
+    "rust_type": "merlin::downstream::ChannelPhase",
+    "owner": "crates/ofdm/src/simulation/channel/results.rs",
+    "same_nominal_owner_and_serialization": true,
+    "native_mapping": "FullLoopControl.snapshot()[\"progress\"][\"phase\"] remains a snake-case string when actual progress is present. No new Python class or callable.",
+    "unchanged_variants": [
+      "Acquisition",
+      "Observation",
+      "Completion",
+      "InterleaverDrain",
+      "Finished",
+      "Failed"
+    ]
+  },
+  "validation": {
+    "rust_passed": 4,
+    "installed_native_passed": 10,
+    "metadata_passed": 38,
+    "cargo_checks": [
+      {
+        "label": "fmt",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.2819801930018002
+      },
+      {
+        "label": "facade",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "-p",
+          "merlin",
+          "--test",
+          "namespaces",
+          "--locked",
+          "downstream_exports_keep_exact_legacy_nominal_types_and_idle_behavior",
+          "--",
+          "--exact"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 16.963615347995074
+      },
+      {
+        "label": "control",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "test",
+          "-p",
+          "docsis-ofdm-fec",
+          "--features",
+          "high-level-api",
+          "--locked",
+          "--test",
+          "api_full_loop",
+          "--",
+          "--exact",
+          "complete_request_matches_existing_job_and_preserves_originals_and_fec",
+          "acknowledged_pause_resume_cancel_retains_completed_comparisons",
+          "initial_pause_and_precancel_preserve_zero_completed_trials_and_file_output_is_exact"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 40.677792004993535
+      },
+      {
+        "label": "clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "clippy",
+          "-p",
+          "docsis-ofdm-fec",
+          "-p",
+          "merlin",
+          "--features",
+          "merlin/native-input",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 13.484664243995212
+      },
+      {
+        "label": "wheel",
+        "command": [
+          "/home/dev01/Projects/merlin/local/api-python-build/bin/python",
+          "-m",
+          "maturin",
+          "build",
+          "--manifest-path",
+          "bindings/python/Cargo.toml",
+          "--release",
+          "--locked",
+          "--compatibility",
+          "linux",
+          "--interpreter",
+          "/usr/bin/python3",
+          "--out",
+          "local/python-wheels-ds-progress-phase"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 48.24643038400973
+      },
+      {
+        "label": "rustdoc",
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "doc",
+          "--workspace",
+          "--no-deps",
+          "--locked",
+          "--features",
+          "merlin/native-input"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.897857146992465
+      },
+      {
+        "label": "rust-inventory",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/rust_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-progress-phase-rust-exports.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 3.5979287380032474
+      }
+    ],
+    "installed": {
+      "status": "passed",
+      "wheel": "/home/dev01/Projects/merlin/local/python-wheels-ds-unnamed-file/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+      "wheel_sha256": "cd00b061bdeb88a078bbb6c76459d6719c997da4abda2d9165cff7bd7af483ac",
+      "commands": [
+        {
+          "label": "install",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-progress-phase-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "pip",
+            "install",
+            "--no-index",
+            "--no-deps",
+            "/home/dev01/Projects/merlin/local/python-wheels-ds-unnamed-file/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-progress-phase-native",
+          "exit_code": 0,
+          "elapsed_seconds": 1.0426892450050218
+        },
+        {
+          "label": "full-loop",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-progress-phase-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_full_loop.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-progress-phase-native",
+          "exit_code": 0,
+          "elapsed_seconds": 5.915600407999591
+        },
+        {
+          "label": "namespaces",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-progress-phase-native/installed/bin/python",
+            "-I",
+            "-B",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "/home/dev01/Projects/merlin/bindings/python/tests",
+            "-p",
+            "test_namespaces.py",
+            "-v"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-progress-phase-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.11405681900214404
+        },
+        {
+          "label": "native-inventory",
+          "command": [
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-progress-phase-native/installed/bin/python",
+            "-I",
+            "-B",
+            "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+            "--output",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-progress-phase-native/native-exports.json"
+          ],
+          "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-progress-phase-native",
+          "exit_code": 0,
+          "elapsed_seconds": 0.12939215799269732
+        }
+      ],
+      "reused_reference": {
+        "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-relative-power-full-loop-reference.stdout",
+        "sha256": "9635eb71a761244faea67852c547f92ca91b9605c9f4fc0ee117a0924a501714",
+        "scope": "Historical exact Rust full-loop process reference reused; scientific implementation and reference settings are unchanged by the nominal enum re-export."
+      }
+    },
+    "native_artifact": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-progress-phase-native/installed/lib/python3.10/site-packages/merlin/_native.cpython-310-x86_64-linux-gnu.so",
+    "native_sha256": "806f23f7ede0affd833c75b71af630c4ea2fc585997242fec9e8508266978cc4",
+    "exact_cases": "docs/development/features/unified-qt-workbench/ds-01-progress-phase-operation-test-results.json",
+    "strict_inventory": {
+      "rust_operation_rows": 567,
+      "native_operation_rows": 540,
+      "old_rows_unchanged": true,
+      "native_type_exports_unchanged": true,
+      "added_type_exports": [
+        {
+          "export": "merlin::downstream::ChannelPhase",
+          "kind": "enum"
+        }
+      ]
+    }
+  },
+  "scope_limits": [
+    "The direct Rust full-loop reference is explicitly reused with its retained hash in installed results; no new reference-process execution claimed.",
+    "No Qt, scientific implementation, binding runtime, manifest, lock, saved schema or original frozen boundary changes.",
+    "No full workspace gate repeated for a nominal re-export. Parent DS-01, Qt wall-time adoption and final line-by-line numeric audit remain pending."
+  ],
+  "local_evidence": [
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-progress-phase-checks.json",
+      "sha256": "499be76b26593750d10cac9f2e0594c3256fc35b72db35aaa4ee05aed185bf26"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-progress-phase-native/results.json",
+      "sha256": "8e63cfadf1dfafd17335a93d557b0fba10bf9581e2b6f64b404f1d6631fb2b25"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-progress-phase-native/native-exports.json",
+      "sha256": "f7a67f34344b2dbe36e80844d279c0da3bd49369df27f44c290a1a367194c631"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-progress-phase-rust-exports.json",
+      "sha256": "6ad2577e1a1118e403d76f8f8e44c92f54a11905b619c4bf68aae93b55d97a4f"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-progress-phase-strict-matrix.log",
+      "sha256": "5ee97406b6df37884cb1422debe5ca007d8277fbeeaefd9d58287ff53d9f2621"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-progress-phase-metadata.log",
+      "sha256": "0aa5fa4a9583535355a20590e993dd9607a9c4978ddbe9b0ea2ddbef0ee8aff5"
+    }
+  ],
+  "validation_correction": {
+    "scope": "The earlier narrative incorrectly described the phase native acceptance as a freshly built source wheel. The fresh environment actually installed the prior unnamed-file wheel; all ten recorded tests passed against that artifact. Its runtime was unchanged by the Rust-only nominal phase re-export, but this is compatibility reuse, not fresh-build evidence.",
+    "actual_prior_wheel": "/home/dev01/Projects/merlin/local/python-wheels-ds-unnamed-file/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "actual_prior_wheel_sha256": "cd00b061bdeb88a078bbb6c76459d6719c997da4abda2d9165cff7bd7af483ac",
+    "prior_native_sha256": "806f23f7ede0affd833c75b71af630c4ea2fc585997242fec9e8508266978cc4",
+    "original_receipts_preserved": true,
+    "current_fresh_revalidation": "docs/development/features/unified-qt-workbench/worker-budget-progress-evidence.json",
+    "current_fresh_native_sha256": "8d23b654be16ea417d5b29d26af0577a3670fb4cc01c56b18d47a73d28afd305",
+    "scope_of_current_revalidation": "The exact newly built archive matches the installed module; all eight full-loop and four namespace cases pass, including original finished-phase and unchanged snapshot-shape checks. No retrospective source-wheel run is claimed."
+  }
+}

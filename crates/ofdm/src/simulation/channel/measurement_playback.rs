@@ -15,6 +15,7 @@ use crate::{
     transmission::{layout::CarrierLayout, TransmissionSettings},
     SimulationError,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
@@ -286,5 +287,116 @@ impl MeasurementPlayback {
             second_source: second,
             second_weight: weight,
         }
+    }
+}
+
+impl RetainedPayload for PlaybackConfiguration {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            profile,
+            frames,
+            mode,
+            interval_symbols,
+            tolerance_seconds,
+        } = self;
+        merlin_api::retention_support::sum([
+            profile.retained_children(),
+            frames.retained_children(),
+            mode.retained_children(),
+            interval_symbols.retained_children(),
+            tolerance_seconds.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for MeasurementPlayback {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            frames,
+            powers,
+            average,
+            mode,
+            interval_symbols,
+            settings,
+        } = self;
+        merlin_api::retention_support::sum([
+            frames.retained_children(),
+            powers.retained_children(),
+            average.retained_children(),
+            mode.retained_children(),
+            interval_symbols.retained_children(),
+            settings.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for PlaybackMode {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        match self {
+            Self::Single => Some(RetainedFootprint::default()),
+            Self::Average => Some(RetainedFootprint::default()),
+            Self::Hold => Some(RetainedFootprint::default()),
+            Self::Interpolate => Some(RetainedFootprint::default()),
+        }
+    }
+}
+
+#[cfg(test)]
+mod retained_footprint_tests {
+    use super::{MeasurementPlayback, PlaybackMode};
+    use crate::{scenario::RxMerFrame, transmission::TransmissionSettings};
+    use merlin_api::retention_support::retained_footprint;
+    use std::{mem::size_of, sync::Arc};
+
+    #[test]
+    fn private_playback_caches_count_spare_capacity_and_each_arc_root() {
+        // Storage-only fixture: no playback validation or scientific claim.
+        const FRAME_SLOTS: usize = 3;
+        const POWER_FRAME_SLOTS: usize = 5;
+        const POWER_VALUE_SLOTS: usize = 7;
+        const AVERAGE_VALUE_SLOTS: usize = 11;
+        let frames = Vec::<RxMerFrame>::with_capacity(FRAME_SLOTS);
+        let mut powers = Vec::with_capacity(POWER_FRAME_SLOTS);
+        let mut values = Vec::with_capacity(POWER_VALUE_SLOTS);
+        values.push(None::<f64>);
+        powers.push(values);
+        let average = Vec::<Option<f64>>::with_capacity(AVERAGE_VALUE_SLOTS);
+        let expected = size_of::<MeasurementPlayback>()
+            + size_of::<Vec<RxMerFrame>>()
+            + frames.capacity() * size_of::<RxMerFrame>()
+            + size_of::<Vec<Vec<Option<f64>>>>()
+            + powers.capacity() * size_of::<Vec<Option<f64>>>()
+            + powers[0].capacity() * size_of::<Option<f64>>()
+            + size_of::<Vec<Option<f64>>>()
+            + average.capacity() * size_of::<Option<f64>>();
+        let plan = MeasurementPlayback {
+            frames: Arc::new(frames),
+            powers: Arc::new(powers),
+            average: Arc::new(average),
+            mode: PlaybackMode::Single,
+            interval_symbols: 1, // Unused clock in this storage-only fixture.
+            settings: TransmissionSettings::default(),
+        };
+        let alias = plan.clone();
+        let before_owners = Arc::strong_count(&plan.powers);
+        let footprint = retained_footprint(&plan).unwrap();
+        assert_eq!(footprint.payload_bytes, expected);
+        assert_eq!(footprint.ordered_entries, 0);
+        assert_eq!(footprint.shared_roots, 3); // Frames, powers and average.
+        assert_eq!(retained_footprint(&alias).unwrap(), footprint);
+        assert_eq!(Arc::strong_count(&plan.powers), before_owners);
+        assert!(Arc::ptr_eq(&plan.powers, &alias.powers));
     }
 }

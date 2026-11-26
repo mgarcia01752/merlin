@@ -1,0 +1,287 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Minimum observation timing API prerequisite",
+  "status": "scoped backend prerequisite accepted; Qt adoption and parent incomplete",
+  "base_commit": "61d69090c2effede83943148cc5c2e40477de83d",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-07",
+    "REQ-UIU-09"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "crates/dsp/src/common/constants.rs",
+      "sha256": "1a601a335085da14450b7d1b1567577616fcdceefc2a8fc8b3a2418cc796a49a"
+    },
+    {
+      "path": "crates/ofdm/src/common/constants.rs",
+      "sha256": "20fcb0725446ec5960829535f5bc14468ec793ef47b840fb920e09249ffafe83"
+    },
+    {
+      "path": "crates/ofdm/src/transmission/timing.rs",
+      "sha256": "9ac525901f10f3627d429826f1a6094beaa12ba80596a072efe560874528a9d9"
+    },
+    {
+      "path": "crates/ofdm/src/api/admission.rs",
+      "sha256": "7bd79cdc4c639fadb4ce83d3785a2e409b4251554bf69e5563b4e2096894e9e0"
+    },
+    {
+      "path": "crates/ofdm/tests/api_admission.rs",
+      "sha256": "da6a4f503bbedaddd9a0ef9b612df441f241f9bd6a827b5d1c7c8cdcfd921f49"
+    },
+    {
+      "path": "bindings/python/src/admission.rs",
+      "sha256": "33bc798b983e9e234ec1c5a432cb8fdc197f9764bad2c585d1d345c3fde9d94e"
+    },
+    {
+      "path": "bindings/python/python/merlin/__init__.pyi",
+      "sha256": "d89309285d381da36859d54b74f0d9419a7b0cf0363346ffdd483e0914a7e512"
+    },
+    {
+      "path": "bindings/python/tests/test_admission.py",
+      "sha256": "1ab440735ee8d6b64562ce49f7c58123151b84914aa1f5bf46acf583e7497311"
+    }
+  ],
+  "operations": {
+    "rust": "merlin::downstream::TransmissionConfiguration::minimum_observation_milliseconds_after",
+    "rust_signature": "pub fn minimum_observation_milliseconds_after( &self, last_symbol_index: u64, ) -> ApiResult<u64>",
+    "python": "merlin.downstream.TransmissionConfiguration.minimum_observation_milliseconds_after",
+    "python_signature": "(self, /, last_symbol_index)",
+    "owner": "Existing Apache integer timing owner under transmission/timing.rs; API/native delegate without Qt/GPL implementation copying.",
+    "semantics": "Minimum whole-millisecond source observation with complete periods greater than the zero-based index. Theoretical threshold may exceed observation/UI/run admission budgets. Acquisition, interleaver drain and window tails remain separate. No source/RNG advance or run.",
+    "shared_errors": [
+      "Existing timing-validation and checked arithmetic/output failures",
+      "Native primitive-width conversion errors for negative or over-u64 indices"
+    ]
+  },
+  "validation": [
+    {
+      "command": "cargo test -p docsis-ofdm-fec --features high-level-api --locked --test api_admission --test duration_timing --test waveform_timing",
+      "exit_code": 0,
+      "passed": 10,
+      "receipt": "ds-01-minimum-window-rust-final.log"
+    },
+    {
+      "command": "cargo clippy -p merlin-dsp -p docsis-ofdm-fec --features docsis-ofdm-fec/high-level-api --all-targets --locked -- -D warnings",
+      "exit_code": 0,
+      "receipt": "ds-01-minimum-window-clippy.log"
+    },
+    {
+      "command": "cargo clippy --manifest-path bindings/python/Cargo.toml --all-targets --locked -- -D warnings",
+      "exit_code": 0,
+      "receipt": "ds-01-minimum-window-python-clippy.log"
+    },
+    {
+      "command": "cargo check -p docsis-ofdm-fec --no-default-features --locked",
+      "exit_code": 0,
+      "receipt": "ds-01-minimum-window-analysis-check.log"
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo fmt --manifest-path bindings/python/Cargo.toml -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo doc --workspace --no-deps --locked --features merlin/native-input",
+      "exit_code": 0,
+      "receipt": "ds-01-minimum-window-rustdoc.log"
+    },
+    {
+      "command": "python3 -B -m unittest discover -s tools/validation -p test_*api*.py -v",
+      "exit_code": 0,
+      "passed": 34,
+      "receipt": "ds-01-minimum-window-metadata-tests.log"
+    },
+    {
+      "command": "python3 -B tools/validation/api_operation_matrix.py with fresh Rust/native exports and every recorded execution file",
+      "exit_code": 0,
+      "receipt": "ds-01-minimum-window-strict-matrix.log"
+    },
+    {
+      "command": "python3 -B tools/validation/integration_traceability.py",
+      "exit_code": 0,
+      "receipt": "ds-01-minimum-window-traceability.log"
+    },
+    {
+      "command": "python3 -B tools/release/versions.py",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -B tools/python/update_integration_doc.py --check",
+      "exit_code": 0
+    },
+    {
+      "command": "git diff --check",
+      "exit_code": 0
+    },
+    {
+      "command": "python3 -B tools/validation/feature_documentation.py",
+      "exit_code": 0,
+      "receipt": "ds-01-minimum-window-docs.log"
+    }
+  ],
+  "installed_native": {
+    "status": "passed",
+    "wheel": "/home/dev01/Projects/merlin/local/python-wheels-ds-minimum-window/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "wheel_sha256": "fa99870f150d726a19209e64b8302771ad485b5e8b18cb1dce691af31e7eeeac",
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-minimum-window-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "pip",
+          "install",
+          "--no-index",
+          "--no-deps",
+          "/home/dev01/Projects/merlin/local/python-wheels-ds-minimum-window/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+        ],
+        "label": "install",
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-minimum-window-native",
+        "exit_code": 0,
+        "elapsed_seconds": 0.7524223649961641
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-minimum-window-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_measurement_sequence.py",
+          "-v"
+        ],
+        "label": "measurement-sequence",
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-minimum-window-native",
+        "exit_code": 0,
+        "elapsed_seconds": 0.21032688299601432
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-minimum-window-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_admission.py",
+          "-v"
+        ],
+        "label": "admission",
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-minimum-window-native",
+        "exit_code": 0,
+        "elapsed_seconds": 0.0598150860023452
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-minimum-window-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_namespaces.py",
+          "-v"
+        ],
+        "label": "namespaces",
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-minimum-window-native",
+        "exit_code": 0,
+        "elapsed_seconds": 0.4718107889930252
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-minimum-window-native/installed/bin/python",
+          "-I",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-minimum-window-native/native-exports.json"
+        ],
+        "label": "native-inventory",
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-minimum-window-native",
+        "exit_code": 0,
+        "elapsed_seconds": 0.24530185299227014
+      }
+    ],
+    "final_admission_rerun": {
+      "command": [
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-minimum-window-native/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/home/dev01/Projects/merlin/bindings/python/tests",
+        "-p",
+        "test_admission.py",
+        "-v"
+      ],
+      "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/ds-01-minimum-window-native",
+      "exit_code": 0,
+      "elapsed_seconds": 0.06471315798989963
+    }
+  },
+  "inventory_preservation": {
+    "rust_rows_before": 565,
+    "native_rows_before": 538,
+    "rust_rows_now": 566,
+    "native_rows_now": 539,
+    "all_prior_rows_deep_equal": true,
+    "class_exports_deep_equal": true,
+    "preserved_native_operation_instances": 940,
+    "new_rust_signature": "pub fn minimum_observation_milliseconds_after( &self, last_symbol_index: u64, ) -> ApiResult<u64>",
+    "new_native_signature": "(self, /, last_symbol_index)",
+    "executed_rust_cases": 10,
+    "executed_native_cases": 14
+  },
+  "executed_cases": "docs/development/features/unified-qt-workbench/ds-01-minimum-window-operation-test-results.json",
+  "numeric_review": {
+    "shared_definitions": "Exact SI MILLISECONDS_PER_SECOND and NANOSECONDS_PER_SECOND live in merlin-dsp common/constants, re-exported by downstream. Replaces identical timing-local nanosecond scale.",
+    "independent_policies": "SI scale 1000 does not define UI maximum duration 1000 ms. Observation and runtime limits stay at original independent owners.",
+    "production_literals": "Mathematical one includes the zero-based selected period; no arbitrary endpoint/default added.",
+    "independent_test_anchors": [
+      "CP512 gives 17/400 ms at 25 kHz and 9/400 ms at 50 kHz; index399 is exactly17/9 ms",
+      "CP1024 gives45 us at25 kHz; representative nonintegral windows round up",
+      "ceil(2^64 *17/400) = 783986623132655944 ms, reportable but outside observation admission"
+    ],
+    "existing_vectors_and_assertions_unchanged": true,
+    "final_integration_line_by_line_review": "pending UIU-QA-01"
+  },
+  "preservation": {
+    "all_previous_operation_rows_and_class_exports_exact": true,
+    "original_timing_signatures_and_outputs_retained": true,
+    "constructor_defaults_and_original_observation_domain_unchanged": true,
+    "qt_tree_and_current_guard_exactly_unchanged": true,
+    "dependencies_and_locks_unchanged": true
+  },
+  "qt_boundary": {
+    "scientific_dependencies": 3,
+    "frozen_files": 40,
+    "direct_sites": 140,
+    "consumer_implemented": false
+  },
+  "limitations": [
+    "Scoped inverse-clock query acceptance; no full backend/native rerun claimed",
+    "Qt timing-help arithmetic still awaits adoption",
+    "No new resource policy, operating mode, schema or dependency",
+    "Final numeric/unified runtime and hosted/installed gates remain pending"
+  ]
+}

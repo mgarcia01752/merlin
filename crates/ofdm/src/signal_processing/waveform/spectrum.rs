@@ -10,12 +10,15 @@ use crate::{
     types::IqPair,
     SimulationError,
 };
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use std::f64::consts::TAU;
 
 /// Maximum overlapping analysis windows retained in one bounded estimate.
 pub const MAX_SPECTRUM_AVERAGES: usize = 32;
 /// Maximum min/max buckets returned for a presentation viewport.
 pub const MAX_SPECTRUM_POINTS: usize = 2048;
+/// Two equal FFT-length parts give the existing 50 percent Welch hop.
+pub(crate) const WELCH_HOP_DIVISOR: usize = 2;
 
 /// Full-resolution centered PSD; powers are normalized sample units squared/Hz.
 #[derive(Clone)]
@@ -44,7 +47,7 @@ pub struct SpectrumBucket {
 /// dB re one normalized sample unit squared/Hz, or None for zero/unavailable input.
 pub fn density_db(density: f64) -> Option<f64> {
     if density > 0.0 && density.is_finite() {
-        return Some(10.0 * density.log10());
+        return Some(crate::common::constants::POWER_RATIO_DECIBEL_FACTOR * density.log10());
     }
     None
 }
@@ -65,7 +68,7 @@ pub fn estimate(
     samples: &[IqPair],
 ) -> Result<PowerSpectrum, SimulationError> {
     let length = spacing.fft_samples() as usize;
-    let hop = length / 2;
+    let hop = length / WELCH_HOP_DIVISOR;
     if samples.len() < length || samples.len() > length + (MAX_SPECTRUM_AVERAGES - 1) * hop {
         return Err(invalid(
             "Spectrum needs 1..32 complete overlapping FFT windows.",
@@ -83,7 +86,7 @@ pub fn estimate(
     let scale = length as f64 / (f64::from(SAMPLE_RATE_HZ) * energy);
     let plan = ForwardTransform::new(spacing);
     let mut density = vec![0.0; length];
-    let averages = 1 + (samples.len() - length) / hop;
+    let averages = average_capacity(spacing, samples.len())?;
     for frame in 0..averages {
         let input: Vec<_> = samples[frame * hop..frame * hop + length]
             .iter()
@@ -106,6 +109,32 @@ pub fn estimate(
             / (window_sum * window_sum),
         density,
     })
+}
+
+/// Counts complete Welch windows fitting a sample budget without estimating a spectrum.
+///
+/// # Arguments
+/// * `spacing` - Accepted downstream spacing determining the original FFT length.
+/// * `max_samples` - Nonnegative sample budget; must fit at least one complete FFT.
+///
+/// # Returns
+/// Capacity capped by the existing analysis-work policy. A larger budget does not
+/// widen that policy or claim retained samples exist. No samples are read or copied.
+///
+/// # Errors
+/// Rejects a budget smaller than the FFT length; no padding or partial FFT is inferred.
+pub(crate) fn average_capacity(
+    spacing: SubcarrierSpacing,
+    max_samples: usize,
+) -> Result<usize, SimulationError> {
+    let length = spacing.fft_samples() as usize;
+    if max_samples < length {
+        return Err(invalid(
+            "Spectrum sample budget must include one complete FFT window.",
+        ));
+    }
+    let hop = length / WELCH_HOP_DIVISOR;
+    Ok(1 + ((max_samples - length) / hop).min(MAX_SPECTRUM_AVERAGES - 1))
 }
 
 impl PowerSpectrum {
@@ -145,5 +174,30 @@ impl PowerSpectrum {
                 }
             })
             .collect())
+    }
+}
+
+impl RetainedPayload for PowerSpectrum {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            zero_frequency_hz,
+            spacing_hz,
+            fft_samples,
+            averages,
+            equivalent_noise_bandwidth_hz,
+            density,
+        } = self;
+        merlin_api::retention_support::sum([
+            zero_frequency_hz.retained_children(),
+            spacing_hz.retained_children(),
+            fft_samples.retained_children(),
+            averages.retained_children(),
+            equivalent_noise_bandwidth_hz.retained_children(),
+            density.retained_children(),
+        ])
     }
 }

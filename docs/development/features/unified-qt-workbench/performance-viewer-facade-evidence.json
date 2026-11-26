@@ -1,0 +1,323 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Profile performance viewer facade",
+  "status": "Level 1 profile-performance viewer accepted; remaining downstream consumers and parent Level 2/final Level 3 remain incomplete",
+  "base_commit": "a8408fe83a0f0f2ff4ce33c84951e2d94a1aea59",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-03",
+    "REQ-UIU-08",
+    "REQ-UIU-19",
+    "REQ-UIU-20",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "design": "docs/development/features/unified-qt-workbench/design.md#uiu-ds-01-profile-performance-viewer-adoption",
+  "prerequisite": "docs/development/features/unified-qt-workbench/profile-performance-api-evidence.json",
+  "implementation": [
+    {
+      "path": "apps/qt/src/downstream/common/constants.rs",
+      "sha256": "67f3b6fb600a36dc8fd52826a868b6b32fd5de491315be7c89b77f75dd05b32a"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/receiver/performance.rs",
+      "sha256": "45a36937edab8bf7e9eca5088655aa22be5d6553dde7b69891358769cb34911c"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop/tests.rs",
+      "sha256": "0daaeb6d40670d71357ad319329ee615b1d4281a89b065cafa643318a4e28a5e"
+    }
+  ],
+  "ownership": "Public FullLoopResult.profile_performance owns all actual source-grid MER/power/count, ideal Shannon capacity, role and scoped FEC/BER/unfinished results. Qt stores owned scalar projections, preserves existing JSON, and groups/normalizes points solely for presentation. Missing queries become explicit profile failures. The separate QAM-history route and its bounded retention remain unchanged.",
+  "testing": {
+    "level": 1,
+    "executed": {
+      "rust": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "--",
+          "--exact",
+          "downstream::simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+          "downstream::simulation::closed_loop::tests::independent_sweep_preserves_each_profile_and_legacy_run_options",
+          "downstream::instruments::receiver::performance::tests::plc_band_uses_selected_profile_centers_and_clips_without_decimation"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 33.11973300200043,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "qml": {
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+          "Workbench::test_receiver_profile_performance_navigation_and_scope",
+          "Workbench::test_fec_overview_profiles_tabs_and_partial_empty_states"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.942900333999205,
+        "behavior_cases": [
+          "test_receiver_profile_performance_navigation_and_scope",
+          "test_fec_overview_profiles_tabs_and_partial_empty_states"
+        ]
+      },
+      "format-check": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.33644115300012345,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "clippy": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.267715554999086,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "release": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "build",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--release",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 43.900658051999926,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "metadata": [
+        {
+          "label": "boundary",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/qt_api_boundary.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.2027130099995702
+        },
+        {
+          "label": "documents",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/feature_documentation.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 11.181910816001619
+        },
+        {
+          "label": "traceability",
+          "command": [
+            "python3",
+            "-B",
+            "tools/validation/integration_traceability.py"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 9.10779051999998
+        },
+        {
+          "label": "python-guide",
+          "command": [
+            "python3",
+            "-B",
+            "tools/python/update_integration_doc.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.031338830000095186
+        },
+        {
+          "label": "diff",
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.017248488999030087
+        }
+      ],
+      "final_style_review": {
+        "format-write": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "fmt",
+            "--manifest-path",
+            "apps/qt/Cargo.toml"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.4408292580010311,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        },
+        "clippy": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "clippy",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--all-targets",
+            "--locked",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 4.577733811000144,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        },
+        "release": {
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "build",
+            "--manifest-path",
+            "apps/qt/Cargo.toml",
+            "--release",
+            "--locked"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 15.684404833000372,
+          "environment": {
+            "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+            "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+            "QT_VERSION_MAJOR": "6",
+            "QT_QUICK_CONTROLS_STYLE": "Fusion",
+            "CARGO_INCREMENTAL": "0",
+            "CARGO_PROFILE_DEV_DEBUG": "0",
+            "CARGO_PROFILE_TEST_DEBUG": "0"
+          }
+        }
+      }
+    },
+    "qt_rust_cases": 3,
+    "actual_cases": [
+      "downstream::instruments::receiver::performance::tests::plc_band_uses_selected_profile_centers_and_clips_without_decimation",
+      "downstream::simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+      "downstream::simulation::closed_loop::tests::independent_sweep_preserves_each_profile_and_legacy_run_options"
+    ],
+    "qml_behavior_cases": 2,
+    "qml_harness_total": 4,
+    "metadata": [],
+    "not_required": [
+      {
+        "checks": "New wheel, root/native/CLI scientific suites or API inventory refresh",
+        "reason": "No backend, binding, public export, numerical algorithm or serialization changes since accepted a8408fe. Its paired API evidence remains applicable; actual Qt full-loop and independent sweep consume that API."
+      },
+      {
+        "checks": "New native startup, project/packaging or validator unit suites",
+        "reason": "No CXX/QML registration, resources, lifecycle, persistence or validation-tool source changes. Affected QML behaviors, current optimized executable and actual metadata audits execute."
+      },
+      {
+        "checks": "Repeat behavioral tests after final style-only review",
+        "reason": "Only explicit constant imports and multiline formatting of the same selected-entry/filter branches changed. No predicates, operations, values or output changed. All-target Clippy and optimized build were repeated; earlier actual worker/sweep/PLC/QML cases remain applicable."
+      }
+    ],
+    "deferred": [
+      "UIU-DS-01 remaining frozen consumers and Level 2 acceptance",
+      "Level 3 milestone/final regressions",
+      "REQ-UIU-27 final numeric/shared-constant audit"
+    ],
+    "boundary": {
+      "errors": [],
+      "scientific_dependencies": 3,
+      "frozen_legacy_files": 18,
+      "final": false
+    }
+  },
+  "preservation": {
+    "official_checkbox_lines_exact": true,
+    "all_original_worker_assertions_exact": true,
+    "qam_history_bytes_exact": true,
+    "project_and_api_contracts_unchanged": true,
+    "boundary_before": {
+      "files": 19,
+      "sites": 77
+    },
+    "boundary_after": {
+      "files": 18,
+      "sites": 75
+    },
+    "dependencies": 3,
+    "all_other_boundary_entries_exact": true
+  },
+  "numeric_review": "Names centralize the independent receiver-history cap, MER initial bounds/rounding, curve buckets, vertical ticks and ideal/observed series identifiers. Frequency ticks, single-carrier denominator and SI conversion reuse existing same-purpose constants. Mathematical index/normalized coordinates and literal independent test anchors retain their meanings. No domain admission limit changes.",
+  "executable": {
+    "path": "apps/qt/target/release/merlin-qt",
+    "sha256": "2d38091dc3d65e8cc357ccff633daaea66c042d1b7879cb09c38b80127110d2d",
+    "scope": "Current optimized Linux build, no installed-platform claim."
+  }
+}

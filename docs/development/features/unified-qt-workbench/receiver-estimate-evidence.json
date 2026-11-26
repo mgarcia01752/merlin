@@ -1,0 +1,336 @@
+{
+  "schema_version": 1,
+  "task": "UIU-API-04",
+  "unit": "Actual received-pilot estimate retention",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-12",
+    "REQ-UIU-18",
+    "REQ-UIU-24"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-api-04",
+  "base_commit": "b16c36119d5ae79fc3547c9797c9c661029598fa",
+  "tested_files": [
+    {
+      "path": "bindings/python/python/merlin/upstream.py",
+      "sha256": "289c30927f6a2575ac7c1ec6519fcb1c883f563b3959557e111394868b7a9b42"
+    },
+    {
+      "path": "bindings/python/python/merlin/upstream.pyi",
+      "sha256": "1303f91a222c6535200b13e8e94d91d7f2ed700fd5dccc5b2b675179c206a6a5"
+    },
+    {
+      "path": "bindings/python/src/upstream/mod.rs",
+      "sha256": "40c28a67d2fd64f51f37d4032d1d2e57427151d7d7cff90489e705b7b5eac6ec"
+    },
+    {
+      "path": "bindings/python/src/upstream/receiver_observations.rs",
+      "sha256": "b33cd57a8a0174d8db175bb77a010c93cc57a20549e83bb2b7908971efb5fb8f"
+    },
+    {
+      "path": "bindings/python/src/upstream/reports.rs",
+      "sha256": "65d6642f591969e62dcf683c740c1df1762df707e146eb13c383c4e0cd31b973"
+    },
+    {
+      "path": "bindings/python/src/upstream/reports/receiver_observations.rs",
+      "sha256": "8238fab25448e84cf06cebe802a806d48440b270efcba4c4f0e3c4c9315d093a"
+    },
+    {
+      "path": "bindings/python/src/upstream/simulation.rs",
+      "sha256": "4c9f67afc383a39d2d46fe66c3923f5dacbf2ef300f68889145c7c1aa4628381"
+    },
+    {
+      "path": "bindings/python/src/upstream/simulation/receiver_observations.rs",
+      "sha256": "e803d97a9b1a67133ed574e9610d91faf0cc4831bfdef10677c35e91b5a575fa"
+    },
+    {
+      "path": "bindings/python/tests/test_upstream_receiver_estimates.py",
+      "sha256": "84faad7bfab12f7bc993e42b7e03482b8f7beb20b545300aa40bdce73038ee1b"
+    },
+    {
+      "path": "crates/merlin/tests/namespaces.rs",
+      "sha256": "c01829831d1779620f0338c0dd45cb25412dc2ba2c1194666a140650bbe91e42"
+    },
+    {
+      "path": "crates/ofdma/examples/upstream_receiver_estimates.rs",
+      "sha256": "1e934bdb9ece4ac001758ca49fc23191c1d7c254e370f0c820c5eab23435abf9"
+    },
+    {
+      "path": "crates/ofdma/src/api/mod.rs",
+      "sha256": "d1783742b88090a1df119a5b5f325df152664e64eaa80f72b4a3525d1225a3f5"
+    },
+    {
+      "path": "crates/ofdma/src/api/session.rs",
+      "sha256": "598f7445285d03d7bb6c936472d858c9a1694bf431e84a0452e3de867139e8c8"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/mod.rs",
+      "sha256": "d061f192305248b2d2fd1cb1fecfa6ee5c93774df5251aea07828cca0a24004f"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/observer.rs",
+      "sha256": "2808b679cf53eefe93a81a6240147fc010d4ec9a5135dbadc2a87a835ddf5b3b"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/receiver.rs",
+      "sha256": "83cd2401f0e9ec030437951dc881b687a294286d0e4c02b8d968c7306e3e11a2"
+    },
+    {
+      "path": "crates/ofdma/src/instruments/receiver_tests.rs",
+      "sha256": "d5331c90be675185fffa8e433c060eb225e50da440623fb7d9cc8372984e0511"
+    },
+    {
+      "path": "crates/ofdma/src/receiver/framing.rs",
+      "sha256": "e2af1126704a7e44130820ebc7053c660e916095f909417e4a6f108ab89a430a"
+    },
+    {
+      "path": "crates/ofdma/src/simulation/mod.rs",
+      "sha256": "49760588c68b1a45302ab0b0f7fcc273f3b4ee7d1d9779201d6404c642dc7bb5"
+    },
+    {
+      "path": "crates/ofdma/src/simulation/run.rs",
+      "sha256": "305f53ee9914a73debef98748bfc9585be6044d2f8a5d69ffe6a299f53b5e7ad"
+    },
+    {
+      "path": "crates/ofdma/tests/api_receiver_estimates.rs",
+      "sha256": "c337ed98783cbb4a3adc9115484d700560e2871d899280437d45c5e75ddfaa5b"
+    },
+    {
+      "path": "tools/testing/native_api.py",
+      "sha256": "8883ca5be6a433fbac5b27e58bc84a06444a57e1a85d0af82fb375fa376661ff"
+    }
+  ],
+  "scope": "Local scoped Rust and installed Linux CPython 3.10 observation acceptance; no full-suite rerun for this partial unit.",
+  "executed_cases": {
+    "upstream": 23,
+    "new_upstream": 8,
+    "facade": 17,
+    "new_facade": 1,
+    "targeted_native": 10,
+    "new_native": 6
+  },
+  "native_acceptance": {
+    "status": "passed",
+    "commands": [
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/cargo.sh",
+          "run",
+          "-p",
+          "docsis-ofdma",
+          "--example",
+          "upstream_receiver_estimates",
+          "--locked"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin",
+        "exit_code": 0,
+        "label": "receiver_estimates",
+        "elapsed_seconds": 4.418790577008622
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-estimate-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "pip",
+          "install",
+          "--no-index",
+          "--no-deps",
+          "/home/dev01/Projects/merlin/local/python-wheels-unified-ui-receiver-estimates/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-estimate-native",
+        "exit_code": 0,
+        "label": "install",
+        "elapsed_seconds": 0.5798491229943465
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-estimate-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_upstream_receiver_estimates.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-estimate-native",
+        "exit_code": 0,
+        "label": "receiver-tests",
+        "elapsed_seconds": 0.3721644839970395
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-estimate-native/installed/bin/python",
+          "-I",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "/home/dev01/Projects/merlin/bindings/python/tests",
+          "-p",
+          "test_namespaces.py",
+          "-v"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-estimate-native",
+        "exit_code": 0,
+        "label": "namespace-tests",
+        "elapsed_seconds": 0.11677009999402799
+      },
+      {
+        "command": [
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-estimate-native/installed/bin/python",
+          "-I",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/native_api_inventory.py",
+          "--output",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-estimate-native/native-exports.json"
+        ],
+        "working_directory": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-estimate-native",
+        "exit_code": 0,
+        "label": "native-inventory",
+        "elapsed_seconds": 0.11896793899359182
+      }
+    ],
+    "cases": [
+      {
+        "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+        "qualified_test_case": "UpstreamReceiverEstimates.test_actual_complex_effective_response_both_modes_and_original_missing_bins"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+        "qualified_test_case": "UpstreamReceiverEstimates.test_aggregate_budgets_and_passive_noisy_outcomes_preserve_default_json"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+        "qualified_test_case": "UpstreamReceiverEstimates.test_busy_policy_access_preserves_accepted_generation_after_cancel"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+        "qualified_test_case": "UpstreamReceiverEstimates.test_owned_queries_limits_zero_channel_and_never_started_inventory"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+        "qualified_test_case": "UpstreamReceiverEstimates.test_policy_validation_defaults_and_atomic_configuration_mode_checks"
+      },
+      {
+        "test_file": "bindings/python/tests/test_upstream_receiver_estimates.py",
+        "qualified_test_case": "UpstreamReceiverEstimates.test_separate_rust_process_inventory_full_optional_coefficients_and_units_match"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+      },
+      {
+        "test_file": "bindings/python/tests/test_namespaces.py",
+        "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+      }
+    ],
+    "wheel": "/home/dev01/Projects/merlin/local/python-wheels-unified-ui-receiver-estimates/merlin_ofdm-0.4.0-cp310-cp310-linux_x86_64.whl",
+    "wheel_sha256": "5c3db63216088e2e21dae3148fe69edbb56793ae207e3f17a5ec4cbe522ee4d3",
+    "scope": "Targeted installed Linux CPython 3.10 receiver-observation and namespace acceptance; full native regression deferred to final integration gate.",
+    "reference": {
+      "path": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/api-04-estimate-native/receiver_estimates.stdout",
+      "sha256": "896a4c05691d4c2d4b6de4be87d1d40d6cc31f55e8e195fcff3e7686f0f61f94"
+    },
+    "passed": 10,
+    "elapsed_seconds": 8.313735617994098
+  },
+  "checks": [
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-estimate-rust.log",
+      "sha256": "65ec8072ec8ba67a4bc2d02411d31e3ca62d4821147d65cfe99fcd90381a90e1"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-estimate-final-rust.log",
+      "sha256": "0d06685fd94aa47b86921ab5aadb52f826f9da69882c9fb5ca08af0297726bc0"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-estimate-boundaries.log",
+      "sha256": "a4fc1d6a35651722e56b4fa6645d10c901fe3e7897f79bdd68da07fac8e84ab8"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-estimate-facade.log",
+      "sha256": "7093f633584b204fb09a4b3510231cdae39f71ff2467491c15b52b630d573369"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-estimate-clippy-final.log",
+      "sha256": "d11b9b5d1ebfddc0c8e8a7233035f4c56d0a1cf1b456038f6c9a4d90202269b6"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-estimate-native-clippy.log",
+      "sha256": "10b3e8112bc0cff3d7b80df64e48c453deb65970f3a5c75a7ef7b4f44ed9f986"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-estimate-wheel.log",
+      "sha256": "a4c1ab5be66e3f08a644a578d64ae3371e044796689ed508307133c859e8836f"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-estimate-rustdoc.log",
+      "sha256": "e1d19789cdb2a43ac084850791ad2b43d6a2dbeae57b7b5833edac483d79429c"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-estimate-tools.log",
+      "sha256": "7da45757ce7842d90f59e9be3ce1e9a992d897000bebf41e87eef84d023ce1b0"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-estimate-docs.log",
+      "sha256": "455203fcab120de31a11cc49bbd728644c299fc444587dd0704e724f8e8756f1"
+    },
+    {
+      "log": "docs/development/local/unified-qt-workbench/api-04-estimate-trace.log",
+      "sha256": "4815641791db39aa3e4d48e76217eb7aff10013ebbb24fc256295cd48506621f"
+    }
+  ],
+  "independent_acceptance": "Literal physical H=2+j and normalized corrective C=j yield received-pilot CxH=-1+2j at both spacings. Unused physical bins remain unavailable; actual zero channel gives Some(0), not None. Complete missing frames give all None. Transaction failure and mid-frame cancellation preserve the previous complete frame without a timing race. Enabled/exhausted observation preserves actual noisy words, BER and matched MER.",
+  "limits": {
+    "retained_frames": 8,
+    "aggregate_scalar_slots": 262144,
+    "query_copy_points": 4096,
+    "scalar_cost_per_original_complex_bin": 2,
+    "default_enabled": false
+  },
+  "compatibility": {
+    "previous_rust_rows_preserved": 527,
+    "previous_native_rows_preserved": 510,
+    "current_rust_rows": 533,
+    "current_native_rows": 516,
+    "historical_alias_corrections_preserved": true,
+    "qt_source_files_unchanged": 178,
+    "existing_constructors_options_and_default_report_json_preserved": true
+  },
+  "provenance": "Actual normal Rust receiver estimates moved after successful completed-frame processing. Existing Apache source notices retained. Transactional copies share immutable retained vectors; no new estimator/FFT, source truth input, random draws, unsafe code or native scientific dependency.",
+  "limitations": [
+    "Observation counts describe enabled retention, not all receiver work when disabled",
+    "Only complete estimates are retained; interrupted partial-frame estimates are unavailable",
+    "Incomplete frequency support does not establish a full-band impulse",
+    "Soft metrics and constellation references keep API-04 unchecked",
+    "Full Rust/native/Qt regressions remain the final integration gate; historical pause-timing failure remains recorded in the preceding response evidence",
+    "No new hosted, desktop-installer or external interoperability acceptance"
+  ],
+  "metadata_tool_cases": 33,
+  "formatting": {
+    "workspace": "cargo fmt --all -- --check passed",
+    "native": "cargo fmt --manifest-path bindings/python/Cargo.toml -- --check passed"
+  },
+  "strict_operation_audit": {
+    "rust_rows": 533,
+    "native_rows": 516,
+    "all_historical_execution_records_checked": true,
+    "result": "passed"
+  }
+}

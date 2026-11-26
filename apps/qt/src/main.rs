@@ -6,14 +6,17 @@
 #![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
 
 mod bridge;
-mod help;
-mod inputs;
-mod instruments;
+mod downstream;
 mod platform;
-mod simulation;
-mod workbench;
+mod shared;
+// Application ownership contracts are shared by the direction adapters;
+// scientific implementations remain exclusively behind the merlin facade.
+pub mod shell;
+pub mod upstream;
 use cxx_qt_lib::{QGuiApplication, QQmlApplicationEngine, QString, QUrl};
-pub(crate) use instruments::{spectrum as spectrum_view, transmitter as transmitter_instruments};
+pub(crate) use downstream::instruments::{
+    spectrum as spectrum_view, transmitter as transmitter_instruments,
+};
 
 /// Starts the native workbench and its Rust simulation adapters.
 ///
@@ -48,7 +51,7 @@ fn main() {
     {
         let check = || -> Result<(), String> {
             let path = arguments.get(1).ok_or("Provide a workbench JSON path.")?;
-            workbench::project_file::check_file(std::path::Path::new(path))
+            downstream::workbench::project_file::check_file(std::path::Path::new(path))
         };
         if let Err(message) = check() {
             eprintln!("{message}");
@@ -96,12 +99,12 @@ fn main() {
         println!("Usage: merlin-qt [--workbench FILE|-] [--debug-ui]\n\n  --workbench FILE  Open a workbench without a file chooser\n  --workbench -     Read workbench JSON from standard input\n  --debug-ui        Show loading elapsed time\n  --check-workbench FILE  Validate a workbench without opening the UI\n  --version        Print the application version\n\nExample: merlin-qt --workbench - < workbench.merlin.json");
         return;
     }
-    match platform::startup::parse(&arguments) {
-        Ok(options) => platform::startup::configure(options),
-        Err(message) => {
-            eprintln!("{message}");
-            std::process::exit(1);
-        }
+    let startup_context = downstream::workbench::session::Context::default();
+    if let Err(message) = platform::startup::parse(&arguments).and_then(|options| {
+        platform::startup::configure(options, startup_context.application.budget())
+    }) {
+        eprintln!("{message}");
+        std::process::exit(1);
     }
     if let Err(error) = platform::logging::initialize(platform::startup::debug_ui()) {
         eprintln!("Cannot initialize logging: {error}");

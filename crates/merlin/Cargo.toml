@@ -11,11 +11,13 @@ description = "Thin public namespaces for independent MERLIN PHY APIs"
 default = ["downstream", "upstream"]
 downstream = ["dep:docsis-ofdm-fec"]
 upstream = ["dep:docsis-ofdma"]
+native-input = ["downstream", "upstream", "dep:pnm-input"]
 
 [dependencies]
 docsis-ofdm-fec = { path = "../ofdm", default-features = false, features = ["high-level-api"], optional = true }
 docsis-ofdma = { path = "../ofdma", default-features = false, optional = true }
 merlin-api = { path = "../phy-api" }
+pnm-input = { path = "../pnm-input", optional = true }
 
 [lints.rust]
 unsafe_code = "forbid"

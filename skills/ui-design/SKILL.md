@@ -24,7 +24,7 @@ screenshots. Review existing Apply buttons when changing this shared pattern.
 
 ## Required action-button style
 
-Use `apps/qt/qml/components/WorkbenchActionButton.qml` for ordinary action
+Use `apps/qt/qml/shared/components/WorkbenchActionButton.qml` for ordinary action
 buttons in every frame: inputs, workbenches, instruments, settings and About.
 Reuse its rounded corners, theme colors, sizing, padding and hover/pressed/focus/
 disabled states; do not introduce plain `Button` controls or copied decorations
@@ -45,6 +45,20 @@ Update chip retains its green identity and menu size. Ordinary instrument action
 chips use the shared style rather than the stage decoration. Verify dark/light,
 keyboard and disabled states, narrow layouts and native screenshots after a
 migration; update the relevant user guides.
+
+## Folder-style page tabs
+
+Page navigation uses folder-style tabs. Label the direction tabs **Downstream**
+and **Upstream**, without OFDM/OFDMA suffixes. Give each tab rounded upper
+corners and a shared baseline at the top of its content panel. The selected tab
+must visually join the panel,
+with a continuous surface and no separating bottom border; inactive tabs recede
+behind that edge. Do not render page tabs as detached action buttons, pills or
+segmented buttons, or apply `WorkbenchActionButton` styling to them.
+
+Preserve tab selection, keyboard navigation, visible focus and independent page
+state. Use shared theme colors and sizing; verify the connected-tab appearance
+in both themes and narrow layouts when implementing or changing these controls.
 
 ## Technical terms and definitions
 
@@ -108,7 +122,7 @@ visible UI behavior. Normal UI keeps timing diagnostics out of the loading view.
 ## Global tooltip delay
 
 Every MERLIN mouse-over tooltip waits **one second** before appearing. The
-single timing definition is `tooltipDelayMs` in `apps/qt/qml/theme/Theme.qml`.
+single timing definition is `tooltipDelayMs` in `apps/qt/qml/shared/theme/Theme.qml`.
 Bind attached tooltips with `ToolTip.delay: theme.tooltipDelayMs`; explicit
 `ToolTip` objects bind `delay` to their owning theme. Shared action buttons
 supply this default as well. Never duplicate a numeric delay in a view or add

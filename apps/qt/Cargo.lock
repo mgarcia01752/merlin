@@ -897,6 +897,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
 
 [[package]]
+name = "merlin"
+version = "0.5.1"
+dependencies = [
+ "docsis-ofdm-fec",
+ "docsis-ofdma",
+ "merlin-api",
+ "pnm-input",
+]
+
+[[package]]
 name = "merlin-api"
 version = "0.5.1"
 dependencies = [
@@ -912,16 +922,16 @@ name = "merlin-qt"
 version = "0.5.1"
 dependencies = [
  "base64",
+ "cc",
  "cxx",
  "cxx-gen",
  "cxx-qt",
  "cxx-qt-build",
  "cxx-qt-lib",
- "docsis-ofdm-fec",
  "env_logger",
  "log",
- "pnm",
- "pnm-input",
+ "merlin",
+ "qt-build-utils",
  "serde",
  "serde_json",
  "sha2",
@@ -1066,6 +1076,7 @@ dependencies = [
  "base64",
  "docsis-ofdm-fec",
  "docsis-ofdma",
+ "merlin-api",
  "pnm",
  "rustix",
  "serde",

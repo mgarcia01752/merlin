@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -7,6 +8,10 @@
  */
 //! Synthetic IUC associations and per-minislot loading; no UCD wire parser.
 use crate::{error::invalid, PhyResult};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::{Deserialize, Serialize};
 
 /// One contiguous physical minislot assignment before interleaving compaction.
@@ -77,5 +82,61 @@ impl Profile {
     /// Caller cannot mutate the admitted profile through this view.
     pub fn minislots(&self) -> &[Minislot] {
         &self.minislots
+    }
+}
+
+impl RetainedPayload for Minislot {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            first_carrier,
+            loading,
+            pilot_pattern,
+        } = self;
+        sum([
+            first_carrier.retained_children(),
+            loading.retained_children(),
+            pilot_pattern.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for Profile {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            id,
+            iuc,
+            seed,
+            minislots,
+        } = self;
+        sum([
+            id.retained_children(),
+            iuc.retained_children(),
+            seed.retained_children(),
+            minislots.retained_children(),
+        ])
+    }
+}
+
+impl Profile {
+    /// Normalizes only owned report-snapshot capacities without changing values.
+    ///
+    /// # Returns
+    /// Unit; exact boxed-slice conversion preserves order and every scientific value.
+    pub(crate) fn compact_report_payload(&mut self) {
+        let Self {
+            id: _,
+            iuc: _,
+            seed: _,
+            minislots,
+        } = self;
+        *minislots = std::mem::take(minislots).into_boxed_slice().into_vec();
     }
 }

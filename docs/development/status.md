@@ -15,7 +15,12 @@ admission. One Rust facade and one native Python distribution expose directional
 namespaces; the existing CLI also runs upstream. Full unified regressions pass.
 Final documentation and backend acceptance now pass their local checklist gates;
 see the [final supported-scope review](features/unified-backend/validation.md#int-accept-01-final-backend-acceptance).
-Multi-channel simulation and upstream Qt remain outside the implemented scope.
+The [unified Qt checklist](checklist.md#unified-qt-workbench-delivery) now records
+21 accepted tasks, including native upstream configuration, execution, measured
+inputs, shared instruments, independent projects and dual-project restart. Final
+[UIU-QA-01 acceptance](features/unified-qt-workbench/validation.md#uiu-qa-01-final-unified-acceptance)
+passes the local integration gates. Multi-channel simulation remains outside
+the implemented scope.
 Continue work through the [development workspace](README.md), which links public
 feature records and defines the ignored local evidence/output location.
 
@@ -82,7 +87,7 @@ known timing/PLC phase. No full blind modem-acquisition claim is made.
 | Measurement evolution | Future explicit correlated/burst models; streaming dynamic DPD/NCP activation is implemented, duration CLI remains fixed-profile | Future model extensions |
 | Cross-platform validation | Windows native/hosted runtime and installer evidence; macOS remains deferred | QA-06 |
 | Product interfaces | Native installer lifecycle/release execution; remaining Qt instrumentation and wider platform Python validation | QA-07, API-01, UI-01 |
-| Later PHY scope | Wider upstream modes/acquisition/ranging, upstream Qt, channel bonding/multiple channels and FDX-specific behavior | INT-DEFER-01, LATER-02 |
+| Later PHY scope | Wider upstream modes/acquisition/ranging, channel bonding/multiple channels and FDX-specific behavior | INT-DEFER-01, LATER-02 |
 
 This table groups outstanding work; it does not reorder the official checklist
 or authorize implementation. Select the next task using its dependencies and

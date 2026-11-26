@@ -1,0 +1,1734 @@
+{
+  "task": "UIU-SHARED-01",
+  "status": "accepted",
+  "validation_level": 2,
+  "accepted_base": "680a15506864fd5d77a110bf2b33734db41aceb2",
+  "requirements": [
+    "REQ-UIU-15",
+    "REQ-UIU-16",
+    "REQ-UIU-17",
+    "REQ-UIU-18",
+    "REQ-UIU-21"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-shared-instruments",
+  "design": "design.md#uiu-shared-01-actual-direction-consumers-and-compatible-drawing",
+  "raw_evidence": "docs/development/local/unified-qt-workbench/shared-01/",
+  "source_sha256": {
+    "apps/qt/build.rs": "3f6b7a92e22caa0a5ba229a007fff39392bec21943115eb6c08732a382d8bae8",
+    "apps/qt/qml/Main.qml": "08ddbf4fe81adc0c93e336dd2f67e500780d76b5462c1d4e5d099493a1234fa0",
+    "apps/qt/qml/downstream/channel/ChannelConfigurationDialog.qml": "1a7d7027f6d6fbfc228ca9cada0ff78905d8baec5dfb6eec8d2d05a801af0d89",
+    "apps/qt/qml/downstream/channel/ChannelResponsePreviewDialog.qml": "49538377efa2950f5752f6cf0e2b03f1e540f244d3f2b2dd84d1fd3d60481219",
+    "apps/qt/qml/downstream/instruments/qam/ReceiverQamDialog.qml": "6b78554034d9e8aa2b3bb96325de87f838779e29c47b9ec52e5d9ee479a13cf8",
+    "apps/qt/qml/downstream/instruments/qam/TransmitterScatter.qml": "e1105ec3a94339084dd8eac1222df227545171328638083048e2b73c7a64fab2",
+    "apps/qt/qml/downstream/instruments/response/ReceiverResponseDialog.qml": "62dc29fb87c48836379c677829e2d20faedfd2594111d0eda5e17fd4f0c0d0ba",
+    "apps/qt/qml/downstream/instruments/spectrum/SpectrumAnalyzerDialog.qml": "46a25eb205cbc7c963bb34097a67b27ffa1ee7bcebc879f07faad901e20af14b",
+    "apps/qt/qml/downstream/measurements/MeasurementViewer.qml": "9f252382a3b3c72402bceeddb36ecef9fe52e460f20660c34725ee2f7f20ae8f",
+    "apps/qt/qml/downstream/measurements/RxmerDesignerDialog.qml": "021638868b7928a61e16d3e24655cde3274e08f4dc00516bdb7071d494de60af",
+    "apps/qt/qml/shared/instruments/MeasurementPlot.qml": "a0406b184fdd7d2cb000e05c70ba3b13f667c1fc7d0c3f54fbff40bbd376fe09",
+    "apps/qt/qml/shared/instruments/QamPlot.qml": "fd15f77d6b5ce705c69ce65f81af9615c879df62bfea495da8e02c6ec06ed9d1",
+    "apps/qt/qml/shared/instruments/SpectrumPlot.qml": "652316b12222b43e427e538f6df2ea720122368fe3ceec073acb2818935678aa",
+    "apps/qt/qml/shell/directions/DirectionShellHost.qml": "5d173f595c6843340ea9b689362a8360138053274bddae00f463c7e88e23cf7a",
+    "apps/qt/qml/upstream/ChannelDialog.qml": "c8fc8194cd88eddf353555945404a6a8385749c7deb9aded308918b7586ba050",
+    "apps/qt/qml/upstream/PreEqualizationDialog.qml": "4f93c3f9a902cc9bf9fef38dfc555a9542c44887c886c68407143bdb90993ba3",
+    "apps/qt/qml/upstream/ReceiverDialog.qml": "86bf6e543a21de36d1e5cc4ed1b29db80e60cacc8498b258dcda78e36d8346f7",
+    "apps/qt/qml/upstream/TransmitterDialog.qml": "ad86676ba65326a5bc51ca17c8d2f30b26088bca99007931dca6744b2d7433c9",
+    "apps/qt/qml/upstream/UpstreamCaptureDialog.qml": "bc45932fc0a1a8c48b05bdac6753823943574c8e5bcc3611719941dfa0131655",
+    "apps/qt/qml/upstream/UpstreamConfigurationDraftDialog.qml": "bebfb650e935ab517d61ffcb70d204914093af839498f091c35cadb292415aca",
+    "apps/qt/qml/upstream/UpstreamQamDialog.qml": "693d4c7b17c48f6dad7ec501c578d59ea20eb6b257dac1bc1835fa2134a36f72",
+    "apps/qt/qml/upstream/UpstreamResponseDialog.qml": "88517fac3328e948bcaf8d8791ff3f983fe6a794606605ee4155da49c43b53b1",
+    "apps/qt/qml/upstream/UpstreamSpectrumDialog.qml": "12eba0f646c2403369fedbf7696c64173f0a80ee07ad4ab4cdc8617ac51e3bd4",
+    "apps/qt/qml/upstream/UpstreamWorkbench.qml": "ef90ebb2e69766e51aa2ade7b1af5728d97b8b7c3be21738b6eccbc46116eb81",
+    "apps/qt/qml/validation/DownstreamSharedInstrumentsProbe.qml": "44175333000ad658d31c7e54caafe41752537ad5bf4ad6672aa42894e2ca39cb",
+    "apps/qt/qml/validation/UpstreamInputsProbe.qml": "e7bfc5bd0dbf82188f073883d2472efcf802dce978ce4b5ce94910fc7dafc4b3",
+    "apps/qt/qml/validation/UpstreamInstrumentsProbe.qml": "ecf4f8844be066bf10f4b247face6e42ca3b72f17e58efdd0245e5fe457b8cdc",
+    "apps/qt/src/bridge/upstream_session.rs": "2c8f751b2ed7b54ffccc93b0ef8555e03e234462fa8a1bb95a20b386b41f05e5",
+    "apps/qt/src/shared/presentation/constants.rs": "eeebd2a772d3d0dbd7b873cd37e53fbe12533237f448e7e5ddbcc697e74b5e39",
+    "apps/qt/src/upstream/workbench/captures.rs": "86ee1e49c7857a4b1b02382949e1eb0748607646b061239e9f3544a8cb810e9b",
+    "apps/qt/src/upstream/workbench/captures/constants.rs": "cb669b30c5397907c62025a7d66ecde6624396fae93b62d9c1699f03d4edcdbc",
+    "apps/qt/src/upstream/workbench/captures/inspection.rs": "b457b02572349cb6e891bb67d3a97ef053d9f5ee5865e5c20282f7d667aed89c",
+    "apps/qt/src/upstream/workbench/captures/plot.rs": "86aae841621bbd7bfb760253efaeb15443be7089e64f8f95230dec1b605bde6d",
+    "apps/qt/src/upstream/workbench/captures/tests.rs": "35805a32cde71d53766924e920cbaf04182cffa5f246e04eb674b100c0a3e059",
+    "apps/qt/src/upstream/workbench/drafts.rs": "f0ad3ed7040c328eb9bb410b07dd7f11ff6cf2400f88facbdc15b76d4f2b8ecc",
+    "apps/qt/src/upstream/workbench/grid_view.rs": "90b95cd4722dbedf35fc43429b2e673e195f78b1525dacea5262d04a46165ae8",
+    "apps/qt/src/upstream/workbench/instrument_view.rs": "7b7a56c4f5e615ccdb37b39b00b67c072736cd4938a042533a166c80195649c5",
+    "apps/qt/src/upstream/workbench/instrument_view/tests.rs": "75a02d0689720d908a9215de04c94a0f74408d3f6313c647bc86871bc541ae22",
+    "apps/qt/src/upstream/workbench/instruments.rs": "cb940e0a9299667da4789c6d6de4e10f39a9645eed36ecbe57ea666668cc466c",
+    "apps/qt/src/upstream/workbench/instruments/common.rs": "5d3a0373dc992903b60f13eac1e64d0ebe134d6e14102a7ab6ac6c22d5f556ba",
+    "apps/qt/src/upstream/workbench/instruments/qam.rs": "3c4dff298a6accadf7ba43eacebb67a2d08520f2b33136a8782f90cad182092b",
+    "apps/qt/src/upstream/workbench/instruments/request.rs": "9af305d2c56780fe6efc1a8226bfd41fa5409b2287d02c2636611e2586cdad90",
+    "apps/qt/src/upstream/workbench/instruments/response.rs": "d9f2ba741492fb61ccfdd03e24b57d0d6f58c0810753fd6fec9d85afe593eec9",
+    "apps/qt/src/upstream/workbench/instruments/response_tests.rs": "9f7079af0e970287c0d947dc8420e8fdcfb2bc5758f6b0271a328c1d0cf5f387",
+    "apps/qt/src/upstream/workbench/instruments/spectrum.rs": "eea72ab6d8aa287bd24bc85b25b64e0471a46217a1cbfb95a3a05956078dbf81",
+    "apps/qt/src/upstream/workbench/instruments/tests.rs": "be23f53e42faad23a94acc0f4065472b22bdecabd45712f74dafb33fa0240a02",
+    "apps/qt/src/upstream/workbench/mod.rs": "618a6df41b917a04b66c3da5c9438e7ec8a09622c10f30488203c7983c85f05c",
+    "apps/qt/src/upstream/workbench/observation_policy.rs": "e72bdefc24206aa3b912066bf20438e078c1193b8919d2b735f3d6ba4aa549b3",
+    "apps/qt/src/upstream/workbench/preparation.rs": "e8ef17f0b38ac88de710529c78f0e7cfcb00be6e798150d48c7d96462f4ce032",
+    "apps/qt/src/upstream/workbench/preparation/grid.rs": "c8145720032905fa7a2ff04286d7ca852ccca5e9d17eedd9b27c497c6431a2a2",
+    "apps/qt/src/upstream/workbench/preparation/instrument.rs": "54b5a24a31f1dc377617d24341b8ad1714296ab5b79054ef3728624633921975",
+    "apps/qt/src/upstream/workbench/preparation/query.rs": "c7705e7ac4a6d425844ec3b4a3abe80174bcac7ebcdac75860af8d2a680397a0",
+    "apps/qt/src/upstream/workbench/preparation/transport_retention_tests.rs": "a70eeaf9d2be33f30d7a8db84335047114eeda135f6d2bb01e110340924eceaa",
+    "apps/qt/src/upstream/workbench/presentation.rs": "3203c57f6f175d5d77816a2076412e50c822e1b4d2308d258f5a0f0955d9c336",
+    "apps/qt/tests/shell/tst_shell_host.qml": "eeb373fb493c3d60b66d7df246a00a8d56e67e55d967ec902190fe1b455a273e",
+    "apps/qt/tests/tst_control_palette.qml": "e882819d7c2dfcded3fcd30e11add4be696468b45b5fb8caacbbc4cdb16ba939",
+    "apps/qt/tests/tst_qam_plot.qml": "82e27576edbdbc3731bd8d816620381c12024021bac18a5c6e5b405abdaef419",
+    "apps/qt/tests/tst_spectrum_plot.qml": "c184753150cb289e4abecd30fef2d9fb3bc8d070168416b63a222fa43131d39d",
+    "apps/qt/tests/upstream/tst_upstream_capture_plot.qml": "b94f3f9e5468f8dc7010b23cdf09ab125f23ad28d625c1c49cfb6c5694a6b601",
+    "apps/qt/tests/upstream/tst_upstream_instruments.qml": "f8026f5cccd6d217c47d7db8009f344533ae90520bd1a2e7641482e42fb6cee9",
+    "apps/qt/tests/upstream/tst_upstream_response.qml": "43c6aaad015b1e6aea410be867ed7abada73486340a9335f3e3101da4ea152ed"
+  },
+  "ownership": {
+    "science": "Existing merlin facade observations only; no backend, binding, scientific default or public API change.",
+    "shared_renderers": {
+      "apps/qt/qml/shared/instruments/QamPlot.qml": [
+        "Actual DS TX/RX QAM",
+        "Actual US raw, backend reference and exact pairing"
+      ],
+      "apps/qt/qml/shared/instruments/SpectrumPlot.qml": [
+        "Actual calibrated DS spectra and supplied/received response",
+        "Actual linear normalized US PSD, configured H/C/composite/periodic impulse and received estimates"
+      ],
+      "apps/qt/qml/shared/instruments/MeasurementPlot.qml": [
+        "Original DS RxMER/H and existing Designer",
+        "Original US decoded RxMER physical carriers/dB/nulls"
+      ]
+    },
+    "native_adapter": "Finite existing passive controller-slot worker; exact context/sequence/generation/run guards, admitted JSON and original-source aliases. No hidden simulation or source advance.",
+    "observations": "Newly admitted native upstream sessions opt into one actual receiver estimate frame under the unchanged public scalar ceiling; recovery/default API behavior is unchanged.",
+    "unavailable": "Absent/partial history, undefined response values and unsupported actual-received impulse stay explicit; configured truth never replaces actual estimates."
+  },
+  "validation": {
+    "qt_rust": {
+      "records": [
+        {
+          "label": "qt-rust-consumers",
+          "command": [
+            "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+            "test",
+            "--manifest-path",
+            "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+            "--locked",
+            "--bin",
+            "merlin-qt",
+            "--",
+            "--test-threads=2"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 354.86707159600337
+        }
+      ],
+      "passed": 512,
+      "failed": 0,
+      "ignored": 0,
+      "reuse_scope": "Complete Qt Rust run after all Rust changes; subsequent edits affect only tested QML presentation, fixed native probes and documentation. No repeat of the unchanged six-minute Rust suite."
+    },
+    "focused_rust": [
+      {
+        "label": "format",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.9293541670049308
+      },
+      {
+        "label": "upstream-rust",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "--",
+          "upstream::workbench::",
+          "--test-threads=2"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 95.77807397001015
+      }
+    ],
+    "checks": [
+      {
+        "label": "clippy",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 89.00544051200268
+      },
+      {
+        "label": "format-check",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "/home/dev01/Projects/merlin/apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.7288890360068763
+      },
+      {
+        "label": "boundary",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/tools/validation/qt_api_boundary.py",
+          "--final"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.3849357519939076
+      }
+    ],
+    "qml": [
+      {
+        "label": "upstream/tst_resource_grid.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_resource_grid.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.9495190510060638,
+        "attempt": "consumers",
+        "passed": 24
+      },
+      {
+        "label": "upstream/tst_upstream_host_drafts.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_host_drafts.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.6608798950037453,
+        "attempt": "repeated-notification-fixed",
+        "passed": 14
+      },
+      {
+        "label": "upstream/tst_upstream_workbench.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_workbench.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 22.04565923899645,
+        "attempt": "consumers",
+        "passed": 13
+      },
+      {
+        "label": "upstream/tst_upstream_drafts.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_drafts.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 64.26021039200714,
+        "attempt": "consumers",
+        "passed": 49
+      },
+      {
+        "label": "upstream/tst_upstream_captures.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_captures.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.7535739599989029,
+        "attempt": "capture-final-compat",
+        "passed": 20
+      },
+      {
+        "label": "upstream/tst_upstream_capture_plot.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_capture_plot.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.531550020998111,
+        "attempt": "repeated-notification-recovery",
+        "passed": 7
+      },
+      {
+        "label": "upstream/tst_upstream_instruments.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_instruments.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.32944737700745463,
+        "attempt": "visible-plots",
+        "passed": 24
+      },
+      {
+        "label": "upstream/tst_upstream_response.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/upstream/tst_upstream_response.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.27407216699793935,
+        "attempt": "visible-plots",
+        "passed": 19
+      },
+      {
+        "label": "tst_qam_plot.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_qam_plot.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.8619912029971601,
+        "attempt": "visible-plots",
+        "passed": 13
+      },
+      {
+        "label": "tst_spectrum_plot.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_spectrum_plot.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.537824847997399,
+        "attempt": "complete-ticks",
+        "passed": 5
+      },
+      {
+        "label": "tst_presentation_owner.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_presentation_owner.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.08204065800237004,
+        "attempt": "consumers",
+        "passed": 11
+      },
+      {
+        "label": "tst_presentation_footprint.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_presentation_footprint.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.23438905300281476,
+        "attempt": "consumers",
+        "passed": 45
+      },
+      {
+        "label": "shell/tst_direction_tabs.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/shell/tst_direction_tabs.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.0225702229945455,
+        "attempt": "consumers",
+        "passed": 12
+      },
+      {
+        "label": "tst_measurement_presentation.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_measurement_presentation.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.17770193199976347,
+        "attempt": "consumers",
+        "passed": 6
+      },
+      {
+        "label": "tst_rxmer_designer.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_rxmer_designer.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 4.263872602008632,
+        "attempt": "consumers",
+        "passed": 20
+      },
+      {
+        "label": "tst_workbench.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.981510208002874,
+        "attempt": "consumers",
+        "passed": 55
+      },
+      {
+        "label": "tst_buttons.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_buttons.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.11637146200519055,
+        "attempt": "consumers",
+        "passed": 5
+      },
+      {
+        "label": "tst_control_palette.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_control_palette.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.020232180992025,
+        "attempt": "visible-plots",
+        "passed": 4
+      },
+      {
+        "label": "tst_tooltips.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_tooltips.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 4.844129625009373,
+        "attempt": "consumers",
+        "passed": 4
+      },
+      {
+        "label": "tst_response_view.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_response_view.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.4249045699980343,
+        "attempt": "visible-plots",
+        "passed": 3
+      },
+      {
+        "label": "tst_soft_diagnostics.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_soft_diagnostics.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.7356973109999672,
+        "attempt": "consumers",
+        "passed": 3
+      },
+      {
+        "label": "tst_updates.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_updates.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.47594176001439337,
+        "attempt": "consumers",
+        "passed": 7
+      },
+      {
+        "label": "shell/tst_shell_host.qml",
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/shell/tst_shell_host.qml",
+          "-platform",
+          "offscreen",
+          "-style",
+          "Fusion"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.13315006899938453,
+        "attempt": "repeated-notification-fixed",
+        "passed": 11
+      }
+    ],
+    "qml_pass_records": 374,
+    "optimized_build": [
+      {
+        "label": "build",
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/qt-desktop.sh",
+          "build"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 111.84030851900752
+      }
+    ],
+    "final_executable_sha256": "6608630c6abfa4a49e2c8ab384931d75e4a58918281a14cf158733ec7e83faad",
+    "native_upstream": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--upstream-instruments-probe",
+        "--upstream-instruments-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-01/native-visible-plots/instruments-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 48.77883094199933,
+      "executable_sha256": "a973f6762cb6e5957357b66f3f727a1b0ff78325c6e5279402fa6f2fac726965",
+      "source_sha256": {
+        "instruments-50": "41910ed860bce3fb18014355e2bc7f72d6eea3439ecd0f80a604ea35edce6468",
+        "instruments-25": "a17ae95349bd084a7b05ee23ece4d2faf705ae8deefaca734e821d6c1b92e023"
+      },
+      "source_fixture": "Existing synthetic 50/25 kHz documents with explicit bounded seven-tap retention; real native runs and immutable observations.",
+      "picker_actions": [
+        {
+          "action": "instruments-50",
+          "owned_window": 14680071,
+          "picker_pid": 595847,
+          "seconds": 3.105341260001296
+        },
+        {
+          "action": "instruments-25",
+          "owned_window": 14680071,
+          "picker_pid": 595902,
+          "seconds": 15.976465275001829
+        }
+      ],
+      "full_window_capture": {
+        "window": 12582919,
+        "pid": 595835,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-01/native-visible-plots/upstream-instruments-main-dark.png",
+        "sha256": "f69b498cb917b56df1bd9ce967048f908c3d576c900fe9a935e6327a5b8b3503",
+        "size": [
+          1210,
+          736
+        ],
+        "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+      },
+      "extra_captures": {
+        "qam": {
+          "window": 12582919,
+          "pid": 595835,
+          "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-01/native-visible-plots/qam-main-dark.png",
+          "sha256": "90642905bef8bc6bda9fb152c5eb0d6514c42cea9d63b06b0a1754f752dd21e0",
+          "size": [
+            1210,
+            736
+          ],
+          "source": "Unaltered actual owned native X11 Main window pixels."
+        },
+        "response": {
+          "window": 12582919,
+          "pid": 595835,
+          "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-01/native-visible-plots/response-main-dark.png",
+          "sha256": "7c46215373a331b8afe6bb13d8da9e6e7d47015005734ec6649935882769f82c",
+          "size": [
+            1210,
+            736
+          ],
+          "source": "Unaltered actual owned native X11 Main window pixels."
+        }
+      },
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-01/native-visible-plots/instruments-dark.png",
+      "image_sha256": "787a261596472ddcb48c620365b37446beaf9d0a2ec2fd1988422dbba509fa42",
+      "views": 28,
+      "original_comparison": {
+        "executable_sha256": "a973f6762cb6e5957357b66f3f727a1b0ff78325c6e5279402fa6f2fac726965",
+        "interpreter": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/native/installed/bin/python",
+        "native_binding_origin": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/native/installed/lib/python3.10/site-packages/merlin/upstream.py",
+        "all_original_science_and_metadata_match": true,
+        "views_compared": 28,
+        "comparisons": [
+          {
+            "tag": "instruments-50",
+            "action": "qam-initial",
+            "kind": "qam",
+            "original_points_compared": 732,
+            "viewport_sha256": "261732c25df881dbc3aa7117fe82b3066d16e1df918eb5e0f249f02da64fa701",
+            "reference_sha256": "57a1582a9036546ecb2647f0574e98be2af361d24aff46119704316622897ca5",
+            "visual": {
+              "items": 88,
+              "canvases": 2
+            },
+            "query_ms": null,
+            "heartbeat_ticks": null
+          },
+          {
+            "tag": "instruments-50",
+            "action": "qam-raw",
+            "kind": "qam",
+            "original_points_compared": 732,
+            "viewport_sha256": "7506e00667b4dbc1ec68b363c9f8d52fe2fecf1ea43427132f64f7c45e4d278d",
+            "reference_sha256": "57a1582a9036546ecb2647f0574e98be2af361d24aff46119704316622897ca5",
+            "visual": {
+              "items": 88,
+              "canvases": 2
+            },
+            "query_ms": 359,
+            "heartbeat_ticks": 2
+          },
+          {
+            "tag": "instruments-50",
+            "action": "qam-unit-reference",
+            "kind": "qam",
+            "original_points_compared": 36,
+            "viewport_sha256": "ce0883eb7768d0ff64f4f83501065e8f8963765395602cc266eec76a54d8f218",
+            "reference_sha256": "cc7514544c53ddc90cc9321ad2adb9f567bfd368137b255d0cf6298ee3b5db5b",
+            "visual": {
+              "items": 92,
+              "canvases": 2
+            },
+            "query_ms": 78,
+            "heartbeat_ticks": 2
+          },
+          {
+            "tag": "instruments-50",
+            "action": "qam-exact-pairing",
+            "kind": "qam",
+            "original_points_compared": 220,
+            "viewport_sha256": "c9e2e9e95c220621f388511939ea9b9e917b44ea4795f38528d6cba9c0059dad",
+            "reference_sha256": "bf0230e464ec4e70a34dd8fcfa469c98c093e75825fbf1fa32f36da600825d09",
+            "visual": {
+              "items": 93,
+              "canvases": 2
+            },
+            "query_ms": 119,
+            "heartbeat_ticks": 2
+          },
+          {
+            "tag": "instruments-50",
+            "action": "spectrum-initial",
+            "kind": "spectrum",
+            "original_points_compared": 2048,
+            "viewport_sha256": "137fd7b42940aca2b83bb926403670f5dc616e2ebcf1e101108298a68591a914",
+            "reference_sha256": "3b8ce45d0ecbf19d12f5e18bc7fca1408ad1542ec8ed714b97c52e265cda12aa",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": null,
+            "heartbeat_ticks": null
+          },
+          {
+            "tag": "instruments-50",
+            "action": "spectrum-channel-output",
+            "kind": "spectrum",
+            "original_points_compared": 2048,
+            "viewport_sha256": "18ff0b09244e69c6f50ec73ca7343fdb192e5044abaf07d0998d04a178c754a4",
+            "reference_sha256": "017cfa4fc313d71049768015ca90722a8732d26ee728ab63d1eea00c6364a393",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": 186,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-50",
+            "action": "spectrum-zoom",
+            "kind": "spectrum",
+            "original_points_compared": 1024,
+            "viewport_sha256": "36b3304da0945b704fe736b7dd7ef606e55e92513d04ec3b2769ccc025baafe3",
+            "reference_sha256": "017cfa4fc313d71049768015ca90722a8732d26ee728ab63d1eea00c6364a393",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": 111,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-50",
+            "action": "spectrum-reset",
+            "kind": "spectrum",
+            "original_points_compared": 2048,
+            "viewport_sha256": "278a5bc0f5ce0a61ac01cab56cfbcae1c29c7f5e420d6b51e4c8f41ff6fce5da",
+            "reference_sha256": "017cfa4fc313d71049768015ca90722a8732d26ee728ab63d1eea00c6364a393",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": 186,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-50",
+            "action": "response-H",
+            "kind": "response",
+            "original_points_compared": 2048,
+            "viewport_sha256": "50c0f2dea6f382b694ee67e535b85b6eb7bd6cd4f34cc5c805596ec14f0d6d1a",
+            "reference_sha256": "1b38a9f7906387c717aed4b057e061c8a4e62e14fa8f4453b28dbbdc3309340e",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": null,
+            "heartbeat_ticks": null
+          },
+          {
+            "tag": "instruments-50",
+            "action": "response-C",
+            "kind": "response",
+            "original_points_compared": 2048,
+            "viewport_sha256": "39e321013bea98a6d5b07fd457eabf8f605e95a71e87b8d057d5fedb1058d208",
+            "reference_sha256": "69065770d913c0f97dafd4c84d60d5bb045fadea1bfb5823e6046bebde8eef07",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": 394,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-50",
+            "action": "response-composite",
+            "kind": "response",
+            "original_points_compared": 2048,
+            "viewport_sha256": "872c8d978adb482475403e2899b91ccf486dc184d3580e28036111f459ab08c7",
+            "reference_sha256": "596854f5db191947c76fb21d8c143d724ad1cea17c382b678228e67fb1c1cff9",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": 354,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-50",
+            "action": "response-impulse",
+            "kind": "response",
+            "original_points_compared": 2048,
+            "viewport_sha256": "a44c059153d7ec952771a07026da06d9a981b7b1e000b92932718d0466713c68",
+            "reference_sha256": "8d7d268f1dce3f12cd950b4628d6ccee574fb91eaf030a75eb8f2448f906fe93",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": 348,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-50",
+            "action": "response-received-amplitude",
+            "kind": "response",
+            "original_points_compared": 2048,
+            "viewport_sha256": "ce29bf379fe8ccf3e9e3575c6403f3ec35aa198f89acedf03ac5f9a9aa155df6",
+            "reference_sha256": "5d0859d64f114d00c32e99b2e328b8c1a7b635d38c1ba531a0095a050281a4f9",
+            "visual": {
+              "items": 75,
+              "canvases": 1
+            },
+            "query_ms": 346,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-50",
+            "action": "response-received-phase",
+            "kind": "response",
+            "original_points_compared": 2048,
+            "viewport_sha256": "95bee7123c38b70759149da5b6965708f3b4cda65bc604b32e4f1670ecf9b9fb",
+            "reference_sha256": "5d0859d64f114d00c32e99b2e328b8c1a7b635d38c1ba531a0095a050281a4f9",
+            "visual": {
+              "items": 75,
+              "canvases": 1
+            },
+            "query_ms": 319,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "qam-initial",
+            "kind": "qam",
+            "original_points_compared": 1120,
+            "viewport_sha256": "4178a9707c1e8eb473da4c497ab7f0fb978de0d6df39d74c97700dc0c5583c01",
+            "reference_sha256": "18038e5f969ded04089f2789b883f0cd52f9af270f7e95d885c63074e5e98bd2",
+            "visual": {
+              "items": 88,
+              "canvases": 2
+            },
+            "query_ms": null,
+            "heartbeat_ticks": null
+          },
+          {
+            "tag": "instruments-25",
+            "action": "qam-raw",
+            "kind": "qam",
+            "original_points_compared": 1120,
+            "viewport_sha256": "d2a2fef19552ce1f0208fc5fb1501fdf1836320e9fbea7f8764b50a7f5d82aaf",
+            "reference_sha256": "18038e5f969ded04089f2789b883f0cd52f9af270f7e95d885c63074e5e98bd2",
+            "visual": {
+              "items": 88,
+              "canvases": 2
+            },
+            "query_ms": 453,
+            "heartbeat_ticks": 2
+          },
+          {
+            "tag": "instruments-25",
+            "action": "qam-unit-reference",
+            "kind": "qam",
+            "original_points_compared": 20,
+            "viewport_sha256": "30505431f15ef9ebe96ff57379e5d2515810a579cc6094469768ec9e33c613d3",
+            "reference_sha256": "68c6ee6d169a0b12a2dd1075be9edb0243e2c1aafc5a4b2ecb35cb6f972688e7",
+            "visual": {
+              "items": 92,
+              "canvases": 2
+            },
+            "query_ms": 113,
+            "heartbeat_ticks": 2
+          },
+          {
+            "tag": "instruments-25",
+            "action": "qam-exact-pairing",
+            "kind": "qam",
+            "original_points_compared": 352,
+            "viewport_sha256": "19bd65b02fd46ab079f4160962d8f4bee40437cad2d0d24a223d7ec65abcb194",
+            "reference_sha256": "9c243aab3e86b2f77c4fa7a91afe841e2458b66ce0317dfae8f19a2bcb7a1ce0",
+            "visual": {
+              "items": 93,
+              "canvases": 2
+            },
+            "query_ms": 104,
+            "heartbeat_ticks": 2
+          },
+          {
+            "tag": "instruments-25",
+            "action": "spectrum-initial",
+            "kind": "spectrum",
+            "original_points_compared": 4096,
+            "viewport_sha256": "6bf19d81ae110d773bc9eb0488138918e55a2b53862dc59b8bd05e553c335184",
+            "reference_sha256": "2267aa84a579d2fc7e6973b80045915a9d57f220d349a02ac64e5af410996e58",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": null,
+            "heartbeat_ticks": null
+          },
+          {
+            "tag": "instruments-25",
+            "action": "spectrum-channel-output",
+            "kind": "spectrum",
+            "original_points_compared": 4096,
+            "viewport_sha256": "a5dcae15ff7031895c1b8f3ad9705f90b54f8fea6f53d2abd0c113fb57e8ec9d",
+            "reference_sha256": "5e397572220e1ddc70e9c48a0509e15426cbb130aaee4d40744037c914d5179b",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": 468,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "spectrum-zoom",
+            "kind": "spectrum",
+            "original_points_compared": 2048,
+            "viewport_sha256": "72081f447b4bdff43b151ee4a805281bbd02f5f3196c31f99e321f51e5556ac9",
+            "reference_sha256": "5e397572220e1ddc70e9c48a0509e15426cbb130aaee4d40744037c914d5179b",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": 502,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "spectrum-reset",
+            "kind": "spectrum",
+            "original_points_compared": 4096,
+            "viewport_sha256": "80ab7c2c65776103bcfb54c80c4cbbff4204b785bb896a6cca55581d0e59f7bb",
+            "reference_sha256": "5e397572220e1ddc70e9c48a0509e15426cbb130aaee4d40744037c914d5179b",
+            "visual": {
+              "items": 56,
+              "canvases": 1
+            },
+            "query_ms": 402,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "response-H",
+            "kind": "response",
+            "original_points_compared": 4096,
+            "viewport_sha256": "372b1071fe24059ac7ef58527b1ab5957d27e1c0514ec7d7c7b06432125b9789",
+            "reference_sha256": "ecf3368504626763a6da107d36b96435ba8f6c07f91dc5c4a054f8a9fb8a45f6",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": null,
+            "heartbeat_ticks": null
+          },
+          {
+            "tag": "instruments-25",
+            "action": "response-C",
+            "kind": "response",
+            "original_points_compared": 4096,
+            "viewport_sha256": "afa9df2a73cd335e5cbf76fbe2912a07ec93677b3938dbaf52bc01c971f96e6b",
+            "reference_sha256": "be8224f5f6bdb9f380f9fd59687068352cab5968b3d6803cf7a69cf9dafae571",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": 820,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "response-composite",
+            "kind": "response",
+            "original_points_compared": 4096,
+            "viewport_sha256": "ad1acfd2708be9bdbc163b9ab7af31128b9eb5eed8afe34066912f8418c4a976",
+            "reference_sha256": "c459515843946c2861ef2603892fe3037f6c484bebe38165cff9f230987967de",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": 771,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "response-impulse",
+            "kind": "response",
+            "original_points_compared": 4096,
+            "viewport_sha256": "3991e8f6740cf72cd4ce987606de973a6b4b14102a39929ea31250491230f646",
+            "reference_sha256": "a1b93ea830133965a2fc2101c33f8e9025f77d1ee7760b41f8e3ae255cf3b16c",
+            "visual": {
+              "items": 87,
+              "canvases": 1
+            },
+            "query_ms": 763,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "response-received-amplitude",
+            "kind": "response",
+            "original_points_compared": 4096,
+            "viewport_sha256": "729b54cc4eed0d17c9253b03c51fe17d7812f1208bf35bd6e28998ee2b54113e",
+            "reference_sha256": "11ca343a2f0b815b8bfa324eeb2e3eb01bf48f5ec80f2300efcf3c2aa1526e2a",
+            "visual": {
+              "items": 75,
+              "canvases": 1
+            },
+            "query_ms": 695,
+            "heartbeat_ticks": 1
+          },
+          {
+            "tag": "instruments-25",
+            "action": "response-received-phase",
+            "kind": "response",
+            "original_points_compared": 4096,
+            "viewport_sha256": "fd8f7672510e636dee7f26a529b1cc22d273fc74f29785286e4409b8c44f3951",
+            "reference_sha256": "11ca343a2f0b815b8bfa324eeb2e3eb01bf48f5ec80f2300efcf3c2aa1526e2a",
+            "visual": {
+              "items": 75,
+              "canvases": 1
+            },
+            "query_ms": 667,
+            "heartbeat_ticks": 1
+          }
+        ],
+        "plans": [
+          {
+            "tag": "instruments-50",
+            "identity": "upstream/2/1",
+            "key": "{\"session\":\"2\",\"generation\":\"1\"}",
+            "result": {
+              "ber": 0,
+              "bit_errors": 0,
+              "bits_tested": 1976,
+              "completed_grants": 1,
+              "reference_recovered": true,
+              "run": "1",
+              "status": "Completed",
+              "unverified_source_bits": 0
+            }
+          },
+          {
+            "tag": "instruments-25",
+            "identity": "upstream/2/2",
+            "key": "{\"session\":\"2\",\"generation\":\"2\"}",
+            "result": {
+              "ber": 0,
+              "bit_errors": 0,
+              "bits_tested": 4216,
+              "completed_grants": 1,
+              "reference_recovered": true,
+              "run": "2",
+              "status": "Completed",
+              "unverified_source_bits": 0
+            }
+          }
+        ],
+        "pre_run_unavailable": 2,
+        "tab_isolation": [
+          {
+            "tag": "instruments-50",
+            "key": "{\"session\":\"2\",\"generation\":\"1\"}",
+            "run": "1",
+            "preserved": true
+          },
+          {
+            "tag": "instruments-25",
+            "key": "{\"session\":\"2\",\"generation\":\"2\"}",
+            "run": "2",
+            "preserved": true
+          }
+        ],
+        "screen_navigation": [
+          {
+            "tag": "instruments-50",
+            "inspection": {
+              "point": {
+                "detail": {
+                  "carrier": 146,
+                  "frame": "0",
+                  "identity": {
+                    "generation": "1",
+                    "grant": "1",
+                    "run": "2"
+                  },
+                  "loading": 4,
+                  "role": "Data",
+                  "symbol": 0,
+                  "value": {
+                    "im": 0.31622776601683794,
+                    "re": 0.31622776601683794
+                  }
+                },
+                "readout": "left \u00b7 frame 0 \u00b7 symbol 0 \u00b7 carrier 146 \u00b7 loading 4 \u00b7 raw I 0.31622776601683794 \u00b7 raw Q 0.31622776601683794",
+                "role": "data",
+                "series": "left",
+                "x": 0.6515151515151514,
+                "y": 0.34848484848484856
+              },
+              "text": "left \u00b7 frame 0 \u00b7 symbol 0 \u00b7 carrier 146 \u00b7 loading 4 \u00b7 raw I 0.31622776601683794 \u00b7 raw Q 0.31622776601683794\n{\n  \"carrier\": 146,\n  \"frame\": \"0\",\n  \"identity\": {\n    \"generation\": \"1\",\n    \"grant\": \"1\",\n    \"run\": \"2\"\n  },\n  \"loading\": 4,\n  \"role\": \"Data\",\n  \"symbol\": 0,\n  \"value\": {\n    \"im\": 0.31622776601683794,\n    \"re\": 0.31622776601683794\n  }\n}",
+              "magnification": 2,
+              "panX": 0.1,
+              "panY": 0.1
+            },
+            "reset": true,
+            "noQuery": true
+          },
+          {
+            "tag": "instruments-25",
+            "inspection": {
+              "point": {
+                "detail": {
+                  "carrier": 264,
+                  "frame": "0",
+                  "identity": {
+                    "generation": "3",
+                    "grant": "1",
+                    "run": "4"
+                  },
+                  "loading": 4,
+                  "role": "Data",
+                  "symbol": 0,
+                  "value": {
+                    "im": 0.31622776601683794,
+                    "re": 0.31622776601683794
+                  }
+                },
+                "readout": "left \u00b7 frame 0 \u00b7 symbol 0 \u00b7 carrier 264 \u00b7 loading 4 \u00b7 raw I 0.31622776601683794 \u00b7 raw Q 0.31622776601683794",
+                "role": "data",
+                "series": "left",
+                "x": 0.6330772826747999,
+                "y": 0.3669227173252001
+              },
+              "text": "left \u00b7 frame 0 \u00b7 symbol 0 \u00b7 carrier 264 \u00b7 loading 4 \u00b7 raw I 0.31622776601683794 \u00b7 raw Q 0.31622776601683794\n{\n  \"carrier\": 264,\n  \"frame\": \"0\",\n  \"identity\": {\n    \"generation\": \"3\",\n    \"grant\": \"1\",\n    \"run\": \"4\"\n  },\n  \"loading\": 4,\n  \"role\": \"Data\",\n  \"symbol\": 0,\n  \"value\": {\n    \"im\": 0.31622776601683794,\n    \"re\": 0.31622776601683794\n  }\n}",
+              "magnification": 2,
+              "panX": 0.1,
+              "panY": 0.1
+            },
+            "reset": true,
+            "noQuery": true
+          }
+        ],
+        "maximum_heartbeat_gap_including_pickers_ms": 2223,
+        "evidence_scope": "Reused installed binding of unchanged backend; Python orchestrates Rust operations only, never scientific calculations."
+      },
+      "reuse_scope": "This artifact establishes all QAM/PSD/response science, selectors, navigation and visibility. Later source edits are confined to fixed DS/Input probes and the original capture-dialog notification guard; these instrument consumers/renderers are unchanged."
+    },
+    "native_downstream": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--downstream-shared-probe",
+        "--downstream-shared-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-01/native-parent-navigation/downstream-shared-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 27.744246456000837,
+      "executable_sha256": "5c6083e51afee3996d203bdcc6f6bf6fc8b96dabb9076d244c40a691e6b6b2ed",
+      "source_sha256": {},
+      "source_fixture": "Existing self-contained downstream saved example, original embedded measurements and actual native recovery.",
+      "picker_actions": [],
+      "full_window_capture": {
+        "window": 12582919,
+        "pid": 597939,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-01/native-parent-navigation/downstream-shared-main-dark.png",
+        "sha256": "72dbe76aa1a3fd43c886f4824a58585a1e7896335c9e7821ae66c91b9812fefc",
+        "size": [
+          1210,
+          736
+        ],
+        "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+      },
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-01/native-parent-navigation/downstream-shared-dark.png",
+      "image_sha256": "43e2a2dd6b3b394feeeb94450bbd6c4391e33650cdb20350536191a6542abb78",
+      "qam_views": 22,
+      "spectrum_views": 12,
+      "response_views": 5,
+      "original_measurement_views": 5,
+      "upstream_science_preserved": true,
+      "no_render_only_simulation_advance": true,
+      "reuse_scope": "Actual parent-first navigation and shared DS consumers pass before only the isolated upstream capture-dialog notification fix. DS code/renderers are unchanged afterward; fresh final native shell/startup regressions also pass."
+    },
+    "native_original_rxmer": {
+      "command": [
+        "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "--upstream-inputs-probe",
+        "--upstream-inputs-image",
+        "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-01/native-rxmer-retained-hover/inputs-dark.png",
+        "--workbench",
+        "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 27.150526629993692,
+      "executable_sha256": "6608630c6abfa4a49e2c8ab384931d75e4a58918281a14cf158733ec7e83faad",
+      "expected_sources": {
+        "ucd-binary": {
+          "family": "ucd",
+          "original_sha256": "7e47467fae5d8aaabbaa52f7d2dda028a3865fa5b9bf603548a38c00393c3e74",
+          "original_bytes": 92,
+          "delivery_sha256": "7e47467fae5d8aaabbaa52f7d2dda028a3865fa5b9bf603548a38c00393c3e74",
+          "delivery_bytes": 92
+        },
+        "ucd-json": {
+          "family": "ucd",
+          "original_sha256": "7e47467fae5d8aaabbaa52f7d2dda028a3865fa5b9bf603548a38c00393c3e74",
+          "original_bytes": 92,
+          "delivery_sha256": "32b0c2d503096fc5885474107d907e27244c76ea198c0f3bb97739cfc2299d04",
+          "delivery_bytes": 936
+        },
+        "rxmer-binary": {
+          "family": "rxmer",
+          "original_sha256": "d1da22fb4a1413f18477b48f4f698e6243ad14d03a28a6ba66daaebed78d41ba",
+          "original_bytes": 697,
+          "delivery_sha256": "d1da22fb4a1413f18477b48f4f698e6243ad14d03a28a6ba66daaebed78d41ba",
+          "delivery_bytes": 697
+        },
+        "rxmer-json": {
+          "family": "rxmer",
+          "original_sha256": "1ee74407762af69674b866bfb5fde97eef2f45af3fa990252b64813cdd1deb84",
+          "original_bytes": 301,
+          "delivery_sha256": "24c3f9ebb2b1027015ef85526e1e0f7c26a7b6b4f0bede15cac7902d407fa4e3",
+          "delivery_bytes": 2391
+        },
+        "pre-eq-binary": {
+          "family": "pre_eq",
+          "original_sha256": "09de1df6055de967c8ef36ad1cd6c2f9b142ebf53408aff5ce5b88b709b6f05b",
+          "original_bytes": 50,
+          "delivery_sha256": "09de1df6055de967c8ef36ad1cd6c2f9b142ebf53408aff5ce5b88b709b6f05b",
+          "delivery_bytes": 50
+        },
+        "pre-eq-json": {
+          "family": "pre_eq",
+          "original_sha256": "497f49bedb09587daaeac3c95630c32b70b0b6dd7d948a7e3fa716ac4ad9320f",
+          "original_bytes": 50,
+          "delivery_sha256": "3ea8f39ef5bb81ad49a525b14d84ca4150cdbdcac21076b414aff9af773718fe",
+          "delivery_bytes": 622
+        }
+      },
+      "fixture_scope": "Existing authored/sanitized fixtures; not field or interoperability evidence.",
+      "picker_actions": [
+        {
+          "action": "ucd-binary",
+          "owned_window": 14680071,
+          "picker_pid": 600067,
+          "seconds": 3.467154670986929
+        },
+        {
+          "action": "cancel",
+          "owned_window": 14680071,
+          "picker_pid": 600096,
+          "seconds": 4.8552830219996395
+        },
+        {
+          "action": "ucd-json",
+          "owned_window": 14680071,
+          "picker_pid": 600114,
+          "seconds": 6.152258292990155
+        },
+        {
+          "action": "rxmer-binary",
+          "owned_window": 14680071,
+          "picker_pid": 600142,
+          "seconds": 7.972167485000682
+        },
+        {
+          "action": "rxmer-json",
+          "owned_window": 14680071,
+          "picker_pid": 600167,
+          "seconds": 12.368443684987142
+        },
+        {
+          "action": "pre-eq-binary",
+          "owned_window": 14680071,
+          "picker_pid": 600191,
+          "seconds": 14.005339759998606
+        },
+        {
+          "action": "pre-eq-json",
+          "owned_window": 14680071,
+          "picker_pid": 600213,
+          "seconds": 15.316070105996914
+        },
+        {
+          "action": "invalid",
+          "owned_window": 14680071,
+          "picker_pid": 600237,
+          "seconds": 17.267171904997667
+        },
+        {
+          "action": "measured-50",
+          "owned_window": 14680071,
+          "picker_pid": 600259,
+          "seconds": 22.341452372987987
+        },
+        {
+          "action": "measured-25",
+          "owned_window": 14680071,
+          "picker_pid": 600289,
+          "seconds": 25.35854858199309
+        }
+      ],
+      "full_window_capture": {
+        "window": 12582919,
+        "pid": 600056,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-01/native-rxmer-retained-hover/upstream-inputs-main-dark.png",
+        "sha256": "279048a3b7bf97a8c58c26cb0ec57b8332923cf0807238efb39f7615dedc9719",
+        "size": [
+          1210,
+          736
+        ],
+        "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+      },
+      "extra_captures": {
+        "rxmer": {
+          "window": 12582919,
+          "pid": 600056,
+          "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-01/native-rxmer-retained-hover/rxmer-main-dark.png",
+          "sha256": "b009be1f0f45980b86c927978a3f0ee3ef1a79000bb8577ce6bfef60928f0947",
+          "size": [
+            1210,
+            736
+          ],
+          "source": "Unaltered actual owned native X11 Main window pixels."
+        }
+      },
+      "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-01/native-rxmer-retained-hover/inputs-dark.png",
+      "image_sha256": "8c3e68775f394c62203efcc5a3a11d1951c1f97dc22a698c06baa3b9d6f3134c",
+      "comparison": {
+        "executable_sha256": "6608630c6abfa4a49e2c8ab384931d75e4a58918281a14cf158733ec7e83faad",
+        "original_rxmer_viewports_compared": [
+          {
+            "tag": "rxmer-binary",
+            "action": "original",
+            "points": 400,
+            "first": 0,
+            "nulls": 0,
+            "source_metadata_sha256": "b9af01261a1c7287bca88538f83536657cdf44633b70acdcd0f3575cbdf6bedd",
+            "viewport_sha256": "a0113908b06d90cda0be0875d9e0fac7cef97dece4637d81f015023b28553504"
+          },
+          {
+            "tag": "rxmer-json",
+            "action": "original",
+            "points": 4,
+            "first": 0,
+            "nulls": 1,
+            "source_metadata_sha256": "93563cac0a0fa955b676052db4ad325e231423c58e0cd5f2f680c9c100f061bf",
+            "viewport_sha256": "5a73bac8aae0d8253abb0d4af17e7010eb4684719d492086601d0cb867d8e12d"
+          },
+          {
+            "tag": "rxmer-binary",
+            "action": "paged",
+            "points": 336,
+            "first": 64,
+            "nulls": 0,
+            "source_metadata_sha256": "b9af01261a1c7287bca88538f83536657cdf44633b70acdcd0f3575cbdf6bedd",
+            "viewport_sha256": "d5cce6d330874284d2cf8f54e38823a40d6c5285292d1b892b838cb64b8c8864"
+          },
+          {
+            "tag": "rxmer-binary",
+            "action": "zoom",
+            "points": 168,
+            "first": 148,
+            "nulls": 0,
+            "source_metadata_sha256": "b9af01261a1c7287bca88538f83536657cdf44633b70acdcd0f3575cbdf6bedd",
+            "viewport_sha256": "fdf3cd1081a4a0cf430649917b57c3987f730c28cfbb2810afba719cad00a67b"
+          },
+          {
+            "tag": "rxmer-binary",
+            "action": "reset",
+            "points": 400,
+            "first": 0,
+            "nulls": 0,
+            "source_metadata_sha256": "b9af01261a1c7287bca88538f83536657cdf44633b70acdcd0f3575cbdf6bedd",
+            "viewport_sha256": "a0113908b06d90cda0be0875d9e0fac7cef97dece4637d81f015023b28553504"
+          }
+        ],
+        "original_points_and_nulls_match": true,
+        "actual_zoom_reset": true,
+        "unchanged_original_provenance": true,
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shared-01/native-rxmer-retained-hover/inputs-dark.png.rxmer.png",
+        "image_sha256": "6c3982f69323f50d3856bf80f589d302f2dd09ce0321c467f360eb853a78f36f"
+      },
+      "native_capture_views": 6,
+      "measured_plans": 2,
+      "navigation_views": 3,
+      "rxmer_image_saved": true
+    },
+    "native_compatibility": {
+      "commands": [
+        {
+          "label": "native-editors",
+          "command": [
+            "python3",
+            "-B",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/run_upstream_configuration_probe.py",
+            "shared-01-final"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 8.943531386001268
+        },
+        {
+          "label": "native-shell",
+          "command": [
+            "python3",
+            "-B",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/run_direction_shell_probe.py",
+            "shared-01-final"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.136144020987558
+        },
+        {
+          "label": "native-startup-projects",
+          "command": [
+            "python3",
+            "-B",
+            "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/run_native_ui_smokes.py",
+            "shared-01-final"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 4.8488755479920655
+        }
+      ],
+      "seven_editors": {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--upstream-configuration-probe",
+          "--upstream-configuration-image",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/shared-01-final/receiver-configuration-dark.png",
+          "--workbench",
+          "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 8.834773698006757,
+        "executable_sha256": "6608630c6abfa4a49e2c8ab384931d75e4a58918281a14cf158733ec7e83faad",
+        "source_sha256": "ba39970338d18e741c0c17362298dc9a71ad39a3a5f2022d8390e128e053e41d",
+        "source_fixture": "Existing us-50khz.json plus explicit synthetic unity Pre-Eq plan; not captured field input.",
+        "picker_actions": [
+          {
+            "action": "cancel",
+            "owned_window": 14680071,
+            "picker_pid": 600350,
+            "seconds": 3.2089000819978537
+          },
+          {
+            "action": "load",
+            "owned_window": 14680071,
+            "picker_pid": 600388,
+            "seconds": 4.292386968008941
+          }
+        ],
+        "full_window_capture": {
+          "window": 12582919,
+          "pid": 600333,
+          "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/shared-01-final/upstream-configuration-main-dark.png",
+          "sha256": "7b6962557414aa151042491493ed0f4405ac94e275f96079c2593f270ed21a99",
+          "size": [
+            1210,
+            736
+          ],
+          "source": "Unaltered native X11 Main window pixels; xwd to lossless PNG."
+        },
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-01/shared-01-final/receiver-configuration-dark.png",
+        "image_sha256": "94d38362eb6d0a26ce1f55b09471d3730425dfc9d6ccb683614c3d3b002ba8e6"
+      },
+      "direction_shell": {
+        "command": [
+          "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+          "--direction-shell-probe",
+          "--direction-shell-downstream-image",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/shared-01-final/downstream-dark.png",
+          "--direction-shell-upstream-image",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/shared-01-final/upstream-dark.png",
+          "--workbench",
+          "/home/dev01/Projects/merlin/examples/workbench/single/workbench.merlin.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 2.032070635992568,
+        "executable_sha256": "6608630c6abfa4a49e2c8ab384931d75e4a58918281a14cf158733ec7e83faad",
+        "display": ":0",
+        "image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/shared-01-final/downstream-dark.png",
+        "upstream_image": "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/shell-01/shared-01-final/upstream-dark.png",
+        "upstream_image_sha256": "486345a60178f2af414739e4b00471b874fa84532bb96ef9af9f0c6e6af15494",
+        "image_sha256": "3f4dd220f6173ed9b281d50c555910a399b67b974b4c23e49016eba155a4d5ff"
+      },
+      "startup_projects": {
+        "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+        "sha256": "6608630c6abfa4a49e2c8ab384931d75e4a58918281a14cf158733ec7e83faad",
+        "display": ":0",
+        "display_dimensions": [
+          "dimensions:    1280x800 pixels (338x211 millimeters)"
+        ],
+        "qt_sdk_version": "6.8.3",
+        "commands": [
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--check-workbench",
+              "examples/workbench/single/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 0.04196566999598872,
+            "stdout": "Workbench inputs accepted.\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--check-workbench",
+              "examples/workbench/multi-rxmer/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 0.058166066999547184,
+            "stdout": "Workbench inputs accepted.\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--check-workbench",
+              "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 0.4319362380047096,
+            "stdout": "Workbench inputs accepted.\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--check-workbench",
+              "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 0.02794925999478437,
+            "stdout": "Workbench inputs accepted.\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--smoke-test"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 2.04030659799173,
+            "stdout": "MERLIN_QT_STYLE=Fusion\n",
+            "stderr": ""
+          },
+          {
+            "command": [
+              "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+              "--smoke-test",
+              "--workbench",
+              "examples/workbench/single/workbench.merlin.json"
+            ],
+            "exit_code": 0,
+            "elapsed_seconds": 2.0143411099998048,
+            "stdout": "MERLIN_QT_STYLE=Fusion\n",
+            "stderr": ""
+          }
+        ]
+      }
+    },
+    "packaging": {
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tools/packaging",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.5352936270064674
+    },
+    "documentation": [
+      {
+        "label": "strict-matrix",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/api_operation_matrix.py",
+          "--exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/rust-exports.json",
+          "--native-exports",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/us-03-source-json/native/native-exports.json"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 9.87452523400134
+      },
+      {
+        "label": "documents",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.616488151994417
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 8.732957704996807
+      },
+      {
+        "label": "uiu-history",
+        "command": [
+          "python3",
+          "-B",
+          "/home/dev01/Projects/merlin/docs/development/local/unified-qt-workbench/audit_shared_instruments_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.14193985500605777
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.036859444007859565
+      },
+      {
+        "label": "guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.034500461013522
+      },
+      {
+        "label": "diff",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.08244070800719783
+      },
+      {
+        "label": "staged-diff",
+        "command": [
+          "git",
+          "diff",
+          "--cached",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.011513335994095542
+      }
+    ]
+  },
+  "regressions_found_and_resolved": [
+    {
+      "evidence": "native-instruments/results.json",
+      "issue": "Loading envelope retained another instrument selector; ready reply failed to restore Refresh.",
+      "resolution": "Adopt authoritative selector on loading-to-ready, with QAM/PSD/response regression cases; all28 final instrument views pass."
+    },
+    {
+      "evidence": "native-loading-reply/results.json",
+      "issue": "Actual native plots followed long metadata and linear PSD tick labels clipped.",
+      "resolution": "Graphs precede metadata; independent wider upstream value-axis policy preserves DS compact layout. Native viewport containment and complete tick tests pass."
+    },
+    {
+      "evidence": "native-downstream/results.json",
+      "issue": "Validation probe opened detached nested DS QAM without its actual parent workbench.",
+      "resolution": "Probe follows real TX/RX parent navigation, adds finite attachment/admission diagnostics; actual22/12/5/5 DS views pass. No DS product rewrite."
+    },
+    {
+      "evidence": "native-original-rxmer/results.json",
+      "issue": "Ordinary polling and repeated same-alias QML notification reset original RxMER hover.",
+      "resolution": "Reuse unchanged native source/view alias and existing successful dialog witness. Separate source/window/error changes and admission retry remain explicit; negative regressions fail before fixes and native hover/zoom/Full Source now pass."
+    }
+  ],
+  "not_required": [
+    {
+      "suite": "Root full workspace, CLI and fresh Python wheel rebuild",
+      "reason": "Only Qt adapter/presentation and docs change; backend/binding/root manifests remain unchanged. Existing accepted scientific/native/CLI evidence is reused within that scope; actual instrument and capture values are independently checked using the installed unchanged public binding."
+    },
+    {
+      "suite": "Repeat complete Qt Rust suite after QML-only fixes",
+      "reason": "No Rust source changed after complete512 pass; directly affected complete QML suites and actual native consumers execute after the fixes."
+    }
+  ],
+  "deferred_gates": [
+    "UIU-SHARED-02 actual FEC/verification",
+    "UIU-FILE-01 per-direction project persistence",
+    "UIU-RECOVERY-01 restart/update recovery",
+    "UIU-QA-01 full applicable final regression and numeric/file/license correspondence audit"
+  ],
+  "limitations": [
+    "Native GUI evidence is this Linux VM with Qt6.8.3 XCB/software/Fusion; no Windows installed or hosted claim.",
+    "Synthetic/authored/sanitized fixtures and MERLIN closed loops are not external interoperability or field-input evidence.",
+    "One active simulation remains policy; no new concurrent execution guarantee.",
+    "Actual receiver impulse remains unavailable; retained PSD requires a complete actual contiguous sample window."
+  ]
+}

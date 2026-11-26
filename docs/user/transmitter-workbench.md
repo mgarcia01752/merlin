@@ -17,6 +17,16 @@ and window boundaries. After main **Start**, the SA uses that run's actual TX
 samples. Before a full run, TX Output can generate the existing transmitter-only
 preview with **Run simulation**; that preview does not populate other inspectors.
 Wheel/drag zoom and **Full Span** use the shared analyzer controls.
+IFFT/prefix/window use retained frame diagnostics; TX Output uses the continuous
+output boundary. Their separate sample budgets and sampling meanings are
+explained in the [Spectrum Analyzer guide](spectrum-analyzer.md).
+
+The transmitter-only preview shares the application's retained-data budget.
+If accepting a replacement configuration or generating a new preview exceeds
+that budget, the analyzer reports the error and keeps its accepted inputs and
+previous preview. Loading a prepared transmitter checks the destination budget
+before replacing the current analyzer. Ordinary invalid-input handling and the
+scientific preview remain unchanged.
 
 ![TX output Spectrum Analyzer](../images/workbench/transmitter-output-sa-dark.png)
 
@@ -51,6 +61,8 @@ relative sample units, not a PSD or a calibrated channel-power measurement. The
 map shows the full retained span independently of the exact-value Details page;
 hover for actual bin, frequency, power and role. No multi-symbol waterfall is
 shown. Preview cards use captured data and show No capture until it is available.
+Power, frequencies and role bands come from the retained public Rust result;
+the workbench only reduces them for drawing and keeps missing readings explicit.
 
 ![Actual captured LDPC bits](../images/workbench/transmitter-stage-dark.png)
 
@@ -71,7 +83,7 @@ Both palettes preserve these role colors. Display reduction keeps rare roles
 represented within the same2048-point limit.
 
 Classification follows the actual TX packing plan and its retained source grid.
-The first interleaved snapshot uses the same interleaver transport for role labels;
+The backend supplies role labels for the first aligned interleaved snapshot;
 when the necessary history is unavailable, samples remain unclassified. Missing
 cells are not drawn. PLC Data/Preamble remain separate selections.
 
@@ -83,7 +95,11 @@ from captured TX PLC frames. Select OCD, Profile A DPD or NCP DPD, expand TLVs f
 their hex values, and use **Bytes / TLV Tree** to switch views. Headers include
 channel, profile, change count and source identity. TLV offsets count from the
 start of the complete MAC packet; HCS/FCS validation uses those same bytes.
-These are not the imported modulation-profile PNM bytes.
+These are not the imported modulation-profile PNM bytes. Packet interpretation and
+transmission status come from the retained simulation result. Scheduled messages
+stay marked incomplete until their carrying TX frame has actually finished. If
+later retained frames are unavailable or invalid, earlier complete packets remain
+visible with the reported issue; switching views never starts another run.
 
 The message inspector shows an aligned **Field / Value / Type / Length / Offset**
 tree. Use the disclosure arrow or double-click a row to fold its child fields;

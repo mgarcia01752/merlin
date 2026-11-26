@@ -3,17 +3,27 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 import QtQuick
+import "../qml/shared/instruments"
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtTest
-import "../qml/theme"
-import "../qml/instruments/qam"
-import "../qml/instruments/spectrum"
+import "fixtures"
+import "../qml/shared/theme"
+import "../qml/downstream/instruments/qam"
+import "../qml/downstream/instruments/spectrum"
 
 Pane {
     id: window
     width: 1180; height: 560; visible: true
-    Theme { id: theme }
+    PresentationBudget {
+        id: presentationBudget
+        // Independent capacities for existing presentation-only fixture graphs.
+        maximumBytes: 10000000
+        maximumEntries: 100000
+        maximumViews: 96
+        maximumOpen: 12
+    }
+    Theme { presentationBackendFactory: presentationBudget.createAdapter; id: theme }
     ThemePalette { targetControl: window; theme: theme }
     ThemePalette { targetControl: window.Window.window; theme: theme }
     ColumnLayout {

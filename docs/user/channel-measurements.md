@@ -112,8 +112,7 @@ carrier-value collection limits also remain.
 
 ## Animate the selected captures
 
-Use **Play** under the chart to view the checked originals in sequence, as in
-PNM Viewer. **Pause**, **Previous**, **Next** and the position slider let you
+Use **Play** under MERLIN’s chart to view the checked originals in sequence. **Pause**, **Previous**, **Next** and the position slider let you
 inspect a particular capture. Select 1, 2, 4 or 8 **Frames/s**; the counter shows
 the current selected frame and total, and the capture UTC is displayed below.
 Playback stops at the last capture; Play at the end starts again from the first.
@@ -125,6 +124,11 @@ static effective model to the simulation; Play previews its selected originals.
 Single Shot has only one selected frame. **Effective RxMER / playback** returns
 to the configured static/hold/interpolated model at **Preview symbol**. Changing
 selection/mode, inspecting a filename or closing the dialog pauses animation.
+
+Each animation frame retains its original capture values, timestamp and source
+identity. Previewing or zooming does not change the original bytes, the accepted
+collection or the simulation's selected inputs. The public Rust measurement
+preview supplies the same bounded chart data used by other MERLIN consumers.
 
 ![Animated capture preview](../images/workbench/rxmer-animation-dark.png)
 
@@ -228,7 +232,10 @@ The circles marked **TP** mean **TapPoint**. Click either to select **Spectrum**
 or **QAM** before or after the amplifier. Channel Input also opens the first tap;
 Channel Output opens instruments at receiver input, after attenuation. These
 routes use the same SA and channel QAM windows with their selected boundary in
-the title. Input QAM shows retained physical FFT bins; output QAM shows actual
+the title. Input QAM preserves retained physical FFT-bin indices, original frequency labels
+and I/Q values. Excluded or unavailable bins produce no points. A physical data
+location alone does not identify payload versus NCP, so its transported-role
+label remains unknown. Output QAM shows actual
 received FFT cells before equalization, with received role/bin/symbol selectors.
 After-amplifier points include the accepted gain; automatic axis scaling keeps
 them visible and the displayed axis extent reports their actual scale.

@@ -1,11 +1,16 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
  * Changes: local crate ownership and shared DSP/FEC imports.
  */
 //! Explicitly synthetic baseband inputs; verified binary captures are separate.
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 mod pre_eq;
 mod rxmer;
 use crate::{
@@ -36,5 +41,35 @@ impl SyntheticGrid {
             return Err(invalid("measurement.synthetic_grid"));
         }
         Ok(())
+    }
+}
+
+impl RetainedPayload for SyntheticGrid {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            waveform,
+            excluded,
+            provenance: _,
+        } = self;
+        sum([waveform.retained_children(), excluded.retained_children()])
+    }
+}
+
+impl SyntheticGrid {
+    /// Normalizes only owned report-snapshot capacities without changing values.
+    ///
+    /// # Returns
+    /// Unit; exact boxed-slice conversion preserves order and every scientific value.
+    pub(crate) fn compact_report_payload(&mut self) {
+        let Self {
+            waveform: _,
+            excluded,
+            provenance: _,
+        } = self;
+        *excluded = std::mem::take(excluded).into_boxed_slice().into_vec();
     }
 }

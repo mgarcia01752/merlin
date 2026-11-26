@@ -1,0 +1,381 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Pre-channel physical-bin scatter facade",
+  "status": "Scoped physical-bin scatter consumer accepted; parent DS task and final numeric audit remain incomplete",
+  "base_commit": "90de71e936174c69b9a8560eb4c64dc5df0f698f",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-08",
+    "REQ-UIU-09",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/src/downstream/common/constants.rs",
+      "sha256": "6c087fd76e00bae46a3ae4459d20bd626d9a289224468dffed4a8efbd2195db3"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/channel_input.rs",
+      "sha256": "3e40a79c64dbe978082dba90d31ebb4e1a8b0602a5677ae0b05f15854400bd1f"
+    },
+    {
+      "path": "apps/qt/src/shared/presentation/constants.rs",
+      "sha256": "b8e857a4e8212fcdc536bb06fd923290fecb6660c34d789a183fd212c801ad26"
+    }
+  ],
+  "contracts": [
+    "FullLoopResult::physical_bins(PhysicalBins, 0, 0, 0) supplies actual retained I/Q and original frequency/role/symbol metadata.",
+    "Public SubcarrierIndex owns explicit global bin-domain admission; the old -1 open-selector convention, invalid-range ordering and messages remain.",
+    "Qt only filters visible bins and projects unchanged values into finite drawing coordinates; physical Data does not prove payload/NCP identity, so unknown role labels remain."
+  ],
+  "preservation": {
+    "boundary": {
+      "before": {
+        "files": 31,
+        "sites": 103
+      },
+      "after": {
+        "files": 30,
+        "sites": 102
+      },
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/channel_input.rs",
+        "sha256": "9ef3cd7b47fc6f066c710fc35e806b19d9f3b4976f3da50f96e860779173126a",
+        "sites": [
+          {
+            "line": 7,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "remaining_entries_exact": true,
+      "dependencies": 3
+    },
+    "old_oracles": "Existing actual worker/instrument assertions preserve exact selected I/Q, inclusive ranges, point bounds, before/after amplifier behavior and invalid selection. No existing assertion is removed.",
+    "new_selector_case": "Literal old -2/-1/0/8191/8192 and i32 endpoint fixtures prove selector domain and reversed ranges reject before querying an absent result.",
+    "scientific_owner_case": "Existing actual FFT-bin/transmit-cell test validates exact values, power, frequency/role/context metadata, missing/zero distinction and invalid public windows. Unchanged source executed inside MERLIN.",
+    "formats_and_imports": "No backend, binding, public API, Cargo/lock, saved schema or QML layout change. No new wheel/Python acceptance claim."
+  },
+  "numeric_review": {
+    "directional_owner": "apps/qt/src/downstream/common/constants.rs",
+    "shared_owner": "apps/qt/src/shared/presentation/constants.rs",
+    "policies": [
+      "OPEN_PHYSICAL_BIN_SELECTOR = -1 is an application selection convention, not a valid subcarrier.",
+      "TX_PHYSICAL_SCATTER_MIN_EXTENT = 1.0 preserves this plot only, distinct from receiver scales or scientific calibration.",
+      "MAX_SCATTER_PLOT_POINTS = 2048 is a display marker cap, independent of PSD/query budgets.",
+      "SCATTER_HEADROOM_RATIO = 1.1 is a ten-percent drawing margin.",
+      "SCATTER_AXIS_CENTER = 0.5 is the normalized canvas midpoint.",
+      "Two-sided axis span derives as extent + extent; no physical sample or power changes."
+    ],
+    "backend_domain": "SubcarrierIndex validates exact explicit coordinates; Qt removes its duplicate 8191 maximum.",
+    "independent_fixtures": "Old numeric scientific and pixel assertions remain literal; new boundary expectations do not derive from production constants.",
+    "final_audit": "Still pending UIU-QA-01; only this scoped provider is migrated."
+  },
+  "validation": {
+    "qt_rust": {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "--",
+        "downstream::instruments::transmitter::channel_input::tests",
+        "downstream::simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 20.230795758005115,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      },
+      "cases": [
+        "downstream::instruments::transmitter::channel_input::tests::selector_domains_and_order_reject_before_requesting_an_observation",
+        "downstream::simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views"
+      ]
+    },
+    "public_rust": {
+      "command": [
+        "docs/development/local/unified-qt-workbench/cargo.sh",
+        "test",
+        "-p",
+        "docsis-ofdm-fec",
+        "--test",
+        "api_full_loop_observations",
+        "--locked",
+        "--features",
+        "high-level-api",
+        "actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history"
+      ],
+      "exit_code": 0,
+      "cases": [
+        "actual_fft_bins_and_transmit_cells_preserve_values_power_roles_offsets_and_missing_history"
+      ],
+      "log_sha256": "fdaef2ed83ac9d4cd68c4bc1aeef4b2a4aac5515f4b107573db00f6fe7588e01"
+    },
+    "metadata": [
+      {
+        "label": "format",
+        "command": [
+          "scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.3327477109996835
+      },
+      {
+        "label": "boundary",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/qt_api_boundary.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.27760762999241706
+      },
+      {
+        "label": "boundary-tests",
+        "command": [
+          "python3",
+          "-B",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "tools/validation",
+          "-p",
+          "test_qt_api_boundary.py",
+          "-v"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.1255900779942749
+      },
+      {
+        "label": "documentation",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/feature_documentation.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.941995713990764
+      },
+      {
+        "label": "traceability",
+        "command": [
+          "python3",
+          "-B",
+          "tools/validation/integration_traceability.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 9.409403209996526
+      },
+      {
+        "label": "versions",
+        "command": [
+          "python3",
+          "-B",
+          "tools/release/versions.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03820634000294376
+      },
+      {
+        "label": "python-guide",
+        "command": [
+          "python3",
+          "-B",
+          "tools/python/update_integration_doc.py",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.042690710004535504
+      },
+      {
+        "label": "preservation",
+        "command": [
+          "git",
+          "diff",
+          "--exit-code",
+          "--",
+          "crates",
+          "bindings",
+          "examples",
+          "Cargo.toml",
+          "Cargo.lock",
+          "apps/qt/Cargo.toml",
+          "apps/qt/Cargo.lock",
+          "skills",
+          ".agents",
+          ".claude"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.010712917006458156
+      },
+      {
+        "label": "diff",
+        "command": [
+          "git",
+          "diff",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.03786573000252247
+      }
+    ],
+    "clippy": {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "--all-targets",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 5.907740092006861,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      }
+    },
+    "release": {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "build",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked",
+        "--release"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 29.196587750993785,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      }
+    },
+    "qml": {
+      "command": [
+        "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+        "-input",
+        "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+        "Workbench::test_transmitter_stage_message_and_qam_navigation"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.635425615007989,
+      "behavior_cases": 1
+    },
+    "native": {
+      "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+      "sha256": "81351bfa1ed9999256d63409ce57ba350ed0a154754b6c5326343989024ecc5e",
+      "display": ":0",
+      "display_dimensions": [
+        "dimensions:    1280x800 pixels (338x211 millimeters)"
+      ],
+      "qt_sdk_version": "6.8.3",
+      "commands": [
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.055301425003563054,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.08530211399192922,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.7196098510030424,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.04248370899586007,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.3369612349924864,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test",
+            "--workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 2.314015009003924,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        }
+      ]
+    },
+    "recorder_note": "Initial metadata logging stopped before running checks because its format-log name already existed; exclusive creation preserved the earlier receipt. Final metadata uses distinct metadata-prefixed names; all required gates passed."
+  },
+  "limits": [
+    "Parent remains incomplete with 30 frozen files/102 direct source references/three scientific dependencies.",
+    "Physical power graphs and waveform-spectrum providers remain separate frozen work; preserve legacy retained-sample budgets before their migration.",
+    "No full historical suite, installed package, Windows/hosted CI or external-interoperability claim.",
+    "No global session arbiter/upstream UI in this consumer."
+  ]
+}

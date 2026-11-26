@@ -267,8 +267,37 @@ signatures belong to the consuming PNM parser, not this toolkit.
 
 Name mode dimensions, generator parameters, permutations, decoder settings and
 application limits. Keep application safety limits distinct from protocol limits.
-Centralize definitions only when semantics actually match. Mathematical zeroes
-and tiny obvious loop origins need no artificial constants.
+Centralize definitions only when semantics actually match. Equal numeric values
+with different purposes need separate names, owners and rationale; a retained-frame
+budget and a Welch-average budget are separate policies even when both are three.
+Document intentional relationships and derive from authoritative domain owners
+instead of tying independent settings together. Audit changed production code,
+defaults, examples and tests for unexplained literals; keep independent expected
+vectors independent of implementation constants and label their fixture meaning.
+Mathematical zeroes and tiny obvious loop origins need no artificial constants.
+
+Put genuinely shared Rust definitions in a common constants module, grouped by
+domain and purpose. Keep generic numerical/physical definitions in the shared
+leaf and direction-specific policies in their directional owner. Re-export an
+existing definition when needed; do not duplicate it or create cross-PHY/facade
+dependencies. Equal-valued independent policies retain separate names.
+
+Define domain limits at their authoritative owner before using them in range
+checks. Name each endpoint with meaning and units, document inclusive/exclusive
+semantics and finite-value handling, and distinguish physical/protocol constraints,
+application policy and defaults. Signed or floating-point validation ranges need
+explicit bounds just as byte/count limits do. Preserve existing endpoints and
+errors when replacing literals; adapters reuse the same domain owner rather than
+copying its bounds. Do not infer shared limits from equal numbers.
+
+Opaque literals in decimal, hexadecimal or binary need either a purpose-specific
+name or an adjacent explanation of their bits, units, origin and reason. For an
+all-ones seed, distinguish register width, valid seed range, selected default and
+sequence period. An isolated well-explained literal is acceptable; a repeated
+shared meaning needs one authoritative definition. File-fill and noise seeds do
+not inherit a continuous-source default solely because their numbers match.
+Keep independent test anchors literal and explained so tests can detect an
+incorrect production constant.
 
 Use focused snake_case Rust modules and UpperCamelCase types. Signal-processing code
 must not depend on Qt, a transport or application state. Simulation crates forbid
@@ -387,13 +416,14 @@ their native controls; menus and dropdown lists are not popup dialogs.
 ## Qt feature and instrument folders
 
 Keep `apps/qt/qml/Main.qml` as bootstrap; place other QML under responsibility
-folders: `shell`, `theme`, `components`, `about`, `inputs`, `workbenches` and
-`instruments`. Group inputs by their Rust owner names and instruments by spectrum,
-QAM, response, slicer, FEC, messages or stage inspection. Keep each window in its
-own file, with its dedicated charts/controls nearby. Use `components` for controls
-shared across features; do not accumulate a new flat catch-all folder.
+folders: `shell`, `shared`, `downstream` and `upstream`. Shared theme, components,
+about and reusable instruments belong under `shared`; direction-specific inputs,
+configuration and instruments remain under their direction. Group instruments by
+spectrum, QAM, response, slicer, FEC, messages or stage inspection. Keep each window
+in its own file, with its dedicated charts/controls nearby. Use `shared/components`
+for controls shared across features; do not accumulate a new flat catch-all folder.
 
-Keep Qt-facing instrument adapters under `apps/qt/src/instruments/`, with cohesive
+Keep Qt-facing instrument adapters under `apps/qt/src/downstream/instruments/`, with cohesive
 TX/RX providers, channel TP routing and shared spectrum formatting. Align QML and Rust by feature and
 responsibility where practical; do not force one-to-one directory mirroring or
 split a shared provider merely to match chart names. Core algorithms remain in
@@ -403,9 +433,10 @@ Pinned CXX-Qt0.7.3 requires all QObject bridge files for the same QML module to
 share one directory: keep all QObject bridges together under `src/bridge/` and
 import the relevant input models, simulation worker and instrument providers.
 Do not move individual bridges into feature folders. Keep `main.rs` focused on
-startup and module wiring. Group input models/restoration under `src/inputs/`,
-accepted state/project persistence under `src/workbench/`, run admission and worker
-lifecycle under `src/simulation/`, and local file/desktop integration under
+startup and module wiring. Group direction-specific input models, accepted state,
+persistence and workers under `src/downstream/` or `src/upstream/`; shared retention,
+presentation and recovery contracts under `src/shared/`; cross-direction actions
+and routing under `src/shell/`; and local file/desktop integration under
 `src/platform/`. Keep native interop headers with their platform implementation.
 Persistence validates saved inputs through their Rust models, never through
 QObject bridges. These folders organize the Qt adapter; core DSP stays separate.
@@ -467,7 +498,7 @@ do not need an artificial mixed-role legend.
 ## Structured binary and TLV inspectors
 
 Present TLV breakdowns as an aligned folding tree grid rather than one full-width
-button per record. Reuse `apps/qt/qml/components/TlvTreeGrid.qml` for bounded tree JSON, with
+button per record. Reuse `apps/qt/qml/shared/components/TlvTreeGrid.qml` for bounded tree JSON, with
 Field/Value and Type/Length/Offset columns, indentation, disclosure controls,
 Expand All/Collapse All and keyboard navigation. Preserve exact bytes and clear
 absolute-offset semantics; decoded child fields are not automatically nested

@@ -49,8 +49,8 @@ selecting operating modes or combining captures.
 Full CMTS MAC services, channel bonding, multi-channel simulation and wider
 upstream acquisition/ranging are outside the accepted scope. Closed-loop results
 describe MERLIN's modeled experiment; they do not establish external modem
-interoperability. The Qt workbench on `master` presents downstream OFDM only;
-the unified upstream UI remains separate development work.
+interoperability. The native Qt workbench presents both directions with independent projects,
+validated configuration and shared instruments. One simulation runs at a time.
 
 <a id="rust-and-python-apis"></a>
 
@@ -72,12 +72,11 @@ Browse the [CLI examples](examples/cli/README.md) and
 
 | Downstream | Upstream |
 | :---: | :---: |
-| [<img src="docs/images/workbench/unified-downstream-dark.png" alt="Downstream workspace in the unified Qt development branch" width="430">](docs/images/workbench/unified-downstream-dark.png) | [<img src="docs/images/workbench/unified-upstream-dark.png" alt="Upstream workspace in the unified Qt development branch" width="430">](docs/images/workbench/unified-upstream-dark.png) |
+| [<img src="docs/images/workbench/unified-downstream-dark.png" alt="Downstream workspace" width="430">](docs/images/workbench/unified-downstream-dark.png) | [<img src="docs/images/workbench/unified-upstream-dark.png" alt="Upstream workspace" width="430">](docs/images/workbench/unified-upstream-dark.png) |
 
-Native previews from the
-[`feature/unified-qt-workbench` branch](https://github.com/mgarcia01752/merlin/tree/feature/unified-qt-workbench).
-Select either image to view it full size. See the [workbench guide](docs/user/workbench.md)
-and [saved examples](examples/workbench/README.md) for the released downstream UI.
+Select either native workspace image to view it full size. See the
+[workbench guide](docs/user/workbench.md) and
+[saved examples](examples/workbench/README.md) for configuration and execution.
 
 ## Signal analyzers and RxMER Designer
 

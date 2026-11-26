@@ -9,15 +9,39 @@
 #[cfg(feature = "downstream")]
 pub mod downstream {
     pub use docsis_ofdm_fec::api::*;
+
+    /// Optional native admission and saved-project operations over existing owners.
+    #[cfg(feature = "native-input")]
+    pub mod inputs {
+        pub use pnm_input::{
+            read_capture, rxmer_export, save_json, CaptureLoader, CaptureScope, Notch,
+            RandomVariation, Ripple, RippleSpacing, RxMerDesign, RxMerDesignLimits,
+            RxMerDesignPosition, RxmerRecipe, Tilt, ValueEdit, Workbench, MAX_RXMER_RECIPE_BYTES,
+        };
+    }
 }
 
 /// Upstream OFDMA API over the independent received-only simulation engine.
 #[cfg(feature = "upstream")]
 pub mod upstream {
     pub use docsis_ofdma::api::*;
+
+    /// Optional provenance-preserving UCD, RxMER, Pre-Eq and association admission.
+    #[cfg(feature = "native-input")]
+    pub mod inputs {
+        pub use pnm_input::upstream::{
+            reassemble_ucd, CaptureAssociation, CaptureEvent, CaptureProbe, CaptureSource,
+            MeasuredExperiment, PreEqCapture, PreEqCaptureKind, PreEqHeader, RxmerCapture,
+            RxmerHeader, UcdBurst, UcdCapture, UcdHeader, UcdTlv,
+        };
+    }
 }
 
 /// Genuinely shared contracts, without universal configurations or reports.
 pub mod common {
-    pub use merlin_api::{Cancellation, ErrorCode, RunControl};
+    pub use merlin_api::{Cancellation, ErrorCode, RetainedFootprint, RunControl};
+    #[cfg(feature = "native-input")]
+    pub use pnm_input::common::constants::MAX_PROJECT_COLLECTION_COUNT;
+    #[cfg(feature = "native-input")]
+    pub use pnm_input::project::{Project, ProjectCollectionInfo, ProjectDirection, ProjectError};
 }

@@ -1,8 +1,10 @@
 /*
  * Copyright 2026 PNM Viewer contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  */
 //! Shared simulation diagnostics, independent of a particular feature.
+use merlin_api::{retention_support::RetainedPayload, RetainedFootprint};
 use serde::Serialize;
 
 /// Domain failure independent of filesystem, Qt and transport diagnostics.
@@ -44,4 +46,15 @@ impl std::error::Error for SimulationError {}
 /// Owned error with the established InvalidLabInput category.
 pub(crate) fn invalid(message: impl Into<String>) -> SimulationError {
     SimulationError::new("InvalidLabInput", message)
+}
+
+impl RetainedPayload for SimulationError {
+    /// Counts every owned child beyond the enclosing fixed value.
+    ///
+    /// # Returns
+    /// Complete passive child metadata, or None on checked arithmetic overflow.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self { code: _, message } = self;
+        merlin_api::retention_support::sum([message.retained_children()])
+    }
 }

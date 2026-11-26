@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "runs": [
+    {
+      "exit_code": 0,
+      "passed": 10,
+      "cases": [
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "transmission_admission_uses_literal_sample_clock_accounting_without_running"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "minimum_observation_rounds_complete_periods_and_reports_over_policy_thresholds"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "source_admission_distinguishes_empty_file_eof_and_continuous_prbs15"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "source_admission_preserves_arbitrary_original_bytes_and_independent_fill"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "transmission_json_admission_rejects_corruption_unknown_fields_and_limits"
+        },
+        {
+          "test_file": "crates/ofdm/tests/api_admission.rs",
+          "qualified_test_case": "profile_editor_compatibility_is_separate_from_full_execution_readiness"
+        },
+        {
+          "test_file": "crates/ofdm/tests/duration_timing.rs",
+          "qualified_test_case": "fractional_ticks_symbol_edges_and_invalid_overflow_are_explicit"
+        },
+        {
+          "test_file": "crates/ofdm/tests/duration_timing.rs",
+          "qualified_test_case": "duration_plan_matches_independent_sample_arithmetic_and_legacy_schedule"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_timing.rs",
+          "qualified_test_case": "timing_budget_has_independent_units_round_trip_and_unknown_velocity"
+        },
+        {
+          "test_file": "crates/ofdm/tests/waveform_timing.rs",
+          "qualified_test_case": "window_zoom_is_bounded_for_both_spacings_and_every_valid_prefix_roll_pair"
+        }
+      ],
+      "receipt": "ds-01-minimum-window-rust-final.log"
+    },
+    {
+      "exit_code": 0,
+      "passed": 5,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_measurement_sequence.py",
+          "qualified_test_case": "MeasurementSequenceTests.test_average_names_every_original_and_retains_owned_copies"
+        },
+        {
+          "test_file": "bindings/python/tests/test_measurement_sequence.py",
+          "qualified_test_case": "MeasurementSequenceTests.test_idle_capacity_literal_clock_boundaries_need_no_admitted_sequence"
+        },
+        {
+          "test_file": "bindings/python/tests/test_measurement_sequence.py",
+          "qualified_test_case": "MeasurementSequenceTests.test_rejections_preserve_accepted_sequences_and_options"
+        },
+        {
+          "test_file": "bindings/python/tests/test_measurement_sequence.py",
+          "qualified_test_case": "MeasurementSequenceTests.test_response_admission_distinguishes_unity_original_h_and_epoch_window"
+        },
+        {
+          "test_file": "bindings/python/tests/test_measurement_sequence.py",
+          "qualified_test_case": "MeasurementSequenceTests.test_temporal_clock_literal_powers_last_hold_and_parallel_queries"
+        }
+      ],
+      "receipt": "ds-01-minimum-window-native/measurement-sequence.stderr"
+    },
+    {
+      "exit_code": 0,
+      "passed": 5,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_empty_eof_and_continuous_seed_remain_distinct"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_exact_byte_file_source_fill_bounds_and_lifetime"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_minimum_observation_has_exact_period_rounding_and_wide_thresholds"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_transmission_literal_timing_and_owned_settings"
+        },
+        {
+          "test_file": "bindings/python/tests/test_admission.py",
+          "qualified_test_case": "NativeAdmissionTests.test_transmission_rejection_and_original_profile_compatibility"
+        }
+      ],
+      "receipt": "ds-01-minimum-window-native/admission-final.stderr"
+    },
+    {
+      "exit_code": 0,
+      "passed": 4,
+      "cases": [
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_common_control_bridge"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_discovery_and_typing_payload"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_installed_imports_and_legacy_identity"
+        },
+        {
+          "test_file": "bindings/python/tests/test_namespaces.py",
+          "qualified_test_case": "NamespaceImports.test_stub_signatures_and_root_alias"
+        }
+      ],
+      "receipt": "ds-01-minimum-window-native/namespaces.stderr"
+    }
+  ]
+}

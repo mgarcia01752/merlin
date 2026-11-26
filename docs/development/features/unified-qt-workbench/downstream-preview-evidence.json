@@ -1,0 +1,460 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Idle transmitter preview facade",
+  "status": "scoped Qt consumer accepted; parent and remaining integration incomplete",
+  "base_commit": "42f04a64626d0ecd187919e18571e222ea0871aa",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-07",
+    "REQ-UIU-08",
+    "REQ-UIU-09",
+    "REQ-UIU-17",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-source-ownership",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/src/bridge/transmitter_analyzer.rs",
+      "sha256": "4aa1fb768d3bc62b036d0f0112d0f17406a17bc5758c87c38aca1792bf0dfadd"
+    },
+    {
+      "path": "apps/qt/src/downstream/common/constants.rs",
+      "sha256": "2e75c56fc72b1f31da972ea344bd0dea4e1ba6b76733745a905cc0e6176d1784"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/mod.rs",
+      "sha256": "8dc1eef7f059f2367653e2d9b63cd95ad7c653ca2f474680015fc263d1a14d77"
+    },
+    {
+      "path": "apps/qt/src/downstream/inputs/public_inputs.rs",
+      "sha256": "a4ad01e0f6524bd6774be68edf6d8af01a976d4637a41ff13e332577d0bb95fb"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/spectrum/symbol_timing.rs",
+      "sha256": "cbe8bffb5ee1cbebefbe72ad5d1db580b408c531603de58393214b50a7b0374d"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/preview.rs",
+      "sha256": "0ae1a483c09704baa204edc0229eaf655a50bb10ce680bcdfd44e31b19597e58"
+    },
+    {
+      "path": "apps/qt/src/downstream/workbench/project_load.rs",
+      "sha256": "0749aa0dfd3ac2737d15ea00260845fcc6a0305cd1470b946c9e93fabbbdf8b2"
+    },
+    {
+      "path": "apps/qt/src/shared/presentation/constants.rs",
+      "sha256": "ae01cd5f6378ebcd7a0551f8380dcad3c83f4b7621646e154d32803c1ba0513b"
+    },
+    {
+      "path": "apps/qt/src/shared/presentation/mod.rs",
+      "sha256": "96d44681b04348abe14bae747237e05b13543c357bd339fd36baac49bfd29ba6"
+    },
+    {
+      "path": "apps/qt/src/shared/presentation/spectrum.rs",
+      "sha256": "23398246ea6c22232c960c14677bd7c0d42c63c1b777a262b7da7c97fdef6640"
+    }
+  ],
+  "public_api_calls": [
+    "TransmissionConfiguration::from_json/new/symbol_timing/window/physical_layout_capture",
+    "CaptureLoader::profile_capture; NamedCapture::new",
+    "SourceInput::prbs15/file/unnamed_file; FileFillPolicy::new; PrbsSeed::new",
+    "TransmitterPreviewRequest::from_capture/generate",
+    "TransmitterPreviewControl::new/clone/snapshot/cancel",
+    "TransmitterPreview::info/calibrated_spectrum"
+  ],
+  "ownership": "Analyzer owns immutable public request/layout/result plus a one-shot public control per bounded worker. GUI and independent Open preparation pass their own original saved source/profile sections. No global scientific store or private kernel added.",
+  "validation": {
+    "rust": {
+      "passed": 11,
+      "cases": [
+        "downstream::workbench::project_load::tests::bounded_stream_preserves_bytes_limits_and_cancellation",
+        "downstream::workbench::project_load::tests::errors_and_cancelled_success_do_not_publish_partial_inputs",
+        "downstream::instruments::spectrum::symbol_timing::tests::cp_and_roll_changes_move_timing_without_self_rescaling_the_overview",
+        "downstream::workbench::project_load::tests::polling_does_not_wait_and_cancel_retains_single_worker_guard",
+        "downstream::instruments::transmitter::preview::tests::accepted_timing_refreshes_without_simulation_and_vf_changes_only_distance",
+        "downstream::inputs::public_inputs::tests::originals_and_dormant_file_seed_fill_remain_distinct",
+        "downstream::instruments::transmitter::preview::tests::readiness_cancellation_and_stale_generation_preserve_accepted_inputs",
+        "downstream::instruments::spectrum::symbol_timing::tests::both_ffts_and_all_valid_prefix_tapers_preserve_core_weights_and_overlap",
+        "downstream::workbench::project_load::tests::command_line_file_preserves_destination_and_rejects_invalid_json",
+        "downstream::instruments::transmitter::preview::tests::generated_baseband_and_capture_axes_share_one_immutable_spectrum",
+        "downstream::workbench::project_load::tests::real_multi_capture_workbench_prepares_editors_off_thread"
+      ],
+      "receipt": "ds-01-preview-all-rust-final.log",
+      "command": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "--",
+          "--exact",
+          "downstream::instruments::transmitter::preview::tests::accepted_timing_refreshes_without_simulation_and_vf_changes_only_distance",
+          "downstream::instruments::transmitter::preview::tests::readiness_cancellation_and_stale_generation_preserve_accepted_inputs",
+          "downstream::instruments::transmitter::preview::tests::generated_baseband_and_capture_axes_share_one_immutable_spectrum",
+          "downstream::instruments::spectrum::symbol_timing::tests::cp_and_roll_changes_move_timing_without_self_rescaling_the_overview",
+          "downstream::instruments::spectrum::symbol_timing::tests::both_ffts_and_all_valid_prefix_tapers_preserve_core_weights_and_overlap",
+          "downstream::inputs::public_inputs::tests::originals_and_dormant_file_seed_fill_remain_distinct",
+          "downstream::workbench::project_load::tests::bounded_stream_preserves_bytes_limits_and_cancellation",
+          "downstream::workbench::project_load::tests::polling_does_not_wait_and_cancel_retains_single_worker_guard",
+          "downstream::workbench::project_load::tests::errors_and_cancelled_success_do_not_publish_partial_inputs",
+          "downstream::workbench::project_load::tests::command_line_file_preserves_destination_and_rejects_invalid_json",
+          "downstream::workbench::project_load::tests::real_multi_capture_workbench_prepares_editors_off_thread"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 75.01985287100251,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      }
+    },
+    "qml": {
+      "passed": 89,
+      "cases": [
+        "qmltestrunner::SharedButtons::initTestCase()",
+        "qmltestrunner::SharedButtons::test_keyboard_disabled_and_theme_states()",
+        "qmltestrunner::SharedButtons::test_standard_dialog_roles()",
+        "qmltestrunner::SharedButtons::cleanupTestCase()",
+        "qmltestrunner::ControlPalette::initTestCase()",
+        "qmltestrunner::ControlPalette::test_dropdown_and_spin_text_contrast_in_both_themes()",
+        "qmltestrunner::ControlPalette::test_plc_band_is_visible_and_below_spectrum_trace()",
+        "qmltestrunner::ControlPalette::cleanupTestCase()",
+        "qmltestrunner::ResponseView::initTestCase()",
+        "qmltestrunner::ResponseView::test_frequency_and_echo_controls()",
+        "qmltestrunner::ResponseView::cleanupTestCase()",
+        "qmltestrunner::RxmerDesigner::initTestCase()",
+        "qmltestrunner::RxmerDesigner::test_cancel_does_not_stage_and_new_flat_source_is_explicit()",
+        "qmltestrunner::RxmerDesigner::test_direction_reverses_signed_tilt_without_changing_magnitude_or_zoom()",
+        "qmltestrunner::RxmerDesigner::test_json_save_remains_available_outside_binary_range()",
+        "qmltestrunner::RxmerDesigner::test_notch_mouse_steps_fit_editor_with_large_font()",
+        "qmltestrunner::RxmerDesigner::test_notch_steps_keep_band_edge_bounds_scope_and_zoom()",
+        "qmltestrunner::RxmerDesigner::test_pnm_export_uses_rust_guard_and_keeps_draft()",
+        "qmltestrunner::RxmerDesigner::test_random_variation_only_for_flat_source()",
+        "qmltestrunner::RxmerDesigner::test_recipe_and_capture_scope_are_independent()",
+        "qmltestrunner::RxmerDesigner::test_restore_switches_between_range_and_all()",
+        "qmltestrunner::RxmerDesigner::test_ripple_steps_preserve_fractional_entry_and_limits()",
+        "qmltestrunner::RxmerDesigner::test_tilt_steps_keep_text_entry_keyboard_and_limits()",
+        "qmltestrunner::RxmerDesigner::test_unchecked_tilt_disables_controls_and_retains_draft()",
+        "qmltestrunner::RxmerDesigner::test_zoom_plc_navigation_and_capture_changes_keep_window()",
+        "qmltestrunner::RxmerDesigner::cleanupTestCase()",
+        "qmltestrunner::SoftDiagnostics::initTestCase()",
+        "qmltestrunner::SoftDiagnostics::test_tabs_bounds_scope_and_empty_state()",
+        "qmltestrunner::SoftDiagnostics::cleanupTestCase()",
+        "qmltestrunner::TooltipTiming::initTestCase()",
+        "qmltestrunner::TooltipTiming::test_attached_shared_button()",
+        "qmltestrunner::TooltipTiming::test_explicit_context_help()",
+        "qmltestrunner::TooltipTiming::cleanupTestCase()",
+        "qmltestrunner::Updates::initTestCase()",
+        "qmltestrunner::Updates::test_chip_is_on_menu_right_and_starts_directly()",
+        "qmltestrunner::Updates::test_error_report_requires_click_and_handles_browser_failure()",
+        "qmltestrunner::Updates::test_manual_check_and_preference()",
+        "qmltestrunner::Updates::test_run_lock_and_recovery_failure_prevent_install()",
+        "qmltestrunner::Updates::test_windows_update_saves_recovery_and_starts_installer()",
+        "qmltestrunner::Updates::cleanupTestCase()",
+        "qmltestrunner::Workbench::initTestCase()",
+        "qmltestrunner::Workbench::test_about_actions_fit_minimum_window_in_both_themes()",
+        "qmltestrunner::Workbench::test_apply_cancel_footers_align_and_reject()",
+        "qmltestrunner::Workbench::test_block_readiness_colors_and_reasons()",
+        "qmltestrunner::Workbench::test_channel_power_controls_cancel_apply_and_tap_symmetry()",
+        "qmltestrunner::Workbench::test_channel_stages_tap_routing_and_loss_draft_cancel()",
+        "qmltestrunner::Workbench::test_contextual_help_hover_keyboard_and_offline_faq()",
+        "qmltestrunner::Workbench::test_controls_and_theme()",
+        "qmltestrunner::Workbench::test_fec_overview_profiles_tabs_and_partial_empty_states()",
+        "qmltestrunner::Workbench::test_full_symbol_timing_popup_keyboard_and_resize()",
+        "qmltestrunner::Workbench::test_loading_modal_stays_responsive_and_cancels_without_adoption()",
+        "qmltestrunner::Workbench::test_mce_draft_cancel_apply_chip_and_channel_independence()",
+        "qmltestrunner::Workbench::test_ofdm_cancel_and_reopen()",
+        "qmltestrunner::Workbench::test_ofdm_tree_and_blank_profile()",
+        "qmltestrunner::Workbench::test_preview_blocks_need_attention()",
+        "qmltestrunner::Workbench::test_profile_dialog_bounds_at_minimum_window()",
+        "qmltestrunner::Workbench::test_profile_staging_apply_cancel_and_remove()",
+        "qmltestrunner::Workbench::test_receiver_configuration_comparison_and_run_controls()",
+        "qmltestrunner::Workbench::test_receiver_profile_performance_navigation_and_scope()",
+        "qmltestrunner::Workbench::test_receiver_retained_filters_response_soft_and_fec_navigation()",
+        "qmltestrunner::Workbench::test_receiver_signal_views_and_independent_spectrum_taps()",
+        "qmltestrunner::Workbench::test_render()",
+        "qmltestrunner::Workbench::test_response_display_labels_follow_retained_mode()",
+        "qmltestrunner::Workbench::test_run_elapsed_survives_completion_pause_and_stationary_symbols()",
+        "qmltestrunner::Workbench::test_rxmer_capture_animation_step_pause_end_and_close()",
+        "qmltestrunner::Workbench::test_rxmer_preview_layout_is_stable_at_minimum_size()",
+        "qmltestrunner::Workbench::test_rxmer_selection_draft_and_single_shot_controls()",
+        "qmltestrunner::Workbench::test_sections(ofdm)",
+        "qmltestrunner::Workbench::test_sections(source)",
+        "qmltestrunner::Workbench::test_sections(tx)",
+        "qmltestrunner::Workbench::test_sections(channel)",
+        "qmltestrunner::Workbench::test_sections(rx)",
+        "qmltestrunner::Workbench::test_sections(verify)",
+        "qmltestrunner::Workbench::test_sections(profile)",
+        "qmltestrunner::Workbench::test_sections(ce)",
+        "qmltestrunner::Workbench::test_sections(mer)",
+        "qmltestrunner::Workbench::test_shared_measurement_viewers_and_joint_channel_readiness()",
+        "qmltestrunner::Workbench::test_source_options_and_accepted_readiness()",
+        "qmltestrunner::Workbench::test_start_requires_every_block_complete()",
+        "qmltestrunner::Workbench::test_transmitter_graph_cards_and_details()",
+        "qmltestrunner::Workbench::test_transmitter_graphs_empty_keyboard_and_minimum_layout()",
+        "qmltestrunner::Workbench::test_transmitter_readiness_analyzer_zoom_and_invalidation()",
+        "qmltestrunner::Workbench::test_transmitter_stage_message_and_qam_navigation()",
+        "qmltestrunner::Workbench::test_verification_partial_results_running_and_empty_state()",
+        "qmltestrunner::Workbench::test_waveform_channel_apply_and_cancel_preserve_receiver_mode()",
+        "qmltestrunner::Workbench::test_workbench_configuration_entry_choices()",
+        "qmltestrunner::Workbench::test_workbench_configuration_lifecycle_and_profile_selection()",
+        "qmltestrunner::Workbench::test_workbench_input_restore_discards_drafts_without_apply()",
+        "qmltestrunner::Workbench::cleanupTestCase()"
+      ],
+      "receipt": "ds-01-preview-qml.log",
+      "scope": "All original QML cases on unchanged QML sources; subsequent Rust-only unnamed-file adoption leaves tested presentation/interaction code exact."
+    },
+    "clippy": {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 67.20959928398952,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      }
+    },
+    "format": {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "fmt",
+        "--manifest-path",
+        "apps/qt/Cargo.toml"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.39659315600874834,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      }
+    },
+    "optimized_build": {
+      "command": [
+        "scripts/qt-desktop.sh",
+        "build"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 116.89927035399887,
+      "qt_sdk": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64"
+    },
+    "native": {
+      "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+      "sha256": "14508dec4d55d5568957a70b3c85cd2af488bc356043c930db92714ef8fc03ca",
+      "display": ":0",
+      "display_dimensions": [
+        "dimensions:    1280x800 pixels (338x211 millimeters)"
+      ],
+      "qt_sdk_version": "6.8.3",
+      "commands": [
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.046842190000461414,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.048048810989712365,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.4619935390073806,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--check-workbench",
+            "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 0.03959206100262236,
+          "stdout": "Workbench inputs accepted.\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.8966847140109167,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        },
+        {
+          "command": [
+            "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+            "--smoke-test",
+            "--workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "elapsed_seconds": 1.9712472510000225,
+          "stdout": "MERLIN_QT_STYLE=Fusion\n",
+          "stderr": ""
+        }
+      ]
+    },
+    "boundary": {
+      "scientific_dependencies": 3,
+      "frozen_files": 38,
+      "direct_sites": 134,
+      "regression_cases": 16,
+      "receipts": [
+        "ds-01-preview-boundary-final.log",
+        "ds-01-preview-boundary-tests-final.log"
+      ]
+    },
+    "final_style_note": {
+      "path": "apps/qt/src/shared/presentation/spectrum.rs",
+      "tested_sha256_before_comment": "f246bf25833e75fca2b63824797898a7300fcce2f16cc8aa238bfafc0c75fdd6",
+      "final_sha256": "23398246ea6c22232c960c14677bd7c0d42c63c1b777a262b7da7c97fdef6640",
+      "change": "Nonsemantic explanatory comment keeps the unit-selection branch multiline under rustfmt. Final format check passes; executable statements and tested values unchanged."
+    },
+    "docs": {
+      "command": "tools/validation/feature_documentation.py",
+      "exit_code": 0,
+      "receipt": "ds-01-preview-docs-final.log"
+    },
+    "traceability": {
+      "command": "tools/validation/integration_traceability.py",
+      "exit_code": 0,
+      "receipt": "ds-01-preview-traceability-final.log"
+    },
+    "versions": {
+      "command": "tools/release/versions.py",
+      "exit_code": 0,
+      "receipt": "ds-01-preview-versions-final.log"
+    },
+    "guide": {
+      "command": "tools/python/update_integration_doc.py --check",
+      "exit_code": 0,
+      "receipt": "ds-01-preview-guide-final.log"
+    },
+    "diff": {
+      "command": "git diff --check",
+      "exit_code": 0,
+      "receipt": "ds-01-preview-diff-final.log"
+    }
+  },
+  "preservation": {
+    "previous_test_names_and_assertions_retained": true,
+    "timing_matrix": "Both FFT geometries and all44 valid original CP/RP combinations; original independent 204.8-samples/us, raised-cosine and overlap-sum anchors retained. Construction now uses public SymbolWindow.",
+    "preview_fixtures": "Original PRBS seed/selected profile retained through exact encoded original sections. Unsupported ID16 fixture now changes original source bytes and uses public capture loading, preserving the original rejection assertion.",
+    "new_coverage": "Exact arbitrary file bytes/ownership, dormant seed/fill, explicit unnamed file label, independent fill target, original hash rejection and preserved zero-count/full-width convention.",
+    "private_algorithms_removed": "No direct preview engine, waveform geometry/window generation, PSD/FFT, calibration or logarithmic power calculation in the two retired files. Existing legacy providers remain separately frozen.",
+    "remaining_guard_entries_and_dependency_records_deep_equal": true,
+    "initial_guard_snapshot_unchanged": true,
+    "qt_qml_and_registration_files_unchanged": true,
+    "backend_bindings_and_locks_unchanged": true
+  },
+  "numeric_review": {
+    "owners": [
+      "apps/qt/src/shared/presentation/constants.rs",
+      "apps/qt/src/downstream/common/constants.rs"
+    ],
+    "independent_policies": "Display SI units, PSD clipping/headroom/grid/tick counts, minimum SA width, fixed timing padding/drawing resolution and one-envelope completion capacity are explicitly named by purpose. Equal values do not tie unrelated budgets.",
+    "mathematical_values": "Zero/one are origins, empty values and normalized endpoints; division by two denotes actual midpoint/half-padding/two-sided frequency coordinates.",
+    "independent_test_literals": "Original CP/RP matrix, 204.8-samples/us, half-sample taper, tolerances, source seeds, unsupported ID16 and actual spectral/timing labels stay literal/explained. Test watchdog/poll cadence have separate local names.",
+    "source_label_gap": "Public unnamed-file prerequisite committed independently before Qt adoption; no fabricated display name or relaxed capture identity.",
+    "final_line_by_line_integration_audit": "pending UIU-QA-01"
+  },
+  "wip_preservation": {
+    "stash": "c0224b5c963e175ccd2eb68c055c9404ca4cc7fa",
+    "api_commit": "42f04a64626d0ecd187919e18571e222ea0871aa",
+    "exact_restored_files": [
+      "apps/qt/src/bridge/transmitter_analyzer.rs",
+      "apps/qt/src/downstream/common/constants.rs",
+      "apps/qt/src/downstream/inputs/mod.rs",
+      "apps/qt/src/downstream/instruments/spectrum/symbol_timing.rs",
+      "apps/qt/src/downstream/instruments/transmitter/preview.rs",
+      "apps/qt/src/downstream/workbench/project_load.rs",
+      "apps/qt/src/shared/presentation/constants.rs",
+      "apps/qt/src/shared/presentation/mod.rs",
+      "docs/development/features/unified-qt-workbench/legacy-qt-boundary.json",
+      "docs/user/spectrum-analyzer.md",
+      "apps/qt/src/downstream/inputs/public_inputs.rs",
+      "apps/qt/src/shared/presentation/spectrum.rs"
+    ],
+    "reconciled_docs": [
+      "docs/architecture.md",
+      "docs/development/checklist.md",
+      "docs/development/features/unified-qt-workbench/design.md",
+      "docs/development/features/unified-qt-workbench/validation.md"
+    ],
+    "all_conflicts_resolved": true,
+    "original_empty_index_restored": true
+  },
+  "preparatory_failures": [
+    {
+      "receipt": "ds-01-preview-clippy.log",
+      "reason": "int-plus-one style diagnostic in PLC clipping; equivalent exclusive-end comparison fixed, final Clippy and all11 targeted Rust cases passed."
+    },
+    {
+      "reason": "An initial boundary invocation omitted the pinned Cargo environment and failed metadata discovery; final guard/regression receipts use the correct environment."
+    }
+  ],
+  "build_cache_finding": {
+    "status": "Separate focused follow-up pending after this consumer commit",
+    "owner": "Pinned qt-build-utils0.7.3 qrc_list splits RCC output at newlines without excluding the terminal empty path; CXX-Qt0.7.3 emits it as a Cargo resource watch.",
+    "observed": "Current build fingerprint contains an empty RerunIfChanged path, watching the Qt package including target artifacts; repeated scoped Cargo commands rebuild the adapter. No cache cleanup or SDK/dependency mutation used.",
+    "source_lines": [
+      "qt-build-utils0.7.3/src/lib.rs:1065-1088",
+      "cxx-qt-build0.7.3/src/lib.rs:936-945"
+    ],
+    "not_a_scientific_or_runtime_acceptance_failure": true
+  },
+  "limitations": [
+    "Scoped public preview/timing consumer, not complete downstream/session/upstream migration",
+    "Shared spectrum renderer currently serves idle TX; legacy channel/receiver presentation convergence remains DS-01/SHARED-01",
+    "Current native checks cover Linux SDK/VM startup and curated preflights; no installed Windows/hosted/UI release acceptance claimed",
+    "Backend/native API prerequisites reused; no full workspace/native rerun in this Qt-only unit",
+    "Final numeric/unified runtime and build-cache follow-up remain open"
+  ]
+}

@@ -1,0 +1,255 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "Wall-time adapter facade",
+  "status": "Scoped Qt consumer accepted; parent and final audit incomplete",
+  "base_commit": "d5638acb19a57c8a71e20934ec0b878ef3bbac2d",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-07",
+    "REQ-UIU-08",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-source-ownership",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/src/downstream/simulation/run_timing.rs",
+      "sha256": "54935c9d319bc8767b75179c00dd239dcf54cda796dc9e4749df237f9e8ab93e"
+    },
+    {
+      "path": "apps/qt/src/shared/presentation/constants.rs",
+      "sha256": "b61f6465aa2a96b8975275af1bb9fd4f45cc0fa1093f87ddc94445488bfcb1fd"
+    }
+  ],
+  "public_api": "merlin::downstream::ChannelPhase (same nominal existing enum; prerequisite d5638acb19a57c8a71e20934ec0b878ef3bbac2d)",
+  "preservation": {
+    "old_test_bodies_byte_identical": [
+      "elapsed_advances_without_progress_and_freezes_before_late_ui_poll",
+      "formatting_and_profile_progress_are_separate_from_simulated_time"
+    ],
+    "all_six_existing_phase_labels_verified": true,
+    "remaining_boundary_entries_exact": true,
+    "original_snapshot_exact": true,
+    "remaining_frozen_files": 37,
+    "remaining_scientific_sites": 133,
+    "scientific_dependencies": 3
+  },
+  "numeric_review": {
+    "shared_owner": "apps/qt/src/shared/presentation/constants.rs",
+    "units": [
+      "SECONDS_PER_MINUTE = 60 exact clock seconds/minute",
+      "MINUTES_PER_HOUR = 60 exact clock minutes/hour, different units from preceding value",
+      "SECONDS_PER_HOUR derived from the two unit definitions"
+    ],
+    "conversion": "std::time::Duration::from_millis(...).as_secs() preserves integer floor without repeating an SI conversion.",
+    "preserved_named_bound": "MAX_PROFILE_TIMINGS reuses the current performance::MAX_PROFILES policy; that frozen owner centralizes when migrated.",
+    "format_width": "Documented two-digit minimum clock-field padding; hours may exceed 99.",
+    "primitive_bounds": "u64::MAX saturation and zero origins retain their native type/counter meaning.",
+    "independent_test_literals": "Original elapsed/frozen/late-poll millisecond anchors, 100-hour formatting, profile identity and recovered-count expectations remain literal and independent of production constants.",
+    "final_line_by_line_audit": "Pending UIU-QA-01; this scoped record does not replace it."
+  },
+  "validation": {
+    "rust_cases": [
+      "downstream::simulation::run_timing::tests::formatting_and_profile_progress_are_separate_from_simulated_time",
+      "downstream::simulation::run_timing::tests::elapsed_advances_without_progress_and_freezes_before_late_ui_poll",
+      "downstream::simulation::run_timing::tests::all_public_processing_phases_preserve_existing_status_labels"
+    ],
+    "cargo": {
+      "rust-final": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "--",
+          "--exact",
+          "downstream::simulation::run_timing::tests::all_public_processing_phases_preserve_existing_status_labels",
+          "downstream::simulation::run_timing::tests::elapsed_advances_without_progress_and_freezes_before_late_ui_poll",
+          "downstream::simulation::run_timing::tests::formatting_and_profile_progress_are_separate_from_simulated_time"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 7.757875089999288,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "format-final": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "fmt",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.38235026999609545,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "clippy": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 11.486545587002183,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "release": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "build",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--release",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 50.63480025398894,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      }
+    },
+    "qml": {
+      "behavior_cases": 1,
+      "harness_checks": 3,
+      "qualified_case": "Workbench::test_run_elapsed_survives_completion_pause_and_stationary_symbols",
+      "failed": 0,
+      "skipped": 0
+    },
+    "boundary_regressions": 20,
+    "guard": {
+      "errors": [],
+      "scientific_dependencies": 3,
+      "frozen_legacy_files": 37,
+      "final": false
+    },
+    "native": {
+      "executable": "/home/dev01/Projects/merlin/apps/qt/target/release/merlin-qt",
+      "sha256": "1150b0ebf11d4394f845b72ca9b29e04e1f4ab7addcc0a2f8dde575781c11db6",
+      "commands": [
+        {
+          "arguments": [
+            "--check-workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "stderr_bytes": 0
+        },
+        {
+          "arguments": [
+            "--check-workbench",
+            "examples/workbench/multi-rxmer/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "stderr_bytes": 0
+        },
+        {
+          "arguments": [
+            "--check-workbench",
+            "examples/workbench/multi-rxmer-2/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "stderr_bytes": 0
+        },
+        {
+          "arguments": [
+            "--check-workbench",
+            "examples/workbench/cl-192mhz-8mhz-notch/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "stderr_bytes": 0
+        },
+        {
+          "arguments": [
+            "--smoke-test"
+          ],
+          "exit_code": 0,
+          "stderr_bytes": 0
+        },
+        {
+          "arguments": [
+            "--smoke-test",
+            "--workbench",
+            "examples/workbench/single/workbench.merlin.json"
+          ],
+          "exit_code": 0,
+          "stderr_bytes": 0
+        }
+      ]
+    }
+  },
+  "local_evidence": [
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-wall-time-rust-final.log",
+      "sha256": "f072dce840304871651269756c6a47ab7ad2f06b3522880ee2d55aee9d075c35"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-wall-time-qml.log",
+      "sha256": "94ea2e592bbc2b7d93c74ab33c920cddc9f333d64452b4e860d749401cd27ae9"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-wall-time-clippy.log",
+      "sha256": "cc3056a76ec3cc6a696ae3cbabc25ed56deb27cc3676bb4badc0eae845e2756d"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-wall-time-release.log",
+      "sha256": "40d376435bb96f88377589b0a7c7c5d192e159076558c93a7178afe377a733f3"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-wall-time-boundary-tests.log",
+      "sha256": "d6c3c79eaa2394759b4292c1a99896e954529fc65e2dd25496e3a41f934f2e99"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-wall-time-boundary.log",
+      "sha256": "c4d52a17aa1087092103926b17505b333ebae51dd56a73707e6116396adabba5"
+    },
+    {
+      "path": "docs/development/local/unified-qt-workbench/ds-01-wall-time-native-results.json",
+      "sha256": "58b879743d5e2d97e57cf35889e7bb2c10dd36c8cf42df3f65e7a519f74e7b91"
+    }
+  ],
+  "limits": [
+    "No backend/API/native Python suite rerun; accepted prerequisite remains independent.",
+    "No full Qt Rust/QML suite or Windows/installed lifecycle executed in this scoped unit.",
+    "Worker/instruments, parent DS-01, later unified tasks and final numeric audit remain incomplete."
+  ]
+}

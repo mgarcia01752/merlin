@@ -1,0 +1,507 @@
+/*
+ * Copyright 2026 MERLIN contributors
+ * SPDX-License-Identifier: GPL-3.0-only
+ */
+//! Profile draft/accepted state and independent project restoration.
+pub(crate) mod document;
+pub(crate) mod plot;
+mod retention;
+use document::Capture;
+use merlin::downstream::{
+    TransmissionConfiguration, TransmissionSettings, MAX_TRANSMISSION_DOCUMENT_BYTES,
+};
+use serde_json::json;
+use serde_json::Value;
+/// Profile editor state retains original bytes independently of Qt.
+#[derive(Clone, Default)]
+pub struct ProfileModel {
+    pub(crate) context: crate::downstream::workbench::session::Context,
+    pub(crate) draft: Option<Capture>,
+    pub(crate) accepted: Option<(Capture, u8)>,
+}
+
+/// Parses and validates a bounded OCD document for profile admission.
+/// # Arguments
+/// * `document` - Accepted OCD JSON, limited to4096 bytes.
+/// # Returns
+/// Validated transmission settings.
+/// # Errors
+/// Rejects oversized, malformed or unsupported settings.
+pub(crate) fn settings(document: &str) -> Result<TransmissionSettings, String> {
+    if document.len() > MAX_TRANSMISSION_DOCUMENT_BYTES {
+        return Err(format!(
+            "OCD request exceeds {MAX_TRANSMISSION_DOCUMENT_BYTES} bytes."
+        ));
+    }
+    TransmissionConfiguration::from_json(document.as_bytes())
+        .map(|configuration| configuration.settings().clone())
+        .map_err(|cause| cause.message().to_owned())
+}
+
+impl ProfileModel {
+    /// Creates an empty profile editor on explicitly prepared downstream Stores.
+    /// # Arguments
+    /// * `context` - Actual canonical-budget owner, without a bootstrap/default lookup.
+    /// # Returns
+    /// Empty draft and accepted selection, preserving the existing default behavior.
+    pub(crate) fn for_context(context: crate::downstream::workbench::session::Context) -> Self {
+        Self {
+            context,
+            draft: None,
+            accepted: None,
+        }
+    }
+
+    /// Measures this actual editor including original/catalog/presentation children.
+    ///
+    /// # Returns
+    /// Checked payload capacities and container/root counts without parsing or cloning.
+    ///
+    /// # Errors
+    /// Public metadata or checked resource overflow.
+    pub(crate) fn retained_resources(&self) -> Result<crate::shell::RetainedResources, String> {
+        retention::resources(self)
+    }
+
+    /// Admits this finite editor candidate before queueing or GUI replacement.
+    ///
+    /// # Arguments
+    /// * `budget` - Exact target budget; old owners stay charged during admission.
+    ///
+    /// # Returns
+    /// Actual model and reservation, reusable during final GUI transfer.
+    ///
+    /// # Errors
+    /// Metadata overflow or aggregate rejection, without changing another owner.
+    pub(crate) fn admit(
+        self,
+        budget: &crate::shell::RetentionBudget,
+    ) -> Result<crate::shell::Retained<Self>, String> {
+        let resources = self.retained_resources()?;
+        crate::downstream::inputs::retention::admit_model(self, resources, budget)
+    }
+
+    /// Queries profile readiness without changing accepted inputs.
+    /// # Arguments
+    /// * `document` - Bounded accepted OCD JSON.
+    /// # Returns
+    /// Scalar compatibility status and selected-profile summary.
+    pub(crate) fn state(&self, document: &str) -> Value {
+        match &self.accepted {
+            None => {
+                json!({"selected":false,"profile_status":"attention","ofdm_status":"attention","reason":"A validated modulation-profile PNM input is required.","summary":{}})
+            }
+            Some((capture, id)) => {
+                let diagnostic =
+                    settings(document).and_then(|settings| capture.compatible(*id, &settings));
+                match diagnostic {
+                    Ok(()) => {
+                        json!({"selected":true,"profile_status":"complete","ofdm_status":"complete","reason":"Profile input and accepted OCD settings are valid and compatible.","summary":{"profile_id":id.to_string(),"source_file":capture.name,"subcarrier_assignments":format!("{} assignments",capture.profile(*id).map(|profile|profile.assignments.len()).unwrap_or(0))}})
+                    }
+                    Err(error) => {
+                        json!({"selected":true,"profile_status":"error","ofdm_status":"error","reason":error,"summary":{}})
+                    }
+                }
+            }
+        }
+    }
+
+    /// Reconstructs profile editor state from an embedded original capture.
+    /// # Arguments
+    /// * `value` - Saved file and selected profile ID, or null.
+    /// # Returns
+    /// Independent draft and accepted snapshots.
+    /// # Errors
+    /// Rejects malformed saved data, capture bytes or unavailable profile IDs.
+    pub(crate) fn from_saved(value: &Value) -> Result<Self, String> {
+        Self::from_saved_for_context(value, Default::default())
+    }
+
+    /// Reconstructs the existing saved profile on an explicit prepared owner.
+    /// # Arguments
+    /// * `value` - Original embedded file/profile selection or null.
+    /// * `context` - Canonical-budget candidate Stores, independent of the target Stores.
+    /// # Returns
+    /// Same decoded original draft/accepted pair without another default host.
+    /// # Errors
+    /// Original saved-format, capture and profile-selection validation errors.
+    pub(crate) fn from_saved_for_context(
+        value: &Value,
+        context: crate::downstream::workbench::session::Context,
+    ) -> Result<Self, String> {
+        if value.is_null() {
+            return Ok(Self::for_context(context));
+        }
+        #[derive(serde::Deserialize)]
+        #[serde(deny_unknown_fields)]
+        struct Saved {
+            file: Value,
+            profile_id: u8,
+        }
+        let saved: Saved = serde_json::from_value(value.clone()).map_err(|e| e.to_string())?;
+        let (name, bytes) = crate::downstream::workbench::project_file::decode(&saved.file)?;
+        let capture = Capture::decode(name, bytes)?;
+        capture.profile(saved.profile_id)?;
+        Ok(Self {
+            context,
+            draft: Some(capture.clone()),
+            accepted: Some((capture, saved.profile_id)),
+        })
+    }
+
+    /// Decodes an original capture before replacing the current draft.
+    /// # Arguments
+    /// * `name` - Display basename retained with the original bytes.
+    /// * `bytes` - Bounded original binary PNM or supported JSON.
+    /// # Returns
+    /// Compact preview for profile0 when present, otherwise the first profile.
+    /// # Errors
+    /// Preserves the draft when decoding or preview admission fails.
+    pub(crate) fn stage_bytes(&mut self, name: String, bytes: Vec<u8>) -> Result<Value, String> {
+        let capture = Capture::decode(name, bytes)?;
+        let ids = capture.catalog.profile_ids();
+        let id = if ids.contains(&0) {
+            0
+        } else {
+            *ids.first().ok_or("No captured profiles.")?
+        };
+        let preview = capture.preview(id)?;
+        self.draft = Some(capture);
+        Ok(preview)
+    }
+    /// Accepts a compatible draft profile or clears an absent draft.
+    /// # Arguments
+    /// * `id` - Selected profile identifier.
+    /// * `document` - Accepted OCD JSON.
+    /// # Returns
+    /// Unit after updating the accepted snapshot.
+    /// # Errors
+    /// Preserves the accepted profile on invalid selection or OCD mismatch.
+    pub(crate) fn accept(&mut self, id: i32, document: &str) -> Result<(), String> {
+        if let Some(capture) = &self.draft {
+            let id = u8::try_from(id).map_err(|_| "Choose a valid profile ID.")?;
+            capture.compatible(id, &settings(document)?)?;
+            self.accepted = Some((capture.clone(), id));
+        } else {
+            self.accepted = None;
+        }
+        Ok(())
+    }
+
+    /// Publishes selected profile, complete catalog and matching document in one transaction.
+    ///
+    /// # Arguments
+    /// * `profile_id` - Exact staged captured identity, ignored for staged removal.
+    /// * `document` - Existing bounded accepted transmission document.
+    ///
+    /// # Returns
+    /// Editor reservation after target admission and infallible replacement.
+    /// Its caller stores the guard after the adopted model fields.
+    ///
+    /// # Errors
+    /// Validation/publication rejection preserves accepted editor, Inputs and section.
+    /// Both editor and accepted Inputs/document admission precede replacement.
+    pub(crate) fn apply_transactional(
+        &mut self,
+        profile_id: i32,
+        document: &str,
+    ) -> Result<crate::shell::RetentionReservation, String> {
+        let mut candidate = self.clone();
+        candidate.accept(profile_id, document)?;
+        let profiles = candidate
+            .accepted
+            .as_ref()
+            .map(|(capture, _)| capture.owned_profiles())
+            .transpose()?
+            .unwrap_or_default();
+        let selected = candidate
+            .accepted
+            .as_ref()
+            .map(|(capture, id)| capture.profile(*id).cloned())
+            .transpose()?;
+        let catalog = candidate
+            .accepted
+            .as_ref()
+            .map(|(capture, _)| capture.catalog.clone());
+        let section = candidate.accepted.as_ref().map(|(capture, id)| json!({
+            "file":crate::downstream::workbench::project_file::encode(&capture.name,capture.original.bytes()),
+            "profile_id":id
+        })).unwrap_or(Value::Null);
+        let candidate = candidate.admit(self.context.application.budget())?;
+        crate::downstream::workbench::session::update(&self.context, |inputs, sections| {
+            inputs.profile = selected;
+            inputs.profiles = profiles;
+            inputs.profile_capture = catalog;
+            sections.insert("profile".into(), section);
+            Ok(())
+        })?;
+        let (candidate, reservation) = candidate.into_parts();
+        *self = candidate;
+        Ok(reservation)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    const BINARY: &[u8] = include_bytes!(
+        "../../../../../../examples/measurements/single-channel/modulation_profile.bin"
+    );
+    const JSON: &[u8] = include_bytes!(
+        "../../../../../../examples/measurements/single-channel/modulation_profile.json"
+    );
+
+    #[test]
+    fn binary_and_json_use_the_same_profile_validation() {
+        let binary = Capture::decode("wrong.json".into(), BINARY.to_vec()).unwrap();
+        let json = Capture::decode("wrong.bin".into(), JSON.to_vec()).unwrap();
+        assert_eq!(binary.format, "Binary PNM");
+        assert_eq!(json.format, "JSON text");
+        for &id in binary.catalog.profile_ids() {
+            let left = binary.profile(id).unwrap();
+            let right = json.profile(id).unwrap();
+            assert_eq!(left.profile_id, right.profile_id);
+            assert_eq!(left.key, right.key);
+            assert_eq!(left.assignments, right.assignments);
+        }
+        assert_eq!(binary.catalog.profile_ids().len(), 4);
+        assert_eq!(binary.profile(0).unwrap().assignments.len(), 7480);
+    }
+    #[test]
+    fn profile_plot_preserves_source_grid_roles_and_bounds() {
+        let binary = Capture::decode("original.bin".into(), BINARY.to_vec()).unwrap();
+        let decoded = Capture::decode("decoded.json".into(), JSON.to_vec()).unwrap();
+        let full = plot::viewport(&binary, 0, 0, 0).unwrap();
+        assert_eq!(full, plot::viewport(&decoded, 0, 0, 0).unwrap());
+        assert!(full["points"].as_array().unwrap().len() <= 512 * 7);
+        assert!(full["roles"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|role| role["kind"] == "continuous_pilot"));
+        let zoomed = plot::viewport(&binary, 0, 20, 4).unwrap();
+        let profile = binary.profile(0).unwrap();
+        for point in zoomed["points"].as_array().unwrap() {
+            let index = point["bin"].as_u64().unwrap() as usize
+                - usize::from(profile.key.grid.first_subcarrier_index);
+            assert!((20..24).contains(&index));
+            assert_eq!(
+                point["frequency_hz"],
+                profile.key.grid.frequency(index).unwrap()
+            );
+            assert_eq!(point["bits"], json!(profile.assignments[index].bit_loading));
+        }
+        assert_eq!(zoomed["points"][0]["x"], 0.0);
+        assert_eq!(zoomed["points"][3]["x"], 1.0);
+        assert!(plot::viewport(&binary, 255, 0, 0).is_err());
+        assert!(plot::viewport(&binary, 0, usize::MAX, 2).is_err());
+        assert!(plot::viewport(&binary, 0, 7479, 2).is_err());
+        let rows = binary.preview(0).unwrap();
+        assert!(!rows["rows"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|row| row["key"] == "source"));
+        assert_eq!(binary.name, "original.bin");
+
+        // Same independent first-carrier exclusion, expressed as an admitted source capture.
+        let mut document: Value = serde_json::from_slice(JSON).unwrap();
+        let profile = document["profiles"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|profile| profile["profile_id"] == 0)
+            .unwrap();
+        let schemes = profile["schemes"].as_array_mut().unwrap();
+        let first_count = schemes[0]["num_subcarriers"].as_u64().unwrap();
+        assert!(first_count > 1);
+        let mut exclusion = schemes[0].clone();
+        exclusion["num_subcarriers"] = json!(1);
+
+        // Existing encoded exclusion assignment 16 has no loading/constellation/Shannon value.
+        exclusion["modulation_order_code"] = json!(16);
+        exclusion["modulation_order"] = json!("exclusion");
+        exclusion["carrier_type"] = json!("exclusion");
+        exclusion["bit_loading"] = Value::Null;
+        exclusion["constellation"] = Value::Null;
+        exclusion["shannon_minimum_mer_db"] = Value::Null;
+        schemes[0]["num_subcarriers"] = json!(first_count - 1);
+        schemes.insert(0, exclusion);
+        let missing = Capture::decode(
+            "missing.json".into(),
+            serde_json::to_vec(&document).unwrap(),
+        )
+        .unwrap();
+        let marker = plot::viewport(&missing, 0, 0, 2).unwrap();
+        assert!(marker["points"][0]["bits"].is_null());
+        assert_eq!(marker["points"][0]["role"], "exclusion");
+        assert_eq!(marker["role_markers"], true);
+    }
+    #[test]
+    fn profile_inspection_overlays_metrics_and_filters_preserve_capture() {
+        let binary = Capture::decode("original.bin".into(), BINARY.to_vec()).unwrap();
+        let decoded = Capture::decode("decoded.json".into(), JSON.to_vec()).unwrap();
+        let request = json!({"profiles":[0,1],"roles":["data","continuous_pilot","plc"],"metric":0,"start":0,"count":0});
+        let view = plot::inspect(&binary, &request.to_string()).unwrap();
+        assert_eq!(view, plot::inspect(&decoded, &request.to_string()).unwrap());
+        assert_eq!(view["series"].as_array().unwrap().len(), 2);
+        assert!(view["series"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|s| s["points"].as_array().unwrap().len() <= 1024));
+        assert!(view["markers"].as_array().unwrap().len() <= 2048 * 6);
+        let profile = binary.profile(0).unwrap();
+        let expected: u64 = profile
+            .assignments
+            .iter()
+            .filter(|a| a.carrier_type == merlin::downstream::ProfileCarrierRole::Data)
+            .filter_map(|a| a.bit_loading)
+            .map(u64::from)
+            .sum::<u64>()
+            * u64::from(profile.key.grid.spacing_hz);
+        assert_eq!(view["profiles"][0]["bandwidth_bps"], expected);
+        let mut r = request.clone();
+        r["start"] = json!(20);
+        r["count"] = json!(4);
+        r["profiles"] = json!([0]);
+        let db = plot::inspect(&binary, &r.to_string()).unwrap();
+        r["metric"] = json!(1);
+        let bits = plot::inspect(&binary, &r.to_string()).unwrap();
+        for (d, b) in db["series"][0]["points"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .zip(bits["series"][0]["points"].as_array().unwrap())
+        {
+            if let Some(y) = b["y"].as_f64() {
+                let loading = (15.0 * (1.0 - y)).round();
+                let expected = 10.0 * (2.0_f64.powf(loading) - 1.0).log10();
+                assert!((45.0 * (1.0 - d["y"].as_f64().unwrap()) - expected).abs() < 1e-10);
+            }
+        }
+        r["roles"] = json!([]);
+        let empty = plot::inspect(&binary, &r.to_string()).unwrap();
+        assert!(empty["series"][0]["points"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|p| p["y"].is_null()));
+        r["profiles"] = json!([]);
+        assert!(plot::inspect(&binary, &r.to_string()).unwrap()["series"]
+            .as_array()
+            .unwrap()
+            .is_empty());
+        r["profiles"] = json!([255]);
+        assert!(plot::inspect(&binary, &r.to_string()).is_err());
+        r["profiles"] = json!([0]);
+        r["start"] = json!(usize::MAX);
+        assert!(plot::inspect(&binary, &r.to_string()).is_err());
+        assert_eq!(binary.name, "original.bin");
+    }
+    #[test]
+    fn staged_failures_removal_and_profile_rejection_preserve_accepted_input() {
+        let mut model = ProfileModel::default();
+        model
+            .stage_bytes("demo.bin".into(), BINARY.to_vec())
+            .unwrap();
+        let config = json!(TransmissionSettings::default()).to_string();
+        model.accept(0, &config).unwrap();
+        assert!(model
+            .stage_bytes("bad.bin".into(), b"not JSON".to_vec())
+            .is_err());
+        assert_eq!(model.accepted.as_ref().unwrap().1, 0);
+        assert!(model.accept(99, &config).is_err());
+        let mut mismatched = json!(TransmissionSettings::default());
+        mismatched["subcarrier_spacing"] = json!("50000");
+        assert!(model.accept(0, &mismatched.to_string()).is_err());
+        assert_eq!(model.accepted.as_ref().unwrap().1, 0);
+        model.draft = None;
+        assert!(model.accepted.is_some());
+        model.accept(-1, &config).unwrap();
+        assert!(model.accepted.is_none());
+    }
+
+    #[test]
+    fn retained_catalog_shares_originals_preserves_text_rows_and_saved_profiles() {
+        use sha2::{Digest, Sha256};
+        let mut document: Value = serde_json::from_slice(JSON).unwrap();
+        document["mac_address"] = json!("00:CA:00:00:00:01");
+
+        // Independent byte-ID/source-order anchors; source row zero remains 4096-QAM.
+        for (profile, id) in document["profiles"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .zip([255, 17, 0, 1])
+        {
+            profile["profile_id"] = json!(id);
+        }
+        let mut bytes = b"\xef\xbb\xbf  ".to_vec(); // Literal UTF-8 BOM plus original whitespace.
+        bytes.extend(serde_json::to_vec_pretty(&document).unwrap());
+        let capture = Capture::decode("wrong.bin".into(), bytes.clone()).unwrap();
+        assert_eq!(capture.format, "JSON text");
+        assert_eq!(capture.catalog.profile_ids(), [0, 1, 17, 255]);
+        assert_eq!(
+            capture.catalog.metadata().source_profile_order,
+            [255, 17, 0, 1]
+        );
+        assert_eq!(capture.sha256, format!("{:x}", Sha256::digest(&bytes)));
+        assert_eq!(capture.original.bytes(), bytes);
+        assert!(std::ptr::eq(
+            capture.original.bytes().as_ptr(),
+            capture.catalog.provenance().original_bytes().as_ptr()
+        ));
+        let shared = capture.clone();
+        assert!(std::ptr::eq(
+            capture.profile(255).unwrap(),
+            shared.profile(255).unwrap()
+        ));
+        let preview = capture.preview(255).unwrap();
+        let row = |key: &str| {
+            preview["rows"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .find(|row| row["key"] == key)
+                .unwrap()
+        };
+        assert_eq!(row("mac")["value"], "00:CA:00:00:00:01");
+        assert_eq!(row("mac")["depth"], 1);
+        assert_eq!(row("file")["depth"], 0);
+        assert_eq!(row("range_0")["depth"], 2);
+        assert_eq!(row("range_0")["value"], "4096-QAM · 110 subcarriers");
+        assert!(row("range_0")["description"]
+            .as_str()
+            .unwrap()
+            .contains("qam_4096, code 12, bit loading 12, role \"data\""));
+        assert!(merlin::downstream::ProfileId::new(255).is_err());
+        let mut owned = capture.owned_profiles().unwrap();
+        assert_eq!(
+            owned
+                .iter()
+                .map(|profile| profile.profile_id)
+                .collect::<Vec<_>>(),
+            [0, 1, 17, 255]
+        );
+        owned[0].profile_id = 99;
+        assert_eq!(capture.profile(0).unwrap().profile_id, 0);
+        let saved = json!({"file":crate::downstream::workbench::project_file::encode(&capture.name,capture.original.bytes()),"profile_id":255});
+        let restored = ProfileModel::from_saved(&saved).unwrap();
+        let (restored, id) = restored.accepted.unwrap();
+        assert_eq!(id, 255);
+        assert_eq!(restored.preview(id).unwrap(), preview);
+        assert_eq!(restored.original.bytes(), bytes);
+        let mut model = ProfileModel::default();
+        model
+            .stage_bytes("original.json".into(), JSON.to_vec())
+            .unwrap();
+        let previous = model.draft.as_ref().unwrap().sha256.clone();
+        assert!(model.stage_bytes(String::new(), JSON.to_vec()).is_err());
+        assert_eq!(model.draft.as_ref().unwrap().sha256, previous);
+    }
+}
+
+#[cfg(test)]
+#[path = "apply_tests.rs"]
+mod apply_tests;

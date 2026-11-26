@@ -31,6 +31,27 @@ impl PyUcdCapture {
             .map_err(error)
     }
 
+    /// Imports a bounded source envelope through the original Rust decoder.
+    ///
+    /// Returns the same owned capture as binary admission. Exact source bytes,
+    /// envelope validation and structured binary errors remain owned by Rust.
+    ///
+    /// # Arguments
+    /// * `py` - Current interpreter token, released during Rust admission.
+    /// * `bytes` - Complete UTF-8 source envelope within the Rust transport policy.
+    ///
+    /// # Returns
+    /// An immutable native capture owning the original binary snapshot.
+    ///
+    /// # Errors
+    /// Shared ApiError for envelope/binary failures; TypeError for non-byte input.
+    #[staticmethod]
+    fn from_source_json(py: Python<'_>, bytes: &[u8]) -> PyResult<Self> {
+        py.detach(|| api::UcdCapture::from_source_json(bytes))
+            .map(Self)
+            .map_err(error)
+    }
+
     /// Copies exact source bytes into an owned native Python bytes object.
     ///
     /// Returns immutable bytes that remain valid after this snapshot is dropped.
@@ -50,6 +71,23 @@ impl PyUcdCapture {
     /// Returns owned text containing header/TLV/offset/provenance data only.
     fn to_json(&self, py: Python<'_>) -> PyResult<String> {
         py.detach(|| self.0.to_json()).map_err(error)
+    }
+
+    /// Exports a lossless source envelope with the interpreter released.
+    ///
+    /// Returns bounded owned JSON containing exact original octets and their
+    /// Rust-validated identity; existing inspection JSON remains separate.
+    ///
+    /// # Arguments
+    /// * `py` - Current interpreter token, released during Rust serialization.
+    ///
+    /// # Returns
+    /// Owned UTF-8 JSON text, independent of this capture's lifetime.
+    ///
+    /// # Errors
+    /// Shared ApiError if Rust transport bounds or serialization fail.
+    fn to_source_json(&self, py: Python<'_>) -> PyResult<String> {
+        py.detach(|| self.0.to_source_json()).map_err(error)
     }
 }
 
@@ -79,6 +117,27 @@ impl PyPreEqCapture {
             .map(Self)
             .map_err(error)
     }
+
+    /// Imports a bounded source envelope through the original Rust decoder.
+    ///
+    /// Returns the same owned capture as binary admission. Exact source bytes,
+    /// envelope validation and structured binary errors remain owned by Rust.
+    ///
+    /// # Arguments
+    /// * `py` - Current interpreter token, released during Rust admission.
+    /// * `bytes` - Complete UTF-8 source envelope within the Rust transport policy.
+    ///
+    /// # Returns
+    /// An immutable native capture owning the original binary snapshot.
+    ///
+    /// # Errors
+    /// Shared ApiError for envelope/binary failures; TypeError for non-byte input.
+    #[staticmethod]
+    fn from_source_json(py: Python<'_>, bytes: &[u8]) -> PyResult<Self> {
+        py.detach(|| api::PreEqCapture::from_source_json(bytes))
+            .map(Self)
+            .map_err(error)
+    }
     /// Copies exact source bytes to an independently owned Python bytes value.
     ///
     /// Retains every source header and signed coefficient encoding.
@@ -103,6 +162,23 @@ impl PyPreEqCapture {
     fn to_json(&self, py: Python<'_>) -> PyResult<String> {
         py.detach(|| self.0.to_json()).map_err(error)
     }
+
+    /// Exports a lossless source envelope with the interpreter released.
+    ///
+    /// Returns bounded owned JSON containing exact original octets and their
+    /// Rust-validated identity; existing inspection JSON remains separate.
+    ///
+    /// # Arguments
+    /// * `py` - Current interpreter token, released during Rust serialization.
+    ///
+    /// # Returns
+    /// Owned UTF-8 JSON text, independent of this capture's lifetime.
+    ///
+    /// # Errors
+    /// Shared ApiError if Rust transport bounds or serialization fail.
+    fn to_source_json(&self, py: Python<'_>) -> PyResult<String> {
+        py.detach(|| self.0.to_source_json()).map_err(error)
+    }
 }
 
 #[pyclass(
@@ -123,6 +199,27 @@ impl PyRxmerCapture {
     #[staticmethod]
     fn from_pnm(py: Python<'_>, bytes: &[u8]) -> PyResult<Self> {
         py.detach(|| api::RxmerCapture::from_pnm(bytes))
+            .map(Self)
+            .map_err(error)
+    }
+
+    /// Imports a bounded source envelope through the original Rust decoder.
+    ///
+    /// Returns the same owned capture as binary admission. Exact source bytes,
+    /// envelope validation and structured binary errors remain owned by Rust.
+    ///
+    /// # Arguments
+    /// * `py` - Current interpreter token, released during Rust admission.
+    /// * `bytes` - Complete UTF-8 source envelope within the Rust transport policy.
+    ///
+    /// # Returns
+    /// An immutable native capture owning the original binary snapshot.
+    ///
+    /// # Errors
+    /// Shared ApiError for envelope/binary failures; TypeError for non-byte input.
+    #[staticmethod]
+    fn from_source_json(py: Python<'_>, bytes: &[u8]) -> PyResult<Self> {
+        py.detach(|| api::RxmerCapture::from_source_json(bytes))
             .map(Self)
             .map_err(error)
     }
@@ -174,5 +271,22 @@ impl PyRxmerCapture {
     /// Returns owned bounded text; full raw provenance remains independently usable.
     fn to_json(&self, py: Python<'_>) -> PyResult<String> {
         py.detach(|| self.0.to_json()).map_err(error)
+    }
+
+    /// Exports a lossless source envelope with the interpreter released.
+    ///
+    /// Returns bounded owned JSON containing exact original octets and their
+    /// Rust-validated identity; existing inspection JSON remains separate.
+    ///
+    /// # Arguments
+    /// * `py` - Current interpreter token, released during Rust serialization.
+    ///
+    /// # Returns
+    /// Owned UTF-8 JSON text, independent of this capture's lifetime.
+    ///
+    /// # Errors
+    /// Shared ApiError if Rust transport bounds or serialization fail.
+    fn to_source_json(&self, py: Python<'_>) -> PyResult<String> {
+        py.detach(|| self.0.to_source_json()).map_err(error)
     }
 }

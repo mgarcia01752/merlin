@@ -78,3 +78,41 @@ impl PilotGenerator {
         Ok([sequence, power, continuous, scattered])
     }
 }
+
+/// Observes original vectors computed by frame assembly, without regenerating or mutating pilots.
+/// # Arguments
+/// * `continuous`, `scattered` - Actual generated values used in the same physical symbol.
+/// * `reference_rms` - Original explicit assembly amplitude reference.
+/// * `context` - Actual run/phase/symbol/grid metadata supplied by the existing link owner.
+/// * `probe`, `observer` - Existing bounded dispatcher and passive owner.
+/// # Returns
+/// Continuous/scattered dispatch outcomes; unavailable/unselected paths stay explicit.
+/// # Errors
+/// Preserves metadata/dispatcher/observer failures; computed vectors remain unchanged.
+pub(crate) fn observe_values(
+    continuous: &[crate::signal_processing::pilots::PilotValue],
+    scattered: &[crate::signal_processing::pilots::PilotValue],
+    reference_rms: f64,
+    context: &ProbeContext,
+    probe: &mut TestPointProbe,
+    observer: &mut impl ProbeObserver,
+) -> Result<[ProbeOutcome; 2], SimulationError> {
+    let mut context = context.clone();
+    context.reference = SignalReference::OtherSubcarrierRms { rms: reference_rms };
+    Ok([
+        probe.emit(
+            TestPointId::ContinuousPilots,
+            &context,
+            SignalDomain::PhysicalFftBin,
+            ProbeData::Pilots(continuous),
+            observer,
+        )?,
+        probe.emit(
+            TestPointId::ScatteredPilots,
+            &context,
+            SignalDomain::PhysicalFftBin,
+            ProbeData::Pilots(scattered),
+            observer,
+        )?,
+    ])
+}

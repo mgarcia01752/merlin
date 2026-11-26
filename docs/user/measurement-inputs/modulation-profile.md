@@ -26,7 +26,7 @@ preserves it. Remove input is also staged until Apply. Captures stay unchanged;
 this dialog does not export modified captures or start a run. Settings and inputs
 are included in saved workbench JSON; viewing and zoom are temporary.
 
-Use **View Profile…** to inspect the capture with the PNM Viewer layout.
+Use **View Profile…** to inspect the capture with MERLIN’s profile viewer.
 Channel and MAC chips identify the capture. Toggle individual **Profiles** to
 overlay their colored traces; **All** enables every profile. These selections
 never change the profile chosen for Apply. Carrier buttons filter Data, Pilots,
@@ -38,6 +38,10 @@ Special carrier roles also appear in separate colored lanes beneath the plot.
 or a receiver requirement. **Profile BW** opens per-profile gross data rates:
 data-carrier bits multiplied by subcarrier spacing, before cyclic-prefix, FEC
 and other overhead. It is not net payload throughput.
+The public Rust profile inspection supplies these quantities and the bounded
+role/loading extrema. Qt formats the axes, lanes and labels. Original capture
+bytes, IDs, grids and hashes stay unchanged while viewing or zooming; source
+IDs outside the runnable profile range can still be inspected.
 
 The horizontal axis preserves the capture's original frequency grid. Hover for
 profile, frequency and value. Full-span views retain bounded extrema and break

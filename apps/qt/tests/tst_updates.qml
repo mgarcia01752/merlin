@@ -6,11 +6,20 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtTest
+import "fixtures"
 import "../qml/shell"
-import "../qml/theme"
+import "../qml/shared/theme"
 Pane {
     id:window;width:960;height:640;visible:true
-    Theme {id:theme}
+    PresentationBudget {
+        id: presentationBudget
+        // Independent capacities for existing presentation-only fixture graphs.
+        maximumBytes: 10000000
+        maximumEntries: 100000
+        maximumViews: 96
+        maximumOpen: 12
+    }
+    Theme { presentationBackendFactory: presentationBudget.createAdapter;id:theme}
     ThemePalette { targetControl: window; theme: theme }
     ThemePalette { targetControl: window.Window.window; theme: theme }
     ThemePalette { targetControl: updates.popup; theme: theme }
@@ -32,8 +41,8 @@ Pane {
     }
     TestCase {
         name:"Updates";when:windowShown
-        function init(){backend.current={enabled:true,busy:false,available:false,status:"No release yet."};backend.installs=0;updates.state=JSON.parse(backend.poll());updates.canUpdate=true;updates.prepareUpdate=function(){return {saved:true}}}
-        function cleanup(){updates.popup.close()}
+        function init(){updates.preparingRecovery=false;updates.pollRecovery=function(){return {error:"No pending recovery"}};backend.current={enabled:true,busy:false,available:false,status:"No release yet."};backend.installs=0;updates.state=JSON.parse(backend.poll());updates.canUpdate=true;updates.prepareUpdate=function(){return {saved:true}}}
+        function cleanup(){updates.preparingRecovery=false;updates.popup.close()}
         function test_chip_is_on_menu_right_and_starts_directly(){
             const chip=findChild(updates,"updateAvailable")
             verify(!chip.visible)
@@ -55,6 +64,41 @@ Pane {
             updates.prepareUpdate=function(){return {error:"Recovery failed"}}
             updates.installUpdate();compare(backend.installs,0)
             compare(updates.state.status,"Recovery failed")
+        }
+        function test_queued_recovery_waits_for_actual_completion_before_install() {
+            updates.prepareUpdate = function() { return {preparing:true} }
+            updates.pollRecovery = function() { return {preparing:true} }
+            updates.installUpdate()
+            verify(updates.preparingRecovery)
+            wait(150)
+            compare(backend.installs, 0)
+            updates.installUpdate()
+            compare(backend.installs, 0)
+            updates.pollRecovery = function() { return {saved:true,preparing:false} }
+            tryCompare(backend, "installs", 1)
+            verify(!updates.preparingRecovery)
+        }
+        function test_async_recovery_failure_and_incomplete_response_never_install() {
+            updates.prepareUpdate = function() { return {preparing:true} }
+            updates.pollRecovery = function() { return {error:"Recovery write failed"} }
+            updates.installUpdate()
+            tryCompare(updates, "preparingRecovery", false)
+            compare(backend.installs, 0)
+            compare(updates.state.status, "Recovery write failed")
+            updates.prepareUpdate = function() { return {} }
+            updates.installUpdate()
+            compare(backend.installs, 0)
+            verify(updates.state.error)
+        }
+        function test_changed_run_admission_during_recovery_prevents_install() {
+            updates.prepareUpdate = function() { return {preparing:true} }
+            updates.pollRecovery = function() { return {preparing:true} }
+            updates.installUpdate()
+            updates.canUpdate = false
+            updates.pollRecovery = function() { return {saved:true} }
+            tryCompare(updates, "preparingRecovery", false)
+            compare(backend.installs, 0)
+            verify(updates.state.error)
         }
         function test_windows_update_saves_recovery_and_starts_installer(){
             let recovered=false

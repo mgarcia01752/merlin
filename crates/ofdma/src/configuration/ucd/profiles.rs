@@ -1,5 +1,6 @@
 /*
  * Copyright 2026 MORGANA contributors
+ * Copyright 2026 MERLIN contributors
  * SPDX-License-Identifier: Apache-2.0
  * Adapted for MERLIN from revision
  * 69b38071cd3ebebc4eb96849f82b7871ab8da5ec.
@@ -7,6 +8,10 @@
  */
 //! Table 29 applicable rows and 6.4.3.4 required per-IUC attributes.
 use crate::{error::invalid, PhyResult};
+use merlin_api::{
+    retention_support::{sum, RetainedPayload},
+    RetainedFootprint,
+};
 use serde::{Deserialize, Serialize};
 
 /// One source Table 29.21 two-byte group, not a vendor profile template.
@@ -145,5 +150,68 @@ impl BurstDescriptor {
             return Err(invalid("ucd.burst_iuc"));
         }
         Ok(())
+    }
+}
+
+impl RetainedPayload for ProfileGroup {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            modulation_index,
+            pilot_pattern,
+            additional_minislots,
+        } = self;
+        sum([
+            modulation_index.retained_children(),
+            pilot_pattern.retained_children(),
+            additional_minislots.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for IrPowerControl {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            starting_power_quarter_dbmv,
+            step_quarter_db,
+        } = self;
+        sum([
+            starting_power_quarter_dbmv.retained_children(),
+            step_quarter_db.retained_children(),
+        ])
+    }
+}
+
+impl RetainedPayload for BurstDescriptor {
+    /// Visits all owned children, including spare capacity and private caches.
+    ///
+    /// # Returns
+    /// Checked additional payload/entry/shared-root quantities; no cloning or science.
+    fn retained_children(&self) -> Option<RetainedFootprint> {
+        let Self {
+            iuc,
+            preamble_length_bits,
+            preamble_offset_bits,
+            initial_ranging_subcarriers,
+            fine_ranging_subcarriers,
+            data_profile,
+            ir_power_control,
+        } = self;
+        sum([
+            iuc.retained_children(),
+            preamble_length_bits.retained_children(),
+            preamble_offset_bits.retained_children(),
+            initial_ranging_subcarriers.retained_children(),
+            fine_ranging_subcarriers.retained_children(),
+            data_profile.retained_children(),
+            ir_power_control.retained_children(),
+        ])
     }
 }

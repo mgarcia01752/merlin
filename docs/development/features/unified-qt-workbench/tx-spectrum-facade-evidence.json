@@ -1,0 +1,257 @@
+{
+  "schema_version": 1,
+  "task": "UIU-DS-01",
+  "unit": "TX spectrum facade adoption",
+  "status": "Level 1 TX spectrum consumer accepted; Level 2 parent and Level 3 milestone/final numeric gates remain incomplete",
+  "base_commit": "8cf1f7e1d540ac4828aeffd6864eb3bfb2b5381b",
+  "requirements": [
+    "REQ-UIU-02",
+    "REQ-UIU-08",
+    "REQ-UIU-09",
+    "REQ-UIU-24",
+    "REQ-UIU-27"
+  ],
+  "architecture": "docs/architecture.md#unified-qt-public-api-boundary",
+  "checklist": "docs/development/checklist.md#task-uiu-ds-01",
+  "implementation": [
+    {
+      "path": "apps/qt/src/downstream/common/constants.rs",
+      "sha256": "4b98f1d123776249710daae380ee17a525f28e883b37306071d2ac204cb13f27"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/capture.rs",
+      "sha256": "5e5b392231ee2ed049e52b47ce1c837b6ce41043fc09273d07ec0ab0702237e8"
+    },
+    {
+      "path": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+      "sha256": "09d41876da60a45aa8f0d7040adc86b1674401f4792b0d7041bb3cf2c69898bf"
+    },
+    {
+      "path": "apps/qt/src/downstream/simulation/closed_loop/tests.rs",
+      "sha256": "d80c6080c099626929a40bf6d1f8cf58ed993ef6187aa1a85368619944eba695"
+    }
+  ],
+  "ownership": [
+    "FullLoopResult.calibrated_spectrum_sequence owns IFFT/prefix/window diagnostic assembly and calibration; calibrated_spectrum owns continuous TX overlap. TransmissionConfiguration.spectrum_average_capacity owns FFT/hop/work planning.",
+    "Independent named 16384-sample frame and 32768-sample continuous policies preserve legacy prefixes. Shared stage registration order and shared drawing-only viewport avoid duplicate tables/formatters. The fixed configured PLC interval comes from public physical_layout; Qt infers no scattered-role phase.",
+    "Public stage inventory owns readiness. Existing labels, result token, explicit absent states, zero-count full-FFT convention, calibrated/relative units, full-band zoom power and plot scaling remain. No private estimator, CarrierLayout or Python science is used."
+  ],
+  "preservation": {
+    "before": {
+      "files": 27,
+      "sites": 96
+    },
+    "after": {
+      "files": 26,
+      "sites": 94
+    },
+    "scientific_dependencies": 3,
+    "retired": {
+      "entry": {
+        "path": "apps/qt/src/downstream/instruments/transmitter/views.rs",
+        "sha256": "18dcb54538c9748162553ec1e8cd5337ae1a7909a7e598c2b5a36f2448f5f582",
+        "sites": [
+          {
+            "line": 10,
+            "root": "docsis_ofdm_fec"
+          },
+          {
+            "line": 185,
+            "root": "docsis_ofdm_fec"
+          }
+        ],
+        "sunset_task": "UIU-DS-01"
+      },
+      "task": "UIU-DS-01",
+      "unit": "TX spectrum facade adoption",
+      "reason": "Public calibrated sequence/continuous queries and configured PLC metadata replace the remaining private estimator/layout calls. Separate named frame/output prefixes preserve original analysis windows; Qt reuses the shared drawing-only viewport.",
+      "evidence": "docs/development/features/unified-qt-workbench/validation.md#uiu-ds-01-tx-spectrum-facade-accepted"
+    },
+    "all_other_frozen_entries_and_dependencies_exact": true,
+    "historical_review_and_initial_records_unchanged": true,
+    "backend_and_native_sources_unchanged": true
+  },
+  "testing": {
+    "level": 1,
+    "risk": "Qt Rust adapter and presentation policies only; no backend algorithm/API/schema/CXX registration/cross-direction lifecycle change.",
+    "executed": {
+      "rust": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "test",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--locked",
+          "--bin",
+          "merlin-qt",
+          "--",
+          "--exact",
+          "downstream::simulation::closed_loop::tests::tx_spectra_keep_independent_frame_output_budgets_and_authoritative_calibrated_power",
+          "downstream::simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+          "--nocapture"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 32.36347652498807,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "clippy": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "clippy",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 10.290084152991767,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "release": {
+        "command": [
+          "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+          "build",
+          "--manifest-path",
+          "apps/qt/Cargo.toml",
+          "--release",
+          "--locked"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 43.890042478989926,
+        "environment": {
+          "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+          "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+          "QT_VERSION_MAJOR": "6",
+          "QT_QUICK_CONTROLS_STYLE": "Fusion",
+          "CARGO_INCREMENTAL": "0",
+          "CARGO_PROFILE_DEV_DEBUG": "0",
+          "CARGO_PROFILE_TEST_DEBUG": "0"
+        }
+      },
+      "qml": {
+        "command": [
+          "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmltestrunner",
+          "-input",
+          "/home/dev01/Projects/merlin/apps/qt/tests/tst_workbench.qml",
+          "Workbench::test_transmitter_readiness_analyzer_zoom_and_invalidation",
+          "Workbench::test_transmitter_stage_message_and_qam_navigation"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.3612854160019197,
+        "behavior_cases": 2
+      }
+    },
+    "actual_rust_cases": [
+      "downstream::simulation::closed_loop::tests::accepted_measurements_run_real_closed_loop_and_invalidate_views",
+      "downstream::simulation::closed_loop::tests::tx_spectra_keep_independent_frame_output_budgets_and_authoritative_calibrated_power"
+    ],
+    "rust_case_count": 2,
+    "qml_behavior_cases": 2,
+    "qml_harness_total": 4,
+    "boundary": {
+      "errors": [],
+      "scientific_dependencies": 3,
+      "frozen_legacy_files": 26,
+      "final": false
+    },
+    "not_required": [
+      {
+        "scope": "Root workspace/scientific and installed Python/parity suites or another wheel",
+        "reason": "Backend/bindings/API code are unchanged; independently accepted API prerequisite 8cf1f7e supplies the scientific/paired evidence. New Qt actual-run cases validate this consumer, without claiming the earlier API pass as Qt acceptance."
+      },
+      {
+        "scope": "Complete Qt/QML suites and unchanged validator unit suites",
+        "reason": "Focused changed-view cases and actual locked boundary audit apply. Full task coverage remains Level 2; validator code itself is unchanged."
+      },
+      {
+        "scope": "Unrelated native startup/Open, CLI/project and packaging regressions",
+        "reason": "No QML/CXX/resource registration, chooser/persistence, package, dependency or lifecycle change. The optimized Qt executable is built for current source; no new native startup/platform/installed lifecycle claim."
+      }
+    ],
+    "deferred": [
+      {
+        "gate": "Level 2 UIU-DS-01",
+        "scope": "Complete relevant feature/crate, affected Qt/QML, compatibility and traceability acceptance before checking parent."
+      },
+      {
+        "gate": "Level 3 milestones/UIU-QA-01",
+        "scope": "Full applicable workspace, Qt/QML, native Python, CLI, persistence and packaging regressions; zero scientific boundary and final numeric audit."
+      }
+    ],
+    "documents": {
+      "errors": [],
+      "mode": "current",
+      "feature_files": 324,
+      "markdown_links": 9835,
+      "canonical_requirement_ids": 520,
+      "source_requirements": 59,
+      "downstream_routes": 127,
+      "downstream_task_mappings": 430,
+      "functional_records": 9,
+      "functional_requirement_mappings": 57,
+      "functional_unique_requirements": 50,
+      "functional_task_mappings": 22,
+      "dependency_nodes": 30,
+      "skills": 12,
+      "discovery_links": 24,
+      "protected_original_records": 163,
+      "historical_archives": 12
+    },
+    "traceability": {
+      "command": [
+        "python3",
+        "-B",
+        "tools/validation/integration_traceability.py"
+      ],
+      "exit_code": 0,
+      "output": "Integration traceability: task/requirement/architecture and recorded implementation chains pass"
+    },
+    "format": {
+      "command": [
+        "/home/dev01/Projects/merlin/scripts/cargo-local.sh",
+        "fmt",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.3255851409921888,
+      "environment": {
+        "CARGO_HOME": "/home/dev01/Projects/merlin/local/merlin-cargo",
+        "QMAKE": "/home/dev01/Projects/raven/local/qt/6.8.3/gcc_64/bin/qmake",
+        "QT_VERSION_MAJOR": "6",
+        "QT_QUICK_CONTROLS_STYLE": "Fusion",
+        "CARGO_INCREMENTAL": "0",
+        "CARGO_PROFILE_DEV_DEBUG": "0",
+        "CARGO_PROFILE_TEST_DEBUG": "0"
+      }
+    }
+  },
+  "compatibility_case": "Actual supported 1024-CP run with three retained IFFT/prefix/window frames: original 16K prefix gives three averages; continuous 32K output gives seven. Existing original worker/instrument assertions remain. New tests check public calibrated reading, zoom/axis/PLC behavior, invalid selectors/count/start and report/retention immutability.",
+  "numeric_review": "Frame prefix is independent of the equal-valued backend event cap; continuous sample budget remains shared with other time-sample instruments. Counts use the public planner, display minimum uses the shared UI owner. The old 1..32 error string is explicitly presentation text, not a duplicate domain validator. Independent expected test anchors remain literal and explained; final line-by-line audit stays pending.",
+  "executable": {
+    "path": "apps/qt/target/release/merlin-qt",
+    "sha256": "65d2359b1e566f8cd0d2f8065e7c82e701fb30db03623f5f27e7186b618a3450",
+    "scope": "Current optimized Linux Qt build; no fresh startup/installed-platform execution in this unit."
+  }
+}
