@@ -4,6 +4,17 @@ Open `workbench.merlin.json` from one of these folders. The Upstream tab restore
 an idle configuration; Start runs the native MERLIN transmitter → channel →
 receiver loop. PRBS-RX shows the actual recovered-source comparison and FEC result.
 
+For the complete input scenario, choose **synthetic-rxmer-25khz** or
+**synthetic-rxmer-50khz**. Both embed their UCD, synthetic 40 dB CMTS RxMER,
+Pre-Eq and execution settings. All input blocks are accepted after Open; press
+Start to produce the actual independently verified result.
+
+Ideal examples are also complete runnable scenarios. They do not require an
+RxMER measurement: **Not used** is a neutral indicator. Before any run,
+PRBS-RX shows neutral **Awaiting results**. A green PRBS-RX indicator requires
+successful actual source verification; cancelled, incomplete or failed recovery
+remains explicit.
+
 | Bundle | Channel spacing | Input |
 | --- | --- | --- |
 | [ideal-50khz](ideal-50khz/README.md) | 50 kHz | Ideal synthetic channel. |

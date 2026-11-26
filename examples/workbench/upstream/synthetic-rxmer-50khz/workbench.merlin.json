@@ -12,9 +12,13 @@
       "maximum_samples": 16777216,
       "chunk_samples": 997,
       "timeout_ms": 30000,
-      "retained_points": 4096,
+      "retained_points": 12288,
       "retained_taps": [
         "TxOutput",
+        "RxInput",
+        "TxGrid",
+        "TxPreEq",
+        "RxFft",
         "RxEqualized"
       ]
     },

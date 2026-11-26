@@ -54,6 +54,46 @@ self-contained saved projects: `ideal-25khz`, `ideal-50khz`,
 `workbench.merlin.json`, check the Upstream configuration, then press Start.
 Open PRBS-RX to inspect recovered bits, BER and FEC outcomes. Loading stays idle.
 
+For a scenario with all measurement inputs, use `synthetic-rxmer-25khz` or
+`synthetic-rxmer-50khz`. Their UCD, RxMER and Pre-Eq inputs are embedded and
+accepted together. Press **Start** to obtain the recovered-source result; merely
+opening a file cannot establish successful verification.
+
+Ideal examples intentionally have no RxMER target. Their RxMER stripe is neutral
+and reads **Not used**, while PRBS-RX reads **Awaiting results** before execution.
+Accepted input blocks are green. PRBS-RX becomes green only after actual complete
+source recovery. Yellow still identifies an input requiring attention or an
+incomplete/unverified result, and red identifies an error.
+
+The runnable manifest also lists twelve downstream notch companions in addition
+to the eight primary projects. These include the flat baseline, supplied-channel
+estimate variant and notch-strength comparisons. They retain their saved inputs
+and limits; impairment demos can produce decoder errors. A completed simulation
+and successful source recovery are separate outcomes.
+
+## Expected results with the saved settings
+
+The saved seeds, observation durations and decoder limits are reproducible.
+All twenty workbenches execute; these are the observed outcomes for their saved
+profiles. A stress example remains a working simulation when its decoder rejects
+corrupted codewords. Inspect PRBS-RX and FEC rather than inferring recovery from
+configuration readiness.
+
+| Scenario | Saved profiles | Expected source/FEC result |
+| --- | --- | --- |
+| Downstream `single` | 0, 1, 2, 3 | Zero bit errors and uncorrectable codewords. |
+| Downstream `multi-rxmer` | 0, 1, 2, 3 | Profile 0 recovers cleanly. Deliberate low-RxMER stress produces errors and uncorrectable codewords for profiles 1–3. |
+| Downstream `multi-rxmer-2` | 0, 3, 4 | Zero bit errors and uncorrectable codewords. |
+| Notch `workbench`, `baseline`, `cmce` and `cl-unity-notch-*db` companions | 3 | Zero bit errors and uncorrectable codewords for these saved settings. |
+| Notch `wb-sim-1` and `user-materialized` | 3 | 6,653 bit errors and 53 uncorrectable codewords. |
+| Notch `user-cl-notch` | 3 | 903 bit errors and 4 uncorrectable codewords. |
+| All four upstream projects | Their saved IUC/grant | Complete independent source recovery with zero bit errors. |
+
+These results describe the saved simulations, not field performance or a
+universal impairment threshold. All downstream runs complete with no unfinished
+generated payloads. Exact file identities, counters and executed checks are
+recorded in the [scenario acceptance evidence](../development/features/workbench-examples/scenario-acceptance.json).
+
 Ideal projects use the accepted synthetic channel. Measured-plan projects use
 authored synthetic CMTS RxMER, UCD and admitted Pre-Eq data, retaining complete
 original bytes and their association/probe context. Correction C, physical
@@ -65,6 +105,11 @@ Companion source documents, loose binary captures, provenance hashes and notices
 are included beside each upstream project. Run and instrument budgets are finite;
 no device/network access or Python process is required by Qt. See the
 [upstream workbench guide](upstream-workbench.md) for controls and observations.
+The saved observation budget retains six test points, with one complete
+numerology FFT per tap: 24,576 aggregate points at 25 kHz or 12,288 at 50 kHz.
+QAM, TX/RX spectrum, response, resource-grid and FEC views use actual retained
+results. This observation setting leaves source bits, channel parameters and
+decoder outcomes unchanged.
 
 ## Development and installed paths
 

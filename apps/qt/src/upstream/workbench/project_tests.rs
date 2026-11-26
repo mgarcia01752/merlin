@@ -77,6 +77,36 @@ fn curated_upstream_projects_open_idle_and_complete_through_the_qt_model() {
         assert!(model.report.is_none());
         assert!(application.active().is_none());
         assert!(!application.snapshot(Direction::Upstream).dirty);
+        let ready = model.state();
+        assert_eq!(ready["can_start"], true, "{name}: {ready}");
+        for section in [
+            "ucd",
+            "profiles",
+            "grants",
+            "source",
+            "transmitter",
+            "channel",
+            "receiver",
+            "preEqualization",
+        ] {
+            assert_eq!(
+                ready["configuration_view"]["blocks"][section]["status"], "complete",
+                "{name}: {section}"
+            );
+        }
+        assert_eq!(
+            ready["configuration_view"]["blocks"]["rxmer"]["status"],
+            if name.starts_with("ideal-") {
+                "unused"
+            } else {
+                "complete"
+            },
+            "{name}"
+        );
+        assert_eq!(
+            ready["configuration_view"]["blocks"]["verification"]["status"], "pending",
+            "{name}: loading cannot claim actual recovery"
+        );
         model.start().unwrap();
         let deadline = Instant::now() + WATCHDOG;
         while model.poll()["busy"] == true {
@@ -88,6 +118,28 @@ fn curated_upstream_projects_open_idle_and_complete_through_the_qt_model() {
         assert!(report.1.value().reference_recovered, "{name}");
         assert!(report.1.value().compared_source_bits > 0);
         assert_eq!(report.1.value().bit_errors, 0);
+        assert_eq!(
+            model.state()["configuration_view"]["blocks"]["verification"]["status"],
+            "complete",
+            "{name}: actual recovery must reach the canvas"
+        );
+        model.begin_resource_grid().unwrap();
+        drain(&mut model);
+        assert_eq!(
+            model.state()["resource_grid_view"]["status"],
+            "ready",
+            "{name}"
+        );
+        for kind in ["qam", "spectrum", "response", "fec"] {
+            model.begin_instrument(kind).unwrap();
+            drain(&mut model);
+            let view = model.state()["instrument_view"].clone();
+            assert_eq!(view["status"], "ready", "{name}: {kind}: {view}");
+            assert_eq!(
+                view["snapshot"]["status"], "ready",
+                "{name}: {kind}: {view}"
+            );
+        }
         assert!(application.active().is_none());
         assert_eq!(std::fs::read(path).unwrap(), original);
     }

@@ -62,8 +62,10 @@ impl Model {
             for section in ["ucd","profiles","grants","source","transmitter","channel","receiver","preEqualization"] {
                 blocks.insert(section.into(),json!({"status":"complete","reason":"Native configuration accepted; simulation observations are separate."}));
             }
-            blocks.insert("rxmer".into(),json!({"status":"attention","reason":"Measured input admission and association remain separate."}));
-            blocks.insert("verification".into(),json!({"status":"attention","reason":"No accepted upstream run report is shown here."}));
+            blocks.insert("rxmer".into(),json!({
+                "status":if run.synthetic_rxmer.is_some(){"complete"}else{"unused"},
+                "reason":if run.synthetic_rxmer.is_some(){"Synthetic RxMER target accepted by the native public API."}else{"This ideal configuration does not use an RxMER target; Start is ready without one."}}));
+            blocks.insert("verification".into(),json!({"status":"pending","reason":"Start upstream to obtain actual recovered-source verification."}));
             Some(json!({"input_mode":"synthetic","blocks":blocks,"details":details}))
         }).ok().flatten()).unwrap_or_else(||json!({"blocks":{},"details":{}}))
     }

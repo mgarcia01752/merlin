@@ -65,7 +65,8 @@ impl Model {
             ),
             None => (
                 json!({"summary":"No actual upstream report is available. Comparison and codeword outcomes remain unavailable.","rows":[]}),
-                json!({"status":"attention","reason":"Run upstream to obtain independent source verification."}),
+                json!({"status":if self.current(){"pending"}else{"attention"},
+                    "reason":if self.current(){"Awaiting actual upstream results; Start runs independent source verification."}else{"Accept an upstream configuration before running independent source verification."}}),
             ),
         };
         json!({"status":status,"elapsed":elapsed,"activity":activity,

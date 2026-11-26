@@ -106,8 +106,19 @@ cancelling a pending edit cannot stop another simulation or import.
 Configuration inspection does not advance the source or produce a waveform.
 A green configuration block indicates accepted settings; it does not establish
 received data or a successful simulation. Missing observations remain unavailable.
+An ideal channel's optional RxMER input is neutral and labelled **Not used**.
+An accepted synthetic or measured RxMER target is green. Before execution,
+PRBS-RX is neutral and labelled **Awaiting results**; actual recovery determines
+its result indicator after Start. These neutral states do not block Start and
+do not count as successful verification. For a fully populated saved scenario,
+use the [synthetic measured-RxMER examples](workbench-examples.md#upstream-examples).
 CM Pre-Eq is transmit correction **C**, the physical channel is **H**, and their
 combined response is **C×H**. A CM Pre-Eq capture is not a CMTS channel estimate.
+
+The ideal 25 kHz saved example is ready to Start with neutral optional-input
+and awaiting-result indicators:
+
+![Ideal upstream workbench ready with neutral unused RxMER and awaiting PRBS-RX](../images/workbench/upstream-example-ideal-ready-dark.png)
 
 ![Accepted receiver configuration in the native dark workbench](../images/workbench/upstream-configuration-dark.png)
 
@@ -117,6 +128,16 @@ After accepting a configuration, click **Start**. Preparation and simulation run
 in the background. The status shows the actual completed grants and independently
 compared bits. **Active elapsed** is the backend execution time in milliseconds;
 it excludes acknowledged pauses and is separate from waveform duration.
+
+The complete synthetic measured-RxMER 25 kHz example reaches green input and
+verification indicators after its actual run:
+
+![Complete upstream synthetic measured example after execution](../images/workbench/upstream-example-completed-dark.png)
+
+Open **PRBS-RX** to confirm independent recovery rather than relying on color
+alone. This saved example compares all 4,216 source bits with zero errors:
+
+![Actual upstream PRBS-RX verification with complete source coverage](../images/workbench/upstream-example-verification-dark.png)
 
 **Pause** requests a safe pause; the button changes to **Resume** after the worker
 acknowledges it. **Stop** requests cooperative cancellation. The application slot

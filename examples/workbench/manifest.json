@@ -175,6 +175,20 @@
     },
     {
       "id": "cl-192mhz-8mhz-notch",
+      "companions": [
+        "downstream/cl-192mhz-8mhz-notch/baseline.merlin.json",
+        "downstream/cl-192mhz-8mhz-notch/cmce.merlin.json",
+        "downstream/cl-192mhz-8mhz-notch/wb-sim-1.merlin.json",
+        "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/cl-unity-notch-0db.merlin.json",
+        "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/cl-unity-notch-5db.merlin.json",
+        "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/cl-unity-notch-10db.merlin.json",
+        "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/cl-unity-notch-20db.merlin.json",
+        "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/cl-unity-notch-30db.merlin.json",
+        "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/cl-unity-notch-40db.merlin.json",
+        "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/cl-unity-notch-48db.merlin.json",
+        "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/user-cl-notch.merlin.json",
+        "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/user-materialized.merlin.json"
+      ],
       "workbench": "downstream/cl-192mhz-8mhz-notch/workbench.merlin.json",
       "modulation_profile": "downstream/cl-192mhz-8mhz-notch/modulation_profile.json",
       "channel_estimate": null,

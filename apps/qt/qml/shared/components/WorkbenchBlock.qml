@@ -12,8 +12,13 @@ Button {
     required property string heading
     required property string blockStatus
     required property string statusReason
-    readonly property string statusLabel: blockStatus === "complete" ? "Complete" : blockStatus === "error" ? "Error" : "Needs attention"
-    readonly property color statusColor: blockStatus === "complete" ? theme.statusComplete : blockStatus === "error" ? theme.statusError : theme.statusAttention
+    readonly property string statusLabel: blockStatus === "complete" ? "Complete"
+        : blockStatus === "error" ? "Error"
+        : blockStatus === "unused" ? "Not used"
+        : blockStatus === "pending" ? "Awaiting results" : "Needs attention"
+    readonly property color statusColor: blockStatus === "complete" ? theme.statusComplete
+        : blockStatus === "error" ? theme.statusError
+        : blockStatus === "unused" || blockStatus === "pending" ? theme.muted : theme.statusAttention
     property bool inputBlock: false
     property string pnmFileType: ""
     property string indicatorText: ""

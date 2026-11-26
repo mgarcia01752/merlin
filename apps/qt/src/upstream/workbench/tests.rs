@@ -88,6 +88,29 @@ fn complete_run_uses_actual_recovery_and_invalid_apply_preserves_accepted_owners
 }
 
 #[test]
+fn admitted_synthetic_rxmer_target_is_ready_without_claiming_completed_verification() {
+    const SOURCE: &[u8] =
+        include_bytes!("../../../../../examples/cli/upstream/us-synthetic-playback.json");
+    let application = ApplicationSessions::desktop().unwrap();
+    let mut model = Model::new(application.clone()).unwrap();
+    model.apply(SOURCE).unwrap();
+    wait_for(|| model.poll()["preparing"] == false);
+    let state = model.state();
+    assert_eq!(state["configured"], true, "{state}");
+    assert_eq!(state["can_start"], true, "{state}");
+    assert_eq!(
+        state["configuration_view"]["blocks"]["rxmer"]["status"],
+        "complete"
+    );
+    assert_eq!(
+        state["configuration_view"]["blocks"]["verification"]["status"],
+        "pending"
+    );
+    assert_eq!(state["has_result"], false);
+    assert!(application.active().is_none());
+}
+
+#[test]
 fn stopping_target_preparation_restores_the_same_controller_without_starting_science() {
     let application = ApplicationSessions::desktop().unwrap();
     let mut model = configured(application.clone());

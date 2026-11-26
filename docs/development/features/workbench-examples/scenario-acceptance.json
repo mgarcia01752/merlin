@@ -1,0 +1,744 @@
+{
+  "task": "UI-EXAMPLES-04",
+  "status": "passed",
+  "base_revision": "d50e7e2d485030658de0c0c889626020c0812d9a",
+  "scope": {
+    "primary_bundles": 8,
+    "saved_projects": 20,
+    "downstream_projects": 16,
+    "downstream_selected_profile_runs": 24,
+    "upstream_projects": 4
+  },
+  "downstream": [
+    {
+      "project": "downstream/single/workbench.merlin.json",
+      "sha256": "e709daaa5a3220d3f5b417a41090d813819abacfbf67b82925be17706518150c",
+      "profile": 0,
+      "status": "complete",
+      "compared_bits": 1223952,
+      "bit_errors": 0,
+      "codewords": 86,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/single/workbench.merlin.json",
+      "sha256": "e709daaa5a3220d3f5b417a41090d813819abacfbf67b82925be17706518150c",
+      "profile": 1,
+      "status": "complete",
+      "compared_bits": 1508592,
+      "bit_errors": 0,
+      "codewords": 106,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/single/workbench.merlin.json",
+      "sha256": "e709daaa5a3220d3f5b417a41090d813819abacfbf67b82925be17706518150c",
+      "profile": 2,
+      "status": "complete",
+      "compared_bits": 1636680,
+      "bit_errors": 0,
+      "codewords": 115,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/single/workbench.merlin.json",
+      "sha256": "e709daaa5a3220d3f5b417a41090d813819abacfbf67b82925be17706518150c",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 1779000,
+      "bit_errors": 0,
+      "codewords": 125,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/multi-rxmer/workbench.merlin.json",
+      "sha256": "1fdd2bacc7687f9450738dd352528426cc7472678be7874fa30c912c057792f5",
+      "profile": 0,
+      "status": "complete",
+      "compared_bits": 1223952,
+      "bit_errors": 0,
+      "codewords": 86,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/multi-rxmer/workbench.merlin.json",
+      "sha256": "1fdd2bacc7687f9450738dd352528426cc7472678be7874fa30c912c057792f5",
+      "profile": 1,
+      "status": "complete",
+      "compared_bits": 1508592,
+      "bit_errors": 33813,
+      "codewords": 106,
+      "uncorrectable_codewords": 106,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/multi-rxmer/workbench.merlin.json",
+      "sha256": "1fdd2bacc7687f9450738dd352528426cc7472678be7874fa30c912c057792f5",
+      "profile": 2,
+      "status": "complete",
+      "compared_bits": 1636680,
+      "bit_errors": 51678,
+      "codewords": 115,
+      "uncorrectable_codewords": 115,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/multi-rxmer/workbench.merlin.json",
+      "sha256": "1fdd2bacc7687f9450738dd352528426cc7472678be7874fa30c912c057792f5",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 1779000,
+      "bit_errors": 60731,
+      "codewords": 125,
+      "uncorrectable_codewords": 125,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/multi-rxmer-2/workbench.merlin.json",
+      "sha256": "1550b7b1ce34fceb2329b540edcbd0960f407651725edc22d8099016519f9161",
+      "profile": 0,
+      "status": "complete",
+      "compared_bits": 1238184,
+      "bit_errors": 0,
+      "codewords": 87,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/multi-rxmer-2/workbench.merlin.json",
+      "sha256": "1550b7b1ce34fceb2329b540edcbd0960f407651725edc22d8099016519f9161",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 1665144,
+      "bit_errors": 0,
+      "codewords": 117,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/multi-rxmer-2/workbench.merlin.json",
+      "sha256": "1550b7b1ce34fceb2329b540edcbd0960f407651725edc22d8099016519f9161",
+      "profile": 4,
+      "status": "complete",
+      "compared_bits": 1807464,
+      "bit_errors": 0,
+      "codewords": 127,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/cl-192mhz-8mhz-notch/workbench.merlin.json",
+      "sha256": "083706473354d2a8b78f6268a500a25ad34f6c860740ccae71d769ebe27d20ba",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 18145800,
+      "bit_errors": 0,
+      "codewords": 1275,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/cl-192mhz-8mhz-notch/baseline.merlin.json",
+      "sha256": "2cf9843b906d7e9b9620e325cd41bb7c947f9fea925ab20aae3afa80755eb12a",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 18145800,
+      "bit_errors": 0,
+      "codewords": 1275,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/cl-192mhz-8mhz-notch/cmce.merlin.json",
+      "sha256": "16f9ca903c64b6483e42bd7550cc59b74549670fce2e88e08ad5cc390d9f6f76",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 18145800,
+      "bit_errors": 0,
+      "codewords": 1275,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/cl-192mhz-8mhz-notch/wb-sim-1.merlin.json",
+      "sha256": "9f802eee2223eddfdfeba3a3f98efeaf253adaf1df0ab503dc5babb4caef5096",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 18145800,
+      "bit_errors": 6653,
+      "codewords": 1275,
+      "uncorrectable_codewords": 53,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/cl-unity-notch-0db.merlin.json",
+      "sha256": "81503f737ac4748794a96dfa346c89dafb5ad54bf37c0189c4c09a4be7c58b6d",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 18145800,
+      "bit_errors": 0,
+      "codewords": 1275,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/cl-unity-notch-5db.merlin.json",
+      "sha256": "aea33978931848f8420ddb242de50881644045119b3813b663f9a1a9d208029e",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 18145800,
+      "bit_errors": 0,
+      "codewords": 1275,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/cl-unity-notch-10db.merlin.json",
+      "sha256": "d8bcda20a9280babf186a7be4ddf69b7a167ae1efe7abb0d3c521f4e8d344b5b",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 18145800,
+      "bit_errors": 0,
+      "codewords": 1275,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/cl-unity-notch-20db.merlin.json",
+      "sha256": "082dcde13c650a351af27e29d9f3db14af6d5f817bdf25d418ad3ad4cfcbd8f9",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 18145800,
+      "bit_errors": 0,
+      "codewords": 1275,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/cl-unity-notch-30db.merlin.json",
+      "sha256": "0ea0efa333a994b46ae96483095b50f61b3a472fab5608c1dc1226a80590aadd",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 18145800,
+      "bit_errors": 0,
+      "codewords": 1275,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/cl-unity-notch-40db.merlin.json",
+      "sha256": "48f12a02b1cb8ead815bfc276d2e063b24bff543b2dd7914fbea06a3bd9f34a0",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 18145800,
+      "bit_errors": 0,
+      "codewords": 1275,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/cl-unity-notch-48db.merlin.json",
+      "sha256": "b87872759120dde49e50f9855e5d61f5c4fc5a5e17cc3d141832ed1795144ad6",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 18145800,
+      "bit_errors": 0,
+      "codewords": 1275,
+      "uncorrectable_codewords": 0,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/user-cl-notch.merlin.json",
+      "sha256": "7db72028f39e02630e5c7227b3ccee976c717bddfe58759ab8575ab73b33f814",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 18145800,
+      "bit_errors": 903,
+      "codewords": 1275,
+      "uncorrectable_codewords": 4,
+      "unfinished_generated_payloads": 0
+    },
+    {
+      "project": "downstream/cl-192mhz-8mhz-notch/comparison-sim-1/user-materialized.merlin.json",
+      "sha256": "c86498238945ca9bd964aa52d85827b66e3e9b0a21bcddcaea1bd4cbec5d7f93",
+      "profile": 3,
+      "status": "complete",
+      "compared_bits": 18145800,
+      "bit_errors": 6653,
+      "codewords": 1275,
+      "uncorrectable_codewords": 53,
+      "unfinished_generated_payloads": 0
+    }
+  ],
+  "upstream": [
+    {
+      "project": "upstream/ideal-50khz/workbench.merlin.json",
+      "sha256": "7156e5f4be94ac96fcacaa9d8fee117340c5e6982d6e4fc34ef82b7109eb6460",
+      "status": "Completed",
+      "compared_bits": 1976,
+      "bit_errors": 0,
+      "reference_recovered": true,
+      "scientific_outcomes_match_previous_retention": true,
+      "source_document_unchanged": true,
+      "retained_taps": [
+        "TxOutput",
+        "RxInput",
+        "TxGrid",
+        "TxPreEq",
+        "RxFft",
+        "RxEqualized"
+      ],
+      "retained_points": 12288,
+      "spectrum_and_qam_queries": "All six actual retained tap queries passed through public Rust."
+    },
+    {
+      "project": "upstream/ideal-25khz/workbench.merlin.json",
+      "sha256": "de6ed8bdb84f05533e5d85462118be65692cc64119a9af32e0c7b8a5c4ca7da9",
+      "status": "Completed",
+      "compared_bits": 4216,
+      "bit_errors": 0,
+      "reference_recovered": true,
+      "scientific_outcomes_match_previous_retention": true,
+      "source_document_unchanged": true,
+      "retained_taps": [
+        "TxOutput",
+        "RxInput",
+        "TxGrid",
+        "TxPreEq",
+        "RxFft",
+        "RxEqualized"
+      ],
+      "retained_points": 24576,
+      "spectrum_and_qam_queries": "All six actual retained tap queries passed through public Rust."
+    },
+    {
+      "project": "upstream/synthetic-rxmer-50khz/workbench.merlin.json",
+      "sha256": "e55a64616ec0e5506a4c0133440ed76eb6536fcc02748781a2da7d86bfb104c8",
+      "status": "Completed",
+      "compared_bits": 1976,
+      "bit_errors": 0,
+      "reference_recovered": true,
+      "scientific_outcomes_match_previous_retention": true,
+      "source_document_unchanged": true,
+      "retained_taps": [
+        "TxOutput",
+        "RxInput",
+        "TxGrid",
+        "TxPreEq",
+        "RxFft",
+        "RxEqualized"
+      ],
+      "retained_points": 12288,
+      "spectrum_and_qam_queries": "All six actual retained tap queries passed through public Rust."
+    },
+    {
+      "project": "upstream/synthetic-rxmer-25khz/workbench.merlin.json",
+      "sha256": "59cc601c58862ef0ba8e5812e658be5be4b3dbd6af1176cabceffd8a26394d6d",
+      "status": "Completed",
+      "compared_bits": 4216,
+      "bit_errors": 0,
+      "reference_recovered": true,
+      "scientific_outcomes_match_previous_retention": true,
+      "source_document_unchanged": true,
+      "retained_taps": [
+        "TxOutput",
+        "RxInput",
+        "TxGrid",
+        "TxPreEq",
+        "RxFft",
+        "RxEqualized"
+      ],
+      "retained_points": 24576,
+      "spectrum_and_qam_queries": "All six actual retained tap queries passed through public Rust."
+    }
+  ],
+  "checks": [
+    {
+      "name": "examples-04-all-downstream-release",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "-p",
+        "pnm-input",
+        "--release",
+        "--test",
+        "directional_workbench_examples",
+        "--locked",
+        "every_downstream_saved_example_executes_each_selected_profile",
+        "--",
+        "--ignored",
+        "--nocapture"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 243.10504956997465
+    },
+    {
+      "name": "examples-04-native-downstream",
+      "command": [
+        "docs/development/local/directional-workbench-examples/installed-parity/installed/bin/python",
+        "-I",
+        "-B",
+        "bindings/python/tests/test_workbench_scenario_acceptance.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 355.3273101680097
+    },
+    {
+      "name": "examples-04-pnm",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "-p",
+        "pnm-input",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 335.2345203149598
+    },
+    {
+      "name": "examples-04-retention-fixed",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "-p",
+        "pnm-input",
+        "--test",
+        "directional_workbench_examples",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 24.81781602895353
+    },
+    {
+      "name": "examples-04-native-upstream",
+      "command": [
+        "docs/development/local/directional-workbench-examples/installed-parity/installed/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "bindings/python/tests",
+        "-p",
+        "test_directional_workbench_examples.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.7224805880105123
+    },
+    {
+      "name": "qt-examples-04-complete",
+      "command": [
+        "scripts/cargo-local.sh",
+        "test",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--locked"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 459.415243777039
+    },
+    {
+      "name": "qt-examples-04-release",
+      "command": [
+        "scripts/qt-desktop.sh",
+        "build"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 352.77979362301994
+    },
+    {
+      "name": "examples-04-clippy",
+      "command": [
+        "scripts/cargo-local.sh",
+        "clippy",
+        "-p",
+        "pnm-input",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 6.009547977009788
+    },
+    {
+      "name": "qt-examples-04-clippy",
+      "command": [
+        "scripts/cargo-local.sh",
+        "clippy",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 212.34793887101114
+    },
+    {
+      "name": "examples-04-format",
+      "command": [
+        "scripts/cargo-local.sh",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.95558044599602
+    },
+    {
+      "name": "qt-examples-04-format",
+      "command": [
+        "scripts/cargo-local.sh",
+        "fmt",
+        "--manifest-path",
+        "apps/qt/Cargo.toml",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.2773454560083337
+    },
+    {
+      "name": "qt-examples-04-boundary",
+      "command": [
+        "python3",
+        "tools/validation/qt_api_boundary.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1.0905016380129382
+    },
+    {
+      "name": "upstream QML directory",
+      "passed": 181,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "downstream tst_workbench.qml",
+      "passed": 55,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "name": "packaging unittest discovery",
+      "passed": 26,
+      "failed": 0
+    },
+    {
+      "name": "feature_documentation.py and integration_traceability.py",
+      "result": "passed"
+    },
+    {
+      "name": "native optimized Qt admission",
+      "passed": 20,
+      "failed": 0
+    },
+    {
+      "name": "native VM Open/Start/verification",
+      "compared_bits": 4216,
+      "bit_errors": 0,
+      "unverified_bits": 0,
+      "result": "verified"
+    },
+    {
+      "name": "saved source and scientific-outcome preservation",
+      "result": "all four original source documents and prior decoder word/source outcomes match"
+    },
+    {
+      "name": "examples-04-clippy-final",
+      "command": [
+        "scripts/cargo-local.sh",
+        "clippy",
+        "-p",
+        "pnm-input",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.39172600902384147
+    },
+    {
+      "name": "qt-examples-04-boundary-final",
+      "command": [
+        "python3",
+        "tools/validation/qt_api_boundary.py",
+        "--final"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.4640062319813296
+    },
+    {
+      "name": "final_static",
+      "commands": [
+        {
+          "command": [
+            "python3",
+            "tools/validation/feature_documentation.py"
+          ],
+          "exit_code": 0,
+          "output": "{\n  \"errors\": [],\n  \"mode\": \"current\",\n  \"feature_files\": 477,\n  \"markdown_links\": 11159,\n  \"canonical_requirement_ids\": 520,\n  \"source_requirements\": 59,\n  \"downstream_routes\": 127,\n  \"downstream_task_mappings\": 430,\n  \"functional_records\": 9,\n  \"functional_requirement_mappings\": 57,\n  \"functional_unique_requirements\": 50,\n  \"functional_task_mappings\": 22,\n  \"dependency_nodes\": 30,\n  \"skills\": 12,\n  \"discovery_links\": 24,\n  \"protected_original_records\": 163,\n  \"historical_archives\": 12\n}\n"
+        },
+        {
+          "command": [
+            "python3",
+            "tools/validation/integration_traceability.py"
+          ],
+          "exit_code": 0,
+          "output": "Integration traceability: task/requirement/architecture and recorded implementation chains pass\n"
+        },
+        {
+          "command": [
+            "python3",
+            "tools/python/update_integration_doc.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "output": "Python integration guide: current\n"
+        },
+        {
+          "command": [
+            "git",
+            "diff",
+            "--check"
+          ],
+          "exit_code": 0,
+          "output": ""
+        }
+      ]
+    }
+  ],
+  "not_required": [
+    "Full unrelated workspace/CLI regressions: no scientific algorithm or public API changed.",
+    "Wheel rebuild: existing installed native wheel runs the unchanged Rust project engine.",
+    "Installed Windows/Ubuntu updater lifecycles: no installer/updater implementation changed."
+  ],
+  "execution_limits": "Original saved seeds, durations, sample caps and decoder iteration/runtime limits preserved.",
+  "evidence_boundary": "Native VM and source/installed-wheel acceptance only; no new hosted or installed-OS lifecycle claim.",
+  "retention_changes": [
+    {
+      "project": "upstream/ideal-50khz/workbench.merlin.json",
+      "before": {
+        "points": 4096,
+        "taps": [
+          "TxOutput",
+          "RxEqualized"
+        ]
+      },
+      "after": {
+        "points": 12288,
+        "taps": [
+          "TxOutput",
+          "RxInput",
+          "TxGrid",
+          "TxPreEq",
+          "RxFft",
+          "RxEqualized"
+        ]
+      },
+      "points_per_tap": 2048
+    },
+    {
+      "project": "upstream/ideal-25khz/workbench.merlin.json",
+      "before": {
+        "points": 4096,
+        "taps": [
+          "TxOutput",
+          "RxEqualized"
+        ]
+      },
+      "after": {
+        "points": 24576,
+        "taps": [
+          "TxOutput",
+          "RxInput",
+          "TxGrid",
+          "TxPreEq",
+          "RxFft",
+          "RxEqualized"
+        ]
+      },
+      "points_per_tap": 4096
+    },
+    {
+      "project": "upstream/synthetic-rxmer-50khz/workbench.merlin.json",
+      "before": {
+        "points": 4096,
+        "taps": [
+          "TxOutput",
+          "RxEqualized"
+        ]
+      },
+      "after": {
+        "points": 12288,
+        "taps": [
+          "TxOutput",
+          "RxInput",
+          "TxGrid",
+          "TxPreEq",
+          "RxFft",
+          "RxEqualized"
+        ]
+      },
+      "points_per_tap": 2048
+    },
+    {
+      "project": "upstream/synthetic-rxmer-25khz/workbench.merlin.json",
+      "before": {
+        "points": 4096,
+        "taps": [
+          "TxOutput",
+          "RxEqualized"
+        ]
+      },
+      "after": {
+        "points": 24576,
+        "taps": [
+          "TxOutput",
+          "RxInput",
+          "TxGrid",
+          "TxPreEq",
+          "RxFft",
+          "RxEqualized"
+        ]
+      },
+      "points_per_tap": 4096
+    }
+  ],
+  "initial_failure": {
+    "test": "curated_upstream_projects_open_idle_and_complete_through_the_qt_model",
+    "cause": "ideal-25khz spectrum.unavailable: 4096 aggregate points over two taps retained 2048 samples, below its 4096-sample FFT.",
+    "resolution": "Six taps with an aggregate budget of six times the numerology FFT; actual public spectra and QAM plus Qt consumers now pass."
+  },
+  "full_qt": {
+    "passed": 649,
+    "failed": 0,
+    "ignored": 1,
+    "ignored_reason": "Existing actual_gui_project_files_load_and_run_through_public_rust_for_native_python_parity requires complete GUI artifact inventory; unchanged gate not rerun by ordinary unit invocation."
+  },
+  "source_hashes": {
+    "apps/qt/qml/shared/components/WorkbenchBlock.qml": "c31c60744200ee0abb5d116a05259b33e04d099635b1a0ed3255e223c4156f3c",
+    "apps/qt/src/upstream/workbench/configuration_view.rs": "41627e4ebc3b79ea93db6633fa49f695a8c3c0d50ef04f691cc1388b7fa38660",
+    "apps/qt/src/upstream/workbench/measured_view.rs": "06b62cabe84861cc9a9adf53c9d92f3d46ef802617eb31154f392332c8c0ec0c",
+    "apps/qt/src/upstream/workbench/execution_view.rs": "7de327abaa1fde1e96c6437d3a1161d36bfe686775beb68ebfeff67da3e4bfee",
+    "crates/pnm-input/tests/directional_workbench_examples.rs": "a5577f3bac0bfe749e2b3d39ba8930da71dc5f7aaeec84c9b201f973f49d6565",
+    "bindings/python/tests/test_workbench_scenario_acceptance.py": "6059404c7bd69e198cd854cc13a5dbe41c36738e15c6361b3291b3bcd8d2dbbe",
+    "examples/workbench/manifest.json": "55a420521d028c13b41bd9550f4d8ebe14016686dee96d3bcc2cdf8abd984c5d"
+  },
+  "preserved_completed_checklist_lines": 379
+}

@@ -50,7 +50,9 @@ def validate(prefix, scratch):
             assert hashlib.sha256(data).hexdigest() == record['sha256']
         for name in ('LICENSE', 'NOTICE'):
             assert (wb.parent / name).is_file()
-        subprocess.run([str(executable), '--check-workbench', str(wb)], env=environment, check=True, timeout=30)
+        for relative in [bundle['workbench'], *bundle.get('companions', [])]:
+            subprocess.run([str(executable), '--check-workbench', str(examples / relative)],
+                           env=environment, check=True, timeout=30)
     assert (payload / 'notices/LICENSE-GPL-3.0').is_file()
     assert (payload / 'notices/qt/qt-source-provenance.json').is_file()
     assert (prefix / 'usr/share/icons/hicolor/256x256/apps/merlin.png').is_file()

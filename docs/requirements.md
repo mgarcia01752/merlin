@@ -2426,3 +2426,16 @@ idle; synthetic observations MUST retain their origin and scientific limits.
 Architecture: [curated examples](architecture.md#curated-workbench-examples-and-open-location).
 Task: [UI-EXAMPLES-03](development/checklist.md#task-ui-examples-03).
 Implementation/tests/evidence: [design](development/features/workbench-examples/design.md#ui-examples-03-directional-bundles-and-runnable-upstream-projects).
+
+### REQ-UI-EXAMPLES-04
+
+Every advertised runnable workbench MUST open idle and execute its saved
+configuration through the public backend to actual source/FEC results. Coverage
+MUST include every selected downstream profile and all upstream mode/spacing
+pairs. Expected impairment outcomes MUST be documented without fabricating
+recovery or changing capture provenance. Optional unused inputs and verification
+awaiting execution MUST remain distinct from missing configuration, successful
+verification and actual failures in Qt readiness displays.
+Architecture: [curated examples](architecture.md#curated-workbench-examples-and-open-location).
+Task: [UI-EXAMPLES-04](development/checklist.md#task-ui-examples-04).
+Implementation/tests/evidence: [design](development/features/workbench-examples/design.md#ui-examples-04-complete-example-execution-and-truthful-readiness).

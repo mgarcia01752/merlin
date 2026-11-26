@@ -5,7 +5,11 @@ an idle, configured project. Press Start to run; open PRBS-RX to inspect
 the recovered-source comparison and FEC results. No capture hardware is used.
 
 `measured-experiment.json` is the exact embedded source, copied from `examples/measurements/upstream/measured/capture-driven.json`.
-The saved runtime options retain its grant, sample, chunk, timeout and tap budgets.
+The saved runtime options preserve its grant, sample, chunk and timeout limits.
+Observation retention explicitly selects six taps: TX output, RX input, TX grid,
+TX Pre-Eq, RX FFT and equalized RX cells. Its 12288-point aggregate budget is
+six times the 2048-sample FFT length, providing one full window per tap for
+the spectrum and QAM instruments. The original source document stays unchanged.
 Receiver instruments retain one channel estimate, four soft cells and one
 LDPC input-metric history. These presentation budgets do not change science.
 

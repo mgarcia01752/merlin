@@ -82,10 +82,10 @@ pub(super) fn presentation(simulation: &Simulation, input: MeasuredInputInfo) ->
     }
     blocks.insert(
         "rxmer".into(),
-        json!({"status":if input.rxmer_captures==0 {"attention"}else{"complete"},
+        json!({"status":if input.rxmer_captures==0 {"unused"}else{"complete"},
         "reason":details["rxmer"]["summary"]}),
     );
-    blocks.insert("verification".into(),json!({"status":"attention","reason":"An actual run is required for recovered-source verification."}));
+    blocks.insert("verification".into(),json!({"status":"pending","reason":"Start upstream to obtain actual recovered-source verification."}));
     Some(json!({"input_mode":"measured","blocks":blocks,"details":details}))
 }
 

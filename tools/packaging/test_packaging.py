@@ -85,6 +85,14 @@ class PackageTests(unittest.TestCase):
                 "upstream-ideal-50khz", "upstream-ideal-25khz",
                 "upstream-synthetic-rxmer-50khz", "upstream-synthetic-rxmer-25khz",
             ])
+            advertised = [path for bundle in manifest['bundles']
+                          for path in [bundle['workbench'], *bundle.get('companions', [])]]
+            self.assertCountEqual(advertised, [str(path.relative_to(examples))
+                                              for path in examples.rglob('*.merlin.json')])
+            original_examples = Path(__file__).resolve().parents[2] / 'examples/workbench'
+            for relative in advertised:
+                self.assertEqual((examples / relative).read_bytes(),
+                                 (original_examples / relative).read_bytes())
             for bundle in manifest["bundles"]:
                 workbench = examples / bundle["workbench"]
                 self.assertTrue(workbench.is_file())

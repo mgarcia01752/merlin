@@ -2033,6 +2033,24 @@ and the
   [Design/evidence](features/workbench-examples/design.md#ui-examples-03-directional-bundles-and-runnable-upstream-projects).
   Evidence: [integrated Level 3 receipt](features/workbench-examples/directional-examples-evidence.json): 930/140 Rust, 648 Qt, 441 QML, 221 native Python, 29 optional facade and 102 decoder cases pass. All four upstream files run through the production Qt model; eight files pass native admission. Fresh GUI exports, CLI smokes, archive integrity and requirement links pass; original downstream bytes/history remain intact.
 
+<a id="task-ui-examples-04"></a>
+- [x] **UI-EXAMPLES-04** Verify every runnable example through execution and
+  actual results, with truthful optional-input and awaiting-run indicators.
+  Requirements: [REQ-UI-EXAMPLES-04](../requirements.md#req-ui-examples-04).
+  Architecture: [curated examples](../architecture.md#curated-workbench-examples-and-open-location).
+  Depends on: UI-EXAMPLES-03.
+  Acceptance: all selected downstream profiles and all upstream examples run;
+  documented scientific outcomes, native Qt readiness/results, reused native
+  Python compatibility, affected crate/QML, boundary and documentation checks.
+  [Design/evidence](features/workbench-examples/design.md#ui-examples-04-complete-example-execution-and-truthful-readiness).
+  Evidence: [scenario acceptance](features/workbench-examples/scenario-acceptance.json):
+  all 20 saved files admit; 24 downstream profile runs and four upstream runs
+  match installed Python. Six upstream taps provide actual instruments without
+  changing scientific outcomes. Complete Qt: 649 pass/one existing ignored GUI
+  artifact gate; 236 affected QML and 26 packaging cases pass. Formatting,
+  Clippy, boundary and links pass; native Open/Start verifies all 4,216 bits in
+  the complete 25 kHz upstream example. Existing completed history is preserved.
+
 <a id="task-ui-open-01"></a>
 - [x] **UI-OPEN-01** Default native Open to installed/source example resources,
   independently of the launch directory. [Design](features/workbench-examples/design.md).

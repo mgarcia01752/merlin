@@ -41,13 +41,13 @@
     },
     {
       "file": "workbench.merlin.json",
-      "bytes": 36233,
-      "sha256": "77acc1e27093d6e5553aec63b9172d6a5bdcd5108c21eb3ba18a3c5b228303ed"
+      "bytes": 36307,
+      "sha256": "e55a64616ec0e5506a4c0133440ed76eb6536fcc02748781a2da7d86bfb104c8"
     },
     {
       "file": "README.md",
-      "bytes": 1061,
-      "sha256": "29d4bad08f6d0b3744194f869f311445b5f04c554767ea5d3f3da95ea7118ea5"
+      "bytes": 1372,
+      "sha256": "48f002a1f7492dce69566611c93fd7702ce42b5727789454fa58d29895248721"
     }
   ],
   "limitations": [
@@ -55,5 +55,12 @@
     "Existing admitted C, H and effective C x H planes and measured associations are preserved.",
     "Opening loads an idle project; Start runs the bounded MERLIN transmitter/channel/receiver loop."
   ],
-  "source_revision": "f9bd6c2d3a6fd4d895776a7499d9a4c9ab474988"
+  "source_revision": "f9bd6c2d3a6fd4d895776a7499d9a4c9ab474988",
+  "observation_retention": {
+    "tap_count": 6,
+    "points_per_tap": 2048,
+    "aggregate_points": 12288,
+    "purpose": "One complete numerology FFT per selected tap; actual QAM and TX/RX spectrum windows.",
+    "source_document_unchanged": true
+  }
 }

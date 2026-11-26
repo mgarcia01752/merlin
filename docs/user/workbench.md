@@ -218,8 +218,9 @@ Blocks show their name only. Their left stripe indicates status:
 | Color | Meaning |
 | --- | --- |
 | Green | Complete: the block's requirements are satisfied. |
-| Yellow | Needs attention: input, configuration or results are missing/pending. |
+| Yellow | Needs attention: required input/configuration is missing, or results are incomplete/unverified. |
 | Red | Error: an input, configuration or processing failure has a diagnostic. |
+| Gray | Upstream **Not used** for optional RxMER, or **Awaiting results** before actual PRBS-RX verification. |
 
 Hover over a block, or focus it with the keyboard, to see its status and reason.
 Screen readers receive the same explanation. Click the block for its dialog.
@@ -233,7 +234,7 @@ is red. A rejected draft remains in its editor with a diagnostic and preserves
 the accepted selection. Applying timing settings alone does not satisfy the input
 requirement.
 
-**Start requires every block to be green.** A yellow or red block disables it.
+**Downstream Start requires every block to be green.** A yellow or red block disables it.
 Green before a run means configured and ready; comparison results are not needed
 to start the run. Start is enabled only for an idle worker and a fully validated
 frozen request. Optional inputs may satisfy readiness through an explicit valid
@@ -242,6 +243,11 @@ bypass/default mode when those controls are implemented.
 Receiver remains yellow until its full-request configuration is applied; PRBS-RX
 requires independent comparison acceptance. Visiting analyzer tabs has no effect.
 Optional measurement inputs will not be required for every future run.
+
+Upstream Start follows its accepted native configuration and the shared execution
+slot. An ideal example's unused RxMER and PRBS-RX awaiting results are neutral
+states and do not disable it. An upstream green PRBS-RX indicator requires an
+actual recovered-source result. See the [upstream guide](upstream-workbench.md).
 
 ## Edit OFDM transmission settings
 

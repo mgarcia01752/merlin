@@ -2369,6 +2369,8 @@ These are MERLIN workflow rules, not DOCSIS specification requirements.
 | Complete | Green | The block's applicable requirements are satisfied by accepted, validated state. Before a run this means configured/ready, including receiver/comparison setup; results are not a prerequisite to starting. |
 | Needs attention | Yellow | Required input, configuration, integration or results are missing or pending. |
 | Error | Red | An actual selected-input, accepted-configuration or processing failure is present, with a concrete diagnostic. |
+| Not used | Neutral gray | Accepted upstream configuration intentionally has no optional RxMER target. No measurement or recovery is fabricated. |
+| Awaiting results | Neutral gray | Upstream configuration is accepted but no actual source-verification report exists. Start remains governed by the native session and global execution slot. |
 
 **WB-RULE-01:** OFDM Channel Descriptor (OCD) remains yellow until its accepted settings are valid
 and a compatible modulation-profile PNM input has been successfully accepted by
@@ -2388,7 +2390,7 @@ FEC outcomes belong to simulation results and are not automatically UI failures.
 Optional inputs do not become mandatory through this display policy; future
 explicit bypass/default modes must be evaluated by their owning Rust request.
 
-**WB-RULE-03:** Start requires all nine workbench blocks to be green. Any yellow
+**WB-RULE-03:** Downstream Start requires all nine workbench blocks to be green. Any yellow
 or red block disables Start. Green means readiness to participate in the next run,
 not the presence of results from that run; PRBS-RX must be ready to compare before
 Start. Optional measurement blocks can be green through an explicit validated
@@ -2398,7 +2400,7 @@ checks all block statuses and dispatches a validated frozen request through the
 Rust worker only when idle. Receiver/PRBS-RX acceptance is configuration, not a
 requirement to have prior results.
 
-Current implementation: accepted OCD-compatible DPD turns DPD and OCD green;
+Current downstream implementation: accepted OCD-compatible DPD turns DPD and OCD green;
 accepted PRBS-TX configuration also makes Transmitter ready. Default unity response
 becomes ready on the valid DPD/OCD grid. Accepted compatible RxMER makes RxMER
 and Channel Simulator green. Removing/replacing inputs revalidates dependencies;
@@ -2531,8 +2533,18 @@ numerologies. [UI-EXAMPLES-03](development/checklist.md#task-ui-examples-03)
 owns saved-file Rust/Python/Qt and packaging acceptance; science/API behavior
 and the native Open root remain unchanged.
 
+[REQ-UI-EXAMPLES-04](requirements.md#req-ui-examples-04) requires actual
+Open/Start/results coverage for every runnable entry and truthful input/result
+readiness. The direction models own those states; shared Qt blocks present them.
+An optional unused measurement and verification awaiting a run are separate
+from missing configuration, completed verification and scientific failures.
+[UI-EXAMPLES-04](development/checklist.md#task-ui-examples-04) owns this
+acceptance without changing captured inputs or scientific algorithms.
+
 `examples/workbench/manifest.json` inventories four downstream and four upstream
-runnable bundles. Downstream includes `single`
+runnable bundles, with twelve explicit downstream `companions` covering all
+twenty saved workbenches. Companion files use the same public loader and package
+integrity/admission gates as their primary bundle. Downstream includes `single`
 (one DPD, one RxMER, one supplied DS channel estimate) and `multi-rxmer` (one DPD,
 five compatible RxMER inputs, one estimate), plus `multi-rxmer-2` (channel 193,
 132 pre-collected RxMER files, companion DPD, flat/unity response because no

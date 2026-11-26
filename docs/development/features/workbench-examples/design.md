@@ -1,5 +1,81 @@
 # Workbench example bundles and installed Open defaults
 
+## UI-EXAMPLES-04: Complete example execution and truthful readiness
+
+Every runnable manifest entry, including its saved companions, must support
+Open → Start → completed scientific results using its saved settings. The
+inventory contains eight primary projects plus twelve downstream companions.
+Verify all selected downstream profiles and all four upstream projects; keep
+impairment outcomes distinct from successful
+source recovery. Loading remains idle. Optional absent RxMER in an ideal channel
+and verification awaiting execution must not look like missing configuration or
+claim completed recovery. Actual failures remain visible.
+
+Reuse the existing public project/full-loop APIs and direction-owned Qt models.
+No new scientific algorithms, public operations or saved-file schema are needed.
+Preserve original captured bytes, upstream source documents and historical
+acceptance. Review each example's expected source/FEC coverage and document any
+deliberate impairment limitations; correct actual execution defects before
+accepting this task.
+
+| Owner / symbol | Existing contract and gap | Disposition |
+| --- | --- | --- |
+| `crates/pnm-input/tests/directional_workbench_examples.rs` | Actual upstream runs, but downstream inventory only checks admission. | EXTEND execution coverage to every selected downstream profile and retain compact outcomes. |
+| `bindings/python/tests/test_workbench_scenario_acceptance.py` | Existing installed wheel shares the unchanged Rust project engine. | ADD explicit acceptance against independently executed downstream references; reuse the existing upstream parity test. |
+| `apps/qt/src/upstream/workbench/{configuration_view,measured_view,execution_view}.rs` | Optional RxMER and not-yet-run verification use attention indicators. | ADAPT presentation states while preserving scientific readiness and report authority. |
+| `apps/qt/qml/shared/components/WorkbenchBlock.qml` | Shared completed/error/attention indicator. | EXTEND explicit neutral states without changing downstream status meanings. |
+| `apps/qt/src/upstream/workbench/project_tests.rs`, upstream QML tests | Existing real Open/run and fixture presentation checks. | EXTEND readiness and successful-result assertions. |
+| `examples/workbench/`, `docs/user/{workbench-examples,upstream-workbench,terminology}.md` | Runnable inventory and scientific provenance. | DOCUMENT expected execution, optional inputs and actual verification. |
+| `tools/packaging/{test_packaging,desktop_smoke}.py` | Primary bundles have package integrity/admission coverage. | EXTEND inventories and native admission to every saved companion. |
+
+Requirement: [REQ-UI-EXAMPLES-04](../../../requirements.md#req-ui-examples-04).
+Task: [UI-EXAMPLES-04](../../checklist.md#task-ui-examples-04).
+Architecture: [curated examples](../../../architecture.md#curated-workbench-examples-and-open-location).
+
+Acceptance covers actual saved-file execution for every runnable entry,
+affected native Python reuse/parity, native Qt Open/Start/readiness, relevant
+Qt/QML and input-crate tests, boundary, formatting, Clippy, links and packaging
+checks. No full unrelated workspace or wheel rebuild is required for unchanged
+science/bindings. Record executed checks, outcomes and any remaining gaps here.
+The exhaustive downstream acceptance case is explicitly selected with
+`cargo test -p pnm-input --release --test directional_workbench_examples every_downstream_saved_example_executes_each_selected_profile -- --ignored`.
+It is a release-mode feature acceptance gate, separate from ordinary per-commit
+debug tests: the twenty saved projects include long, deliberately impaired
+decoder experiments. Preserve their original durations and iteration limits.
+The installed-wheel exhaustive downstream case requires the separate Rust
+reference in `MERLIN_DOWNSTREAM_EXAMPLES_RUST_REFERENCE_JSON`; ordinary native
+runs explicitly skip that additional long scenario gate when no reference is
+provided. This changes no existing test, vector or release gate.
+
+The initial expanded Qt acceptance found `spectrum.unavailable` for the 25 kHz
+ideal project: its old 4,096-point aggregate across two taps retained only 2,048
+time samples, short of its 4,096-sample FFT. All four saved projects now retain
+six taps (`TxOutput`, `RxInput`, `TxGrid`, `TxPreEq`, `RxFft`, `RxEqualized`).
+Their aggregate limits are derived as six times the numerology FFT length:
+24,576 points at 25 kHz and 12,288 at 50 kHz. No scientific implementation or
+source document changes. Bundle README/hash inventories describe that explicit
+saved-option override. Actual public TX/RX spectra and four QAM taps are checked;
+Qt opens resource-grid, QAM, spectrum, response and FEC instruments after each
+saved project runs. Scientific configurations, decoder word outcomes and source
+verification match the original retention-independent references exactly.
+
+Accepted local feature evidence is recorded in
+[scenario-acceptance.json](scenario-acceptance.json). All twenty saved files admit,
+24 selected downstream profile runs and four upstream runs match independent
+installed-native Python execution, and every upstream project opens the resource
+grid and QAM/spectrum/response/FEC views through its production Qt model. Complete
+Qt tests pass 649 cases, with one existing GUI-artifact case explicitly ignored;
+181 upstream and 55 downstream QML cases pass. Packaging passes 26 cases; relevant
+formatting, Clippy, public-boundary and documentation checks pass. Native VM
+File/Open/Start produces all-green complete-scenario indicators and verifies
+4,216 source bits without errors or unverified bits. New dark screenshots show
+both neutral ideal readiness and actual complete verification. Full input-crate
+coverage passed 126 cases before the observation-budget correction; the complete
+saved-example feature suite and native parity were rerun after it. The exhaustive
+downstream test was separately executed in release mode, not inferred from its
+ordinary ignored status. Unrelated full workspace/CLI, wheel rebuilds and installed
+OS/publication gates were not required and are not reported as passed here.
+
 ## UI-EXAMPLES-03: Directional bundles and runnable upstream projects
 
 The user requires delivery on `master`. Local merge `bc37be7c` preserves both

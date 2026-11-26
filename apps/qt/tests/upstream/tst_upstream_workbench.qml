@@ -168,6 +168,32 @@ Pane {
             compare(navigationSpy.count, before);
         }
 
+        function test_optional_input_and_pending_results_have_neutral_indicators_data() {
+            return [{tag: "dark", dark: true}, {tag: "light", dark: false}];
+        }
+
+        function test_optional_input_and_pending_results_have_neutral_indicators(data) {
+            theme.dark = data.dark;
+            host.presentation = {blocks: {
+                rxmer: {status: "unused", reason: "This ideal configuration does not use RxMER."},
+                verification: {status: "pending", reason: "Start to obtain actual source verification."}
+            }};
+            const rxmer = blockFor("rxmer");
+            const verification = blockFor("verification");
+            compare(rxmer.statusLabel, "Not used");
+            compare(verification.statusLabel, "Awaiting results");
+            compare(findChild(rxmer, "statusStripe").color, theme.muted);
+            compare(findChild(verification, "statusStripe").color, theme.muted);
+            verify(rxmer.Accessible.description.indexOf("Not used:") === 0);
+            verify(verification.Accessible.description.indexOf("Awaiting results:") === 0);
+            host.presentation = {blocks: {
+                rxmer: {status: "complete", reason: "Native measurement plan accepted."},
+                verification: {status: "complete", reason: "Actual recovered-source comparison succeeded."}
+            }};
+            compare(findChild(rxmer, "statusStripe").color, theme.statusComplete);
+            compare(findChild(verification, "statusStripe").color, theme.statusComplete);
+        }
+
         function test_rejected_host_snapshot_preserves_admitted_readiness() {
             host.presentation = {blocks: {transmitter: {status: "complete", reason: "Admitted display"}}};
             compare(blockFor("transmitter").blockStatus, "complete");
